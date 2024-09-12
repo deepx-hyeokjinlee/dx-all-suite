@@ -1,6 +1,23 @@
 ## Changelog
 ### 2024-09-12  
 #### dx-compiler  
+ bd6770650b62e8dd528482f902fb0b8afd6780c2 dx-compiler (remotes/origin/HEAD)  
+ 57c3100ce172ed519ec967b13b0e8ad8a20772a4 dx-compiler/dx_codegen (v2.22.0)  
+ 140293339e9cf2e1ba15b95c383570becd2d3a95 dx-compiler/dx_com (v1.2.5-253-g1402933)  
+ bea8310c22a9c5fe34ca30ce7d24ef2bbf7be6a3 dx-compiler/dx_common (v0.34.0)  
+ a8f51e9a8217333b44238d3d94960be674b949fe dx-compiler/dx_simulator (v2.9.1-71-ga8f51e9)  
+
+#### dx-runtime  
++1164cdf4cd928c68b66ea88e1cdc6a395ed648b2 dx-runtime (remotes/origin/HEAD)  
++f8c201e940b543d5d4a8d8777f551279e5fe9db8 dx-runtime/dx_app (v0.1.1-78-gf8c201e)  
++aef425dd3c3607ab68dc66b988919b3e1537a0a3 dx-runtime/dx_rt (v2.0.1)  
+ 02f493cd5ca19881a3f3cb41bd3fbff537ab3b40 dx-runtime/dx_rt_npu_linux_driver (v1.0.7)  
+ 1c56175b7aa7afa106d105f4118005a55a2d6719 dx-runtime/dx_rt_npu_linux_driver/modules/pci_deepx (remotes/origin/HEAD)  
+ 25d31cade90f1587ae8c7e3bed284bc603d4cbbd dx-runtime/dx_rt_npu_linux_driver/modules/pci_xilinx (remotes/origin/HEAD)  
+ 55e207daf880e1f60c6b9cbe2416366937e83c36 dx-runtime/dx_rt_npu_linux_driver/utils (heads/main-5-g55e207d)  
+ 27fcee717232ff4163e5bdd17ba5db3221919230 dx-runtime/rt_npu_validation (v1.1.0)  
+### 2024-09-12  
+#### dx-compiler  
 +bd6770650b62e8dd528482f902fb0b8afd6780c2 dx-compiler (remotes/origin/HEAD)  
 +cf86b944ff3303fb69d9523b40fdd6c90d30c31c dx-compiler/dx_codegen (v2.19.2-1-gcf86b94)  
 +0baedfa48b505b27b72733a0b8521ddff58e7fac dx-compiler/dx_com (v1.2.5-207-g0baedfa)  
