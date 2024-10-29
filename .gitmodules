@@ -1,8 +1,8 @@
 [submodule "dx-compiler"]
 	path = dx-compiler
-	url = git@github.com:KOMOSYS/dx-compiler
+	url = git@gh.deepx.ai:deepx/dx-compiler.git
 	branch = main
 [submodule "dx-runtime"]
 	path = dx-runtime
-	url = git@github.com:KOMOSYS/dx-runtime
+	url = git@gh.deepx.ai:deepx/dx-runtime.git
 	branch = main
