@@ -1,0 +1,112 @@
+name: trigger-dev-to-main
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1-5'  # 3:00 AM UTC Monday to Friday (12:00 PM Seoul Time)
+
+permissions: write-all
+
+jobs:
+  trigger-dev-to-main:
+    runs-on: self-hosted
+    steps:
+      - name: Clean
+        run: |
+          sudo rm -rf ${{ github.workspace }}
+          mkdir -p ${{ github.workspace }}
+
+      - name: Perform HTTP Requests
+        run: |
+          BASE_URL="http://eng.dpx.ai/regression/api?build_type=DAILY&build_date__contains=$(date +%Y-%m-%d)"
+          echo "BASE_URL=$BASE_URL" >> $GITHUB_ENV
+          DEVICES=("V3" "M1A")
+          MODES=("DEBUG" "RELEASE")
+          FAILURE=false
+
+          for DEVICE in "${DEVICES[@]}"; do
+            for MODE in "${MODES[@]}"; do
+              API_URL="$BASE_URL&target_device=${DEVICE}&target_input_mode=${MODE}&build_status=SUCCESS"
+              echo "Checking API: $API_URL"
+
+              STATUS_CODE=$(curl -o /dev/null -s -w "%{http_code}" "$API_URL")
+
+              echo "HTTP Status Code for $DEVICE - $MODE: $STATUS_CODE"
+
+              if [ "$STATUS_CODE" -ne 200 ]; then
+                echo "Request failed for Device: $DEVICE, Mode: $MODE (Status: $STATUS_CODE)"
+                FAILURE=true
+              fi
+            done
+          done
+
+          if [ "$FAILURE" = true ]; then
+            echo "One or more API requests for Daily Regression failed."
+            exit 1
+          else
+            echo "All API requests for Daily Regression succeeded."
+          fi
+
+      - name: Send GET request and save response to file
+        run: |
+           curl -s "${BASE_URL}&target_device=M1A&target_input_mode=DEBUG" -o response.json
+           echo "Response (first 200 characters):"
+           head -c 200 response.json
+
+      - name: Extract commit ids using jq
+        run: |
+          # compiler
+          COMMON_COMMIT_ID=$(jq -r '.[0].compiler[0].common_commit_id' response.json)
+          CODEGEN_COMMIT_ID=$(jq -r '.[0].compiler[0].codegen_commit_id' response.json)
+          COM_COMMIT_ID=$(jq -r '.[0].compiler[0].com_commit_id' response.json)
+          SIMULATOR_COMMIT_ID=$(jq -r '.[0].compiler[0].simulator_commit_id' response.json)
+
+          # runtime
+          DX_RT_COMMIT_ID=$(jq -r '.[0].runtime[0].commit_id' response.json)
+          NPU_LINUX_DRIVER_COMMIT_ID=$(jq -r '.[0].runtime[0].npu_linux_driver_commit_id' response.json)
+          NPU_VALIDATION_COMMIT_ID=$(jq -r '.[0].runtime[0].npu_validation_commit_id' response.json)
+
+          # compiler
+          echo "COMMON_COMMIT_ID=$COMMON_COMMIT_ID" >> $GITHUB_ENV
+          echo "CODEGEN_COMMIT_ID=$CODEGEN_COMMIT_ID" >> $GITHUB_ENV
+          echo "COM_COMMIT_ID=$COM_COMMIT_ID" >> $GITHUB_ENV
+          echo "SIMULATOR_COMMIT_ID=$SIMULATOR_COMMIT_ID" >> $GITHUB_ENV
+
+          # runtime
+          echo "DX_RT_COMMIT_ID=$DX_RT_COMMIT_ID" >> $GITHUB_ENV
+          echo "NPU_LINUX_DRIVER_COMMIT_ID=$NPU_LINUX_DRIVER_COMMIT_ID" >> $GITHUB_ENV
+          echo "NPU_VALIDATION_COMMIT_ID=$NPU_VALIDATION_COMMIT_ID" >> $GITHUB_ENV
+
+      - name: Trigger the dev-to-main workflow in other repos
+        run: |
+          REPOS=("dx_com-common" "dx_codegen" "dx_com" "dx_simulator" "dx_rt" "dx_rt_npu_linux_driver"
+                 "rt_npu_validation")
+          COMMIT_IDS=( "$COMMON_COMMIT_ID" "$CODEGEN_COMMIT_ID" "$COM_COMMIT_ID" "$SIMULATOR_COMMIT_ID"
+                       "$DX_RT_COMMIT_ID" "$NPU_LINUX_DRIVER_COMMIT_ID" "$NPU_VALIDATION_COMMIT_ID" )
+          for i in "${!REPOS[@]}"; do
+            REPO="${REPOS[$i]}"
+            COMMIT_ID="${COMMIT_IDS[$i]}"
+
+            DEFAULT_BRANCH=$(curl -s -H "Authorization: Bearer ${{ secrets.GH_DCI_TOKEN }}" \
+              "https://gh.deepx.ai/api/v3/repos/deepx/$REPO" | jq -r '.default_branch')
+
+            echo "'"$DEFAULT_BRANCH"'"
+
+            curl -X POST \
+              https://gh.deepx.ai/api/v3/repos/deepx/$REPO/actions/workflows/dev-to-main.yml/dispatches \
+              -H "Authorization: Bearer ${{ secrets.GH_DCI_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -d '{
+                    "ref": "'"$DEFAULT_BRANCH"'",
+                    "inputs": {
+                        "target_commit": "'"$COMMIT_ID"'"
+                    }
+                  }'
+
+            echo "'"$COMMIT_ID"'"
+          done
+
+      - name: Clean
+        run: |
+          sudo rm -rf ${{ github.workspace }}
+          mkdir -p ${{ github.workspace }}
