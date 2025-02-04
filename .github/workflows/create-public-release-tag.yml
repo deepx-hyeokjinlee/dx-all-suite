@@ -31,7 +31,7 @@ jobs:
 
       - name: Determine Release Tag
         run: |
-          release_tag="release-${{ env.current_date }}""
+          release_tag="release-${{ env.current_date }}"
           echo "release_tag=$release_tag" >> $GITHUB_ENV
           echo "Determined release tag: $release_tag"
 
