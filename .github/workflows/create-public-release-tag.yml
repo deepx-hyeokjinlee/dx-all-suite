@@ -38,7 +38,8 @@ jobs:
       - name: Generate Release Message
         run: |
           echo "Generating release message..."
-          echo -e "Remark: Integration Test Passed!\n" > "release_message.txt"
+          echo -e "Integration Test M1A/V3 Pass\n" > "release_message.txt"
+          echo -e "Remark:" >> "release_message.txt"
 
           SUB_REPOS=("dx-compiler" "dx-runtime")
 
