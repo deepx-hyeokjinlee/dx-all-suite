@@ -1,4 +1,33 @@
 ## Changelog
+### 2025-02-05  
+#### dx-compiler  
++de5b46b6308197b06b51d146ebc6fa6b5200fccd dx-compiler (remotes/origin/HEAD)  
+ 354dfda5a78b1c7e1bbd6ca74e290f68501cd90b dx-compiler/dx_codegen (2.10.0-785-g354dfda5)  
+ 908f2057e7f824c9069c4c6acf4d2c8c527fd4cf dx-compiler/dx_com (v1.2.5-418-g908f205)  
+ 08a61a3dc3cf6276648677b32ee400fd3ee5f7a7 dx-compiler/dx_common (v0.50.0)  
+ d76c71a50254a4accb1e40c4cf3ca13ccc4f46c4 dx-compiler/dx_simulator (v2.9.1-91-gd76c71a)  
+
+#### dx-runtime  
+ 3ca7deb2a900333d4d82562f4db90f1fa7ab7c4a dx-runtime (heads/main)  
+ 0e52dc0078cfe637910f63669ac57dbfdea87581 dx-runtime/dx_app (v0.1.1-166-g0e52dc0)  
+ 74e46cbac3ff7e170016da9aa94b958a410b5ba4 dx-runtime/dx_fw (v1.6.1)  
+ 9de5ce7796e77ed3063b8de2ef4a41de18902be4 dx-runtime/dx_fw/extern/cc_sw_bundle (m1a_v1.4.0_r20240107-11-g9de5ce7)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (m1a_v1.4.1_r20240123)  
+ 47f57e44c795ae3b3ff146a726af65d54957c093 dx-runtime/dx_fw/firmware/bootloader (m1a_v1.4.0_r20240107-305-g47f57e4)  
+ da3874be64c57fd94ef37edbde3eab10b9821518 dx-runtime/dx_fw/firmware/freertos/apps (m1a_v1.6.0_r20241220-4-gda3874b)  
+ 6f63da20b3c9e1408e7c8007d3427b75878cbd64 dx-runtime/dx_fw/firmware/freertos/kern (V10.5.0)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 36e5b7aee628a21f2124474f6b21c90f8288b7b2 dx-runtime/dx_fw/firmware/freertos/plat (m1a_v1.6.0_r20241220-19-g36e5b7a)  
+ 6e13160bc92253138845d2ebd6e48bfea10c31ac dx-runtime/dx_fw/firmware/romcode (m1a_v1.4.0_r20240107-250-g6e13160)  
+ d613e38b4f3acecc73a5fa24fad9bce9cab97cbb dx-runtime/dx_fw/utils/tools/rt_bingen (m1a_v1.4.1_r20240123-2-gd613e38)  
+ f1977352f69fd996f4de00d15c860d59b0ffeb16 dx-runtime/dx_rt (v2.6.3-13-gf1977352)  
+ b10566e1f4a43f95b689df330c89b7c314c98ef1 dx-runtime/dx_rt_npu_linux_driver (v1.3.1-3-gb10566e)  
+ b15365994086ffb5d09fb73d17390be2c9928c35 dx-runtime/dx_rt_npu_linux_driver/modules/pci_deepx (v1.2.0-1-gb153659)  
+ 96414e475552ae30e2d4672428a3900d15e3fefd dx-runtime/dx_rt_npu_linux_driver/modules/pci_xilinx (v1.1.0)  
+ c739aa5a591e6d0fb950dc7bc852b6603edab723 dx-runtime/dx_rt_npu_linux_driver/utils (c739aa5)  
+ f81ebbd68da4a04a9a6423ca3ab794a0b8440904 dx-runtime/dx_stream (1.0.0-13-gf81ebbd)  
+ aecb3b262f2855c5b1a3b3583f5313e61e256e8b dx-runtime/rt_npu_validation (v1.4.0-3-gaecb3b2)  
 ### 2025-02-03  
 #### dx-compiler  
 +2e437294d05bac3ab5dd42533b020de8c2c1bcec dx-compiler (heads/main)  
