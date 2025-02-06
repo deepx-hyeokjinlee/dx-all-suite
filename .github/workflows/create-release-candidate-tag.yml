@@ -107,6 +107,12 @@ jobs:
             });
 
             console.log(`Created pre-release: ${response.data.html_url}`);
+
+      - name: Trigger Jenkins Job
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST "http://192.168.0.82:8080/jenkins/devops/generic-webhook-trigger/invoke?token=integration-test"
       
       - name: Clean
         run: |
