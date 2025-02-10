@@ -1,0 +1,32 @@
+services:
+  dxnn-sdk-runtime:
+    container_name: dxnn-sdk-runtime
+    image: dxnn-sdk-runtime:20.04
+    command: sleep infinity
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ipc: host
+    tty: true
+    stdin_open: true
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=${DISPLAY}   # for X11 forwarding
+      - XAUTHORITY=/root/.Xauthority
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro        
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/machine-id:/etc/machine-id:ro
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+      - /run/dbus:/run/dbus
+      - /var/lib/dbus:/var/lib/dbu
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.Xauthority:/root/.Xauthority
+      - ../dx-runtime/dx_stream/dx_stream/samples:/app/dx_stream/dx_stream/samples
+      - ../dx-runtime/dx_app/assets:/app/dx_app/asstes
+    network_mode: "host"
+    privileged: true
+    restart: on-failure
+    devices:
+      - "/dev/dxrt0:/dev/dxrt0"
