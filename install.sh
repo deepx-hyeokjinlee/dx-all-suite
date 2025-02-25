@@ -11,6 +11,7 @@ function help()
 
 function install_dx_rt_npu_linux_driver()
 {
+    sudo apt update && sudo apt-get -y install pciutils kmod build-essential make linux-headers-6.11.0-17-generic
     cd $SCRIPT_DIR/dx-runtime/dx_rt_npu_linux_driver/modules
     sudo ./build.sh -c uninstall
     ./build.sh
