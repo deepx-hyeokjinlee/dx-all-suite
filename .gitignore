@@ -1,2 +1,5 @@
+.idea/
+archives/
+volume_dir/
 *.pdf
 /docs/docs

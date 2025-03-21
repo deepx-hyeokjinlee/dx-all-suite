@@ -1,4 +1,4 @@
-# DXNN-SDK
+# DXNN® - DEEPX NPU Software(SDK) 
 
 ## Prerequisites
 
@@ -17,19 +17,6 @@ $ git submodule update --init --recursive
 ```
 $ git submodule status
 ```
-
-#### setup assets (DEEPX)
-- dx_app
-    ```
-    $ cd dx-runtime/dx_app
-    $ ./get_assets.sh
-    ```
-
-- dx_stream
-    ```
-    $ cd dx-runtime/dx_stream
-    $ ./setup_dxnn_assets.sh
-    ```
 
 #### (Optional) Install Docker & Docker compose
 ```
@@ -80,12 +67,18 @@ $ ./docker_build.sh
 - creating a Docker container
 
     ```
+    $ ./docker_run.sh
+    ```
+    or
+    ```
     $ docker compose -f docker/docker-compose.yml up -d
     ```
+
 - exec container
     ```
     $ docker exec -it dxnn-sdk-runtime bash
     ```
+
 - check installation
     ```
     # dxrt-cli -s
@@ -109,3 +102,41 @@ $ ./docker_build.sh
     dvfs Disabled
     =======================================================
     ```
+
+---
+
+#### Run Sample Application
+
+- dx_app
+    - setup assets(pre-copmpiled NPU model and sample input videos)
+    ```
+    $ cd /deepx/dx_app
+    $ ./setup.sh
+    ```
+
+  - run dx-app
+    ```
+    $ cd /deepx/dx_app
+    $ ./scripts/run_detector.sh
+    ```
+
+    * You can refer to /deepx/dx_app/README.md for more details.
+
+###### setup assets(pre-copmpiled NPU model and sample input videos)
+
+- dx_stream
+    - setup assets(pre-copmpiled NPU model and sample input videos)
+    ```
+    $ cd /deepx/dx_stream
+    $ ./setup.sh
+    ```
+
+    - run dx-app
+    ```
+    $ cd /deepx/dx_stream
+    $ ./run_demo.sh
+    ```
+
+    * You can refer to /deepx/dx_stream/README.md for more details.
+- 
+
