@@ -26,32 +26,68 @@ RUN apt-get update && apt-get install -y \
 # X11 forwarding and xcb
 RUN apt-get install -y x11-apps libx11-6 xauth libxext6 libxrender1 libxtst6 libxi6 libxcb-xinerama0
 
-WORKDIR /deepx
+# python 3
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get install -y python3 python3-dev python3-venv
 
+# Set up Virtual Environment
+RUN set -x && \
+    python3 -m venv /venv-dxnn --system-site-packages && \
+    . /venv-dxnn/bin/activate && \
+    echo "Upgrade pip wheel setuptools..." && \
+    UBUNTU_VERSION=$(lsb_release -rs) && \
+    if [ "$UBUNTU_VERSION" = "24.04" ]; then \
+      pip install --upgrade setuptools; \
+    elif [ "$UBUNTU_VERSION" = "22.04" ]; then \
+      pip install --upgrade pip wheel setuptools; \
+    elif [ "$UBUNTU_VERSION" = "20.04" ]; then \
+      pip install --upgrade pip wheel setuptools; \
+    else \
+      echo "Unspported Ubuntu version: $UBUNTU_VERSION" && exit 1; \
+    fi
+
+WORKDIR /deepx/dx_rt
 ADD archives/dx_rt.tar.gz /deepx/dx_rt/
-RUN cd /deepx/dx_rt && \
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "Build dx_rt..." && \
     ./install.sh --dep && \
     ./build.sh --install
 
-ADD archives/dx_app.tar.gz /deepx/dx_app/
-RUN cd /deepx/dx_app && \
-    ./install.sh --all && \
+WORKDIR /deepx/dx_app
+ARG FILE_DXAPP=archives/dx_app.tar.gz
+ADD ${FILE_DXAPP} /deepx/dx_app/
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "Build dx_app..." && \
+    ./install.sh --all
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
     ./build.sh
 
-ADD archives/dx_stream.tar.gz /deepx/dx_stream/
-RUN cd /deepx/dx_stream && \
-    ./install.sh && \
-    ./build.sh --install
+WORKDIR /deepx/dx_stream
+ARG FILE_DXSTREAM=archives/dx_stream.tar.gz
+ADD ${FILE_DXSTREAM} /deepx/dx_stream/
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "install dependancies for dx_stream..." && \
+    sudo ./install.sh && \
+    echo "Build dx_stream..." && \
+    sudo ./build.sh --install
 
 RUN rm -rf /deepx/dx_stream/util && \
     rm -rf /deepx/dx_app/util && \
     rm -rf /deepx/dx_app/build_x86_64 && \
     rm -rf /deepx/dx_rt/build_x86_64
 
+WORKDIR /deepx
+
 RUN apt-get update && \
     apt-get install -y \
     vim fim && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+RUN echo "source /venv-dxnn/bin/activate" >> /root/.bashrc
 
 ENTRYPOINT [ "/usr/local/bin/dxrtd" ]

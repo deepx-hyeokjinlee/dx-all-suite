@@ -6,6 +6,8 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+      args:
+        UBUNTU_VERSION: ${UBUNTU_VERSION:-20.04}
     ipc: host                                 # NPU ipc
     tty: true                                 # NPU
     stdin_open: true

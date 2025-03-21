@@ -55,7 +55,7 @@ $ ./install.sh --target <package name>
 #### Build image
 
 ```
-$ ./docker_build.sh
+$ ./docker_build.sh --ubuntu_version=<ubutnu_version>
 ```
 
 #### Run continer
@@ -67,16 +67,13 @@ $ ./docker_build.sh
 - creating a Docker container
 
     ```
-    $ ./docker_run.sh
-    ```
-    or
-    ```
-    $ docker compose -f docker/docker-compose.yml up -d
+    $ ./docker_run.sh --ubuntu_version=<ubutnu_version>
     ```
 
 - exec container
     ```
-    $ docker exec -it dxnn-sdk-runtime bash
+    $ docker ps 
+    $ docker exec -it dxnn-sdk-runtime-<ubutnu_version> bash
     ```
 
 - check installation
@@ -114,7 +111,7 @@ $ ./docker_build.sh
     $ ./setup.sh
     ```
 
-  - run dx-app
+    - run dx-app
     ```
     $ cd /deepx/dx_app
     $ ./scripts/run_detector.sh
@@ -138,5 +135,4 @@ $ ./docker_build.sh
     ```
 
     * You can refer to /deepx/dx_stream/README.md for more details.
-- 
-
+ 
