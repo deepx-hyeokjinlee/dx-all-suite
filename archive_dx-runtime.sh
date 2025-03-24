@@ -1,6 +1,6 @@
 #!/bin/bash
-
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
+pushd $SCRIPT_DIR
 
 # git archive
 OUTPUT_DIR="$SCRIPT_DIR/archives"
@@ -23,9 +23,13 @@ find "$SCRIPT_DIR/dx-runtime" -mindepth 1 -maxdepth 1 -type d | while read -r su
             echo "Archive created successfully: $archive_file"
         else
             echo "Failed to create archive for: $dir_name"
+            exit 1
         fi
     else
         echo "No .git directory found in: $dir_name"
+        exit 1
     fi
 done
 
+popd
+exit 0

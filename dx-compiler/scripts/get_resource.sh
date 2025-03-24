@@ -1,0 +1,282 @@
+#!/bin/bash
+SCRIPT_DIR=$(realpath "$(dirname "$0")")
+
+BASE_URL="https://sdk.deepx.ai/"
+
+# default value
+SOURCE_PATH=""
+DOWNLOAD_DIR="$SCRIPT_DIR/../download"
+OUTPUT_DIR=""
+SYMLINK_TARGET_PATH=""
+FORCE="n"
+
+# Function to display help message
+show_help() {
+  
+  echo "Usage: $(basename "$0") --src_path=<source_path> --output=<dir> [--extract=<y/n>] [--symlink_target_path=<dir>]"
+  echo "Example: $0 --src_path=release/dx-com/dx_com_M1A_v1.38.1.tar.gz --output=./archives --extract=n --symlink_target_path=../volume_dir/release/dx-com"
+  echo "Options:"
+  echo "  --src_path=<path>                Set source path for file server endpoint (example: release/dx-com/dx_com_M1A_v1.38.1.tar.gz)"
+  echo "  --output=<path>                  Set output path (example: ./assets)"
+  echo "  [--extract=<y|n>]                Choose whether to extract the compressed file (default: y)"
+  echo "  [--symlink_target_path=<path>]   Set symlink target path for output path (example: ../workspace/res/clip_assets)"
+  echo "  [--force=<y|n>]                  Force overwrite if the file already exists (default: n)"
+  echo "  [--help]                         Show this help message"
+
+  if [ "$1" == "error" ]; then
+    echo "Error: Invalid or missing arguments."
+    exit 1
+  fi
+  exit 0
+}
+
+download() {
+    echo "=== Download Start ==="
+    FILENAME=$(basename "${SOURCE_PATH}")
+    DOWNLOAD_PATH=$DOWNLOAD_DIR/$FILENAME
+
+    echo "--- Download path: $DOWNLOAD_PATH ---"
+    echo "--- Download real path: $(readlink -f "$DOWNLOAD_PATH") ---"
+
+    if [ -e "$DOWNLOAD_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
+        echo "Downloaded file($DOWNLOAD_PATH) is already exist. so skip to download"
+        echo "=== Download SKIP ==="
+        return 0
+    fi
+    
+    if [ "$USE_FORCE" -eq 1 ]; then
+        echo "'--force=y' option is set. so remove Downloaded file($DOWNLOAD_PATH)"
+        rm -rf $DOWNLOAD_PATH
+    fi
+        
+    URL="${BASE_URL}${SOURCE_PATH}"
+
+    # check curl and install curl
+    if ! command -v curl &> /dev/null; then
+        echo "curl is not installed. Installing..."
+        sudo apt update && sudo apt install -y curl
+
+        # curl install failed
+        if ! command -v curl &> /dev/null; then
+            echo "Failed to install curl. Exiting."
+            exit 1
+        fi
+    fi
+
+    mkdir -p "$DOWNLOAD_DIR"
+
+    # download file
+    echo "Downloading $FILENAME from $URL..."
+    curl -o "$DOWNLOAD_PATH" "$URL"
+
+    # download failed check
+    if [ $? -ne 0 ]; then
+        echo "Download failed($DOWNLOAD_PATH)!"
+        rm -rf "$DOWNLOAD_PATH"
+        exit 1
+    fi
+    echo "=== Download Complete ==="
+}
+
+generate_output() {
+    echo "=== Generate output Start ==="
+
+    # setting extract location 
+    FILENAME=$(basename "${SOURCE_PATH}")
+    
+    # Get extract target dir name without extension 
+    # Remove .tar.gz or .tgz explicitly, otherwise remove only the last extension
+    if [[ "$FILENAME" == *.tar.gz ]]; then
+        TARGET_DIR_NAME="${FILENAME%.tar.gz}"
+    elif [[ "$FILENAME" == *.tgz ]]; then
+        TARGET_DIR_NAME="${FILENAME%.tgz}"
+    else
+        TARGET_DIR_NAME="${FILENAME%.*}"
+    fi
+    
+    if [ "$USE_EXTRACT" -eq 0 ]; then
+        ACTION_TYPE="Move"
+    else
+        ACTION_TYPE="Move and Extract"
+    fi
+
+    if [ -n "$SYMLINK_TARGET_PATH" ]; then
+        # if '--symlink_target_path' option is exist.
+        ARCHIVE_TARGET_DIR="$SYMLINK_TARGET_PATH/download"
+        ARCHIVE_TARGET_PATH="$ARCHIVE_TARGET_DIR/$FILENAME"
+        OUTPUT_TARGET_PATH="$SYMLINK_TARGET_PATH/$TARGET_DIR_NAME"
+        echo "${ACTION_TYPE} to --symlink_target_path: $ARCHIVE_TARGET_PATH"
+    else
+        ARCHIVE_TARGET_DIR="$OUTPUT_DIR/download"
+        ARCHIVE_TARGET_PATH="$ARCHIVE_TARGET_DIR/$FILENAME"
+        OUTPUT_TARGET_PATH="$OUTPUT_DIR/$TARGET_DIR_NAME"
+        echo "${ACTION_TYPE} to output path: $ARCHIVE_TARGET_PATH"
+    fi
+
+    if [ -e "$ARCHIVE_TARGET_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
+        echo "archive file downloaded path($ARCHIVE_TARGET_PATH) is already exist. so, skip to move downloaded file to output path"
+        echo "=== MOVE SKIP ==="
+    else
+        echo "Move $DOWNLOAD_PATH to $ARCHIVE_TARGET_PATH"
+        mkdir -p $ARCHIVE_TARGET_DIR
+        mv "$DOWNLOAD_PATH" "$ARCHIVE_TARGET_PATH"
+        # failed check
+        if [ $? -ne 0 ]; then
+            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force=y' option."
+            rm -rf "$DOWNLOAD_DIR"
+            rm -rf "$ARCHIVE_TARGET_PATH"
+            echo "=== MOVE FAIL ==="
+            exit 1
+        fi
+        ln -s $(readlink -f "$ARCHIVE_TARGET_PATH") $(readlink -f "$DOWNLOAD_PATH")
+        # failed check
+        if [ $? -ne 0 ]; then
+            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force=y' option."
+            rm -rf "$DOWNLOAD_DIR"
+            rm -rf "$ARCHIVE_TARGET_PATH"
+            echo "=== MAKE SYMLINK FAIL ==="
+            exit 1
+        fi
+        echo "=== MAKE SYMLINK SUCC ==="
+    fi
+    
+    # extract tar.gz or move tar.gz
+    if [ "$USE_EXTRACT" -eq 0 ]; then
+        echo "Skip to extract file($ARCHIVE_TARGET_PATH)"
+    else
+        if [ -e "$OUTPUT_TARGET_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
+            echo "Output file($OUTPUT_TARGET_PATH) is already exist. so, skip to extract downloaded file to output path"
+            echo "=== EXTRACT SKIP ==="
+            return 0
+        fi
+        
+        echo "Extract file($ARCHIVE_TARGET_PATH) to '$OUTPUT_TARGET_PATH'"
+
+        # Create a directory
+        rm -rf $OUTPUT_TARGET_PATH      # clean
+        mkdir -p $OUTPUT_TARGET_PATH
+
+        # and extract the contents into the created directory.
+        tar -xzf "$ARCHIVE_TARGET_PATH" --strip-components=1 -C "$OUTPUT_TARGET_PATH"
+        
+        # failed check
+        if [ $? -ne 0 ]; then
+            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force=y' option."
+            rm -rf "$DOWNLOAD_DIR"
+            rm -rf "$ARCHIVE_TARGET_PATH"
+            echo "=== EXTRACT FAIL ==="
+            exit 1
+        fi
+        echo "=== EXTRACT SUCC ==="
+    fi
+    
+    echo "${ACTION_TYPE} complete."
+    echo "=== Generate output Complete ==="
+}
+
+make_symlink() {
+    echo "=== Make Symbolic Link Start ==="
+    URL="${BASE_URL}${SOURCE_PATH}"
+    FILENAME=$(basename "$URL")
+
+    # if '--symlink_target_path' option is exist, make symbolic link
+    if [ -n "$SYMLINK_TARGET_PATH" ]; then
+        if [ "$USE_EXTRACT" -eq 0 ]; then
+            if [ -e "${OUTPUT_DIR}/${FILENAME}" ] && [ "$USE_FORCE" -eq 0 ]; then
+                MSG="Output file(${OUTPUT_DIR}/${FILENAME}) is already exist. so, skip to copy downloaded file to output path"
+            else
+                mkdir -p "$(dirname "$OUTPUT_DIR")"
+                CMD="cp ${ARCHIVE_TARGET_PATH} ${OUTPUT_DIR}/${FILENAME}"
+                MSG="Copy file: $ARCHIVE_TARGET_PATH -> $OUTPUT_DIR/$FILENAME"
+            fi
+        else
+            if [ -L "$OUTPUT_DIR" ] && [ -e "$OUTPUT_DIR" ] && [ "$USE_FORCE" -eq 0 ]; then
+                MSG="Symbolic link($OUTPUT_DIR) is already exist. so, skip to create symlink"
+            else
+                if [ -e "$OUTPUT_DIR" ]; then
+                    echo "Output directory($OUTPUT_DIR) is already exist. so, remove dir and then create symlink"
+                    rm -rf $OUTPUT_DIR
+                fi
+
+                OUTPUT_TARGET_REAL_PATH=$(readlink -f "$OUTPUT_TARGET_PATH")
+                CMD="ln -s $OUTPUT_TARGET_REAL_PATH $OUTPUT_DIR"
+                MSG="Created symbolic link: $OUTPUT_DIR -> $OUTPUT_TARGET_REAL_PATH"
+            fi
+        fi
+        
+        if [ "$CMD" != "" ]; then
+            echo "CMD: ${CMD}"
+            ${CMD}
+        fi             
+        echo "$MSG"
+        
+    else
+        echo "the --symlink_target_path option is not set. so, skip to make symlink."
+    fi
+    echo "=== Make Symbolic Link Complete ==="
+}
+
+# parse args
+for i in "$@"; do
+    case "$1" in
+        --src_path=*)
+            SOURCE_PATH="${1#*=}"
+            ;;
+        --output=*)
+            OUTPUT_DIR="${1#*=}"
+
+            # Symbolic link cannot be created when output_dir is the current directory.
+            OUTPUT_REAL_DIR=$(readlink -f "$OUTPUT_DIR")
+            CURRENT_REAL_DIR=$(readlink -f "./")
+            if [ "$OUTPUT_REAL_DIR" == "$CURRENT_REAL_DIR" ]; then
+                echo "'--output' is the same as the current directory. Please specify a different directory."
+                exit 1
+            fi
+            ;;
+        --extract=*)
+            EXTRACT="${1#*=}"
+            ;;
+        --symlink_target_path=*)
+            SYMLINK_TARGET_PATH="${1#*=}"
+            SYMLINK_TARGET_REAL_PATH=$(readlink -f "$SYMLINK_TARGET_PATH")
+            ;;
+        --force=*)
+            FORCE="${1#*=}"
+            ;;
+        --help)
+            show_help
+            ;;
+        *)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+if [ "$EXTRACT" = "n" ] || [ "$EXTRACT" = "N" ]; then
+    USE_EXTRACT=0
+else
+    USE_EXTRACT=1
+fi
+echo "USE_EXTRACT($USE_EXTRACT)"
+
+if [ "$FORCE" = "y" ] || [ "$FORCE" = "Y" ]; then
+    USE_FORCE=1
+else
+    USE_FORCE=0
+fi
+echo "USE_FORCE($USE_FORCE)"
+
+# usage
+if [ -z "$SOURCE_PATH" ] || [ -z "$OUTPUT_DIR" ]; then
+    echo "Error: SOURCE_PATH(${SOURCE_PATH}) or OUTPUT_DIR(${OUTPUT_DIR}) does not exist."
+    show_help "error"
+fi
+
+download
+generate_output
+make_symlink
+
+exit 0
+

@@ -38,7 +38,7 @@ $ git submodule status
 
 ### (Optional) Install Docker & Docker compose
 ```
-$ ./install_docker.sh
+$ ./scripts/install_docker.sh
 ```
 
 ---

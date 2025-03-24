@@ -1,13 +1,43 @@
 services:
-  dxnn-sdk-runtime:
-    container_name: dxnn-sdk-runtime-${UBUNTU_VERSION:-20.04}
-    image: dxnn-sdk-runtime:${UBUNTU_VERSION:-20.04}
+  dxnn-sdk-compiler:
+    container_name: dxnn-sdk-compiler-${UBUNTU_VERSION}
+    image: dxnn-sdk-compiler:${UBUNTU_VERSION}
     command: sleep infinity
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.dx-compiler
       args:
-        UBUNTU_VERSION: ${UBUNTU_VERSION:-20.04}
+        UBUNTU_VERSION: ${UBUNTU_VERSION}
+        FILE_DXCOM: ${FILE_DXCOM:-/should/be/set/path}
+        FILE_DXSIM: ${FILE_DXSIM:-/should/be/set/path}
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DISPLAY=${DISPLAY}                    # X11 forwarding
+      - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}    # X11
+      - XAUTHORITY=/tmp/.docker.xauth         # X11
+      - DOCKER_VOLUME_PATH=${DOCKER_VOLUME_PATH:-/deepx/workspace} # volume path
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix         # X11
+      - $HOME/.Xauthority:/root/.Xauthority   # X11
+      - $XAUTHORITY:/tmp/.docker.xauth        # X11
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${LOCAL_VOLUME_PATH:-../volume_dir}:${DOCKER_VOLUME_PATH:-/deepx/workspace} # mount volume
+    network_mode: "host"
+    restart: on-failure
+    devices:
+      - "/dev/dri:/dev/dri"                   # GPU    
+
+  dxnn-sdk-runtime:
+    container_name: dxnn-sdk-runtime-${UBUNTU_VERSION}
+    image: dxnn-sdk-runtime:${UBUNTU_VERSION}
+    command: sleep infinity
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dx-runtime
+      args:
+        UBUNTU_VERSION: ${UBUNTU_VERSION}
     ipc: host                                 # NPU ipc
     tty: true                                 # NPU
     stdin_open: true

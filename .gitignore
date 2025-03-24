@@ -3,3 +3,6 @@ archives/
 volume_dir/
 *.pdf
 /docs/docs
+dx-compiler/dx_com
+dx-compiler/dx_simulator
+**/download/
