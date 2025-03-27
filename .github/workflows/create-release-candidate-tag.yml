@@ -75,7 +75,7 @@ jobs:
               
               echo "${submodule}: ${submodule_tag}@${submodule_hash}" >> "release_message.txt"
             done
-            echo "\n" >> "release_message.txt"
+            echo -e "\n" >> "release_message.txt"
           done
 
           release_message=$(cat "release_message.txt")
