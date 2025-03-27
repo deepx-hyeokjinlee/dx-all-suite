@@ -58,6 +58,8 @@ jobs:
           SUB_REPOS=("dx-compiler" "dx-runtime")
 
           for SUB_REPO in "${SUB_REPOS[@]}"; do
+            SUB_HASH = $(git -C "$SUB_REPO" rev-parse --short=7 HEAD)
+            echo "$SUB_REPO@$SUB_HASH" >> "release_message.txt"
             git -C "$SUB_REPO" submodule foreach --quiet "
               echo \${name}
             " | while read -r submodule; do
@@ -68,10 +70,12 @@ jobs:
               else
                 submodule_tag=$(git -C "$SUB_REPO/$submodule" describe --tags --abbrev=0 2>/dev/null ||
                                 echo "No Release tag found")
+                submodule_hash=$(git -C "$SUB_REPO/$submodule" rev-parse --short=7 HEAD)
               fi
               
-              echo "$submodule: $submodule_tag" >> "release_message.txt"
+              echo "$submodule: $submodule_tag@$submodule_hash" >> "release_message.txt"
             done
+            echo "\n" >> "release_message.txt"
           done
 
           release_message=$(cat "release_message.txt")
