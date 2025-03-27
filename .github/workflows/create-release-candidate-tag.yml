@@ -58,7 +58,7 @@ jobs:
           SUB_REPOS=("dx-compiler" "dx-runtime")
 
           for SUB_REPO in "${SUB_REPOS[@]}"; do
-            SUB_HASH = $(git -C "$SUB_REPO" rev-parse --short=7 HEAD)
+            SUB_HASH=$(git -C "$SUB_REPO" rev-parse --short=7 HEAD)
             echo "${SUB_REPO} @${SUB_HASH}" >> "release_message.txt"
             git -C "$SUB_REPO" submodule foreach --quiet "
               echo \${name}
