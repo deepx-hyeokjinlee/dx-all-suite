@@ -424,12 +424,14 @@ Compiling Model : 100%|███████████████████
     ```
     $ docker exec -it dxnn-sdk-compiler-<ubuntu_version> bash
     (venv-dx-compiler) # cd /deepx/dx_simulator
+    (venv-dx-compiler) # pip install /deepx/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
+    (venv-dx-compiler) # pip install ultralytics
     ```
 
 ### Run `dx_simulator` using Sample dxnn input
 ```
-$ (venv-dx-simulator) python examples/example_yolov5s.py
-$ fim examples/yolov5s.jpg
+(venv-dx-simulator) $ python examples/example_yolov5s.py
+(venv-dx-simulator) $ fim examples/yolov5s.jpg
 ```
 
 **For more details, refer to `dx_simulator/README.md`.**

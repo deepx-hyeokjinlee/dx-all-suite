@@ -111,10 +111,7 @@ RUN set -x && \
         libc6-dev \
         libncurses5-dev \
         libnss3-dev \
-        ccache && \
-    . /venv-dx-compiler/bin/activate && \
-    pip install /deepx/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall && \
-    pip install ultralytics
+        ccache
 
 RUN apt-get update && \
     apt-get install -y \
