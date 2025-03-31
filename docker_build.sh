@@ -12,11 +12,13 @@ FILE_DXSIM=archives/dx_simulator_v2.14.5.tar.gz
 show_help() {
     echo "Usage: $(basename "$0") OPTIONS(--all | target=<environment_name>) --ubuntu_version=<version> [--help]"
     echo "Example:1) $0 --all --ubuntu_version=24.04"
-    echo "Example 2) $0 --target=dx-runtime --ubuntu_version=24.04"
+    echo "Example 2) $0 --target=dx-compiler --ubuntu_version=24.04"
+    echo "Example 2) $0 --target=dx-runtime --ubuntu_version=24.04 --driver_update"
     echo "Options:"
-    echo "  --all                          : install DXNN® Software Stack (dx-compiler & dx-runtime)"
-    echo "  --target=<environment_name>    : install specify target DXNN® environment (ex> dx-compiler | dx-runtime)"
-    echo "  --ubuntu_version=<version>     : Specify Ubuntu version (default: 20.04)"
+    echo "  --all                          : Install DXNN® Software Stack (dx-compiler & dx-runtime)"
+    echo "  --target=<environment_name>    : Install specify target DXNN® environment (ex> dx-compiler | dx-runtime)"
+    echo "  --ubuntu_version=<version>     : Specify Ubuntu version (ex> 24.04)"
+    echo "  [--driver_update]              : Install 'dx_rt_npu_linux_driver' in the host environment"
     echo "  [--help]                       : Show this help message"
 
     if [ "$1" == "error" ]; then
@@ -63,6 +65,14 @@ docker_build_dx-runtime()
     ${CMD}
 }
 
+install_dx_rt_npu_linux_driver() 
+{
+    CMD="./dx-runtime/install.sh --target=dx_rt_npu_linux_driver"
+    echo "${CMD}"
+
+    ${CMD}
+}
+
 # parse args
 for i in "$@"; do
     case "$1" in
@@ -74,6 +84,9 @@ for i in "$@"; do
             ;;
         --ubuntu_version=*)
             UBUNTU_VERSION="${1#*=}"
+            ;;
+        --driver_update)
+            DRIVER_UPDATE=y
             ;;
         --help)
             show_help
@@ -97,6 +110,9 @@ else
     echo "TARGET_ENV($TARGET_ENV) is set."
     echo "FILE_DXCOM($FILE_DXCOM) is set."
     echo "FILE_DXSIM($FILE_DXSIM) is set."
+    if [ "$DRIVER_UPDATE" = "y" ]; then
+        echo "DRIVER_UPDATE($DRIVER_UPDATE) is set."
+    fi
 fi
 
 case $TARGET_ENV in
@@ -109,12 +125,18 @@ case $TARGET_ENV in
         echo "Installing dx-runtime"
         ./archive_dx-runtime.sh
         docker_build_dx-runtime
+        if [ "$DRIVER_UPDATE" = "y" ]; then
+            install_dx_rt_npu_linux_driver
+        fi
         ;;
     all)
         echo "Installing all DXNN® environments"
         ./archive_dx-compiler.sh
         ./archive_dx-runtime.sh
         docker_build_all
+        if [ "$DRIVER_UPDATE" = "y" ]; then
+            install_dx_rt_npu_linux_driver
+        fi
         ;;
     *)
         echo "[ERROR] Unknown DXNN® environment name: $1"
