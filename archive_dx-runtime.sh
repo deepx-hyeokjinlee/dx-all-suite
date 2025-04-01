@@ -5,7 +5,7 @@ pushd $SCRIPT_DIR
 # git archive
 OUTPUT_DIR="$SCRIPT_DIR/archives"
 mkdir -p "$OUTPUT_DIR"
-EXCLUDED_DIRS=("dx_fw" "dx_rt_npu_linux_driver")
+EXCLUDED_DIRS=("dx_fw" "dx_rt_npu_linux_driver" "workspace")
 
 find "$SCRIPT_DIR/dx-runtime" -mindepth 1 -maxdepth 1 -type d | while read -r subdir; do
     dir_name=$(basename "$subdir")
@@ -15,7 +15,7 @@ find "$SCRIPT_DIR/dx-runtime" -mindepth 1 -maxdepth 1 -type d | while read -r su
         continue
     fi
 
-    if [[ -d "$subdir/.github" ]]; then
+    if [ -f "$subdir/.git" ] || [ -d "$subdir/.git" ]; then
         archive_file="$OUTPUT_DIR/${dir_name}.tar.gz"
         echo "Archiving repository: $dir_name"
         (cd "$subdir" && git archive --format=tar.gz --output="$archive_file" $(git symbolic-ref --short HEAD || git rev-parse HEAD))
@@ -23,11 +23,9 @@ find "$SCRIPT_DIR/dx-runtime" -mindepth 1 -maxdepth 1 -type d | while read -r su
             echo "Archive created successfully: $archive_file"
         else
             echo "Failed to create archive for: $dir_name"
-            exit 1
         fi
     else
         echo "No .git directory found in: $dir_name"
-        exit 1
     fi
 done
 
