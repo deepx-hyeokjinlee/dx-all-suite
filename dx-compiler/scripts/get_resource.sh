@@ -8,7 +8,7 @@ SOURCE_PATH=""
 DOWNLOAD_DIR="$SCRIPT_DIR/../download"
 OUTPUT_DIR=""
 SYMLINK_TARGET_PATH=""
-FORCE="n"
+USE_FORCE=0
 
 # Function to display help message
 show_help() {
@@ -20,7 +20,7 @@ show_help() {
   echo "  --output=<path>                  Set output path (example: ./assets)"
   echo "  [--extract=<y|n>]                Choose whether to extract the compressed file (default: y)"
   echo "  [--symlink_target_path=<path>]   Set symlink target path for output path (example: ../workspace/res/clip_assets)"
-  echo "  [--force=<y|n>]                  Force overwrite if the file already exists (default: n)"
+  echo "  [--force]                        Force overwrite if the file already exists"
   echo "  [--help]                         Show this help message"
 
   if [ "$1" == "error" ]; then
@@ -45,7 +45,7 @@ download() {
     fi
     
     if [ "$USE_FORCE" -eq 1 ]; then
-        echo "'--force=y' option is set. so remove Downloaded file($DOWNLOAD_PATH)"
+        echo "'--force' option is set. so remove Downloaded file($DOWNLOAD_PATH)"
         rm -rf $DOWNLOAD_PATH
     fi
         
@@ -122,7 +122,7 @@ generate_output() {
         mv "$DOWNLOAD_PATH" "$ARCHIVE_TARGET_PATH"
         # failed check
         if [ $? -ne 0 ]; then
-            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force=y' option."
+            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
             rm -rf "$DOWNLOAD_DIR"
             rm -rf "$ARCHIVE_TARGET_PATH"
             echo "=== MOVE FAIL ==="
@@ -131,7 +131,7 @@ generate_output() {
         ln -s $(readlink -f "$ARCHIVE_TARGET_PATH") $(readlink -f "$DOWNLOAD_PATH")
         # failed check
         if [ $? -ne 0 ]; then
-            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force=y' option."
+            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
             rm -rf "$DOWNLOAD_DIR"
             rm -rf "$ARCHIVE_TARGET_PATH"
             echo "=== MAKE SYMLINK FAIL ==="
@@ -161,7 +161,7 @@ generate_output() {
         
         # failed check
         if [ $? -ne 0 ]; then
-            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force=y' option."
+            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
             rm -rf "$DOWNLOAD_DIR"
             rm -rf "$ARCHIVE_TARGET_PATH"
             echo "=== EXTRACT FAIL ==="
@@ -240,15 +240,15 @@ for i in "$@"; do
             SYMLINK_TARGET_PATH="${1#*=}"
             SYMLINK_TARGET_REAL_PATH=$(readlink -f "$SYMLINK_TARGET_PATH")
             ;;
-        --force=*)
-            FORCE="${1#*=}"
+        --force)
+            USE_FORCE=1
             ;;
         --help)
             show_help
             ;;
         *)
             echo "Unknown option: $1"
-            exit 1
+            show_help "error"
             ;;
     esac
     shift
@@ -261,11 +261,6 @@ else
 fi
 echo "USE_EXTRACT($USE_EXTRACT)"
 
-if [ "$FORCE" = "y" ] || [ "$FORCE" = "Y" ]; then
-    USE_FORCE=1
-else
-    USE_FORCE=0
-fi
 echo "USE_FORCE($USE_FORCE)"
 
 # usage

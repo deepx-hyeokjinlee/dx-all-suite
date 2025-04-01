@@ -6,7 +6,6 @@ COM_VERSION="1.38.1"        # default
 SIM_VERSION="2.14.5"        # default
 ARCHIVE_MODE="n"            # default
 ARCHIVE_MODE_ARGS=""        # default
-FORCE="n"
 FORCE_ARGS=""
 
 # Function to display help message
@@ -17,7 +16,7 @@ show_help() {
   echo "  [--com_version=<version>]         : Specify dx_com version"
   echo "  [--simulator_version=<version>]   : Specify dx_simulator version"
   echo "  [--archive_mode=<y|n>]            : Set archive mode (default: n)"
-  echo "  [--force=<y|n>]                   : Force overwrite if the file already exists (default: n)"
+  echo "  [--force]                         : Force overwrite if the file already exists"
   echo "  [--help]                          : Show this help message"
 
   if [ "$1" == "error" ]; then
@@ -39,9 +38,8 @@ for i in "$@"; do
         --archive_mode=*)
             ARCHIVE_MODE="${1#*=}"
             ;;
-        --force=*)
-            FORCE="${1#*=}"
-            FORCE_ARGS="--force=$FORCE"
+        --force)
+            FORCE_ARGS="--force"
             ;;
         --help)
             show_help

@@ -50,10 +50,10 @@ $ ./dx-compiler/install.sh
    - 심볼릭 링크가 `./dx-compiler/dx-com` 및 `./dx-simulator`에 생성됩니다.
 
 3. 이미 설치된 경우, `./dx-compiler/install.sh`를 다시 실행하면 기존 설치를 재사용합니다.  
-   강제 재설치를 원할 경우 `--force=y` 옵션을 사용하세요.
+   강제 재설치를 원할 경우 `--force` 옵션을 사용하세요.
 
    ```
-   $ ./dx-compiler/install.sh --force=y
+   $ ./dx-compiler/install.sh --force
    ```
 
 ### 특정 버전 설치
@@ -73,7 +73,7 @@ $ ./install.sh --com_version=<version> --sim_version=<version>
 
 ---
 
-## DX-Runtime 환경 설치 (dx_com, dx_simulator)
+## DX-Runtime 환경 설치 (`dx_rt_npu_linux_driver`, `dx_rt`, `dx_app`, and `dx_stream`)
 
 `DX-Runtime` 환경은 각 모듈의 소스 코드를 포함하며, `./dx-runtime` 디렉터리에서 Git 서브모듈로 관리됩니다.  
 모든 모듈을 빌드 및 설치하려면 아래 명령을 실행하세요.
@@ -250,7 +250,8 @@ DVFS Disabled
    ```
 2. **도커 컨테이너 내부에서 실행하는 경우:**
    ```
-   $ cd /deepx/dx_app
+    $ docker exec -it dxnn-sdk-runtime-<ubuntu_version> bash
+    # cd /deepx/dx_app
    ```
 
 ### 애셋 설정 (사전 컴파일된 NPU 모델 및 샘플 입력 영상)
@@ -280,7 +281,8 @@ $ fim ./result-app1.jpg
    ```
 2. **도커 컨테이너 내부에서 실행하는 경우:**
    ```
-   $ cd /deepx/dx_stream
+    $ docker exec -it dxnn-sdk-runtime-<ubuntu_version> bash
+    # cd /deepx/dx_stream
    ```
 
 ### Assets 설정 (사전 컴파일된 NPU 모델 및 샘플 입력 영상)
@@ -424,13 +426,15 @@ Compiling Model : 100%|███████████████████
     ```
     $ docker exec -it dxnn-sdk-compiler-<ubuntu_version> bash
     (venv-dx-compiler) # cd /deepx/dx_simulator
+    (venv-dx-compiler) # pip install /deepx/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
+    (venv-dx-compiler) # pip install ultralytics
     ```
 
 ### 샘플 DXNN 입력을 사용하여 `dx_simulator` 실행
 
 ```
-$ (venv-dx-simulator) python examples/example_yolov5s.py
-$ fim examples/yolov5s.jpg
+(venv-dx-simulator) $ python examples/example_yolov5s.py
+(venv-dx-simulator) $ fim examples/yolov5s.jpg
 ```
 
 **자세한 내용은 `dx_simulator/README.md`를 참고하세요.**

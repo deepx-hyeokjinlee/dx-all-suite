@@ -50,10 +50,10 @@ When executing the above command:
    Symbolic links will also be created at `./dx-compiler/dx-com` and `./dx-simulator`.
 
 3. If the modules are already installed, running `./dx-compiler/install.sh` again will reuse the existing installations.  
-   To force a reinstallation, use the `--force=y` option:
+   To force a reinstallation, use the `--force` option:
 
    ```
-   $ ./dx-compiler/install.sh --force=y
+   $ ./dx-compiler/install.sh --force
    ```
 
 ### Install a Specific Version
@@ -326,11 +326,13 @@ dx_com/dx_com \
         -c sample/MobileNetV1-1.json \
         -o sample/MobileNetV1-1 
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:06<00:00,  7.00s/model ]
+
 dx_com/dx_com \
         -m sample/ResNet50-1.onnx \
         -c sample/ResNet50-1.json \
         -o sample/ResNet50-1 
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:19<00:00, 19.17s/model ]
+
 dx_com/dx_com \
         -m sample/YOLOV5-1.onnx \
         -c sample/YOLOV5-1.json \

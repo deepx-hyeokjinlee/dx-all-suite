@@ -4,7 +4,6 @@ SCRIPT_DIR=$(realpath "$(dirname "$0")")
 VERSION=""      # default
 MODULE_NAME=""
 ARCHIVE_MODE=""
-FORCE="n"
 FORCE_ARGS=""
 
 # Function to display help message
@@ -15,7 +14,7 @@ show_help() {
   echo "  --module_name=<module name>  : Specify module (dx_com | dx_simulator)"
   echo "  [--file_name=<file_name>]    : Specify file name (ex> dx_com_M1A, skip if it matches the module name)"
   echo "  --version=<version>          : Specify version"
-  echo "  [--force=<y|n>]              : Force overwrite if the file already exists (default: n)"
+  echo "  [--force]                    : Force overwrite if the file already exists"
   echo "  [--help]                     : Show this help message"
 
   if [ "$1" == "error" ]; then
@@ -40,9 +39,8 @@ for i in "$@"; do
         --archive_mode=*)
             ARCHIVE_MODE="${1#*=}"
             ;;
-        --force=*)
-            FORCE="${1#*=}"
-            FORCE_ARGS="--force=$FORCE"
+        --force)
+            FORCE_ARGS="--force"
             ;;
         --help)
             show_help
