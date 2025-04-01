@@ -73,7 +73,7 @@ $ ./install.sh --com_version=<version> --sim_version=<version>
 
 ---
 
-## Install DX-Runtime Environment (dx_com, dx_simulator)
+## Install DX-Runtime Environment (`dx_rt_npu_linux_driver`, `dx_rt`, `dx_app`, and `dx_stream`)
 
 The `DX-Runtime` environment includes source code for each module. The repositories are managed as Git submodules under `./dx-runtime`.  
 To build and install all modules, run:
