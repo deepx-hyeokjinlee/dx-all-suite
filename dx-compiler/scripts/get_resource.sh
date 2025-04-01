@@ -78,6 +78,29 @@ download() {
     echo "=== Download Complete ==="
 }
 
+extract_tar() {
+    local TAR_FILE="$1"
+    local TARGET_DIR="$2"
+
+    # Check the internal structure of the tar file
+    local FIRST_ENTRY
+    FIRST_ENTRY=$(tar tf "$TAR_FILE" | head -n 1)
+
+    # Determine if a top-level directory exists
+    if [[ "$FIRST_ENTRY" == */* ]]; then
+        echo "Detected top-level directory: Using --strip-components=1"
+        EXTRACT_CMD="tar xvfz "$TAR_FILE" --strip-components=1 -C "$TARGET_DIR""
+    else
+        echo "No top-level directory detected: Extracting as is"
+        EXTRACT_CMD="tar xvfz "$TAR_FILE" -C "$TARGET_DIR""
+    fi
+    echo "EXTRACT_CMD: ${EXTRACT_CMD}"
+    ${EXTRACT_CMD}
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+}
+
 generate_output() {
     echo "=== Generate output Start ==="
 
@@ -157,7 +180,7 @@ generate_output() {
         mkdir -p $OUTPUT_TARGET_PATH
 
         # and extract the contents into the created directory.
-        tar -xzf "$ARCHIVE_TARGET_PATH" --strip-components=1 -C "$OUTPUT_TARGET_PATH"
+        extract_tar "$ARCHIVE_TARGET_PATH" "$OUTPUT_TARGET_PATH"
         
         # failed check
         if [ $? -ne 0 ]; then
@@ -198,6 +221,7 @@ make_symlink() {
                     rm -rf $OUTPUT_DIR
                 fi
 
+                mkdir -p "$(dirname "$OUTPUT_DIR")"
                 OUTPUT_TARGET_REAL_PATH=$(readlink -f "$OUTPUT_TARGET_PATH")
                 CMD="ln -s $OUTPUT_TARGET_REAL_PATH $OUTPUT_DIR"
                 MSG="Created symbolic link: $OUTPUT_DIR -> $OUTPUT_TARGET_REAL_PATH"
