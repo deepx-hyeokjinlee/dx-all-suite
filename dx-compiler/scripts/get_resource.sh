@@ -162,7 +162,7 @@ generate_output() {
         # failed check
         if [ $? -ne 0 ]; then
             echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
-            rm -rf "$DOWNLOAD_DIR"
+            rm -rf "$DOWNLOAD_PATH"
             rm -rf "$ARCHIVE_TARGET_PATH"
             echo "=== MOVE FAIL ==="
             exit 1
@@ -171,7 +171,7 @@ generate_output() {
         # failed check
         if [ $? -ne 0 ]; then
             echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
-            rm -rf "$DOWNLOAD_DIR"
+            rm -rf "$DOWNLOAD_PATH"
             rm -rf "$ARCHIVE_TARGET_PATH"
             echo "=== MAKE SYMLINK FAIL ==="
             exit 1
@@ -201,7 +201,7 @@ generate_output() {
         # failed check
         if [ $? -ne 0 ]; then
             echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
-            rm -rf "$DOWNLOAD_DIR"
+            rm -rf "$DOWNLOAD_PATH"
             rm -rf "$ARCHIVE_TARGET_PATH"
             echo "=== EXTRACT FAIL ==="
             exit 1
