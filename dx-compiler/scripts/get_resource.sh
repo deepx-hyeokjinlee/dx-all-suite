@@ -11,6 +11,40 @@ SYMLINK_TARGET_PATH=""
 USE_FORCE=0
 USE_EXTRACT=0
 
+set_archive_target_path() {
+    # setting extract location
+    FILENAME=$(basename "${SOURCE_PATH}")
+
+    # Get extract target dir name without extension
+    # Remove .tar.gz or .tgz explicitly, otherwise remove only the last extension
+    if [[ "$FILENAME" == *.tar.gz ]]; then
+        TARGET_DIR_NAME="${FILENAME%.tar.gz}"
+    elif [[ "$FILENAME" == *.tgz ]]; then
+        TARGET_DIR_NAME="${FILENAME%.tgz}"
+    else
+        TARGET_DIR_NAME="${FILENAME%.*}"
+    fi
+
+    if [ "$USE_EXTRACT" -eq 0 ]; then
+        ACTION_TYPE="Move"
+    else
+        ACTION_TYPE="Move and Extract"
+    fi
+
+    if [ -n "$SYMLINK_TARGET_PATH" ]; then
+        # if '--symlink_target_path' option is exist.
+        ARCHIVE_TARGET_DIR="$SYMLINK_TARGET_PATH/download"
+        ARCHIVE_TARGET_PATH="$ARCHIVE_TARGET_DIR/$FILENAME"
+        OUTPUT_TARGET_PATH="$SYMLINK_TARGET_PATH/$TARGET_DIR_NAME"
+        echo "${ACTION_TYPE} to --symlink_target_path: $ARCHIVE_TARGET_PATH"
+    else
+        ARCHIVE_TARGET_DIR="$OUTPUT_DIR/download"
+        ARCHIVE_TARGET_PATH="$ARCHIVE_TARGET_DIR/$FILENAME"
+        OUTPUT_TARGET_PATH="$OUTPUT_DIR/$TARGET_DIR_NAME"
+        echo "${ACTION_TYPE} to output path: $ARCHIVE_TARGET_PATH"
+    fi
+}
+
 # Function to display help message
 show_help() {
   
@@ -33,14 +67,19 @@ show_help() {
 
 download() {
     echo "=== Download Start ==="
-    FILENAME=$(basename "${SOURCE_PATH}")
-    DOWNLOAD_PATH=$DOWNLOAD_DIR/$FILENAME
+    set_archive_target_path
 
+    DOWNLOAD_PATH=$DOWNLOAD_DIR/$FILENAME
     echo "--- Download path: $DOWNLOAD_PATH ---"
     echo "--- Download real path: $(readlink -f "$DOWNLOAD_PATH") ---"
 
-    if [ -e "$DOWNLOAD_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
-        echo "Downloaded file($DOWNLOAD_PATH) is already exist. so skip to download"
+    if [ -e "$ARCHIVE_TARGET_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
+        echo "archive file downloaded path($ARCHIVE_TARGET_PATH) is already exist. so, skip to download file to output path"
+        if [ ! -e "$DOWNLOAD_PATH" ]; then
+            echo "make symlink '$ARCHIVE_TARGET_PATH' -> '$DOWNLOAD_PATH'"
+            mkdir -p "$DOWNLOAD_DIR"
+            ln -s $(readlink -f "$ARCHIVE_TARGET_PATH") $(readlink -f "$DOWNLOAD_PATH")
+        fi
         echo "=== Download SKIP ==="
         return 0
     fi
@@ -105,36 +144,12 @@ extract_tar() {
 generate_output() {
     echo "=== Generate output Start ==="
 
-    # setting extract location 
-    FILENAME=$(basename "${SOURCE_PATH}")
-    
-    # Get extract target dir name without extension 
-    # Remove .tar.gz or .tgz explicitly, otherwise remove only the last extension
-    if [[ "$FILENAME" == *.tar.gz ]]; then
-        TARGET_DIR_NAME="${FILENAME%.tar.gz}"
-    elif [[ "$FILENAME" == *.tgz ]]; then
-        TARGET_DIR_NAME="${FILENAME%.tgz}"
-    else
-        TARGET_DIR_NAME="${FILENAME%.*}"
-    fi
-    
+    set_archive_target_path
+
     if [ "$USE_EXTRACT" -eq 0 ]; then
         ACTION_TYPE="Move"
     else
         ACTION_TYPE="Move and Extract"
-    fi
-
-    if [ -n "$SYMLINK_TARGET_PATH" ]; then
-        # if '--symlink_target_path' option is exist.
-        ARCHIVE_TARGET_DIR="$SYMLINK_TARGET_PATH/download"
-        ARCHIVE_TARGET_PATH="$ARCHIVE_TARGET_DIR/$FILENAME"
-        OUTPUT_TARGET_PATH="$SYMLINK_TARGET_PATH/$TARGET_DIR_NAME"
-        echo "${ACTION_TYPE} to --symlink_target_path: $ARCHIVE_TARGET_PATH"
-    else
-        ARCHIVE_TARGET_DIR="$OUTPUT_DIR/download"
-        ARCHIVE_TARGET_PATH="$ARCHIVE_TARGET_DIR/$FILENAME"
-        OUTPUT_TARGET_PATH="$OUTPUT_DIR/$TARGET_DIR_NAME"
-        echo "${ACTION_TYPE} to output path: $ARCHIVE_TARGET_PATH"
     fi
 
     if [ -e "$ARCHIVE_TARGET_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
