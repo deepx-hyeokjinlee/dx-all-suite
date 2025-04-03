@@ -9,16 +9,17 @@ DOWNLOAD_DIR="$SCRIPT_DIR/../download"
 OUTPUT_DIR=""
 SYMLINK_TARGET_PATH=""
 USE_FORCE=0
+USE_EXTRACT=0
 
 # Function to display help message
 show_help() {
   
-  echo "Usage: $(basename "$0") --src_path=<source_path> --output=<dir> [--extract=<y/n>] [--symlink_target_path=<dir>]"
-  echo "Example: $0 --src_path=release/dx-com/dx_com_M1A_v1.38.1.tar.gz --output=./archives --extract=n --symlink_target_path=../volume_dir/release/dx-com"
+  echo "Usage: $(basename "$0") --src_path=<source_path> --output=<dir> [--symlink_target_path=<dir>] [--extract] [--force]"
+  echo "Example: $0 --src_path=release/dx-com/dx_com_M1A_v1.38.1.tar.gz --output=./archives --symlink_target_path=../volume_dir/release/dx-com"
   echo "Options:"
   echo "  --src_path=<path>                Set source path for file server endpoint (example: release/dx-com/dx_com_M1A_v1.38.1.tar.gz)"
   echo "  --output=<path>                  Set output path (example: ./assets)"
-  echo "  [--extract=<y|n>]                Choose whether to extract the compressed file (default: y)"
+  echo "  [--extract]                      Choose whether to extract the compressed file"
   echo "  [--symlink_target_path=<path>]   Set symlink target path for output path (example: ../workspace/res/clip_assets)"
   echo "  [--force]                        Force overwrite if the file already exists"
   echo "  [--help]                         Show this help message"
@@ -257,8 +258,8 @@ for i in "$@"; do
                 exit 1
             fi
             ;;
-        --extract=*)
-            EXTRACT="${1#*=}"
+        --extract)
+            USE_EXTRACT=1
             ;;
         --symlink_target_path=*)
             SYMLINK_TARGET_PATH="${1#*=}"
@@ -278,13 +279,7 @@ for i in "$@"; do
     shift
 done
 
-if [ "$EXTRACT" = "n" ] || [ "$EXTRACT" = "N" ]; then
-    USE_EXTRACT=0
-else
-    USE_EXTRACT=1
-fi
 echo "USE_EXTRACT($USE_EXTRACT)"
-
 echo "USE_FORCE($USE_FORCE)"
 
 # usage

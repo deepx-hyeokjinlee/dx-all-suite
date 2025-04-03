@@ -73,15 +73,14 @@ BASE_URL="https://sdk.deepx.ai/"
 # default value
 SOURCE_PATH="release/${MODULE_NAME}/${FILE_NAME}_v${VERSION}.tar.gz"
 OUTPUT_DIR="$SCRIPT_DIR/../${MODULE_NAME}"
-EXTRACT="y"
+EXTRACT_ARGS="--extract"
 if [ "$ARCHIVE_MODE" = "y" ]; then
     OUTPUT_DIR="$SCRIPT_DIR/../../archives"
-    EXTRACT="n"
+    EXTRACT_ARGS=""
 fi
-EXTRACT_ARGS="--extract=$EXTRACT"
+
 SYMLINK_TARGET_PATH="$SCRIPT_DIR/../../volume_dir/release/${MODULE_NAME}"
 SYMLINK_ARGS="--symlink_target_path=$SYMLINK_TARGET_PATH"
-
 
 GET_RES_CMD="$SCRIPT_DIR/get_resource.sh --src_path=$SOURCE_PATH --output=$OUTPUT_DIR $EXTRACT_ARGS $SYMLINK_ARGS $FORCE_ARGS"
 echo "Get Resources from remote server ..."
