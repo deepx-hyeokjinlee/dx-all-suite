@@ -23,7 +23,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${LOCAL_VOLUME_PATH:-../volume_dir}:${DOCKER_VOLUME_PATH:-/deepx/workspace} # mount volume
+      - ${LOCAL_VOLUME_PATH:-../workspace}:${DOCKER_VOLUME_PATH:-/deepx/workspace} # mount volume
     network_mode: "host"
     restart: on-failure
     devices:
@@ -61,7 +61,7 @@ services:
       - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket # NPU dbus
       - /run/dbus:/run/dbus                   # NPU dbus
       - /var/lib/dbus:/var/lib/dbus           # NPU dbus
-      - ${LOCAL_VOLUME_PATH:-../volume_dir}:${DOCKER_VOLUME_PATH:-/deepx/workspace} # mount volume
+      - ${LOCAL_VOLUME_PATH:-../workspace}:${DOCKER_VOLUME_PATH:-/deepx/workspace} # mount volume
     network_mode: "host"
     privileged: true                          # NPU
     restart: on-failure

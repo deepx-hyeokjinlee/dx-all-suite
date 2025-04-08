@@ -48,17 +48,17 @@ RUN set -x && \
       echo "Unspported Ubuntu version: $UBUNTU_VERSION" && exit 1; \
     fi
 
-WORKDIR /deepx/dx_rt
-ADD archives/dx_rt.tar.gz /deepx/dx_rt/
+WORKDIR /deepx/dx-runtime/dx_rt
+ADD archives/dx_rt.tar.gz /deepx/dx-runtime/dx_rt/
 RUN set -x && \
     . /venv-dxnn/bin/activate && \
     echo "Build dx_rt..." && \
     ./install.sh --dep && \
     ./build.sh --install
 
-WORKDIR /deepx/dx_app
+WORKDIR /deepx/dx-runtime/dx_app
 ARG FILE_DXAPP=archives/dx_app.tar.gz
-ADD ${FILE_DXAPP} /deepx/dx_app/
+ADD ${FILE_DXAPP} /deepx/dx-runtime/dx_app/
 RUN set -x && \
     . /venv-dxnn/bin/activate && \
     echo "Build dx_app..." && \
@@ -67,9 +67,9 @@ RUN set -x && \
     . /venv-dxnn/bin/activate && \
     ./build.sh
 
-WORKDIR /deepx/dx_stream
+WORKDIR /deepx/dx-runtime/dx_stream
 ARG FILE_DXSTREAM=archives/dx_stream.tar.gz
-ADD ${FILE_DXSTREAM} /deepx/dx_stream/
+ADD ${FILE_DXSTREAM} /deepx/dx-runtime/dx_stream/
 RUN set -x && \
     . /venv-dxnn/bin/activate && \
     echo "install dependancies for dx_stream..." && \
@@ -77,10 +77,10 @@ RUN set -x && \
     echo "Build dx_stream..." && \
     sudo ./build.sh --install
 
-RUN rm -rf /deepx/dx_stream/util && \
-    rm -rf /deepx/dx_app/util && \
-    rm -rf /deepx/dx_app/build_x86_64 && \
-    rm -rf /deepx/dx_rt/build_x86_64
+RUN rm -rf /deepx/dx-runtime/dx_stream/util && \
+    rm -rf /deepx/dx-runtime/dx_app/util && \
+    rm -rf /deepx/dx-runtime/dx_app/build_x86_64 && \
+    rm -rf /deepx/dx-runtime/dx_rt/build_x86_64
 
 WORKDIR /deepx
 

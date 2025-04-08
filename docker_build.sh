@@ -1,19 +1,28 @@
 #!/bin/bash
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
+DX_ALL_DIR=$(realpath -s "${SCRIPT_DIR}")
+
+# color env settings
+source ${DX_ALL_DIR}/scripts/color_env.sh
+
 pushd "$SCRIPT_DIR"
 
 OUTPUT_DIR="$SCRIPT_DIR/archives"
 UBUNTU_VERSION=""
 
-FILE_DXCOM=archives/dx_com_M1A_v1.38.1.tar.gz
-FILE_DXSIM=archives/dx_simulator_v2.14.5.tar.gz
+DXCOM_VER="1.38.1"
+# DXSIM_VER=2.14.5
+DXSIM_VER="2.14.5_hotfix-1"         # temporary
+
+FILE_DXCOM="archives/dx_com_M1A_v${DXCOM_VER}.tar.gz"
+FILE_DXSIM="archives/dx_simulator_v${DXSIM_VER}.tar.gz"
 
 # Function to display help message
 show_help() {
     echo "Usage: $(basename "$0") OPTIONS(--all | target=<environment_name>) --ubuntu_version=<version> [--help]"
     echo "Example:1) $0 --all --ubuntu_version=24.04"
     echo "Example 2) $0 --target=dx-compiler --ubuntu_version=24.04"
-    echo "Example 2) $0 --target=dx-runtime --ubuntu_version=24.04 --driver_update"
+    echo "Example 3) $0 --target=dx-runtime --ubuntu_version=24.04 --driver_update"
     echo "Options:"
     echo "  --all                          : Install DXNN® Software Stack (dx-compiler & dx-runtime)"
     echo "  --target=<environment_name>    : Install specify target DXNN® environment (ex> dx-compiler | dx-runtime)"
@@ -22,7 +31,7 @@ show_help() {
     echo "  [--help]                       : Show this help message"
 
     if [ "$1" == "error" ]; then
-        echo "Error: Invalid or missing arguments."
+        echo -e "${TAG_ERROR} Invalid or missing arguments."
         exit 1
     fi
     exit 0
@@ -73,6 +82,60 @@ install_dx_rt_npu_linux_driver()
     ${CMD}
 }
 
+main() {
+    
+
+    # usage
+    if [ -z "$UBUNTU_VERSION" ]; then
+        echo -e "${TAG_ERROR} --ubuntu_version ($UBUNTU_VERSION) does not exist."
+        show_help "error"
+    else
+        echo -e "${TAG_INFO} UBUNTU_VERSSION($UBUNTU_VERSION) is set."
+        echo -e "${TAG_INFO} TARGET_ENV($TARGET_ENV) is set."
+        echo -e "${TAG_INFO} FILE_DXCOM($FILE_DXCOM) is set."
+        echo -e "${TAG_INFO} FILE_DXSIM($FILE_DXSIM) is set."
+        if [ "$DRIVER_UPDATE" = "y" ]; then
+            echo -e "${TAG_INFO} DRIVER_UPDATE($DRIVER_UPDATE) is set."
+        fi
+    fi
+
+    case $TARGET_ENV in
+        dx-compiler)
+            echo "Archiving dx-compiler"
+            ./archive_dx-compiler.sh
+            docker_build_dx-compiler
+            ;;
+        dx-runtime)
+            echo "Archiving dx-runtime"
+            ./archive_dx-runtime.sh
+            docker_build_dx-runtime
+            if [ "$DRIVER_UPDATE" = "y" ]; then
+                install_dx_rt_npu_linux_driver
+            fi
+            ;;
+        all)
+            echo "Archiving all DXNN® environments"
+            ./archive_dx-compiler.sh
+            ./archive_dx-runtime.sh
+            docker_build_all
+            if [ "$DRIVER_UPDATE" = "y" ]; then
+                install_dx_rt_npu_linux_driver
+            fi
+            ;;
+        *)
+            echo -e "${TAG_ERROR} Unknown '--target' option '$TARGET_ENV'"
+            echo -e "${TAG_INFO} (Hint) Please specify either the '--all' option or the '--target=<dx-compiler | dx-runtime>' option."
+            show_help "error"
+            ;;
+    esac
+
+    # remove archives
+    # if [[ -d "$OUTPUT_DIR" ]]; then
+    #     echo "Removing archive directory: $OUTPUT_DIR"
+    #     rm -rf "$OUTPUT_DIR"
+    # fi
+}
+
 # parse args
 for i in "$@"; do
     case "$1" in
@@ -93,7 +156,7 @@ for i in "$@"; do
             exit 0
             ;;
         *)
-            echo "Error: Invalid option '$1'"
+            echo -e "${TAG_ERROR}: Invalid option '$1'"
             show_help
             exit 1
             ;;
@@ -101,53 +164,7 @@ for i in "$@"; do
     shift
 done
 
-# usage
-if [ -z "$UBUNTU_VERSION" ]; then
-    echo "Error: --ubuntu_version ($UBUNTU_VERSION) does not exist."
-    show_help "error"
-else
-    echo "UBUNTU_VERSSION($UBUNTU_VERSION) is set."
-    echo "TARGET_ENV($TARGET_ENV) is set."
-    echo "FILE_DXCOM($FILE_DXCOM) is set."
-    echo "FILE_DXSIM($FILE_DXSIM) is set."
-    if [ "$DRIVER_UPDATE" = "y" ]; then
-        echo "DRIVER_UPDATE($DRIVER_UPDATE) is set."
-    fi
-fi
-
-case $TARGET_ENV in
-    dx-compiler)
-        echo "Installing dx-compiler"
-        ./archive_dx-compiler.sh
-        docker_build_dx-compiler
-        ;;
-    dx-runtime)
-        echo "Installing dx-runtime"
-        ./archive_dx-runtime.sh
-        docker_build_dx-runtime
-        if [ "$DRIVER_UPDATE" = "y" ]; then
-            install_dx_rt_npu_linux_driver
-        fi
-        ;;
-    all)
-        echo "Installing all DXNN® environments"
-        ./archive_dx-compiler.sh
-        ./archive_dx-runtime.sh
-        docker_build_all
-        if [ "$DRIVER_UPDATE" = "y" ]; then
-            install_dx_rt_npu_linux_driver
-        fi
-        ;;
-    *)
-        echo "[ERROR] Unknown DXNN® environment name: $1"
-        exit 1
-        ;;
-esac
-
-# remove archives
-# if [[ -d "$OUTPUT_DIR" ]]; then
-#     echo "Removing archive directory: $OUTPUT_DIR"
-#     rm -rf "$OUTPUT_DIR"
-# fi
+main
 
 popd
+

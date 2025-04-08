@@ -3,7 +3,8 @@ SCRIPT_DIR=$(realpath "$(dirname "$0")")
 pushd "$SCRIPT_DIR"
 
 COM_VERSION="1.38.1"        # default
-SIM_VERSION="2.14.5"        # default
+# SIM_VERSION="2.14.5"        # default
+SIM_VERSION="2.14.5_hotfix-1"        # temporary
 ARCHIVE_MODE="n"            # default
 ARCHIVE_MODE_ARGS=""        # default
 FORCE_ARGS=""
@@ -45,8 +46,7 @@ for i in "$@"; do
             show_help
             ;;
         *)
-            echo "[ERROR] Unknown option: $1"
-            exit 1
+            show_help "error"
             ;;
     esac
     shift

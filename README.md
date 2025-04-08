@@ -1,9 +1,10 @@
-# DXNN® - DEEPX NPU Software (SDK)
+# DXNN® - DEEPX NPU Software (DX-AS: DEEPX All Suite)
 
 ## Prerequisites
 
 ### Clone the Main Repository
 
+*temporary: need to change Github URL to cloud public repo*
 ```
 $ git clone --recurse-submodules git@gh.deepx.ai:deepx/dxnn-sdk.git
 ```
@@ -355,79 +356,27 @@ Compiling Model : 100%|███████████████████
 2. **Inside the Docker Container:**
     ```
     $ docker exec -it dxnn-sdk-compiler-<ubuntu_version> bash
-    (venv-dx-compiler) # cd /deepx/dx_simulator
+    (venv-dx-simulator) # cd /deepx/dx_simulator
     ```
 
 ### Install Prerequisites
 
 1. **On the Host Environment:**
     ```
-    # install prerequisites
-    ./scripts/install_prerequisites.sh              ### TODO: error on ubuntu 24.04 (add condition for ubuntu_version)
+    # install prerequisites, python venv and dx_simulator
+    ./scripts/install.sh
 
-    # install python
-    ./scripts/install_python.sh                     ### TODO: error(install wget, c-compiler) on docker (replace source build to apt install)
-
-    # install dx_simulator
-    pip install dx_simulator-xxx-cp38-cp38-linux_x86_64.whl --force-reinstall
-    ```
-
-    **temporary**
-    ```
-    $ \
-    echo "Setup dx_simulator..." && \
-    echo "Install dependencies..." && \
-    UBUNTU_VERSION=$(lsb_release -rs) && \
-    echo "*** UBUNTU_VERSION(${UBUNTU_VERSION}) ***" && \
-    if [ "$UBUNTU_VERSION" = "24.04" ]; then \
-      apt-get update && apt-get install -y --no-install-recommends \
-              libgl1-mesa-dev libglib2.0-0; \
-    elif [ "$UBUNTU_VERSION" = "22.04" ]; then \
-      apt-get update && apt-get install -y --no-install-recommends \
-              libgl1-mesa-dev libglib2.0-0; \
-    elif [ "$UBUNTU_VERSION" = "20.04" ] || [ "$UBUNTU_VERSION" = "18.04" ]; then \
-      apt-get update && apt-get install -y --no-install-recommends \
-              libgl1-mesa-dev libgl1-mesa-glx libglib2.0-0; \
-    else \
-      echo "Unspported Ubuntu version: $UBUNTU_VERSION" && exit 1; \
-    fi && \
-    apt-get update && apt-get install -y --no-install-recommends \
-        libssl-dev \
-        wget \
-        openssl \
-        build-essential \
-        zlib1g-dev \
-        patchelf \
-        libffi-dev \
-        ca-certificates \
-        libbz2-dev \
-        liblzma-dev \
-        libncursesw5-dev \
-        libsqlite3-dev \
-        tk-dev \
-        libgdbm-dev \
-        libc6-dev \
-        libncurses5-dev \
-        libnss3-dev \
-        ccache
-        
-    $ \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt-get install -y python3.11 python3.11-dev python3.11-venv
-
-    $ python3.11 -m venv /venv-dx-compiler --system-site-packages
-    
-    $ source /venv-dx-compiler/bin/activate
-    (venv-dx-compiler) $ pip install /deepx/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
-    (venv-dx-compiler) $ pip install ultralytics
+    # "To activate the virtual environment, run:"
+    source ${VENV_PATH}/bin/activate
+    (venv-dx-simulator) $
     ```
 
 2. **Inside the Docker Container:**
     ```
     $ docker exec -it dxnn-sdk-compiler-<ubuntu_version> bash
-    (venv-dx-compiler) # cd /deepx/dx_simulator
-    (venv-dx-compiler) # pip install /deepx/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
-    (venv-dx-compiler) # pip install ultralytics
+    (venv-dx-simulator) # cd /deepx/dx_simulator
+    (venv-dx-simulator) # pip install /deepx/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
+    (venv-dx-simulator) # pip install ultralytics
     ```
 
 ### Run `dx_simulator` using Sample dxnn input

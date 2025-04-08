@@ -1,5 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
+COMPILER_PATH=$(realpath -s "${SCRIPT_DIR}/..")
+DX_AS_PATH=$(realpath -s "${COMPILER_PATH}/..")
 
 VERSION=""      # default
 MODULE_NAME=""
@@ -72,17 +74,17 @@ BASE_URL="https://sdk.deepx.ai/"
 
 # default value
 SOURCE_PATH="release/${MODULE_NAME}/${FILE_NAME}_v${VERSION}.tar.gz"
-OUTPUT_DIR="$SCRIPT_DIR/../${MODULE_NAME}"
+OUTPUT_DIR="${COMPILER_PATH}/${MODULE_NAME}"
 EXTRACT_ARGS="--extract"
 if [ "$ARCHIVE_MODE" = "y" ]; then
-    OUTPUT_DIR="$SCRIPT_DIR/../../archives"
+    OUTPUT_DIR="${DX_AS_PATH}/archives"
     EXTRACT_ARGS=""
 fi
 
-SYMLINK_TARGET_PATH="$SCRIPT_DIR/../../volume_dir/release/${MODULE_NAME}"
+SYMLINK_TARGET_PATH="${DX_AS_PATH}/workspace/release/${MODULE_NAME}"
 SYMLINK_ARGS="--symlink_target_path=$SYMLINK_TARGET_PATH"
 
-GET_RES_CMD="$SCRIPT_DIR/get_resource.sh --src_path=$SOURCE_PATH --output=$OUTPUT_DIR $EXTRACT_ARGS $SYMLINK_ARGS $FORCE_ARGS"
+GET_RES_CMD="${DX_AS_PATH}/scripts/get_resource.sh --src_path=$SOURCE_PATH --output=$OUTPUT_DIR $EXTRACT_ARGS $SYMLINK_ARGS $FORCE_ARGS"
 echo "Get Resources from remote server ..."
 echo "$GET_RES_CMD"
 

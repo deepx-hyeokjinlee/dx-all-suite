@@ -5,11 +5,15 @@ BASE_URL="https://sdk.deepx.ai/"
 
 # default value
 SOURCE_PATH=""
-DOWNLOAD_DIR="$SCRIPT_DIR/../download"
+DOWNLOAD_DIR=$(realpath -s "${SCRIPT_DIR}/../download")
 OUTPUT_DIR=""
 SYMLINK_TARGET_PATH=""
 USE_FORCE=0
 USE_EXTRACT=0
+
+# color env settings
+source ${SCRIPT_DIR}/color_env.sh
+
 
 set_archive_target_path() {
     # setting extract location
@@ -47,14 +51,13 @@ set_archive_target_path() {
 
 # Function to display help message
 show_help() {
-  
   echo "Usage: $(basename "$0") --src_path=<source_path> --output=<dir> [--symlink_target_path=<dir>] [--extract] [--force]"
-  echo "Example: $0 --src_path=release/dx-com/dx_com_M1A_v1.38.1.tar.gz --output=./archives --symlink_target_path=../volume_dir/release/dx-com"
+  echo "Example: $0 --src_path=modelzoo/onnx/MobileNetV2-1.onnx --output=../getting-start/modelzoo/json -symlink_target_path=../workspace/modelzoo/json"
   echo "Options:"
-  echo "  --src_path=<path>                Set source path for file server endpoint (example: release/dx-com/dx_com_M1A_v1.38.1.tar.gz)"
+  echo "  --src_path=<path>                Set source path for file server endpoint"
   echo "  --output=<path>                  Set output path (example: ./assets)"
   echo "  [--extract]                      Choose whether to extract the compressed file"
-  echo "  [--symlink_target_path=<path>]   Set symlink target path for output path (example: ../workspace/res/clip_assets)"
+  echo "  [--symlink_target_path=<path>]   Set symlink target path for output path"
   echo "  [--force]                        Force overwrite if the file already exists"
   echo "  [--help]                         Show this help message"
 
@@ -66,12 +69,13 @@ show_help() {
 }
 
 download() {
-    echo "=== Download Start ==="
+    echo -e "=== Download Start ==="
     set_archive_target_path
 
     DOWNLOAD_PATH=$DOWNLOAD_DIR/$FILENAME
     echo "--- Download path: $DOWNLOAD_PATH ---"
     echo "--- Download real path: $(readlink -f "$DOWNLOAD_PATH") ---"
+    echo "--- ARCHIVE_TARGET_PATH($ARCHIVE_TARGET_PATH) ---"
 
     if [ -e "$ARCHIVE_TARGET_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
         echo "archive file downloaded path($ARCHIVE_TARGET_PATH) is already exist. so, skip to download file to output path"
@@ -80,12 +84,20 @@ download() {
             mkdir -p "$DOWNLOAD_DIR"
             ln -s $(readlink -f "$ARCHIVE_TARGET_PATH") $(readlink -f "$DOWNLOAD_PATH")
         fi
-        echo "=== Download SKIP ==="
+        echo -e "${TAG_INFO} === Download SKIP ==="
         return 0
+    elif [ -L "${ARCHIVE_TARGET_PATH}" ] && [ ! -e "${ARCHIVE_TARGET_PATH}" ]; then
+        echo "archive file target path($ARCHIVE_TARGET_PATH) is symlink. but, it is broken. so, recreate symlink."
+        rm -rf "$ARCHIVE_TARGET_PATH"
     fi
     
     if [ "$USE_FORCE" -eq 1 ]; then
         echo "'--force' option is set. so remove Downloaded file($DOWNLOAD_PATH)"
+        rm -rf $DOWNLOAD_PATH
+    fi
+
+    if [ -L "${DOWNLOAD_PATH}" ] && [ ! -e "${DOWNLOAD_PATH}" ]; then
+        echo "downloaded path($DOWNLOAD_PATH) is symlink. but, it is broken. so, recreate symlink."
         rm -rf $DOWNLOAD_PATH
     fi
         
@@ -98,7 +110,7 @@ download() {
 
         # curl install failed
         if ! command -v curl &> /dev/null; then
-            echo "Failed to install curl. Exiting."
+            echo -e "${TAG_ERROR} Failed to install curl. Exiting."
             exit 1
         fi
     fi
@@ -111,11 +123,11 @@ download() {
 
     # download failed check
     if [ $? -ne 0 ]; then
-        echo "Download failed($DOWNLOAD_PATH)!"
+        echo -e "${TAG_ERROR} Download failed($DOWNLOAD_PATH)!"
         rm -rf "$DOWNLOAD_PATH"
         exit 1
     fi
-    echo "=== Download Complete ==="
+    echo -e "=== ${TAG_SUCC} Download Complete ==="
 }
 
 extract_tar() {
@@ -142,7 +154,7 @@ extract_tar() {
 }
 
 generate_output() {
-    echo "=== Generate output Start ==="
+    echo -e "=== Generate output Start ==="
 
     set_archive_target_path
 
@@ -154,29 +166,29 @@ generate_output() {
 
     if [ -e "$ARCHIVE_TARGET_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
         echo "archive file downloaded path($ARCHIVE_TARGET_PATH) is already exist. so, skip to move downloaded file to output path"
-        echo "=== MOVE SKIP ==="
+        echo -e "${TAG_INFO} === MOVE SKIP ==="
     else
         echo "Move $DOWNLOAD_PATH to $ARCHIVE_TARGET_PATH"
         mkdir -p $ARCHIVE_TARGET_DIR
         mv "$DOWNLOAD_PATH" "$ARCHIVE_TARGET_PATH"
         # failed check
         if [ $? -ne 0 ]; then
-            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
+            echo -e "${TAG_ERROR} ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
             rm -rf "$DOWNLOAD_PATH"
             rm -rf "$ARCHIVE_TARGET_PATH"
-            echo "=== MOVE FAIL ==="
+            echo -e "${TAG_ERROR} === MOVE FAIL ==="
             exit 1
         fi
         ln -s $(readlink -f "$ARCHIVE_TARGET_PATH") $(readlink -f "$DOWNLOAD_PATH")
         # failed check
         if [ $? -ne 0 ]; then
-            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
+            echo -e "${TAG_ERROR} ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
             rm -rf "$DOWNLOAD_PATH"
             rm -rf "$ARCHIVE_TARGET_PATH"
-            echo "=== MAKE SYMLINK FAIL ==="
+            echo -e "${TAG_ERROR} === MAKE SYMLINK FAIL ==="
             exit 1
         fi
-        echo "=== MAKE SYMLINK SUCC ==="
+        echo -e "${TAG_SUCC} === MAKE SYMLINK SUCC ==="
     fi
     
     # extract tar.gz or move tar.gz
@@ -185,7 +197,7 @@ generate_output() {
     else
         if [ -e "$OUTPUT_TARGET_PATH" ] && [ "$USE_FORCE" -eq 0 ]; then
             echo "Output file($OUTPUT_TARGET_PATH) is already exist. so, skip to extract downloaded file to output path"
-            echo "=== EXTRACT SKIP ==="
+            echo -e "${TAG_INFO} === EXTRACT SKIP ==="
             return 0
         fi
         
@@ -200,39 +212,40 @@ generate_output() {
         
         # failed check
         if [ $? -ne 0 ]; then
-            echo "[ERROR] ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
+            echo -e "${TAG_ERROR} ${ACTION_TYPE} failed! Please try installing again with the '--force' option."
             rm -rf "$DOWNLOAD_PATH"
             rm -rf "$ARCHIVE_TARGET_PATH"
-            echo "=== EXTRACT FAIL ==="
+            echo -e "${TAG_ERROR} === EXTRACT FAIL ==="
             exit 1
         fi
-        echo "=== EXTRACT SUCC ==="
+        echo -e "${TAG_SUCC} === EXTRACT SUCC ==="
     fi
     
     echo "${ACTION_TYPE} complete."
-    echo "=== Generate output Complete ==="
+    echo -e "${TAG_SUCC} === Generate output Complete ==="
 }
 
 make_symlink() {
-    echo "=== Make Symbolic Link Start ==="
+    echo -e "=== Make Symbolic Link Start ==="
     URL="${BASE_URL}${SOURCE_PATH}"
     FILENAME=$(basename "$URL")
 
     # if '--symlink_target_path' option is exist, make symbolic link
     if [ -n "$SYMLINK_TARGET_PATH" ]; then
         if [ "$USE_EXTRACT" -eq 0 ]; then
-            if [ -e "${OUTPUT_DIR}/${FILENAME}" ] && [ "$USE_FORCE" -eq 0 ]; then
-                MSG="Output file(${OUTPUT_DIR}/${FILENAME}) is already exist. so, skip to copy downloaded file to output path"
+            OUTPUT_PATH=${OUTPUT_DIR}/${FILENAME}
+            if [ -e "${OUTPUT_PATH}" ] && [ "$USE_FORCE" -eq 0 ]; then
+                MSG="Output file(${OUTPUT_PATH}) is already exist. so, skip to copy downloaded file to output path"
             else
-                mkdir -p "$(dirname "$OUTPUT_DIR")"
-                CMD="cp ${ARCHIVE_TARGET_PATH} ${OUTPUT_DIR}/${FILENAME}"
-                MSG="Copy file: $ARCHIVE_TARGET_PATH -> $OUTPUT_DIR/$FILENAME"
+                mkdir -p "$(dirname "$OUTPUT_PATH")"
+                CMD="cp ${ARCHIVE_TARGET_PATH} ${OUTPUT_PATH}"
+                MSG="Copy file: ${ARCHIVE_TARGET_PATH} -> ${OUTPUT_PATH}"
             fi
         else
             if [ -L "$OUTPUT_DIR" ] && [ -e "$OUTPUT_DIR" ] && [ "$USE_FORCE" -eq 0 ]; then
                 MSG="Symbolic link($OUTPUT_DIR) is already exist. so, skip to create symlink"
             else
-                if [ -e "$OUTPUT_DIR" ]; then
+                if [ -L "$OUTPUT_DIR" ] || [ -d "$OUTPUT_DIR" ]; then
                     echo "Output directory($OUTPUT_DIR) is already exist. so, remove dir and then create symlink"
                     rm -rf $OUTPUT_DIR
                 fi
@@ -253,7 +266,7 @@ make_symlink() {
     else
         echo "the --symlink_target_path option is not set. so, skip to make symlink."
     fi
-    echo "=== Make Symbolic Link Complete ==="
+    echo -e "${TAG_SUCC} === Make Symbolic Link Complete ==="
 }
 
 # parse args
@@ -299,7 +312,7 @@ echo "USE_FORCE($USE_FORCE)"
 
 # usage
 if [ -z "$SOURCE_PATH" ] || [ -z "$OUTPUT_DIR" ]; then
-    echo "Error: SOURCE_PATH(${SOURCE_PATH}) or OUTPUT_DIR(${OUTPUT_DIR}) does not exist."
+    echo -e "${TAG_ERROR} SOURCE_PATH(${SOURCE_PATH}) or OUTPUT_DIR(${OUTPUT_DIR}) does not exist."
     show_help "error"
 fi
 
