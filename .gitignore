@@ -12,6 +12,8 @@ dx-runtime/workspace/
 **/dxnn/
 **/dxnn
 getting-start/calibration_dataset
-getting-start/forked_example/
+getting-start/forked*/
 getting-start/modelzoo/
+**/venv-*/
+**/venv-*
 

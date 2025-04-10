@@ -1,82 +1,107 @@
 #!/bin/bash
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
 COMPILER_PATH=$(realpath -s "${SCRIPT_DIR}/../dx-compiler")
-DX_SIMULATOR_PATH=$(realpath -s "${COMPILER_PATH}/dx_simulator")
 DX_AS_PATH=$(realpath -s "${COMPILER_PATH}/..")
+
+DX_SIMULATOR_PATH="${COMPILER_PATH}/dx_simulator"
 
 # color env settings
 source ${DX_AS_PATH}/scripts/color_env.sh
 
 echo -e "======== PATH INFO ========="
-echo "DX_SIMULATOR_PATH($DX_SIMULATOR_PATH)"
+echo "COMPILER_PATH($COMPILER_PATH)"
 echo "DX_AS_PATH($DX_AS_PATH)"
+echo "DX_SIMULATOR_PATH($DX_SIMULATOR_PATH)"
 echo -e "============================"
 
 pushd ${SCRIPT_DIR}
 
-FORK_PATH="./forked_example"
+FORK_PATH="./forked_dx_simulator_example"
 
 # fork dx_simulator ${example_file_name} example code and input images
 fork_examples() {
-    local example_file_name=$1
+    echo -e "=== fork dx_simulator examples to '${FORK_PATH}' ${TAG_START} ==="
 
-    echo -e "=== fork dx_simulator examples to './forked_example' ${TAG_START} ==="
+    # copy dx_simulator example application files
+    mkdir -p ${FORK_PATH}/examples
+    # for Object Detection (YOLOV5S-1)
+    cp -dp ${DX_SIMULATOR_PATH}/examples/example_yolov5s.py ${FORK_PATH}/examples/.
+    # for Face Detection (YOLOV5S_Face-1)
+    cp -dp ${DX_SIMULATOR_PATH}/examples/example_yolov5face.py ${FORK_PATH}/examples/.
+    # for Image Classification (MobileNetV2-1-1)
+    cp -dp ${DX_SIMULATOR_PATH}/examples/example_classification.py ${FORK_PATH}/examples/.
     
-    
-    CP_SOURCE_CMD="cp -dp ${DX_SIMULATOR_PATH}/examples/example_${example_file_name}.py ${FORK_PATH}/."
-    echo "$CP_SOURCE_CMD"
-    $CP_SOURCE_CMD
-    if [ $? -ne 0 ]; then
-        echo -e "${TAG_ERROR} Fork examples source failed!"
-        exit 1
-    fi
+    # copy input image sample
+    mkdir -p ${FORK_PATH}/examples
+    cp -dpR ${DX_SIMULATOR_PATH}/examples/images ${FORK_PATH}/examples/.
 
-    CP_INPUT_IMAGE_CMD="cp -dpR ${DX_SIMULATOR_PATH}/examples/images ${FORK_PATH}/."
-    echo "$CP_INPUT_IMAGE_CMD"
-    $CP_INPUT_IMAGE_CMD
-    if [ $? -ne 0 ]; then
-        echo -e "${TAG_ERROR} Fork examples input image failed!"
-        exit 1
-    fi
-    
-    echo -e "=== fork dx_simulator examples to './forked_example' ${TAG_DONE} ==="
+    # Initialize a Git repository and make the initial commit to enable diff checking
+    pushd ${FORK_PATH}
+    git init && git add . && git commit -m "initial commit"
+    popd
+
+    echo -e "=== fork dx_simulator examples to '${FORK_PATH}' ${TAG_DONE} ==="
 }
 
-hijack_example_path() {
-    local example_file_name=$1
-    local input_img_name=$2
-    local source_model_name=$3
-    local target_model_name=$4
-
-    echo -e "=== hijack example path ${TAG_START} ==="
-    TARGET_FILE=${FORK_PATH}/example_${example_file_name}.py
-    ORIGIN_FILE=${FORK_PATH}/example_${example_file_name}.py.bak
-
-    cp ${TARGET_FILE} ${ORIGIN_FILE}
+replace_all() {
+    local example_file_path=$1
+    local source_str=$2
+    local target_str=$3
 
     HIJACK_CMD="sed -i \
-    -e 's|examples/compiled_results/${source_model_name}.dxnn|dxnn/${target_model_name}.dxnn|g' \
-    -e 's|examples/images/${input_img_name}.jpg|${FORK_PATH}/images/${input_img_name}.jpg|g' \
-    -e 's|examples/${example_file_name}.jpg|${FORK_PATH}/result-${target_model_name}.jpg|g' \
+    -e 's|${source_str}|${target_str}|g' \
     ${TARGET_FILE}"
 
     echo "$HIJACK_CMD"
     eval "$HIJACK_CMD"
     if [ $? -ne 0 ]; then
-        echo -e "${TAG_ERROR} Hijack example path failed!"
+        echo -e "${TAG_ERROR} Hijack example failed!"
         exit 1
     fi
+}
 
-    echo -e "=== show hijacking diff [BEGIN] ==="
-    diff ${ORIGIN_FILE} ${TARGET_FILE}
-    echo -e "=== show hijacking diff [END] ==="
+show_diff() {
+    local commit_msg=$1
+    echo -e "---------------- ${TAG_INFO} show hijacking diff [BEGIN] ----------------"
+
+    pushd ${FORK_PATH}
+    # Make a commit for diff comparison
+    git add . && git commit -m "hijack: ${commit_msg}" && git --no-pager diff HEAD~1
+    popd
+
+    echo -e "---------------- ${TAG_INFO} show hijacking diff  [END]  ----------------"
+}
+
+hijack_example() {
+    local example_file_path=$1
+    local source_str=$2
+    local target_str=$3
+    local commit_msg=$4
+
+    echo -e "=== hijack example ${TAG_START} ==="
+
+    # backup file
+    TARGET_FILE="${FORK_PATH}/${example_file_path}"
+
+    # hijack
+    replace_all "${TARGET_FILE}" ${source_str} ${target_str}
+
+    # show diff
+    show_diff "${commit_msg}"
     echo -e "=== hijack example path ${TAG_DONE} ==="
 }
 
-run_example_using_simulator() {
-    local example_file_name=$1
+run_hijacked_example() {
+    local example_file_path=$1
+    local save_log=$2
 
-    echo -e "=== run example using dx_simulator - model: ${model_name} ${TAG_START} ==="
+    echo -e "=== run_hijacked_example ${TAG_START} ==="
+    pushd ${FORK_PATH}
+
+    if [ "${save_log}" = "y" ]; then
+        SAVE_LOG_ARG=" > result-app.log"
+    fi
+
     # activate python venv for dx_simulator
     ACTVATE_VENV_CMD="source ${DX_SIMULATOR_PATH}/venv-dx-simulator/bin/activate"
     echo "$ACTVATE_VENV_CMD"
@@ -89,22 +114,49 @@ run_example_using_simulator() {
     fi
 
     # run hijakced python example source
-    RUN_CMD="python ${FORK_PATH}/example_${example_file_name}.py"
+    RUN_CMD="python ${example_file_path} ${SAVE_LOG_ARG}"
     echo "$RUN_CMD"
-    $RUN_CMD
+    eval "$RUN_CMD"
     if [ $? -ne 0 ]; then
-        echo -e "${TAG_ERROR} Run hijacked python example source(${FORK_PATH}/example_${example_file_name}.py) failed!"
+        echo -e "${TAG_ERROR} Run hijacked example failed!"
         exit 1
     fi
 
-    echo -e "=== run example using dx_simulator - model: ${model_name} ${TAG_DONE} ==="
+    popd
+    echo -e "=== run_hijacked_example ${TAG_DONE} ==="
 }
 
 main() {
-    EXAMPLE_FILE_NAME_LIST=("yolov5s" "yolov5face" "classification")
-    INPUT_IMG_NAME_LIST=("baseball" "baseball" "gold_fish")
-    SOURCE_MODEL_NAME_NAME_LIST=("yolov5s" "yolov5face" "mobilenetv2")
-    TARGET_MODEL_NAME_LIST=("YOLOV5S-1" "YOLOV5S_Face-1" "MobileNetV2-1")
+    YOLO_FACE_TARGET_STR="${DX_AS_PATH}/getting-start/dxnn/YOLOV5S_Face-1.dxnn"
+    YOLO_V5S_TARGET_STR="${DX_AS_PATH}/getting-start/dxnn/YOLOV5S-1.dxnn"
+    MOBILENET_V2_TARGET_STR="${DX_AS_PATH}/getting-start/dxnn/MobileNetV2-1.dxnn"
+
+    # Check if the *.dxnn files were successfully generated using 'getting-start/compiler-4_model_compile.sh'
+    DXNN_CHECK_LIST=("${YOLO_FACE_TARGET_STR}" "${YOLO_V5S_TARGET_STR}" "${MOBILENET_V2_TARGET_STR}")
+    for i in "${!DXNN_CHECK_LIST[@]}"; do
+        if [ ! -f ${DXNN_CHECK_LIST[$i]} ]; then
+            echo -e "${TAG_ERROR} ${DXNN_CHECK_LIST[$i]} does not exist."
+            echo -e "${TAG_INFO} (HINT) In the dx-compiler environment, use 'getting-start/compiler-4_model_compile.sh' to compile 'getting-start/modelzoo/onnx/*.onnx' into 'getting-start/dxnn/*.dxnn'."
+            exit 1
+        fi
+    done
+
+    # Check if 'fim' is installed
+    if ! command -v fim &> /dev/null; then
+        echo -e "${TAG_INFO} 'fim' is not installed. Installing now..."
+
+        sudo apt update && \
+        sudo apt install -y fim
+
+        # Check if installation was successful
+        if command -v fim &> /dev/null; then
+            echo -e "${TAG_INFO} 'fim' has been successfully installed."
+        else
+            echo -e "${TAG_ERROR} Failed to install 'fim'. Please check your sources or try installing manually."
+        fi
+    else
+        echo -e "${TAG_INFO} 'fim' is already installed."
+    fi
 
     if [ -d "${FORK_PATH}" ]; then
         echo "forked example (${FORK_PATH}) already exists. It will be removed and recreated."
@@ -112,17 +164,55 @@ main() {
     fi
     mkdir -p ${FORK_PATH}
 
-    for i in "${!EXAMPLE_FILE_NAME_LIST[@]}"; do
-        fork_examples ${EXAMPLE_FILE_NAME_LIST[$i]}
-    done
+    # fork dx_app example (yolo_face, yolov5s, mobilenetv2)
+    fork_examples
 
-    for i in "${!EXAMPLE_FILE_NAME_LIST[@]}"; do
-        hijack_example_path ${EXAMPLE_FILE_NAME_LIST[$i]} ${INPUT_IMG_NAME_LIST[$i]} ${SOURCE_MODEL_NAME_NAME_LIST[$i]} ${TARGET_MODEL_NAME_LIST[$i]}
-    done
 
-    for i in "${!EXAMPLE_FILE_NAME_LIST[@]}"; do
-        run_example_using_simulator ${EXAMPLE_FILE_NAME_LIST[$i]}
-    done
+    echo -e "${TAG_START} === Yolov5 Face ==="
+    COMMIT_MSG="Updated to use '*.dxnn' files compiled by the user with 'dx_com'"
+
+    # hijack yolo_face example
+    YOLO_FACE_EXAMPLE_PATH="examples/example_yolov5face.py"
+    YOLO_FACE_SOURCE_STR="examples/compiled_results/yolov5face.dxnn"
+    hijack_example "${YOLO_FACE_EXAMPLE_PATH}" "${YOLO_FACE_SOURCE_STR}" "${YOLO_FACE_TARGET_STR}" "${COMMIT_MSG}"
+
+    # run yolo_face hijakced example
+    rm -rf ${FORK_PATH}/examples/yolov5face.jpg
+    run_hijacked_example "${YOLO_FACE_EXAMPLE_PATH}"
+    echo -e "${TAG_INFO} <hint> Use the 'Page Up/Down' keys to view previous/next results"
+    echo -e "${TAG_INFO} <hint> Press 'q' to exit result viewing"
+    fim ${FORK_PATH}/examples/yolov5face.jpg
+    echo -e "${TAG_DONE} === YOLOV5 Face ==="
+
+
+    echo -e "${TAG_START} === Yolov5S ==="
+    # hijack yolov5s example
+    YOLO_V5S_EXAMPLE_PATH="examples/example_yolov5s.py"
+    YOLO_V5S_SOURCE_STR="examples/compiled_results/yolov5s.dxnn"
+    hijack_example "${YOLO_V5S_EXAMPLE_PATH}" "${YOLO_V5S_SOURCE_STR}" "${YOLO_V5S_TARGET_STR}" "${COMMIT_MSG}"
+
+    # run yolov5s hijakced example
+    rm -rf ${FORK_PATH}/examples/yolov5s.jpg
+    run_hijacked_example "${YOLO_V5S_EXAMPLE_PATH}"
+    echo -e "${TAG_INFO} <hint> Use the 'Page Up/Down' keys to view previous/next results"
+    echo -e "${TAG_INFO} <hint> Press 'q' to exit result viewing"
+    fim ${FORK_PATH}/examples/yolov5s.jpg
+    echo -e "${TAG_DONE} === Yolov5s ==="
+
+
+    # hijack mobilenetv2 example
+    echo -e "${TAG_START} === MobileNetV2 ==="
+    MOBILENET_V2_EXAMPLE_PATH="examples/example_classification.py"
+    MOBILENET_V2_SOURCE_STR="examples/compiled_results/mobilenetv2.dxnn"
+    hijack_example "${MOBILENET_V2_EXAMPLE_PATH}" "${MOBILENET_V2_SOURCE_STR}" "${MOBILENET_V2_TARGET_STR}" "${COMMIT_MSG}"
+
+    # run mobilenetv2 hijakced example
+    rm -rf ${FORK_PATH}/result*.log
+    run_hijacked_example "${MOBILENET_V2_EXAMPLE_PATH}" "y"
+    echo -e "${TAG_INFO} -------- [Result of MobileNetV2 example] --------"
+    cat ${FORK_PATH}/result-app.log
+    echo -e "${TAG_INFO} -------------------------------------------------"
+    echo -e "${TAG_DONE} === MobileNetV2 ==="
 }
 
 main

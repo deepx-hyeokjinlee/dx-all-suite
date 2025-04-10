@@ -10,20 +10,26 @@ FORCE_ARGS=""
 
 # Function to display help message
 show_help() {
-  echo "Usage: $(basename "$0") --module_name=<module name> [--file_name=dx_com_M1A] --version=<version> "
-  echo "Example: $0 --module_name=dx_com --file_name=dx_com_M1A --version=1.38.1"
-  echo "Options:"
-  echo "  --module_name=<module name>  : Specify module (dx_com | dx_simulator)"
-  echo "  [--file_name=<file_name>]    : Specify file name (ex> dx_com_M1A, skip if it matches the module name)"
-  echo "  --version=<version>          : Specify version"
-  echo "  [--force]                    : Force overwrite if the file already exists"
-  echo "  [--help]                     : Show this help message"
+    echo "Usage: $(basename "$0") --module_name=<module name> [--file_name=dx_com_M1A] --version=<version> "
+    echo "Example: $0 --module_name=dx_com --file_name=dx_com_M1A --version=1.38.1"
+    echo "Options:"
+    echo "  --module_name=<module name>  : Specify module (dx_com | dx_simulator)"
+    echo "  [--file_name=<file_name>]    : Specify file name (ex> dx_com_M1A, skip if it matches the module name)"
+    echo "  --version=<version>          : Specify version"
+    echo "  [--force]                    : Force overwrite if the file already exists"
+    echo "  [--help]                     : Show this help message"
 
-  if [ "$1" == "error" ]; then
-    echo "Error: Invalid or missing arguments."
-    exit 1
-  fi
-  exit 0
+    if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
+        echo -e "${TAG_ERROR} Invalid or missing arguments."
+        exit 1
+    elif [ "$1" == "error" ] && [[ -n "$2" ]]; then
+        echo -e "${TAG_ERROR} $2"
+        exit 1
+    elif [[ "$1" == "warn" ]] && [[ -n "$2" ]]; then
+        echo -e "${TAG_WARN} $2"
+        return 0
+    fi
+    exit 0
 }
 
 # parse args
@@ -48,8 +54,7 @@ for i in "$@"; do
             show_help
             ;;
         *)
-            echo "Unknown option: $1"
-            exit 1
+            show_help "error" "Invalid option '$1'"
             ;;
     esac
     shift
@@ -57,13 +62,11 @@ done
 
 # usage
 if [ -z "$VERSION" ]; then
-    echo "Error: --version ($VERSION) does not exist."
-    show_help "error"
+    show_help "error" "--version ($VERSION) does not exist."
 fi
 
 if [ -z "$MODULE_NAME" ]; then
-    echo "Error: --module_name ($MODULE_NAME) does not exist."
-    show_help "error"
+    show_help "error" "--module_name ($MODULE_NAME) does not exist."
 fi
 
 if [ -z "$FILE_NAME" ]; then

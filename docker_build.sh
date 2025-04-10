@@ -30,9 +30,15 @@ show_help() {
     echo "  [--driver_update]              : Install 'dx_rt_npu_linux_driver' in the host environment"
     echo "  [--help]                       : Show this help message"
 
-    if [ "$1" == "error" ]; then
+    if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
         echo -e "${TAG_ERROR} Invalid or missing arguments."
         exit 1
+    elif [ "$1" == "error" ] && [[ -n "$2" ]]; then
+        echo -e "${TAG_ERROR} $2"
+        exit 1
+    elif [[ "$1" == "warn" ]] && [[ -n "$2" ]]; then
+        echo -e "${TAG_WARN} $2"
+        return 0
     fi
     exit 0
 }
@@ -87,8 +93,7 @@ main() {
 
     # usage
     if [ -z "$UBUNTU_VERSION" ]; then
-        echo -e "${TAG_ERROR} --ubuntu_version ($UBUNTU_VERSION) does not exist."
-        show_help "error"
+        show_help "error" "--ubuntu_version ($UBUNTU_VERSION) does not exist."
     else
         echo -e "${TAG_INFO} UBUNTU_VERSSION($UBUNTU_VERSION) is set."
         echo -e "${TAG_INFO} TARGET_ENV($TARGET_ENV) is set."
@@ -124,8 +129,7 @@ main() {
             ;;
         *)
             echo -e "${TAG_ERROR} Unknown '--target' option '$TARGET_ENV'"
-            echo -e "${TAG_INFO} (Hint) Please specify either the '--all' option or the '--target=<dx-compiler | dx-runtime>' option."
-            show_help "error"
+            show_help "error" "${TAG_INFO} (Hint) Please specify either the '--all' option or the '--target=<dx-compiler | dx-runtime>' option."
             ;;
     esac
 
@@ -153,12 +157,9 @@ for i in "$@"; do
             ;;
         --help)
             show_help
-            exit 0
             ;;
         *)
-            echo -e "${TAG_ERROR}: Invalid option '$1'"
-            show_help
-            exit 1
+            show_help "error" "Invalid option '$1'"
             ;;
     esac
     shift
@@ -168,3 +169,4 @@ main
 
 popd
 
+exit 0

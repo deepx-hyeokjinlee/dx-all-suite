@@ -72,7 +72,7 @@ RUN add-apt-repository -y ppa:deadsnakes/ppa && \
 
 # Set up Virtual Environment
 RUN set -x && \
-    python3.11 -m venv /venv-dxnn --system-site-packages
+    python3.11 -m venv /venv-dxnn
 
 RUN set -x && \
     echo "Install dependencies..." && \

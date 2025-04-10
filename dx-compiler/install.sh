@@ -11,20 +11,26 @@ FORCE_ARGS=""
 
 # Function to display help message
 show_help() {
-  echo "Usage: $(basename "$0") --com_version=<version> --sim_version=<version>"
-  echo "Example: $0 [--com_version=$COM_VERSION] [--sim_version=$SIM_VERSION]"
-  echo "Options:"
-  echo "  [--com_version=<version>]         : Specify dx_com version"
-  echo "  [--simulator_version=<version>]   : Specify dx_simulator version"
-  echo "  [--archive_mode=<y|n>]            : Set archive mode (default: n)"
-  echo "  [--force]                         : Force overwrite if the file already exists"
-  echo "  [--help]                          : Show this help message"
+    echo "Usage: $(basename "$0") --com_version=<version> --sim_version=<version>"
+    echo "Example: $0 [--com_version=$COM_VERSION] [--sim_version=$SIM_VERSION]"
+    echo "Options:"
+    echo "  [--com_version=<version>]         : Specify dx_com version"
+    echo "  [--simulator_version=<version>]   : Specify dx_simulator version"
+    echo "  [--archive_mode=<y|n>]            : Set archive mode (default: n)"
+    echo "  [--force]                         : Force overwrite if the file already exists"
+    echo "  [--help]                          : Show this help message"
 
-  if [ "$1" == "error" ]; then
-    echo "Error: Invalid or missing arguments."
-    exit 1
-  fi
-  exit 0
+    if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
+        echo -e "${TAG_ERROR} Invalid or missing arguments."
+        exit 1
+    elif [ "$1" == "error" ] && [[ -n "$2" ]]; then
+        echo -e "${TAG_ERROR} $2"
+        exit 1
+    elif [[ "$1" == "warn" ]] && [[ -n "$2" ]]; then
+        echo -e "${TAG_WARN} $2"
+        return 0
+    fi
+    exit 0
 }
 
 # parse args
@@ -46,7 +52,7 @@ for i in "$@"; do
             show_help
             ;;
         *)
-            show_help "error"
+            show_help "error" "Invalid option '$1'"
             ;;
     esac
     shift
@@ -54,13 +60,11 @@ done
 
 # usage
 if [ -z "$COM_VERSION" ]; then
-    echo "Error: --com_version ($COM_VERSION) does not exist."
-    show_help "error"
+    show_help "error" "--com_version ($COM_VERSION) does not exist."
 fi
 
 if [ -z "$SIM_VERSION" ]; then
-    echo "Error: --sim_version ($SIM_VERSION) does not exist."
-    show_help "error"
+    show_help "error" "--sim_version ($SIM_VERSION) does not exist."
 fi
 
 if [ "$ARCHIVE_MODE" = "y" ]; then

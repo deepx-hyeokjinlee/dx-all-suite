@@ -12,16 +12,22 @@ echo -e "============================"
 
 # Function to display help message
 show_help() {
-  echo "Usage: $(basename "$0") [OPTIONS]"
-  echo "Options:"
-  echo "  [--force]                    : Force overwrite if the file already exists"
-  echo "  [--help]                     : Show this help message"
+    echo "Usage: $(basename "$0") [OPTIONS]"
+    echo "Options:"
+    echo "  [--force]     : Force overwrite if the file already exists"
+    echo "  [--help]      : Show this help message"
 
-  if [ "$1" == "error" ]; then
-    echo -e "${TAG_ERROR} Invalid or missing arguments."
-    exit 1
-  fi
-  exit 0
+    if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
+        echo -e "${TAG_ERROR} Invalid or missing arguments."
+        exit 1
+    elif [ "$1" == "error" ] && [[ -n "$2" ]]; then
+        echo -e "${TAG_ERROR} $2"
+        exit 1
+    elif [[ "$1" == "warn" ]] && [[ -n "$2" ]]; then
+        echo -e "${TAG_WARN} $2"
+        return 0
+    fi
+    exit 0
 }
 
 download() {
@@ -61,7 +67,7 @@ main() {
                 show_help
                 ;;
             *)
-                show_help "error"
+                show_help "error" "Invalid option '$1'"
                 ;;
         esac
         shift

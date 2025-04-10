@@ -33,13 +33,14 @@ main() {
                 echo -e "${TAG_WARN} Failed to create archive for: $dir_name"
             fi
         else
-            echo -e "${TAG_ERROR} No .git directory found in: $dir_name"
+            echo -e "${TAG_WARN} No .git directory found in: $dir_name"
         fi
     done
 
     echo -e "=== Archiving dx-runtime ... ${TAG_DONE} ==="
 }
 
+main
 
 popd
 
