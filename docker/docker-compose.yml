@@ -19,7 +19,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix         # X11
       - $HOME/.Xauthority:/root/.Xauthority   # X11
-      - $XAUTHORITY:/tmp/.docker.xauth        # X11
+      - $XAUTHORITY:$XAUTHORITY_TARGET        # X11
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
@@ -50,7 +50,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix         # X11
       - $HOME/.Xauthority:/root/.Xauthority   # X11
-      - $XAUTHORITY:/tmp/.docker.xauth        # X11
+      - $XAUTHORITY:$XAUTHORITY_TARGET        # X11
       - /dev:/dev                             # NPU, Camera, GPU
       - /lib/udev/rules.d:/lib/udev/rules.d   # auto detect device(USB CAM)
       - /lib/modules:/lib/modules             # GPU

@@ -35,37 +35,60 @@ show_help() {
     exit 0
 }
 
-docker_run_all() 
+docker_run_impl()
 {
+    local target=$1
+
     # Run Docker Container
     export COMPOSE_BAKE=true
     export UBUNTU_VERSION=${UBUNTU_VERSION}
-    CMD="docker compose -f docker/docker-compose.yml up -d --remove-orphans"
+    if [ ! -n "${XAUTHORITY}" ]; then
+        echo -e "${TAG_INFO} XAUTHORITY env is not set. so, try to set automatically."
+        DUMMY_XAUTHORITY="/tmp/dummy"
+        touch ${DUMMY_XAUTHORITY}
+        export XAUTHORITY=${DUMMY_XAUTHORITY}
+        export XAUTHORITY_TARGET=${DUMMY_XAUTHORITY}
+        
+    else
+        echo -e "${TAG_INFO} XAUTHORITY(${XAUTHORITY}) is set"
+        export XAUTHORITY_TARGET="/tmp/.docker.xauth"
+    fi
+    
+    CMD="docker compose -f docker/docker-compose.yml up -d --remove-orphans dxnn-sdk-${target}"
     echo "${CMD}"
 
     ${CMD}
+
+    if [ -n "${DUMMY_XAUTHORITY}" ]; then
+        XAUTHORITY=~/.Xauthority
+        export XAUTHORITY
+        XAUTH=$(xauth list "$DISPLAY")
+        XAUTH_ADD_CMD="xauth add $XAUTH"
+        
+        DOCKER_EXEC_CMD1="docker exec -it dxnn-sdk-${target}-${UBUNTU_VERSION} touch /tmp/.docker.xauth"
+        DOCKER_EXEC_CMD2="docker exec -it dxnn-sdk-${target}-${UBUNTU_VERSION} ${XAUTH_ADD_CMD}"
+
+        echo -e "${DOCKER_EXEC_CMD1}"
+        echo -e "${DOCKER_EXEC_CMD2}"
+        ${DOCKER_EXEC_CMD1}
+        ${DOCKER_EXEC_CMD2}
+    fi
+}
+
+docker_run_all() 
+{
+    docker_run_dx-compiler
+    docker_run_dx-runtime
 }
 
 docker_run_dx-compiler() 
 {
-    # Run Docker Container
-    export COMPOSE_BAKE=true
-    export UBUNTU_VERSION=${UBUNTU_VERSION}
-    CMD="docker compose -f docker/docker-compose.yml up -d --remove-orphans dxnn-sdk-compiler"
-    echo "${CMD}"
-
-    ${CMD}
+    docker_run_impl "compiler"
 }
 
 docker_run_dx-runtime() 
 {
-    # Run Docker Container
-    export COMPOSE_BAKE=true
-    export UBUNTU_VERSION=${UBUNTU_VERSION}
-    CMD="docker compose -f docker/docker-compose.yml up -d --remove-orphans dxnn-sdk-runtime"
-    echo "${CMD}"
-
-    ${CMD}
+    docker_run_impl "runtime"
 }
 
 main() {

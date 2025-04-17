@@ -182,6 +182,7 @@ main() {
     echo -e "${TAG_INFO} <hint> Use the 'Page Up/Down' keys to view previous/next results"
     echo -e "${TAG_INFO} <hint> Press 'q' to exit result viewing"
     fim ${FORK_PATH}/examples/yolov5face.jpg
+    rm -rf ${FORK_PATH}/examples/yolov5face.jpg
     echo -e "${TAG_DONE} === YOLOV5 Face ==="
 
 
@@ -197,6 +198,7 @@ main() {
     echo -e "${TAG_INFO} <hint> Use the 'Page Up/Down' keys to view previous/next results"
     echo -e "${TAG_INFO} <hint> Press 'q' to exit result viewing"
     fim ${FORK_PATH}/examples/yolov5s.jpg
+    rm -rf ${FORK_PATH}/examples/yolov5s.jpg
     echo -e "${TAG_DONE} === Yolov5s ==="
 
 
@@ -212,6 +214,7 @@ main() {
     echo -e "${TAG_INFO} -------- [Result of MobileNetV2 example] --------"
     cat ${FORK_PATH}/result-app.log
     echo -e "${TAG_INFO} -------------------------------------------------"
+    rm -rf ${FORK_PATH}/result*.log
     echo -e "${TAG_DONE} === MobileNetV2 ==="
 }
 
