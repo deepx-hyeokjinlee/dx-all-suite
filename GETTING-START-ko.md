@@ -63,7 +63,7 @@
 
 ---
 
-## 📁 2. compiler-2_setup_dataset.sh
+## 📁 2. compiler-2_setup_calribration_dataset.sh
 
 Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어씌웁니다.
 

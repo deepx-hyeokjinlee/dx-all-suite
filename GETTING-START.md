@@ -67,7 +67,7 @@ Downloads model files (`.onnx`, `.json`) and links them into the workspace.
 
 ---
 
-## 📁 2. compiler-2_setup_dataset.sh
+## 📁 2. compiler-2_setup_calribration_dataset.sh
 
 Creates a symbolic link to the calibration dataset and modifies `.json` config files to use it.
 
