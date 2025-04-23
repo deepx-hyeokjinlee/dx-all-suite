@@ -1,7 +1,7 @@
 services:
-  dxnn-sdk-compiler:
-    container_name: dxnn-sdk-compiler-${UBUNTU_VERSION}
-    image: dxnn-sdk-compiler:${UBUNTU_VERSION}
+  dx-compiler:
+    container_name: dx-compiler-${UBUNTU_VERSION}
+    image: dx-compiler:${UBUNTU_VERSION}
     command: sleep infinity
     build:
       context: ..
@@ -29,9 +29,9 @@ services:
     devices:
       - "/dev/dri:/dev/dri"                   # GPU    
 
-  dxnn-sdk-runtime:
-    container_name: dxnn-sdk-runtime-${UBUNTU_VERSION}
-    image: dxnn-sdk-runtime:${UBUNTU_VERSION}
+  dx-runtime:
+    container_name: dx-runtime-${UBUNTU_VERSION}
+    image: dx-runtime:${UBUNTU_VERSION}
     command: sleep infinity
     build:
       context: ..

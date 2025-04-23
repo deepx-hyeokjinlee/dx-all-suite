@@ -73,7 +73,7 @@ TBD
     ```
 - exec container
     ```
-    $ docker exec -it dxnn-sdk-runtime bash
+    $ docker exec -it dx-runtime bash
     ```
 - check installation
     ```

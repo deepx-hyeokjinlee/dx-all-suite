@@ -54,7 +54,7 @@ docker_run_impl()
         export XAUTHORITY_TARGET="/tmp/.docker.xauth"
     fi
     
-    CMD="docker compose -f docker/docker-compose.yml up -d --remove-orphans dxnn-sdk-${target}"
+    CMD="docker compose -f docker/docker-compose.yml up -d --remove-orphans dx-${target}"
     echo "${CMD}"
 
     ${CMD}
@@ -65,8 +65,8 @@ docker_run_impl()
         XAUTH=$(xauth list "$DISPLAY")
         XAUTH_ADD_CMD="xauth add $XAUTH"
         
-        DOCKER_EXEC_CMD1="docker exec -it dxnn-sdk-${target}-${UBUNTU_VERSION} touch /tmp/.docker.xauth"
-        DOCKER_EXEC_CMD2="docker exec -it dxnn-sdk-${target}-${UBUNTU_VERSION} ${XAUTH_ADD_CMD}"
+        DOCKER_EXEC_CMD1="docker exec -it dx-${target}-${UBUNTU_VERSION} touch /tmp/.docker.xauth"
+        DOCKER_EXEC_CMD2="docker exec -it dx-${target}-${UBUNTU_VERSION} ${XAUTH_ADD_CMD}"
 
         echo -e "${DOCKER_EXEC_CMD1}"
         echo -e "${DOCKER_EXEC_CMD2}"

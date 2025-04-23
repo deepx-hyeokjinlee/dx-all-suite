@@ -1,7 +1,7 @@
 services:
-  dxnn-sdk-runtime:
-    container_name: dxnn-sdk-runtime_intel-hw-acc-${UBUNTU_VERSION:-20.04}
-    image: dxnn-sdk-runtime_intel-hw-acc:${UBUNTU_VERSION:-20.04}
+  dx-runtime:
+    container_name: dx-runtime_intel-hw-acc-${UBUNTU_VERSION:-20.04}
+    image: dx-runtime_intel-hw-acc:${UBUNTU_VERSION:-20.04}
     command: sleep infinity
     build:
       context: ../

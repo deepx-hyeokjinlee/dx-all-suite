@@ -153,8 +153,8 @@ $ docker images
 
 ```
 REPOSITORY               TAG       IMAGE ID       CREATED          SIZE
-dxnn-sdk-compiler        22.04     9b7e6577c526   6 minutes ago    6.56GB
-dxnn-sdk-runtime         22.04     1c96c081fdea   16 hours ago     4.02GB
+dx-compiler        22.04     9b7e6577c526   6 minutes ago    6.56GB
+dx-runtime         22.04     1c96c081fdea   16 hours ago     4.02GB
 ```
 
 #### 특정 환경만 빌드
@@ -192,18 +192,18 @@ $ docker ps
 
 ```
 CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS     NAMES
-47837ae2aa4a   dxnn-sdk-runtime:24.04    "/usr/local/bin/dxrt…"   26 minutes ago   Up 26 minutes             dxnn-sdk-runtime-24.04
-6c2b63d248d6   dxnn-sdk-compiler:24.04   "tail -f /dev/null s…"   26 minutes ago   Up 26 minutes             dxnn-sdk-compiler-24.04
+47837ae2aa4a   dx-runtime:24.04    "/usr/local/bin/dxrt…"   26 minutes ago   Up 26 minutes             dx-runtime-24.04
+6c2b63d248d6   dx-compiler:24.04   "tail -f /dev/null s…"   26 minutes ago   Up 26 minutes             dx-compiler-24.04
 ```
 
 #### 컨테이너 내부 접속
 
 ```
-$ docker exec -it dxnn-sdk-runtime-<ubuntu_version> bash
+$ docker exec -it dx-runtime-<ubuntu_version> bash
 ```
 
 ```
-$ docker exec -it dxnn-sdk-container-<ubuntu_version> bash
+$ docker exec -it dx-container-<ubuntu_version> bash
 ```
 
 위 명령어를 통해 `dx-compiler` 및 `dx-runtime` 환경에 접속할 수 있습니다.
@@ -251,7 +251,7 @@ DVFS Disabled
    ```
 2. **도커 컨테이너 내부에서 실행하는 경우:**
    ```
-    $ docker exec -it dxnn-sdk-runtime-<ubuntu_version> bash
+    $ docker exec -it dx-runtime-<ubuntu_version> bash
     # cd /deepx/dx_app
    ```
 
@@ -282,7 +282,7 @@ $ fim ./result-app1.jpg
    ```
 2. **도커 컨테이너 내부에서 실행하는 경우:**
    ```
-    $ docker exec -it dxnn-sdk-runtime-<ubuntu_version> bash
+    $ docker exec -it dx-runtime-<ubuntu_version> bash
     # cd /deepx/dx_stream
    ```
 
@@ -314,7 +314,7 @@ $ ./run_demo.sh
     ```
 2. **도커 컨테이너 내부에서 실행하는 경우:**
     ```
-    $ docker exec -it dxnn-sdk-compiler-<ubuntu_version> bash
+    $ docker exec -it dx-compiler-<ubuntu_version> bash
     # cd /deepx/dx_com
     ```
 
@@ -355,7 +355,7 @@ Compiling Model : 100%|███████████████████
     ```
 2. **도커 컨테이너 내부에서 실행하는 경우:**
     ```
-    $ docker exec -it dxnn-sdk-compiler-<ubuntu_version> bash
+    $ docker exec -it dx-compiler-<ubuntu_version> bash
     (venv-dx-simulator) # cd /deepx/dx_simulator
     ```
 
@@ -373,7 +373,7 @@ Compiling Model : 100%|███████████████████
 
 2. **도커 컨테이너 내부에서 실행하는 경우:**
     ```
-    $ docker exec -it dxnn-sdk-compiler-<ubuntu_version> bash
+    $ docker exec -it dx-compiler-<ubuntu_version> bash
     (venv-dx-simulator) # cd /deepx/dx_simulator
     (venv-dx-simulator) # pip install /deepx/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
     (venv-dx-simulator) # pip install ultralytics

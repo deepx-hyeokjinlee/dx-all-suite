@@ -63,7 +63,7 @@ docker_build_dx-compiler()
     export UBUNTU_VERSION=${UBUNTU_VERSION}
     export FILE_DXCOM=${FILE_DXCOM}
     export FILE_DXSIM=${FILE_DXSIM}
-    CMD="docker compose -f ./docker/docker-compose.yml build dxnn-sdk-compiler"
+    CMD="docker compose -f ./docker/docker-compose.yml build dx-compiler"
     echo "${CMD}"
 
     ${CMD}
@@ -74,7 +74,7 @@ docker_build_dx-runtime()
     # Build Docker image
     export COMPOSE_BAKE=true
     export UBUNTU_VERSION=${UBUNTU_VERSION}
-    CMD="docker compose -f ./docker/docker-compose.yml build dxnn-sdk-runtime"
+    CMD="docker compose -f ./docker/docker-compose.yml build dx-runtime"
     echo "${CMD}"
 
     ${CMD}
