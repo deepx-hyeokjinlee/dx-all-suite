@@ -1,14 +1,14 @@
 services:
   dx-runtime:
-    container_name: dx-runtime_intel-hw-acc-${UBUNTU_VERSION:-20.04}
-    image: dx-runtime_intel-hw-acc:${UBUNTU_VERSION:-20.04}
-    command: sleep infinity
+    container_name: dx-runtime_intel-hw-acc-${UBUNTU_VERSION}
+    image: dx-runtime_intel-hw-acc:${UBUNTU_VERSION}
     build:
-      context: ../
+      context: ..
       dockerfile: docker/Dockerfile.intel-hw-acc
       args:
-        UBUNTU_VERSION: ${UBUNTU_VERSION:-20.04}
+        UBUNTU_VERSION: ${UBUNTU_VERSION}
     ipc: host                                 # NPU ipc
+    pid: host                                 # pid sharing for DX-RT Service
     tty: true                                 # NPU
     stdin_open: true
     environment:
@@ -20,7 +20,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix         # X11
       - $HOME/.Xauthority:/root/.Xauthority   # X11
-      - $XAUTHORITY:/tmp/.docker.xauth        # X11
+      - $XAUTHORITY:$XAUTHORITY_TARGET        # X11
       - /dev:/dev                             # NPU, Camera, GPU
       - /lib/udev/rules.d:/lib/udev/rules.d   # auto detect device(USB CAM)
       - /lib/modules:/lib/modules             # GPU
@@ -36,6 +36,5 @@ services:
     privileged: true                          # NPU
     restart: on-failure
     devices:
-      - "/dev/dxrt0:/dev/dxrt0"               # NPU
-      - "/dev/dri:/dev/dri"                   # GPU
+      - "/dev:/dev"                           # NPU / GPU / USB CAM
 

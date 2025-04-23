@@ -54,7 +54,8 @@ fork_examples() {
 
     # Initialize a Git repository and make the initial commit to enable diff checking
     pushd ${FORK_PATH}
-    git init && git add . && git commit -m "initial commit"
+    git init && git config user.email "you@example.com" && git config user.name "Your Name"
+    git add . && git commit -m "initial commit"
     popd
 
     echo -e "=== fork dx_app examples to '${FORK_PATH}' ${TAG_DONE} ==="

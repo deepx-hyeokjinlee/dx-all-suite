@@ -2,7 +2,6 @@ services:
   dx-compiler:
     container_name: dx-compiler-${UBUNTU_VERSION}
     image: dx-compiler:${UBUNTU_VERSION}
-    command: sleep infinity
     build:
       context: ..
       dockerfile: docker/Dockerfile.dx-compiler
@@ -32,13 +31,13 @@ services:
   dx-runtime:
     container_name: dx-runtime-${UBUNTU_VERSION}
     image: dx-runtime:${UBUNTU_VERSION}
-    command: sleep infinity
     build:
       context: ..
       dockerfile: docker/Dockerfile.dx-runtime
       args:
         UBUNTU_VERSION: ${UBUNTU_VERSION}
     ipc: host                                 # NPU ipc
+    pid: host                                 # pid sharing for DX-RT Service
     tty: true                                 # NPU
     stdin_open: true
     environment:
@@ -66,6 +65,5 @@ services:
     privileged: true                          # NPU
     restart: on-failure
     devices:
-      - "/dev/dxrt0:/dev/dxrt0"               # NPU
-      - "/dev/dri:/dev/dri"                   # GPU
+      - "/dev:/dev"                           # NPU / GPU / USB CAM
 

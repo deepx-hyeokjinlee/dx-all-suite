@@ -1,9 +1,9 @@
 #!/bin/bash
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
-DX_ALL_DIR=$(realpath -s "${SCRIPT_DIR}")
+DX_AS_PATH=$(realpath -s "${SCRIPT_DIR}")
 
 # color env settings
-source ${DX_ALL_DIR}/scripts/color_env.sh
+source ${DX_AS_PATH}/scripts/color_env.sh
 
 pushd "$SCRIPT_DIR"
 
@@ -23,9 +23,10 @@ show_help() {
     echo "Example:1) $0 --all --ubuntu_version=24.04"
     echo "Example 2) $0 --target=dx-compiler --ubuntu_version=24.04"
     echo "Example 3) $0 --target=dx-runtime --ubuntu_version=24.04 --driver_update"
+    echo "Example 3) $0 --target=dx-modelzoo --ubuntu_version=24.04 --driver_update"
     echo "Options:"
-    echo "  --all                          : Install DXNN® Software Stack (dx-compiler & dx-runtime)"
-    echo "  --target=<environment_name>    : Install specify target DXNN® environment (ex> dx-compiler | dx-runtime)"
+    echo "  --all                          : Install DXNN® Software Stack (dx-compiler & dx-runtime & dx-modelzoo)"
+    echo "  --target=<environment_name>    : Install specify target DXNN® environment (ex> dx-compiler | dx-runtime | dx-modelzoo)"
     echo "  --ubuntu_version=<version>     : Specify Ubuntu version (ex> 24.04)"
     echo "  [--driver_update]              : Install 'dx_rt_npu_linux_driver' in the host environment"
     echo "  [--help]                       : Show this help message"
@@ -43,41 +44,62 @@ show_help() {
     exit 0
 }
 
-docker_build_all() 
+docker_build_impl()
 {
+    local target=$1
+    local config_file_args=${2:--f docker/docker-compose.yml}
+
     # Build Docker image
     export COMPOSE_BAKE=true
     export UBUNTU_VERSION=${UBUNTU_VERSION}
     export FILE_DXCOM=${FILE_DXCOM}
     export FILE_DXSIM=${FILE_DXSIM}
-    CMD="docker compose -f ./docker/docker-compose.yml build"
+    if [ ! -n "${XAUTHORITY}" ]; then
+        echo -e "${TAG_INFO} XAUTHORITY env is not set. so, try to set automatically."
+        DUMMY_XAUTHORITY="/tmp/dummy"
+        touch ${DUMMY_XAUTHORITY}
+        export XAUTHORITY=${DUMMY_XAUTHORITY}
+        export XAUTHORITY_TARGET=${DUMMY_XAUTHORITY}
+        
+    else
+        echo -e "${TAG_INFO} XAUTHORITY(${XAUTHORITY}) is set"
+        export XAUTHORITY_TARGET="/tmp/.docker.xauth"
+    fi
+
+    CMD="docker compose ${config_file_args} build dx-${target}"
     echo "${CMD}"
 
     ${CMD}
+}
+
+docker_build_all() 
+{
+    docker_build_dx-compiler
+    docker_build_dx-runtime "modelzoo"
+    docker_build_dx-modelzoo
 }
 
 docker_build_dx-compiler() 
 {
-    # Build Docker image
-    export COMPOSE_BAKE=true
-    export UBUNTU_VERSION=${UBUNTU_VERSION}
-    export FILE_DXCOM=${FILE_DXCOM}
-    export FILE_DXSIM=${FILE_DXSIM}
-    CMD="docker compose -f ./docker/docker-compose.yml build dx-compiler"
-    echo "${CMD}"
-
-    ${CMD}
+    docker_build_impl "compiler"
 }
 
-docker_build_dx-runtime() 
+docker_build_dx-runtime()
 {
-    # Build Docker image
-    export COMPOSE_BAKE=true
-    export UBUNTU_VERSION=${UBUNTU_VERSION}
-    CMD="docker compose -f ./docker/docker-compose.yml build dx-runtime"
-    echo "${CMD}"
+    local modelzoo=${2}
+    local docker_compose_args=""
 
-    ${CMD}
+    if [ -n ${modelzoo} ]; then
+        docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
+    fi
+
+    docker_build_impl "runtime" "${docker_compose_args}"
+}
+
+docker_build_dx-modelzoo()
+{
+    docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
+    docker_build_impl "modelzoo" "${docker_compose_args}"
 }
 
 install_dx_rt_npu_linux_driver() 
@@ -89,8 +111,6 @@ install_dx_rt_npu_linux_driver()
 }
 
 main() {
-    
-
     # usage
     if [ -z "$UBUNTU_VERSION" ]; then
         show_help "error" "--ubuntu_version ($UBUNTU_VERSION) does not exist."
@@ -112,16 +132,21 @@ main() {
             ;;
         dx-runtime)
             echo "Archiving dx-runtime"
-            ./archive_dx-runtime.sh
+            ./archive_git_repos.sh --target=dx-runtime
             docker_build_dx-runtime
             if [ "$DRIVER_UPDATE" = "y" ]; then
                 install_dx_rt_npu_linux_driver
             fi
             ;;
+        dx-modelzoo)
+            echo "Archiving dx-modelzoo"
+            ./archive_git_repos.sh --target=dx-modelzoo
+            docker_build_dx-modelzoo
+            ;;
         all)
             echo "Archiving all DXNN® environments"
             ./archive_dx-compiler.sh
-            ./archive_dx-runtime.sh
+            ./archive_git_repos.sh --all
             docker_build_all
             if [ "$DRIVER_UPDATE" = "y" ]; then
                 install_dx_rt_npu_linux_driver
@@ -157,9 +182,12 @@ for i in "$@"; do
             ;;
         --help)
             show_help
+            exit 0
             ;;
         *)
-            show_help "error" "Invalid option '$1'"
+            echo -e "${TAG_ERROR}: Invalid option '$1'"
+            show_help
+            exit 1
             ;;
     esac
     shift

@@ -1,9 +1,9 @@
 #!/bin/bash
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
-DX_ALL_DIR=$(realpath -s "${SCRIPT_DIR}")
+DX_AS_PATH=$(realpath -s "${SCRIPT_DIR}")
 
 # color env settings
-source ${DX_ALL_DIR}/scripts/color_env.sh
+source ${DX_AS_PATH}/scripts/color_env.sh
 
 pushd "$SCRIPT_DIR"
 
@@ -16,9 +16,10 @@ show_help() {
     echo "Example:1) $0 --all --ubuntu_version=24.04"
     echo "Example 2) $0 --target=dx-compiler --ubuntu_version=24.04"
     echo "Example 3) $0 --target=dx-runtime --ubuntu_version=24.04"
+    echo "Example 3) $0 --target=dx-modelzoo --ubuntu_version=24.04"
     echo "Options:"
-    echo "  --all                          : Install DXNN® Software Stack (dx-compiler & dx-runtime)"
-    echo "  --target=<environment_name>    : Install specify target DXNN® environment (ex> dx-compiler | dx-runtime)"
+    echo "  --all                          : Install DXNN® Software Stack (dx-compiler & dx-runtime & dx-modelzoo)"
+    echo "  --target=<environment_name>    : Install specify target DXNN® environment (ex> dx-compiler | dx-runtime | dx-modelzoo)"
     echo "  --ubuntu_version=<version>     : Specify Ubuntu version (ex> 24.04)"
     echo "  [--help]                       : Show this help message"
 
@@ -38,6 +39,7 @@ show_help() {
 docker_run_impl()
 {
     local target=$1
+    local config_file_args=${2:--f docker/docker-compose.yml}
 
     # Run Docker Container
     export COMPOSE_BAKE=true
@@ -53,8 +55,8 @@ docker_run_impl()
         echo -e "${TAG_INFO} XAUTHORITY(${XAUTHORITY}) is set"
         export XAUTHORITY_TARGET="/tmp/.docker.xauth"
     fi
-    
-    CMD="docker compose -f docker/docker-compose.yml up -d --remove-orphans dx-${target}"
+
+    CMD="docker compose ${config_file_args} up -d --remove-orphans dx-${target}"
     echo "${CMD}"
 
     ${CMD}
@@ -78,7 +80,8 @@ docker_run_impl()
 docker_run_all() 
 {
     docker_run_dx-compiler
-    docker_run_dx-runtime
+    docker_run_dx-runtime "modelzoo"
+    docker_run_dx-modelzoo
 }
 
 docker_run_dx-compiler() 
@@ -86,9 +89,22 @@ docker_run_dx-compiler()
     docker_run_impl "compiler"
 }
 
-docker_run_dx-runtime() 
+docker_run_dx-runtime()
 {
-    docker_run_impl "runtime"
+    local modelzoo=${2}
+    local docker_compose_args=""
+
+    if [ -n ${modelzoo} ]; then
+        docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
+    fi
+
+    docker_run_impl "runtime" "${docker_compose_args}"
+}
+
+docker_run_dx-modelzoo()
+{
+    docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
+    docker_run_impl "modelzoo" "${docker_compose_args}"
 }
 
 main() {
@@ -108,6 +124,10 @@ main() {
         dx-runtime)
             echo "Installing dx-runtime"
             docker_run_dx-runtime
+            ;;
+        dx-modelzoo)
+            echo "Installing dx-modelzoo"
+            docker_run_dx-modelzoo
             ;;
         all)
             echo "Installing all DXNN® environments"
