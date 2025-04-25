@@ -29,6 +29,7 @@ show_help() {
     echo "  --target=<environment_name>    : Install specify target DXNN® environment (ex> dx-compiler | dx-runtime | dx-modelzoo)"
     echo "  --ubuntu_version=<version>     : Specify Ubuntu version (ex> 24.04)"
     echo "  [--driver_update]              : Install 'dx_rt_npu_linux_driver' in the host environment"
+    echo "  [--no-cache]                   : Build Docker images freshly without cache"
     echo "  [--help]                       : Show this help message"
 
     if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
@@ -48,6 +49,11 @@ docker_build_impl()
 {
     local target=$1
     local config_file_args=${2:--f docker/docker-compose.yml}
+    local no_cache_arg=""
+
+    if [ "$NO_CACHE" = "y" ]; then
+        no_cache_arg="--no-cache"
+    fi
 
     # Build Docker image
     export COMPOSE_BAKE=true
@@ -66,7 +72,7 @@ docker_build_impl()
         export XAUTHORITY_TARGET="/tmp/.docker.xauth"
     fi
 
-    CMD="docker compose ${config_file_args} build dx-${target}"
+    CMD="docker compose ${config_file_args} build ${no_cache_arg} dx-${target}"
     echo "${CMD}"
 
     ${CMD}
@@ -121,6 +127,9 @@ main() {
         echo -e "${TAG_INFO} FILE_DXSIM($FILE_DXSIM) is set."
         if [ "$DRIVER_UPDATE" = "y" ]; then
             echo -e "${TAG_INFO} DRIVER_UPDATE($DRIVER_UPDATE) is set."
+        fi
+        if [ "$NO_CACHE" = "y" ]; then
+            echo -e "${TAG_INFO} NO_CACHE($NO_CACHE) is set."
         fi
     fi
 
@@ -179,6 +188,9 @@ for i in "$@"; do
             ;;
         --driver_update)
             DRIVER_UPDATE=y
+            ;;
+        --no-cache)
+            NO_CACHE=y
             ;;
         --help)
             show_help
