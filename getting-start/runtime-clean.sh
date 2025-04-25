@@ -13,7 +13,7 @@ printf "WORKSPACE_PATH(%b)\n" "${WORKSPACE_PATH}"
 OLD_DIR=$(pwd)
 cd "${SCRIPT_DIR}"
 
-main() {
+runtime_clean() {
     find "${SCRIPT_DIR}"/* -depth ! -name "runtime-*.sh" -delete
     if [ $? -ne 0 ]; then
         printf "%b Failed to remove 'getting-start' artifacts\n" "${TAG_ERROR}"
@@ -21,6 +21,19 @@ main() {
     fi
 
     printf "=== remove 'getting-start' artifacts %b ===\n" "${TAG_DONE}"
+}
+
+main() {
+    CONTAINER_MODE=false
+
+    if grep -qE "/docker|/lxc|/containerd" /proc/1/cgroup || [ -f /.dockerenv ] || [ "${DX_CONTAINER_MODE}" = "true" ]; then
+        CONTAINER_MODE=true
+        printf "(container mode detected)\n"
+        runtime_clean
+    else
+        printf "(host mode detected)\n"
+        printf "%b Please use 'runtime-clean.sh' only inside the Docker container.%b\n" "${TAG_WARN} ${COLOR_BRIGHT_YELLOW_ON_BLACK}" "${COLOR_RESET}"
+    fi
 }
 
 main

@@ -187,8 +187,8 @@ main() {
     # run yolo_face hijakced example
     rm -rf ${FORK_PATH}/result*.jpg
     run_hijacked_example "./bin/run_detector" "${YOLO_FACE_EXAMPLE_PATH}"
-    echo -e "${TAG_INFO} <hint> Use the 'Page Up/Down' keys to view previous/next results"
-    echo -e "${TAG_INFO} <hint> Press 'q' to exit result viewing"
+    echo -e "${TAG_INFO} <hint> Use the ${COLOR_BRIGHT_GREEN_ON_BLACK}'Page Up/Down'${COLOR_RESET} keys to view previous/next results"
+    echo -e "${TAG_INFO} <hint> Press ${COLOR_BRIGHT_GREEN_ON_BLACK}'q'${COLOR_RESET} to exit result viewing"
     fim ${FORK_PATH}/result*.jpg
     rm -rf ${FORK_PATH}/result*.jpg
     echo -e "${TAG_DONE} === YOLOV5 Face ==="
@@ -203,8 +203,8 @@ main() {
     # run yolov5s hijakced example
     rm -rf ${FORK_PATH}/result*.jpg
     run_hijacked_example "./bin/run_detector" "${YOLO_V5S_EXAMPLE_PATH}"
-    echo -e "${TAG_INFO} <hint> Use the 'Page Up/Down' keys to view previous/next results"
-    echo -e "${TAG_INFO} <hint> Press 'q' to exit result viewing"
+    echo -e "${TAG_INFO} <hint> Use the ${COLOR_BRIGHT_GREEN_ON_BLACK}'Page Up/Down'${COLOR_RESET} keys to view previous/next results"
+    echo -e "${TAG_INFO} <hint> Press ${COLOR_BRIGHT_GREEN_ON_BLACK}'q'${COLOR_RESET} to exit result viewing"
     fim ${FORK_PATH}/result*.jpg
     rm -rf ${FORK_PATH}/result*.jpg
     echo -e "${TAG_DONE} === Yolov5s ==="

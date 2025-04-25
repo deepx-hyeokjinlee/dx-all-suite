@@ -37,6 +37,7 @@ RUN tar_file=$(ls *.tar.gz) && \
 # COPY 'scripts' and 'getting-start'
 COPY scripts /deepx/scripts
 COPY getting-start /deepx/getting-start
+ENV DX_CONTAINER_MODE=true
 RUN /deepx/getting-start/compiler-clean.sh
 
 ###

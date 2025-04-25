@@ -110,6 +110,7 @@ RUN echo "source /venv-dxnn/bin/activate" >> /root/.bashrc
 # COPY 'scripts' and 'getting-start'
 COPY scripts /deepx/scripts
 COPY getting-start /deepx/getting-start
+ENV DX_CONTAINER_MODE=true
 RUN /deepx/getting-start/runtime-clean.sh
 
 ENTRYPOINT [ "/usr/local/bin/dxrtd" ]
