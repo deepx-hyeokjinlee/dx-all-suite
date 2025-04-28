@@ -67,10 +67,15 @@ RUN set -x && \
 WORKDIR /deepx/dx-modelzoo
 ARG FILE_DXMODELZOO=archives/dx-modelzoo.tar.gz
 ADD ${FILE_DXMODELZOO} /deepx/dx-modelzoo/
-RUN set -x && \
-    . /venv-dxnn/bin/activate && \
-    echo "Build dx-modelzoo..." && \
-    pip install -e .
+
+#### Install dx-modelzoo python dependencies ####
+# dx_simulator installation is disabled — enabling it would increase the Docker image size from 2GB to 10GB.
+# Therefore, it is recommended to run `/deepx/dx-modelzoo/setup.sh` after the container starts, rather than during the Docker build stage.
+##############################
+# RUN set -x && \
+#     . /venv-dxnn/bin/activate && \
+#     echo "Install dx-modelzoo..." && \
+#     pip install -e .
 
 WORKDIR /deepx
 

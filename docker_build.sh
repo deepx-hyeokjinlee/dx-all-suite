@@ -1,6 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
 DX_AS_PATH=$(realpath -s "${SCRIPT_DIR}")
+COMPILER_PATH="${DX_AS_PATH}/dx-compiler"
 
 # color env settings
 source ${DX_AS_PATH}/scripts/color_env.sh
@@ -10,12 +11,28 @@ pushd "$SCRIPT_DIR"
 OUTPUT_DIR="$SCRIPT_DIR/archives"
 UBUNTU_VERSION=""
 
-DXCOM_VER="1.38.1"
-# DXSIM_VER=2.14.5
-DXSIM_VER="2.14.5_hotfix-1"         # temporary
+# Properties file path
+VERSION_FILE="$COMPILER_PATH/compiler.properties"
 
-FILE_DXCOM="archives/dx_com_M1A_v${DXCOM_VER}.tar.gz"
-FILE_DXSIM="archives/dx_simulator_v${DXSIM_VER}.tar.gz"
+# read 'COM_VERSION', 'SIM_VERSION' from properties file
+if [[ -f "$VERSION_FILE" ]]; then
+    # load varialbles
+    source "$VERSION_FILE"
+else
+    echo -e "${TAG_ERROR} Version file '$VERSION_FILE' not found."
+    exit 1
+fi
+
+if [ -n "${COM_VERSION}" ] && [ -n "${SIM_VERSION}" ]; then
+    echo -e "${TAG_INFO} dx_com version(${COM_VERSION}) is set."
+    echo -e "${TAG_INFO} dx_simulator version(${SIM_VERSION}) is set."
+else
+    echo -e "${TAG_ERROR} 'dx_com' or 'dx_sim' version is not specified in ${VERSION_FILE}."
+    exit 1
+fi
+
+FILE_DXCOM="archives/dx_com_M1A_v${COM_VERSION}.tar.gz"
+FILE_DXSIM="archives/dx_simulator_v${SIM_VERSION}.tar.gz"
 
 # Function to display help message
 show_help() {
@@ -81,7 +98,7 @@ docker_build_impl()
 docker_build_all() 
 {
     docker_build_dx-compiler
-    docker_build_dx-runtime "modelzoo"
+    docker_build_dx-runtime
     docker_build_dx-modelzoo
 }
 
@@ -92,19 +109,13 @@ docker_build_dx-compiler()
 
 docker_build_dx-runtime()
 {
-    local modelzoo=${2}
-    local docker_compose_args=""
-
-    if [ -n ${modelzoo} ]; then
-        docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
-    fi
-
+    local docker_compose_args="-f docker/docker-compose.yml"
     docker_build_impl "runtime" "${docker_compose_args}"
 }
 
 docker_build_dx-modelzoo()
 {
-    docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
+    local docker_compose_args="-f docker/docker-compose.yml"
     docker_build_impl "modelzoo" "${docker_compose_args}"
 }
 

@@ -88,7 +88,9 @@ ADD ${FILE_DXSTREAM} /deepx/dx-runtime/dx_stream/
 RUN set -x && \
     . /venv-dxnn/bin/activate && \
     echo "install dependancies for dx_stream..." && \
-    sudo ./install.sh && \
+    sudo ./install.sh
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
     echo "Build dx_stream..." && \
     sudo ./build.sh --install
 

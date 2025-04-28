@@ -4,7 +4,7 @@ services:
     image: dx-runtime_intel-hw-acc:${UBUNTU_VERSION}
     build:
       context: ..
-      dockerfile: docker/Dockerfile.intel-hw-acc
+      dockerfile: docker/Dockerfile.intel_gpu_hw_acc
       args:
         UBUNTU_VERSION: ${UBUNTU_VERSION}
     ipc: host                                 # NPU ipc

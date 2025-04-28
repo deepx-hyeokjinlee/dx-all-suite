@@ -10,6 +10,9 @@ pushd "$SCRIPT_DIR"
 OUTPUT_DIR="$SCRIPT_DIR/archives"
 UBUNTU_VERSION=""
 
+DEV_MODE=0
+INTEL_GPU_HW_ACC=0
+
 # Function to display help message
 show_help() {
     echo "Usage: $(basename "$0") OPTIONS(--all | target=<environment_name>) --ubuntu_version=<version> [--help]"
@@ -40,6 +43,10 @@ docker_run_impl()
 {
     local target=$1
     local config_file_args=${2:--f docker/docker-compose.yml}
+
+    if [ ${DEV_MODE} -eq 1 ]; then
+        config_file_args="${config_file_args} -f docker/docker-compose.dev.yml"
+    fi
 
     # Run Docker Container
     export COMPOSE_BAKE=true
@@ -80,7 +87,7 @@ docker_run_impl()
 docker_run_all() 
 {
     docker_run_dx-compiler
-    docker_run_dx-runtime "modelzoo"
+    docker_run_dx-runtime
     docker_run_dx-modelzoo
 }
 
@@ -91,11 +98,10 @@ docker_run_dx-compiler()
 
 docker_run_dx-runtime()
 {
-    local modelzoo=${2}
-    local docker_compose_args=""
+    local docker_compose_args="-f docker/docker-compose.yml"
 
-    if [ -n ${modelzoo} ]; then
-        docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
+    if [ ${INTEL_GPU_HW_ACC} -eq 1 ]; then
+        docker_compose_args="${docker_compose_args} -f docker/docker-compose.intel_gpu_hw_acc.yml"
     fi
 
     docker_run_impl "runtime" "${docker_compose_args}"
@@ -103,7 +109,7 @@ docker_run_dx-runtime()
 
 docker_run_dx-modelzoo()
 {
-    docker_compose_args="-f docker/docker-compose.yml -f docker/docker-compose.modelzoo.yml"
+    local docker_compose_args="-f docker/docker-compose.yml"
     docker_run_impl "modelzoo" "${docker_compose_args}"
 }
 
@@ -155,6 +161,12 @@ for i in "$@"; do
         --help)
             show_help
             exit 0
+            ;;
+        --dev)
+            DEV_MODE=1
+            ;;
+        --intel_gpu_hw_acc)
+            INTEL_GPU_HW_ACC=1
             ;;
         *)
             echo -e "${TAG_ERROR}: Invalid option '$1'"
