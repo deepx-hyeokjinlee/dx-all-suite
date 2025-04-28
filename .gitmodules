@@ -1,26 +1,11 @@
-[submodule "dx-runtime/dx_stream"]
-	path = dx-runtime/dx_stream
-	url = git@github.com:DEEPX-AI/dx_stream.git
+[submodule "dx-runtime"]
+	path = dx-runtime
+	url = git@github.com:DEEPX-AI/dx-runtime.git
 	branch = main
 	ignore = dirty
-[submodule "dx-runtime/dx_rt"]
-	path = dx-runtime/dx_rt
-	url = git@github.com:DEEPX-AI/dx_rt.git
-	branch = main
-	ignore = dirty
-[submodule "dx-runtime/dx_rt_npu_linux_driver"]
-	path = dx-runtime/dx_rt_npu_linux_driver
-	url = git@github.com:DEEPX-AI/dx_rt_npu_linux_driver.git
-	branch = main
-	ignore = dirty
-[submodule "dx-runtime/dx_app"]
-	path = dx-runtime/dx_app
-	url = git@github.com:DEEPX-AI/dx_app.git
-	branch = main
-	ignore = dirty
-[submodule "dx-runtime/dx_fw"]
-	path = dx-runtime/dx_fw
-	url = git@github.com:DEEPX-AI/dx_fw.git
+[submodule "dx-compiler"]
+	path = dx-compiler
+	url = git@github.com:DEEPX-AI/dx-compiler.git
 	branch = main
 	ignore = dirty
 [submodule "dx-modelzoo"]
@@ -28,3 +13,4 @@
 	url = https://gh.deepx.ai/deepx/deepx_open_modelzoo.git
 	branch = dev
 	ignore = dirty
+
