@@ -10,7 +10,7 @@ DX-ALL is a tool for creating an environment to validate and utilize DEEPX devic
 ### Clone main repository
 
 ```
-$ git clone --recurse-submodules git@gh.deepx.ai:deepx/dxnn-sdk.git
+$ git clone --recurse-submodules git@github.com:DEEPX-AI/dx-all-suite.git
 ```
 
 ### (Optional) Initializing and updating submodule in an already cloned repository
