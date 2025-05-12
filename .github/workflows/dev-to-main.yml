@@ -1,0 +1,76 @@
+name: dev-to-main
+run-name: ${{github.triggering_actor}} - Rebase dev(${{github.event.inputs.target_commit}}) → main
+
+on:
+    workflow_dispatch:
+        inputs:
+            target_commit:
+                description: 'Target commit to rebase dev to main'
+                required: true
+            push_force:
+              type: boolean
+              description: "Should commit rebased by force?"
+              default: false
+
+permissions: write-all
+
+jobs:
+    check:
+      name: check
+      runs-on: self-hosted
+      if: github.repository == 'deepx/dx-all-suite'
+      timeout-minutes: 20
+      steps:
+        - name: clean
+          run: |
+            sudo rm -rf ${{ github.workspace }}
+            mkdir -p ${{ github.workspace }}
+        - name: checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+            token: ${{ secrets.GH_DCI_TOKEN }}
+            ref: main
+
+        - name: Check branch & head
+          run: git branch -avv
+
+        - name: Check commit exists on dev
+          run: |
+            BRANCH_LIST=$(git branch -r --contains ${{github.event.inputs.target_commit}})
+            echo "Existing branches : ${BRANCH_LIST}"
+            if echo "${BRANCH_LIST}" | grep -q dev; then
+              echo "COMMIT_EXISTS=true" >> $GITHUB_ENV
+            else
+              echo "COMMIT_EXISTS=false" >> $GITHUB_ENV
+            fi
+        - name: Stop
+          if: env.COMMIT_EXISTS == 'false'
+          uses: actions/github-script@v6
+          with:
+            script: core.setFailed("${{github.event.inputs.target_commit}} does not exists on dev")
+
+    rebase:
+        name: rebase
+        needs: check
+        if: github.repository == 'deepx/dx_stream' && needs.check.result == 'success'
+        runs-on: self-hosted
+        timeout-minutes: 20
+        steps:
+          - name: Rebase target commit to main
+            run: git rebase ${{ github.event.inputs.target_commit }}
+
+          - name: Push main
+            if: ${{ github.event.inputs.push_force == 'false' }}
+            uses: ad-m/github-push-action@master
+            with:
+              github_token: ${{ secrets.GH_DCI_TOKEN }}
+              branch: main
+
+          - name: Push main forceably
+            if: ${{ github.event.inputs.push_force == 'true' }}
+            uses: ad-m/github-push-action@master
+            with:
+              github_token: ${{ secrets.GH_DCI_TOKEN }}
+              branch: main
+              force: true

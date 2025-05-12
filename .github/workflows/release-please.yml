@@ -1,0 +1,93 @@
+name: public-release
+run-name: ${{github.triggering_actor}} - Release ${{github.event.inputs.tag}} → DEEPX-AI/dx-all-suite
+
+on: 
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Git Tag'
+        required: true
+
+permissions: write-all
+
+env:
+  internal_repo: deepx/dx-all-suite
+  internal_repo_path: ./_internal
+  public_repo: DEEPX-AI/dx-all-suite
+  public_repo_path: ./_public
+
+jobs:
+    release:
+        name: release
+        runs-on: self-hosted
+        timeout-minutes: 20
+        steps:
+          - name: Clean
+            run: |
+                sudo rm -rf ${{ github.workspace }}
+                mkdir -p ${{ github.workspace }}
+                
+          - name: Checkout Internal
+            uses: actions/checkout@v4
+            with:
+              repository: ${{ env.internal_repo }}
+              path: ${{ env.internal_repo_path }}
+              token: ${{ secrets.GH_DCI_TOKEN }}
+              ref: ${{ github.event.inputs.tag }}
+              fetch-depth: 0
+              fetch-tags: true
+
+          - name: Checkout Public
+            uses: actions/checkout@v4
+            with:
+              github-server-url: "https://github.com"
+              repository: ${{ env.public_repo }}
+              path: ${{ env.public_repo_path }}
+              token: ${{ secrets.GC_DCI_TOKEN }}
+              fetch-depth: 0
+              fetch-tags: true
+
+          - name: Workspace status
+            run: ls -al
+
+          - name: Clean public repo
+            run: |
+              rm -rf ${{env.public_repo_path}}/*
+              sudo rm -rf ${{env.public_repo_path}}/.github \
+                          ${{env.public_repo_path}}/.gitignore
+          - name: Copy Internal
+            run: |
+              rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
+                    --exclude-from=${{env.exclude_path}}
+            env:
+              exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
+
+    pull_request:
+        name: pull_request
+        needs: release
+        if: needs.release.result == 'success'
+        runs-on: self-hosted
+        timeout-minutes: 20
+        steps:
+          - name: Remove internal
+            run: rm -rf ${{env.internal_repo_path}}
+
+          - name: Change workspace
+            run: |
+              rsync -av ${{ env.public_repo_path }}/ .
+              rm -rf ${{ env.public_repo_path }}
+              
+          - name: Create PR
+            uses: peter-evans/create-pull-request@v6
+            with:
+              title: ${{ github.event.inputs.tag }}
+              body: ${{ github.event.inputs.tag }}
+              delete-branch: true
+              base: main
+              branch: ${{ env.target_branch}}
+              commit-message: ${{ github.event.inputs.tag }}
+              committer: GitHub <noreply@github.com>
+              author: "DX-CI <dci@deepx.ai>"
+              token: ${{ secrets.GC_DCI_TOKEN }}
+            env:
+              target_branch: 'release-${{ github.event.inputs.tag }}'
