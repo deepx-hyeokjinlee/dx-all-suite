@@ -41,11 +41,14 @@ git_archive() {
         (cd "$base_path" && git archive --format=tar.gz --output="$archive_file" $(git symbolic-ref --short HEAD || git rev-parse HEAD))
         if [[ $? -eq 0 ]]; then
             echo -e "${TAG_SUCC} Archive created successfully: $archive_file"
+            return 0
         else
             echo -e "${TAG_WARN} Failed to create archive for: $dir_name"
+            return 2
         fi
     else
         echo -e "${TAG_WARN} No .git directory found in: $dir_name"
+        return 1
     fi
 }
 
@@ -61,6 +64,10 @@ git_archive_from_subdirs() {
 
         if [[ " ${target_subdirs[@]} " =~ " ${dir_name} " ]]; then
             git_archive "${subdir}"
+            if [ $? -ne 0 ]; then
+                echo -e "${TAG_ERROR} Archiving $subdir failed!"
+                exit $?
+            fi
         else
             echo -e "${TAG_INFO} Directory not included in target list, skipping: $dir_name"
             continue
@@ -79,6 +86,10 @@ archive_modelzoo() {
     DXRT_TARGET_DIRS=("dx_rt")
     git_archive_from_subdirs "${DX_AS_PATH}/dx-runtime" "${DXRT_TARGET_DIRS[@]}"
     git_archive "${DX_AS_PATH}/dx-modelzoo"
+    if [ $? -ne 0 ]; then
+        echo -e "${TAG_ERROR} Archiving dx-modelzoo failed!"
+        exit 1
+    fi
 }
 
 main() {
