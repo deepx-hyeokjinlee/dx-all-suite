@@ -11,6 +11,6 @@
 [submodule "dx-modelzoo"]
 	path = dx-modelzoo
 	url = git@github.com:DEEPX-AI/dx-modelzoo.git
-	branch = dev
+	branch = main
 	ignore = dirty
 
