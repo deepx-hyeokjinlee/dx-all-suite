@@ -1,43 +1,80 @@
-# DXNN® - DEEPX NPU 소프트웨어 (SDK) Getting-Start
+# Getting-Start
 
-## 📑 목차 (Index)
+## Overall
 
-### 📦 사전 준비
-- [DX-AS (DEEPX All Suite) 설치](#📦-dx-as-deepx-all-suite-설치)
+**🔄 Full Execution Order**
 
-### 🧩 DX-Compiler
-- [1. compiler-1_download_onnx.sh](#📁-1-compiler-1_download_onnxsh)
-- [2. compiler-2_setup_dataset.sh](#📁-2-compiler-2_setup_datasetsh)
-- [3. compiler-3_setup_output_path.sh](#📁-3-compiler-3_setup_output_pathsh)
-- [4. compiler-4_model_compile.sh](#📁-4-compiler-4_model_compilesh)
-- [5. compiler-5_setup_simulator_deps.sh](#📁-5-compiler-5_setup_simulator_depssh)
-- [6. compiler-6_run_examples_using_simulator.sh](#📁-6-compiler-6_run_examples_using_simulatorsh)
+```bash
+# Compiler Steps
+bash compiler-1_download_onnx.sh
+bash compiler-2_setup_dataset.sh
+bash compiler-3_setup_output_path.sh
+bash compiler-4_model_compile.sh
+bash compiler-5_setup_simulator_deps.sh
+bash compiler-6_run_examples_using_simulator.sh
 
-### 🧩 DX-Runtime
-- [1. runtime-1_setup_input_path.sh](#📁-1-runtime-1_setup_input_pathsh)
-- [2. runtime-2_setup_assets.sh](#📁-2-runtime-2_setup_assetssh)
-- [3. runtime-3_run_example_using_dxrt.sh](#📁-3-runtime-3_run_example_using_dxrtsh)
+# Runtime Steps
+bash runtime-1_setup_input_path.sh
+bash runtime-2_setup_assets.sh
+bash runtime-3_run_example_using_dxrt.sh
+```
+
+
+**📁 폴더 구조 예시 (실행 이후)**
+
+```
+getting-start/ 
+├── calibration_dataset
+├── dxnn                         # ← Model output symbolic link created by dx-compiler 
+├── forked_dx_app_example        # ← Example execution target (forked) 
+│   ├── bin
+│   ├── example
+│   │   ├── run_classifier
+│   │   └── run_detector
+│   └── sample
+│       └── ILSVRC2012
+├── forked_dx_simulator_example  # ← Example execution target (forked) 
+│   └── examples
+│       └── images
+└── modelzoo
+    ├── json
+    └── onnx
+```
+
+## Preparation
+
+### 📦 DX-AS (DEEPX All Suite) 설치
+
+[https://github.com/DEEPX-AI/dx-all-suite](https://github.com/DEEPX-AI/dx-all-suite)를 참고하여 `DXNN® - DEEPX NPU 소프트웨어 (SDK)`를 로컬 환경 또는 도커 컨테이너 환경에 설치합니다.
+
+1. [Local 환경에 직접 설치](installation.md#local-installation)
+2. [Docker 이미지 빌드 및 컨테이너 실행 환경 구축](installation.md#installation-using-docker)
 
 ---
 
-# Preparation
-
-## 📦 DX-AS (DEEPX All Suite) 설치
-
-`https://github.com/DEEX-AI/dx-all-suite/README.md`를 참고하여 `DXNN® - DEEPX NPU 소프트웨어 (SDK)`를 로컬 환경 또는 도커 컨테이너 환경에 설치합니다.
-
-1. [Local 환경에 직접 설치](README.md#local-installation)
-2. [Docker 이미지 빌드 및 컨테이너 실행 환경 구축](README.md#installation-using-docker)
-
----
-
-# 🧩 DX-Compiler: AI Model Compile Scripts Guide
+## 🧩 DX-Compiler: AI Model Compilation Scripts Guide
 
 이 문서는 `compiler-1_download_onnx.sh` ~ `compiler-6_run_examples_using_simulator.sh` 까지 각 스크립트의 역할과 실행 순서를 설명합니다.
 
+**🔄 실행 순서**
+
+```bash
+./getting-start/compiler-1_download_onnx.sh
+./getting-start/compiler-2_setup_dataset.sh
+./getting-start/compiler-3_setup_output_path.sh
+./getting-start/compiler-4_model_compile.sh
+./getting-start/compiler-5_setup_simulator_deps.sh
+./getting-start/compiler-6_run_examples_using_simulator.sh
+```
+
+**💡 Tip**
+
+- `.dxnn` 파일은 `dx_com`으로 생성된 최종 실행 대상이며, 시뮬레이터는 이를 기반으로 추론을 수행합니다.
+- 각 스크립트는 독립적으로 실행할 수 있지만, 위 순서를 지켜야 전체 프로세스가 정상 동작합니다.
+
 ---
 
-## 📁 1. compiler-1_download_onnx.sh
+### 📁 1. compiler-1_download_onnx.sh
 
 모델 파일(.onnx, .json)을 다운로드 받아 설정된 workspace로 연결합니다.
 
@@ -47,7 +84,7 @@
   - `YOLOV5S-1`, `YOLOV5S_Face-1`, `MobileNetV2-1` 모델을 기준으로 동작합니다.
   - `--force` 옵션으로 기존 파일을 덮어쓸 수 있습니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `show_help([type], [message])`
   - 잘못된 옵션 입력 시 도움말 메시지를 출력하고 종료합니다.
@@ -63,7 +100,7 @@
 
 ---
 
-## 📁 2. compiler-2_setup_calribration_dataset.sh
+### 📁 2. compiler-2_setup_calribration_dataset.sh
 
 Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어씌웁니다.
 
@@ -73,7 +110,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `modelzoo/json/*.json` 내 `dataset_path` 항목을 `./calibration_dataset` 으로 강제 변경(hijack)합니다.
   - `dx_com` 내부에 포함된 샘플 calibration dataset을 사용하도록 구성되어 있습니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `make_symlink_calribration_dataset()`
   - `dx_com/calibration_dataset` → `./calibration_dataset` 심볼릭 링크 생성.
@@ -90,7 +127,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 
 ---
 
-## 📁 3. compiler-3_setup_output_path.sh
+### 📁 3. compiler-3_setup_output_path.sh
 
 모델 컴파일 결과물 경로(`./dxnn`)를 설정하고 심볼릭 링크를 생성합니다.
 
@@ -99,7 +136,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `./dxnn` 경로에 심볼릭 링크를 생성하여 결과물 저장 경로를 `workspace/dxnn` 으로 지정합니다.
   - Docker 컨테이너 환경과 호스트 환경을 모두 지원하며 자동으로 감지합니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `setup_compiled_model_path()`
   - 컨테이너 환경인지 검사 후 결과물 위치 결정:
@@ -110,7 +147,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 
 ---
 
-## 📁 4. compiler-4_model_compile.sh
+### 📁 4. compiler-4_model_compile.sh
 
 `.onnx` 모델을 `.dxnn` 포맷으로 컴파일합니다.
 
@@ -119,7 +156,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `dx_com` 툴을 이용해 `.onnx` 및 `.json` 파일을 `.dxnn` 포맷으로 변환합니다.
   - 변환된 `.dxnn` 파일은 `./dxnn/` 디렉토리에 저장됩니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `compile(model_name)`
   - `dx_com` 실행하여 `.onnx + .json → .dxnn` 으로 변환.
@@ -131,7 +168,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 
 ---
 
-## 📁 5. compiler-5_setup_simulator_deps.sh
+### 📁 5. compiler-5_setup_simulator_deps.sh
 
 시뮬레이터 실행에 필요한 의존성 패키지를 설치합니다.
 
@@ -140,7 +177,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `dx_simulator/scripts/install.sh` 를 실행하여 python venv 및 필요 패키지를 설치합니다.
   - 최초 1회만 실행하면 됩니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `main()`
   - `dx_simulator/scripts/install.sh` 실행.
@@ -148,7 +185,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 
 ---
 
-## 📁 6. compiler-6_run_examples_using_simulator.sh
+### 📁 6. compiler-6_run_examples_using_simulator.sh
 
 `.dxnn` 모델을 이용해 시뮬레이터 예제를 실행합니다. 코드 자동 수정(hijack) 및 결과 출력 포함.
 
@@ -158,7 +195,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `.dxnn` 경로를 자동으로 대체(hijack)하여 사용자 컴파일 결과를 사용하도록 수정합니다.
   - `YOLOV5S`, `YOLOV5S_Face`, `MobileNetV2` 예제를 실행하고 결과를 확인합니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `fork_examples()`
   - `dx_simulator/examples` 디렉토리 내 예제들을 `forked_dx_simulator_example`로 복사.
@@ -185,32 +222,27 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 
 ---
 
-## 🔄 실행 순서
-
-```bash
-./getting-start/compiler-1_download_onnx.sh
-./getting-start/compiler-2_setup_dataset.sh
-./getting-start/compiler-3_setup_output_path.sh
-./getting-start/compiler-4_model_compile.sh
-./getting-start/compiler-5_setup_simulator_deps.sh
-./getting-start/compiler-6_run_examples_using_simulator.sh
-```
----
-
-## 💡 Tip
-
-- `.dxnn` 파일은 `dx_com`으로 생성된 최종 실행 대상이며, 시뮬레이터는 이를 기반으로 추론을 수행합니다.
-- 각 스크립트는 독립적으로 실행할 수 있지만, 위 순서를 지켜야 전체 프로세스가 정상 동작합니다.
-
----
-
-# 🧩 DX-Runtime: Application Execution Scripts Guide
+## 🧩 DX-Runtime: Application Execution Scripts Guide
 
 이 문서는 `runtime-1_setup_input_path.sh` ~ `runtime-3_run_example_using_dxrt.sh` 스크립트의 역할과 실행 흐름을 설명합니다.  
 `dx-compiler` 에서 `.dxnn` 모델을 생성한 후, 이를 실제 런타임 환경에서 실행하기 위한 예제 기반 가이드입니다.
+
+**🔄 Runtime 실행 순서**
+
+```bash
+bash runtime-1_setup_input_path.sh
+bash runtime-2_setup_assets.sh
+bash runtime-3_run_example_using_dxrt.sh
+```
+
+**💡 Tip**
+
+- `DXNN®` 모델이 `.dxnn` 형태로 정상 생성된 이후에 `runtime-*` 스크립트를 실행하세요.
+- `fim` 툴은 이미지 결과 확인용 CLI 도구로, 자동 설치 루틴이 포함되어 있습니다.
+- 예제 실행 전 `dx_app/setup.sh`을 통해 필요한 모델/샘플 데이터를 반드시 준비해야 합니다.
 ---
 
-## 📁 1. runtime-1_setup_input_path.sh
+### 📁 1. runtime-1_setup_input_path.sh
 
 컴파일된 `.dxnn` 모델 경로(`./dxnn`)를 런타임 실행을 위한 위치에 연결합니다.
 
@@ -219,7 +251,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `./dxnn` 심볼릭 링크를 생성해 `workspace/dxnn`을 가리키도록 설정합니다.
   - 호스트와 Docker 컨테이너 환경 모두 자동 감지 및 지원합니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `setup_compiled_model_path()`
   - 컨테이너 여부를 감지해 경로를 자동 설정.
@@ -228,7 +260,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `./dxnn` → 해당 workspace 경로로 연결 (broken symlink도 복구 처리 포함)
 ---
 
-## 📁 2. runtime-2_setup_assets.sh
+### 📁 2. runtime-2_setup_assets.sh
 
 실행 예제를 위한 설정 파일 및 모델 리소스를 준비합니다.
 
@@ -237,14 +269,14 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `dx_app` 및 `dx_stream`의 `setup.sh` 를 호출하여 예제 실행에 필요한 리소스를 다운로드/복사합니다.
   - 자동으로 필요한 모델, 설정파일, 샘플 이미지 등을 준비합니다.
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `setup_assets(target_path)`
   - 각 모듈 (`dx_app`, `dx_stream`)의 `setup.sh`를 실행.
   - 내부적으로 샘플 이미지, JSON 설정, 모델 등을 복사하거나 링크.
 ---
 
-## 📁 3. runtime-3_run_example_using_dxrt.sh
+### 📁 3. runtime-3_run_example_using_dxrt.sh
 
 `dx_app` 예제를 기반으로 `.dxnn` 모델을 실행하고 결과를 확인합니다.
 
@@ -255,7 +287,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - `run_detector`, `run_classifier` 바이너리 실행
   - 이미지 결과(fim) 또는 로그 출력 확인
 
-### 📌 주요 함수
+#### 📌 주요 함수
 
 - `fork_examples()`
   - `dx_app/bin` 실행 바이너리 및 `example/*`, `sample/*` 리소스 전체 복사
@@ -272,61 +304,5 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 
 - `main()`
   - YOLOV5S_Face, YOLOV5S, MobileNetV2 모델 각각에 대해 fork → hijack → run 수행
----
-
-## 🔄 Runtime 실행 순서
-
-```bash
-bash runtime-1_setup_input_path.sh
-bash runtime-2_setup_assets.sh
-bash runtime-3_run_example_using_dxrt.sh
-```
 
 ---
-
-## 💡 Tip
-
-- `DXNN®` 모델이 `.dxnn` 형태로 정상 생성된 이후에 `runtime-*` 스크립트를 실행하세요.
-- `fim` 툴은 이미지 결과 확인용 CLI 도구로, 자동 설치 루틴이 포함되어 있습니다.
-- 예제 실행 전 `dx_app/setup.sh`을 통해 필요한 모델/샘플 데이터를 반드시 준비해야 합니다.
----
-
-## 🔄 Full Execution Order
-
-```bash
-# Compiler Steps
-bash compiler-1_download_onnx.sh
-bash compiler-2_setup_dataset.sh
-bash compiler-3_setup_output_path.sh
-bash compiler-4_model_compile.sh
-bash compiler-5_setup_simulator_deps.sh
-bash compiler-6_run_examples_using_simulator.sh
-
-# Runtime Steps
-bash runtime-1_setup_input_path.sh
-bash runtime-2_setup_assets.sh
-bash runtime-3_run_example_using_dxrt.sh
-```
----
-
-## 📁 폴더 구조 예시 (실행 이후)
-
-```
-getting-start/ 
-├── calibration_dataset
-├── dxnn                         # ← Model output symbolic link created by dx-compiler 
-├── forked_dx_app_example        # ← Example execution target (forked) 
-│   ├── bin
-│   ├── example
-│   │   ├── run_classifier
-│   │   └── run_detector
-│   └── sample
-│       └── ILSVRC2012
-├── forked_dx_simulator_example  # ← Example execution target (forked) 
-│   └── examples
-│       └── images
-└── modelzoo
-    ├── json
-    └── onnx
-```
-

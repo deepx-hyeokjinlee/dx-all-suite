@@ -3,6 +3,7 @@ archives/
 workspace/
 *.pdf
 /docs/docs
+/docs/mkdocs.yml
 dx-compiler/dx_com
 dx-compiler/dx_simulator
 dx-runtime/workspace/
