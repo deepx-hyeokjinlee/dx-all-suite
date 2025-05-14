@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2025-05-14
+
+### 🐛 Bug Fixes
+
+- Update document and support mkdocs
+
+### ⚙️ Miscellaneous Tasks
+
+- Remove unnecessary install in draft release action
+
 ## [0.2.0] - 2025-05-14
 
 ### 🚀 Features
