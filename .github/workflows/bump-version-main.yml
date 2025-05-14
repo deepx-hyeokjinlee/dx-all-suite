@@ -1,10 +1,10 @@
 name: bump-version
-run-name: "${{github.triggering_actor}} - Bump version dev(${{github.sha}})"
+run-name: "${{github.triggering_actor}} - Bump version main(${{github.sha}})"
 
 on:
   push:
     branches:
-      - dev
+      - main
 
 env:
   USER_EMAIL: dci@deepx.ai
@@ -17,9 +17,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  bump-dev-version:
+  bump-main-version:
     runs-on: self-hosted
-    if: github.repository == 'deepx/dx-all-suite' && github.ref == 'refs/heads/dev' && !contains(github.event.head_commit.message, 'ci-skip') && !contains(github.event.head_commit.message, 'bump-skip') && !contains(github.event.head_commit.message, 'Bump version')
+    if: github.repository == 'deepx/dx-all-suite' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'ci-skip') && !contains(github.event.head_commit.message, 'bump-skip') && !contains(github.event.head_commit.message, 'Bump version')
     timeout-minutes: 20
     steps:
       - name: Clean
@@ -52,7 +52,7 @@ jobs:
         uses: ietf-tools/semver-action@v1
         with:
           token: ${{ github.token }}
-          branch: dev
+          branch: main
           majorList: break
           minorList: feat
           patchList: fix, perf, refactor
