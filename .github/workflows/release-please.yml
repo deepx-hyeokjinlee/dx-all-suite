@@ -1,12 +1,17 @@
 name: public-release
-run-name: ${{github.triggering_actor}} - Release ${{github.event.inputs.tag}} → DEEPX-AI/dx-all-suite
+run-name: ${{github.triggering_actor}} - Release ${{github.event.inputs.target_commit}} → DEEPX-AI/dx-all-suite
 
 on: 
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'Git Tag'
+      target_commit:
+        description: 'Target commit from main to release'
         required: true
+      manual_release:
+        type: boolean
+        description: 'Manual release'
+        required: false
+        default: true
 
 permissions: write-all
 
@@ -20,6 +25,8 @@ jobs:
     release:
         name: release
         runs-on: self-hosted
+        outputs:
+          release_version: ${{ steps.get_version.outputs.RELEASE_VERSION }}
         timeout-minutes: 20
         steps:
           - name: Clean
@@ -33,9 +40,14 @@ jobs:
               repository: ${{ env.internal_repo }}
               path: ${{ env.internal_repo_path }}
               token: ${{ secrets.GH_DCI_TOKEN }}
-              ref: ${{ github.event.inputs.tag }}
+              ref: main
               fetch-depth: 0
               fetch-tags: true
+
+          - name: Rebase target commit to main
+            run: |
+              cd ${{ env.internal_repo_path }}
+              git rebase ${{ github.event.inputs.target_commit }}
 
           - name: Checkout Public
             uses: actions/checkout@v4
@@ -46,15 +58,29 @@ jobs:
               token: ${{ secrets.GC_DCI_TOKEN }}
               fetch-depth: 0
               fetch-tags: true
-
+          
           - name: Workspace status
             run: ls -al
+
+          - name: Get release tag
+            id: get_version
+            run: |
+              cd ${{ env.internal_repo_path }}
+              release_tag=$(git describe --tags --abbrev=0)
+              short_commit=$(echo "${{ github.event.inputs.target_commit }}" | cut -c1-7)
+              echo "short_commit=$short_commit" >> $GITHUB_ENV
+              RELEASE_VERSION="$release_tag+${{env.release_method}}.$short_commit"
+              echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
+              echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+            env:
+              release_method: ${{ github.event.inputs.manual_release == 'true' && 'manual.sha' || 'auto.sha' }}
 
           - name: Clean public repo
             run: |
               rm -rf ${{env.public_repo_path}}/*
               sudo rm -rf ${{env.public_repo_path}}/.github \
                           ${{env.public_repo_path}}/.gitignore
+
           - name: Copy Internal
             run: |
               rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
@@ -78,16 +104,22 @@ jobs:
               rm -rf ${{ env.public_repo_path }}
               
           - name: Create PR
-            uses: peter-evans/create-pull-request@v6
+            uses: peter-evans/create-pull-request@v7
+            id: cpr
             with:
-              title: ${{ github.event.inputs.tag }}
-              body: ${{ github.event.inputs.tag }}
+              title: ${{ needs.release.outputs.release_version }}
+              body: ${{ needs.release.outputs.release_version }}
               delete-branch: true
               base: main
-              branch: ${{ env.target_branch}}
-              commit-message: ${{ github.event.inputs.tag }}
+              branch: release-${{ needs.release.outputs.release_version }}
+              commit-message: ${{ needs.release.outputs.release_version }}
               committer: GitHub <noreply@github.com>
               author: "DX-CI <dci@deepx.ai>"
               token: ${{ secrets.GC_DCI_TOKEN }}
+
+          - name: Merge PR
+            if: ${{ github.event.inputs.manual_release == 'false' }}
+            run: |
+              gh pr merge --rebase --admin --delete-branch "${{ steps.cpr.outputs.pull-request-number }}"
             env:
-              target_branch: 'release-${{ github.event.inputs.tag }}'
+              GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}

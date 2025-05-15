@@ -31,29 +31,30 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Install GitHub CLI
+      run: |
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 23F3D4EA75716059
+        sudo apt-add-repository https://cli.github.com/packages
+        sudo apt update
+        sudo apt install gh
+
     - name: Get version
       run: |
         VERSION=$(grep 'current_version =' .bumpversion.cfg | cut -d ' ' -f 3)
         echo "CURRENT_VERSION=$VERSION" >> $GITHUB_ENV
 
-    - name: Get latest release tags
+    - name: Get latest release tag
       run: |
-        RELEASES=$(curl -s -H "Authorization: token ${{ secrets.GH_DCI_TOKEN }}" \
-          "https://gh.deepx.ai/api/v3/repos/${{ github.repository }}/releases")
-        
-        RELEASE_TAGS=$(echo "$RELEASES" | grep -o '"tag_name": "[^"]*"' | cut -d '"' -f 4)
-        
-        LATEST_TAG=$(echo "$RELEASE_TAGS" | head -n 1)
-        
-        if [[ "v$CURRENT_VERSION" == "$LATEST_TAG" ]]; then
-          # Get the second latest tag
-          RELEASE_TAG=$(echo "$RELEASE_TAGS" | head -n 2 | tail -n 1)
-        else
-          RELEASE_TAG=$LATEST_TAG
+        RELEASE_TAG=$(gh release list --limit 1 | awk '{print $3}')
+
+        if [[ "v$CURRENT_VERSION" == "$RELEASE_TAG" ]]; then
+          RELEASE_TAG=$(gh release list --limit 2 | awk 'NR==2 {print $3}')
         fi
-  
         echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
-        echo "The latest tag is $RELEASE_TAG"
+
+    - name: Print latest tag
+      run: |
+        echo "The latest tag is ${{ env.RELEASE_TAG }}"
 
     - name: Set git config
       run: |
