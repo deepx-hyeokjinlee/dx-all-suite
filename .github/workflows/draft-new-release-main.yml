@@ -2,9 +2,7 @@ name: draft-new-release
 run-name: "${{github.triggering_actor}} - Draft a new release (${{github.sha}})"
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 env:
   USER_EMAIL: dci@deepx.ai
@@ -20,7 +18,7 @@ concurrency:
 jobs:
   generate-release:
     runs-on: self-hosted
-    if: github.repository == 'deepx/dx-all-suite' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'ci-skip') && !contains(github.event.head_commit.message, 'bump-skip') && !contains(github.event.head_commit.message, 'hotfix')
+    if: github.repository == 'deepx/dx-all-suite'
     steps:
     - name: Clean
       run: |

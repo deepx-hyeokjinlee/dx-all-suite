@@ -17,7 +17,7 @@ jobs:
   check_on_push_to_main:
     name: Check if push to main
     runs-on: self-hosted
-    if: github.repository == 'deepx/dx-all-suite' && startsWith(github.ref, 'refs/heads/main')
+    if: github.repository == 'deepx/dx-all-suite' && startsWith(github.ref, 'refs/heads/main') && !contains(github.event.head_commit.message, 'Bump version')
     steps:
       - name: Set merged closed flag
         id: set
@@ -65,7 +65,7 @@ jobs:
           ref: main
 
       - name: Wait for bump-version to complete
-        run: sleep 60s
+        run: sleep 30s
         shell: bash
 
       - name: Check if bump-version done alright
