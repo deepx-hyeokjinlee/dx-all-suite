@@ -43,6 +43,7 @@ jobs:
               ref: main
               fetch-depth: 0
               fetch-tags: true
+              submodules: true
 
           - name: Rebase target commit to main
             run: |
@@ -58,6 +59,7 @@ jobs:
               token: ${{ secrets.GC_DCI_TOKEN }}
               fetch-depth: 0
               fetch-tags: true
+              submodules: true
           
           - name: Workspace status
             run: ls -al
@@ -85,6 +87,15 @@ jobs:
             run: |
               rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
                     --exclude-from=${{env.exclude_path}}
+
+              cd ${{ env.public_repo_path }}
+              git submodule update --init --force
+
+              cd ..
+              rsync -av ${{env.internal_repo_path}}/.git/modules/ ${{env.public_repo_path}}/.git/modules/
+
+              cd ${{ env.public_repo_path }}
+              git status
             env:
               exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
 
