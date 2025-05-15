@@ -1,8 +1,10 @@
 name: bump-version
-run-name: "${{github.triggering_actor}} - Bump version dev(${{github.sha}})"
+run-name: "${{github.triggering_actor}} - Bump version(${{github.sha}})"
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 env:
   USER_EMAIL: dci@deepx.ai
