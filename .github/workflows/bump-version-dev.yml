@@ -17,7 +17,7 @@ concurrency:
 jobs:
   bump-dev-version:
     runs-on: self-hosted
-    if: github.repository == 'deepx/deepx_open_modelzoo' && github.ref == 'refs/heads/dev' && !contains(github.event.head_commit.message, 'ci-skip') && !contains(github.event.head_commit.message, 'bump-skip') && !contains(github.event.head_commit.message, 'Bump version')
+    if: github.repository == 'deepx/dx-all-suite' && github.ref == 'refs/heads/dev' && !contains(github.event.head_commit.message, 'ci-skip') && !contains(github.event.head_commit.message, 'bump-skip') && !contains(github.event.head_commit.message, 'Bump version')
     timeout-minutes: 20
     steps:
       - name: Clean
