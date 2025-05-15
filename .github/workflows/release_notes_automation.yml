@@ -2,8 +2,9 @@ name: release_notes_automation
 run-name: "PR #${{ github.event.pull_request.number }} merged and closed - automated writing RELEASE_NOTES.md"
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches:
+      - main
 
 env:
   PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -13,29 +14,25 @@ env:
 permissions: write-all
 
 jobs:
-  check_pr_merged_closed:
-    name: Check if this PR is closed due to merge
+  check_on_push_to_main:
+    name: Check if push to main
     runs-on: self-hosted
-    if: |
-      github.repository == 'deepx/dx-all-suite' && 
-      github.event.pull_request.merged && 
-      github.event.pull_request.base.ref == 'dev'
+    if: github.repository == 'deepx/dx-all-suite' && startsWith(github.ref, 'refs/heads/main')
     steps:
-      - name: init pr_merged variable
+      - name: Set merged closed flag
         id: set
         run: |
-          MERGED_CLOSED="true"
-          echo "MERGED_CLOSED=${MERGED_CLOSED}" >> $GITHUB_OUTPUT
+          echo "ON_PUSH_TO_MAIN=true" >> $GITHUB_OUTPUT
     outputs:
-      MERGED_CLOSED: ${{ steps.set.outputs.MERGED_CLOSED }}
+      ON_PUSH_TO_MAIN: ${{ steps.set.outputs.ON_PUSH_TO_MAIN }}
 
   get_version_before_bump:
     name: Get version before bump
-    needs: check_pr_merged_closed
+    needs: check_on_push_to_main
     runs-on: self-hosted
-    if: needs.check_pr_merged_closed.outputs.MERGED_CLOSED == 'true'
+    if: needs.check_on_push_to_main.outputs.ON_PUSH_TO_MAIN == 'true'
     steps:
-      - name: Checkout dev branch
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_DCI_TOKEN }}
@@ -55,27 +52,27 @@ jobs:
       VERSION_BEFORE_BUMP: ${{ steps.set.outputs.VERSION_BEFORE_BUMP }}
 
   dispatch_bump_version:
-    name: pr merge close to dev dispatch bump-version-dev.yml action
-    needs: check_pr_merged_closed
+    name: on push to main dispatch bump-version.yml action
+    needs: check_on_push_to_main
     runs-on: self-hosted
-    if: needs.check_pr_merged_closed.outputs.MERGED_CLOSED == 'true'
+    if: needs.check_on_push_to_main.outputs.ON_PUSH_TO_MAIN == 'true'
     steps:
-      - name: Trigger bump-version-dev workflow
+      - name: Trigger bump-version workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: "bump-version-dev.yml"
+          workflow: "bump-version.yml"
           token: ${{ secrets.GH_DCI_TOKEN }}
-          ref: dev
+          ref: main
 
-      - name: Wait for bump-version-dev to complete
+      - name: Wait for bump-version to complete
         run: sleep 60s
         shell: bash
 
-      - name: Check if bump-version-dev done alright
+      - name: Check if bump-version done alright
         id: dispatch_action
         run: |
           RUN_INFO=$(curl -s -H "Authorization: token ${{ secrets.GH_DCI_TOKEN }}" \
-            "https://gh.deepx.ai/api/v3/repos/${{ github.repository }}/actions/workflows/bump-version-dev.yml/runs?branch=dev" | jq -r '.workflow_runs | sort_by(.created_at) | reverse | .[0]')
+            "https://gh.deepx.ai/api/v3/repos/${{ github.repository }}/actions/workflows/bump-version.yml/runs?branch=main" | jq -r '.workflow_runs | sort_by(.created_at) | reverse | .[0]')
 
           STATUS=$(echo "$RUN_INFO" | jq -r '.status')
           CONCLUSION=$(echo "$RUN_INFO" | jq -r '.conclusion')
@@ -83,10 +80,10 @@ jobs:
           echo "Final Status: $STATUS (Conclusion: $CONCLUSION)"
 
           if [[ "$CONCLUSION" == "success" ]]; then
-            echo "✅ bump-version-dev completed successfully."
+            echo "✅ bump-version completed successfully."
             echo "BUMP_VERSION_ACTION_DONE=true" >> $GITHUB_OUTPUT
           else
-            echo "❌ bump-version-dev failed."
+            echo "❌ bump-version failed."
             echo "BUMP_VERSION_ACTION_DONE=false" >> $GITHUB_OUTPUT
           fi
     outputs:
@@ -95,8 +92,8 @@ jobs:
   check_release_notes_need_change:
     name: check whether RELEASE_NOTES should be changed
     runs-on: self-hosted
-    needs: check_pr_merged_closed
-    if: github.repository == 'deepx/dx-all-suite' && needs.check_pr_merged_closed.outputs.MERGED_CLOSED == 'true'
+    needs: check_on_push_to_main
+    if: github.repository == 'deepx/dx-all-suite' && needs.check_on_push_to_main.outputs.ON_PUSH_TO_MAIN == 'true'
     steps:
       - name: check if CHANGED, FIXED, ADDED are all empty or None
         id: modified
@@ -203,7 +200,7 @@ jobs:
         dispatch_bump_version,
       ]
     if: |
-      github.repository == 'deepx/dx-all-suite' && needs.check_pr_merged_closed.outputs.MERGED_CLOSED == 'true' &&
+      github.repository == 'deepx/dx-all-suite' && needs.check_on_push_to_main.outputs.ON_PUSH_TO_MAIN == 'true' &&
       needs.check_release_notes_need_change.outputs.RELEASE_NOTES_CHANGE_NEEDED == 'true'  &&
       needs.dispatch_bump_version.outputs.BUMP_VERSION_ACTION_DONE == 'true'
     env:
@@ -211,7 +208,7 @@ jobs:
       RELEASE_NOTES_SECTION: ${{ needs.fetch_release_notes_section.outputs.RELEASE_NOTES_SECTION }}
       VERSION_BEFORE_BUMP: ${{ needs.get_version_before_bump.outputs.VERSION_BEFORE_BUMP }}
     steps:
-      - name: Checkout dev branch
+      - name: Checkout branch
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_DCI_TOKEN }}
@@ -219,22 +216,22 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Get dev version
+      - name: Get current version
         id: set
         run: |
-          echo "Get dev version of PR branch..."
-          DEV_VERSION=$(grep 'current_version =' .bumpversion.cfg | cut -d ' ' -f 3)
-          echo "DEV_VERSION=${DEV_VERSION}"
-          echo "DEV_VERSION=${DEV_VERSION}" >> $GITHUB_OUTPUT
+          echo "Get current version..."
+          CURR_VERSION=$(grep 'current_version =' .bumpversion.cfg | cut -d ' ' -f 3)
+          echo "CURR_VERSION=${CURR_VERSION}"
+          echo "CURR_VERSION=${CURR_VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Compare current version and dev version
+      - name: Compare current version and before bump version
         id: versions
         run: |
-          if [[ "${{ steps.set.outputs.DEV_VERSION }}" != "${{ env.VERSION_BEFORE_BUMP}}" ]]; then
-            echo "VERSION_BEFORE_BUMP and DEV_VERSION are not the same, Bump version occurred."
+          if [[ "${{ steps.set.outputs.CURR_VERSION }}" != "${{ env.VERSION_BEFORE_BUMP}}" ]]; then
+            echo "VERSION_BEFORE_BUMP and CURR_VERSION are not the same, Bump version occurred."
             echo "BUMP_VERSION=true" >> $GITHUB_OUTPUT
           else
-            echo "VERSION_BEFORE_BUMP and DEV_VERSION are the same, Bump version didn't occur."
+            echo "VERSION_BEFORE_BUMP and CURR_VERSION are the same, Bump version didn't occur."
             echo "BUMP_VERSION=false" >> $GITHUB_OUTPUT
           fi
 
@@ -253,7 +250,7 @@ jobs:
           HEADER="# RELEASE_NOTES\n"
 
           # Define new version section
-          NEW_VERSION_HEADER="## v${{ steps.set.outputs.DEV_VERSION }} / $(date +'%Y-%m-%d')"
+          NEW_VERSION_HEADER="## v${{ steps.set.outputs.CURR_VERSION }} / $(date +'%Y-%m-%d')"
           echo "NEW_VERSION_HEADER=${NEW_VERSION_HEADER}"
 
           # Find the first line number where the current body starts
@@ -371,12 +368,12 @@ jobs:
         run: |
           git config user.name "dx-ci"
           git config user.email "dci@deepx.ai"
-          git checkout dev
+          git checkout main
           git add RELEASE_NOTES.md
           git add RELEASE_NOTES_WITH_JIRA_NUM.md
           git commit -m "docs: update RELEASE_NOTES.md"
-          git push origin dev
-          git tag -d v${{ steps.set.outputs.DEV_VERSION }}
-          git tag v${{ steps.set.outputs.DEV_VERSION }}
-          git push origin v${{ steps.set.outputs.DEV_VERSION }} --force
-          echo "✅ RELEASE_NOTES.md Change pushed to dev."
+          git push origin main
+          git tag -d v${{ steps.set.outputs.CURR_VERSION }}
+          git tag v${{ steps.set.outputs.CURR_VERSION }}
+          git push origin v${{ steps.set.outputs.CURR_VERSION }} --force
+          echo "✅ RELEASE_NOTES.md Change pushed to main."
