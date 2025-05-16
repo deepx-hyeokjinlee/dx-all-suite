@@ -1,0 +1,103 @@
+name: dev-to-main
+run-name: ${{github.triggering_actor}} - Rebase dev(${{github.event.inputs.target_commit}}) → main
+
+on:
+    workflow_dispatch:
+        inputs:
+            target_commit:
+                description: "Target commit to rebase dev to main (COMMIT_HASH or TAG or 'latest')"
+                required: true
+            push_force:
+              type: boolean
+              description: "Should commit rebased by force?"
+              default: false
+
+permissions: write-all
+
+jobs:
+    check:
+      name: check
+      runs-on: self-hosted
+      outputs:
+        TARGET_COMMIT: ${{ steps.check_commit.outputs.TARGET_COMMIT }}
+      if: github.repository == 'deepx/dx-all-suite'
+      timeout-minutes: 20
+      steps:
+        - name: clean
+          run: |
+            sudo rm -rf ${{ github.workspace }}
+            mkdir -p ${{ github.workspace }}
+
+        - name: checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+            token: ${{ secrets.GH_DCI_TOKEN }}
+            ref: main
+
+        - name: Check branch & head
+          run: git branch -avv
+
+        - name: Check commit exists on dev
+          id: check_commit
+          run: |
+            if [ "${{ github.event.inputs.target_commit }}" = "latest" ]; then
+              echo "target_commit is 'latest'. Fetching latest commit hash from origin/dev..."
+              git fetch origin dev
+              TARGET_COMMIT=$(git rev-parse origin/dev)
+            else
+              TARGET_COMMIT=${{ github.event.inputs.target_commit }}
+            fi
+
+            echo "Using target commit: $TARGET_COMMIT"
+            echo "TARGET_COMMIT=$TARGET_COMMIT" >> $GITHUB_OUTPUT
+
+            BRANCH_LIST=$(git branch -r --contains "$TARGET_COMMIT")
+            echo "Existing branches : ${BRANCH_LIST}"
+
+            if echo "${BRANCH_LIST}" | grep -q "origin/dev"; then
+              echo "COMMIT_EXISTS=true" >> $GITHUB_ENV
+            else
+              echo "COMMIT_EXISTS=false" >> $GITHUB_ENV
+            fi
+
+        - name: Stop
+          if: env.COMMIT_EXISTS == 'false'
+          uses: actions/github-script@v6
+          with:
+            script: core.setFailed("${{github.event.inputs.target_commit}} does not exists on dev")
+
+    rebase:
+      name: rebase
+      needs: check
+      if: github.repository == 'deepx/dx-all-suite' && needs.check.result == 'success'
+      runs-on: self-hosted
+      timeout-minutes: 20
+      steps:
+        - name: checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+            token: ${{ secrets.GH_DCI_TOKEN }}
+            ref: main
+          
+        - name: Check branch & head
+          run: git branch -avv
+
+        - name: Rebase target commit to main
+          run: git rebase "${{ needs.check.outputs.TARGET_COMMIT }}"
+
+        - name: Push main
+          if: ${{ github.event.inputs.push_force == 'false' }}
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.GH_DCI_TOKEN }}
+            branch: main
+
+        - name: Push main forceably
+          if: ${{ github.event.inputs.push_force == 'true' }}
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.GH_DCI_TOKEN }}
+            branch: main
+            force: true

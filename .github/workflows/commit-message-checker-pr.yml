@@ -1,0 +1,43 @@
+name: convention-checker
+run-name: "${{github.triggering_actor}} - PR #${{ github.event.pull_request.number }} convention checker"
+
+on:
+  pull_request:
+    # synchronize: pr head branch was updated
+    # edited: pr title or body was editied, or base branch of pr was changed.
+    types: [opened, reopened, synchronize, edited]
+  issue_comment:
+    types: [created]
+env:
+    PR_TITLE: ${{ github.event.pull_request.title }}
+    COMMIT_MESSAGE_PATTERN: ${{ vars.COMMIT_MESSAGE_PATTERN }}
+    RELEASE_PATTERN: ${{ vars.RELEASE_PATTERN }}
+
+permissions: read-all
+
+jobs:
+  Commit-Message:
+    runs-on: self-hosted
+    if: github.repository == 'deepx/dx-all-suite' && (github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && contains(github.event.comment.body, 'rerun')))
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Commit message check
+        run: |
+          echo "Fetching PR commits..."
+          PR_COMMITS_URL=${{ github.event.pull_request.commits_url }}
+          echo "Commits URL: $PR_COMMITS_URL"
+          curl -H "Authorization: token ${{ secrets.GH_DCI_TOKEN }}" $PR_COMMITS_URL > commits.json
+          jq -r '.[].commit.message | split("\n"[0])' commits.json | while read commit_message; do
+            echo "Checking commit message: $commit_message"
+            if ! echo "$commit_message" | grep -Eq "${{ env.COMMIT_MESSAGE_PATTERN }}"; then
+              if ! echo "$commit_message" | grep -Eq "${{ env.RELEASE_PATTERN }}"; then
+                echo "Commit message does not match the required format."
+                echo "$commit_message"
+                exit 1
+              fi
+            fi
+          done
+          echo "All commit messages match the required format."
