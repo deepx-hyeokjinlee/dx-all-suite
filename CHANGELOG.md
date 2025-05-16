@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2025-05-16
+
+### 🐛 Bug Fixes
+
+- Submodule not updating in release-please.yml
+
 ## [0.3.0] - 2025-05-15
 
 ### 🚀 Features
