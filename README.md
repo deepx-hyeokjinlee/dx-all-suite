@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# dxnn-test
-=======
 # DXNN® - DEEPX NPU SDK (DX-AS: DEEPX All Suite)
 
 DX-AS (DEEPX All Suite) is an integrated environment of frameworks and tools that enables inference and compilation of AI models using DEEPX devices. Users can build the integrated environment by installing individual tools, but DX-AS maintains optimal compatibility by aligning the versions of the individual tools.
@@ -29,4 +26,4 @@ For detailed guides on running demo applications and templates, refer to the fol
 
 ### Make Docuemtment
 [Link](docs/make_docs.md)
->>>>>>> dx-all-suite-main
+
