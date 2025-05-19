@@ -17,4 +17,5 @@ getting-start/forked*/
 getting-start/modelzoo/
 **/venv-*/
 **/venv-*
-
+*.crt
+!dummy.crt
