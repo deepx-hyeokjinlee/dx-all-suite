@@ -51,6 +51,7 @@ docker_run_impl()
     # Run Docker Container
     export COMPOSE_BAKE=true
     export UBUNTU_VERSION=${UBUNTU_VERSION}
+    DUMMY_XAUTHORITY=""
     if [ ! -n "${XAUTHORITY}" ]; then
         echo -e "${TAG_INFO} XAUTHORITY env is not set. so, try to set automatically."
         DUMMY_XAUTHORITY="/tmp/dummy"
@@ -69,6 +70,15 @@ docker_run_impl()
     ${CMD}
 
     if [ -n "${DUMMY_XAUTHORITY}" ]; then
+        echo -e "${TAG_INFO} Adding xauth into docker container"
+
+        # remove 'localhost' or 'LOCALHOST' in DISPLAY env var
+        if [[ "$DISPLAY" == localhost:* ]]; then
+            export DISPLAY=${DISPLAY#localhost}
+        elif [[ "$DISPLAY" == LOCALHOST:* ]]; then
+            export DISPLAY=${DISPLAY#LOCALHOST}
+        fi
+
         XAUTHORITY=~/.Xauthority
         export XAUTHORITY
         XAUTH=$(xauth list "$DISPLAY")
