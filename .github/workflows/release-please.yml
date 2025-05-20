@@ -22,116 +22,191 @@ env:
   public_repo_path: ./_public
 
 jobs:
-    release:
-        name: release
-        runs-on: self-hosted
-        outputs:
-          release_version: ${{ steps.get_version.outputs.RELEASE_VERSION }}
-        timeout-minutes: 20
-        steps:
-          - name: Clean
-            run: |
-                sudo rm -rf ${{ github.workspace }}
-                mkdir -p ${{ github.workspace }}
-                
-          - name: Checkout Internal
-            uses: actions/checkout@v4
-            with:
-              repository: ${{ env.internal_repo }}
-              path: ${{ env.internal_repo_path }}
-              token: ${{ secrets.GH_DCI_TOKEN }}
-              ref: main
-              fetch-depth: 0
-              fetch-tags: true
-              submodules: false
+  release:
+    name: release
+    runs-on: self-hosted
+    timeout-minutes: 20
+    outputs:
+      has_changes: ${{ steps.dx_runtime_commit.outputs.has_changes }}
+      release_version: ${{ steps.get_version.outputs.release_version }}
+    steps:
+      - name: Clean
+        run: |
+          sudo rm -rf ${{ github.workspace }}
+          mkdir -p ${{ github.workspace }}
 
-          - name: Rebase target commit to main
-            run: |
-              cd ${{ env.internal_repo_path }}
-              git rebase ${{ github.event.inputs.target_commit }}
+      - name: Checkout Internal
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.internal_repo }}
+          path: ${{ env.internal_repo_path }}
+          token: ${{ secrets.GH_DCI_TOKEN }}
+          ref: main
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: false
 
-          - name: Checkout Public
-            uses: actions/checkout@v4
-            with:
-              github-server-url: "https://github.com"
-              repository: ${{ env.public_repo }}
-              path: ${{ env.public_repo_path }}
-              token: ${{ secrets.GC_DCI_TOKEN }}
-              fetch-depth: 0
-              fetch-tags: true
-              submodules: true
-          
-          - name: Workspace status
-            run: ls -al
+      - name: Rebase target commit to main
+        run: |
+          cd ${{ env.internal_repo_path }}
+          git rebase ${{ github.event.inputs.target_commit }}
 
-          - name: Get release tag
-            id: get_version
-            run: |
-              cd ${{ env.internal_repo_path }}
-              release_tag=$(git describe --tags --abbrev=0)
-              short_commit=$(echo "${{ github.event.inputs.target_commit }}" | cut -c1-7)
-              echo "short_commit=$short_commit" >> $GITHUB_ENV
-              RELEASE_VERSION="$release_tag+${{env.release_method}}.$short_commit"
-              echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
-              echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_OUTPUT
-            env:
-              release_method: ${{ github.event.inputs.manual_release == 'true' && 'manual.sha' || 'auto.sha' }}
+      - name: Checkout Public
+        uses: actions/checkout@v4
+        with:
+          github-server-url: "https://github.com"
+          repository: ${{ env.public_repo }}
+          path: ${{ env.public_repo_path }}
+          token: ${{ secrets.GC_DCI_TOKEN }}
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: true
 
-          - name: Clean public repo
-            run: |
-              rm -rf ${{env.public_repo_path}}/*
-              sudo rm -rf ${{env.public_repo_path}}/.github \
-                          ${{env.public_repo_path}}/.gitignore
+      - name: Workspace status
+        run: ls -al
 
-          - name: Copy Internal
-            run: |
-              rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
-                    --exclude-from=${{env.exclude_path}}
-              cd ${{ env.public_repo_path }}
-              git status
-            env:
-              exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
+      - name: Get release tag
+        id: get_version
+        run: |
+          cd ${{ env.internal_repo_path }}
+          release_tag=$(git describe --tags --abbrev=0)
+          short_commit=$(echo "${{ github.event.inputs.target_commit }}" | cut -c1-7)
+          echo "short_commit=$short_commit" >> $GITHUB_ENV
+          RELEASE_VERSION="$release_tag+${{env.release_method}}.$short_commit"
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
+          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+        env:
+          release_method: ${{ github.event.inputs.manual_release == 'true' && 'manual.sha' || 'auto.sha' }}
 
-          - name: Update public submodule to latest
-            run: |
-              cd ${{ env.public_repo_path }}
-              git submodule update --init --force --remote
-              git status
-            env:
-              exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
+      - name: Clean public repo
+        run: |
+          rm -rf ${{env.public_repo_path}}/*
+          sudo rm -rf ${{env.public_repo_path}}/.github \
+                      ${{env.public_repo_path}}/.gitignore
 
-    pull_request:
-        name: pull_request
-        needs: release
-        if: needs.release.result == 'success'
-        runs-on: self-hosted
-        timeout-minutes: 20
-        steps:
-          - name: Remove internal
-            run: rm -rf ${{env.internal_repo_path}}
+      - name: Copy Internal
+        run: |
+          rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
+                --exclude-from=${{env.exclude_path}}
+          cd ${{ env.public_repo_path }}
+          git status
+        env:
+          exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
 
-          - name: Change workspace
-            run: |
-              rsync -av ${{ env.public_repo_path }}/ .
-              rm -rf ${{ env.public_repo_path }}
-              
-          - name: Create PR
-            uses: peter-evans/create-pull-request@v7
-            id: cpr
-            with:
-              title: ${{ needs.release.outputs.release_version }}
-              body: ${{ needs.release.outputs.release_version }}
-              delete-branch: true
-              base: main
-              branch: release-${{ needs.release.outputs.release_version }}
-              commit-message: ${{ needs.release.outputs.release_version }}
-              committer: GitHub <noreply@github.com>
-              author: "DX-CI <dci@deepx.ai>"
-              token: ${{ secrets.GC_DCI_TOKEN }}
+      - name: Update public submodules recursively
+        run: |
+          git submodule update --init --force --remote --recursive
+        working-directory: ${{ env.public_repo_path }}
 
-          - name: Merge PR
-            if: ${{ github.event.inputs.manual_release == 'false' }}
-            run: |
-              gh pr merge --rebase --admin --delete-branch "${{ steps.cpr.outputs.pull-request-number }}"
-            env:
-              GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+      - name: Commit and push if changes exist for dx-runtime
+        id: dx_runtime_commit
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "DX-CI"
+            git config user.email "dci@deepx.ai"
+            
+            git checkout -b ${{ env.RELEASE_VERSION }}
+            git add .
+            git status
+            git commit -m "${{ env.RELEASE_VERSION }}"
+            git status
+            git log
+            git push origin ${{ env.RELEASE_VERSION }}
+            git status
+            git log
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes in dx-runtime"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+        working-directory: ${{ env.public_repo_path }}/dx-runtime
+
+      - name: Remove internal
+        run: rm -rf ${{env.internal_repo_path}}
+
+      - name: Change workspace
+        run: |
+          rsync -av ${{ env.public_repo_path }}/ .
+          rm -rf ${{ env.public_repo_path }}
+
+      - name: checkout dx-runtime new branch
+        if: steps.dx_runtime_commit.outputs.has_changes == 'true'
+        run: |
+          cd ./dx-runtime
+          git fetch
+          git checkout ${{ env.RELEASE_VERSION }}
+          git log
+          cd ..
+          git log
+          git status
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v7
+        id: cpr
+        with:
+          title: ${{ env.RELEASE_VERSION }}
+          body: ${{ env.RELEASE_VERSION }}
+          delete-branch: false
+          base: main
+          branch: release-${{ env.RELEASE_VERSION }}
+          commit-message: ${{ env.RELEASE_VERSION }}
+          committer: GitHub <noreply@github.com>
+          author: "DX-CI <dci@deepx.ai>"
+          token: ${{ secrets.GC_DCI_TOKEN }}
+
+      - name: Merge PR
+        if: ${{ github.event.inputs.manual_release == 'false' && steps.cpr.outputs.pull-request-number }}
+        run: |
+          gh pr merge --rebase --admin "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+
+  dx_runtime_pr:
+    name: create-dx-runtime-pr
+    needs: release
+    if: needs.release.result == 'success' && needs.release.outputs.has_changes == 'true'
+    runs-on: self-hosted
+    steps:
+      - name: Clean
+        run: |
+          sudo rm -rf ${{ github.workspace }}
+          mkdir -p ${{ github.workspace }}
+
+      - name: Checkout dx-runtime
+        uses: actions/checkout@v4
+        with:
+          github-server-url: "https://github.com"
+          repository: DEEPX-AI/dx-runtime
+          token: ${{ secrets.GC_DCI_TOKEN }}
+          ref: ${{ needs.release.outputs.release_version }}
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: true
+
+      - name: Create PR to dx-runtime
+        id: create_pr_dx_runtime
+        run: |
+          pr_output=$(gh pr create \
+            --repo DEEPX-AI/dx-runtime \
+            --title "${{ needs.release.outputs.release_version }}" \
+            --body "${{ needs.release.outputs.release_version }}" \
+            --base main \
+            --head "${{ needs.release.outputs.release_version }}")
+
+          echo "PR Output: $pr_output"
+
+          pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
+
+          echo "Extracted PR Number: $pr_number"
+          echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+          GH_HOST: github.com
+
+
+      - name: Merge PR to dx-runtime
+        if: ${{ steps.create_pr_dx_runtime.outputs.pr_number }}
+        run: |
+          gh pr merge --rebase --admin "${{ steps.create_pr_dx_runtime.outputs.pr_number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
