@@ -93,7 +93,12 @@ docker_run_impl()
 
     ${CMD}
 
-    if [[ "$XDG_SESSION_TYPE" != "tty" && -n "${DUMMY_XAUTHORITY}" ]]; then
+    if [ "$XDG_SESSION_TYPE" == "tty" ]; then
+        local DOCKER_EXEC_CMD_EXPORT_ENV="docker exec -it dx-${target}-${UBUNTU_VERSION} export HOST_XDG_SESSION_TYPE=$XDG_SESSION_TYPE"
+
+        echo -e "${DOCKER_EXEC_CMD_EXPORT_ENV}"
+        ${DOCKER_EXEC_CMD_EXPORT_ENV}
+    elif [ -n "${DUMMY_XAUTHORITY}" ]; then
         echo -e "${TAG_INFO} Adding xauth into docker container"
 
         # remove 'localhost' or 'LOCALHOST' in DISPLAY env var
@@ -108,8 +113,8 @@ docker_run_impl()
         XAUTH=$(xauth list "$DISPLAY")
         XAUTH_ADD_CMD="xauth add $XAUTH"
         
-        DOCKER_EXEC_CMD1="docker exec -it dx-${target}-${UBUNTU_VERSION} touch /tmp/.docker.xauth"
-        DOCKER_EXEC_CMD2="docker exec -it dx-${target}-${UBUNTU_VERSION} ${XAUTH_ADD_CMD}"
+        local DOCKER_EXEC_CMD1="docker exec -it dx-${target}-${UBUNTU_VERSION} touch /tmp/.docker.xauth"
+        local DOCKER_EXEC_CMD2="docker exec -it dx-${target}-${UBUNTU_VERSION} ${XAUTH_ADD_CMD}"
 
         echo -e "${DOCKER_EXEC_CMD1}"
         echo -e "${DOCKER_EXEC_CMD2}"
