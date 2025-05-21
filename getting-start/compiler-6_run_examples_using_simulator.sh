@@ -131,16 +131,17 @@ run_hijacked_example() {
 
 show_result() {
     local result_path=$1
+    local result_real_path=$(realpath -s "${result_path}")
 
-    if [ "$HOST_XDG_SESSION_TYPE" != "tty" ]; then
+    if [ ! -f /deepx/tty_flag ]; then
         echo -e "${TAG_INFO} <hint> Use the ${COLOR_BRIGHT_GREEN_ON_BLACK}'Page Up/Down'${COLOR_RESET} keys to view previous/next results"
         echo -e "${TAG_INFO} <hint> Press ${COLOR_BRIGHT_GREEN_ON_BLACK}'q'${COLOR_RESET} to exit result viewing"
         fim ${result_path}
         rm -rf ${result_path}
     else
         echo -e "${TAG_WARN} ${COLOR_BRIGHT_YELLOW_ON_BLACK}You are currently running in a **tty session**, which does not support GUI. In such environments, it is not possible to visually confirm the results of example code execution via GUI. (Note): ${COLOR_RESET}"
-        echo -e "${TAG_WARN} ${COLOR_BRIGHT_YELLOW_ON_BLACK}The result has been saved at **${result_path}**. Please use the **docker cp** command or similar method to copy the file and check the result on your host. ${COLOR_RESET}"
-        echo -e "${TAG_INFO} ${COLOR_BRIGHT_CYAN_ON_BLACK}(e.g.) docker cp <container_name>:${result_path} ${COLOR_RESET}"
+        echo -e "${TAG_INFO} ${COLOR_BRIGHT_YELLOW_ON_BLACK}The result has been saved at **${result_path}**. Please use the **docker cp** command or similar method to copy the file and check the result on your host. ${COLOR_RESET}"
+        echo -e "${TAG_INFO} ${COLOR_BRIGHT_CYAN_ON_BLACK}(e.g.) 'docker cp <container_name>:${result_real_path} .' ${COLOR_RESET}"
         echo -e -n "${TAG_INFO} ${COLOR_BRIGHT_GREEN_ON_BLACK}Press any key and hit Enter to continue. ${COLOR_RESET}"
         read -r answer
     fi

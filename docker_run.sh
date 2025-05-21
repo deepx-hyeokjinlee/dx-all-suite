@@ -94,10 +94,10 @@ docker_run_impl()
     ${CMD}
 
     if [ "$XDG_SESSION_TYPE" == "tty" ]; then
-        local DOCKER_EXEC_CMD_EXPORT_ENV="docker exec -it dx-${target}-${UBUNTU_VERSION} export HOST_XDG_SESSION_TYPE=$XDG_SESSION_TYPE"
+        local DOCKER_EXEC_CMD="docker exec -it dx-${target}-${UBUNTU_VERSION} touch /deepx/tty_flag"
 
-        echo -e "${DOCKER_EXEC_CMD_EXPORT_ENV}"
-        ${DOCKER_EXEC_CMD_EXPORT_ENV}
+        echo -e "${DOCKER_EXEC_CMD}"
+        ${DOCKER_EXEC_CMD}
     elif [ -n "${DUMMY_XAUTHORITY}" ]; then
         echo -e "${TAG_INFO} Adding xauth into docker container"
 
