@@ -11,6 +11,39 @@
  1a1aecb7a0f1bcc2b93f9ff7bfc8785ed6276ca1 dx-modelzoo (heads/dev)  
 
 #### dx-runtime  
++0af4b07831479f70ee882c9f887a964ce51c0780 dx-runtime (runtime-20250522-rc1)  
+ d4525b40477489699ef3ac7312596e5fbaa64e63 dx-runtime/dx_app (d4525b4)  
+ ca79b2b842c3e3e0ba1e446fab1df21dc6ad177a dx-runtime/dx_fw (ca79b2b)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ 2e03dccbce9ab08f967a383e0e4311f998324920 dx-runtime/dx_fw/firmware/bootloader (2e03dcc)  
+ 32c2b22dc6252e11dcce21c384909cbdf486e744 dx-runtime/dx_fw/firmware/freertos/apps (32c2b22)  
+ 6f63da20b3c9e1408e7c8007d3427b75878cbd64 dx-runtime/dx_fw/firmware/freertos/kern (6f63da2)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 265c7dfdf540ced9b359de3bf3e1de8e367abfa9 dx-runtime/dx_fw/firmware/freertos/plat (265c7df)  
+ 6e13160bc92253138845d2ebd6e48bfea10c31ac dx-runtime/dx_fw/firmware/romcode (6e13160)  
+ 7a0175c962ff7a56ad3b88b33e67867be6c14eda dx-runtime/dx_fw/firmware/secureloader (7a0175c)  
+ d613e38b4f3acecc73a5fa24fad9bce9cab97cbb dx-runtime/dx_fw/utils/tools/rt_bingen (heads/main)  
+ a52f5138c1a67216c1f9173f1dc21075ed429a63 dx-runtime/dx_rt (a52f513)  
+ c22c12d497a1190a89fe6d66639c30eb5944ef8b dx-runtime/dx_rt_npu_linux_driver (c22c12d)  
+ a665988855206fa802253e3ead5664445ccef0ee dx-runtime/dx_rt_npu_linux_driver/modules/pci_deepx (a665988)  
+ 71854f57608df8f2dc09a8bb2780d97efe086786 dx-runtime/dx_rt_npu_linux_driver/modules/pci_xilinx (heads/main)  
+ c739aa5a591e6d0fb950dc7bc852b6603edab723 dx-runtime/dx_rt_npu_linux_driver/utils (c739aa5)  
+ c6dba5ed67c140a25b06fa0ce69f7f005fb8e2dc dx-runtime/dx_stream (c6dba5e)  
+ 84006f897ed0c8063d248813a2fc520f5a131f2f dx-runtime/rt_npu_validation (84006f8)  
+### 2025-05-22  
+#### dx-compiler  
+ 1010a3855c765aa930302d837c75cddb98220beb dx-compiler (compiler-20250521-rc0)  
+ a8c1c9059d9f19e94485140414c79e0a652fdd3b dx-compiler/dx_codegen (a8c1c90)  
+ c0e0ff82194e5df943afbb3a59bf815f6821f913 dx-compiler/dx_com (c0e0ff8)  
+ 6a244c7db583a305e8647c95c737c9af0a05288c dx-compiler/dx_common (6a244c7)  
+ bf6b5fb33c6b431f653e71286a7536a7bde24150 dx-compiler/dx_simulator (bf6b5fb)  
+
+#### dx-modelzoo  
+ 1a1aecb7a0f1bcc2b93f9ff7bfc8785ed6276ca1 dx-modelzoo (heads/dev)  
+
+#### dx-runtime  
 +10e0488358bd7f07c3ef09ff28f6c00cee79aadc dx-runtime (runtime-20250522-rc0)  
  d4525b40477489699ef3ac7312596e5fbaa64e63 dx-runtime/dx_app (d4525b4)  
  ca79b2b842c3e3e0ba1e446fab1df21dc6ad177a dx-runtime/dx_fw (ca79b2b)  
