@@ -27,7 +27,8 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 20
     outputs:
-      has_changes: ${{ steps.dx_runtime_commit.outputs.has_changes }}
+      runtime_has_changes: ${{ steps.dx_runtime_commit.outputs.has_changes }}
+      compiler_has_changes: ${{ steps.dx_compiler_commit.outputs.has_changes }}
       release_version: ${{ steps.get_version.outputs.release_version }}
     steps:
       - name: Clean
@@ -121,6 +122,29 @@ jobs:
           fi
         working-directory: ${{ env.public_repo_path }}/dx-runtime
 
+      - name: Commit and push if changes exist for dx-compiler
+        id: dx_compiler_commit
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "DX-CI"
+            git config user.email "dci@deepx.ai"
+            
+            git checkout -b ${{ env.RELEASE_VERSION }}
+            git add .
+            git status
+            git commit -m "${{ env.RELEASE_VERSION }}"
+            git status
+            git log
+            git push origin ${{ env.RELEASE_VERSION }}
+            git status
+            git log
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No changes in dx-compiler"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+        working-directory: ${{ env.public_repo_path }}/dx-compiler
+
       - name: Remove internal
         run: rm -rf ${{env.internal_repo_path}}
 
@@ -130,9 +154,20 @@ jobs:
           rm -rf ${{ env.public_repo_path }}
 
       - name: checkout dx-runtime new branch
-        if: steps.dx_runtime_commit.outputs.has_changes == 'true'
+        if: steps.dx_runtime_commit.outputs.runtime_has_changes == 'true'
         run: |
           cd ./dx-runtime
+          git fetch
+          git checkout ${{ env.RELEASE_VERSION }}
+          git log
+          cd ..
+          git log
+          git status
+
+      - name: checkout dx-compiler new branch
+        if: steps.dx_compiler_commit.outputs.compiler_has_changes == 'true'
+        run: |
+          cd ./dx-compiler
           git fetch
           git checkout ${{ env.RELEASE_VERSION }}
           git log
@@ -164,7 +199,7 @@ jobs:
   dx_runtime_pr:
     name: create-dx-runtime-pr
     needs: release
-    if: needs.release.result == 'success' && needs.release.outputs.has_changes == 'true'
+    if: needs.release.result == 'success' && needs.release.outputs.runtime_has_changes == 'true'
     runs-on: self-hosted
     steps:
       - name: Clean
@@ -208,5 +243,55 @@ jobs:
         if: ${{ steps.create_pr_dx_runtime.outputs.pr_number }}
         run: |
           gh pr merge --rebase --admin "${{ steps.create_pr_dx_runtime.outputs.pr_number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+
+  dx_compiler_pr:
+    name: create-dx-compiler-pr
+    needs: release
+    if: needs.release.result == 'success' && needs.release.outputs.compiler_has_changes == 'true'
+    runs-on: self-hosted
+    steps:
+      - name: Clean
+        run: |
+          sudo rm -rf ${{ github.workspace }}
+          mkdir -p ${{ github.workspace }}
+
+      - name: Checkout dx-compiler
+        uses: actions/checkout@v4
+        with:
+          github-server-url: "https://github.com"
+          repository: DEEPX-AI/dx-compiler
+          token: ${{ secrets.GC_DCI_TOKEN }}
+          ref: ${{ needs.release.outputs.release_version }}
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: true
+
+      - name: Create PR to dx-compiler
+        id: create_pr_dx_compiler
+        run: |
+          pr_output=$(gh pr create \
+            --repo DEEPX-AI/dx-compiler \
+            --title "${{ needs.release.outputs.release_version }}" \
+            --body "${{ needs.release.outputs.release_version }}" \
+            --base main \
+            --head "${{ needs.release.outputs.release_version }}")
+
+          echo "PR Output: $pr_output"
+
+          pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
+
+          echo "Extracted PR Number: $pr_number"
+          echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+          GH_HOST: github.com
+
+
+      - name: Merge PR to dx-compiler
+        if: ${{ steps.create_pr_dx_compiler.outputs.pr_number }}
+        run: |
+          gh pr merge --rebase --admin "${{ steps.create_pr_dx_compiler.outputs.pr_number }}"
         env:
           GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
