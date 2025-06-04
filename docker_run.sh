@@ -79,7 +79,8 @@ docker_run_impl()
     DUMMY_XAUTHORITY=""
     if [ ! -n "${XAUTHORITY}" ]; then
         echo -e "${TAG_INFO} XAUTHORITY env is not set. so, try to set automatically."
-        DUMMY_XAUTHORITY="/tmp/dummy"
+        DUMMY_XAUTHORITY="${DX_AS_PATH}/dummy_xauthority"
+        rm -rf ${DUMMY_XAUTHORITY}
         touch ${DUMMY_XAUTHORITY}
         export XAUTHORITY=${DUMMY_XAUTHORITY}
         export XAUTHORITY_TARGET=${DUMMY_XAUTHORITY}
