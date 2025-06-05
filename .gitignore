@@ -19,3 +19,4 @@ getting-start/modelzoo/
 **/venv-*
 *.crt
 !dummy.crt
+dummy_xauthority
