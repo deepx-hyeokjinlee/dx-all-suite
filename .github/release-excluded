@@ -1,6 +1,6 @@
 .git
 .github/scripts/
-.github/workflows/ghes/
+.github/workflows/
 .github/release-excluded
 .github/CODEOWNERS
 .github/pull_request_template.md
