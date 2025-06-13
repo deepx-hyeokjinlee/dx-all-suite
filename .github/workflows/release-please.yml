@@ -218,7 +218,7 @@ jobs:
           body: ${{ env.RELEASE_VERSION }}
           delete-branch: false
           base: main
-          branch: release-${{ env.RELEASE_VERSION }}
+          branch: ${{ env.RELEASE_VERSION }}
           commit-message: ${{ env.RELEASE_VERSION }}
           committer: GitHub <noreply@github.com>
           author: "DX-CI <dci@deepx.ai>"
