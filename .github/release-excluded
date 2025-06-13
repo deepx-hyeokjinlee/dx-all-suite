@@ -1,13 +1,6 @@
 .git
 .github/scripts/
-.github/workflows/add_submodule.yml
-.github/workflows/create-public-release-tag.yml
-.github/workflows/create-release-candidate-tag.yml
-.github/workflows/remove_submodule.yml
-.github/workflows/release-please.yml
-.github/workflows/trigger-dev-to-main.yml
-.github/workflows/trigger-integration-test.yml
-.github/workflows/update_submodule.yml
+.github/workflows/ghes/
 .github/release-excluded
 .github/CODEOWNERS
 .github/pull_request_template.md
