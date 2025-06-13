@@ -55,7 +55,7 @@ jobs:
           echo "Generating release message..."
           echo -e "Remark:\n" > "release_message.txt"
 
-          SUB_REPOS=("dx-compiler" "dx-runtime")
+          SUB_REPOS=("dx-compiler" "dx-runtime" "dx-modelzoo")
 
           for SUB_REPO in "${SUB_REPOS[@]}"; do
             SUB_HASH=$(git -C "$SUB_REPO" rev-parse --short=7 HEAD)
