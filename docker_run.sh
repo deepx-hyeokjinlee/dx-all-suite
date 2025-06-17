@@ -94,7 +94,7 @@ docker_run_impl()
         export XAUTHORITY_TARGET="/tmp/.docker.xauth"
     fi
 
-    CMD="docker compose ${config_file_args} up -d --remove-orphans dx-${target}"
+    CMD="docker compose ${config_file_args} -p dx-all-suite up -d --remove-orphans dx-${target}"
     echo "${CMD}"
 
     ${CMD}
