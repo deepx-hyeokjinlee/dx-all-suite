@@ -138,7 +138,8 @@ docker_run_all()
 
 docker_run_dx-compiler() 
 {
-    docker_run_impl "compiler"
+    local docker_compose_args="-f docker/docker-compose.yml"
+    docker_run_impl "compiler" "${docker_compose_args}"
 }
 
 docker_run_dx-runtime()
