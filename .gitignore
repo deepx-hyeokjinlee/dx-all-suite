@@ -17,6 +17,9 @@ getting-start/forked*/
 getting-start/modelzoo/
 **/venv-*/
 **/venv-*
+venv-*/
+venv-*
 *.crt
 !dummy.crt
 dummy_xauthority
+
