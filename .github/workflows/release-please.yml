@@ -94,20 +94,12 @@ jobs:
         run: |
           rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
                 --exclude-from=${{env.exclude_path}}
-          cd ${{ env.public_repo_path }}
-          # Enable nullglob so that unmatched globs are removed (instead of remaining as literal strings)
-          shopt -s nullglob
-          files=(${{env.gh-cloud-workflows-files}})
-
-          if [ ${#files[@]} -gt 0 ]; then
-            mkdir -p ${{env.public_repo_path}}/.github/workflows
-            cp "${files[@]}" ${{env.public_repo_path}}/.github/workflows/
-          else
-            echo "No gh-cloud-*.yml files found, skipping copy."
-          fi
         env:
           exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
-          gh-cloud-workflows-files: ${{env.internal_repo_path}}/.github/workflows/gh-cloud-*.yml
+
+      - name: move path github-cloud workflows
+        run: |
+          mv ${{env.public_repo_path}}/.github/workflows-ghcloud ${{env.public_repo_path}}/.github/workflows || true
 
       # disable update flow for dx-all-suite -> dx-runtime -> dx_app
       # - name: Update public submodules recursively
