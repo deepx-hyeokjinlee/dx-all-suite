@@ -94,6 +94,9 @@ jobs:
         run: |
           rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
                 --exclude-from=${{env.exclude_path}}
+          # disable update flow for dx-all-suite -> dx-runtime -> dx_app
+          cd ${{env.public_repo_path}}
+          git submodule update --init --force
         env:
           exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
 
