@@ -22,15 +22,16 @@ env:
   public_repo_path: ./_public
 
 jobs:
-  release:
-    name: release
+  release_and_pr:
+    name: release_and_pr
     runs-on: self-hosted
     timeout-minutes: 20
-    outputs:
-      runtime_has_changes: ${{ steps.dx_runtime_commit.outputs.has_changes }}
-      compiler_has_changes: ${{ steps.dx_compiler_commit.outputs.has_changes }}
-      modelzoo_has_changes: ${{ steps.dx_modelzoo_commit.outputs.has_changes }}
-      release_version: ${{ steps.get_version.outputs.release_version }}
+    # disable update flow for dx-all-suite -> dx-runtime -> dx_app
+    # outputs:
+    #   runtime_has_changes: ${{ steps.dx_runtime_commit.outputs.has_changes }}
+    #   compiler_has_changes: ${{ steps.dx_compiler_commit.outputs.has_changes }}
+    #   modelzoo_has_changes: ${{ steps.dx_modelzoo_commit.outputs.has_changes }}
+    #   release_version: ${{ steps.get_version.outputs.release_version }}
     steps:
       - name: Clean
         run: |
@@ -62,7 +63,9 @@ jobs:
           token: ${{ secrets.GC_DCI_TOKEN }}
           fetch-depth: 0
           fetch-tags: true
-          submodules: true
+          # disable update flow for dx-all-suite -> dx-runtime -> dx_app
+          # submodules: true
+          submodules: false
 
       - name: Workspace status
         run: ls -al
@@ -76,7 +79,8 @@ jobs:
           echo "short_commit=$short_commit" >> $GITHUB_ENV
           RELEASE_VERSION="$release_tag+${{env.release_method}}.$short_commit"
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
-          echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
+          # disable update flow for dx-all-suite -> dx-runtime -> dx_app
+          # echo "release_version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
         env:
           release_method: ${{ github.event.inputs.manual_release == 'true' && 'manual.sha' || 'auto.sha' }}
 
@@ -91,83 +95,94 @@ jobs:
           rsync -av ${{env.internal_repo_path}}/ ${{env.public_repo_path}}/ \
                 --exclude-from=${{env.exclude_path}}
           cd ${{ env.public_repo_path }}
-          git status
+          # Enable nullglob so that unmatched globs are removed (instead of remaining as literal strings)
+          shopt -s nullglob
+          files=(${{env.gh-cloud-workflows-files}})
+
+          if [ ${#files[@]} -gt 0 ]; then
+            mkdir -p ${{env.public_repo_path}}/.github/workflows
+            cp "${files[@]}" ${{env.public_repo_path}}/.github/workflows/
+          else
+            echo "No gh-cloud-*.yml files found, skipping copy."
+          fi
         env:
           exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
+          gh-cloud-workflows-files: ${{env.internal_repo_path}}/.github/workflows/gh-cloud-*.yml
 
-      - name: Update public submodules recursively
-        run: |
-          git submodule update --init --force --remote --recursive
-        working-directory: ${{ env.public_repo_path }}
+      # disable update flow for dx-all-suite -> dx-runtime -> dx_app
+      # - name: Update public submodules recursively
+      #   run: |
+      #     git submodule update --init --force --remote --recursive
+      #   working-directory: ${{ env.public_repo_path }}
 
-      - name: Commit and push if changes exist for dx-runtime
-        id: dx_runtime_commit
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "DX-CI"
-            git config user.email "dci@deepx.ai"
+      # - name: Commit and push if changes exist for dx-runtime
+      #   id: dx_runtime_commit
+      #   run: |
+      #     if [ -n "$(git status --porcelain)" ]; then
+      #       git config user.name "DX-CI"
+      #       git config user.email "dci@deepx.ai"
             
-            git checkout -b ${{ env.RELEASE_VERSION }}
-            git add .
-            git status
-            git commit -m "${{ env.RELEASE_VERSION }}"
-            git status
-            git log
-            git push origin ${{ env.RELEASE_VERSION }}
-            git status
-            git log
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "No changes in dx-runtime"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-        working-directory: ${{ env.public_repo_path }}/dx-runtime
+      #       git checkout -b ${{ env.RELEASE_VERSION }}
+      #       git add .
+      #       git status
+      #       git commit -m "${{ env.RELEASE_VERSION }}"
+      #       git status
+      #       git log
+      #       git push origin ${{ env.RELEASE_VERSION }}
+      #       git status
+      #       git log
+      #       echo "has_changes=true" >> $GITHUB_OUTPUT
+      #     else
+      #       echo "No changes in dx-runtime"
+      #       echo "has_changes=false" >> $GITHUB_OUTPUT
+      #     fi
+      #   working-directory: ${{ env.public_repo_path }}/dx-runtime
 
-      - name: Commit and push if changes exist for dx-compiler
-        id: dx_compiler_commit
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "DX-CI"
-            git config user.email "dci@deepx.ai"
+      # - name: Commit and push if changes exist for dx-compiler
+      #   id: dx_compiler_commit
+      #   run: |
+      #     if [ -n "$(git status --porcelain)" ]; then
+      #       git config user.name "DX-CI"
+      #       git config user.email "dci@deepx.ai"
             
-            git checkout -b ${{ env.RELEASE_VERSION }}
-            git add .
-            git status
-            git commit -m "${{ env.RELEASE_VERSION }}"
-            git status
-            git log
-            git push origin ${{ env.RELEASE_VERSION }}
-            git status
-            git log
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "No changes in dx-compiler"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-        working-directory: ${{ env.public_repo_path }}/dx-compiler
+      #       git checkout -b ${{ env.RELEASE_VERSION }}
+      #       git add .
+      #       git status
+      #       git commit -m "${{ env.RELEASE_VERSION }}"
+      #       git status
+      #       git log
+      #       git push origin ${{ env.RELEASE_VERSION }}
+      #       git status
+      #       git log
+      #       echo "has_changes=true" >> $GITHUB_OUTPUT
+      #     else
+      #       echo "No changes in dx-compiler"
+      #       echo "has_changes=false" >> $GITHUB_OUTPUT
+      #     fi
+      #   working-directory: ${{ env.public_repo_path }}/dx-compiler
 
-      - name: Commit and push if changes exist for dx-modelzoo
-        id: dx_modelzoo_commit
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "DX-CI"
-            git config user.email "dci@deepx.ai"
+      # - name: Commit and push if changes exist for dx-modelzoo
+      #   id: dx_modelzoo_commit
+      #   run: |
+      #     if [ -n "$(git status --porcelain)" ]; then
+      #       git config user.name "DX-CI"
+      #       git config user.email "dci@deepx.ai"
             
-            git checkout -b ${{ env.RELEASE_VERSION }}
-            git add .
-            git status
-            git commit -m "${{ env.RELEASE_VERSION }}"
-            git status
-            git log
-            git push origin ${{ env.RELEASE_VERSION }}
-            git status
-            git log
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "No changes in dx-modelzoo"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-        working-directory: ${{ env.public_repo_path }}/dx-modelzoo
+      #       git checkout -b ${{ env.RELEASE_VERSION }}
+      #       git add .
+      #       git status
+      #       git commit -m "${{ env.RELEASE_VERSION }}"
+      #       git status
+      #       git log
+      #       git push origin ${{ env.RELEASE_VERSION }}
+      #       git status
+      #       git log
+      #       echo "has_changes=true" >> $GITHUB_OUTPUT
+      #     else
+      #       echo "No changes in dx-modelzoo"
+      #       echo "has_changes=false" >> $GITHUB_OUTPUT
+      #     fi
+      #   working-directory: ${{ env.public_repo_path }}/dx-modelzoo
 
       - name: Remove internal
         run: rm -rf ${{env.internal_repo_path}}
@@ -177,38 +192,39 @@ jobs:
           rsync -av ${{ env.public_repo_path }}/ .
           rm -rf ${{ env.public_repo_path }}
 
-      - name: checkout dx-runtime new branch
-        if: steps.dx_runtime_commit.outputs.runtime_has_changes == 'true'
-        run: |
-          cd ./dx-runtime
-          git fetch
-          git checkout ${{ env.RELEASE_VERSION }}
-          git log
-          cd ..
-          git log
-          git status
+      # disable update flow for dx-all-suite -> dx-runtime -> dx_app
+      # - name: checkout dx-runtime new branch
+      #   if: steps.dx_runtime_commit.outputs.runtime_has_changes == 'true'
+      #   run: |
+      #     cd ./dx-runtime
+      #     git fetch
+      #     git checkout ${{ env.RELEASE_VERSION }}
+      #     git log
+      #     cd ..
+      #     git log
+      #     git status
 
-      - name: checkout dx-compiler new branch
-        if: steps.dx_compiler_commit.outputs.compiler_has_changes == 'true'
-        run: |
-          cd ./dx-compiler
-          git fetch
-          git checkout ${{ env.RELEASE_VERSION }}
-          git log
-          cd ..
-          git log
-          git status
+      # - name: checkout dx-compiler new branch
+      #   if: steps.dx_compiler_commit.outputs.compiler_has_changes == 'true'
+      #   run: |
+      #     cd ./dx-compiler
+      #     git fetch
+      #     git checkout ${{ env.RELEASE_VERSION }}
+      #     git log
+      #     cd ..
+      #     git log
+      #     git status
 
-      - name: checkout dx-compiler new branch
-        if: steps.dx_modelzoo_commit.outputs.modelzoo_has_changes == 'true'
-        run: |
-          cd ./dx-modelzoo
-          git fetch
-          git checkout ${{ env.RELEASE_VERSION }}
-          git log
-          cd ..
-          git log
-          git status
+      # - name: checkout dx-compiler new branch
+      #   if: steps.dx_modelzoo_commit.outputs.modelzoo_has_changes == 'true'
+      #   run: |
+      #     cd ./dx-modelzoo
+      #     git fetch
+      #     git checkout ${{ env.RELEASE_VERSION }}
+      #     git log
+      #     cd ..
+      #     git log
+      #     git status
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v7
@@ -217,7 +233,7 @@ jobs:
           title: ${{ env.RELEASE_VERSION }}
           body: ${{ env.RELEASE_VERSION }}
           delete-branch: false
-          base: main
+          base: staging
           branch: ${{ env.RELEASE_VERSION }}
           commit-message: ${{ env.RELEASE_VERSION }}
           committer: GitHub <noreply@github.com>
@@ -231,152 +247,153 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
 
-  dx_runtime_pr:
-    name: create-dx-runtime-pr
-    needs: release
-    if: needs.release.result == 'success' && needs.release.outputs.runtime_has_changes == 'true'
-    runs-on: self-hosted
-    steps:
-      - name: Clean
-        run: |
-          sudo rm -rf ${{ github.workspace }}
-          mkdir -p ${{ github.workspace }}
+  # disable update flow for dx-all-suite -> dx-runtime -> dx_app
+  # dx_runtime_pr:
+  #   name: create-dx-runtime-pr
+  #   needs: release
+  #   if: needs.release.result == 'success' && needs.release_and_pr.outputs.runtime_has_changes == 'true'
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Clean
+  #       run: |
+  #         sudo rm -rf ${{ github.workspace }}
+  #         mkdir -p ${{ github.workspace }}
 
-      - name: Checkout dx-runtime
-        uses: actions/checkout@v4
-        with:
-          github-server-url: "https://github.com"
-          repository: DEEPX-AI/dx-runtime
-          token: ${{ secrets.GC_DCI_TOKEN }}
-          ref: ${{ needs.release.outputs.release_version }}
-          fetch-depth: 0
-          fetch-tags: true
-          submodules: true
+  #     - name: Checkout dx-runtime
+  #       uses: actions/checkout@v4
+  #       with:
+  #         github-server-url: "https://github.com"
+  #         repository: DEEPX-AI/dx-runtime
+  #         token: ${{ secrets.GC_DCI_TOKEN }}
+  #         ref: ${{ needs.release_and_pr.outputs.release_version }}
+  #         fetch-depth: 0
+  #         fetch-tags: true
+  #         submodules: true
 
-      - name: Create PR to dx-runtime
-        id: create_pr_dx_runtime
-        run: |
-          pr_output=$(gh pr create \
-            --repo DEEPX-AI/dx-runtime \
-            --title "${{ needs.release.outputs.release_version }}" \
-            --body "${{ needs.release.outputs.release_version }}" \
-            --base main \
-            --head "${{ needs.release.outputs.release_version }}")
+  #     - name: Create PR to dx-runtime
+  #       id: create_pr_dx_runtime
+  #       run: |
+  #         pr_output=$(gh pr create \
+  #           --repo DEEPX-AI/dx-runtime \
+  #           --title "${{ needs.release_and_pr.outputs.release_version }}" \
+  #           --body "${{ needs.release_and_pr.outputs.release_version }}" \
+  #           --base main \
+  #           --head "${{ needs.release_and_pr.outputs.release_version }}")
 
-          echo "PR Output: $pr_output"
+  #         echo "PR Output: $pr_output"
 
-          pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
+  #         pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
 
-          echo "Extracted PR Number: $pr_number"
-          echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
-          GH_HOST: github.com
-
-
-      - name: Merge PR to dx-runtime
-        if: ${{ steps.create_pr_dx_runtime.outputs.pr_number }}
-        run: |
-          gh pr merge --rebase --admin "${{ steps.create_pr_dx_runtime.outputs.pr_number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
-
-  dx_compiler_pr:
-    name: create-dx-compiler-pr
-    needs: release
-    if: needs.release.result == 'success' && needs.release.outputs.compiler_has_changes == 'true'
-    runs-on: self-hosted
-    steps:
-      - name: Clean
-        run: |
-          sudo rm -rf ${{ github.workspace }}
-          mkdir -p ${{ github.workspace }}
-
-      - name: Checkout dx-compiler
-        uses: actions/checkout@v4
-        with:
-          github-server-url: "https://github.com"
-          repository: DEEPX-AI/dx-compiler
-          token: ${{ secrets.GC_DCI_TOKEN }}
-          ref: ${{ needs.release.outputs.release_version }}
-          fetch-depth: 0
-          fetch-tags: true
-          submodules: true
-
-      - name: Create PR to dx-compiler
-        id: create_pr_dx_compiler
-        run: |
-          pr_output=$(gh pr create \
-            --repo DEEPX-AI/dx-compiler \
-            --title "${{ needs.release.outputs.release_version }}" \
-            --body "${{ needs.release.outputs.release_version }}" \
-            --base main \
-            --head "${{ needs.release.outputs.release_version }}")
-
-          echo "PR Output: $pr_output"
-
-          pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
-
-          echo "Extracted PR Number: $pr_number"
-          echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
-          GH_HOST: github.com
+  #         echo "Extracted PR Number: $pr_number"
+  #         echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+  #         GH_HOST: github.com
 
 
-      - name: Merge PR to dx-compiler
-        if: ${{ steps.create_pr_dx_compiler.outputs.pr_number }}
-        run: |
-          gh pr merge --rebase --admin "${{ steps.create_pr_dx_compiler.outputs.pr_number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+  #     - name: Merge PR to dx-runtime
+  #       if: ${{ steps.create_pr_dx_runtime.outputs.pr_number }}
+  #       run: |
+  #         gh pr merge --rebase --admin "${{ steps.create_pr_dx_runtime.outputs.pr_number }}"
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
 
-  dx_modelzoo_pr:
-    name: create-dx-modelzoo-pr
-    needs: release
-    if: needs.release.result == 'success' && needs.release.outputs.modelzoo_has_changes == 'true'
-    runs-on: self-hosted
-    steps:
-      - name: Clean
-        run: |
-          sudo rm -rf ${{ github.workspace }}
-          mkdir -p ${{ github.workspace }}
+  # dx_compiler_pr:
+  #   name: create-dx-compiler-pr
+  #   needs: release
+  #   if: needs.release.result == 'success' && needs.release_and_pr.outputs.compiler_has_changes == 'true'
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Clean
+  #       run: |
+  #         sudo rm -rf ${{ github.workspace }}
+  #         mkdir -p ${{ github.workspace }}
 
-      - name: Checkout dx-modelzoo
-        uses: actions/checkout@v4
-        with:
-          github-server-url: "https://github.com"
-          repository: DEEPX-AI/dx-modelzoo
-          token: ${{ secrets.GC_DCI_TOKEN }}
-          ref: ${{ needs.release.outputs.release_version }}
-          fetch-depth: 0
-          fetch-tags: true
-          submodules: true
+  #     - name: Checkout dx-compiler
+  #       uses: actions/checkout@v4
+  #       with:
+  #         github-server-url: "https://github.com"
+  #         repository: DEEPX-AI/dx-compiler
+  #         token: ${{ secrets.GC_DCI_TOKEN }}
+  #         ref: ${{ needs.release_and_pr.outputs.release_version }}
+  #         fetch-depth: 0
+  #         fetch-tags: true
+  #         submodules: true
 
-      - name: Create PR to dx-modelzoo
-        id: create_pr_dx_modelzoo
-        run: |
-          pr_output=$(gh pr create \
-            --repo DEEPX-AI/dx-modelzoo \
-            --title "${{ needs.release.outputs.release_version }}" \
-            --body "${{ needs.release.outputs.release_version }}" \
-            --base main \
-            --head "${{ needs.release.outputs.release_version }}")
+  #     - name: Create PR to dx-compiler
+  #       id: create_pr_dx_compiler
+  #       run: |
+  #         pr_output=$(gh pr create \
+  #           --repo DEEPX-AI/dx-compiler \
+  #           --title "${{ needs.release_and_pr.outputs.release_version }}" \
+  #           --body "${{ needs.release_and_pr.outputs.release_version }}" \
+  #           --base main \
+  #           --head "${{ needs.release_and_pr.outputs.release_version }}")
 
-          echo "PR Output: $pr_output"
+  #         echo "PR Output: $pr_output"
 
-          pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
+  #         pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
 
-          echo "Extracted PR Number: $pr_number"
-          echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
-          GH_HOST: github.com
+  #         echo "Extracted PR Number: $pr_number"
+  #         echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+  #         GH_HOST: github.com
 
 
-      - name: Merge PR to dx-modelzoo
-        if: ${{ steps.create_pr_dx_modelzoo.outputs.pr_number }}
-        run: |
-          gh pr merge --rebase --admin "${{ steps.create_pr_dx_modelzoo.outputs.pr_number }}"
-        env:
-          GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+  #     - name: Merge PR to dx-compiler
+  #       if: ${{ steps.create_pr_dx_compiler.outputs.pr_number }}
+  #       run: |
+  #         gh pr merge --rebase --admin "${{ steps.create_pr_dx_compiler.outputs.pr_number }}"
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+
+  # dx_modelzoo_pr:
+  #   name: create-dx-modelzoo-pr
+  #   needs: release
+  #   if: needs.release.result == 'success' && needs.release_and_pr.outputs.modelzoo_has_changes == 'true'
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Clean
+  #       run: |
+  #         sudo rm -rf ${{ github.workspace }}
+  #         mkdir -p ${{ github.workspace }}
+
+  #     - name: Checkout dx-modelzoo
+  #       uses: actions/checkout@v4
+  #       with:
+  #         github-server-url: "https://github.com"
+  #         repository: DEEPX-AI/dx-modelzoo
+  #         token: ${{ secrets.GC_DCI_TOKEN }}
+  #         ref: ${{ needs.release_and_pr.outputs.release_version }}
+  #         fetch-depth: 0
+  #         fetch-tags: true
+  #         submodules: true
+
+  #     - name: Create PR to dx-modelzoo
+  #       id: create_pr_dx_modelzoo
+  #       run: |
+  #         pr_output=$(gh pr create \
+  #           --repo DEEPX-AI/dx-modelzoo \
+  #           --title "${{ needs.release_and_pr.outputs.release_version }}" \
+  #           --body "${{ needs.release_and_pr.outputs.release_version }}" \
+  #           --base main \
+  #           --head "${{ needs.release_and_pr.outputs.release_version }}")
+
+  #         echo "PR Output: $pr_output"
+
+  #         pr_number=$(echo "$pr_output" | grep -oE '\/pull\/[0-9]+' | grep -oE '[0-9]+')
+
+  #         echo "Extracted PR Number: $pr_number"
+  #         echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
+  #         GH_HOST: github.com
+
+
+  #     - name: Merge PR to dx-modelzoo
+  #       if: ${{ steps.create_pr_dx_modelzoo.outputs.pr_number }}
+  #       run: |
+  #         gh pr merge --rebase --admin "${{ steps.create_pr_dx_modelzoo.outputs.pr_number }}"
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
