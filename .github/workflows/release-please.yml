@@ -1,15 +1,15 @@
 name: public-release
 run-name: ${{github.triggering_actor}} - Release ${{github.event.inputs.target_commit}} → deepx/dx-all-suite-public
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       target_commit:
-        description: 'Target commit from main to release'
+        description: "Target commit from main to release"
         required: true
       manual_release:
         type: boolean
-        description: 'Manual release'
+        description: "Manual release"
         required: false
         default: true
 
@@ -100,10 +100,6 @@ jobs:
         env:
           exclude_path: ${{env.internal_repo_path}}/.github/release-excluded
 
-      - name: move path github-cloud workflows
-        run: |
-          mv ${{env.public_repo_path}}/.github/workflows-ghcloud ${{env.public_repo_path}}/.github/workflows || true
-
       # disable update flow for dx-all-suite -> dx-runtime -> dx_app
       # - name: Update public submodules recursively
       #   run: |
@@ -116,7 +112,7 @@ jobs:
       #     if [ -n "$(git status --porcelain)" ]; then
       #       git config user.name "DX-CI"
       #       git config user.email "dci@deepx.ai"
-            
+
       #       git checkout -b ${{ env.RELEASE_VERSION }}
       #       git add .
       #       git status
@@ -139,7 +135,7 @@ jobs:
       #     if [ -n "$(git status --porcelain)" ]; then
       #       git config user.name "DX-CI"
       #       git config user.email "dci@deepx.ai"
-            
+
       #       git checkout -b ${{ env.RELEASE_VERSION }}
       #       git add .
       #       git status
@@ -162,7 +158,7 @@ jobs:
       #     if [ -n "$(git status --porcelain)" ]; then
       #       git config user.name "DX-CI"
       #       git config user.email "dci@deepx.ai"
-            
+
       #       git checkout -b ${{ env.RELEASE_VERSION }}
       #       git add .
       #       git status
@@ -285,7 +281,6 @@ jobs:
   #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
   #         GH_HOST: github.com
 
-
   #     - name: Merge PR to dx-runtime
   #       if: ${{ steps.create_pr_dx_runtime.outputs.pr_number }}
   #       run: |
@@ -335,7 +330,6 @@ jobs:
   #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
   #         GH_HOST: github.com
 
-
   #     - name: Merge PR to dx-compiler
   #       if: ${{ steps.create_pr_dx_compiler.outputs.pr_number }}
   #       run: |
@@ -384,7 +378,6 @@ jobs:
   #       env:
   #         GH_TOKEN: ${{ secrets.GC_DCI_TOKEN }}
   #         GH_HOST: github.com
-
 
   #     - name: Merge PR to dx-modelzoo
   #       if: ${{ steps.create_pr_dx_modelzoo.outputs.pr_number }}
