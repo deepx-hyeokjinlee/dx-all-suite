@@ -35,7 +35,7 @@ else
     exit 1
 fi
 
-FILE_DXCOM="archives/dx_com_M1A_v${COM_VERSION}.tar.gz"
+FILE_DXCOM="archives/dx_com_M1_v${COM_VERSION}.tar.gz"
 FILE_DXSIM="archives/dx_simulator_v${SIM_VERSION}.tar.gz"
 
 # Function to display help message
