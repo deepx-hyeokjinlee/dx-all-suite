@@ -1,13 +1,13 @@
 # Installation Guide
 
-DX-ALL is a tool for creating an environment to validate and utilize DEEPX devices. DX-ALL provides the following below methods for setting up the integrated environment:
+DX-All-Suite is a tool for creating an environment to validate and utilize DEEPX devices. DX-All-Suite provides the following below methods for setting up the integrated environment:
 
 **Install on local machine**
-    - Set up the DX-ALL environment directly on the host environment
+    - Set up the DX-All-Suite environment directly on the host environment
     (maintaining compatibility between the individual tools).
 
 **Build Docker image and run container**
-    - Build a DX-ALL environment within a Docker environment, or load a pre-built image to create a container.
+    - Build a DX-All-Suite environment within a Docker environment, or load a pre-built image to create a container.
 
 
 ## Prerequisites
