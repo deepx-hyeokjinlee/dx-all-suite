@@ -48,38 +48,58 @@ The `DX-Compiler` environment provides prebuilt binary outputs and does not incl
 $ ./dx-compiler/install.sh
 ```
 
-When executing the above command:
+When executing the above command, **DEEPX Developers' Portal** account authentication may be required to download and install the DX-Compiler modules. The script obtains authentication information based on the following priority:
 
-1. The `dx-com` and `dx-simulator` modules will be downloaded to  
-   `../docker_volume/release/dx_com/download/dx_com_M1A_v[VERSION].tar.gz` and  
-   `../docker_volume/release/dx_simulator/download/dx_simulator_v[VERSION].tar.gz`, respectively.
+1.  **Directly specify when executing the command (1st priority):**
+    ```
+    $ ./dx-compiler/install.sh --username=<your_email> --password=<your_password>
+    ```
+2.  **Use environment variables (2nd priority):**
+    ```
+    $ export DX_USERNAME=<your_email>
+    $ export DX_PASSWORD=<your_password>
+    $ ./dx-compiler/install.sh
+    ```
 
-2. The downloaded modules will be extracted to  
-   `../docker_volume/release/dx_com/dx_com_M1A_v[VERSION]` and  
-   `../docker_volume/release/dx_simulator/dx_simulator_v[VERSION]`.  
-   Symbolic links will also be created at `./dx-compiler/dx-com` and `./dx-simulator`.
+    Alternatively, you can add account information to `compiler.properties` as shown below, which will be injected as environment variables:
+    ```
+    DX_USERNAME=<your_email>
+    DX_PASSWORD=<your_password>
+    ```
+3.  **Prompt for input (3rd priority):**
+    If neither of the above methods is used, the script will prompt you to enter your account information directly in the terminal during execution.
 
-3. If the modules are already installed, running `./dx-compiler/install.sh` again will reuse the existing installations.  
-   To force a reinstallation, use the `--force` option:
+Upon successful installation:
 
-   ```
-   $ ./dx-compiler/install.sh --force
-   ```
+1.  The `dx-com` and `dx_simulator` module archive files (`.tar.gz`) will be downloaded and saved to:
+    * `./workspace/release/dx_com/download/dx_com_M1A_v[VERSION].tar.gz`
+    * `./workspace/release/dx_simulator/download/dx_simulator_v[VERSION].tar.gz`
 
-#### Install a Specific Version
+2.  The downloaded modules will be extracted to:
+    * `./workspace/release/dx_com/dx_com_M1A_v[VERSION]`
+    * `./workspace/release/dx_simulator/dx_simulator_v[VERSION]`
+    * Symbolic links will also be created at `./dx-compiler/dx-com` and `./dx-compiler/dx_simulator`.
 
-To install a specific version, modify the environment variables in `install.sh`:
+3.  If the modules are already installed, running `./dx-compiler/install.sh` again will reuse the existing installations. To force a reinstallation, use the `--force` option:
+
+    ```
+    $ ./dx-compiler/install.sh --force
+    ```
+
+####  Archive Mode (--archive_mode=y)
+
+The `--archive_mode=y` option is primarily used when building Docker images for the `dx-compiler` environment with `docker_build.sh`. When this mode is activated, only the download of the module's `.tar.gz` file proceeds; no extraction or symbolic link creation is performed.
 
 ```
-COM_VERSION="1.38.1"        # default
-SIM_VERSION="2.14.5"        # default
+$ ./dx-compiler/install.sh --archive_mode=y
 ```
 
-Alternatively, specify the version directly when executing the command:
+When executing the above command, the module archive files (`*.tar.gz`) will be downloaded and saved to:
 
-```
-$ ./dx-compiler/install.sh --com_version=<version> --sim_version=<version>
-```
+* `../archives/dx_com_M1A_v[VERSION].tar.gz`
+* `../archives/dx_simulator_v[VERSION].tar.gz`
+
+These archive files can then be utilized by the Docker image build process.
 
 ---
 
