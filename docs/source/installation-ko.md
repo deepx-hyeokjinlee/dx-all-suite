@@ -39,7 +39,7 @@ $ ./scripts/install_docker.sh
 
 ## 로컬 설치
 
-### DX-Compiler 환경 설치 (dx_com, dx_simulator)
+### DX-Compiler 환경 설치 (dx_com)
 
 `DX-Compiler` 환경은 사전 빌드된 바이너리를 제공하며, 소스 코드는 포함되지 않습니다. 각 모듈은 원격 서버에서 다운로드하여 설치할 수 있습니다.
 
@@ -71,14 +71,12 @@ $ ./dx-compiler/install.sh
 
 성공적으로 설치되면:
 
-1.  `dx-com` 및 `dx-simulator` 모듈의 아카이브 파일(`.tar.gz`)이 아래 경로에 다운로드 및 저장됩니다.
+1.  `dx-com` 모듈의 아카이브 파일(`.tar.gz`)이 아래 경로에 다운로드 및 저장됩니다.
     * `./workspace/release/dx_com/download/dx_com_M1_v[VERSION].tar.gz`
-    * `./workspace/release/dx_simulator/download/dx_simulator_v[VERSION].tar.gz`
 
 2.  다운로드된 모듈이 아래 경로에 압축 해제됩니다.
     * `./workspace/release/dx_com/dx_com_M1_v[VERSION]`
-    * `./workspace/release/dx_simulator/dx_simulator_v[VERSION]`
-    * 심볼릭 링크가 `./dx-compiler/dx-com` 및 `./dx-compiler/dx_simulator`에 생성됩니다.
+    * 심볼릭 링크가 `./dx-compiler/dx-com`에 생성됩니다.
 
 3.  이미 설치된 경우, `./dx-compiler/install.sh`를 다시 실행하면 기존 설치를 재사용합니다. 강제 재설치를 원할 경우 `--force` 옵션을 사용하세요.
 
@@ -95,7 +93,6 @@ $ ./dx-compiler/install.sh --archive_mode=y
 위 명령을 실행하면, 모듈 아카이브 파일(*.tar.gz)이 아래 경로에 다운로드 및 저장됩니다:
 
 archives/dx_com_M1_v[VERSION].tar.gz
-archives/dx_simulator_v[VERSION].tar.gz
 
 이 아카이브 파일들은 Docker 이미지 빌드 프로세스에서 활용될 수 있습니다.
 
@@ -424,49 +421,4 @@ Compiling Model : 100%|███████████████████
 ```
 
 **자세한 내용은 [dx-compiler/source/docs/02_02_Installation_of_DX-COM.md](/dx-compiler/source/docs/02_02_Installation_of_DX-COM.md)를 참고하세요.**
-
----
-
-### dx_simulator
-
-#### 설치 경로
-
-1. **호스트 환경에서 실행하는 경우:**
-    ```
-    $ cd ./dx-compiler/dx_simulator
-    ```
-2. **도커 컨테이너 내부에서 실행하는 경우:**
-    ```
-    $ docker exec -it dx-compiler-<ubuntu_version> bash
-    (venv-dx-simulator) # cd /deepx/dx-compiler/dx_simulator
-    ```
-
-#### 필수 패키지 설치
-
-1. **호스트 환경에서 실행하는 경우:**
-    ```
-    # install prerequisites, python venv and dx_simulator
-    ./scripts/install.sh
-
-    # "To activate the virtual environment, run:"
-    source ${VENV_PATH}/bin/activate
-    (venv-dx-simulator) $
-    ```
-
-2. **도커 컨테이너 내부에서 실행하는 경우:**
-    ```
-    $ docker exec -it dx-compiler-<ubuntu_version> bash
-    (venv-dx-simulator) # cd /deepx/dx-compiler/dx_simulator
-    (venv-dx-simulator) # pip install /deepx/dx-compiler/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
-    (venv-dx-simulator) # pip install ultralytics
-    ```
-
-#### 샘플 DXNN 입력을 사용하여 `dx_simulator` 실행
-
-```
-(venv-dx-simulator) $ python examples/example_yolov5s.py
-(venv-dx-simulator) $ fim examples/yolov5s.jpg
-```
-
-**자세한 내용은 [dx-compiler/source/docs/04_01_Simulator_DX-SIM.md](/dx-compiler/source/docs/04_01_Simulator_DX-SIM.md)를 참고하세요.**
 

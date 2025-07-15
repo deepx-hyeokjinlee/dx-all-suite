@@ -2,8 +2,8 @@ DEEPX software components have version compatibility dependencies between them. 
 
 ## M1 Accelerator
 
-| DX-All-Suite | DX-COM | DX-Simulator| DX_FW | NPU Driver | DX-RT | DX-Stream | DX-APP |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| v1.0.0 | v1.60.1 | v2.15.2 | v2.1.0 | v1.5.0 | v2.9.6 | v1.6.3 | v1.10.2 |
+| DX-All-Suite | DX-COM | DX_FW | NPU Driver | DX-RT | DX-Stream | DX-APP |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| v1.0.0 | v1.60.1 | v2.1.0 | v1.5.0 | v2.9.6 | v1.6.3 | v1.10.2 |
 
 

@@ -40,7 +40,7 @@ $ ./scripts/install_docker.sh
 
 ## Local Installation
 
-### Install DX-Compiler Environment (dx_com, dx_simulator)
+### Install DX-Compiler Environment (dx_com)
 
 The `DX-Compiler` environment provides prebuilt binary outputs and does not include source code. Each module can be downloaded and installed from a remote server using the following command:
 
@@ -71,14 +71,12 @@ When executing the above command, **DEEPX Developers' Portal** account authentic
 
 Upon successful installation:
 
-1.  The `dx-com` and `dx_simulator` module archive files (`.tar.gz`) will be downloaded and saved to:
+1.  The `dx-com` module archive files (`.tar.gz`) will be downloaded and saved to:
     * `./workspace/release/dx_com/download/dx_com_M1A_v[VERSION].tar.gz`
-    * `./workspace/release/dx_simulator/download/dx_simulator_v[VERSION].tar.gz`
 
 2.  The downloaded modules will be extracted to:
     * `./workspace/release/dx_com/dx_com_M1A_v[VERSION]`
-    * `./workspace/release/dx_simulator/dx_simulator_v[VERSION]`
-    * Symbolic links will also be created at `./dx-compiler/dx-com` and `./dx-compiler/dx_simulator`.
+    * Symbolic links will also be created at `./dx-compiler/dx-com`.
 
 3.  If the modules are already installed, running `./dx-compiler/install.sh` again will reuse the existing installations. To force a reinstallation, use the `--force` option:
 
@@ -97,7 +95,6 @@ $ ./dx-compiler/install.sh --archive_mode=y
 When executing the above command, the module archive files (`*.tar.gz`) will be downloaded and saved to:
 
 * `../archives/dx_com_M1A_v[VERSION].tar.gz`
-* `../archives/dx_simulator_v[VERSION].tar.gz`
 
 These archive files can then be utilized by the Docker image build process.
 
@@ -427,48 +424,3 @@ Compiling Model : 100%|███████████████████
 ```
 
 **For more details, refer to [dx-compiler/source/docs/02_02_Installation_of_DX-COM.md](/dx-compiler/source/docs/02_02_Installation_of_DX-COM.md).**
-
----
-
-### dx_simulator
-
-#### Installation Path
-
-1. **On the Host Environment:**
-    ```
-    $ cd ./dx-compiler/dx_simulator
-    ```
-2. **Inside the Docker Container:**
-    ```
-    $ docker exec -it dx-compiler-<ubuntu_version> bash
-    (venv-dx-simulator) # cd /deepx/dx-compiler/dx_simulator
-    ```
-
-#### Install Prerequisites
-
-1. **On the Host Environment:**
-    ```
-    # install prerequisites, python venv and dx_simulator
-    ./scripts/install.sh
-
-    # "To activate the virtual environment, run:"
-    source ${VENV_PATH}/bin/activate
-    (venv-dx-simulator) $
-    ```
-
-2. **Inside the Docker Container:**
-    ```
-    $ docker exec -it dx-compiler-<ubuntu_version> bash
-    (venv-dx-simulator) # cd /deepx/dx-compiler/dx_simulator
-    (venv-dx-simulator) # pip install /deepx/dx-compiler/dx_simulator/dx_simulator-*-cp311-cp311-linux_x86_64.whl --force-reinstall
-    (venv-dx-simulator) # pip install ultralytics
-    ```
-
-#### Run `dx_simulator` using Sample dxnn input
-```
-(venv-dx-simulator) $ python examples/example_yolov5s.py
-(venv-dx-simulator) $ fim examples/yolov5s.jpg
-```
-
-**For more details, refer to [dx-compiler/source/docs/04_01_Simulator_DX-SIM.md](/dx-compiler/source/docs/04_01_Simulator_DX-SIM.md).**
-
