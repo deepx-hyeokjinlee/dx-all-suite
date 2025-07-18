@@ -14,3 +14,4 @@ dx-compiler/
 dx-modelzoo/
 dx-runtime/
 dx-*/
+pytest.ini
