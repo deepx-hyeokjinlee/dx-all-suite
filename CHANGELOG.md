@@ -11,6 +11,38 @@
  6f8d6eb5ff33897e875319e3338983e8043e59cf dx-modelzoo (6f8d6eb)  
 
 #### dx-runtime  
++ac61fbf12e06867a9af0d7c3c079f287efc0f6bd dx-runtime (runtime-20250722-rc1-1-gac61fbf)  
+ dc161f1155ed16898518725f1510c5ae58ada3df dx-runtime/dx_app (heads/dev)  
+ 6af65ef79415b52a0b9e3ddf7a2183012b0d0919 dx-runtime/dx_fw (6af65ef)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ ca4903b6239df38b3834ab3d21c288328e76674f dx-runtime/dx_fw/firmware/bootloader (ca4903b)  
+ c62a2dbd806dee4b42b6055c932014c0adde4b89 dx-runtime/dx_fw/firmware/freertos/apps (c62a2db)  
+ 6f63da20b3c9e1408e7c8007d3427b75878cbd64 dx-runtime/dx_fw/firmware/freertos/kern (6f63da2)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 95d143039ecdd782eccc20f3a0fe664e1127ae96 dx-runtime/dx_fw/firmware/freertos/plat (95d1430)  
+ 6e13160bc92253138845d2ebd6e48bfea10c31ac dx-runtime/dx_fw/firmware/romcode (6e13160)  
+ fb60f5bdb963d524f0ca0b390b6da116245a1f74 dx-runtime/dx_fw/firmware/secureloader (fb60f5b)  
+ d613e38b4f3acecc73a5fa24fad9bce9cab97cbb dx-runtime/dx_fw/utils/tools/rt_bingen (heads/main)  
+ d053da5d98b0c1a6dc1e6e1745d738e6c841cb16 dx-runtime/dx_rt (d053da5)  
+ 407754314cad4c28db92e8d71eb3e26b67e7bf7d dx-runtime/dx_rt_npu_linux_driver (heads/dev)  
+ 60547b82214030d98d00749154adc86f62c01f83 dx-runtime/dx_rt_npu_linux_driver/modules/pci_deepx (60547b8)  
+ 71854f57608df8f2dc09a8bb2780d97efe086786 dx-runtime/dx_rt_npu_linux_driver/modules/pci_xilinx (heads/main)  
+ c739aa5a591e6d0fb950dc7bc852b6603edab723 dx-runtime/dx_rt_npu_linux_driver/utils (c739aa5)  
++685f5e23cfae4567b6287ff45886afb8f6b18c9e dx-runtime/dx_stream (bump=none)  
+### 2025-07-22  
+#### dx-compiler  
+ b844ccc7ca4e7f37b982fa205745e0b3eac4859a dx-compiler (compiler-20250715-rc0)  
+ a8c1c9059d9f19e94485140414c79e0a652fdd3b dx-compiler/dx_codegen (a8c1c90)  
+ c0e0ff82194e5df943afbb3a59bf815f6821f913 dx-compiler/dx_com (c0e0ff8)  
+ 6a244c7db583a305e8647c95c737c9af0a05288c dx-compiler/dx_common (6a244c7)  
+ bf6b5fb33c6b431f653e71286a7536a7bde24150 dx-compiler/dx_simulator (bf6b5fb)  
+
+#### dx-modelzoo  
+ 6f8d6eb5ff33897e875319e3338983e8043e59cf dx-modelzoo (6f8d6eb)  
+
+#### dx-runtime  
 +e7a9d6b15f97f7f3834a31f5bc4d8f0be5added4 dx-runtime (heads/main)  
  dc161f1155ed16898518725f1510c5ae58ada3df dx-runtime/dx_app (heads/dev)  
  6af65ef79415b52a0b9e3ddf7a2183012b0d0919 dx-runtime/dx_fw (6af65ef)  
