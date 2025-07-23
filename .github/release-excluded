@@ -7,8 +7,6 @@
 .gitignore
 .gitattribute
 .gitmodules
-.bumpversion.cfg
-release.ver
 CHANGELOG.md
 dx-compiler/
 dx-modelzoo/
