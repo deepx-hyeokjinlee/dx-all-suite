@@ -11,6 +11,44 @@
  8818aa34be5e5f03c9f9c8b5b5f0c7e97697b630 dx-modelzoo (heads/dev)  
 
 #### dx-runtime  
++8adc335c9fb8a5a4af31f986152b99a5379d285b dx-runtime (remotes/origin/HEAD)  
+ f189bef5bae4193151876606cf54a929e8f21daf dx-runtime/dx_app (bump=minor-2-gf189bef)  
+ 6f7f8356b3b8a63dd8b21e3e2d88059581417cb7 dx-runtime/dx_fw (6f7f835)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ 91801685be67310abc3eeaf023d8e8c4dc2dc548 dx-runtime/dx_fw/firmware/bootloader (9180168)  
+ 3ba650fe15ca0201876a23d59b65e9ca2096f8b4 dx-runtime/dx_fw/firmware/freertos/apps (3ba650f)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ f0cba6bdc151da958671ace83a608f264e809ade dx-runtime/dx_fw/firmware/freertos/plat (f0cba6b)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+-dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+-afa294982e8a28bc06f341cc77fd4276641b42bd dx-runtime/dx_fw/firmware/freertos/tcp/tools/CMock  
+ 6e13160bc92253138845d2ebd6e48bfea10c31ac dx-runtime/dx_fw/firmware/romcode (6e13160)  
+ b68429e6228d08540ee24dc9fe7a5398ff8b906a dx-runtime/dx_fw/firmware/secureloader (b68429e)  
+ d613e38b4f3acecc73a5fa24fad9bce9cab97cbb dx-runtime/dx_fw/utils/tools/rt_bingen (heads/main)  
+ 3346f45afec35838f6a91d647b321236e474a758 dx-runtime/dx_rt (bump=major-1-g3346f45)  
++407754314cad4c28db92e8d71eb3e26b67e7bf7d dx-runtime/dx_rt_npu_linux_driver (4077543)  
+ 60547b82214030d98d00749154adc86f62c01f83 dx-runtime/dx_rt_npu_linux_driver/modules/pci_deepx (60547b8)  
+ 71854f57608df8f2dc09a8bb2780d97efe086786 dx-runtime/dx_rt_npu_linux_driver/modules/pci_xilinx (heads/main)  
+ c739aa5a591e6d0fb950dc7bc852b6603edab723 dx-runtime/dx_rt_npu_linux_driver/utils (c739aa5)  
+ f52f64206bc6984ea1db59ee1a65ffa6673c6028 dx-runtime/dx_stream (bump=none)  
+### 2025-07-25  
+#### dx-compiler  
+ 036e0158782e82c00ce4c86874dfefb47b574d8e dx-compiler (compiler-20250724-rc0)  
+ a8c1c9059d9f19e94485140414c79e0a652fdd3b dx-compiler/dx_codegen (a8c1c90)  
+ c0e0ff82194e5df943afbb3a59bf815f6821f913 dx-compiler/dx_com (c0e0ff8)  
+ 6a244c7db583a305e8647c95c737c9af0a05288c dx-compiler/dx_common (6a244c7)  
+ bf6b5fb33c6b431f653e71286a7536a7bde24150 dx-compiler/dx_simulator (bf6b5fb)  
+
+#### dx-modelzoo  
+ 8818aa34be5e5f03c9f9c8b5b5f0c7e97697b630 dx-modelzoo (heads/dev)  
+
+#### dx-runtime  
 +9cbbd6000fb3d51178c34c810e03e6c72b9fc592 dx-runtime (remotes/origin/HEAD)  
  f189bef5bae4193151876606cf54a929e8f21daf dx-runtime/dx_app (bump=minor-2-gf189bef)  
  6f7f8356b3b8a63dd8b21e3e2d88059581417cb7 dx-runtime/dx_fw (6f7f835)  
