@@ -1,15 +1,12 @@
 [submodule "dx-runtime"]
 	path = dx-runtime
 	url = git@gh.deepx.ai:deepx/dx-runtime.git
-	branch = main
 	ignore = dirty
 [submodule "dx-compiler"]
 	path = dx-compiler
 	url = git@gh.deepx.ai:deepx/dx-compiler.git
-	branch = main
 	ignore = dirty
 [submodule "dx-modelzoo"]
 	path = dx-modelzoo
 	url = git@gh.deepx.ai:deepx/dx-modelzoo.git
-	branch = main
 	ignore = dirty
