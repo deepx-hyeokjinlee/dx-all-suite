@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch Tags
-        run: git fetch --tags --recurse-submodules
+        run: git fetch --tags --recurse-submodules || true
 
       - name: Get Current Date
         run: echo "current_date=$(date +'%Y%m%d')" >> $GITHUB_ENV
