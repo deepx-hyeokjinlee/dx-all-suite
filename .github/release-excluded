@@ -13,3 +13,4 @@ dx-modelzoo/
 dx-runtime/
 dx-*/
 pytest.ini
+internal/
