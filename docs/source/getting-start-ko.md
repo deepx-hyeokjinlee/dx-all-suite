@@ -10,8 +10,6 @@ bash compiler-1_download_onnx.sh
 bash compiler-2_setup_calibration_dataset.sh
 bash compiler-3_setup_output_path.sh
 bash compiler-4_model_compile.sh
-bash compiler-5_setup_simulator_deps.sh
-bash compiler-6_run_examples_using_simulator.sh
 
 # Runtime Steps
 bash runtime-1_setup_input_path.sh
@@ -19,23 +17,19 @@ bash runtime-2_setup_assets.sh
 bash runtime-3_run_example_using_dxrt.sh
 ```
 
-
 **📁 폴더 구조 예시 (실행 이후)**
 
 ```
-getting-start/ 
+getting-start/
 ├── calibration_dataset
-├── dxnn                         # ← Model output symbolic link created by dx-compiler 
-├── forked_dx_app_example        # ← Example execution target (forked) 
+├── dxnn                         # ← Model output symbolic link created by dx-compiler
+├── forked_dx_app_example        # ← Example execution target (forked)
 │   ├── bin
 │   ├── example
 │   │   ├── run_classifier
 │   │   └── run_detector
 │   └── sample
 │       └── ILSVRC2012
-├── forked_dx_simulator_example  # ← Example execution target (forked) 
-│   └── examples
-│       └── images
 └── modelzoo
     ├── json
     └── onnx
@@ -60,7 +54,7 @@ getting-start/
 
 ```bash
 ./getting-start/compiler-1_download_onnx.sh
-./getting-start/compiler-2_setup_dataset.sh
+./getting-start/compiler-2_setup_calibration_dataset.sh
 ./getting-start/compiler-3_setup_output_path.sh
 ./getting-start/compiler-4_model_compile.sh
 ```
@@ -85,10 +79,12 @@ getting-start/
 #### 📌 주요 함수
 
 - `show_help([type], [message])`
+
   - 잘못된 옵션 입력 시 도움말 메시지를 출력하고 종료합니다.
   - `--force`, `--help` 지원.
 
 - `download(model_name, ext_name)`
+
   - 주어진 모델 이름과 확장자를 기반으로 리소스를 다운로드합니다.
   - `get_resource.sh`를 호출해 `modelzoo/{ext_name}/{model_name}.{ext_name}`에 저장.
   - workspace (`workspace/modelzoo/`)와의 심볼릭 링크 생성도 포함.
@@ -111,10 +107,12 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 #### 📌 주요 함수
 
 - `make_symlink_calibration_dataset()`
+
   - `dx_com/calibration_dataset` → `./calibration_dataset` 심볼릭 링크 생성.
   - 기존 링크가 깨져 있는 경우 재생성 처리.
 
 - `hijack_dataset_path(model_name)`
+
   - `json/{model_name}.json` 내 `"dataset_path"` 값을 `./calibration_dataset` 로 강제 변경.
   - 기존 파일 백업(`.bak`) 후 `sed` 명령어로 값 수정.
   - 변경 전/후 `diff` 출력.
@@ -157,6 +155,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
 #### 📌 주요 함수
 
 - `compile(model_name)`
+
   - `dx_com` 실행하여 `.onnx + .json → .dxnn` 으로 변환.
   - 결과물은 `./dxnn` 디렉토리에 저장.
   - 실패 시 종료.
@@ -184,6 +183,7 @@ bash runtime-3_run_example_using_dxrt.sh
 - `DXNN®` 모델이 `.dxnn` 형태로 정상 생성된 이후에 `runtime-*` 스크립트를 실행하세요.
 - `fim` 툴은 이미지 결과 확인용 CLI 도구로, 자동 설치 루틴이 포함되어 있습니다.
 - 예제 실행 전 `dx_app/setup.sh`을 통해 필요한 모델/샘플 데이터를 반드시 준비해야 합니다.
+
 ---
 
 ### 📁 1. runtime-1_setup_input_path.sh
@@ -202,6 +202,7 @@ bash runtime-3_run_example_using_dxrt.sh
     - 컨테이너: `${DOCKER_VOLUME_PATH}/dxnn`
     - 호스트: `${DX_AS_PATH}/workspace/dxnn`
   - `./dxnn` → 해당 workspace 경로로 연결 (broken symlink도 복구 처리 포함)
+
 ---
 
 ### 📁 2. runtime-2_setup_assets.sh
@@ -218,6 +219,7 @@ bash runtime-3_run_example_using_dxrt.sh
 - `setup_assets(target_path)`
   - 각 모듈 (`dx_app`, `dx_stream`)의 `setup.sh`를 실행.
   - 내부적으로 샘플 이미지, JSON 설정, 모델 등을 복사하거나 링크.
+
 ---
 
 ### 📁 3. runtime-3_run_example_using_dxrt.sh
@@ -234,14 +236,17 @@ bash runtime-3_run_example_using_dxrt.sh
 #### 📌 주요 함수
 
 - `fork_examples()`
+
   - `dx_app/bin` 실행 바이너리 및 `example/*`, `sample/*` 리소스 전체 복사
   - Git 초기화 및 커밋으로 diff 추적 가능하게 구성
 
 - `hijack_example(file_path, source_str, target_str, commit_msg)`
+
   - `.json` 설정파일 내 `"./assets/models/*.dxnn"` 경로를 실제 생성된 모델 경로로 대체
   - diff 확인
 
 - `run_hijacked_example(exe, config, save_log)`
+
   - 바이너리 실행 + 결과 확인
     - Object/Face Detection: 결과 이미지 출력 후 `fim`으로 확인
     - Classification: 결과 로그 (`result-app.log`)로 출력
