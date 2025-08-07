@@ -152,6 +152,15 @@ $ ./dx-runtime/install.sh --target=dx_fw
 
 **펌웨어 업데이트 후에는 시스템을 완전히 종료하고 전원을 껐다가 다시 켜는 것이 권장됩니다.**
 
+
+#### Sanity check
+
+```
+$ ./dx-runtime/scripts/sanity_check.sh
+```
+
+이 명령어를 통해 `dx_rt`와 `dx_rt_npu_linux_driver`가 정상적으로 설치가 되었는지 체크 할 수 있습니다.
+
 ---
 
 ## Docker를 이용한 설치
