@@ -150,6 +150,15 @@ Alternatively, you can use:
 $ ./dx-runtime/install.sh --target=dx_fw
 ```
 
+#### Sanity check
+
+```
+$ ./dx-runtime/scripts/sanity_check.sh
+```
+
+You can use this command to verify that `dx_rt` and `dx_rt_npu_linux_driver` are installed correctly.
+
+
 **It is recommended to completely shut down and power off the system before rebooting after a firmware update.**
 
 ---
