@@ -118,7 +118,14 @@ $ ./dx-runtime/install.sh --all
 ```
 
 이 명령어는 다음 모듈을 빌드 및 설치합니다.  
-`dx_rt_npu_linux_driver`, `dx_rt`, `dx_app`, `dx_stream` (단, `dx_fw` 펌웨어 업데이트 제외)
+`dx_fw, dx_rt_npu_linux_driver`, `dx_rt`, `dx_app`, `dx_stream`
+
+
+```
+$ ./dx-runtime/install.sh --all --exclude-fw
+``` 
+
+`--exclude-fw` 옵션을 사용하여 `dx_fw`를 제외하고 설치가 가능합니다.
 
 #### 특정 모듈만 설치
 
