@@ -26,18 +26,24 @@ AWS_CONFIG_FILE_PATH="${DX_AS_PATH}/internal/config/aws_config.properties"
 COM_BIN_PATH=${COMPILER_PATH}/dx_com/dx_com/dx_com
 COM_VERSION=""
 USE_FORCE=0
+DXNN_FORMAT_VERSION="v7"
+SKIP_UPLOAD_DXNN=0
 
 # Function to display help message
 show_help() {
     print_colored "Usage: $(basename "$0") --com_version=<version> [--help ]" "YELLOW"
     print_colored "Options:" "GREEN"
-    print_colored "  --com_version=<version>        : Specify version (e.g., 1.60.1)" "GREEN"
-    print_colored "  [--force]                      : Force overwrite if the file already exists" "GREEN"
-    print_colored "  [--venv_path=<PATH>]           : Specify the path for the virtual environment (default: ${VENV_PATH_DEFAULT})" "GREEN"
-    print_colored "  [--venv-force-remove]          : Force remove existing virtual environment at --venv_path before creation." "GREEN"
-    print_colored "  [--venv-reuse]                 : Reuse existing virtual environment at --venv_path if it's valid, skipping creation." "GREEN"
-    print_colored "  [--verbose]                    : Enable verbose (debug) logging." "GREEN"
-    print_colored "  [--help]                       : Show this help message" "GREEN"
+    print_colored "  [--com_version=<version>]          : Specify version (default: parse from compiler.properties)" "GREEN"
+    print_colored "  [--dxnn_format_version=<version>]  : Specify .dxnn format version (default: ${DXNN_FORMAT_VERSION})" "GREEN"
+    print_colored "  [--output_path=<PATH>]             : Specify the path for the output directory (default: ${OUTPUT_DIR})" "GREEN"
+    print_colored "  [--force]                          : Force overwrite if the file already exists" "GREEN"
+    print_colored "  [--dev]                            : Use config/dev_config.properties instead of config/aws_config.properties" "GREEN"
+    print_colored "  [--venv_path=<PATH>]               : Specify the path for the virtual environment (default: ${VENV_PATH_DEFAULT})" "GREEN"
+    print_colored "  [--venv-force-remove]              : Force remove existing virtual environment at --venv_path before creation." "GREEN"
+    print_colored "  [--venv-reuse]                     : Reuse existing virtual environment at --venv_path if it's valid, skipping creation." "GREEN"
+    print_colored "  [--verbose]                        : Enable verbose (debug) logging." "GREEN"
+    print_colored "  [--skip-upload-dxnn]               : Skip to upload compiled dxnn files to aws s3" "GREEN"
+    print_colored "  [--help]                           : Show this help message" "GREEN"
 
     if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
         print_colored "Invalid or missing arguments." "ERROR"
@@ -63,10 +69,10 @@ install_dx_compiler() {
 download_app_models() {
     print_colored_v2 "INFO" "--- app models(onnx, json) files are downloading ---"
     
-    PATTERN_ARGS="--include-pattern res/onnx/*.onnx --include-pattern res/json/*.json"
+    PATTERN_ARGS="--include-pattern res/onnx/*.onnx --include-pattern res/json/${DXNN_FORMAT_VERSION}/*.json"
     
     # for testing
-    # PATTERN_ARGS="--include-pattern res/onnx/YoloV7*.onnx --include-pattern res/json/YoloV7*.json"
+    # PATTERN_ARGS="--include-pattern res/onnx/YoloV7*.onnx --include-pattern res/json/${DXNN_FORMAT_VERSION}/YoloV7*.json"
 
     if [[ "$USE_FORCE" -eq 1 ]]; then
         print_colored_v2 "INFO" "Force option is enabled. Overwriting existing files."
@@ -95,6 +101,7 @@ run_compile_app_models() {
 
     COM_BIN_PATH_ARGS="--dx_com_bin_path ${COM_BIN_PATH}"
     MODEL_DIR_ARGS="--model_dir ${OUTPUT_DIR}"
+    DXNN_FORMAT_VERSION_ARGS="--dxnn_format_version ${DXNN_FORMAT_VERSION}"
     GEN_HTML_REPORT_ARGS="--gen_html_report"
 
     if [[ "$USE_FORCE" -eq 1 ]]; then
@@ -102,7 +109,7 @@ run_compile_app_models() {
         FORCE_ARGS="--force"
     fi
 
-    COMPILER_APP_MODEL_CMD="python ${MODELZOO_PATH}/internal/run_compile.py ${COM_BIN_PATH_ARGS} ${MODEL_DIR_ARGS} ${GEN_HTML_REPORT_ARGS} ${FORCE_ARGS}"
+    COMPILER_APP_MODEL_CMD="python ${MODELZOO_PATH}/internal/run_compile.py ${COM_BIN_PATH_ARGS} ${MODEL_DIR_ARGS} ${DXNN_FORMAT_VERSION_ARGS} ${GEN_HTML_REPORT_ARGS} ${FORCE_ARGS}"
     echo "CMD : $COMPILER_APP_MODEL_CMD"
     $COMPILER_APP_MODEL_CMD || { print_colored "Compile failed for app models(onnx, json)." "ERROR"; exit 1; }
     rm -rf ./calibration_dataset || true
@@ -111,6 +118,11 @@ run_compile_app_models() {
 }
 
 upload_dxnn_to_aws_s3() {
+    if [ $SKIP_UPLOAD_DXNN -eq 1 ]; then
+        print_colored_v2 "WARNING" "skip to upload dxnn to aws s3"
+        return
+    fi
+    
     print_colored_v2 "INFO" "--- DXNN files uploading to s3://<your-bucket>/res/dxnn/${com_ver_dirname} ---"
 
     print_colored_v2 "INFO" "Get dx_com version to create s3 path"
@@ -193,6 +205,12 @@ for i in "$@"; do
         --com_version=*)
             COM_VERSION="${1#*=}"
             ;;
+        --dxnn_format_version=*)
+            DXNN_FORMAT_VERSION="${1#*=}"
+            ;;
+        --output_path=*)
+            OUTPUT_DIR="${1#*=}"
+            ;;
         --force)
             USE_FORCE=1
             exit 0
@@ -213,14 +231,15 @@ for i in "$@"; do
             ENABLE_DEBUG_LOGS=1
             ENABLE_DEV_MODE=1
             ;;
+        --skip-upload-dxnn)
+            SKIP_UPLOAD_DXNN=1
+            ;;
         --help)
             show_help
             exit 0
             ;;
         *)
-            print_colored "${TAG_ERROR}: Invalid option '$1'" "ERROR"
-            show_help
-            exit 1
+            show_help "error" "Invalid option '$1'"
             ;;
     esac
     shift
