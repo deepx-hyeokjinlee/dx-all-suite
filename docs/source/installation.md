@@ -39,6 +39,26 @@ $ git submodule status
 $ ./scripts/install_docker.sh
 ```
 
+#### Python Virtual Environment (Recommended)
+
+The installation scripts will install Python packages via pip. To avoid conflicts with system packages and maintain a clean environment, it is strongly recommended to use a Python virtual environment:
+
+```bash
+# Create a virtual environment
+$ python -m venv dx-venv
+
+# Activate the virtual environment
+$ source dx-venv/bin/activate  # On Linux/macOS
+# or
+$ dx-venv\Scripts\activate  # On Windows
+
+# Verify the virtual environment is active
+$ which python
+# Should show: /path/to/dx-venv/bin/python
+```
+
+After activating the virtual environment, proceed with the installation steps below.
+
 ---
 
 ## Local Installation
@@ -51,7 +71,7 @@ The `DX-Compiler` environment provides prebuilt binary outputs and does not incl
 $ ./dx-compiler/install.sh
 ```
 
-When executing the above command, **DEEPX Developers' Portal** account authentication may be required to download and install the DX-Compiler modules. The script obtains authentication information based on the following priority:
+When executing the above command, **DEEPX Developers' Portal (https://developer.deepx.ai)** account authentication may be required to download and install the DX-Compiler modules. The script obtains authentication information based on the following priority:
 
 1.  **Directly specify when executing the command (1st priority):**
     ```
@@ -118,14 +138,7 @@ $ ./dx-runtime/install.sh --all
 ```
 
 This command will build and install the following modules:  
-`dx_fw`, `dx_rt_npu_linux_driver`, `dx_rt`, `dx_app`, and `dx_stream`
-
-```
-$ ./dx-runtime/install.sh --all --exclude-fw
-``` 
-
-You can exclude `dx_fw` from the installation using the `--exclude-fw` option.
-
+`dx_rt_npu_linux_driver`, `dx_rt`, `dx_app`, and `dx_stream` (excluding `dx_fw` firmware updates).
 
 #### Selective Installation of a Specific Module
 
@@ -149,15 +162,6 @@ Alternatively, you can use:
 ```
 $ ./dx-runtime/install.sh --target=dx_fw
 ```
-
-#### Sanity check
-
-```
-$ ./dx-runtime/scripts/sanity_check.sh
-```
-
-You can use this command to verify that `dx_rt` and `dx_rt_npu_linux_driver` are installed correctly.
-
 
 **It is recommended to completely shut down and power off the system before rebooting after a firmware update.**
 
