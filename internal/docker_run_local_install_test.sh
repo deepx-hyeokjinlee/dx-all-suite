@@ -5,8 +5,9 @@ DX_AS_INTERNAL_PATH="${DX_AS_PATH}/internal"
 
 # color env settings
 source ${DX_AS_PATH}/scripts/color_env.sh
+source ${DX_AS_PATH}/scripts/common_util.sh
 
-pushd "$DX_AS_INTERNAL_PATH"
+pushd "$DX_AS_INTERNAL_PATH" >&2
 
 UBUNTU_VERSION=""
 
@@ -88,7 +89,9 @@ docker_run_impl()
         export XAUTHORITY_TARGET="/tmp/.docker.xauth"
     fi
 
-    CMD="docker compose ${config_file_args} -p dx-all-suite-local-install-test up -d --remove-orphans dx-local-install-test"
+    # Dynamically set the project name based on the Ubuntu
+    export COMPOSE_PROJECT_NAME="dx-local-install-test-$(echo "${UBUNTU_VERSION}" | sed 's/\./-/g')"
+    CMD="docker compose ${config_file_args} -p ${COMPOSE_PROJECT_NAME} up -d --remove-orphans dx-local-install-test"
     echo "${CMD}"
 
     ${CMD}
@@ -178,6 +181,6 @@ done
 
 main
 
-popd
+popd >&2
 
 exit 0

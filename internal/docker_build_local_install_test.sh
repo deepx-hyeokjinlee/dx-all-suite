@@ -2,40 +2,18 @@
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
 DX_AS_PATH=$(realpath -s "${SCRIPT_DIR}/../")
 DX_AS_INTERNAL_PATH="${DX_AS_PATH}/internal"
-COMPILER_PATH="${DX_AS_PATH}/dx-compiler"
 
 # color env settings
 source ${DX_AS_PATH}/scripts/color_env.sh
+source ${DX_AS_PATH}/scripts/common_utils.sh
 
-pushd "$DX_AS_INTERNAL_PATH"
+pushd "$DX_AS_INTERNAL_PATH" >&2
 
-OUTPUT_DIR="$DX_AS_PATH/archives"
 UBUNTU_VERSION=""
 
 NVIDIA_GPU_MODE=0
 INTERNAL_MODE=0
-FORCE_ARGS=""
 
-# Properties file path
-VERSION_FILE="$COMPILER_PATH/compiler.properties"
-
-# read 'COM_VERSION' from properties file
-if [[ -f "$VERSION_FILE" ]]; then
-    # load varialbles
-    source "$VERSION_FILE"
-else
-    echo -e "${TAG_ERROR} Version file '$VERSION_FILE' not found.\n${TAG_INFO} ${COLOR_BRIGHT_YELLOW_ON_BLACK}Please try running 'git submodule update --init --recursive --force' and then try again.${COLOR_RESET}"
-    exit 1
-fi
-
-if [ -n "${COM_VERSION}" ]; then
-    echo -e "${TAG_INFO} dx_com version(${COM_VERSION}) is set."
-else
-    echo -e "${TAG_ERROR} 'dx_com' version is not specified in ${VERSION_FILE}."
-    exit 1
-fi
-
-FILE_DXCOM="archives/dx_com_M1_v${COM_VERSION}.tar.gz"
 
 # Function to display help message
 show_help() {
@@ -81,7 +59,6 @@ docker_build_impl()
     # Build Docker image
     export COMPOSE_BAKE=true
     export UBUNTU_VERSION=${UBUNTU_VERSION}
-    export FILE_DXCOM=${FILE_DXCOM}
     if [ ! -n "${XAUTHORITY}" ]; then
         echo -e "${TAG_INFO} XAUTHORITY env is not set. so, try to set automatically."
         DUMMY_XAUTHORITY="/tmp/dummy"
@@ -120,7 +97,6 @@ main() {
         show_help "error" "--ubuntu_version ($UBUNTU_VERSION) does not exist."
     else
         echo -e "${TAG_INFO} UBUNTU_VERSSION($UBUNTU_VERSION) is set."
-        echo -e "${TAG_INFO} FILE_DXCOM($FILE_DXCOM) is set."
         if [ "$DRIVER_UPDATE" = "y" ]; then
             echo -e "${TAG_INFO} DRIVER_UPDATE($DRIVER_UPDATE) is set."
         fi
@@ -129,19 +105,10 @@ main() {
         fi
     fi
 
-    echo "Archiving all DXNN® environments"
-    ${DX_AS_PATH}/scripts/archive_dx-compiler.sh || { echo -e "${TAG_ERROR} Archiving dx-compiler failed."; exit 1; }
-    ${DX_AS_PATH}/scripts/archive_git_repos.sh --all || { echo -e "${TAG_ERROR} Archiving dx-runtime or dx-modelzoo failed.\n${TAG_INFO} ${COLOR_BRIGHT_YELLOW_ON_BLACK}Please try running 'git submodule update --init --recursive --force' and then try again.${COLOR_RESET}"; exit 1; }
     docker_build
     if [ "$DRIVER_UPDATE" = "y" ]; then
         install_dx_rt_npu_linux_driver
     fi
-
-    # remove archives
-    # if [[ -d "$OUTPUT_DIR" ]]; then
-    #     echo "Removing archive directory: $OUTPUT_DIR"
-    #     rm -rf "$OUTPUT_DIR"
-    # fi
 }
 
 # parse args
@@ -166,9 +133,6 @@ for i in "$@"; do
         --internal)
             INTERNAL_MODE=1
             ;;
-        --force)
-            FORCE_ARGS="--force"
-            ;;
         *)
             echo -e "${TAG_ERROR}: Invalid option '$1'"
             show_help
@@ -180,6 +144,6 @@ done
 
 main
 
-popd
+popd >&2
 
 exit 0
