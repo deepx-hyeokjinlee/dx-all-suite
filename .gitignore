@@ -34,3 +34,5 @@ dummy_xauthority
 **/run_compile*.json
 internal/build/
 internal/config/dev_config.properties
+internal/venv*/
+internal/workspace*/
