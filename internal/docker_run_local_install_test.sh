@@ -18,7 +18,7 @@ INTEL_GPU_HW_ACC=0
 # Function to display help message
 show_help() {
     echo "Usage: $(basename "$0") --ubuntu_version=<version> [--help]"
-    echo "Example:1) $0 --ubuntu_version=24.04"
+    echo "Example 1) $0 --ubuntu_version=24.04"
     echo "Options:"
     echo "  --ubuntu_version=<version>     : Specify Ubuntu version (ex> 24.04)"
     echo "  [--help]                       : Show this help message"
@@ -94,7 +94,7 @@ docker_run_impl()
     CMD="docker compose ${config_file_args} -p ${COMPOSE_PROJECT_NAME} up -d --remove-orphans dx-local-install-test"
     echo "${CMD}"
 
-    ${CMD}
+    ${CMD} || { echo -e "${TAG_ERROR} docker run 'dx-local-install-test' failed. "; exit 1; }
 
     if [ "$XDG_SESSION_TYPE" == "tty" ]; then
         local DOCKER_EXEC_CMD="docker exec -it dx-local-install-test-${UBUNTU_VERSION} touch /deepx/tty_flag"

@@ -5,7 +5,7 @@ DX_AS_INTERNAL_PATH="${DX_AS_PATH}/internal"
 
 # color env settings
 source ${DX_AS_PATH}/scripts/color_env.sh
-source ${DX_AS_PATH}/scripts/common_utils.sh
+source ${DX_AS_PATH}/scripts/common_util.sh
 
 pushd "$DX_AS_INTERNAL_PATH" >&2
 
@@ -14,6 +14,10 @@ UBUNTU_VERSION=""
 NVIDIA_GPU_MODE=0
 INTERNAL_MODE=0
 
+HOST_UID=$(id -u)
+HOST_GID=$(id -g)
+TARGET_USER=deepx
+TARGET_HOME=/deepx
 
 # Function to display help message
 show_help() {
@@ -59,6 +63,10 @@ docker_build_impl()
     # Build Docker image
     export COMPOSE_BAKE=true
     export UBUNTU_VERSION=${UBUNTU_VERSION}
+    export HOST_UID=${HOST_UID}
+    export HOST_GID=${HOST_GID}
+    export TARGET_USER=${TARGET_USER}
+    export TARGET_HOME=${TARGET_HOME}
     if [ ! -n "${XAUTHORITY}" ]; then
         echo -e "${TAG_INFO} XAUTHORITY env is not set. so, try to set automatically."
         DUMMY_XAUTHORITY="/tmp/dummy"
@@ -74,7 +82,7 @@ docker_build_impl()
     CMD="docker compose ${config_file_args} build ${no_cache_arg} dx-local-install-test"
     echo "${CMD}"
 
-    ${CMD} || { echo -e "${TAG_ERROR} docker build dx-local-install-test failed. "; exit 1; }
+    ${CMD} || { echo -e "${TAG_ERROR} docker build 'dx-local-install-test' failed. "; exit 1; }
 }
 
 docker_build() 
@@ -97,6 +105,10 @@ main() {
         show_help "error" "--ubuntu_version ($UBUNTU_VERSION) does not exist."
     else
         echo -e "${TAG_INFO} UBUNTU_VERSSION($UBUNTU_VERSION) is set."
+        echo -e "${TAG_INFO} HOST_UID($HOST_UID) is set."
+        echo -e "${TAG_INFO} HOST_GID($HOST_GID) is set."
+        echo -e "${TAG_INFO} TARGET_USER($TARGET_USER) is set."
+        echo -e "${TAG_INFO} TARGET_HOME($TARGET_HOME) is set."
         if [ "$DRIVER_UPDATE" = "y" ]; then
             echo -e "${TAG_INFO} DRIVER_UPDATE($DRIVER_UPDATE) is set."
         fi
@@ -134,9 +146,7 @@ for i in "$@"; do
             INTERNAL_MODE=1
             ;;
         *)
-            echo -e "${TAG_ERROR}: Invalid option '$1'"
-            show_help
-            exit 1
+            show_help "error" "Invalid option '$1'"
             ;;
     esac
     shift

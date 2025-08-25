@@ -45,7 +45,34 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /deepx
+ARG HOST_UID
+ARG HOST_GID
+ARG TARGET_USER
+ARG TARGET_HOME
+
+# Set default values (in case values are not provided at build time)
+ENV HOST_UID=${HOST_UID:-1000}
+ENV HOST_GID=${HOST_GID:-1000}
+ENV TARGET_USER=${TARGET_USER:-deepx}
+ENV TARGET_HOME=${TARGET_HOME:-/deepx}
+
+# UID/GID based user processing
+RUN set -eux; \
+    if getent passwd "$HOST_UID" > /dev/null; then \
+        EXISTING_USER=$(getent passwd "$HOST_UID" | cut -d: -f1); \
+        usermod -l "$TARGET_USER" -d "$TARGET_HOME" -m "$EXISTING_USER"; \
+        EXISTING_GROUP=$(getent group "$HOST_GID" | cut -d: -f1); \
+        groupmod -n "$TARGET_USER" "$EXISTING_GROUP"; \
+    else \
+        groupadd -g "$HOST_GID" "$TARGET_USER" || true; \
+        useradd -u "$HOST_UID" -g "$HOST_GID" -d "$TARGET_HOME" -s /bin/bash "$TARGET_USER"; \
+    fi
+
+# set default password
+RUN echo "deepx:deepx" | chpasswd
+
+USER $TARGET_USER
+WORKDIR $TARGET_HOME
 
 ENTRYPOINT ["tail", "-f", "/dev/null"]
 

@@ -7,6 +7,11 @@ services:
       dockerfile: internal/docker/Dockerfile.local.install.test
       args:
         UBUNTU_VERSION: ${UBUNTU_VERSION}
+        FILE_DXCOM: ${FILE_DXCOM:-/should/be/set/path}
+        FILE_DXTRON: ${FILE_DXTRON:-/should/be/set/path}
+        HOST_UID: ${HOST_UID:-1000}
+        HOST_GID: ${HOST_GID:-1000}
+        
     ipc: host                                 # NPU ipc
     pid: host                                 # pid sharing for dx-local-install-test-RT Service
     tty: true                                 # NPU
@@ -17,11 +22,12 @@ services:
       - XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR}    # X11
       - XAUTHORITY=/tmp/.docker.xauth         # X11
       - DOCKER_VOLUME_PATH=${DOCKER_VOLUME_PATH:-/deepx/workspace} # volume path
+      - DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${HOST_UID:-1000}/bus # fuse (for DX-Tron)
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix         # X11
       - $HOME/.Xauthority:/root/.Xauthority   # X11
       - $XAUTHORITY:$XAUTHORITY_TARGET        # X11
-      - /dev:/dev                             # NPU, Camera, GPU
+      - /dev:/dev                             # NPU, Camera, GPU, fuse
       - /lib/udev/rules.d:/lib/udev/rules.d   # auto detect device(USB CAM)
       - /lib/modules:/lib/modules             # GPU
       - /etc/timezone:/etc/timezone:ro
