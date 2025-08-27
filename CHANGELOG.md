@@ -6,6 +6,32 @@
  bf6b5fb33c6b431f653e71286a7536a7bde24150 dx-compiler/dx_simulator (bf6b5fb)  
 
 #### dx-modelzoo  
+ 9ac4a491b76e9f56ec178589e6d26e6357f132a0 dx-modelzoo (heads/dev)  
+
+#### dx-runtime  
++69ae995dada162ae3053b6de8474b41891c8fc5b dx-runtime (heads/main)  
+ 662d1c3b1f62ce7b2ebf569c5e21aafef3ccf16c dx-runtime/dx_app (662d1c3)  
+ 6580a001bf876cafd5dd81e7dc9977a63447e816 dx-runtime/dx_fw (6580a00)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ dede0060262fa52f773c6b7428065b107413f84e dx-runtime/dx_fw/firmware/bootloader (dede006)  
+ f10026a5b95fcb7b1cc8a1cf2e75a44bc109e86a dx-runtime/dx_fw/firmware/freertos/apps (f10026a)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 4a06caf66393ec301e49f6c9be22c7d2f07c3ae8 dx-runtime/dx_fw/firmware/freertos/plat (4a06caf)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2025-08-27  
+#### dx-compiler  
+ b02902fa581e27f32c145ffe984e7ace3d6970c5 dx-compiler (heads/main)  
+ b9ddd707c2c967418bd5a288ac1a8d7e5ce8e371 dx-compiler/dx_com (b9ddd70)  
+ bf6b5fb33c6b431f653e71286a7536a7bde24150 dx-compiler/dx_simulator (bf6b5fb)  
+
+#### dx-modelzoo  
 +9ac4a491b76e9f56ec178589e6d26e6357f132a0 dx-modelzoo (remotes/origin/HEAD)  
 
 #### dx-runtime  
