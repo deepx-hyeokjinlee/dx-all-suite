@@ -44,6 +44,4 @@ services:
     restart: on-failure
     devices:
       - "/dev:/dev"                           # NPU / GPU / USB CAM
-    entrypoint: ["/bin/sh", "-c"]
-    command: ["sleep infinity"]
 

@@ -68,6 +68,10 @@ RUN set -eux; \
         useradd -u "$HOST_UID" -g "$HOST_GID" -d "$TARGET_HOME" -s /bin/bash "$TARGET_USER"; \
     fi
 
+# Copy init script for workspace permissions
+COPY docker/init-workspace.sh /usr/local/bin/init-workspace.sh
+RUN chmod +x /usr/local/bin/init-workspace.sh
+
 # set default password
 RUN echo "deepx:deepx" | chpasswd
 
@@ -79,5 +83,5 @@ RUN groupadd -g "$HOST_GID" "$TARGET_USER" || true; \
 USER $TARGET_USER
 WORKDIR $TARGET_HOME
 
-ENTRYPOINT ["tail", "-f", "/dev/null"]
-
+ENTRYPOINT ["/usr/local/bin/init-workspace.sh"]
+CMD ["tail", "-f", "/dev/null"]
