@@ -71,6 +71,11 @@ RUN set -eux; \
 # set default password
 RUN echo "deepx:deepx" | chpasswd
 
+# add sudo group
+RUN groupadd -g "$HOST_GID" "$TARGET_USER" || true; \
+    usermod -aG sudo "$TARGET_USER"; \
+    echo "$TARGET_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers;
+
 USER $TARGET_USER
 WORKDIR $TARGET_HOME
 
