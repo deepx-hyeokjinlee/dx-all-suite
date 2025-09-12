@@ -61,6 +61,7 @@ jobs:
           repository: ${{ env.public_repo }}
           path: ${{ env.public_repo_path }}
           token: ${{ secrets.GC_DCI_TOKEN }}
+          ref: staging
           fetch-depth: 0
           fetch-tags: true
           submodules: false
