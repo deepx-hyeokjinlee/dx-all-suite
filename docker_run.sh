@@ -151,8 +151,23 @@ docker_run_all()
 
 docker_run_dx-compiler() 
 {
+    # this function is defined in scripts/common_util.sh
+    # Usage: os_check "supported_os_names" "ubuntu_versions" "debian_versions"
+    os_check "ubuntu" "20.04 22.04 24.04" "" || {
+        print_colored_v2 "SKIP" "Current OS is not supported. Skip and continue to next target."
+        return 0
+    }
+
+    # this function is defined in scripts/common_util.sh
+    # Usage: arch_check "supported_arch_names"
+    arch_check "amd64 x86_64" || {
+        print_colored_v2 "SKIP" "Current architecture is not supported. Skip and continue to next target."
+        return 0
+    }
+
     local docker_compose_args="-f docker/docker-compose.yml"
     docker_run_impl "compiler" "${docker_compose_args}"
+    return 0
 }
 
 docker_run_dx-runtime()
