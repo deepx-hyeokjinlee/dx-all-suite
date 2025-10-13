@@ -11,6 +11,12 @@ DX-All-Suite is a tool for creating an environment to validate and utilize DEEPX
 
 ### Clone the Main Repository
 
+```
+$ git clone --recurse-submodules https://github.com/DEEPX-AI/dx-all-suite.git
+```
+
+or
+
 ```bash
 git clone --recurse-submodules https://github.com/DEEPX-AI/dx-all-suite.git
 ```
@@ -71,7 +77,14 @@ The `DX-Compiler` environment provides prebuilt binary outputs and does not incl
 ./dx-compiler/install.sh
 ```
 
-When executing the above command, **DEEPX Developers' Portal (https://developer.deepx.ai)** account authentication may be required to download and install the DX-Compiler modules. The script obtains authentication information based on the following priority:
+When executing the above command, DEEPX Developers' Portal ([https://developer.deepx.ai](https://developer.deepx.ai)) account authentication is required to download and install the DX-Compiler modules.
+
+To obtain Developer Portal credentials: Please send an email to [sales@deepx.ai](mailto:sales@deepx.ai) with the following information:
+
+- Company/Organization name
+- Your job title
+
+The script obtains authentication information based on the following priority:
 
 1.  **Directly specify when executing the command (1st priority):**
     ```bash
@@ -136,10 +149,9 @@ This command will build and install the following modules:
 
 ```bash
 ./dx-runtime/install.sh --all --exclude-fw
-``` 
+```
 
 You can exclude `dx_fw` from the installation using the `--exclude-fw` option.
-
 
 #### Selective Installation of a Specific Module
 
@@ -171,7 +183,6 @@ Alternatively, you can use:
 ```
 
 You can use this command to verify that `dx_rt` and `dx_rt_npu_linux_driver` are installed correctly.
-
 
 **It is recommended to completely shut down and power off the system before rebooting after a firmware update.**
 
@@ -454,17 +465,20 @@ dx_com/dx_com \
         -m sample/MobileNetV1-1.onnx \
         -c sample/MobileNetV1-1.json \
         -o sample/MobileNetV1-1
+        -o sample/MobileNetV1-1
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:06<00:00,  7.00s/model ]
 
 dx_com/dx_com \
         -m sample/ResNet50-1.onnx \
         -c sample/ResNet50-1.json \
         -o sample/ResNet50-1
+        -o sample/ResNet50-1
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:19<00:00, 19.17s/model ]
 
 dx_com/dx_com \
         -m sample/YOLOV5-1.onnx \
         -c sample/YOLOV5-1.json \
+        -o sample/YOLOV5-1
         -o sample/YOLOV5-1
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:47<00:00, 47.66s/model ]
 ```

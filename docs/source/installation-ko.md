@@ -10,7 +10,6 @@ DX-All-Suite은 DEEPX 디바이스를 검증하고 활용하기 위한 환경을
 
 ### 메인 리포지토리 클론
 
-
 ```bash
 git clone --recurse-submodules https://github.com/DEEPX-AI/dx-all-suite.git
 ```
@@ -71,7 +70,14 @@ which python
 ./dx-compiler/install.sh
 ```
 
-위 명령을 실행하면, DX-Compiler 모듈을 **DEEPX Developers' Portal**에서 다운로드하고 설치하기 위해 계정 인증 정보가 필요할 수 있습니다. 스크립트는 다음 우선순위에 따라 인증 정보를 획득합니다:
+위 명령어를 실행하면 DX-Compiler 모듈을 다운로드 및 설치하기 위해 DEEPX Developers' Portal([https://developer.deepx.ai](https://developer.deepx.ai)) 계정 인증이 필요합니다.
+
+Developer Portal 계정이 필요하신 경우, 아래 정보를 포함하여 [sales@deepx.ai](mailto:sales@deepx.ai)로 이메일을 보내주세요.
+
+- 회사/기관명
+- 직책
+
+스크립트는 아래의 우선순위에 따라 인증 정보를 획득합니다:
 
 1.  **명령어 실행 시 직접 지정 (1순위):**
     ```bash
@@ -135,10 +141,9 @@ archives/dx_com_M1_v[VERSION].tar.gz
 이 명령어는 다음 모듈을 빌드 및 설치합니다.  
 `dx_fw, dx_rt_npu_linux_driver`, `dx_rt`, `dx_app`, `dx_stream`
 
-
 ```bash
 ./dx-runtime/install.sh --all --exclude-fw
-``` 
+```
 
 `--exclude-fw` 옵션을 사용하여 `dx_fw`를 제외하고 설치가 가능합니다.
 
@@ -166,7 +171,6 @@ dxrt-cli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
 ```
 
 **펌웨어 업데이트 후에는 시스템을 완전히 종료하고 전원을 껐다가 다시 켜는 것이 권장됩니다.**
-
 
 #### Sanity check
 
@@ -455,17 +459,20 @@ dx_com/dx_com \
         -m sample/MobileNetV1-1.onnx \
         -c sample/MobileNetV1-1.json \
         -o sample/MobileNetV1-1
+        -o sample/MobileNetV1-1
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:06<00:00,  7.00s/model ]
 
 dx_com/dx_com \
         -m sample/ResNet50-1.onnx \
         -c sample/ResNet50-1.json \
         -o sample/ResNet50-1
+        -o sample/ResNet50-1
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:19<00:00, 19.17s/model ]
 
 dx_com/dx_com \
         -m sample/YOLOV5-1.onnx \
         -c sample/YOLOV5-1.json \
+        -o sample/YOLOV5-1
         -o sample/YOLOV5-1
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:47<00:00, 47.66s/model ]
 ```
