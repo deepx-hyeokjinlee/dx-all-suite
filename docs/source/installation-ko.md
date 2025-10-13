@@ -47,7 +47,7 @@ git submodule status
 python -m venv dx-venv
 
 # 가상 환경 활성화
-source dx-venv/bin/activate  # Linux/macOS
+source dx-venv/bin/activate  # Linux
 # 또는
 dx-venv\Scripts\activate  # Windows
 

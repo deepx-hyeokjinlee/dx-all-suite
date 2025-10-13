@@ -54,7 +54,7 @@ The installation scripts will install Python packages via pip. To avoid conflict
 python -m venv dx-venv
 
 # Activate the virtual environment
-source dx-venv/bin/activate  # On Linux/macOS
+source dx-venv/bin/activate  # On Linux
 # or
 dx-venv\Scripts\activate  # On Windows
 
