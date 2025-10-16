@@ -15,9 +15,9 @@ dx-runtime/workspace/
 **/dxnn
 calibration_dataset
 internal/calibration_dataset
-getting-start/calibration_dataset
-getting-start/forked*/
-getting-start/modelzoo/
+getting-started/calibration_dataset
+getting-started/forked*/
+getting-started/modelzoo/
 **/venv-*/
 **/venv-*
 venv-*/

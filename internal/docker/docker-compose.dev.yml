@@ -7,6 +7,6 @@ services:
       - ${DX_COMPILER_SRC_PATH:-../../dx-compiler}:/deepx/dx-compiler
       - ${DX_RUNTIME_SRC_PATH:-../../dx-runtime}:/deepx/dx-runtime
       - ${DX_MZ_SRC_PATH:-../../dx-modelzoo}:/deepx/dx-modelzoo
-      - ${DX_GETTING_START_SRC_PATH:-../../getting-start}:/deepx/getting-start
+      - ${DX_GETTING_STARTED_SRC_PATH:-../../getting-started}:/deepx/getting-started
       - ${DX_AS_SRC_PATH:-../../}:/deepx/dx-all-suite
       - ~/.ssh:/root/.ssh
