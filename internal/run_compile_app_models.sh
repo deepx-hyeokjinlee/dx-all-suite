@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# USAGES: internal/run_compile_app_models.sh --dxnn_format_version=v8 --skip-upload-dxnn --skip-install-dx-compiler --skip-download-app-models --venv-reuse
+
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
 DX_AS_PATH=$(realpath -s "${SCRIPT_DIR}/../")
 COMPILER_PATH="${DX_AS_PATH}/dx-compiler"
@@ -28,6 +31,8 @@ COM_VERSION=""
 USE_FORCE=0
 DXNN_FORMAT_VERSION="v7"
 SKIP_UPLOAD_DXNN=0
+SKIP_INSTALL_DX_COMPILER=0
+SKIP_DOWNLOAD_APP_MODELS=0
 
 # Function to display help message
 show_help() {
@@ -43,6 +48,8 @@ show_help() {
     print_colored "  [--venv-reuse]                     : Reuse existing virtual environment at --venv_path if it's valid, skipping creation." "GREEN"
     print_colored "  [--verbose]                        : Enable verbose (debug) logging." "GREEN"
     print_colored "  [--skip-upload-dxnn]               : Skip to upload compiled dxnn files to aws s3" "GREEN"
+    print_colored "  [--skip-install-dx-compiler]       : Skip dx-compiler installation" "GREEN"
+    print_colored "  [--skip-download-app-models]       : Skip downloading app models (onnx, json) files" "GREEN"
     print_colored "  [--help]                           : Show this help message" "GREEN"
 
     if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
@@ -59,6 +66,11 @@ show_help() {
 }
 
 install_dx_compiler() {
+    if [ $SKIP_INSTALL_DX_COMPILER -eq 1 ]; then
+        print_colored_v2 "WARNING" "skip to install dx-compiler"
+        return
+    fi
+    
     print_colored_v2 "INFO" "--- dx-compiler is installing ---"
     DX_COM_INSTALL_CMD="${COMPILER_PATH}/install.sh"
     echo "CMD : $DX_COM_INSTALL_CMD"
@@ -67,6 +79,11 @@ install_dx_compiler() {
 }
 
 download_app_models() {
+    if [ $SKIP_DOWNLOAD_APP_MODELS -eq 1 ]; then
+        print_colored_v2 "WARNING" "skip to download app models"
+        return
+    fi
+    
     print_colored_v2 "INFO" "--- app models(onnx, json) files are downloading ---"
     
     PATTERN_ARGS="--include-pattern res/onnx/*.onnx --include-pattern res/json/${DXNN_FORMAT_VERSION}/*.json"
@@ -99,9 +116,12 @@ run_compile_app_models() {
         exit 1
     fi
 
+    mkdir -p ./log
+
     COM_BIN_PATH_ARGS="--dx_com_bin_path ${COM_BIN_PATH}"
     MODEL_DIR_ARGS="--model_dir ${OUTPUT_DIR}"
     DXNN_FORMAT_VERSION_ARGS="--dxnn_format_version ${DXNN_FORMAT_VERSION}"
+    RESULT_LOG_ARGS="--log_file ./log/run_compile_app_models.log --json_result ./log/run_compile_app_models_results.json --csv_result ./log/run_compile_app_models_results.csv"
     GEN_HTML_REPORT_ARGS="--gen_html_report"
 
     if [[ "$USE_FORCE" -eq 1 ]]; then
@@ -109,7 +129,7 @@ run_compile_app_models() {
         FORCE_ARGS="--force"
     fi
 
-    COMPILER_APP_MODEL_CMD="python ${MODELZOO_PATH}/internal/run_compile.py ${COM_BIN_PATH_ARGS} ${MODEL_DIR_ARGS} ${DXNN_FORMAT_VERSION_ARGS} ${GEN_HTML_REPORT_ARGS} ${FORCE_ARGS}"
+    COMPILER_APP_MODEL_CMD="python ${MODELZOO_PATH}/internal/run_compile.py ${COM_BIN_PATH_ARGS} ${MODEL_DIR_ARGS} ${DXNN_FORMAT_VERSION_ARGS} ${RESULT_LOG_ARGS} ${GEN_HTML_REPORT_ARGS} ${FORCE_ARGS}"
     echo "CMD : $COMPILER_APP_MODEL_CMD"
     $COMPILER_APP_MODEL_CMD || { print_colored "Compile failed for app models(onnx, json)." "ERROR"; exit 1; }
     rm -rf ./calibration_dataset || true
@@ -213,7 +233,6 @@ for i in "$@"; do
             ;;
         --force)
             USE_FORCE=1
-            exit 0
             ;;
         --venv_path=*)
             VENV_PATH_ARG="${1#*=}"
@@ -233,6 +252,12 @@ for i in "$@"; do
             ;;
         --skip-upload-dxnn)
             SKIP_UPLOAD_DXNN=1
+            ;;
+        --skip-install-dx-compiler)
+            SKIP_INSTALL_DX_COMPILER=1
+            ;;
+        --skip-download-app-models)
+            SKIP_DOWNLOAD_APP_MODELS=1
             ;;
         --help)
             show_help
