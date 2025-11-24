@@ -28,11 +28,8 @@ dummy_xauthority
 *models*/
 **/__pycache__/
 **/.pytest_cache/
-**/run_compile*.csv
-**/run_compile*.log
-**/run_compile*.html
-**/run_compile*.json
 internal/build/
 internal/config/dev_config.properties
 internal/venv*/
 internal/workspace*/
+log/
