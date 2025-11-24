@@ -26,10 +26,13 @@ venv-*
 !dummy.crt
 dummy_xauthority
 *models*/
+*models*
 **/__pycache__/
 **/.pytest_cache/
 internal/build/
 internal/config/dev_config.properties
 internal/venv*/
 internal/workspace*/
+internal/tests/reports/
+internal/tests/venv/
 log/

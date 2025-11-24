@@ -1,0 +1,11 @@
+# Test framework
+pytest>=7.4.3
+pytest-html>=4.1.1
+pytest-json-report>=1.5.0
+
+# Additional utilities
+pytest-timeout>=2.2.0
+
+# Required for test modules
+boto3
+requests

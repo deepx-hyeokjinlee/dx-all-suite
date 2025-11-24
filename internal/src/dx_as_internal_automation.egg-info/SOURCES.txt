@@ -8,3 +8,4 @@ src/dx_as_internal_automation.egg-info/entry_points.txt
 src/dx_as_internal_automation.egg-info/requires.txt
 src/dx_as_internal_automation.egg-info/top_level.txt
 tests/test_aws_s3_manager.py
+tests/test_docker_build.py
