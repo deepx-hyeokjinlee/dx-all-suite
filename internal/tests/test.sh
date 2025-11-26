@@ -20,6 +20,19 @@
 #   ubuntu-20.04    - Run tests for Ubuntu 20.04 only
 #   ubuntu-18.04    - Run tests for Ubuntu 18.04 only
 #   debian-12       - Run tests for Debian 12 only
+#   runtime-ubuntu-24.04    - Run dx-runtime tests for Ubuntu 24.04
+#   runtime-ubuntu-22.04    - Run dx-runtime tests for Ubuntu 22.04
+#   runtime-ubuntu-20.04    - Run dx-runtime tests for Ubuntu 20.04
+#   runtime-ubuntu-18.04    - Run dx-runtime tests for Ubuntu 18.04
+#   runtime-debian-12       - Run dx-runtime tests for Debian 12
+#   modelzoo-ubuntu-24.04   - Run dx-modelzoo tests for Ubuntu 24.04
+#   modelzoo-ubuntu-22.04   - Run dx-modelzoo tests for Ubuntu 22.04
+#   modelzoo-ubuntu-20.04   - Run dx-modelzoo tests for Ubuntu 20.04
+#   modelzoo-ubuntu-18.04   - Run dx-modelzoo tests for Ubuntu 18.04
+#   modelzoo-debian-12      - Run dx-modelzoo tests for Debian 12
+#   compiler-ubuntu-24.04   - Run dx-compiler tests for Ubuntu 24.04
+#   compiler-ubuntu-22.04   - Run dx-compiler tests for Ubuntu 22.04
+#   compiler-ubuntu-20.04   - Run dx-compiler tests for Ubuntu 20.04
 #   list            - List all available tests
 #   report          - Run all tests and generate HTML report
 #   json            - Run all tests and generate JSON report
@@ -76,6 +89,21 @@ print_usage() {
     echo -e "  ${GREEN}ubuntu-18.04${NC}    - Run tests for Ubuntu 18.04 only"
     echo -e "  ${GREEN}debian-12${NC}       - Run tests for Debian 12 only"
     echo -e ""
+    echo -e "Target + OS Specific Commands:"
+    echo -e "  ${GREEN}runtime-ubuntu-24.04${NC}    - Run dx-runtime tests for Ubuntu 24.04"
+    echo -e "  ${GREEN}runtime-ubuntu-22.04${NC}    - Run dx-runtime tests for Ubuntu 22.04"
+    echo -e "  ${GREEN}runtime-ubuntu-20.04${NC}    - Run dx-runtime tests for Ubuntu 20.04"
+    echo -e "  ${GREEN}runtime-ubuntu-18.04${NC}    - Run dx-runtime tests for Ubuntu 18.04"
+    echo -e "  ${GREEN}runtime-debian-12${NC}       - Run dx-runtime tests for Debian 12"
+    echo -e "  ${GREEN}modelzoo-ubuntu-24.04${NC}   - Run dx-modelzoo tests for Ubuntu 24.04"
+    echo -e "  ${GREEN}modelzoo-ubuntu-22.04${NC}   - Run dx-modelzoo tests for Ubuntu 22.04"
+    echo -e "  ${GREEN}modelzoo-ubuntu-20.04${NC}   - Run dx-modelzoo tests for Ubuntu 20.04"
+    echo -e "  ${GREEN}modelzoo-ubuntu-18.04${NC}   - Run dx-modelzoo tests for Ubuntu 18.04"
+    echo -e "  ${GREEN}modelzoo-debian-12${NC}      - Run dx-modelzoo tests for Debian 12"
+    echo -e "  ${GREEN}compiler-ubuntu-24.04${NC}   - Run dx-compiler tests for Ubuntu 24.04"
+    echo -e "  ${GREEN}compiler-ubuntu-22.04${NC}   - Run dx-compiler tests for Ubuntu 22.04"
+    echo -e "  ${GREEN}compiler-ubuntu-20.04${NC}   - Run dx-compiler tests for Ubuntu 20.04"
+    echo -e ""
     echo -e "Utility Commands:"
     echo -e "  ${GREEN}list${NC}            - List all available tests"
     echo -e "  ${GREEN}report${NC}          - Run all tests and generate HTML report"
@@ -86,6 +114,8 @@ print_usage() {
     echo -e "  ./test.sh sanity"
     echo -e "  ./test.sh runtime -v -s"
     echo -e "  ./test.sh ubuntu-24.04"
+    echo -e "  ./test.sh runtime-ubuntu-18.04"
+    echo -e "  ./test.sh compiler-ubuntu-24.04"
     echo -e "  ./test.sh --report sanity"
     echo -e "  ./test.sh --show-capture runtime"
     echo -e "  ./test.sh --report --show-capture compiler -vv"
@@ -106,7 +136,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --show-capture)
             SHOW_CAPTURE=1
-            CAPTURE_ARGS="-s"
+            CAPTURE_ARGS="-s --capture=no"
             shift
             ;;
         *)
@@ -121,7 +151,7 @@ if [ $GENERATE_REPORT -eq 1 ]; then
     mkdir -p "${REPORT_DIR}"
     TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
     REPORT_FILE="${REPORT_DIR}/test_report_${TIMESTAMP}.html"
-    REPORT_ARGS="--html=\"${REPORT_FILE}\" --self-contained-html"
+    REPORT_ARGS="--html=${REPORT_FILE} --self-contained-html"
 fi
 
 COMMAND=$1
@@ -130,7 +160,7 @@ shift
 case "$COMMAND" in
     sanity)
         print_info "Running sanity checks only..."
-        eval "${RUNNER_SCRIPT}" -m sanity -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -m sanity -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -140,7 +170,7 @@ case "$COMMAND" in
     
     all)
         print_info "Running all tests..."
-        eval "${RUNNER_SCRIPT}" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -150,7 +180,7 @@ case "$COMMAND" in
     
     runtime)
         print_info "Running dx-runtime tests only..."
-        eval "${RUNNER_SCRIPT}" -k "runtime" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "runtime" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -160,7 +190,7 @@ case "$COMMAND" in
     
     modelzoo)
         print_info "Running dx-modelzoo tests only..."
-        eval "${RUNNER_SCRIPT}" -k "modelzoo" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "modelzoo" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -170,7 +200,7 @@ case "$COMMAND" in
     
     compiler)
         print_info "Running dx-compiler tests only..."
-        eval "${RUNNER_SCRIPT}" -k "compiler" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "compiler" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -180,7 +210,7 @@ case "$COMMAND" in
     
     ubuntu)
         print_info "Running tests for Ubuntu images only..."
-        eval "${RUNNER_SCRIPT}" -k "ubuntu" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "ubuntu" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -190,7 +220,7 @@ case "$COMMAND" in
     
     debian)
         print_info "Running tests for Debian images only..."
-        eval "${RUNNER_SCRIPT}" -k "debian" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "debian" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -200,7 +230,7 @@ case "$COMMAND" in
     
     ubuntu-24.04)
         print_info "Running tests for Ubuntu 24.04 only..."
-        eval "${RUNNER_SCRIPT}" -k "ubuntu and 24.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "ubuntu and 24.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -210,7 +240,7 @@ case "$COMMAND" in
     
     ubuntu-22.04)
         print_info "Running tests for Ubuntu 22.04 only..."
-        eval "${RUNNER_SCRIPT}" -k "ubuntu and 22.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "ubuntu and 22.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -220,7 +250,7 @@ case "$COMMAND" in
     
     ubuntu-20.04)
         print_info "Running tests for Ubuntu 20.04 only..."
-        eval "${RUNNER_SCRIPT}" -k "ubuntu and 20.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "ubuntu and 20.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -230,7 +260,7 @@ case "$COMMAND" in
     
     ubuntu-18.04)
         print_info "Running tests for Ubuntu 18.04 only..."
-        eval "${RUNNER_SCRIPT}" -k "ubuntu and 18.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "ubuntu and 18.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
@@ -240,7 +270,137 @@ case "$COMMAND" in
     
     debian-12)
         print_info "Running tests for Debian 12 only..."
-        eval "${RUNNER_SCRIPT}" -k "debian and 12" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        "${RUNNER_SCRIPT}" -k "debian and 12" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    runtime-ubuntu-24.04)
+        print_info "Running dx-runtime tests for Ubuntu 24.04 only..."
+        "${RUNNER_SCRIPT}" -k "runtime and ubuntu and 24.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    runtime-ubuntu-22.04)
+        print_info "Running dx-runtime tests for Ubuntu 22.04 only..."
+        "${RUNNER_SCRIPT}" -k "runtime and ubuntu and 22.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    runtime-ubuntu-20.04)
+        print_info "Running dx-runtime tests for Ubuntu 20.04 only..."
+        "${RUNNER_SCRIPT}" -k "runtime and ubuntu and 20.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    runtime-ubuntu-18.04)
+        print_info "Running dx-runtime tests for Ubuntu 18.04 only..."
+        "${RUNNER_SCRIPT}" -k "runtime and ubuntu and 18.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    runtime-debian-12)
+        print_info "Running dx-runtime tests for Debian 12 only..."
+        "${RUNNER_SCRIPT}" -k "runtime and debian and 12" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    modelzoo-ubuntu-24.04)
+        print_info "Running dx-modelzoo tests for Ubuntu 24.04 only..."
+        "${RUNNER_SCRIPT}" -k "modelzoo and ubuntu and 24.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    modelzoo-ubuntu-22.04)
+        print_info "Running dx-modelzoo tests for Ubuntu 22.04 only..."
+        "${RUNNER_SCRIPT}" -k "modelzoo and ubuntu and 22.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    modelzoo-ubuntu-20.04)
+        print_info "Running dx-modelzoo tests for Ubuntu 20.04 only..."
+        "${RUNNER_SCRIPT}" -k "modelzoo and ubuntu and 20.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    modelzoo-ubuntu-18.04)
+        print_info "Running dx-modelzoo tests for Ubuntu 18.04 only..."
+        "${RUNNER_SCRIPT}" -k "modelzoo and ubuntu and 18.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    modelzoo-debian-12)
+        print_info "Running dx-modelzoo tests for Debian 12 only..."
+        "${RUNNER_SCRIPT}" -k "modelzoo and debian and 12" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    compiler-ubuntu-24.04)
+        print_info "Running dx-compiler tests for Ubuntu 24.04 only..."
+        "${RUNNER_SCRIPT}" -k "compiler and ubuntu and 24.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    compiler-ubuntu-22.04)
+        print_info "Running dx-compiler tests for Ubuntu 22.04 only..."
+        "${RUNNER_SCRIPT}" -k "compiler and ubuntu and 22.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+    
+    compiler-ubuntu-20.04)
+        print_info "Running dx-compiler tests for Ubuntu 20.04 only..."
+        "${RUNNER_SCRIPT}" -k "compiler and ubuntu and 20.04" -v ${CAPTURE_ARGS} ${REPORT_ARGS} "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"

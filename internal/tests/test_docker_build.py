@@ -102,20 +102,51 @@ class TestDockerBuild:
             # "--skip-archive",  # Skip archiving to speed up tests
         ]
         
-        print(f"\n{'='*80}")
-        print(f"Testing: {target} on {os_type}:{version}")
-        print(f"Command: {' '.join(cmd)}")
-        print(f"{'='*80}\n")
-        
-        # Run build
+        # Run build (output handled in run_docker_build)
         result = self.run_docker_build(cmd, target, os_type, version)
         
-        # Assert build succeeded
-        assert result.returncode == 0, (
-            f"Docker build failed for {target} on {os_type}:{version}\n"
-            f"Exit code: {result.returncode}\n"
-            f"See logs above for details"
-        )
+        # Assert build succeeded with detailed error message
+        if result.returncode != 0:
+            # Extract last 50 lines of output for error context
+            output_lines = result.stdout.split('\n') if result.stdout else []
+            
+            # Find error indicators in the output
+            error_indicators = ['ERROR', 'FAILED', 'Error', 'error:', 'failed:', 'cannot', 'Cannot']
+            error_lines = []
+            for i, line in enumerate(output_lines):
+                if any(indicator in line for indicator in error_indicators):
+                    # Get context: 2 lines before and after
+                    start = max(0, i - 2)
+                    end = min(len(output_lines), i + 3)
+                    error_lines.extend(output_lines[start:end])
+                    error_lines.append("..." if end < len(output_lines) else "")
+            
+            # If no specific errors found, show last 50 lines
+            if not error_lines:
+                error_lines = output_lines[-50:] if len(output_lines) > 50 else output_lines
+            else:
+                # Deduplicate while preserving order
+                seen = set()
+                error_lines = [x for x in error_lines if not (x in seen or seen.add(x))]
+            
+            error_msg = [
+                "",
+                "=" * 80,
+                f"DOCKER BUILD FAILED: {target} on {os_type}:{version}",
+                "=" * 80,
+                f"Exit Code: {result.returncode}",
+                f"Command: {' '.join(cmd)}",
+                "",
+                "Error Context (key error lines with context):",
+                "-" * 80,
+            ]
+            error_msg.extend(error_lines)
+            error_msg.append("-" * 80)
+            error_msg.append("")
+            error_msg.append("💡 Tip: Scroll up to see the full build output for more context")
+            error_msg.append("")
+            
+            pytest.fail("\n".join(error_msg))
     
     def run_docker_build(self, cmd, target, os_type, version):
         """
@@ -131,6 +162,11 @@ class TestDockerBuild:
             CompletedProcess object
         """
         try:
+            banner = f"\n{'='*80}\n🚀 Building: {target} on {os_type}:{version}\n{'='*80}\n"
+            # Write to both stdout and stderr to ensure visibility in HTML report
+            print(banner, file=sys.stdout, flush=True)
+            print(banner, file=sys.stderr, flush=True)
+            
             # Run command with real-time output
             process = subprocess.Popen(
                 cmd,
@@ -141,20 +177,37 @@ class TestDockerBuild:
                 cwd=PROJECT_ROOT
             )
             
-            # Print output in real-time
+            # Print output in real-time with line numbers for easier debugging
             output_lines = []
+            line_count = 0
             for line in process.stdout:
-                print(line, end='')
-                output_lines.append(line)
+                line_count += 1
+                # Write to both stdout and stderr for maximum visibility
+                print(line, end='', file=sys.stdout, flush=True)
+                print(line, end='', file=sys.stderr, flush=True)
+                # Store clean line for error reporting
+                output_lines.append(line.rstrip())
             
             # Wait for completion
             process.wait(timeout=TEST_TIMEOUT)
+            
+            # Print summary
+            summary = f"\n{'='*80}\n"
+            if process.returncode == 0:
+                summary += f"✅ Build succeeded: {target} on {os_type}:{version}\n"
+            else:
+                summary += f"❌ Build failed: {target} on {os_type}:{version} (exit code: {process.returncode})\n"
+            summary += f"{'='*80}\n"
+            
+            # Write to both stdout and stderr
+            print(summary, file=sys.stdout, flush=True)
+            print(summary, file=sys.stderr, flush=True)
             
             # Create result object
             result = subprocess.CompletedProcess(
                 args=cmd,
                 returncode=process.returncode,
-                stdout=''.join(output_lines),
+                stdout='\n'.join(output_lines),
                 stderr=None
             )
             
@@ -162,31 +215,29 @@ class TestDockerBuild:
             
         except subprocess.TimeoutExpired:
             process.kill()
-            pytest.fail(
-                f"Docker build timed out after {TEST_TIMEOUT} seconds for "
-                f"{target} on {os_type}:{version}"
-            )
+            error_msg = [
+                "",
+                "=" * 80,
+                f"BUILD TIMEOUT: {target} on {os_type}:{version}",
+                "=" * 80,
+                f"Timeout: {TEST_TIMEOUT} seconds exceeded",
+                f"Command: {' '.join(cmd)}",
+                "=" * 80,
+            ]
+            pytest.fail("\n".join(error_msg))
         except Exception as e:
-            pytest.fail(
-                f"Docker build failed with exception for {target} on {os_type}:{version}: {str(e)}"
-            )
+            error_msg = [
+                "",
+                "=" * 80,
+                f"BUILD EXCEPTION: {target} on {os_type}:{version}",
+                "=" * 80,
+                f"Exception: {type(e).__name__}",
+                f"Message: {str(e)}",
+                f"Command: {' '.join(cmd)}",
+                "=" * 80,
+            ]
+            pytest.fail("\n".join(error_msg))
 
 
-def pytest_configure(config):
-    """Configure pytest with custom markers"""
-    config.addinivalue_line(
-        "markers", "sanity: marks tests as sanity checks (deselect with '-m \"not sanity\"')"
-    )
-    config.addinivalue_line(
-        "markers", "runtime: marks tests as dx-runtime build tests"
-    )
-    config.addinivalue_line(
-        "markers", "modelzoo: marks tests as dx-modelzoo build tests"
-    )
-    config.addinivalue_line(
-        "markers", "compiler: marks tests as dx-compiler build tests"
-    )
-
-
-# Apply markers to test classes
+# Apply sanity marker to test class
 TestDockerBuildSanity = pytest.mark.sanity(TestDockerBuildSanity)
