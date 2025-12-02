@@ -24,7 +24,7 @@ jobs:
     name: Set Target Commit
     runs-on:
       - self-hosted
-      - sdk
+      - ops-01
     outputs:
       commit_sha: ${{ steps.set_commit.outputs.commit_sha }}
     steps:
