@@ -1,4 +1,45 @@
 ## Changelog
+### 2025-12-29  
+#### dx-compiler  
++2af9f349f7b7668af26fe700c66ee54e6a296550 dx-compiler (remotes/origin/HEAD)  
+ a0c62968673a00a8cb91d630fc5d67397f0cd1ad dx-compiler/dx_com (remotes/origin/HEAD)  
+ a4ca07f13b560b4f6fa5459eef7159e4f9ee9a6b dx-compiler/dx_com/src/dx_mlir-cpp/third_party/llvm-project (a4ca07f13b)  
+ b86cc54efce19530fb953e4b21f57e6b3888534c dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx (b86cc54)  
+ 2dd015dfef425c866d9a43f2c67d8b52d709acb6 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx/third_party/benchmark (2dd015d)  
+ 5b0a6fc2017fcc176545afe3e09c9f9885283242 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx/third_party/pybind11 (5b0a6fc)  
+ 55100ebc991c45a41476195083e58ef6f155b419 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir (heads/main)  
+ 2dd015dfef425c866d9a43f2c67d8b52d709acb6 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/benchmark (2dd015d)  
+ b86cc54efce19530fb953e4b21f57e6b3888534c dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/onnx (b86cc54)  
+ 2dd015dfef425c866d9a43f2c67d8b52d709acb6 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/onnx/third_party/benchmark (2dd015d)  
+ 5b0a6fc2017fcc176545afe3e09c9f9885283242 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/onnx/third_party/pybind11 (5b0a6fc)  
+ 5b0a6fc2017fcc176545afe3e09c9f9885283242 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/pybind11 (5b0a6fc)  
+ ff6af6fc683159deb51c543b065eba14dfcf329b dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/rapidcheck (heads/master)  
+ 03d122a35c3f5c398c43095a87bc82ed44642516 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/rapidcheck/ext/catch (03d122a)  
+ e38ef3be887afc0089005e394c5001002e313960 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/rapidcheck/ext/googletest (e38ef3b)  
+ 3442dbe0cd65ced69f0d1d4a6c274cb154873764 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/stablehlo (3442dbe)  
+ 869cc1ff085dd405635b00eb46e5c84f50f26099 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/pybind11 (869cc1f)  
++315ccff9548ea41600764e410741bfb84d1c3ff6 dx-compiler/dx_simulator (315ccff)  
+
+#### dx-modelzoo  
+ 2eaf7039ab2f63a472306453f09cec5c9b306ef0 dx-modelzoo (2eaf703)  
+
+#### dx-runtime  
+ 4825dd50c7daac7d8f6a61ad3e28c093de8130e9 dx-runtime (remotes/origin/HEAD)  
+ b41ba9b6ac61630184c2489d39e46f23c63ceacd dx-runtime/dx_app (v2.1.0-rc+manual-20251215.b41ba9b)  
+ 896538d307f2819b99161add1567ff40f077a484 dx-runtime/dx_fw (v2.4.1-2-g896538d)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ a2b84781508f972658c73965720888e1165d4928 dx-runtime/dx_fw/firmware/bootloader (m1b_v2.4.0_r20251107_bl)  
+ a2ab363d3a3c2f8580ead6103bfe4ed69cdee79f dx-runtime/dx_fw/firmware/freertos/apps (m1b_v2.4.0_r20251107)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ f8d1f64648b3746f7a3ece8a73f2de22ccc68106 dx-runtime/dx_fw/firmware/freertos/plat (m1b_v2.4.1_r20251211)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
 ### 2025-12-26  
 #### dx-compiler  
  f96cd56f63260c3754675b5b0f11b7e69407a7fe dx-compiler (remotes/origin/HEAD)  
