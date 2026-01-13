@@ -73,10 +73,7 @@ The `DX-Compiler` environment provides prebuilt binary outputs and does not incl
 
 When executing the above command, DEEPX Developers' Portal ([https://developer.deepx.ai](https://developer.deepx.ai)) account authentication is required to download and install the DX-Compiler modules.
 
-To obtain Developer Portal credentials: Please send an email to [sales@deepx.ai](mailto:sales@deepx.ai) with the following information:
-
-- Company/Organization name
-- Your job title
+Please visit the developer portal and create an account before proceeding.
 
 The script obtains authentication information based on the following priority:
 
