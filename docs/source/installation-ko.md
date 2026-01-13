@@ -72,10 +72,7 @@ which python
 
 위 명령어를 실행하면 DX-Compiler 모듈을 다운로드 및 설치하기 위해 DEEPX Developers' Portal([https://developer.deepx.ai](https://developer.deepx.ai)) 계정 인증이 필요합니다.
 
-Developer Portal 계정이 필요하신 경우, 아래 정보를 포함하여 [sales@deepx.ai](mailto:sales@deepx.ai)로 이메일을 보내주세요.
-
-- 회사/기관명
-- 직책
+계속하기 전에 개발자 포털을 방문하여 계정을 생성하세요.
 
 스크립트는 아래의 우선순위에 따라 인증 정보를 획득합니다:
 
