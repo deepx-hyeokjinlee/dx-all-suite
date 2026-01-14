@@ -1,6 +1,47 @@
 ## Changelog
 ### 2026-01-14  
 #### dx-compiler  
+ ffbb1f23e82a1710d0abf3cc26f370f363d43ca0 dx-compiler (v2.2.0-rc+manual-20260105.d274c56-2-gffbb1f2)  
+ c1aefbd6dacf8e6db46b8b9a6bbf1b29bb601687 dx-compiler/dx_com (c1aefbd)  
+ a4ca07f13b560b4f6fa5459eef7159e4f9ee9a6b dx-compiler/dx_com/src/dx_mlir-cpp/third_party/llvm-project (a4ca07f13b)  
+ b86cc54efce19530fb953e4b21f57e6b3888534c dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx (b86cc54)  
+ 2dd015dfef425c866d9a43f2c67d8b52d709acb6 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx/third_party/benchmark (2dd015d)  
+ 5b0a6fc2017fcc176545afe3e09c9f9885283242 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx/third_party/pybind11 (5b0a6fc)  
+ 55100ebc991c45a41476195083e58ef6f155b419 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir (heads/main)  
+ 2dd015dfef425c866d9a43f2c67d8b52d709acb6 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/benchmark (2dd015d)  
+ b86cc54efce19530fb953e4b21f57e6b3888534c dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/onnx (b86cc54)  
+ 2dd015dfef425c866d9a43f2c67d8b52d709acb6 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/onnx/third_party/benchmark (2dd015d)  
+ 5b0a6fc2017fcc176545afe3e09c9f9885283242 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/onnx/third_party/pybind11 (5b0a6fc)  
+ 5b0a6fc2017fcc176545afe3e09c9f9885283242 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/pybind11 (5b0a6fc)  
+ ff6af6fc683159deb51c543b065eba14dfcf329b dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/rapidcheck (heads/master)  
+ 03d122a35c3f5c398c43095a87bc82ed44642516 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/rapidcheck/ext/catch (03d122a)  
+ e38ef3be887afc0089005e394c5001002e313960 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/rapidcheck/ext/googletest (e38ef3b)  
+ 3442dbe0cd65ced69f0d1d4a6c274cb154873764 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/onnx-mlir/third_party/stablehlo (3442dbe)  
+ 869cc1ff085dd405635b00eb46e5c84f50f26099 dx-compiler/dx_com/src/dx_mlir-cpp/third_party/pybind11 (869cc1f)  
+ a41881120eda7e6a422276e71f2439d864fe75cf dx-compiler/dx_simulator (heads/dev)  
+
+#### dx-modelzoo  
+ 1f0486456f9b2e0f9f8e1c1531df9ec6ed3d9af4 dx-modelzoo (1f04864)  
+
+#### dx-runtime  
++72f27dd37679cd0fa93a51f6c255e1fbc239e769 dx-runtime (remotes/origin/HEAD)  
+ a0dede337ad4b84cf6b7367e1ad52928f32a8ef0 dx-runtime/dx_app (v3.0.0-rc+manual-20260113.a0dede3)  
+ 860a6ce4d2ffe6c365ec00af38e7236dd213f1f2 dx-runtime/dx_fw (v2.5.0)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ 434b44c1060a5be5c3d61dc5861f44a7fb36264e dx-runtime/dx_fw/firmware/bootloader (m1b_v2.5.0_r20260102_bl)  
+ 76a9af520f9f6116894ad5d54ceb38dd9aa6d09c dx-runtime/dx_fw/firmware/freertos/apps (m1b_v2.5.0_r20260102)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 8d1d519c2d50a9c960184df58618e3c32a9d7049 dx-runtime/dx_fw/firmware/freertos/plat (m1b_v2.5.0_r20260102)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2026-01-14  
+#### dx-compiler  
 +ffbb1f23e82a1710d0abf3cc26f370f363d43ca0 dx-compiler (v2.2.0-rc+manual-20260105.d274c56-2-gffbb1f2)  
  c1aefbd6dacf8e6db46b8b9a6bbf1b29bb601687 dx-compiler/dx_com (c1aefbd)  
  a4ca07f13b560b4f6fa5459eef7159e4f9ee9a6b dx-compiler/dx_com/src/dx_mlir-cpp/third_party/llvm-project (a4ca07f13b)  
