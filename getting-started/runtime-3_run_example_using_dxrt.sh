@@ -25,138 +25,82 @@ fork_examples() {
     
     # copy dx_app example application binary executable files
     mkdir -p  ${FORK_PATH}/bin
-    local cp_run_detector_cmd="cp -dp ${DX_APP_PATH}/bin/run_detector ${FORK_PATH}/bin/."
-    local cp_run_classifier_cmd="cp -dp ${DX_APP_PATH}/bin/run_classifier ${FORK_PATH}/bin/."
-    local err_msg_run_detector="Failed to copy 'run_detector' binary executable file."
-    local err_msg_run_classifier="Failed to copy 'run_classifier' binary executable file."
+    local cp_efficientnet_async_cmd="cp -dp ${DX_APP_PATH}/bin/efficientnet_async ${FORK_PATH}/bin/."
+    local cp_yolov5_async_cmd="cp -dp ${DX_APP_PATH}/bin/yolov5_async ${FORK_PATH}/bin/."
+    local cp_yolov5face_async_cmd="cp -dp ${DX_APP_PATH}/bin/yolov5face_async ${FORK_PATH}/bin/."
+    local err_msg_efficientnet_async="Failed to copy 'efficientnet_async' binary executable file."
+    local err_msg_yolov5_async="Failed to copy 'yolov5_async' binary executable file."
+    local err_msg_yolov5face_async="Failed to copy 'yolov5face_async' binary executable file."
     local hint_msg="Please build dx_app first. using command"
     local suggested_action_cmd="${RUNTIME_PATH}/install.sh --target=dx_app"
 
-    eval "$cp_run_detector_cmd" || {
+    eval "$cp_efficientnet_async_cmd" || {
         # handle_cmd_failure function arguments
         #   - local error_message=$1
         #   - local hint_message=$2
         #   - local origin_cmd=$3
         #   - local suggested_action_cmd=$4
-        handle_cmd_failure "$err_msg_run_detector" "$hint_msg" "$cp_run_detector_cmd" "$suggested_action_cmd"
+        handle_cmd_failure "$err_msg_efficientnet_async" "$hint_msg" "$cp_efficientnet_async_cmd" "$suggested_action_cmd"
     }
 
-    eval "$cp_run_classifier_cmd" || {
+    eval "$cp_yolov5_async_cmd" || {
         # handle_cmd_failure function arguments
         #   - local error_message=$1
         #   - local hint_message=$2
         #   - local origin_cmd=$3
         #   - local suggested_action_cmd=$4
-        handle_cmd_failure "$err_msg_run_classifier" "$hint_msg" "$cp_run_classifier_cmd" "$suggested_action_cmd"
+        handle_cmd_failure "$err_msg_yolov5_async" "$hint_msg" "$cp_yolov5_async_cmd" "$suggested_action_cmd"
     }
 
-    # copy dx_app example application configration(json) files
-    mkdir -p ${FORK_PATH}/example/run_detector
-    mkdir -p ${FORK_PATH}/example/run_classifier
-    # for Object Detection (YOLOV5S-1)
-    cp -dp ${DX_APP_PATH}/example/run_detector/yolov5s1_example.json ${FORK_PATH}/example/run_detector/.
-    # for Face Detection (YOLOV5S_Face-1)
-    cp -dp ${DX_APP_PATH}/example/run_detector/yolo_face_example.json ${FORK_PATH}/example/run_detector/.
-    # for Image Classification (MobileNetV2-1-1)
-    cp -dp ${DX_APP_PATH}/example/run_classifier/imagenet_example.json ${FORK_PATH}/example/run_classifier/.
-    
+    eval "$cp_yolov5face_async_cmd" || {
+        # handle_cmd_failure function arguments
+        #   - local error_message=$1
+        #   - local hint_message=$2
+        #   - local origin_cmd=$3
+        #   - local suggested_action_cmd=$4
+        handle_cmd_failure "$err_msg_yolov5face_async" "$hint_msg" "$cp_yolov5face_async_cmd" "$suggested_action_cmd"
+    }
 
     # copy input image sample for Image Classification Model
     # for Object Detection (YOLOV5S-1)
     mkdir -p ${FORK_PATH}/sample
-    cp -dp ${DX_APP_PATH}/sample/1.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/2.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/3.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/4.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/5.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/1.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/2.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/3.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/4.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/5.jpg ${FORK_PATH}/sample/.
     # for Face Detection (YOLOV5S_Face-1)
-    cp -dp ${DX_APP_PATH}/sample/face_sample.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/face_sample.jpg ${FORK_PATH}/sample/.
     # for Image Classification (MobileNetV2-1-1)
     mkdir -p ${FORK_PATH}/sample/ILSVRC2012
     cp -dpR ${DX_APP_PATH}/sample/ILSVRC2012 ${FORK_PATH}/sample/.
 
-    # Initialize a Git repository and make the initial commit to enable diff checking
-    pushd ${FORK_PATH}
-    git init && git config user.email "you@example.com" && git config user.name "Your Name"
-    git add . && git commit -m "initial commit"
-    popd
-
     echo -e "=== fork dx_app examples to '${FORK_PATH}' ${TAG_DONE} ==="
 }
 
-replace_all() {
-    local example_file_path=$1
-    local source_str=$2
-    local target_str=$3
-
-    HIJACK_CMD="sed -i \
-    -e 's|${source_str}|${target_str}|g' \
-    ${TARGET_FILE}"
-
-    echo "$HIJACK_CMD"
-    eval "$HIJACK_CMD"
-    if [ $? -ne 0 ]; then
-        echo -e "${TAG_ERROR} Hijack example failed!"
-        exit 1
-    fi
-}
-
-show_diff() {
-    local commit_msg=$1
-    echo -e "---------------- ${TAG_INFO} show hijacking diff [BEGIN] ----------------"
-
-    pushd ${FORK_PATH}
-    # Make a commit for diff comparison
-    # rm -rf ./result*.*
-    git add . && git commit -m "hijack: ${commit_msg}" && git --no-pager diff HEAD~1
-    echo -e -n "${TAG_INFO} ${COLOR_BRIGHT_GREEN_ON_BLACK}Press any key and hit Enter to continue. ${COLOR_RESET}"
-    read -r answer
-    popd
-
-    echo -e "---------------- ${TAG_INFO} show hijacking diff  [END]  ----------------"
-}
-
-hijack_example() {
-    local example_file_path=$1
-    local source_str=$2
-    local target_str=$3
-    local commit_msg=$4
-
-    echo -e "=== hijack example ${TAG_START} ==="
-
-    # backup file
-    TARGET_FILE="${FORK_PATH}/${example_file_path}"
-
-    # hijack
-    replace_all "${TARGET_FILE}" ${source_str} ${target_str}
-
-    # show diff
-    show_diff "${commit_msg}"
-    echo -e "=== hijack example path ${TAG_DONE} ==="
-}
-
-run_hijacked_example() {
+run_example() {
     local exe_file_path=$1
-    local example_file_path=$2
-    local save_log=$3
+    local dxnn_file_path=$2
+    local image_path=$3
+    local save_log=$4
 
-    echo -e "=== run_hijacked_example ${TAG_START} ==="
+    echo -e "=== run_example ${TAG_START} ==="
     pushd ${FORK_PATH}
 
     if [ "${save_log}" = "y" ]; then
         SAVE_LOG_ARG=" > result-app.log"
     fi
     
-    RUN_CMD="${exe_file_path} -c ${example_file_path} ${SAVE_LOG_ARG}"
+    RUN_CMD="${exe_file_path} -m ${dxnn_file_path} -i ${image_path} ${SAVE_LOG_ARG}"
     echo "$RUN_CMD"
     eval "$RUN_CMD"
     if [ $? -ne 0 ]; then
-        echo -e "${TAG_ERROR} Run hijacked example failed!"
+        echo -e "${TAG_ERROR} Run example failed!"
         exit 1
     fi
 
     popd
-    echo -e "=== run_hijacked_example ${TAG_DONE} ==="
+    echo -e "=== run_example ${TAG_DONE} ==="
 }
 
 show_result() {
@@ -218,44 +162,38 @@ main() {
     # fork dx_app example (yolo_face, yolov5s, mobilenetv2)
     fork_examples
 
-
     echo -e "${TAG_START} === Yolov5 Face ==="
     COMMIT_MSG="Updated to use '*.dxnn' files compiled by the user with 'dx_com'"
 
-    # hijack yolo_face example
-    YOLO_FACE_EXAMPLE_PATH="example/run_detector/yolo_face_example.json"
-    YOLO_FACE_SOURCE_STR="./assets/models/YOLOV5S_Face-1.dxnn"
-    hijack_example "${YOLO_FACE_EXAMPLE_PATH}" "${YOLO_FACE_SOURCE_STR}" "${YOLO_FACE_TARGET_STR}" "${COMMIT_MSG}"
-
-    # run yolo_face hijakced example
+    # yolo_face example
     rm -rf ${FORK_PATH}/result*.jpg
-    run_hijacked_example "./bin/run_detector" "${YOLO_FACE_EXAMPLE_PATH}"
+    run_example "./bin/yolov5face_async" "${YOLO_FACE_TARGET_STR}" "./sample/face_sample.jpg" "y"
     show_result "${FORK_PATH}/result*.jpg"
     echo -e "${TAG_DONE} === YOLOV5 Face ==="
 
 
     echo -e "${TAG_START} === Yolov5S ==="
-    # hijack yolov5s example
-    YOLO_V5S_EXAMPLE_PATH="example/run_detector/yolov5s1_example.json"
-    YOLO_V5S_SOURCE_STR="./assets/models/YOLOV5S-1.dxnn"
-    hijack_example "${YOLO_V5S_EXAMPLE_PATH}" "${YOLO_V5S_SOURCE_STR}" "${YOLO_V5S_TARGET_STR}" "${COMMIT_MSG}"
-
-    # run yolov5s hijakced example
+    # yolov5s example
     rm -rf ${FORK_PATH}/result*.jpg
-    run_hijacked_example "./bin/run_detector" "${YOLO_V5S_EXAMPLE_PATH}"
+    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/1.jpg" "y"
+    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/2.jpg" "y"
+    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/3.jpg" "y"
+    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/4.jpg" "y"
+    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/5.jpg" "y"
     show_result "${FORK_PATH}/result*.jpg"
     echo -e "${TAG_DONE} === Yolov5s ==="
 
 
     # hijack mobilenetv2 example
     echo -e "${TAG_START} === MobileNetV2 ==="
-    MOBILENET_V2_EXAMPLE_PATH="example/run_classifier/imagenet_example.json"
-    MOBILENET_V2_SOURCE_STR="./assets/models/EfficientNetB0_4.dxnn"
     hijack_example "${MOBILENET_V2_EXAMPLE_PATH}" "${MOBILENET_V2_SOURCE_STR}" "${MOBILENET_V2_TARGET_STR}" "${COMMIT_MSG}"
 
     # run mobilenetv2 hijakced example
     rm -rf ${FORK_PATH}/result*.log
-    run_hijacked_example "./bin/run_classifier" "${MOBILENET_V2_EXAMPLE_PATH}" "y"
+    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/0.jpeg" "y"
+    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/1.jpeg" "y"
+    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/2.jpeg" "y"
+    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/3.jpeg" "y"
     echo -e "${TAG_INFO} -------- [Result of MobileNetV2 example] --------"
     echo -e -n "${COLOR_BRIGHT_YELLOW_ON_BLACK}"
     cat ${FORK_PATH}/result-app.log
