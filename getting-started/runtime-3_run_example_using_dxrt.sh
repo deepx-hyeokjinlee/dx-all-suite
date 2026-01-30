@@ -83,6 +83,8 @@ run_example() {
     local dxnn_file_path=$2
     local image_path=$3
     local save_log=$4
+    local loop=${5:-300}
+    local additional_args=""
 
     echo -e "=== run_example ${TAG_START} ==="
     pushd ${FORK_PATH}
@@ -90,8 +92,14 @@ run_example() {
     if [ "${save_log}" = "y" ]; then
         SAVE_LOG_ARG=" > result-app.log"
     fi
+
+    if [ ! -f /deepx/tty_flag ]; then
+        echo -e "${TAG_INFO} <hint> Press ${COLOR_BRIGHT_GREEN_ON_BLACK}'q' or 'Ctrl+C'${COLOR_RESET} to exit result viewing"
+    else
+        additional_args+=" --no-display"
+    fi
     
-    RUN_CMD="${exe_file_path} -m ${dxnn_file_path} -i ${image_path} ${SAVE_LOG_ARG}"
+    RUN_CMD="${exe_file_path} -m ${dxnn_file_path} -i ${image_path} ${SAVE_LOG_ARG} -l ${loop} ${additional_args}"
     echo "$RUN_CMD"
     eval "$RUN_CMD"
     if [ $? -ne 0 ]; then
@@ -108,14 +116,20 @@ show_result() {
     local result_real_path=$(realpath -s "${result_path}")
 
     if [ ! -f /deepx/tty_flag ]; then
-        echo -e "${TAG_INFO} <hint> Use the ${COLOR_BRIGHT_GREEN_ON_BLACK}'Page Up/Down'${COLOR_RESET} keys to view previous/next results"
-        echo -e "${TAG_INFO} <hint> Press ${COLOR_BRIGHT_GREEN_ON_BLACK}'q'${COLOR_RESET} to exit result viewing"
-        fim ${result_path}
-        rm -rf ${result_path}
+        ## legacy code backup
+        # echo -e "${TAG_INFO} <hint> Use the ${COLOR_BRIGHT_GREEN_ON_BLACK}'Page Up/Down'${COLOR_RESET} keys to view previous/next results"
+        # echo -e "${TAG_INFO} <hint> Press ${COLOR_BRIGHT_GREEN_ON_BLACK}'q'${COLOR_RESET} to exit result viewing"
+        # fim ${result_path}
+        # rm -rf ${result_path}
+       
+        # temporary code: dx_app v3.0.0 is not supported save image files
+        echo -e -n "${TAG_INFO} ${COLOR_BRIGHT_GREEN_ON_BLACK}Press any key and hit Enter to continue. ${COLOR_RESET}"
+        read -r answer
     else
         echo -e "${TAG_WARN} ${COLOR_BRIGHT_YELLOW_ON_BLACK}You are currently running in a **tty session**, which does not support GUI. In such environments, it is not possible to visually confirm the results of example code execution via GUI. (Note): ${COLOR_RESET}"
         echo -e "${TAG_INFO} ${COLOR_BRIGHT_CYAN_ON_BLACK}The result has been saved at **${result_path}**. Please use the **docker cp** command or similar method to copy the file and check the result on your host. ${COLOR_RESET}"
-        echo -e "${TAG_INFO} ${COLOR_BRIGHT_CYAN_ON_BLACK}(e.g.) 'docker cp <container_name>:${result_real_path} .' ${COLOR_RESET}"
+        ## temporary disable code: dx_app v3.0.0 is not supported save image files
+        # echo -e "${TAG_INFO} ${COLOR_BRIGHT_CYAN_ON_BLACK}(e.g.) 'docker cp <container_name>:${result_real_path} .' ${COLOR_RESET}"
         echo -e -n "${TAG_INFO} ${COLOR_BRIGHT_GREEN_ON_BLACK}Press any key and hit Enter to continue. ${COLOR_RESET}"
         read -r answer
     fi
@@ -167,7 +181,7 @@ main() {
 
     # yolo_face example
     rm -rf ${FORK_PATH}/result*.jpg
-    run_example "./bin/yolov5face_async" "${YOLO_FACE_TARGET_STR}" "./sample/face_sample.jpg" "y"
+    run_example "./bin/yolov5face_async" "${YOLO_FACE_TARGET_STR}" "./sample/face_sample.jpg" "n" "30"
     show_result "${FORK_PATH}/result*.jpg"
     echo -e "${TAG_DONE} === YOLOV5 Face ==="
 
@@ -175,11 +189,7 @@ main() {
     echo -e "${TAG_START} === Yolov5S ==="
     # yolov5s example
     rm -rf ${FORK_PATH}/result*.jpg
-    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/1.jpg" "y"
-    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/2.jpg" "y"
-    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/3.jpg" "y"
-    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/4.jpg" "y"
-    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/5.jpg" "y"
+    run_example "./bin/yolov5_async" "${YOLO_V5S_TARGET_STR}" "./sample/1.jpg" "n" "300"
     show_result "${FORK_PATH}/result*.jpg"
     echo -e "${TAG_DONE} === Yolov5s ==="
 
@@ -190,10 +200,7 @@ main() {
 
     # run mobilenetv2 hijakced example
     rm -rf ${FORK_PATH}/result*.log
-    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/0.jpeg" "y"
-    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/1.jpeg" "y"
-    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/2.jpeg" "y"
-    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/3.jpeg" "y"
+    run_example "./bin/efficientnet_async" "${MOBILENET_V2_TARGET_STR}" "./sample/ILSVRC2012/1.jpeg" "y" "300"
     echo -e "${TAG_INFO} -------- [Result of MobileNetV2 example] --------"
     echo -e -n "${COLOR_BRIGHT_YELLOW_ON_BLACK}"
     cat ${FORK_PATH}/result-app.log
