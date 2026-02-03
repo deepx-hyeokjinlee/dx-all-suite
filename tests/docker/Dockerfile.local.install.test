@@ -1,7 +1,6 @@
-ARG UBUNTU_VERSION=24.04
-ARG TAG_NAME=${UBUNTU_VERSION}
-ARG BASE_IMAGE_NAME=ubuntu
-FROM ${BASE_IMAGE_NAME}:${TAG_NAME}
+ARG OS_TYPE=ubuntu
+ARG VERSION=24.04
+FROM ${OS_TYPE}:${VERSION}
 
 USER root
 
@@ -12,11 +11,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV PATH="/usr/local/bin:${PATH}"
 
 ### update apt repo
-RUN apt-get update && apt-get install -y \
+RUN if [ "${OS_TYPE}" = "ubuntu" ]; then \
+    apt-get update && apt-get install -y \
     software-properties-common && \
     add-apt-repository universe && \
     add-apt-repository multiverse && \
-    apt-get update
+    apt-get update; \
+    fi
 
 ### install utils
 RUN apt-get update && apt-get install -y \

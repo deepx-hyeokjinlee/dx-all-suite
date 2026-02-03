@@ -16,6 +16,7 @@ dx-runtime/workspace/
 calibration_dataset
 internal/calibration_dataset
 getting-started/calibration_dataset
+getting-started/dxnn
 getting-started/forked*/
 getting-started/modelzoo/
 **/venv-*/
@@ -29,10 +30,6 @@ dummy_xauthority
 *models*
 **/__pycache__/
 **/.pytest_cache/
-internal/build/
-internal/config/dev_config.properties
-internal/venv*/
-internal/workspace*/
-internal/tests/reports/
-internal/tests/venv/
 log/
+tests/reports/
+tests/venv/

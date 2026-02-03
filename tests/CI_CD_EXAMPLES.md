@@ -1,19 +1,17 @@
 # CI/CD Integration Examples
 
-이 문서는 Docker Build Test Suite를 다양한 CI/CD 플랫폼에 통합하는 방법을 제공합니다.
+This document provides guidance on integrating the Docker Build Test Suite with various CI/CD platforms.
 
-## 목차
+## Table of Contents
 
 - [GitHub Actions](#github-actions)
 - [GitLab CI](#gitlab-ci)
 - [Jenkins](#jenkins)
-- [일반 가이드라인](#일반-가이드라인)
-
----
+- [General Guidelines](#general-guidelines)
 
 ## GitHub Actions
 
-### 기본 워크플로우
+### Basic Workflow
 
 `.github/workflows/docker-build-test.yml`:
 
@@ -31,21 +29,21 @@ jobs:
   sanity-check:
     name: Sanity Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      
+
       - name: Run sanity tests
         run: |
-          cd internal/tests
+          cd tests
           ./test.sh sanity
 
   docker-build-runtime:
@@ -55,33 +53,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04, debian-12]
-    
+        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04, debian-12, debian-13]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Test dx-runtime build
         run: |
-          cd internal/tests
-          ./run_docker_build_tests.sh -v -k "runtime and ${{ matrix.os }}"
-      
+          OS="${{ matrix.os }}"
+          OS_DISTRO="${OS%%-*}"
+          OS_VERSION="${OS##*-}"
+
+          cd tests
+          ./test.sh report -k "runtime and ${OS_DISTRO} and ${OS_VERSION}"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: test-results-runtime-${{ matrix.os }}
-          path: internal/tests/reports/
+          path: tests/reports/
 
   docker-build-modelzoo:
     name: Build dx-modelzoo
@@ -90,33 +92,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04, debian-12]
-    
+        os: [ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, ubuntu-18.04, debian-12, debian-13]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Test dx-modelzoo build
         run: |
-          cd internal/tests
-          ./run_docker_build_tests.sh -v -k "modelzoo and ${{ matrix.os }}"
-      
+          OS="${{ matrix.os }}"
+          OS_DISTRO="${OS%%-*}"
+          OS_VERSION="${OS##*-}"
+
+          cd tests
+          ./test.sh report -k "modelzoo and ${OS_DISTRO} and ${OS_VERSION}"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: test-results-modelzoo-${{ matrix.os }}
-          path: internal/tests/reports/
+          path: tests/reports/
 
   docker-build-compiler:
     name: Build dx-compiler
@@ -126,50 +132,54 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, ubuntu-22.04, ubuntu-20.04]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Test dx-compiler build
         run: |
-          cd internal/tests
-          ./run_docker_build_tests.sh -v -k "compiler and ${{ matrix.os }}"
-      
+          OS="${{ matrix.os }}"
+          OS_DISTRO="${OS%%-*}"
+          OS_VERSION="${OS##*-}"
+
+          cd tests
+          ./test.sh -v -k "compiler and ${OS_DISTRO} and ${OS_VERSION}"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: test-results-compiler-${{ matrix.os }}
-          path: internal/tests/reports/
+          path: tests/reports/
 
   generate-report:
     name: Generate Test Report
     needs: [docker-build-runtime, docker-build-modelzoo, docker-build-compiler]
     runs-on: ubuntu-latest
     if: always()
-    
+
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
         with:
           path: test-results
-      
+
       - name: Display structure of downloaded files
         run: ls -R test-results
 ```
 
-### 간소화된 워크플로우 (빠른 검증용)
+### Simplified Workflow (Quick Validation)
 
 ```yaml
 name: Quick Docker Build Check
@@ -182,34 +192,32 @@ jobs:
   quick-test:
     name: Quick Build Test
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      
+
       - name: Run sanity tests
         run: |
-          cd internal/tests
+          cd tests
           ./test.sh sanity
-      
+
       - name: Test one configuration per target
         run: |
-          cd internal/tests
-          ./run_docker_build_tests.sh -v -k "ubuntu-24.04"
+          cd tests
+          ./test.sh -k "ubuntu and 24.04"
 ```
-
----
 
 ## GitLab CI
 
-### 기본 파이프라인
+### Basic Pipeline
 
 `.gitlab-ci.yml`:
 
@@ -230,7 +238,7 @@ before_script:
   - docker --version
   - docker compose version
 
-# Sanity 테스트
+# Sanity tests
 sanity-check:
   stage: sanity
   image: ubuntu:24.04
@@ -238,12 +246,12 @@ sanity-check:
     - docker:24-dind
   script:
     - apt-get update && apt-get install -y python3 python3-venv docker.io
-    - cd internal/tests
+    - cd tests
     - ./test.sh sanity
   tags:
     - docker
 
-# dx-runtime 빌드 테스트
+# dx-runtime build tests
 .runtime-template: &runtime-template
   stage: build-runtime
   image: ubuntu:24.04
@@ -251,12 +259,12 @@ sanity-check:
     - docker:24-dind
   script:
     - apt-get update && apt-get install -y python3 python3-venv docker.io docker-compose-v2
-    - cd internal/tests
-    - ./run_docker_build_tests.sh -v -k "runtime and ${OS_VERSION}"
+    - cd tests
+    - ./test.sh report -k "runtime and ${OS_DISTRO} and ${OS_VERSION}"
   artifacts:
     when: always
     paths:
-      - internal/tests/reports/
+      - tests/reports/
     expire_in: 7 days
   tags:
     - docker
@@ -264,33 +272,44 @@ sanity-check:
 runtime-ubuntu-24.04:
   <<: *runtime-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "24.04"
 
 runtime-ubuntu-22.04:
   <<: *runtime-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "22.04"
 
 runtime-ubuntu-20.04:
   <<: *runtime-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "20.04"
 
 runtime-ubuntu-18.04:
   <<: *runtime-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "18.04"
 
 runtime-debian-12:
   <<: *runtime-template
   variables:
+    OS_DISTRO: "debian"
     OS_VERSION: "12"
+
+runtime-debian-13:
+  <<: *runtime-template
+  variables:
+    OS_DISTRO: "debian"
+    OS_VERSION: "13"
   script:
     - apt-get update && apt-get install -y python3 python3-venv docker.io docker-compose-v2
-    - cd internal/tests
-    - ./run_docker_build_tests.sh -v -k "runtime and debian and 12"
+    - cd tests
+    - ./test.sh -v -k "runtime and debian and 13"
 
-# dx-modelzoo 빌드 테스트
+# dx-modelzoo build tests
 .modelzoo-template: &modelzoo-template
   stage: build-modelzoo
   image: ubuntu:24.04
@@ -298,12 +317,12 @@ runtime-debian-12:
     - docker:24-dind
   script:
     - apt-get update && apt-get install -y python3 python3-venv docker.io docker-compose-v2
-    - cd internal/tests
-    - ./run_docker_build_tests.sh -v -k "modelzoo and ${OS_VERSION}"
+    - cd tests
+    - ./test.sh -v -k "modelzoo and ${OS_DISTRO} and ${OS_VERSION}"
   artifacts:
     when: always
     paths:
-      - internal/tests/reports/
+      - tests/reports/
     expire_in: 7 days
   tags:
     - docker
@@ -311,33 +330,44 @@ runtime-debian-12:
 modelzoo-ubuntu-24.04:
   <<: *modelzoo-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "24.04"
 
 modelzoo-ubuntu-22.04:
   <<: *modelzoo-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "22.04"
 
 modelzoo-ubuntu-20.04:
   <<: *modelzoo-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "20.04"
 
 modelzoo-ubuntu-18.04:
   <<: *modelzoo-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "18.04"
 
 modelzoo-debian-12:
   <<: *modelzoo-template
   variables:
+    OS_DISTRO: "debian"
     OS_VERSION: "12"
+
+modelzoo-debian-13:
+  <<: *modelzoo-template
+  variables:
+    OS_DISTRO: "debian"
+    OS_VERSION: "13"
   script:
     - apt-get update && apt-get install -y python3 python3-venv docker.io docker-compose-v2
-    - cd internal/tests
-    - ./run_docker_build_tests.sh -v -k "modelzoo and debian and 12"
+    - cd tests
+    - ./test.sh -v -k "modelzoo and debian and 13"
 
-# dx-compiler 빌드 테스트
+# dx-compiler build tests
 .compiler-template: &compiler-template
   stage: build-compiler
   image: ubuntu:24.04
@@ -345,12 +375,12 @@ modelzoo-debian-12:
     - docker:24-dind
   script:
     - apt-get update && apt-get install -y python3 python3-venv docker.io docker-compose-v2
-    - cd internal/tests
-    - ./run_docker_build_tests.sh -v -k "compiler and ${OS_VERSION}"
+    - cd tests
+    - ./test.sh -v -k "compiler and ${OS_DISTRO} and ${OS_VERSION}"
   artifacts:
     when: always
     paths:
-      - internal/tests/reports/
+      - tests/reports/
     expire_in: 7 days
   tags:
     - docker
@@ -358,34 +388,37 @@ modelzoo-debian-12:
 compiler-ubuntu-24.04:
   <<: *compiler-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "24.04"
 
 compiler-ubuntu-22.04:
   <<: *compiler-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "22.04"
 
 compiler-ubuntu-20.04:
   <<: *compiler-template
   variables:
+    OS_DISTRO: "ubuntu"
     OS_VERSION: "20.04"
 
-# 테스트 리포트 생성
+# Generate test report
 generate-report:
   stage: report
   image: ubuntu:24.04
   script:
     - echo "All tests completed"
-    - ls -R internal/tests/reports/ || true
+    - ls -R tests/reports/ || true
   artifacts:
     paths:
-      - internal/tests/reports/
+      - tests/reports/
     expire_in: 30 days
   tags:
     - docker
 ```
 
-### 간소화된 파이프라인 (MR 검증용)
+### Simplified Pipeline (MR Validation)
 
 ```yaml
 stages:
@@ -398,16 +431,14 @@ quick-build-check:
     - docker:24-dind
   script:
     - apt-get update && apt-get install -y python3 python3-venv docker.io docker-compose-v2
-    - cd internal/tests
+    - cd tests
     - ./test.sh sanity
-    - ./run_docker_build_tests.sh -v -k "ubuntu-24.04"
+    - ./test.sh report -k "ubuntu and 24.04"
   only:
     - merge_requests
   tags:
     - docker
 ```
-
----
 
 ## Jenkins
 
@@ -418,11 +449,11 @@ quick-build-check:
 ```groovy
 pipeline {
     agent any
-    
+
     environment {
         PYTHON_VERSION = '3.10'
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -430,117 +461,131 @@ pipeline {
                 sh 'git submodule update --init --recursive'
             }
         }
-        
+
         stage('Sanity Check') {
             steps {
-                dir('internal/tests') {
+                dir('tests') {
                     sh './test.sh sanity'
                 }
             }
         }
-        
+
         stage('Build Tests') {
             parallel {
                 stage('dx-runtime') {
                     stages {
                         stage('Ubuntu 24.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "runtime and ubuntu-24.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "runtime and ubuntu and 24.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 22.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "runtime and ubuntu-22.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "runtime and ubuntu and 22.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 20.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "runtime and ubuntu-20.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "runtime and ubuntu and 20.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 18.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "runtime and ubuntu-18.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "runtime and ubuntu and 18.04"'
                                 }
                             }
                         }
                         stage('Debian 12') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "runtime and debian-12"'
+                                dir('tests') {
+                                    sh './test.sh report -k "runtime and debian and 12"'
+                                }
+                            }
+                        }
+                        stage('Debian 13') {
+                            steps {
+                                dir('tests') {
+                                    sh './test.sh report -k "runtime and debian and 13"'
                                 }
                             }
                         }
                     }
                 }
-                
+
                 stage('dx-modelzoo') {
                     stages {
                         stage('Ubuntu 24.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "modelzoo and ubuntu-24.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "modelzoo and ubuntu and 24.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 22.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "modelzoo and ubuntu-22.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "modelzoo and ubuntu and 22.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 20.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "modelzoo and ubuntu-20.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "modelzoo and ubuntu and 20.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 18.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "modelzoo and ubuntu-18.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "modelzoo and ubuntu and 18.04"'
                                 }
                             }
                         }
                         stage('Debian 12') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "modelzoo and debian-12"'
+                                dir('tests') {
+                                    sh './test.sh report -k "modelzoo and debian and 12"'
+                                }
+                            }
+                        }
+                        stage('Debian 13') {
+                            steps {
+                                dir('tests') {
+                                    sh './test.sh report -k "modelzoo and debian and 13"'
                                 }
                             }
                         }
                     }
                 }
-                
+
                 stage('dx-compiler') {
                     stages {
                         stage('Ubuntu 24.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "compiler and ubuntu-24.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "compiler and ubuntu and 24.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 22.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "compiler and ubuntu-22.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "compiler and ubuntu and 22.04"'
                                 }
                             }
                         }
                         stage('Ubuntu 20.04') {
                             steps {
-                                dir('internal/tests') {
-                                    sh './run_docker_build_tests.sh -v -k "compiler and ubuntu-20.04"'
+                                dir('tests') {
+                                    sh './test.sh report -k "compiler and ubuntu and 20.04"'
                                 }
                             }
                         }
@@ -548,35 +593,27 @@ pipeline {
                 }
             }
         }
-        
-        stage('Generate Report') {
-            steps {
-                dir('internal/tests') {
-                    sh './test.sh report'
-                }
-            }
-        }
     }
-    
+
     post {
         always {
-            archiveArtifacts artifacts: 'internal/tests/reports/**/*', allowEmptyArchive: true
-            
+            archiveArtifacts artifacts: 'tests/reports/**/*', allowEmptyArchive: true
+
             // Publish HTML reports if using HTML Publisher plugin
             publishHTML([
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
-                reportDir: 'internal/tests/reports',
+                reportDir: 'tests/reports',
                 reportFiles: '*.html',
-                reportName: 'Docker Build Test Report'
+                reportName: 'DX-ALL-SUITE Test Report'
             ])
         }
-        
+
         success {
             echo 'All Docker build tests passed!'
         }
-        
+
         failure {
             echo 'Some Docker build tests failed!'
         }
@@ -584,7 +621,7 @@ pipeline {
 }
 ```
 
-### Scripted Pipeline (간소화 버전)
+### Scripted Pipeline (Simplified Version)
 
 ```groovy
 node {
@@ -592,43 +629,41 @@ node {
         checkout scm
         sh 'git submodule update --init --recursive'
     }
-    
+
     stage('Sanity Check') {
-        dir('internal/tests') {
+        dir('tests') {
             sh './test.sh sanity'
         }
     }
-    
+
     stage('Quick Build Test') {
-        dir('internal/tests') {
-            sh './run_docker_build_tests.sh -v -k "ubuntu-24.04"'
+        dir('tests') {
+            sh './test.sh report -k "ubuntu and 24.04"'
         }
     }
-    
+
     stage('Archive Results') {
-        archiveArtifacts artifacts: 'internal/tests/reports/**/*', allowEmptyArchive: true
+        archiveArtifacts artifacts: 'tests/reports/**/*', allowEmptyArchive: true
     }
 }
 ```
 
----
+## General Guidelines
 
-## 일반 가이드라인
+### 1. Parallel Execution Optimization
 
-### 1. 병렬 실행 최적화
+Parallel execution is recommended to reduce build time:
 
-빌드 시간을 단축하기 위해 병렬 실행을 권장합니다:
+- **Strategy**: Run tests in parallel by OS version
+- **Job Separation**: Separate runtime, modelzoo, and compiler into different jobs
+- **Execution Order**: Sanity tests → Parallel build tests → Report generation
 
-- **Strategy**: OS 버전별로 병렬 실행
-- **Job 분리**: runtime, modelzoo, compiler를 별도 job으로 분리
-- **실행 순서**: Sanity 테스트 → 병렬 빌드 테스트 → 리포트 생성
+### 2. Caching Strategy
 
-### 2. 캐싱 전략
-
-Docker 레이어 캐싱을 활용하여 빌드 시간 단축:
+Leverage Docker layer caching to reduce build time:
 
 ```yaml
-# GitHub Actions 예제
+# GitHub Actions example
 - name: Cache Docker layers
   uses: actions/cache@v3
   with:
@@ -638,9 +673,9 @@ Docker 레이어 캐싱을 활용하여 빌드 시간 단축:
       ${{ runner.os }}-buildx-
 ```
 
-### 3. 타임아웃 설정
+### 3. Timeout Settings
 
-각 빌드에 적절한 타임아웃 설정:
+Set appropriate timeouts for each build:
 
 ```yaml
 # GitHub Actions
@@ -653,92 +688,91 @@ timeout: 45m
 timeout(time: 45, unit: 'MINUTES')
 ```
 
-### 4. 아티팩트 관리
+### 4. Artifact Management
 
-테스트 결과를 아티팩트로 저장:
+Save test results as artifacts:
 
-- HTML 리포트
-- JSON 리포트
-- 빌드 로그
-- 보관 기간: 7-30일 권장
+- HTML reports
+- JSON reports
+- Build logs
+- **Retention period**: 7-30 days recommended
 
-### 5. 실패 처리
+### 5. Failure Handling
 
 ```yaml
-# 하나의 빌드 실패가 전체를 중단하지 않도록 설정
+# Prevent one build failure from stopping the entire workflow
 strategy:
   fail-fast: false  # GitHub Actions
-# 또는
+# or
 allow_failure: true  # GitLab CI
 ```
 
-### 6. 알림 설정
+### 6. Notification Setup
 
-빌드 실패 시 알림 설정:
+Configure notifications for build failures:
 
-- Slack 통합
-- 이메일 알림
-- GitHub/GitLab 코멘트
+- Slack integration
+- Email notifications
+- GitHub/GitLab comments
 
-### 7. 스케줄 실행
+### 7. Scheduled Execution
 
-정기적인 빌드 검증:
+Regular build validation:
 
 ```yaml
-# GitHub Actions - 매일 자정에 실행
+# GitHub Actions - Run daily at midnight
 on:
   schedule:
     - cron: '0 0 * * *'
 
-# GitLab CI - 매일 자정에 실행
+# GitLab CI - Run daily at midnight
 only:
   - schedules
 ```
 
-### 8. 리소스 최적화
+### 8. Resource Optimization
 
-CI 리소스 사용 최적화:
+Optimize CI resource usage:
 
-- **Sanity 먼저**: 빠른 검증 후 실패 시 조기 종료
-- **선택적 실행**: PR에서는 변경된 타겟만 테스트
-- **우선순위**: 자주 사용되는 OS 버전 우선 실행
+- **Sanity First**: Quick validation, fail early if issues detected
+- **Selective Execution**: In PRs, test only changed targets
+- **Prioritization**: Test frequently-used OS versions first
 
----
+## Best Practices
 
-## 베스트 프랙티스
+### 1. PR Workflow
 
-### 1. PR 워크플로우
+For Pull Requests:
 
-Pull Request에서는:
-- ✅ Sanity 테스트 필수
-- ✅ 최신 OS 버전 (24.04) 빌드 테스트
-- ❌ 전체 테스트는 생략 (시간 절약)
+- ✅ Sanity tests are mandatory
+- ✅ Build test for latest OS version (24.04)
+- ❌ Skip full test suite (save time)
 
-### 2. Main/Develop 브랜치
+### 2. Main/Develop Branch
 
-메인 브랜치에서는:
-- ✅ 전체 테스트 실행
-- ✅ 모든 OS 버전 검증
-- ✅ 리포트 생성 및 아카이브
+For main branches:
 
-### 3. Release 워크플로우
+- ✅ Run full test suite
+- ✅ Validate all OS versions
+- ✅ Generate and archive reports
 
-릴리스 전에는:
-- ✅ 전체 테스트 실행
-- ✅ 리포트 검토
-- ✅ 수동 승인 단계 추가
+### 3. Release Workflow
 
-### 4. 모니터링
+Before releases:
 
-CI/CD 성능 모니터링:
-- 빌드 시간 추적
-- 성공/실패율 모니터링
-- 병목 구간 식별
+- ✅ Run full test suite
+- ✅ Review reports
+- ✅ Add manual approval step
 
----
+### 4. Monitoring
 
-## 추가 자료
+Monitor CI/CD performance:
 
-- [README_DOCKER_BUILD_TESTS.md](README_DOCKER_BUILD_TESTS.md) - 기본 사용법
-- [REFERENCE.sh](REFERENCE.sh) - 명령어 퀵 레퍼런스
-- [SUMMARY.md](SUMMARY.md) - 프로젝트 개요
+- Track build times
+- Monitor success/failure rates
+- Identify bottlenecks
+
+## Additional Resources
+
+- [README.md](README.md) - Project Overview
+- [REFERENCE.sh](REFERENCE.sh) - Quick command reference
