@@ -303,34 +303,50 @@ bash runtime-0_install_dx-runtime.sh --exclude-fw -f
 
 ### 📁 3. runtime-3_run_example_using_dxrt.sh
 
-`dx_app` 예제를 기반으로 `.dxnn` 모델을 실행하고 결과를 확인합니다.
+`dx_app` async 예제를 사용하여 `.dxnn` 모델을 실행하고 결과를 확인합니다.
 
-- **기능**: 런타임 예제 실행 (Object Detection, Face Detection, Classification)
+- **기능**: 런타임 예제 실행 (Object Detection, Face Detection, Image Classification)
 - **설명**:
-  - `dx_app` 예제를 복제(fork)하여 `forked_dx_app_example` 폴더 생성
-  - `.json` 설정 파일 내 모델 경로를 사용자 컴파일 결과로 hijack
-  - `run_detector`, `run_classifier` 바이너리 실행
-  - 이미지 결과(fim) 또는 로그 출력 확인
+  - `dx_app` 예제 바이너리와 샘플 데이터를 `forked_dx_app_example` 폴더로 복사
+  - 컴파일된 `.dxnn` 모델과 함께 `yolov5face_async`, `yolov5_async`, `efficientnet_async` 바이너리 실행
+  - TTY/headless 환경을 자동으로 감지하여 디스플레이 동작 조정
+  - 실행 전 모델 파일 존재 여부 검증
 
 #### 📌 주요 함수
 
 - `fork_examples()`
 
-  - `dx_app/bin` 실행 바이너리 및 `example/*`, `sample/*` 리소스 전체 복사
-  - Git 초기화 및 커밋으로 diff 추적 가능하게 구성
+  - `dx_app/bin` 바이너리 복사: `yolov5face_async`, `yolov5_async`, `efficientnet_async`
+  - 객체 감지, 얼굴 감지, 분류를 위한 샘플 이미지 복사
+  - 바이너리 누락 시 `handle_cmd_failure()`를 통해 도움말 제공
 
-- `hijack_example(file_path, source_str, target_str, commit_msg)`
+- `run_example(exe_file_path, dxnn_file_path, image_path, save_log, loop)`
 
-  - `.json` 설정파일 내 `"./assets/models/*.dxnn"` 경로를 실제 생성된 모델 경로로 대체
-  - diff 확인
+  - 지정된 모델과 입력 이미지로 async 바이너리 실행
+  - `loop`: 추론 반복 횟수 (기본값: 300, 얼굴 감지: 30)
+  - `save_log`: "y"로 설정 시 출력을 `result-app.log`로 리다이렉트
+  - TTY/headless 환경(`/deepx/tty_flag` 확인)에서 자동으로 `--no-display` 플래그 추가
+    - **예외**: `efficientnet_async`는 `--no-display` 옵션을 지원하지 않으므로 플래그가 추가되지 않음
+  - 실패 시 오류 메시지와 함께 종료
 
-- `run_hijacked_example(exe, config, save_log)`
+- `show_result(result_path)`
 
-  - 바이너리 실행 + 결과 확인
-    - Object/Face Detection: 결과 이미지 출력 후 `fim`으로 확인
-    - Classification: 결과 로그 (`result-app.log`)로 출력
+  - 그래픽 환경: 계속 진행하도록 사용자에게 프롬프트 표시 (레거시 `fim` 뷰어 코드 비활성화)
+  - TTY 환경: `docker cp`를 사용하여 결과를 복사하는 방법 안내
+  - 두 환경 모두 원활하게 처리
 
 - `main()`
-  - YOLOV5S_Face, YOLOV5S, MobileNetV2 모델 각각에 대해 fork → hijack → run 수행
+  
+  - 모든 `.dxnn` 모델 파일 존재 여부 검증 (`YOLOV5S_Face-1`, `YOLOV5S-1`, `MobileNetV2-1`)
+  - 필요한 경우 `fim` 설치 확인 (향후 이미지 뷰어 지원용)
+  - 세 가지 예제를 순차적으로 실행:
+    - **YOLOV5 Face**: `face_sample.jpg`에 대해 30회 반복
+    - **YOLOV5S**: `1.jpg`에 대해 300회 반복
+    - **MobileNetV2**: `ILSVRC2012/1.jpeg`에 대해 300회 반복 (로그 출력)
+
+**테스트된 모델:**
+- YOLOV5S_Face-1 (얼굴 감지)
+- YOLOV5S-1 (객체 감지)
+- MobileNetV2-1 (이미지 분류)
 
 ---

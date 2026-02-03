@@ -305,34 +305,50 @@ Prepares the configuration files and model resources for running examples.
 
 ### 📁 3. runtime-3_run_example_using_dxrt.sh
 
-Runs the `.dxnn` model using `dx_app` examples and checks the results.
+Runs the `.dxnn` model using `dx_app` async examples and checks the results.
 
-- **Function**: Run runtime examples (Object Detection, Face Detection, Classification).
+- **Function**: Run runtime examples (Object Detection, Face Detection, Image Classification).
 - **Description**:
-  - Forks the `dx_app` example into the `forked_dx_app_example` folder.
-  - Hijacks the model path in the `.json` configuration file to the user’s compiled model.
-  - Executes `run_detector` and `run_classifier` binaries.
-  - Checks image results (using `fim`) or logs.
+  - Forks the `dx_app` example binaries and sample data into the `forked_dx_app_example` folder.
+  - Executes `yolov5face_async`, `yolov5_async`, and `efficientnet_async` binaries with compiled `.dxnn` models.
+  - Automatically detects TTY/headless environments and adjusts display behavior accordingly.
+  - Validates model files exist before execution.
 
 #### 📌 Key Functions
 
 - `fork_examples()`
 
-  - Copies `dx_app/bin` binaries, `example/*`, and `sample/*` resources.
-  - Initializes Git and commits to track diffs.
+  - Copies `dx_app/bin` binaries: `yolov5face_async`, `yolov5_async`, `efficientnet_async`.
+  - Copies sample images for object detection, face detection, and classification.
+  - Uses error handling with `handle_cmd_failure()` to provide helpful hints if binaries are missing.
 
-- `hijack_example(file_path, source_str, target_str, commit_msg)`
+- `run_example(exe_file_path, dxnn_file_path, image_path, save_log, loop)`
 
-  - Replaces `"./assets/models/*.dxnn"` path in `.json` configuration file with the actual generated model path.
-  - Shows the diff for verification.
+  - Executes the async binary with specified model and input image.
+  - `loop`: Number of inference iterations (default: 300, face detection: 30).
+  - `save_log`: Redirects output to `result-app.log` when set to "y".
+  - Automatically adds `--no-display` flag in TTY/headless environments (checked via `/deepx/tty_flag`).
+    - **Exception**: `efficientnet_async` does not support `--no-display` option, so the flag is not added for this binary.
+  - Exits on failure with error message.
 
-- `run_hijacked_example(exe, config, save_log)`
+- `show_result(result_path)`
 
-  - Runs the binary and checks the results.
-    - Object/Face Detection: Displays the result image and checks with `fim`.
-    - Classification: Logs results to the `result-app.log` file.
+  - In graphical environments: Prompts user to continue (legacy `fim` viewer code disabled).
+  - In TTY environments: Displays instructions for copying results using `docker cp`.
+  - Handles both environments gracefully.
 
 - `main()`
-  - Forks, hijacks, and runs the YOLOV5S_Face, YOLOV5S, and MobileNetV2 models.
+  
+  - Validates all `.dxnn` model files exist (`YOLOV5S_Face-1`, `YOLOV5S-1`, `MobileNetV2-1`).
+  - Checks and installs `fim` if needed (for future image viewing support).
+  - Runs three examples sequentially:
+    - **YOLOV5 Face**: 30 iterations on `face_sample.jpg`
+    - **YOLOV5S**: 300 iterations on `1.jpg`
+    - **MobileNetV2**: 300 iterations on `ILSVRC2012/1.jpeg` with logged output
+
+**Models tested:**
+- YOLOV5S_Face-1 (Face Detection)
+- YOLOV5S-1 (Object Detection)
+- MobileNetV2-1 (Image Classification)
 
 ---
