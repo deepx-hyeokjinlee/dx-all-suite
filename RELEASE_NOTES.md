@@ -25,10 +25,7 @@ This release focuses on enhancing the YOLO ecosystem with expanded model variant
 
 **New Features & Tools**
 
-- YOLO26 Classification: Added support and examples for YOLO26 classification tasks.
-- YOLO26 Pose Estimation: Added support and examples for YOLO26 pose estimation.
-- YOLO26 Segmentation: Added support and examples for YOLO26 instance segmentation.
-- YOLO26 OBB: Added support and examples for YOLO26 oriented bounding box detection.
+- Add yolov26 cls, yolo26 pose, yolo26 seg, yolo26 obb examples
 
 ---
 
