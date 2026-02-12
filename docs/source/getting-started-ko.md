@@ -96,20 +96,22 @@ getting-started/
 
 ### 📁 2. compiler-2_setup_calibration_dataset.sh
 
-Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어씌웁니다.
+Calibration dataset을 다운로드하고 `.json` 파일 내 경로를 설정합니다.
 
 - **기능**: Calibration 데이터셋 설정
 - **설명**:
-  - 심볼릭 링크를 생성:`./calibration_dataset` → `dx_com/calibration_dataset`
+  - 원격 서버에서 `calibration_dataset.tar.gz` 를 다운로드하여 `./calibration_dataset` 에 압축을 해제합니다.
+  - workspace에 심볼릭 링크 생성: `workspace/dataset` → `./calibration_dataset`.
   - `modelzoo/json/*.json` 내 `dataset_path` 항목을 `./calibration_dataset` 으로 강제 변경(hijack)합니다.
-  - `dx_com` 내부에 포함된 샘플 calibration dataset을 사용하도록 구성되어 있습니다.
+  - `--force` 옵션으로 기존 파일을 덮어쓸 수 있습니다.
 
 #### 📌 주요 함수
 
-- `make_symlink_calibration_dataset()`
+- `download()`
 
-  - `dx_com/calibration_dataset` → `./calibration_dataset` 심볼릭 링크 생성.
-  - 기존 링크가 깨져 있는 경우 재생성 처리.
+  - 원격 서버에서 calibration dataset 아카이브를 다운로드합니다.
+  - `get_resource.sh`를 호출하여 `dataset/calibration_dataset.tar.gz`를 다운로드하고 압축 해제합니다.
+  - `workspace/dataset`에서 압축 해제된 dataset으로의 심볼릭 링크를 생성합니다.
 
 - `hijack_dataset_path(model_name)`
 
@@ -118,7 +120,7 @@ Calibration dataset 경로를 설정하고 `.json` 파일 내 경로도 덮어�
   - 변경 전/후 `diff` 출력.
 
 - `main()`
-  - `make_symlink_calibration_dataset()` 실행.
+  - `download()`를 실행하여 calibration dataset 다운로드.
   - 예시 모델 각각에 대해 `hijack_dataset_path()` 수행.
 
 ---

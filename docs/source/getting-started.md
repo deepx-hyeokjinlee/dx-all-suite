@@ -97,20 +97,22 @@ Downloads model files (`.onnx`, `.json`) and links them into the workspace.
 
 ### 📁 2. compiler-2_setup_calibration_dataset.sh
 
-Creates a symbolic link to the calibration dataset and modifies `.json` config files to use it.
+Downloads the calibration dataset and modifies `.json` config files to use it.
 
 - **Purpose**: Calibration dataset setup
 - **Description**:
-  - Creates symlink: `./calibration_dataset` → `dx_com/calibration_dataset`
+  - Downloads `calibration_dataset.tar.gz` and extracts it to `workspace/dataset`.
+  - Creates a symlink in the workspace: `workspace/dataset/calibration_dataset` → `./calibration_dataset`.
   - Forcefully changes (hijacks) the `dataset_path` entry in `modelzoo/json/*.json` to `./calibration_dataset`.
-  - Configured to use the sample calibration dataset included within `dx_com`.
+  - `--force` option allows overwriting existing files.
 
 #### 📌 Key Functions
 
-- `make_symlink_calibration_dataset()`
+- `download()`
 
-  - Creates a symbolic link from `dx_com/calibration_dataset` to `./calibration_dataset`.
-  - Recreates the link if the existing one is broken.
+  - Downloads the calibration dataset archive from the remote server.
+  - Calls `get_resource.sh` to download and extract `dataset/calibration_dataset.tar.gz`.
+  - Creates a symbolic link from `workspace/dataset/calibration_dataset` to the extracted dataset.
 
 - `hijack_dataset_path(model_name)`
 
@@ -119,7 +121,7 @@ Creates a symbolic link to the calibration dataset and modifies `.json` config f
   - Outputs the `diff` showing changes before and after.
 
 - `main()`
-  - Executes `make_symlink_calibration_dataset()`.
+  - Executes `download()` to get the calibration dataset.
   - Runs `hijack_dataset_path()` for each of the three models.
 
 ---
