@@ -7,6 +7,30 @@
  1f0486456f9b2e0f9f8e1c1531df9ec6ed3d9af4 dx-modelzoo (1f04864)  
 
 #### dx-runtime  
++995cd7cd9b4b7988e774de5b15b8193785b303fb dx-runtime (remotes/origin/HEAD)  
++4a72bf6e1284f79d9f96ffe7c3948ce9598af3d9 dx-runtime/dx_app (v3.0.2-rc+manual-20260212.4a72bf6)  
+ ac0caccbb708af2f1c919141051268d949ba104b dx-runtime/dx_fw (remotes/origin/HEAD)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ 1b5b4e6a4a1de97ad0a9402702210a9ec3268921 dx-runtime/dx_fw/firmware/bootloader (m1b_v2.5.1_r20260225_bl)  
+ 34ae255e6d39e3a9eaaed1f6b7d6903140c0fbaf dx-runtime/dx_fw/firmware/freertos/apps (heads/main)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 90ff7463191dc04e4ec40e8087588fe63272b0d5 dx-runtime/dx_fw/firmware/freertos/plat (remotes/origin/HEAD)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2026-02-26  
+#### dx-compiler  
+ c61eafdcdeacdd965378fdaf5a07634d4ed4f33c dx-compiler (v2.2.0-rc+manual-20260226.c61eafd)  
+
+#### dx-modelzoo  
+ 1f0486456f9b2e0f9f8e1c1531df9ec6ed3d9af4 dx-modelzoo (1f04864)  
+
+#### dx-runtime  
 +f6ebb32e289a624a7b7f29751d58e150992e8a7a dx-runtime (remotes/origin/HEAD)  
  4a72bf6e1284f79d9f96ffe7c3948ce9598af3d9 dx-runtime/dx_app (4a72bf6)  
 +f9362e28e6e05770c03d9ca9a7ca3c42d798f64f dx-runtime/dx_fw (f9362e2)  
