@@ -29,6 +29,15 @@ python ./internal/run_compile.py \
    
 # 연결된 script:
 dx-all-suite/internal/run_compile_app_models.sh --output_path=./models_test --venv-reuse --dev --skip-upload-dxnn
+
+# 예시 (모델 경로의 컴파일 대상 모델 목록 가져오기)
+python ./internal/run_compile.py --model_dir ./internal/workspace/app_models/ --get_model_list
+python ./internal/run_compile.py --model_dir ./internal/workspace/app_models/ --get_model_list | grep yolo26 > yolo26_models.txt
+
+# 예시 (특정 모델(--include_from)만 컴파일)
+ln -s ./getting-started/calibration_dataset .
+python ./internal/run_compile.py --model_dir ./internal/workspace/app_models/ --include_from yolo26_models.txt --dxnn_format_version v8
+rm -rf ./calibration_dataset
 """
 
 RETRY_LIMIT = 0
@@ -72,7 +81,7 @@ def get_model_list(model_dir):
         logging.error(f"Directory not found: {json_dir}")
         sys.exit(1)
 
-    models = [Path(f).stem for f in Path(json_dir).glob("*.json")]
+    models = [Path(f).stem for f in Path(json_dir).glob("**/*.json")]
     for model in models:
         print(model)
     sys.exit(0)
@@ -307,6 +316,7 @@ def main():
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--exclude_from")
     parser.add_argument("--include_from")
+    parser.add_argument("--models", help="Comma-separated list of model names to compile (e.g. yolov7,resnet50)")
     parser.add_argument("--get_model_list", action="store_true")
     # cause of disable: Even when increasing the number of workers for parallel processing, the total compile time may actually increase.
     # parser.add_argument("--max_workers", type=int, default=get_default_max_workers())
@@ -339,14 +349,27 @@ def main():
         shutil.rmtree(dxnn_dir)
 
     # Filter model list
+    selected_models = []
+
     if args.include_from:
-        models = load_model_list_from_file(args.include_from)
+        selected_models += load_model_list_from_file(args.include_from)
+
+    if args.models:
+        cli_models = [m.strip() for m in args.models.split(",") if m.strip()]
+        logging.info(f"Models specified via --models: {cli_models}")
+        selected_models += cli_models
+
+    if selected_models:
+        # Deduplicate while preserving order
+        seen = set()
+        models = [m for m in selected_models if not (m in seen or seen.add(m))]
+        logging.info(f"Compiling {len(models)} selected model(s): {models}")
     else:
         json_path = Path(args.model_dir, "json")
-        
+
         if args.dxnn_format_version:
             json_path = Path(json_path, args.dxnn_format_version)
-        
+
         all_models = [Path(f).stem for f in Path(args.model_dir, "json", json_path).glob("*.json")]
         if args.exclude_from:
             exclude = set(load_model_list_from_file(args.exclude_from))

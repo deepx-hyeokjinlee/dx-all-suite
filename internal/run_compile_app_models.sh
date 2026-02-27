@@ -5,6 +5,16 @@
 # - private network: internal/run_compile_app_models.sh --dxnn_format_version=v8 --skip-upload-dxnn --skip-install-dx-compiler --skip-download-app-models
 # Note: private network can not access to aws s3 to download app models and upload dxnn files, and also can not install dx-compiler by install.sh. So, it should use pre-downloaded app models. 
 
+# 파일로 모델 목록 지정 (실패한 모델 목록 파일)
+# internal/run_compile_app_models.sh --compile_list_file=./failed_models.txt --skip-install-dx-compiler --skip-download-app-models --skip-upload-dxnn
+
+# CLI에서 직접 모델 지정
+# internal/run_compile_app_models.sh --models=yolov7,resnet50 --skip-install-dx-compiler --skip-download-app-models --skip-upload-dxnn
+    
+# 두 방식 동시 사용 (합산 후 중복 제거)
+# internal/run_compile_app_models.sh --compile_list_file=./failed.txt --models=new_model --skip-install-dx-compiler --skip-download-app-models --skip-upload-dxnn
+
+
 SCRIPT_DIR=$(realpath "$(dirname "$0")")
 DX_AS_PATH=$(realpath -s "${SCRIPT_DIR}/../")
 COMPILER_PATH="${DX_AS_PATH}/dx-compiler"
@@ -35,6 +45,8 @@ DXNN_FORMAT_VERSION="v8"
 SKIP_UPLOAD_DXNN=0
 SKIP_INSTALL_DX_COMPILER=0
 SKIP_DOWNLOAD_APP_MODELS=0
+COMPILE_LIST_FILE=""
+COMPILE_MODELS=""
 
 # Function to display help message
 show_help() {
@@ -51,6 +63,8 @@ show_help() {
     print_colored "  [--skip-upload-dxnn]               : Skip to upload compiled dxnn files to aws s3" "GREEN"
     print_colored "  [--skip-install-dx-compiler]       : Skip dx-compiler installation" "GREEN"
     print_colored "  [--skip-download-app-models]       : Skip downloading app models (onnx, json) files" "GREEN"
+    print_colored "  [--compile_list_file=<PATH>]       : Compile only models listed in the specified file (one model name per line)" "GREEN"
+    print_colored "  [--models=<LIST>]                  : Compile only the specified models (comma-separated, e.g. yolov7,resnet50)" "GREEN"
     print_colored "  [--help]                           : Show this help message" "GREEN"
 
     if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
@@ -127,7 +141,17 @@ run_compile_app_models() {
         FORCE_ARGS="--force"
     fi
 
-    COMPILER_APP_MODEL_CMD="python ${DX_AS_PATH}/internal/run_compile.py ${MODEL_DIR_ARGS} ${DXNN_FORMAT_VERSION_ARGS} ${RESULT_LOG_ARGS} ${GEN_HTML_REPORT_ARGS} ${FORCE_ARGS}"
+    FILTER_ARGS=""
+    if [[ -n "$COMPILE_LIST_FILE" ]]; then
+        print_colored_v2 "INFO" "Compile list file: ${COMPILE_LIST_FILE}"
+        FILTER_ARGS+=" --include_from ${COMPILE_LIST_FILE}"
+    fi
+    if [[ -n "$COMPILE_MODELS" ]]; then
+        print_colored_v2 "INFO" "Compile models: ${COMPILE_MODELS}"
+        FILTER_ARGS+=" --models ${COMPILE_MODELS}"
+    fi
+
+    COMPILER_APP_MODEL_CMD="python ${DX_AS_PATH}/internal/run_compile.py ${MODEL_DIR_ARGS} ${DXNN_FORMAT_VERSION_ARGS} ${RESULT_LOG_ARGS} ${GEN_HTML_REPORT_ARGS} ${FORCE_ARGS} ${FILTER_ARGS}"
     echo "CMD : $COMPILER_APP_MODEL_CMD"
     $COMPILER_APP_MODEL_CMD || { print_colored "Compile failed for app models(onnx, json)." "ERROR"; exit 1; }
     rm -rf ./calibration_dataset || true
@@ -198,6 +222,9 @@ setup_venv() {
             export DX_PASSWORD
             export AWS_ACCESS_KEY
             export AWS_SECRET_KEY
+            export BUCKET_NAME
+            export REGION_NAME
+            export CLOUDFRONT_DOMAIN
             print_colored_v2 "DEBUG" "dev config properties file $DEV_CONFIG_FILE_PATH is loadded."
         else
             print_colored_v2 "DEBUG" "dev config properties file $DEV_CONFIG_FILE_PATH is not found."
@@ -253,6 +280,12 @@ for i in "$@"; do
             ;;
         --skip-download-app-models)
             SKIP_DOWNLOAD_APP_MODELS=1
+            ;;
+        --compile_list_file=*)
+            COMPILE_LIST_FILE="${1#*=}"
+            ;;
+        --models=*)
+            COMPILE_MODELS="${1#*=}"
             ;;
         --help)
             show_help
