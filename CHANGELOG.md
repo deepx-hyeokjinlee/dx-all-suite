@@ -1,4 +1,28 @@
 ## Changelog
+### 2026-03-03  
+#### dx-compiler  
++655689b554617658337292f1539f25e49d9deadc dx-compiler (v2.2.0-rc+manual-20260226.c61eafd-2-g655689b)  
+
+#### dx-modelzoo  
+ 1f0486456f9b2e0f9f8e1c1531df9ec6ed3d9af4 dx-modelzoo (v0.6.0)  
+
+#### dx-runtime  
+ 484d5928d073efe1445ebfbfe6c70b8db40a99d3 dx-runtime (remotes/origin/HEAD)  
+ 48c63a7aa9f73ba451bb123a18908abffe8f99ff dx-runtime/dx_app (v3.0.2-rc+manual-20260227.48c63a7)  
+ 4b06d745c7ffc41357318cb17fa25b3961574ada dx-runtime/dx_fw (remotes/origin/HEAD)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ 1b5b4e6a4a1de97ad0a9402702210a9ec3268921 dx-runtime/dx_fw/firmware/bootloader (m1b_v2.5.1_r20260225_bl)  
+ 34ae255e6d39e3a9eaaed1f6b7d6903140c0fbaf dx-runtime/dx_fw/firmware/freertos/apps (heads/main)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 96ec6036594e0678049242567313272a7b381eb5 dx-runtime/dx_fw/firmware/freertos/plat (remotes/origin/HEAD)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
 ### 2026-02-27  
 #### dx-compiler  
  c61eafdcdeacdd965378fdaf5a07634d4ed4f33c dx-compiler (v2.2.0-rc+manual-20260224.8a7da6f-2-gc61eafd)  
