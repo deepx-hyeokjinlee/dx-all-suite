@@ -19,7 +19,7 @@ internal/calibration_dataset
 getting-started/calibration_dataset
 getting-started/dxnn
 getting-started/forked*/
-getting-started/modelzoo/
+getting-started/sample_models
 *.crt
 !dummy.crt
 dummy_xauthority
