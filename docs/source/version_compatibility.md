@@ -15,7 +15,7 @@ DEEPX software components have version compatibility dependencies between them. 
     <tr>
       <th>DX-COM</th>
       <th>DX-TRON</th>
-      <th>DX_FW</th>
+      <th>DX-FW</th>
       <th>NPU Driver</th>
       <th>DX-RT</th>
       <th>DX-Stream</th>
