@@ -39,25 +39,15 @@ git submodule status
 ./scripts/install_docker.sh
 ```
 
-#### Python Virtual Environment (Recommended)
+#### (Optional) Install Python and Python Virtual Environment
 
-The installation scripts will install Python packages via pip. To avoid conflicts with system packages and maintain a clean environment, it is strongly recommended to use a Python virtual environment:
+The installation scripts automatically detect your Python version, install a compatible Python if needed, and create and activate a virtual environment. You do not need to set up Python or a virtual environment manually — simply run the installation script and it will handle everything.
+
+If Python is not already installed on your system, installing it beforehand can reduce build time:
 
 ```bash
-# Create a virtual environment
-python -m venv dx-venv
-
-# Activate the virtual environment
-source dx-venv/bin/activate  # On Linux
-# or
-dx-venv\Scripts\activate  # On Windows
-
-# Verify the virtual environment is active
-which python
-# Should show: /path/to/dx-venv/bin/python
+sudo apt install python3 python3-dev python3-venv
 ```
-
-After activating the virtual environment, proceed with the installation steps below.
 
 ---
 
@@ -108,31 +98,15 @@ Upon successful installation:
 
 #### Using dx_com
 
-**If installed with Wheel mode:**
-
 You can use the `dxcom` command after activating the virtual environment:
 
 ```bash
 # Activate virtual environment
-source ./dx-compiler/venv-dx-compiler/bin/activate
+source ./dx-compiler/venv-dx-compiler-local/bin/activate
 
 # Use dxcom
 dxcom -h
 ```
-
-#### Archive Mode (--archive_mode=y)
-
-The `--archive_mode=y` option is primarily used when building Docker images for the `dx-compiler` environment with `docker_build.sh`. When this mode is activated, only the download of the module's `.tar.gz` file proceeds; no extraction or symbolic link creation is performed.
-
-```bash
-./dx-compiler/install.sh --archive_mode=y
-```
-
-When executing the above command, the module archive files (`*.tar.gz`) will be downloaded and saved to:
-
-archives/dx_com_M1_v[VERSION].tar.gz
-
-These archive files can then be utilized by the Docker image build process.
 
 #### Using DX-TRON
 
@@ -391,23 +365,23 @@ dxrt-cli -s
 Example output:
 
 ```
-DXRT v2.6.3
+DXRT v3.2.0
 =======================================================
 * Device 0: M1, Accelerator type
 ---------------------   Version   ---------------------
-* RT Driver version   : v1.3.1
-* PCIe Driver version : v1.2.0
+* RT Driver version   : v2.1.0
+* PCIe Driver version : v2.0.1
 -------------------------------------------------------
-* FW version          : v1.6.0
+* FW version          : v2.4.0
 --------------------- Device Info ---------------------
-* Memory : LPDDR5 5800 MHz, 3.92GiB
-* Board  : M.2, Rev 10.0
+* Memory : LPDDR5 6000 MHz, 3.92GiB
+* Board  : M.2, Rev 1.0
+* Chip Offset : 0
 * PCIe   : Gen3 X4 [02:00:00]
 
 NPU 0: voltage 750 mV, clock 1000 MHz, temperature 29'C
 NPU 1: voltage 750 mV, clock 1000 MHz, temperature 28'C
 NPU 2: voltage 750 mV, clock 1000 MHz, temperature 28'C
-DVFS Disabled
 =======================================================
 ```
 
@@ -510,11 +484,9 @@ Run the following from the `./dx-compiler/dx_com/` directory.
 
 **Or compile individual models manually:**
 
-**If installed with Wheel mode:**
-
 ```bash
 # Activate virtual environment
-source ./dx-compiler/venv-dx-compiler/bin/activate
+source ./dx-compiler/venv-dx-compiler-local/bin/activate
 
 cd ./dx-compiler/dx_com
 

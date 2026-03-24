@@ -52,7 +52,7 @@ DX-Stream is a GStreamer Custom Plugin designed to simplify the development of V
   - DX-COM: Converts ONNX models into highly optimized, NPU-ready binaries.
 
 **Flexibility & Support**
-  - OS: Compatible with Debian-based Linux (Ubuntu 20.04, 22.04, 24.04)
+  - OS: Compatible with Debian-based Linux
   - Architecture: Supports x86_64 only
 
 **Easy Installation**
