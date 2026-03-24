@@ -71,42 +71,9 @@ The `DX-Compiler` environment provides prebuilt binary outputs and does not incl
 ./dx-compiler/install.sh
 ```
 
-When executing the above command, DEEPX Developers' Portal ([https://developer.deepx.ai](https://developer.deepx.ai)) account authentication is required to download and install the DX-Compiler modules.
-
-Please visit the developer portal and create an account before proceeding.
-
-The script obtains authentication information based on the following priority:
-
-1.  **Directly specify when executing the command (1st priority):**
-    ```bash
-    ./dx-compiler/install.sh --username=<your_email> --password=<your_password>
-    ```
-    
-    **Note:** If your password contains special characters like `!` or `$`, use single quotes:
-    ```bash
-    ./dx-compiler/install.sh --username=<your_email> --password='pass!word'
-    ```
-2.  **Use environment variables (2nd priority):**
-
-    ```bash
-    export DX_USERNAME=<your_email>
-    export DX_PASSWORD=<your_password>
-    ./dx-compiler/install.sh
-    ```
-
-    Alternatively, you can add account information to `compiler.properties` as shown below, which will be injected as environment variables:
-
-    ```bash
-    DX_USERNAME=<your_email>
-    DX_PASSWORD=<your_password>
-    ```
-
-3.  **Prompt for input (3rd priority):**
-    If neither of the above methods is used, the script will prompt you to enter your account information directly in the terminal during execution.
-
 #### Python Version Compatibility
 
-`dx_com`'s **Wheel mode (default)** installation requires Python.
+`dx_com`'s installation requires Python.
 
 The installation script automatically checks Python version compatibility. Supported Python versions are `3.8`, `3.9`, `3.10`, `3.11`, and `3.12`.
 
@@ -118,30 +85,14 @@ If the current system's Python version is not compatible, the script will detect
 
 #### Installation Modes
 
-By default, the installation script runs in **Wheel mode**. In this mode, Python wheel packages are downloaded and installed into the virtual environment.
+The installation script downloads and installs Python wheel packages into the virtual environment, automatically selecting the appropriate package for your Python version.
 
-To use legacy executables, add the `--legacy` option:
-
-```bash
-./dx-compiler/install.sh --legacy
-```
-
-**Wheel Mode (default):**
-- Downloads and installs Python wheel packages
-- Use `dxcom` command after activating the virtual environment
-- Automatically selects the appropriate wheel package for your Python version
-
-**Legacy Mode:**
-- Downloads and extracts executable files
-- Can be run directly
-
-> ⚠️ **Warning:** Legacy mode will be removed in future versions. We recommend using Wheel mode (default) for new projects.
+Use `dxcom` command after activating the virtual environment.
 
 Upon successful installation:
 
 1.  The `dx_com` module will be downloaded and installed:
-    - **Wheel Mode:** Python wheel packages are installed in the virtual environment
-    - **Legacy Mode:** Executables are extracted to `./workspace/release/dx_com/dx_com_M1_v[VERSION]`
+    - Python wheel packages are installed in the virtual environment
 
 2.  Symbolic links will be created at `./dx-compiler/dx_com`.
 
@@ -167,14 +118,6 @@ source ./dx-compiler/venv-dx-compiler/bin/activate
 
 # Use dxcom
 dxcom -h
-```
-
-**If installed with Legacy mode:**
-
-You can run it directly:
-
-```bash
-./dx-compiler/dx_com/dx_com/dx_com -h
 ```
 
 #### Archive Mode (--archive_mode=y)
@@ -588,16 +531,5 @@ dxcom \
 Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:06<00:00,  7.00s/model ]
 ```
 
-**If installed with Legacy mode:**
-
-```bash
-cd ./dx-compiler/dx_com
-
-dx_com/dx_com \
-        -m sample_models/onnx/YOLOV5S-1.onnx \
-        -c sample_models/json/YOLOV5S-1.json \
-        -o output/YOLOV5S-1
-Compiling Model : 100%|███████████████████████████████| 1.0/1.0 [00:47<00:00, 47.66s/model ]
-```
 
 **For more details, refer to [dx-compiler/source/docs/02_02_Installation_of_DX-COM.md](/dx-compiler/source/docs/02_02_Installation_of_DX-COM.md).**
