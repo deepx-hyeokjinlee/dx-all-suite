@@ -64,13 +64,9 @@ fork_examples() {
     # copy input image sample for Image Classification Model
     # for Object Detection (YOLOV5S-1)
     mkdir -p ${FORK_PATH}/sample
-    cp -dp ${DX_APP_PATH}/sample/img/1.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/img/2.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/img/3.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/img/4.jpg ${FORK_PATH}/sample/.
-    cp -dp ${DX_APP_PATH}/sample/img/5.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/sample_kitchen.jpg ${FORK_PATH}/sample/.
     # for Face Detection (YOLOV5S_Face-1)
-    cp -dp ${DX_APP_PATH}/sample/img/face_sample.jpg ${FORK_PATH}/sample/.
+    cp -dp ${DX_APP_PATH}/sample/img/sample_face.jpg ${FORK_PATH}/sample/.
     # for Image Classification (MobileNetV2-1-1)
     mkdir -p ${FORK_PATH}/sample/ILSVRC2012
     cp -dpR ${DX_APP_PATH}/sample/ILSVRC2012 ${FORK_PATH}/sample/.
@@ -181,14 +177,14 @@ main() {
     # yolo_face example
     echo -e "${TAG_START} === Yolov5 Face ==="
     rm -rf ${FORK_PATH}/result*.jpg
-    run_example "./bin/yolov5s_face_async" "${YOLO_FACE_TARGET_STR}" "./sample/face_sample.jpg" "n" "30"
+    run_example "./bin/yolov5s_face_async" "${YOLO_FACE_TARGET_STR}" "./sample/sample_face.jpg" "n" "30"
     show_result "${FORK_PATH}/result*.jpg"
     echo -e "${TAG_DONE} === YOLOV5 Face ==="
 
     # yolov5s example
     echo -e "${TAG_START} === Yolov5S ==="
     rm -rf ${FORK_PATH}/result*.jpg
-    run_example "./bin/yolov5s_async" "${YOLO_V5S_TARGET_STR}" "./sample/1.jpg" "n" "300"
+    run_example "./bin/yolov5s_async" "${YOLO_V5S_TARGET_STR}" "./sample/sample_kitchen.jpg" "n" "300"
     show_result "${FORK_PATH}/result*.jpg"
     echo -e "${TAG_DONE} === Yolov5s ==="
 
