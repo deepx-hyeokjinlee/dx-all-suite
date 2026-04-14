@@ -1,6 +1,30 @@
 ## Changelog
 ### 2026-04-14  
 #### dx-compiler  
+ 2ac35fff464d02ac8448f79890875029fa243b8b dx-compiler (v2.3.0-rc+manual-20260414.2ac35ff)  
+
+#### dx-modelzoo  
+ 1f0486456f9b2e0f9f8e1c1531df9ec6ed3d9af4 dx-modelzoo (1f04864)  
+
+#### dx-runtime  
++b93aa59a426822992aad8cf88091dca693462d78 dx-runtime (remotes/origin/HEAD)  
+ 818e27093f9d40678343628d9ca66ff9697f3950 dx-runtime/dx_app (v3.1.0-rc+manual-20260413.818e270)  
++e4c475229d634257e3671f15085ee4e7e06d9723 dx-runtime/dx_fw (v2.5.3)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ cf417d14c1c14d7b8dad2fe59102e26484d369c2 dx-runtime/dx_fw/firmware/bootloader (m1b_v2.5.3_r20260404_bl)  
+ 34ae255e6d39e3a9eaaed1f6b7d6903140c0fbaf dx-runtime/dx_fw/firmware/freertos/apps (m1b_v2.5.1_r20260225)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 367c155153876581289a08602510ddb7972e106b dx-runtime/dx_fw/firmware/freertos/plat (m1b_v2.5.3_r20260404)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2026-04-14  
+#### dx-compiler  
 +2ac35fff464d02ac8448f79890875029fa243b8b dx-compiler (v2.3.0-rc+manual-20260410.527165f-1-g2ac35ff)  
 
 #### dx-modelzoo  
