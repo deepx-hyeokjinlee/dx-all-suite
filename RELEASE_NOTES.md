@@ -22,7 +22,6 @@ This patch release focuses on stability improvements, documentation corrections,
 
 - **Installer Fix (DX-Compiler)**: `uninstall.sh` now properly removes all installed packages and extracted module directories, and supports a new `--target` option for selective uninstallation.
 - **Runtime Compatibility (DX-RT)**: Updated pre-built library versions (onnxruntime, openvino) for improved compatibility.
-- **License Compliance (DX-Stream & DX-APP)**: Added third-party license notices for models and datasets.
 
 ---
 
@@ -32,14 +31,7 @@ This patch release focuses on stability improvements, documentation corrections,
 
 - **DX-Compiler Installer**: Fixed `uninstall.sh` not removing installed packages (`dx_com` via `pip3 uninstall`) and the `dxtron` Debian package (`apt-get remove`), and not deleting extracted `dx_com/` and `dx_tron/` directories.
 - **DX-RT**: Updated pre-built onnxruntime (1.23.2 → 1.22.0) and openvino (25.4 → 25.1) for improved compatibility.
-- **DX-Stream**: Replaced licensed test images with license-free alternatives in YOLO model samples.
 - **Documentation**: Fixed typos across DX-RT, DX-APP, and DX-Stream user manuals.
-
-**New Features & Tools**
-
-- **DX-Compiler Installer**: Added `--target=<dx_com|dx_tron|all>` option to `uninstall.sh` (default: `all`), consistent with `install.sh`.
-- **DX-APP**: Added license information for third-party models and datasets.
-- **DX-Stream**: Added third-party sample model license notice documentation.
 
 For detailed updated items, refer to **each environment & module's Release Notes**.
 
