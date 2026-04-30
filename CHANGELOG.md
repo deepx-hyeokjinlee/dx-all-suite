@@ -1,4 +1,39 @@
 ## Changelog
+### 2026-04-30  
+#### dx-compiler  
+ 2acf17f10d3e70bd52095b953f3b877024482543 dx-compiler (v2.3.1-rc+manual-20260424.2acf17f)  
+
+#### dx-modelzoo  
+ 1f0486456f9b2e0f9f8e1c1531df9ec6ed3d9af4 dx-modelzoo (1f04864)  
+
+#### dx-runtime  
++91c49c4eba9deb9b3f1d3b577c63d46796dd5355 dx-runtime (remotes/origin/HEAD)  
+ 915533ee8106ca9327d802a11b28f9d51260b11f dx-runtime/dx_app (remotes/origin/HEAD)  
++cacd21cf5953f306aacb33182551bdb7dc5f9eef dx-runtime/dx_fw (cacd21c)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ b82e724441aca3ccdcfc46bf515cdf39e86d4958 dx-runtime/dx_fw/firmware/bootloader (b82e724)  
+ b8f9fd2d3d60bcda896520b2e15183f4795d2f1b dx-runtime/dx_fw/firmware/freertos/apps (m1b_v2.5.4_r20260413)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ bb153a2507d68d2757a5bae547e7c19fc501d4f1 dx-runtime/dx_fw/firmware/freertos/plat (bb153a2)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+-dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+-afa294982e8a28bc06f341cc77fd4276641b42bd dx-runtime/dx_fw/firmware/freertos/tcp/tools/CMock  
+ 6e13160bc92253138845d2ebd6e48bfea10c31ac dx-runtime/dx_fw/firmware/romcode (6e13160)  
+ 610de90dbf3421b3b3df70d8da7bc153a74c26e5 dx-runtime/dx_fw/firmware/secureloader (610de90)  
+ d613e38b4f3acecc73a5fa24fad9bce9cab97cbb dx-runtime/dx_fw/utils/tools/rt_bingen (heads/main)  
+ ed74cde35d2b4ba13c0f2b30b0954cebced24a93 dx-runtime/dx_rt (ed74cde)  
+ cfc2de0e2c2c40968258f3aaec70317353363f27 dx-runtime/dx_rt/external/dx_vnpu_core_lib (heads/main)  
+ 96f16f731ef8285a8d4d5d21b3f70b4c095d0da0 dx-runtime/dx_rt_npu_linux_driver (remotes/origin/HEAD)  
+ c041ccc4905a003ce07731580c668ae33217f8f8 dx-runtime/dx_rt_npu_linux_driver/modules/pci_deepx (c041ccc)  
+ ea6497e01ce32c379c8a54cc687e089c5edd2650 dx-runtime/dx_rt_npu_linux_driver/modules/pci_xilinx (ea6497e)  
+ 219988a3e0c15c308adef224994e12362fafddb9 dx-runtime/dx_rt_npu_linux_driver/utils (219988a)  
+ 46145f629f0f543427c8a33865dfe0d6653b9818 dx-runtime/dx_stream (46145f6)  
 ### 2026-04-29  
 #### dx-compiler  
  2acf17f10d3e70bd52095b953f3b877024482543 dx-compiler (v2.3.1-rc+manual-20260424.2acf17f)  
