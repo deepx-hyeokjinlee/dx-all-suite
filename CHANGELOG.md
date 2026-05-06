@@ -1,6 +1,30 @@
 ## Changelog
 ### 2026-05-06  
 #### dx-compiler  
++2acf17f10d3e70bd52095b953f3b877024482543 dx-compiler (v2.3.1-rc+manual-20260424.2acf17f)  
+
+#### dx-modelzoo  
+ 029474af728a66f0c9a28f8745cd2291fc1fad83 dx-modelzoo (029474a)  
+
+#### dx-runtime  
+ 034d95c1e0adf031104e979164189abf8d271f3f dx-runtime (remotes/origin/HEAD)  
+ 915533ee8106ca9327d802a11b28f9d51260b11f dx-runtime/dx_app (v3.1.1-rc+manual-20260423.915533e)  
+ 8d478a7aab6d36dd70066a28b4ee9dc9bd0d9284 dx-runtime/dx_fw (v2.6.1)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ b82e724441aca3ccdcfc46bf515cdf39e86d4958 dx-runtime/dx_fw/firmware/bootloader (b82e724)  
+ b8f9fd2d3d60bcda896520b2e15183f4795d2f1b dx-runtime/dx_fw/firmware/freertos/apps (m1b_v2.5.4_r20260413)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ 76575ff1619e150826a5006d83de0582e17b907f dx-runtime/dx_fw/firmware/freertos/plat (76575ff)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2026-05-06  
+#### dx-compiler  
 +d38860f51a6b9d8aa04943e7dc50d319b97cda14 dx-compiler (v2.3.1-rc+manual-20260424.2acf17f-1-gd38860f)  
 
 #### dx-modelzoo  
