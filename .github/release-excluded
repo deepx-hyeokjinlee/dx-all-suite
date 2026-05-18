@@ -1,5 +1,6 @@
 .git
 .github/scripts/
+.github/agents/copilot-pr-review.md
 .github/workflows/
 .github/release-excluded
 .github/CODEOWNERS
