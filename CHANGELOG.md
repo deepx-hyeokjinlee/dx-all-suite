@@ -7,6 +7,30 @@
  029474af728a66f0c9a28f8745cd2291fc1fad83 dx-modelzoo (029474a)  
 
 #### dx-runtime  
++e16d0a3c4999d5c2adadb310e0b83ed1a51ec665 dx-runtime (remotes/origin/HEAD)  
+ 915533ee8106ca9327d802a11b28f9d51260b11f dx-runtime/dx_app (915533e)  
+ 56c6d7e00147e2c2160083700687ec4d1683983e dx-runtime/dx_fw (v2.7.0)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ c76853690dd16792a65a5740dda4b3c8713c2382 dx-runtime/dx_fw/firmware/bootloader (m1b_v2.7.0_r20260611_bl)  
+ 6976dbeb1e2bfabc453de056c3d879e1057c5fea dx-runtime/dx_fw/firmware/freertos/apps (m1b_v2.7.0_r20260611)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ fe0dbf00798bb7c21c270963bab36d67d2e57b06 dx-runtime/dx_fw/firmware/freertos/plat (m1b_v2.7.0_r20260611)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2026-06-11  
+#### dx-compiler  
+ 144a9138eddfaef9ae4cbbeb0bbaf86f62256d7e dx-compiler (heads/main)  
+
+#### dx-modelzoo  
+ 029474af728a66f0c9a28f8745cd2291fc1fad83 dx-modelzoo (029474a)  
+
+#### dx-runtime  
 +57e077b9702db7b8533a2dd7892b836c605e640c dx-runtime (remotes/origin/HEAD)  
  915533ee8106ca9327d802a11b28f9d51260b11f dx-runtime/dx_app (915533e)  
 +32a2f061df9049e5edde8d961e48bc3bdd41e931 dx-runtime/dx_fw (32a2f06)  
