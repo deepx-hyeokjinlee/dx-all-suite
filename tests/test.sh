@@ -13,6 +13,7 @@
 #   local           - Run only local installation tests
 #   docker          - Run only docker installation tests
 #   getting_started - Run only getting-started tests
+#   version_compatibility - Run version compatibility tests
 #   list            - List all available tests
 #   report          - Run all tests and generate HTML report
 #   json            - Run all tests and generate JSON report
@@ -142,6 +143,7 @@ print_usage() {
     echo -e "  ${GREEN}local_install${NC}   - Run only local installation tests"
     echo -e "  ${GREEN}docker_install${NC}  - Run only docker installation tests"
     echo -e "  ${GREEN}getting_started${NC} - Run only getting-started tests"
+    echo -e "  ${GREEN}version_compatibility${NC} - Run version compatibility tests"
     echo -e ""
     echo -e "Utility Commands:"
     echo -e "  ${GREEN}list${NC}            - List all available tests"
@@ -159,6 +161,7 @@ print_usage() {
     echo -e "  ./test.sh local_install"
     echo -e "  ./test.sh docker_install"
     echo -e "  ./test.sh getting_started"
+    echo -e "  ./test.sh version_compatibility"
     echo -e "  ./test.sh --report sanity"
     echo -e "  ./test.sh --debug local_install"
     echo -e "  ./test.sh report"
@@ -411,6 +414,21 @@ case "$COMMAND" in
             COMBINED_M_ARGS=(-m getting_started)
         fi
         pytest -v "${CAPTURE_ARGS[@]}" "${COLLECT_ONLY_ARGS[@]}" "${COMBINED_M_ARGS[@]}" "${K_ARGS[@]}" "${REPORT_ARGS[@]}" "${JSON_ARGS[@]}" "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+
+    version_compatibility)
+        print_info "Running version compatibility tests..."
+        if [ -n "${M_EXPR}" ]; then
+            COMBINED_M_ARGS=(-m "version_compatibility and (${M_EXPR})")
+        else
+            COMBINED_M_ARGS=(-m version_compatibility)
+        fi
+        pytest "${SCRIPT_DIR}/test_version_compatibility" -v "${CAPTURE_ARGS[@]}" "${COLLECT_ONLY_ARGS[@]}" "${COMBINED_M_ARGS[@]}" "${K_ARGS[@]}" "${REPORT_ARGS[@]}" "${JSON_ARGS[@]}" "$@"
         EXIT_CODE=$?
         if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
             print_success "HTML report generated: ${REPORT_FILE}"
