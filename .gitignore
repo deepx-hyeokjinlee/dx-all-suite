@@ -32,3 +32,58 @@ internal/build/
 internal/config/dev_config.properties
 internal/workspace/
 internal/venv/
+# Getting started artifacts
+getting-started/calibration_dataset
+getting-started/dxnn/
+getting-started/modelzoo/
+getting-started/results/
+getting-started/forked_dx_app_example/
+
+# Internal tools and workspace
+internal/
+workspace/
+
+# SSL certificate
+intranet_CA_SSL.crt
+
+
+.deepx/tests/venv/
+.deepx/e2e/venv/
+dx-agent-dev/
+docs/superpowers/
+copilot-session-*.html
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.deepx/tools/src/dx_agent_dev_gen.egg-info/
+.deepx/tools/build/
+.deepx/tools/e2e-loop-results/
+tests/reports/
+.deepx/tests/reports/
+.deepx/e2e/reports/
+.deepx/e2e/runner_state/
+.deepx/e2e/analyzer_reports/
+compile.pid
+*.onnx
+*.pt
+*.txt
+!requirements.txt
+# Showcase deliverables are tracked despite the global ignores above (*.txt, etc.) —
+# a showcase dir is a curated, runnable artifact, so everything in it is committed...
+!dx-agent-dev-showcase/**
+# ...except heavy model/venv artifacts that must never be committed (downloaded by setup.sh):
+dx-agent-dev-showcase/**/*.onnx
+dx-agent-dev-showcase/**/*.dxnn
+dx-agent-dev-showcase/**/*.pt
+dx-agent-dev-showcase/**/venv/
+dx-agent-dev-showcase/**/.venv/
+dx-agent-dev-showcase/**/dxnn_models/
+dx-agent-dev-showcase/**/onnx_models/
+dx-agent-dev-showcase/**/download/
+dx-agent-dev-showcase/**/__pycache__/
+dx-agent-dev-showcase/**/output/
+session-ses_*.md
+

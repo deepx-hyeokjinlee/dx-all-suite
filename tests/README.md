@@ -6,6 +6,8 @@ A comprehensive pytest-based test suite for automated verification of the dx-all
 
 **Purpose:** End-to-end validation of Docker builds, local installations, getting-started workflows, and release version compatibility across multiple components and OS platforms.
 
+> **Note:** For agent-driven development tests (conformance, test_agent_e2e_scenarios), see [`.deepx/tests/README.md`](../.deepx/tests/README.md).
+
 ## ✅ Test Suite Categories
 
 This repository includes four primary pytest suites for CI/CD and local validation:
@@ -154,7 +156,7 @@ cd tests
 ### Step 3: Full Test Suite
 
 ```bash
-./test.sh all          # All 91 tests (~12-20 hours)
+./test.sh all          # All tests (12-20 hours)
 ```
 
 ### Step 4: Generate Reports
@@ -170,7 +172,7 @@ cd tests
 
 ```bash
 ./test.sh sanity           # ⚡ Quick validation (5-10 seconds)
-./test.sh all              # 🔥 Full test suite (12-20 hours, 91 tests)
+./test.sh all              # 🔥 Full test suite (12-20 hours)
 ./test.sh list             # 📋 List all available tests
 ./test.sh help             # ❓ Show detailed help
 ```
@@ -470,9 +472,9 @@ Checks installed `dxcom` and `dxrt-cli` versions when those commands are availab
 
 | Document | Description |
 |----------|-------------|
-| `README.md` | 📝 This comprehensive guide (all test suites) |
-| `test.sh` | ⚡ Main test runner with all options |
-| `conftest.py` | 🔧 Shared pytest fixtures and utilities |
+| `README.md` | This comprehensive guide (all test suites) |
+| `test.sh` | Main test runner with all options |
+| `conftest.py` | Shared pytest fixtures and utilities |
 | `pytest.ini` | ⚙️ Pytest configuration and markers |
 | `README_DOCKER_BUILD_TESTS.md` | 📘 Legacy docker build guide |
 | `CI_CD_EXAMPLES.md` | 🔄 CI/CD integration examples |
@@ -536,7 +538,6 @@ export DX_TEST_NO_CACHE=1
 
 # Custom volume mount path
 export LOCAL_VOLUME_PATH="/path/to/dx-all-suite"
-
 ```
 
 **Using --internal flag:**
@@ -778,7 +779,7 @@ See [CI_CD_EXAMPLES.md](CI_CD_EXAMPLES.md) for detailed examples.
 ---
 
 **Last Updated:**
-2026-01-29
+2026-05-06
 **Total Tests:**
 78 (docker_install: 19 | local_install: 48 | getting_started: 11)
 **Supported OS:**
