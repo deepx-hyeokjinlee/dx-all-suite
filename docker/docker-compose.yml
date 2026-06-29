@@ -1,13 +1,14 @@
 services:
   dx-compiler:
-    container_name: dx-compiler-${BASE_IMAGE_NAME}-${OS_VERSION}
-    image: dx-compiler:${BASE_IMAGE_NAME}-${OS_VERSION}
+    container_name: dx-compiler-${IMAGE_TAG_SUFFIX:-${BASE_IMAGE_NAME}-${OS_VERSION}}
+    image: dx-compiler:${IMAGE_TAG_SUFFIX:-${BASE_IMAGE_NAME}-${OS_VERSION}}
     build:
       context: ..
       dockerfile: docker/Dockerfile.dx-compiler
       args:
         BASE_IMAGE_NAME: ${BASE_IMAGE_NAME:-ubuntu}
         OS_VERSION: ${OS_VERSION}
+        TAG_NAME: ${TAG_NAME:-${OS_VERSION}}
         FILE_DXCOM: ${FILE_DXCOM:-/should/be/set/path}
         FILE_DXTRON: ${FILE_DXTRON:-/should/be/set/path}
         HOST_UID: ${HOST_UID:-1000}
@@ -35,7 +36,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix         # X11
       - $HOME/.Xauthority:/root/.Xauthority   # X11
       - $XAUTHORITY:$XAUTHORITY_TARGET        # X11
-      - /etc/timezone:/etc/timezone:ro
+      - ${TIMEZONE_MOUNT:-/dev/null}:${TIMEZONE_MOUNT_TARGET:-/dev/null}:ro  # /etc/timezone (Debian/Ubuntu only)
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - ${LOCAL_VOLUME_PATH:-../workspace}:${DOCKER_VOLUME_PATH:-/deepx/workspace} # mount volume
@@ -47,8 +48,8 @@ services:
       - "/dev/dri:/dev/dri"                   # GPU    
 
   dx-runtime:
-    container_name: dx-runtime-${BASE_IMAGE_NAME}-${OS_VERSION}
-    image: dx-runtime:${BASE_IMAGE_NAME}-${OS_VERSION}
+    container_name: dx-runtime-${IMAGE_TAG_SUFFIX:-${BASE_IMAGE_NAME}-${OS_VERSION}}
+    image: dx-runtime:${IMAGE_TAG_SUFFIX:-${BASE_IMAGE_NAME}-${OS_VERSION}}
     build:
       context: ..
       dockerfile: docker/Dockerfile.dx-runtime
@@ -72,7 +73,7 @@ services:
       - /dev:/dev                             # NPU, Camera, GPU
       - /lib/udev/rules.d:/lib/udev/rules.d   # auto detect device(USB CAM)
       - /lib/modules:/lib/modules             # GPU
-      - /etc/timezone:/etc/timezone:ro
+      - ${TIMEZONE_MOUNT:-/dev/null}:${TIMEZONE_MOUNT_TARGET:-/dev/null}:ro  # /etc/timezone (Debian/Ubuntu only)
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/machine-id:/etc/machine-id:ro    # NPU dbus
@@ -97,8 +98,8 @@ services:
     # command: ["sleep infinity"]
 
   dx-modelzoo:
-    container_name: dx-modelzoo-${BASE_IMAGE_NAME}-${OS_VERSION}
-    image: dx-modelzoo:${BASE_IMAGE_NAME}-${OS_VERSION}
+    container_name: dx-modelzoo-${IMAGE_TAG_SUFFIX:-${BASE_IMAGE_NAME}-${OS_VERSION}}
+    image: dx-modelzoo:${IMAGE_TAG_SUFFIX:-${BASE_IMAGE_NAME}-${OS_VERSION}}
     build:
       context: ..
       dockerfile: docker/Dockerfile.dx-modelzoo
@@ -122,7 +123,7 @@ services:
       - /dev:/dev                             # NPU, Camera, GPU
       - /lib/udev/rules.d:/lib/udev/rules.d   # auto detect device(USB CAM)
       - /lib/modules:/lib/modules             # GPU
-      - /etc/timezone:/etc/timezone:ro
+      - ${TIMEZONE_MOUNT:-/dev/null}:${TIMEZONE_MOUNT_TARGET:-/dev/null}:ro  # /etc/timezone (Debian/Ubuntu only)
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/machine-id:/etc/machine-id:ro    # NPU dbus

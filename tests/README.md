@@ -32,7 +32,7 @@ Tests local installation procedures inside clean Docker containers to verify ins
 - For dx-runtime: also installs drivers and runtime on the host
 - Verifies installations complete successfully without errors
 
-**Total tests:** 48 (3 sanity + 15 build + 15 run + 15 install tests)
+**Total tests:** 57 (3 sanity + 18 build + 18 run + 18 install tests)
 
 ### 3. **test_getting_started** — End-to-End Workflow Validation
 Validates the complete getting-started user workflow from compilation to execution.
@@ -223,7 +223,7 @@ Use `-k` to filter tests by component, OS type, or version:
 
 # By OS version
 ./test.sh -k "24.04" docker_install
-./test.sh -k "18.04" local_install
+./test.sh -k "20.04" local_install
 
 # Combined filters
 ./test.sh -k "runtime and ubuntu and 24.04"
@@ -295,8 +295,8 @@ Use `-m` to filter tests by pytest markers:
 # Test only Debian distributions
 ./test.sh -k "debian" local_install
 
-# Test only Ubuntu 18.04 across all suites
-./test.sh -k "18.04" all
+# Test only Ubuntu 20.04 across all suites
+./test.sh -k "20.04" all
 ```
 
 ### Example 8: List Tests Without Running
@@ -346,7 +346,7 @@ Use `-m` to filter tests by pytest markers:
 
 ## 🔍 Test Details
 
-### Test Suite 1: docker_install (19 tests)
+### Test Suite 1: docker_install (30 tests)
 
 #### Sanity Tests (4 tests)
 
@@ -355,32 +355,41 @@ Use `-m` to filter tests by pytest markers:
 - ✅ `test_docker_compose_command_available` - Check docker compose
 - ✅ `test_project_structure` - Verify project directories
 
-#### Docker Build Tests (15 tests)
+#### Docker Build Tests (26 tests)
 
-**dx-compiler (3 tests - Ubuntu only)**
+**dx-compiler (12 tests - Ubuntu, Fedora, RHEL, CentOS Stream)**
+- ✅ `test_docker_build[dx-compiler-ubuntu-26.04]`
 - ✅ `test_docker_build[dx-compiler-ubuntu-24.04]`
 - ✅ `test_docker_build[dx-compiler-ubuntu-22.04]`
 - ✅ `test_docker_build[dx-compiler-ubuntu-20.04]`
+- ✅ `test_docker_build[dx-compiler-fedora-42]`
+- ✅ `test_docker_build[dx-compiler-fedora-43]`
+- ✅ `test_docker_build[dx-compiler-fedora-44]`
+- ✅ `test_docker_build[dx-compiler-fedora-45]`
+- ✅ `test_docker_build[dx-compiler-rhel-9]`
+- ✅ `test_docker_build[dx-compiler-rhel-10]`
+- ✅ `test_docker_build[dx-compiler-centos-stream9]`
+- ✅ `test_docker_build[dx-compiler-centos-stream10]`
 
 **dx-modelzoo (6 tests)**
+- ✅ `test_docker_build[dx-modelzoo-ubuntu-26.04]`
 - ✅ `test_docker_build[dx-modelzoo-ubuntu-24.04]`
 - ✅ `test_docker_build[dx-modelzoo-ubuntu-22.04]`
 - ✅ `test_docker_build[dx-modelzoo-ubuntu-20.04]`
-- ✅ `test_docker_build[dx-modelzoo-ubuntu-18.04]`
 - ✅ `test_docker_build[dx-modelzoo-debian-12]`
 - ✅ `test_docker_build[dx-modelzoo-debian-13]`
 
 **dx-runtime (6 tests)**
+- ✅ `test_docker_build[dx-runtime-ubuntu-26.04]`
 - ✅ `test_docker_build[dx-runtime-ubuntu-24.04]`
 - ✅ `test_docker_build[dx-runtime-ubuntu-22.04]`
 - ✅ `test_docker_build[dx-runtime-ubuntu-20.04]`
-- ✅ `test_docker_build[dx-runtime-ubuntu-18.04]`
 - ✅ `test_docker_build[dx-runtime-debian-12]`
 - ✅ `test_docker_build[dx-runtime-debian-13]`
 
 ---
 
-### Test Suite 2: local_install (49 tests)
+### Test Suite 2: local_install (57 tests)
 
 #### Sanity Tests (3 tests)
 
@@ -388,25 +397,25 @@ Use `-m` to filter tests by pytest markers:
 - ✅ `test_docker_compose_command_available` - Check docker compose
 - ✅ `test_project_structure` - Verify project structure
 
-#### Image Build Tests (15 tests)
+#### Image Build Tests (18 tests)
 
 Validates base OS container images build successfully for local install testing.
 
-#### Container Run Tests (15 tests)
+#### Container Run Tests (18 tests)
 
 Validates containers start successfully and are ready for installations.
 
-#### Installation Tests (16 tests)
+#### Installation Tests (18 tests)
 
 **dx-compiler (4 tests)**
-- ✅ Ubuntu 24.04, 22.04, 20.04, 18.04
+- ✅ Ubuntu 26.04, 24.04, 22.04, 20.04
 
 **dx-modelzoo (6 tests)**
-- ✅ Ubuntu 24.04, 22.04, 20.04, 18.04
+- ✅ Ubuntu 26.04, 24.04, 22.04, 20.04
 - ✅ Debian 12, 13
 
 **dx-runtime (6 tests)**
-- ✅ Ubuntu 24.04, 22.04, 20.04, 18.04
+- ✅ Ubuntu 26.04, 24.04, 22.04, 20.04
 - ✅ Debian 12, 13
 
 **Note:** dx-runtime tests also install NPU driver and runtime on the host system.
@@ -605,7 +614,7 @@ deactivate
 ./run_docker_build_tests.sh -k "not debian"
 
 # Complex condition
-./run_docker_build_tests.sh -k "(runtime or modelzoo) and ubuntu and not 18.04"
+./run_docker_build_tests.sh -k "(runtime or modelzoo) and ubuntu and not 20.04"
 ```
 
 ## 🚨 Troubleshooting
@@ -734,7 +743,6 @@ See [CI_CD_EXAMPLES.md](CI_CD_EXAMPLES.md) for detailed examples.
 | Ubuntu 24.04 | ✅ (3 comp) | ✅ (3 comp) | Full |
 | Ubuntu 22.04 | ✅ (3 comp) | ✅ (3 comp) | Full |
 | Ubuntu 20.04 | ✅ (3 comp) | ✅ (3 comp) | Full |
-| Ubuntu 18.04 | ✅ (2 comp) | ✅ (3 comp) | Full |
 | Debian 12 | ✅ (2 comp) | ✅ (2 comp) | Partial |
 | Debian 13 | ✅ (2 comp) | ✅ (2 comp) | Partial |
 
@@ -783,6 +791,6 @@ See [CI_CD_EXAMPLES.md](CI_CD_EXAMPLES.md) for detailed examples.
 **Total Tests:**
 78 (docker_install: 19 | local_install: 48 | getting_started: 11)
 **Supported OS:**
-Ubuntu 24.04, 22.04, 20.04, 18.04 | Debian 12, 13
+Ubuntu 24.04, 22.04, 20.04 | Debian 12, 13
 **Components:**
 dx-compiler, dx-modelzoo, dx-runtime

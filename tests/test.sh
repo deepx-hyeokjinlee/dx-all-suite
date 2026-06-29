@@ -14,6 +14,7 @@
 #   docker          - Run only docker installation tests
 #   getting_started - Run only getting-started tests
 #   version_compatibility - Run version compatibility tests
+#   install_option  - Run install.sh option tests (local, no Docker)
 #   list            - List all available tests
 #   report          - Run all tests and generate HTML report
 #   json            - Run all tests and generate JSON report
@@ -21,10 +22,33 @@
 #
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 LOCAL_SCRIPT="${SCRIPT_DIR}/test_local/test_local.sh"
 DOCKER_SCRIPT="${SCRIPT_DIR}/test_docker/test_docker.sh"
 VENV_DIR="${SCRIPT_DIR}/venv"
 REQUIREMENTS_FILE="${SCRIPT_DIR}/requirements.txt"
+
+# Run pytest from tests/ so discovery stays scoped to this tree.
+cd "${SCRIPT_DIR}" || exit 1
+
+# Restore permission-only git changes caused by container-side chmod.
+restore_git_permissions() {
+    [ -d "$REPO_ROOT/.git" ] || return 0
+    git -C "$REPO_ROOT" diff --raw 2>/dev/null | while IFS= read -r line; do
+        old_mode=$(echo "$line" | sed 's/^:\([0-9]*\) .*/\1/')
+        new_mode=$(echo "$line" | sed 's/^:[0-9]* \([0-9]*\) .*/\1/')
+        filepath=$(echo "$line" | sed 's/.*\t//')
+        [ -z "$filepath" ] && continue
+        [ "$old_mode" = "$new_mode" ] && continue
+        if [ "$old_mode" = "100644" ]; then
+            chmod 644 "$REPO_ROOT/$filepath" 2>/dev/null
+        elif [ "$old_mode" = "100755" ]; then
+            chmod 755 "$REPO_ROOT/$filepath" 2>/dev/null
+        fi
+    done
+}
+
+trap restore_git_permissions EXIT
 
 # Color codes
 BLUE='\033[0;34m'
@@ -109,6 +133,10 @@ pytest-json-report>=1.5.0
 
 # Additional utilities
 pytest-timeout>=2.2.0
+
+# Parallel execution and host-resource locking
+pytest-xdist>=3.5.0
+filelock>=3.13.0
 EOF
         print_info "Created ${REQUIREMENTS_FILE}"
     fi
@@ -144,6 +172,7 @@ print_usage() {
     echo -e "  ${GREEN}docker_install${NC}  - Run only docker installation tests"
     echo -e "  ${GREEN}getting_started${NC} - Run only getting-started tests"
     echo -e "  ${GREEN}version_compatibility${NC} - Run version compatibility tests"
+    echo -e "  ${GREEN}install_option${NC}  - Run install.sh option tests (local, no Docker)"
     echo -e ""
     echo -e "Utility Commands:"
     echo -e "  ${GREEN}list${NC}            - List all available tests"
@@ -154,7 +183,7 @@ print_usage() {
     echo -e "Keyword Filters:"
     echo -e "  ${GREEN}Target keywords${NC}     - compiler | modelzoo | runtime (e.g. -k \"compiler\") "
     echo -e "  ${GREEN}OS type keywords${NC}    - ubuntu | debian (e.g. -k \"ubuntu\")"
-    echo -e "  ${GREEN}OS version keywords${NC} - 24.04 | 22.04 | 20.04 | 18.04 | 12 | 13 (e.g. -k \"debian and 12\")"
+    echo -e "  ${GREEN}OS version keywords${NC} - 26.04 | 24.04 | 22.04 | 20.04 | 12 | 13 (e.g. -k \"debian and 12\")"
     echo -e ""
     echo -e "Examples:"
     echo -e "  ./test.sh sanity"
@@ -162,6 +191,7 @@ print_usage() {
     echo -e "  ./test.sh docker_install"
     echo -e "  ./test.sh getting_started"
     echo -e "  ./test.sh version_compatibility"
+    echo -e "  ./test.sh install_option"
     echo -e "  ./test.sh --report sanity"
     echo -e "  ./test.sh --debug local_install"
     echo -e "  ./test.sh report"
@@ -732,6 +762,36 @@ case "$COMMAND" in
         exit $EXIT_CODE
         ;;
 
+    version_compatibility)
+        print_info "Running version compatibility tests..."
+        if [ -n "${M_EXPR}" ]; then
+            COMBINED_M_ARGS=(-m "version_compatibility and (${M_EXPR})")
+        else
+            COMBINED_M_ARGS=(-m version_compatibility)
+        fi
+        pytest "${SCRIPT_DIR}/test_version_compatibility" -v "${CAPTURE_ARGS[@]}" "${COLLECT_ONLY_ARGS[@]}" "${COMBINED_M_ARGS[@]}" "${K_ARGS[@]}" "${REPORT_ARGS[@]}" "${JSON_ARGS[@]}" "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+
+    install_option)
+        print_info "Running install.sh option tests (local, no Docker)..."
+        if [ -n "${M_EXPR}" ]; then
+            COMBINED_M_ARGS=(-m "install_option and (${M_EXPR})")
+        else
+            COMBINED_M_ARGS=(-m install_option)
+        fi
+        pytest -v "${CAPTURE_ARGS[@]}" "${COLLECT_ONLY_ARGS[@]}" "${COMBINED_M_ARGS[@]}" "${K_ARGS[@]}" "${REPORT_ARGS[@]}" "${JSON_ARGS[@]}" "$@"
+        EXIT_CODE=$?
+        if [ $GENERATE_REPORT -eq 1 ] && [ $EXIT_CODE -eq 0 ]; then
+            print_success "HTML report generated: ${REPORT_FILE}"
+        fi
+        exit $EXIT_CODE
+        ;;
+
     list)
         print_info "Listing all available tests..."
         pytest --collect-only "${K_ARGS[@]}" "${M_ARGS[@]}" "$@"
@@ -744,7 +804,7 @@ case "$COMMAND" in
         TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
         REPORT_FILE="${REPORT_DIR}/test_report_${TIMESTAMP}.html"
 
-        pytest -v "${K_ARGS[@]}" "${M_ARGS[@]}" --html="${REPORT_FILE}" --self-contained-html "${JSON_ARGS[@]}" "$@"
+        pytest -v "${CAPTURE_ARGS[@]}" "${K_ARGS[@]}" "${M_ARGS[@]}" --html="${REPORT_FILE}" --self-contained-html "${JSON_ARGS[@]}" "$@"
         EXIT_CODE=$?
 
         if [ $EXIT_CODE -eq 0 ]; then
@@ -762,7 +822,7 @@ case "$COMMAND" in
             JSON_FILE="${REPORT_DIR}/test_report_${TIMESTAMP}.json"
         fi
 
-        pytest -v "${K_ARGS[@]}" "${M_ARGS[@]}" --json-report --json-report-file="${JSON_FILE}" "$@"
+        pytest -v "${CAPTURE_ARGS[@]}" "${K_ARGS[@]}" "${M_ARGS[@]}" --json-report --json-report-file="${JSON_FILE}" "$@"
         EXIT_CODE=$?
 
         if [ $EXIT_CODE -eq 0 ]; then

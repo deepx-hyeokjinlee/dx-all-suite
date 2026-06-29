@@ -327,7 +327,7 @@ This release introduces a **Python-Centric Ecosystem** and a **Complete Example 
 **New Features & Tools**
 - Installation & Deployment:
     - DX-COM Wheel: Install the compiler via `pip` for automated ML pipelines and Jupyter environments.
-    - DX-TRON Debian: Added `.deb` package support for Ubuntu 20.04/22.04/24.04.
+    - DX-TRON Debian: Added `.deb` package support for Ubuntu 20.04/22.04/24.04/26.04.
 - Development Tools:
     - YOLO26 Support: Integration of the latest Ultralytics model optimized for edge deployment.
     - `RuntimeEventDispatcher`: A new centralized C++/Python singleton for handling system events, errors, and warnings.

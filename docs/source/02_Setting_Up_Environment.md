@@ -340,7 +340,7 @@ sudo apt-get install -y --no-install-recommends libgl1-mesa-glx libglib2.0-0 mak
 **Supported Environments**  
 
 - **OS**: Linux (x86_64)  
-- **Python Version**: 3.8, 3.9, 3.10, 3.11, 3.12 (The installation script will automatically detect your version)  
+- **Python Version**: 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 (The installation script will automatically detect your version)
 
 **Integrated Package Installation**  
 The provided install.sh script handles everything in one go, including Python version detection and package installation.  

@@ -173,10 +173,10 @@ KEYWORD FILTERS (-k option):
 
 # Exclude with NOT
 ./test.sh docker_install -k "not debian"
-./test.sh local_install -k "ubuntu and not 18.04"
+./test.sh local_install -k "ubuntu and not 20.04"
 
 # Complex expressions
-./test.sh local_install -k "(runtime or modelzoo) and ubuntu and not 18.04"
+./test.sh local_install -k "(runtime or modelzoo) and ubuntu and not 20.04"
 
 
 DIRECT PYTEST USAGE:

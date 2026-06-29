@@ -1,0 +1,11 @@
+# Test virtualenv and caches
+venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Generated reports
+reports/
+
+# kcov coverage output (install.sh option coverage tests)
+_coverage/
