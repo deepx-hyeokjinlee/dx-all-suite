@@ -74,10 +74,12 @@ compile.pid
 # Showcase deliverables are tracked despite the global ignores above (*.txt, etc.) —
 # a showcase dir is a curated, runnable artifact, so everything in it is committed...
 !dx-agent-dev-showcase/**
-# ...except heavy model/venv artifacts that must never be committed (downloaded by setup.sh):
-dx-agent-dev-showcase/**/*.onnx
-dx-agent-dev-showcase/**/*.dxnn
-dx-agent-dev-showcase/**/*.pt
+# ...INCLUDING model artifacts (*.onnx/*.dxnn/*.pt): for retrain/export showcases the
+# compiled .dxnn, DeepX export config/metadata, and retrained best.pt ARE curated
+# deliverables, so a fresh checkout carries the real produced models (no recompile needed).
+# Only environments, caches, and runtime-download dirs are excluded — a *directory* ignore
+# below cannot be un-ignored by the `!**` rule above, so downloaded/model-zoo binaries that
+# live under these dirs (e.g. a fork/game showcase's setup.sh downloads) stay uncommitted:
 dx-agent-dev-showcase/**/venv/
 dx-agent-dev-showcase/**/.venv/
 dx-agent-dev-showcase/**/dxnn_models/
@@ -85,5 +87,6 @@ dx-agent-dev-showcase/**/onnx_models/
 dx-agent-dev-showcase/**/download/
 dx-agent-dev-showcase/**/__pycache__/
 dx-agent-dev-showcase/**/output/
+dx-agent-dev-showcase/**/.venv_path
 session-ses_*.md
 
