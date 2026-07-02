@@ -39,3 +39,7 @@ jobs:
         with:
           commit_message: 'docs(${{env.DATE}}): Update version compatibility matrix'
           file_pattern: 'docs/source/04_Version_Compatibility.md docs/source/04_Version_Compatibility_kor.md'
+
+      - name: Clean Workspace
+        run: |
+          rm -rf dx-compiler dx-runtime
