@@ -1,0 +1,41 @@
+name: version-compatibility-stamper
+
+# Manual only. Stamps docs/source/04_Version_Compatibility{,_kor}.md from the
+# release-ready staging versions of dx-compiler / dx-runtime, so the matrix
+# stays in sync with what is actually on staging (not every submodule main push).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stamp:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout dx-all-suite
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_DCI_TOKEN }}
+
+      - name: Fetch dx-compiler & dx-runtime at 'staging'
+        run: |
+          rm -rf dx-compiler dx-runtime
+          git clone https://github.com/DEEPX-AI/dx-compiler
+          git clone https://github.com/DEEPX-AI/dx-runtime
+          git -C dx-compiler checkout staging
+          git -C dx-runtime  checkout staging
+          # dx-runtime component versions (dx_fw/dx_rt/dx_app/dx_stream/dx_rt_npu_linux_driver)
+          # live in nested submodules -> init one level so their release.ver is readable.
+          git -C dx-runtime submodule update --init
+
+      - name: Stamp Version Compatibility
+        run: |
+          echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
+          ./.github/scripts/version_stamper.sh
+
+      - name: Commit Version Compatibility
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'docs(${{env.DATE}}): Update version compatibility matrix'
+          file_pattern: 'docs/source/04_Version_Compatibility.md docs/source/04_Version_Compatibility_kor.md'
