@@ -1,0 +1,14 @@
+# CI / test dependencies for dx-ai-studio.
+# The runtime itself has NO third-party dependencies (pure stdlib) — these are only
+# the extras the test suite needs. Install with:  pip install -r requirements-ci.txt
+# Browser UI-audit suites additionally need:  python -m playwright install chromium
+#
+# NOTE: dx_engine (NPU runtime) and dx_com (compiler) are NOT pip packages — they are
+# built/installed from dx-runtime and dx-compiler. Unit/contract tests mock or skip
+# NPU/compile paths; the e2e (`-m e2e`) suite needs a real dx_com venv.
+
+pytest>=8.0
+numpy>=1.24             # dx_app / dx_modelzoo / dx_compiler test data
+onnx>=1.16              # dx_compiler onnx parser/surgery tests
+opencv-python>=4.8      # dx_app image/preprocess tests
+playwright>=1.40        # browser zoom/i18n/tutorial UI-audit suites (run via scripts/run_ci.sh --browser)

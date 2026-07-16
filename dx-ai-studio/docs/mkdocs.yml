@@ -1,0 +1,85 @@
+site_name: DX-AI-Studio User Manual
+site_description: Install, launch, and use DX-AI-Studio — the browser hub for the DEEPX NPU SDK.
+use_directory_urls: false
+docs_dir: source          # markdown source
+site_dir: site            # generated HTML output (kept separate from dev docs/*.md)
+
+theme:
+  name: material
+  language: en
+  logo: img/deepx-logo.svg
+  favicon: img/deepx-logo.svg
+  font:
+    text: Noto Sans Display
+    code: Roboto Mono
+  palette:
+    - scheme: default
+      primary: black
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.instant
+    - toc.integrate
+    - content.code.copy
+    - content.tabs.link
+    - search.highlight
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - tables
+
+nav:
+  - Overview: index.md
+  - Installation & Launch: docs/01_Installation_and_Launch.md
+  - The Hub: docs/02_The_Hub.md
+  - Tools:
+    - DX Compiler: docs/03_DX_Compiler.md
+    - DX App: docs/04_DX_App.md
+    - DX Stream: docs/05_DX_Stream.md
+    - DX Model Zoo: docs/06_DX_Model_Zoo.md
+    - DX Benchmark: docs/07_DX_Benchmark.md
+    - DX Monitor: docs/08_DX_Monitor.md
+    - DX EdgeGuide: docs/09_DX_EdgeGuide.md
+    - DX Agent Dev: docs/10_DX_Agent_Dev.md
+  - SDK Library & About: docs/11_SDK_Library_and_About.md
+  - Appendix:
+    - Third-Party Licenses: docs/Appendix_Third_Party_License.md
+    - Change Log: docs/Appendix_Change_Log.md
+
+plugins:
+  - search
+  - include-markdown
+  - to-pdf:
+      # PDF export runs only when ENABLE_PDF_EXPORT is set, so a plain
+      # `mkdocs build --strict` verifies content without the PDF step (the PDF
+      # renderer's internal warnings otherwise fail --strict). Build the PDF with:
+      #   ENABLE_PDF_EXPORT=1 mkdocs build
+      enabled_if_env: ENABLE_PDF_EXPORT
+      author: DEEPX.ai
+      copyright: ⓒ Copyright 2026 DEEPX All Rights Reserved.
+      output_path: DX-AI-Studio-User-Manual.pdf

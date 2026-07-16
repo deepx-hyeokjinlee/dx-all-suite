@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YOLO26 Benchmark Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-active-tab="fps-compare">
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">YOLO26 Benchmark</p>
+        <h1>Performance Dashboard</h1>
+        <p class="lede">Compare model performance across environments at a glance.</p>
+      </div>
+      <div id="meta" class="meta-card"></div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="fps-compare">E2E FPS Overview</button>
+      <button class="tab" data-tab="overview">Full Metrics</button>
+      <button class="tab" data-tab="detail">Detailed Data</button>
+      <button class="tab" data-tab="version-trend">Version Trend</button>
+    </nav>
+
+    <!-- FPS Overview Tab -->
+    <div id="tab-fps-compare" class="tab-content active">
+      <section class="controls run-selector-panel">
+        <div class="control-heading">Run Selection by Environment</div>
+        <div id="fpsRunSelectors" class="run-selector-grid"></div>
+      </section>
+      <section class="controls">
+        <label>Task
+          <select id="fpsTaskFilter">
+            <option value="object_detection">OD (Object Detection)</option>
+            <option value="pose_estimation">Pose (Pose Estimation)</option>
+            <option value="segmentation">Seg (Segmentation)</option>
+            <option value="oriented_bbox">OBB (Oriented BBox)</option>
+            <option value="classification">Cls (Classification)</option>
+          </select>
+        </label>
+        <label>ORT
+          <select id="fpsOrtFilter">
+            <option value="on">ON</option>
+            <option value="off">OFF</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="chart-header">
+          <h2 id="fpsChartTitle">E2E FPS by Model Size</h2>
+          <p class="chart-subtitle" id="fpsChartSubtitle"></p>
+        </div>
+        <div class="chart-container">
+          <canvas id="fpsCompareChart"></canvas>
+        </div>
+        <p class="chart-hint" id="fpsChartHint">Click on a bar group to view environment details</p>
+      </section>
+
+      <section class="panel env-detail" id="fpsEnvDetail" style="display:none">
+        <h2 id="fpsEnvDetailTitle">Environment Details</h2>
+        <div class="env-detail-grid env-detail-grid--3">
+          <div class="env-detail-col">
+            <h3>Host PC</h3>
+            <div id="fpsEnvHostInfo"></div>
+          </div>
+          <div class="env-detail-col">
+            <h3>NPU</h3>
+            <div id="fpsEnvNpuInfo"></div>
+          </div>
+          <div class="env-detail-col">
+            <h3>Tools</h3>
+            <div id="fpsEnvToolsInfo"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="fpsModelMetaPanel" style="display:none">
+        <h2 id="fpsModelMetaTitle">Benchmarked Models</h2>
+        <div id="fpsModelMetaSection"></div>
+      </section>
+
+      <section class="panel" id="fpsE2eTableSection" style="display:none">
+        <h2 id="fpsE2eTableTitle">E2E Pipeline (Single-Stream)</h2>
+        <div id="fpsE2eTableContent"></div>
+      </section>
+    </div>
+
+    <!-- Full Metrics Tab -->
+    <div id="tab-overview" class="tab-content">
+      <section class="controls run-selector-panel">
+        <div class="control-heading">Run Selection by Environment</div>
+        <div id="overviewRunSelectors" class="run-selector-grid"></div>
+      </section>
+      <section class="controls">
+        <label>Task
+          <select id="taskFilter">
+            <option value="object_detection">OD (Object Detection)</option>
+            <option value="pose_estimation">Pose (Pose Estimation)</option>
+            <option value="segmentation">Seg (Segmentation)</option>
+            <option value="oriented_bbox">OBB (Oriented BBox)</option>
+            <option value="classification">Cls (Classification)</option>
+          </select>
+        </label>
+        <label>Size
+          <select id="sizeFilter">
+            <option value="n">N (Nano)</option>
+            <option value="s">S (Small)</option>
+            <option value="m">M (Medium)</option>
+            <option value="l">L (Large)</option>
+            <option value="x">X (Extra-Large)</option>
+          </select>
+        </label>
+        <label>ORT
+          <select id="ortFilter">
+            <option value="on">ON</option>
+            <option value="off">OFF</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="chart-header">
+          <h2 id="chartTitle">Environment Performance Comparison</h2>
+          <p class="chart-subtitle" id="chartSubtitle"></p>
+        </div>
+        <div class="chart-container">
+          <canvas id="mainChart"></canvas>
+        </div>
+        <p class="chart-hint" id="chartHint">Click on a bar to view environment details</p>
+      </section>
+
+      <section class="panel env-detail" id="envDetail" style="display:none">
+        <h2 id="envDetailTitle">Environment Details</h2>
+        <div class="env-detail-grid env-detail-grid--3">
+          <div class="env-detail-col">
+            <h3>Host PC</h3>
+            <div id="envHostInfo"></div>
+          </div>
+          <div class="env-detail-col">
+            <h3>NPU</h3>
+            <div id="envNpuInfo"></div>
+          </div>
+          <div class="env-detail-col">
+            <h3>Tools</h3>
+            <div id="envToolsInfo"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="overviewModelMetaPanel" style="display:none">
+        <h2 id="overviewModelMetaTitle">Benchmarked Models</h2>
+        <div id="overviewModelMetaSection"></div>
+      </section>
+    </div>
+
+    <!-- Detailed Data Tab -->
+    <div id="tab-detail" class="tab-content">
+      <section class="controls">
+        <label>Environment <select id="detailEnvFilter"></select></label>
+        <label>Run ID <select id="detailRunFilter"></select></label>
+        <label>Task
+          <select id="detailTaskFilter">
+            <option value="all">All Tasks</option>
+            <option value="object_detection">OD (Object Detection)</option>
+            <option value="pose_estimation">Pose (Pose Estimation)</option>
+            <option value="segmentation">Seg (Segmentation)</option>
+            <option value="oriented_bbox">OBB (Oriented BBox)</option>
+            <option value="classification">Cls (Classification)</option>
+          </select>
+        </label>
+        <label>ORT
+          <select id="detailOrtFilter">
+            <option value="all">All</option>
+            <option value="on">ON</option>
+            <option value="off">OFF</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel">
+        <div id="detailTables"></div>
+      </section>
+    </div>
+
+    <!-- Version Trend Tab -->
+    <div id="tab-version-trend" class="tab-content">
+      <section class="controls">
+        <label>Environment <select id="trendEnvFilter"></select></label>
+        <label>Task
+          <select id="trendTaskFilter">
+            <option value="object_detection">OD (Object Detection)</option>
+            <option value="pose_estimation">Pose (Pose Estimation)</option>
+            <option value="segmentation">Seg (Segmentation)</option>
+            <option value="oriented_bbox">OBB (Oriented BBox)</option>
+            <option value="classification">Cls (Classification)</option>
+          </select>
+        </label>
+        <label>ORT
+          <select id="trendOrtFilter">
+            <option value="on">ON</option>
+            <option value="off">OFF</option>
+          </select>
+        </label>
+        <label>Metrics
+          <select id="trendMetricFilter">
+            <option value="latency">Latency</option>
+            <option value="throughput">Throughput</option>
+            <option value="e2e" selected>E2E FPS</option>
+            <option value="capacity">Max Channel</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="chart-header">
+          <h2 id="trendChartTitle">E2E FPS (Single-Channel) Trend</h2>
+          <p class="chart-subtitle" id="trendChartSubtitle"></p>
+        </div>
+        <div class="chart-container">
+          <canvas id="trendChart"></canvas>
+        </div>
+        <p class="chart-hint" id="trendChartHint">Click on a data point group to view snapshot environment details</p>
+      </section>
+
+      <section class="panel env-detail" id="trendEnvDetail" style="display:none">
+        <h2 id="trendEnvDetailTitle">Environment Details</h2>
+        <div class="env-detail-grid env-detail-grid--3">
+          <div class="env-detail-col">
+            <h3>Host PC</h3>
+            <div id="trendEnvHostInfo"></div>
+          </div>
+          <div class="env-detail-col">
+            <h3>NPU</h3>
+            <div id="trendEnvNpuInfo"></div>
+          </div>
+          <div class="env-detail-col">
+            <h3>Tools</h3>
+            <div id="trendEnvToolsInfo"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="trendModelMetaPanel" style="display:none">
+        <h2 id="trendModelMetaTitle">Benchmarked Models</h2>
+        <div id="trendModelMetaSection"></div>
+      </section>
+    </div>
+  </main>
+
+  <script id="embedded-dataset" type="application/json">__DATASET_JSON__</script>
+  <script src="app.js"></script>
+</body>
+</html>

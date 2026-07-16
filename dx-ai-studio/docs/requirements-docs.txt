@@ -1,0 +1,7 @@
+# Doc-build dependencies for the DX-AI-Studio User Manual (MkDocs).
+# Install into a venv, then `cd docs && mkdocs build`.
+mkdocs>=1.5
+mkdocs-material>=9.5
+mkdocs-include-markdown-plugin>=6.0
+mkdocs-to-pdf>=0.1.1
+pymdown-extensions>=10.0

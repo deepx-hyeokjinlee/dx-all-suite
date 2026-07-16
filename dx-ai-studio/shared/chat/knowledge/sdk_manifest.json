@@ -1,0 +1,12 @@
+{
+  ".deepx/memory/sdk_grounding_reference.md": "d2f3a19d741a95ab714a9801a1d8dede4d5ca277cba22ad3bc0b1df9172a98ac",
+  "dx-compiler/.deepx/memory/MEMORY.md": "9e086798a27c0c6e6ab60ef78e48bf3d53b90dbd9627fce47f2089b09835b3c3",
+  "dx-compiler/.deepx/memory/common_pitfalls.md": "d928da4f8495c1e241c64e082fdcd4f6a921544cdd68e971f3b5d58499838a99",
+  "dx-compiler/.deepx/toolsets/config-schema.md": "f0fa2ed9b3fe3ae142df03a269e09d2251608eb44bbdc11c006224f38fed7d9b",
+  "dx-compiler/.deepx/toolsets/dxcom-api.md": "c2111d64f294a2a66800c80fe75ae36681f1a8e03176f52119b948d0547122c0",
+  "dx-compiler/.deepx/toolsets/dxcom-cli.md": "d18bd09455f76f2528204868ca9b4a049e7cf11a0e68e45d2534115391879e00",
+  "dx-compiler/.deepx/toolsets/paddlepaddle-deepx.md": "00f44364549dfa48931ded4daf7f8376c44801601ac7fb38aa9207f288b5fab1",
+  "dx-compiler/.deepx/toolsets/ultralytics-deepx-export.md": "faad836322afbf6f7a37c28c9d000615ece94bde6d2ad9b6d990494173ba0e4b",
+  "dx-compiler/.deepx/toolsets/ultralytics-train-eval.md": "c8309130f8ac7f7a673d083565b1347a58bc7f46c46e713566cd5f027ac9272d",
+  "dx-runtime/.deepx/memory/common_pitfalls.md": "b0588f909a7179367d345dec0a7990c72597bae213bef5fc6dcb9504b687d455"
+}

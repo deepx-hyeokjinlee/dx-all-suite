@@ -1,12 +1,12 @@
 [submodule "dx-runtime"]
 	path = dx-runtime
-	url = ../dx-runtime.git
+	url = https://github.com/DEEPX-AI/dx-runtime.git
 	ignore = dirty
 [submodule "dx-compiler"]
 	path = dx-compiler
-	url = ../dx-compiler.git
+	url = https://github.com/DEEPX-AI/dx-compiler.git
 	ignore = dirty
 [submodule "dx-modelzoo"]
 	path = dx-modelzoo
-	url = ../dx-modelzoo.git
+	url = https://github.com/DEEPX-AI/dx-modelzoo.git
 	ignore = dirty
