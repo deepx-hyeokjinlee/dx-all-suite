@@ -1,0 +1,25 @@
+# dx-all-suite/.github/workflows/dx-ai-studio-i18n-audit.yml
+# Manual-only six-language i18n audit for dx-ai-studio.
+#
+# Deliberately manual-dispatch only (no PR trigger): the full audit is heavier/slower
+# and the fast copy checks already run inside the pytest gate (run_ci.sh step 4/6).
+# Trigger this by hand for release-level i18n verification.
+name: dx-ai-studio i18n audit
+
+on:
+  workflow_dispatch:
+
+jobs:
+  i18n-audit:
+    runs-on:
+      - self-hosted
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    steps:
+      - name: Checkout suite (dx-ai-studio only, no submodules)
+        uses: actions/checkout@v4
+        # See dx-ai-studio-pytest.yml — dx-ai-studio is a plain directory, no
+        # submodule checkout needed for the i18n audit.
+      - name: Run i18n audit gate (scripts/i18n_audit_gate.sh)
+        run: bash scripts/i18n_audit_gate.sh

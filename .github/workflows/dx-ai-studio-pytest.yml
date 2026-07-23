@@ -1,0 +1,36 @@
+# dx-all-suite/.github/workflows/dx-ai-studio-pytest.yml
+# Closed-net PR gate for the dx-ai-studio submodule.
+#
+# Runs scripts/run_ci.sh on a self-hosted runner. Air-gapped-safe: run_ci.sh never
+# pip-installs — the runner must already have the CI deps from requirements-ci.txt
+# (in .venv or system python3). Browser/UX suites are intentionally excluded from the
+# default gate (see run_ci.sh --browser / --ux); this gate is the blocking PR check.
+#
+# TEMPORARILY MANUAL-ONLY: the shared self-hosted runner pool doesn't have
+# requirements-ci.txt installed yet, so the automatic PR trigger just fails with
+# "pytest not found". Re-enable the `pull_request:` trigger below once the runner
+# has the CI deps installed (see requirements-ci.txt). Until then, trigger via
+# Actions tab -> workflow_dispatch.
+name: dx-ai-studio pytest gate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pytest-gate:
+    runs-on:
+      - self-hosted
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    steps:
+      - name: Checkout suite (dx-ai-studio only, no submodules)
+        uses: actions/checkout@v4
+        # dx-ai-studio is a plain directory (not a submodule) and its default
+        # unit/contract test gate mocks or skips any dx-runtime/dx-compiler
+        # dependent paths, so no submodule checkout is needed here. Recursively
+        # fetching sibling submodules (dx-runtime, dx-compiler, dx-modelzoo) is
+        # unnecessary for this gate and can fail on runners without access to
+        # those repos.
+      - name: Run CI gate (scripts/run_ci.sh)
+        run: bash scripts/run_ci.sh
