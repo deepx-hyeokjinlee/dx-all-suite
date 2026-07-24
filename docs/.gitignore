@@ -1,0 +1,5 @@
+# Ephemeral build artifacts created and removed by mkdocs.sh — never commit them.
+# mkdocs.yml is generated from mkdocs-template.yml via envsubst; source/ai-studio/ is a
+# build-time copy of dx-ai-studio/docs/source (the studio tree is the source of truth).
+mkdocs.yml
+source/ai-studio/
