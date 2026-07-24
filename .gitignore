@@ -4,6 +4,7 @@
 archives/
 workspace/
 *.pdf
+!dx-ai-studio/launcher/static/pdfs/**
 /docs/docs
 /docs/mkdocs.yml
 dx-compiler/dx_com
