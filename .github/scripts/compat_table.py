@@ -35,7 +35,7 @@ def parse_block(three_trs):
 
 
 def fmt(val, prev):
-    return f"<b>{val}</b>" if prev is not None and val != prev else val
+    return val
 
 
 def ver_tuple(s):
