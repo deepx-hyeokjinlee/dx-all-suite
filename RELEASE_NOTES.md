@@ -176,6 +176,12 @@ Describe an app or model task in plain language, and an AI coding agent drives t
   - Test Suite: 73 new test binaries under `test/base/{element,metadata,pipeline}/` covering element contracts, domain boundaries, end-to-end pipelines (DX-Stream).
   - DxMsgConv: `include-frame` property for base64 JPEG frame encoding with Kafka/MQTT consumer display support (DX-Stream).
 
+- **Docker & Deployment**:
+  - Red Hat family support for the `dx-compiler` container: build and run on Fedora (42–45), RHEL/UBI (9, 10), and CentOS Stream (stream9, stream10) via new `--fedora_version` / `--rhel_version` / `--centos_version` options. `dx-runtime` and `dx-modelzoo` remain Ubuntu/Debian only (Docker).
+  - Ubuntu 26.04 base image support for all three containers (Docker).
+  - Faster `dx-runtime` / `dx-modelzoo` image builds: `dx_rt` and the matching `dx_engine` Python wheel are installed from prebuilt Debian packages instead of being compiled from source (Docker).
+  - DX-Tron on Red Hat family images is provided as the web variant (`run_dxtron_web.sh`) since the `.deb`/AppImage is not supported there (Docker).
+
 ### Known Issues
 
 - **PReLU Degradation**: Significant FPS degradation has been observed in models using PReLU as an activation function.
