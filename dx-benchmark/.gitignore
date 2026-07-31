@@ -1,0 +1,31 @@
+# dx-benchmark local ignores — self-contained so the folder is portable across repos
+# (mirrors the suite-root rules; paths are relative to dx-benchmark/)
+
+# downloaded models/videos + local venv (large, regenerated)
+benchmark/assets/
+venv/
+
+# per-run raw logs + timeout diagnostics — huge, not needed for distribution
+results/**/raw/
+results/**/incidents/
+
+# CSV mirrors of *_results.json — tool consumes JSON only; JSON is lossless
+results/**/*.csv
+
+# stale single-file dashboard export (not produced by `run.sh dashboard`)
+results/dashboard/dashboard_standalone.html
+
+# local http.server access logs + out-of-tree measurement backups
+results/*.log
+results/**/*.log
+results_backup/
+
+# internal-only docs (배포 금지)
+docs/QUALITY_REVIEW_*
+docs/BUFFER_COUNT_SWEEP_ANALYSIS_*
+docs/YOLO26_BENCHMARK_ANALYSIS_*
+
+# python bytecode / pytest cache
+__pycache__/
+*.pyc
+.pytest_cache/

@@ -95,6 +95,19 @@
 
 **Explore the studio →** [`dx-ai-studio/README.md`](./dx-ai-studio/README.md)  ·  **Install & launch →** [Installation and Launch](./dx-ai-studio/docs/source/01_Installation_and_Launch.md)
 
+## ✨ DX-Benchmark — dx-benchmark (Beta)
+
+Reproducible YOLO26 performance benchmarking on the DEEPX NPU — one standardized procedure
+across any Host PC + NPU combination. It measures two tiers: **Model-Level** (`run_model`) —
+**Latency** (single-core, sync) and **Throughput** (multi-core, async) — and **E2E Pipeline**
+(DX-Stream) — **Single-Stream** FPS and **Multi-Stream** channel capacity. Both tiers run
+automatic ONNX-Runtime ON/OFF comparison with thermal-throttle detection, then render an
+interactive dashboard for cross-environment and cross-version comparison. Measured results for
+6 hardware environments are included, and the dashboard built from them is also viewable in
+[DX AI Studio](./dx-ai-studio/README.md)'s **DX Benchmark** view.
+
+**Get started →** [`dx-benchmark/README.md`](./dx-benchmark/README.md)  ·  **Performance analysis →** [`dx-benchmark/docs/ANALYSIS_EN.md`](./dx-benchmark/docs/ANALYSIS_EN.md)
+
 ## Getting Started
 
 **DX-AllSuite** provides two environments depending on your intended use. Choose the environment that fits your needs to get started.
@@ -146,6 +159,7 @@ If you are a first-time user, we recommend following the documentation in this o
 
 - **[Introduction](./docs/source/index.md)**: DX-AS overview and component descriptions
 - **★ [Agent-Driven Development (Beta)](./docs/source/00_Agent_Driven_Development.md)**: Build DEEPX apps with natural-language prompts using AI coding agents (Claude Code, Cursor, GitHub Copilot, OpenCode, Codex CLI)  
+- **[DX-Benchmark (Beta)](./dx-benchmark/README.md)**: Reproducible YOLO26 NPU benchmarks (Model-Level + E2E Pipeline) with an interactive performance dashboard  
 - **Step 1. [DX-AllSuite Architecture Overview](./docs/source/01_DX-AllSuite_Architecture_Overview.md)**: SDK overview, module descriptions, and ModelZoo usage  
 - **Step 2. [Setting Up Environment](./docs/source/02_Setting_Up_Environment.md)**: Detailed Local/Docker installation and troubleshooting  
 - **Step 3. [Running Your First NPU Model](./docs/source/03_Running_Your_First_NPU_Model.md)**: Step-by-step hands-on script execution  

@@ -1,6 +1,6 @@
 # RELEASE_NOTES
 
-## DX-All-Suite v2.4.1 / 2026-07-28
+## DX-All-Suite v2.4.1 / 2026-07-29
 
 - DX-Compiler: v2.4.1
     - DX-COM: v2.4.0
@@ -18,9 +18,24 @@ Here are the **DX-All-Suite v2.4.1** Release Notes.
 
 ### What's New?
 
-This hotfix polishes the **DX AI Studio (Beta)** introduced in v2.4.0, and adds documentation updates across the suite.
+This release adds **DX-Benchmark (Beta)**, polishes the **DX AI Studio (Beta)** introduced in v2.4.0, and adds documentation updates across the suite.
 
-**DX AI Studio (Beta) improvements**
+#### 📊 New: Reproducible NPU performance benchmarks
+
+**DX-Benchmark (`dx-benchmark`) is now available in Beta** — one standardized procedure that measures YOLO26 performance on any Host PC + NPU combination, published together with results for six hardware environments.
+
+**Highlights**
+- **Two measurement tiers** — **Model-Level** (`run_model`): Latency (single-core, sync) and Throughput (multi-core, async); **E2E Pipeline** (DX-Stream): Single-Stream FPS and Multi-Stream channel capacity.
+- **Comparable by construction** — automatic ONNX-Runtime ON/OFF comparison, thermal steady-state normalization with throttle detection, and a full environment fingerprint recorded per run.
+- **Published dataset** — 6 hardware environments (H1-Quattro, Intel N97, OrangePi 5+, ROCK 5B+, and Raspberry Pi 5 with M1 / M1M) measured on v2.3.3 and v2.4.0.
+- **Interactive dashboard** — self-contained HTML (no CDN) for cross-environment and cross-version comparison; the same dataset backs DX AI Studio's Benchmark view.
+- **Performance analysis** — EN/KOR documents covering NPU-bound vs host-bound behaviour, ORT-mode selection, and per-environment deployment guidance.
+
+> **Beta notice:** DX-Benchmark is a Beta release (tool v0.1.0, measurement protocol v1). The CLI and output schema may change.
+
+**Learn more** — see [`dx-benchmark/README.md`](dx-benchmark/README.md) and the [performance analysis](dx-benchmark/docs/ANALYSIS_EN.md).
+
+#### **DX AI Studio (Beta) improvements**
 - **Model Zoo** — browse the full model catalog with one-click download (and re-download), in six languages.
 - **App demos** — correct, clearer results for classification, pose, and video demos.
 - **Stream** — demos and the Pipeline Builder now play reliably in remote / SSH browsers.
