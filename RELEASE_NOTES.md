@@ -88,7 +88,7 @@ Describe an app or model task in plain language, and an AI coding agent drives t
 **DX AI Studio is now available in Beta** — an all-in-one desktop web workspace that unifies eight DEEPX tools in a single browser, in six languages.
 
 **Highlights**
-- **Eight tools, one hub** — DX App (NPU inference on image/video/camera/RTSP with live multi-stream), DX Stream (real-time GStreamer pipelines with live WebRTC playback), DX Model Zoo (350+ models with in-browser demos and one-click `.dxnn`/ONNX downloads), DX Compiler (ONNX → `.dxnn` with a config wizard, quantization tuning/diagnosis, and agentic auto-compile), DX EdgeGuide (board recommendation from real benchmarks), DX Benchmark, DX Monitor (live NPU telemetry), and DX Agent Dev.
+- **Eight tools, one hub** — DX App (NPU inference on image/video/camera/RTSP with live multi-stream), DX Stream (real-time GStreamer pipelines with live WebRTC playback), DX Model Zoo (345 models with in-browser demos and one-click `.dxnn`/ONNX downloads), DX Compiler (ONNX → `.dxnn` with a config wizard, quantization tuning/diagnosis, and agentic auto-compile), DX EdgeGuide (board recommendation from real benchmarks), DX Benchmark, DX Monitor (live NPU telemetry), and DX Agent Dev.
 - **Zero dependencies, self-installing** — pure Python standard library; `./launcher.sh` installs, boots every tool, and opens the browser with no manual setup.
 - **Runs without hardware** — every tool degrades gracefully to sample/mock data, so the whole studio is browsable with no NPU, SDK, or models.
 - **Six languages** and a built-in AI assistant (multi-provider, with a fully-offline local option).
