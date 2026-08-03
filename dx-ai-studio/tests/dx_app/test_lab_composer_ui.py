@@ -21,6 +21,20 @@ COMPOSER_I18N_KEYS = {
     "Plugin palette",
     "Drag a custom plugin to Preprocess or Postprocess",
     "Custom plugin",
+    "Save Recipe",
+    "Export Recipe",
+    "Import Recipe",
+    "Run Package",
+    "Developer Package",
+    "Reusable Recipe",
+    "Export Preflight",
+    "Recipe saved",
+    "Recipe import failed",
+    "Recipe export failed",
+    "Choose a recipe JSON file",
+    "Copy-out verified",
+    "Plugins",
+    "Validation",
     "Add custom preprocess",
     "Add custom postprocess",
     "Apply Plugin Scaffold",
@@ -145,6 +159,38 @@ def test_customize_supports_server_validated_model_asset_and_plugin_drag_actions
     assert "planPluginScaffold(stage, language)" in source
 
 
+def test_recipe_and_export_controls_use_server_validated_workflow_operations():
+    source = _composer_source()
+
+    assert "function saveRecipe" in source
+    assert "function exportRecipe" in source
+    assert "function importRecipe" in source
+    assert "function renderRecipeControls" in source
+    assert "function renderExportPanel" in source
+    assert "FileReader" in source
+    assert "'/api/lab/composer/recipe/export'" in source
+    assert "'/api/lab/composer/recipe/import'" in source
+    assert "package_type: packageType" in source
+    assert "manifest_id: currentWorkflow.manifest_id" in source
+    assert "recipe: recipe" in source
+    assert "workflow: currentWorkflow.workflow" not in source
+
+
+def test_recipe_download_defers_blob_url_cleanup_until_after_click():
+    source = _composer_source()
+
+    assert "function downloadRecipe" in source
+    assert "link.click();" in source
+    assert "setTimeout(function () { URL.revokeObjectURL(url); }, 0);" in source
+
+
+def test_recipe_import_and_package_download_validate_response_shapes():
+    source = _composer_source()
+
+    assert "recipe === null || Array.isArray(recipe)" in source
+    assert "typeof result.download.name !== 'string'" in source
+
+
 def test_composer_uses_dom_apis_and_text_content_without_inner_html():
     source = _composer_source()
 
@@ -174,3 +220,20 @@ def test_all_composer_strings_have_six_locale_coverage():
         assert match, key
         entry = match.group(1)
         assert all(f"{locale}:" in entry or f"'{locale}':" in entry for locale in LOCALES), key
+
+
+def test_package_type_choices_have_localized_non_english_labels():
+    translations = I18N_JS.read_text(encoding="utf-8")
+
+    for key in ("Run Package", "Developer Package", "Reusable Recipe"):
+        match = re.search(
+            rf"'{re.escape(key)}':\s*\{{(.*?)\n\s*\}}\s*(?:,|\n)",
+            translations,
+            re.S,
+        )
+        assert match, key
+        entry = match.group(1)
+        for locale in ("ko", "ja", "zh-CN", "zh-TW"):
+            localized = re.search(rf"'?{re.escape(locale)}'?\s*:\s*'([^']+)'", entry)
+            assert localized, f"{key}: {locale}"
+            assert localized.group(1) != key, f"{key}: {locale}"

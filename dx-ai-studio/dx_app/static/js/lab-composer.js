@@ -9,6 +9,7 @@ window.LabComposer = (function () {
   var customizationHistory = [];
   var customizationHistoryIndex = -1;
   var pendingPluginScaffold = null;
+  var savedRecipe = null;
   var compatibleAssets = [];
   var compatibleAssetKey = '';
   var MAX_CUSTOMIZATION_HISTORY = 20;
@@ -37,6 +38,20 @@ window.LabComposer = (function () {
         pluginPalette: 'Plugin palette',
         dragPlugin: 'Drag a custom plugin to Preprocess or Postprocess',
         customPlugin: 'Custom plugin',
+        saveRecipe: 'Save Recipe',
+        exportRecipe: 'Export Recipe',
+        importRecipe: 'Import Recipe',
+        runPackage: 'Run Package',
+        developerPackage: 'Developer Package',
+        reusableRecipe: 'Reusable Recipe',
+        exportPreflight: 'Export Preflight',
+        recipeSaved: 'Recipe saved',
+        recipeImportFailed: 'Recipe import failed',
+        recipeExportFailed: 'Recipe export failed',
+        chooseRecipe: 'Choose a recipe JSON file',
+        copyOutVerified: 'Copy-out verified',
+        plugins: 'Plugins',
+        validation: 'Validation',
         addCustomPreprocess: 'Add custom preprocess',
         addCustomPostprocess: 'Add custom postprocess',
         applyPluginScaffold: 'Apply Plugin Scaffold',
@@ -58,6 +73,20 @@ window.LabComposer = (function () {
       pluginPalette: T('Plugin palette'),
       dragPlugin: T('Drag a custom plugin to Preprocess or Postprocess'),
       customPlugin: T('Custom plugin'),
+      saveRecipe: T('Save Recipe'),
+      exportRecipe: T('Export Recipe'),
+      importRecipe: T('Import Recipe'),
+      runPackage: T('Run Package'),
+      developerPackage: T('Developer Package'),
+      reusableRecipe: T('Reusable Recipe'),
+      exportPreflight: T('Export Preflight'),
+      recipeSaved: T('Recipe saved'),
+      recipeImportFailed: T('Recipe import failed'),
+      recipeExportFailed: T('Recipe export failed'),
+      chooseRecipe: T('Choose a recipe JSON file'),
+      copyOutVerified: T('Copy-out verified'),
+      plugins: T('Plugins'),
+      validation: T('Validation'),
       addCustomPreprocess: T('Add custom preprocess'),
       addCustomPostprocess: T('Add custom postprocess'),
       applyPluginScaffold: T('Apply Plugin Scaffold'),
@@ -270,6 +299,7 @@ window.LabComposer = (function () {
       validation: response.validation || response.workflow.validation || {},
       status: response.status
     };
+    savedRecipe = null;
     if (historyAction === 'record') recordCustomizationState();
     else if (historyAction !== 'preserve') resetCustomizationHistory();
     render();
@@ -614,9 +644,91 @@ window.LabComposer = (function () {
     var blocked = !currentWorkflow || isBlocked(validation);
     var runButton = appendActionButton(actions, 'btn-acc', composerLabels().runWorkflow, runWorkflow);
     runButton.disabled = blocked;
-    var exportButton = appendActionButton(actions, 'btn-blue', composerLabels().exportPackage, exportPackage);
+    var exportButton = appendActionButton(actions, 'btn-blue', composerLabels().exportPackage, function () {
+      exportPackage('run');
+    });
     exportButton.disabled = blocked;
     parent.appendChild(actions);
+  }
+
+  function renderRecipeControls(parent) {
+    var validation = currentWorkflow && currentWorkflow.validation ? currentWorkflow.validation : {};
+    if (!currentWorkflow || isBlocked(validation)) return;
+    var section = make('section', 'lab-composer-recipe-controls');
+    section.appendChild(make('h3', '', composerLabels().saveRecipe));
+    var actions = make('div', 'lab-composer-recipe-actions');
+    appendActionButton(actions, 'btn-blue', composerLabels().saveRecipe, saveRecipe);
+    appendActionButton(actions, 'btn-blue', composerLabels().exportRecipe, exportRecipe);
+    var importLabel = make('label', 'btn btn-blue', composerLabels().importRecipe);
+    importLabel.setAttribute('for', 'lab-composer-recipe-file');
+    var importFile = document.createElement('input');
+    importFile.id = 'lab-composer-recipe-file';
+    importFile.type = 'file';
+    importFile.accept = '.json,application/json';
+    importFile.className = 'lab-composer-recipe-file';
+    importFile.addEventListener('change', function () {
+      var file = importFile.files && importFile.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        var recipe;
+        try {
+          recipe = JSON.parse(String(reader.result || ''));
+        } catch (err) {
+          renderError(composerLabels().recipeImportFailed);
+          return;
+        }
+        if (typeof recipe !== 'object' || recipe === null || Array.isArray(recipe)) {
+          renderError(composerLabels().recipeImportFailed);
+          return;
+        }
+        importRecipe(recipe);
+      };
+      reader.onerror = function () {
+        renderError(composerLabels().recipeImportFailed);
+      };
+      reader.readAsText(file);
+      importFile.value = '';
+    });
+    actions.appendChild(importLabel);
+    actions.appendChild(importFile);
+    section.appendChild(actions);
+    if (savedRecipe) section.appendChild(make('p', 'txt-dim txt-sm', composerLabels().recipeSaved));
+    parent.appendChild(section);
+  }
+
+  function renderExportPanel(parent) {
+    var validation = currentWorkflow && currentWorkflow.validation ? currentWorkflow.validation : {};
+    if (!currentWorkflow || isBlocked(validation)) return;
+    var workflow = currentWorkflow.workflow || {};
+    var model = workflow.model || {};
+    var input = workflow.input || {};
+    var plugins = Array.isArray(workflow.plugins) ? workflow.plugins : [];
+    var section = make('section', 'lab-composer-export-panel');
+    section.appendChild(make('h3', '', composerLabels().exportPreflight));
+    var summary = make('dl', 'lab-composer-export-summary');
+    [
+      [text('Model'), [model.name, model.category].filter(Boolean).join(' · ') || text('Unavailable')],
+      [text('Input'), [input.kind, input.path].filter(Boolean).join(' · ') || text('Unavailable')],
+      [composerLabels().plugins, plugins.length ? plugins.map(function (plugin) { return plugin.id; }).join(', ') : text('Built-in defaults')],
+      [composerLabels().validation, validation.status]
+    ].forEach(function (item) {
+      summary.appendChild(make('dt', '', item[0]));
+      summary.appendChild(make('dd', '', item[1]));
+    });
+    section.appendChild(summary);
+    var actions = make('div', 'lab-composer-export-actions');
+    [
+      ['run', composerLabels().runPackage],
+      ['developer', composerLabels().developerPackage],
+      ['recipe', composerLabels().reusableRecipe]
+    ].forEach(function (choice) {
+      appendActionButton(actions, 'btn-blue', choice[1], function () {
+        exportPackage(choice[0]);
+      });
+    });
+    section.appendChild(actions);
+    parent.appendChild(section);
   }
 
   async function createQuickStart(model) {
@@ -774,6 +886,8 @@ window.LabComposer = (function () {
     if (currentWorkflow) renderValidation(shell, currentWorkflow.validation);
     renderGraph(shell);
     renderActions(shell);
+    renderRecipeControls(shell);
+    renderExportPanel(shell);
     renderResult(shell);
     container.appendChild(shell);
   }
@@ -833,16 +947,73 @@ window.LabComposer = (function () {
     setStatus(result && result.error ? result.error : text('Workflow completed'), result && result.error ? 'err' : 'ok');
   }
 
-  async function exportPackage() {
+  function downloadRecipe(recipe) {
+    var blob = new Blob([JSON.stringify(recipe, null, 2) + '\n'], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'workflow.recipe.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 0);
+  }
+
+  async function saveRecipe() {
     if (!currentWorkflow) return;
+    setStatus(composerLabels().saveRecipe, 'info');
+    var result = await request('/api/lab/composer/recipe/export', {
+      manifest_id: currentWorkflow.manifest_id
+    });
+    if (!result || result.error || !result.recipe || typeof result.recipe !== 'object') {
+      renderError((result && result.error) || composerLabels().recipeExportFailed);
+      return;
+    }
+    savedRecipe = result.recipe;
+    render();
+    setStatus(composerLabels().recipeSaved, 'ok');
+  }
+
+  async function exportRecipe() {
+    if (!currentWorkflow) return;
+    setStatus(composerLabels().exportRecipe, 'info');
+    var result = await request('/api/lab/composer/recipe/export', {
+      manifest_id: currentWorkflow.manifest_id
+    });
+    if (!result || result.error || !result.recipe || typeof result.recipe !== 'object') {
+      renderError((result && result.error) || composerLabels().recipeExportFailed);
+      return;
+    }
+    savedRecipe = result.recipe;
+    downloadRecipe(savedRecipe);
+    render();
+    setStatus(composerLabels().recipeSaved, 'ok');
+  }
+
+  async function importRecipe(recipe) {
+    setStatus(composerLabels().importRecipe, 'info');
+    var result = await request('/api/lab/composer/recipe/import', { recipe: recipe });
+    if (!result || result.error) {
+      renderError((result && result.error) || composerLabels().recipeImportFailed);
+      return;
+    }
+    setWorkflow(result);
+  }
+
+  async function exportPackage(packageType) {
+    if (!currentWorkflow) return;
+    setStatus(composerLabels().exportPreflight, 'info');
     var result = await request('/api/lab/composer/export', {
       manifest_id: currentWorkflow.manifest_id,
-      package_type: 'run'
+      package_type: packageType
     });
     var output = document.getElementById('lab-composer-result');
     if (!output) return;
     var archiveUrl = result && result.download ? safeOutputUrl(result.download.url) : '';
-    if (!result || result.error || !result.download || !archiveUrl || !result.download.name) {
+    if (
+      !result || result.error || !result.download || !archiveUrl ||
+      typeof result.download.name !== 'string' || !result.download.name
+    ) {
       renderError((result && result.error) || text('Package export failed'));
       return;
     }
@@ -852,6 +1023,9 @@ window.LabComposer = (function () {
     link.href = archiveUrl;
     link.download = result.download.name;
     output.appendChild(link);
+    if (result.copy_out_verified) {
+      output.appendChild(make('p', 'txt-dim txt-sm', composerLabels().copyOutVerified));
+    }
     setStatus(text('Package export completed'), 'ok');
   }
 

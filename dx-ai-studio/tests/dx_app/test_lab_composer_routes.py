@@ -393,6 +393,37 @@ def test_recipe_export_returns_portable_recipe_and_enforces_workflow_ownership()
     assert forbidden["data"]["error_code"] == "manifest_owner_forbidden"
 
 
+def test_recipe_export_validates_completed_plugins_from_the_controlled_workspace(monkeypatch, tmp_path):
+    import lab_portal
+    from developer import lab_session
+
+    token = lab_session()["token"]
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path / "outputs")
+    workflow = _ready_workflow()
+    workflow["plugins"] = [{
+        "id": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "python",
+        "entrypoint": "plugins/preprocess/custom_preprocess.py",
+        "interface_version": 1,
+        "enabled": True,
+    }]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=workflow, creator_token=token
+    )
+    plugin = (
+        lab_portal.OUTPUTS_DIR / "lab_composer" / manifest["id"] / "plugins" /
+        "preprocess" / "custom_preprocess.py"
+    )
+    plugin.parent.mkdir(parents=True)
+    plugin.write_text("def preprocess(image, context):\n    return image\n", encoding="utf-8")
+
+    exported, code = lab_portal.export_composer_recipe(token, {"manifest_id": manifest["id"]})
+
+    assert code == 200
+    assert exported["recipe"]["plugins"] == workflow["plugins"]
+
+
 def test_composer_run_converts_server_manifest_to_precise_inference_values(monkeypatch):
     import lab_portal
     from developer import lab_session

@@ -2958,6 +2958,48 @@ window._DX_I18N_DICT = {
   'Custom plugin': {
     ko: '사용자 지정 Plugin', ja: 'カスタム Plugin', 'zh-CN': '自定义 Plugin', 'zh-TW': '自訂 Plugin', es: 'Plugin personalizado',
   },
+  'Save Recipe': {
+    ko: 'Recipe 저장', ja: 'Recipe を保存', 'zh-CN': '保存 Recipe', 'zh-TW': '儲存 Recipe', es: 'Guardar receta',
+  },
+  'Export Recipe': {
+    ko: 'Recipe 내보내기', ja: 'Recipe をエクスポート', 'zh-CN': '导出 Recipe', 'zh-TW': '匯出 Recipe', es: 'Exportar receta',
+  },
+  'Import Recipe': {
+    ko: 'Recipe 가져오기', ja: 'Recipe をインポート', 'zh-CN': '导入 Recipe', 'zh-TW': '匯入 Recipe', es: 'Importar receta',
+  },
+  'Run Package': {
+    ko: '실행 패키지', ja: '実行パッケージ', 'zh-CN': '运行包', 'zh-TW': '執行套件', es: 'Paquete de ejecución',
+  },
+  'Developer Package': {
+    ko: '개발자 패키지', ja: '開発者パッケージ', 'zh-CN': '开发包', 'zh-TW': '開發套件', es: 'Paquete de desarrollo',
+  },
+  'Reusable Recipe': {
+    ko: '재사용 가능한 Recipe', ja: '再利用可能なレシピ', 'zh-CN': '可复用配方', 'zh-TW': '可重複使用的配方', es: 'Receta reutilizable',
+  },
+  'Export Preflight': {
+    ko: '내보내기 사전 점검', ja: 'エクスポート事前チェック', 'zh-CN': '导出预检', 'zh-TW': '匯出預先檢查', es: 'Comprobación previa a la exportación',
+  },
+  'Recipe saved': {
+    ko: 'Recipe가 저장되었습니다', ja: 'Recipe を保存しました', 'zh-CN': 'Recipe 已保存', 'zh-TW': 'Recipe 已儲存', es: 'Receta guardada',
+  },
+  'Recipe import failed': {
+    ko: 'Recipe 가져오기에 실패했습니다', ja: 'Recipe のインポートに失敗しました', 'zh-CN': 'Recipe 导入失败', 'zh-TW': 'Recipe 匯入失敗', es: 'Falló la importación de la receta',
+  },
+  'Recipe export failed': {
+    ko: 'Recipe 내보내기에 실패했습니다', ja: 'Recipe のエクスポートに失敗しました', 'zh-CN': 'Recipe 导出失败', 'zh-TW': 'Recipe 匯出失敗', es: 'Falló la exportación de la receta',
+  },
+  'Choose a recipe JSON file': {
+    ko: 'Recipe JSON 파일 선택', ja: 'Recipe JSON ファイルを選択', 'zh-CN': '选择 Recipe JSON 文件', 'zh-TW': '選取 Recipe JSON 檔案', es: 'Elija un archivo JSON de receta',
+  },
+  'Copy-out verified': {
+    ko: 'Copy-out 검증 완료', ja: 'Copy-out 検証済み', 'zh-CN': '已验证 Copy-out', 'zh-TW': '已驗證 Copy-out', es: 'Copia externa verificada',
+  },
+  'Plugins': {
+    ko: 'Plugins', ja: 'Plugins', 'zh-CN': 'Plugins', 'zh-TW': 'Plugins', es: 'Plugins',
+  },
+  'Validation': {
+    ko: '검증', ja: '検証', 'zh-CN': '验证', 'zh-TW': '驗證', es: 'Validación',
+  },
   'Add custom preprocess': {
     ko: '사용자 지정 전처리 추가', ja: 'カスタム前処理を追加', 'zh-CN': '添加自定义预处理', 'zh-TW': '新增自訂前處理', es: 'Agregar preprocesamiento personalizado',
   },

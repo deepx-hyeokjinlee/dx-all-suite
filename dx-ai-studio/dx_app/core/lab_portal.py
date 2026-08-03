@@ -896,7 +896,15 @@ def export_composer_recipe(tok, payload):
     if code != 200:
         return manifest, code
     workflow = manifest.get("workflow")
-    validation = validate_workflow(workflow)
+    try:
+        plugin_root = _composer_plugin_root(manifest)
+    except ValueError as exc:
+        return {
+            "error": "Composer plugin workspace is unsafe",
+            "error_code": "plugin_workspace_unsafe",
+            "detail": str(exc),
+        }, 400
+    validation = validate_workflow(workflow, plugin_root=plugin_root)
     if validation["status"] != "ready":
         return {
             "error": "Workflow is blocked",
