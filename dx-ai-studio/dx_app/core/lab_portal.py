@@ -8,7 +8,7 @@ from pathlib import Path
 from collections import OrderedDict
 
 from dx_app.core import config
-from dx_app.core.config import DX_APP_ROOT, CPP_DIR, PY_DIR, OUTPUTS_DIR
+from dx_app.core.config import DX_APP_ROOT, CPP_DIR, PY_DIR, OUTPUTS_DIR, TEMPLATES_DIR
 from dx_app.core.developer import require_lab, _require_lab_model_name, _require_lab_category, dev_add, dev_new_task, build_task_file_plan
 from dx_app.core.dx_app_security import resolve_existing_file, resolve_under
 from dx_app.core.lab_workflow import (
@@ -54,6 +54,11 @@ _manifests = OrderedDict()
 _manifests_lock = threading.RLock()
 _apply_locks = set()
 _apply_lock_mutex = threading.Lock()
+_PLUGIN_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
+_CPP_PLUGIN_SOURCE_RE = re.compile(
+    r"^\s*(plugins/(?:preprocess|postprocess)/[A-Za-z][A-Za-z0-9_]*\.hpp)\s*$",
+    re.MULTILINE,
+)
 
 
 def _safe_lab_id(prefix):
@@ -135,6 +140,144 @@ def _owned_composer_manifest(tok, manifest_id):
             "error_code": "manifest_owner_forbidden",
         }, 403
     return manifest, 200
+
+
+def _plugin_scaffold_error(message, code):
+    return {"error": message, "error_code": code, "status": 400}
+
+
+def _plugin_template(stage, language):
+    suffix = "py" if language == "python" else "hpp"
+    template = TEMPLATES_DIR / "lab_plugins" / f"{language}_{stage}.{suffix}"
+    try:
+        return template.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
+def _cpp_plugin_sources(cmake_path):
+    """Return safe plugin entries from a generated CMake source list."""
+    if not cmake_path.is_file() or cmake_path.is_symlink():
+        return []
+    try:
+        return list(dict.fromkeys(_CPP_PLUGIN_SOURCE_RE.findall(
+            cmake_path.read_text(encoding="utf-8")
+        )))
+    except (OSError, UnicodeDecodeError):
+        return []
+
+
+def _has_symlink_component(path, root):
+    """Return whether ``path`` or an ancestor below ``root`` is a symlink."""
+    root = Path(root)
+    candidate = Path(path)
+    try:
+        relative_path = candidate.relative_to(root)
+    except ValueError:
+        return True
+    current = root
+    if current.is_symlink():
+        return True
+    for part in relative_path.parts:
+        current = current / part
+        if current.is_symlink():
+            return True
+    return False
+
+
+def plan_composer_plugin_scaffold(tok, payload):
+    """Return a session-bound plugin file preview without writing any files."""
+    err = require_lab(tok)
+    if err:
+        return err
+    payload = payload if isinstance(payload, dict) else {}
+    workflow_id = payload.get("workflow_manifest_id", "")
+    workflow_manifest, code = _owned_composer_manifest(tok, workflow_id)
+    if code != 200:
+        result = dict(workflow_manifest)
+        result["status"] = code
+        return result
+
+    name = payload.get("plugin_name", "")
+    stage = payload.get("stage", "")
+    language = payload.get("language", "")
+    if not isinstance(name, str) or not _PLUGIN_NAME_RE.fullmatch(name):
+        return _plugin_scaffold_error("Invalid plugin name", "plugin_name_invalid")
+    if stage not in PLUGIN_STAGES:
+        return _plugin_scaffold_error("Invalid plugin stage", "plugin_stage_invalid")
+    if language not in PLUGIN_LANGUAGES:
+        return _plugin_scaffold_error("Invalid plugin language", "plugin_language_invalid")
+
+    content = _plugin_template(stage, language)
+    if content is None:
+        return _plugin_scaffold_error("Plugin scaffold template is unavailable", "plugin_template_unavailable")
+
+    workspace = Path("lab_composer") / workflow_manifest["id"]
+    extension = ".py" if language == "python" else ".hpp"
+    plugin_path = workspace / "plugins" / stage / f"{name}{extension}"
+    paths_and_content = [(plugin_path, content)]
+    if language == "cpp":
+        cmake_path = workspace / "CMakeLists.txt"
+        try:
+            cmake_target = resolve_under(str(OUTPUTS_DIR / cmake_path), (OUTPUTS_DIR,))
+        except ValueError as exc:
+            return _plugin_scaffold_error(str(exc), "plugin_path_unsafe")
+        if _has_symlink_component(cmake_target, OUTPUTS_DIR):
+            return _plugin_scaffold_error("Plugin target must not be a symlink", "plugin_path_unsafe")
+        plugin_source = (Path("plugins") / stage / f"{name}{extension}").as_posix()
+        sources = _cpp_plugin_sources(cmake_target)
+        if plugin_source not in sources:
+            sources.append(plugin_source)
+        cmake_content = (
+            "# Generated DX App Lab plugin source list\n"
+            "set(DX_APP_LAB_PLUGIN_SOURCES\n"
+            + "".join(f"    {source}\n" for source in sources)
+            + ")\n"
+        )
+        paths_and_content.append((cmake_path, cmake_content))
+
+    operations = []
+    confirmations = []
+    existing_paths = []
+    for relative_path, preview in paths_and_content:
+        try:
+            target = resolve_under(str(OUTPUTS_DIR / relative_path), (OUTPUTS_DIR,))
+        except ValueError as exc:
+            return _plugin_scaffold_error(str(exc), "plugin_path_unsafe")
+        if _has_symlink_component(target, OUTPUTS_DIR):
+            return _plugin_scaffold_error("Plugin target must not be a symlink", "plugin_path_unsafe")
+        exists = target.exists()
+        operations.append(_operation(
+            "modify" if exists else "create",
+            "OUTPUTS_DIR",
+            relative_path.as_posix(),
+            exists=exists,
+            preview=preview,
+        ))
+        if exists:
+            existing_paths.append(relative_path.as_posix())
+    if existing_paths:
+        confirmations.append({
+            "key": "overwrite",
+            "expected": f"overwrite:{name}",
+            "label": "Overwrite existing plugin scaffold files",
+        })
+
+    return create_manifest(
+        "composer_plugin_scaffold",
+        inputs={
+            "workflow_manifest_id": workflow_manifest["id"],
+            "plugin_name": name,
+            "stage": stage,
+            "language": language,
+            "plugin_root": workspace.as_posix(),
+        },
+        creator_token=tok,
+        operations=operations,
+        confirmations=confirmations,
+        status="ready",
+        summary=f"Create {language} {stage} plugin {name}",
+    )
 
 
 def _composer_manifest_response(manifest):

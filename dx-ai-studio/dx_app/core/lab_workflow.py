@@ -34,6 +34,24 @@ WORKFLOW_TEMPLATES = {
 
 _VIDEO_SUFFIXES = {".avi", ".mkv", ".mov", ".mp4", ".webm"}
 _SCAFFOLD_MARKERS = ("notimplemented", "not_implemented", "implement_me", "plugin_scaffold", "todo")
+_CPP_PLUGIN_SIGNATURES = {
+    "preprocess": re.compile(
+        r"std::string\s+preprocess\s*\(\s*const\s+std::string\s*&\s*input_path\s*,"
+        r"\s*const\s+PluginContext\s*&\s*context\s*\)",
+        re.MULTILINE,
+    ),
+    "postprocess": re.compile(
+        r"std::string\s+postprocess\s*\(\s*const\s+std::string\s*&\s*output_path\s*,"
+        r"\s*const\s+PluginContext\s*&\s*context\s*\)",
+        re.MULTILINE,
+    ),
+}
+_CPP_PLUGIN_MARKERS = (
+    "#pragma once",
+    "#include <string>",
+    "namespace dx_app_lab",
+    "struct PluginContext",
+)
 
 
 def new_workflow_id():
@@ -250,10 +268,22 @@ def _plugin_complete(path, language, stage):
     expected = "preprocess" if stage == "preprocess" else "postprocess"
     if language == "python":
         return _python_plugin_complete(source, stage)
-    return bool(re.search(
-        r"\b(?:void|bool|int|float|double|auto|[A-Za-z_]\w*(?:::\w+)*)\s+%s\s*\(" % re.escape(expected),
-        source,
-    ))
+    return (
+        all(marker in source for marker in _CPP_PLUGIN_MARKERS)
+        and bool(_CPP_PLUGIN_SIGNATURES[expected].search(source))
+    )
+
+
+def _cpp_plugin_registered(path, plugin_root):
+    """Return whether the generated CMake source list includes the plugin file."""
+    root = Path(plugin_root).resolve()
+    cmake = root / "CMakeLists.txt"
+    if cmake.is_symlink() or not cmake.is_file():
+        return False
+    try:
+        return path.relative_to(root).as_posix() in cmake.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError, ValueError):
+        return False
 
 
 def validate_workflow(workflow, plugin_root=None):
@@ -344,5 +374,7 @@ def validate_workflow(workflow, plugin_root=None):
             _add(blockers, plugin_id, error)
         elif not _plugin_complete(path, language, stage):
             _add(blockers, plugin_id, "plugin_incomplete")
+        elif language == "cpp" and not _cpp_plugin_registered(path, plugin_root):
+            _add(blockers, plugin_id, "plugin_cmake_source_missing")
 
     return {"status": "blocked" if blockers else "ready", "blockers": blockers, "warnings": warnings}

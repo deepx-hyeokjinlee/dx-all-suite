@@ -1,5 +1,7 @@
 """RED contracts for Lab Composer workflow resolution and validation."""
 
+from pathlib import Path
+
 import pytest
 
 from dx_app.core.lab_portal import lab_capabilities
@@ -281,3 +283,188 @@ def test_camera_template_without_runtime_input_is_blocked():
     assert workflow["input"] == {"kind": "camera", "path": ""}
     assert workflow["validation"]["status"] == "blocked"
     assert {"node_id": "input", "code": "camera_input_not_available"} in workflow["validation"]["blockers"]
+
+
+def test_plugin_scaffold_templates_have_exact_interfaces_and_are_incomplete():
+    template_root = Path(__file__).resolve().parents[2] / "dx_app" / "templates" / "lab_plugins"
+    python_preprocess = (template_root / "python_preprocess.py").read_text(encoding="utf-8")
+    python_postprocess = (template_root / "python_postprocess.py").read_text(encoding="utf-8")
+    cpp_preprocess = (template_root / "cpp_preprocess.hpp").read_text(encoding="utf-8")
+    cpp_postprocess = (template_root / "cpp_postprocess.hpp").read_text(encoding="utf-8")
+
+    assert 'def preprocess(image, context):' in python_preprocess
+    assert 'raise NotImplementedError("Implement preprocess(image, context)")' in python_preprocess
+    assert 'def postprocess(outputs, context):' in python_postprocess
+    assert 'raise NotImplementedError("Implement postprocess(outputs, context)")' in python_postprocess
+    for source, function, parameter in (
+        (cpp_preprocess, "preprocess", "input_path"),
+        (cpp_postprocess, "postprocess", "output_path"),
+    ):
+        assert "#pragma once" in source
+        assert "#include <string>" in source
+        assert "namespace dx_app_lab" in source
+        assert f"std::string {function}(const std::string& {parameter}, const PluginContext& context);" in source
+
+
+def test_cpp_plugin_requires_exact_interface_and_cmake_source_registration(tmp_path):
+    plugin_path = tmp_path / "plugins" / "postprocess" / "custom_postprocess.hpp"
+    plugin_path.parent.mkdir(parents=True)
+    plugin_path.write_text(
+        """#pragma once
+#include <string>
+namespace dx_app_lab {
+struct PluginContext;
+std::string postprocess(const std::string& output_path, const PluginContext& context);
+}
+""",
+        encoding="utf-8",
+    )
+    workflow = _workflow(plugins=[{
+        "id": "custom_postprocess",
+        "stage": "postprocess",
+        "language": "cpp",
+        "entrypoint": "plugins/postprocess/custom_postprocess.hpp",
+        "interface_version": 1,
+        "enabled": True,
+    }])
+
+    missing_cmake = validate_workflow(workflow, plugin_root=tmp_path)
+    assert {"node_id": "custom_postprocess", "code": "plugin_cmake_source_missing"} in missing_cmake["blockers"]
+
+    (tmp_path / "CMakeLists.txt").write_text(
+        "set(DX_APP_LAB_PLUGIN_SOURCES plugins/postprocess/custom_postprocess.hpp)\n",
+        encoding="utf-8",
+    )
+    assert validate_workflow(workflow, plugin_root=tmp_path)["status"] == "ready"
+
+
+def test_cpp_plugin_without_required_interface_markers_is_incomplete(tmp_path):
+    plugin_path = tmp_path / "plugins" / "preprocess" / "custom_preprocess.hpp"
+    plugin_path.parent.mkdir(parents=True)
+    plugin_path.write_text(
+        """namespace dx_app_lab {
+std::string preprocess(const std::string& input_path, const PluginContext& context);
+}
+""",
+        encoding="utf-8",
+    )
+    (tmp_path / "CMakeLists.txt").write_text(
+        "set(DX_APP_LAB_PLUGIN_SOURCES plugins/preprocess/custom_preprocess.hpp)\n",
+        encoding="utf-8",
+    )
+    workflow = _workflow(plugins=[{
+        "id": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "cpp",
+        "entrypoint": "plugins/preprocess/custom_preprocess.hpp",
+        "interface_version": 1,
+        "enabled": True,
+    }])
+
+    result = validate_workflow(workflow, plugin_root=tmp_path)
+    assert {"node_id": "custom_preprocess", "code": "plugin_incomplete"} in result["blockers"]
+
+
+def test_scaffolded_python_plugin_is_blocked_until_implemented(tmp_path):
+    template = (
+        Path(__file__).resolve().parents[2]
+        / "dx_app" / "templates" / "lab_plugins" / "python_preprocess.py"
+    )
+    plugin_path = tmp_path / "plugins" / "preprocess" / "custom_preprocess.py"
+    plugin_path.parent.mkdir(parents=True)
+    plugin_path.write_text(template.read_text(encoding="utf-8"), encoding="utf-8")
+    workflow = _workflow(plugins=[{
+        "id": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "python",
+        "entrypoint": "plugins/preprocess/custom_preprocess.py",
+        "interface_version": 1,
+        "enabled": True,
+    }])
+
+    result = validate_workflow(workflow, plugin_root=tmp_path)
+    assert {"node_id": "custom_preprocess", "code": "plugin_incomplete"} in result["blockers"]
+
+
+def test_plugin_scaffold_plan_returns_session_bound_preview_without_writing(tmp_path, monkeypatch):
+    import dx_app.core.lab_portal as lab_portal
+    from dx_app.core.developer import lab_session
+
+    token = lab_session()["token"]
+    workflow_manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_workflow(), creator_token=token
+    )
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path)
+
+    result = lab_portal.plan_composer_plugin_scaffold(token, {
+        "workflow_manifest_id": workflow_manifest["id"],
+        "plugin_name": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "python",
+    })
+
+    assert result["kind"] == "composer_plugin_scaffold"
+    assert result["creator_token"] == token
+    assert result["status"] == "ready"
+    assert result["operations"]
+    assert all(operation["root"] == "OUTPUTS_DIR" for operation in result["operations"])
+    assert all("lab_composer" in operation["path"] for operation in result["operations"])
+    assert not any(tmp_path.rglob("*"))
+
+
+def test_cpp_plugin_scaffold_preview_preserves_existing_cmake_sources(tmp_path, monkeypatch):
+    import dx_app.core.lab_portal as lab_portal
+    from dx_app.core.developer import lab_session
+
+    token = lab_session()["token"]
+    workflow_manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_workflow(), creator_token=token
+    )
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path)
+    workspace = tmp_path / "lab_composer" / workflow_manifest["id"]
+    workspace.mkdir(parents=True)
+    (workspace / "CMakeLists.txt").write_text(
+        "set(DX_APP_LAB_PLUGIN_SOURCES\n"
+        "    plugins/preprocess/first.hpp\n"
+        ")\n",
+        encoding="utf-8",
+    )
+
+    result = lab_portal.plan_composer_plugin_scaffold(token, {
+        "workflow_manifest_id": workflow_manifest["id"],
+        "plugin_name": "second",
+        "stage": "postprocess",
+        "language": "cpp",
+    })
+
+    cmake_preview = next(
+        operation["preview"]
+        for operation in result["operations"]
+        if operation["path"].endswith("CMakeLists.txt")
+    )
+    assert "plugins/preprocess/first.hpp" in cmake_preview
+    assert "plugins/postprocess/second.hpp" in cmake_preview
+
+
+def test_plugin_scaffold_plan_rejects_symlinked_session_workspace(tmp_path, monkeypatch):
+    import dx_app.core.lab_portal as lab_portal
+    from dx_app.core.developer import lab_session
+
+    token = lab_session()["token"]
+    workflow_manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_workflow(), creator_token=token
+    )
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (tmp_path / "lab_composer").symlink_to(outside, target_is_directory=True)
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path)
+
+    result = lab_portal.plan_composer_plugin_scaffold(token, {
+        "workflow_manifest_id": workflow_manifest["id"],
+        "plugin_name": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "python",
+    })
+
+    assert result["status"] == 400
+    assert result["error_code"] == "plugin_path_unsafe"

@@ -76,6 +76,26 @@ def test_composer_routes_reject_hostile_origin_even_with_valid_token(path):
     assert captured["data"]["error"] == "Cross-origin access denied"
 
 
+def test_plugin_scaffold_preview_route_requires_local_lab_session():
+    from developer import lab_session
+
+    missing_token = _post_route(
+        "/api/lab/composer/plugin/dry_run",
+        {},
+        headers={"Origin": "http://localhost:8080"},
+    )
+    hostile_origin = _post_route(
+        "/api/lab/composer/plugin/dry_run",
+        {},
+        headers={"X-Lab-Token": lab_session()["token"], "Origin": "https://evil.example.com"},
+    )
+
+    assert missing_token["code"] == 403
+    assert missing_token["data"]["error"] == "Lab session required"
+    assert hostile_origin["code"] == 403
+    assert hostile_origin["data"]["error"] == "Cross-origin access denied"
+
+
 def test_composer_run_rejects_expired_workflow_without_invoking_inference(monkeypatch):
     import lab_portal
     from developer import lab_session
