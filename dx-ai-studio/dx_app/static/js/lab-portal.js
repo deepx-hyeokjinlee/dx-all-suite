@@ -3,6 +3,7 @@ window.LabPortal = (function () {
   var _ready = false;
   var _cardsBound = false;
   var _capabilities = null;
+  var _composerOpened = false;
   var _currentManifest = null;
   var _dryRunInFlight = false;
   var _applyInFlight = false;
@@ -807,12 +808,22 @@ window.LabPortal = (function () {
     });
   }
 
+  async function _openComposerByDefault() {
+    if (_composerOpened || !window.LabComposer || typeof window.LabComposer.open !== 'function') return;
+    await window.LabComposer.open();
+    _composerOpened = true;
+  }
+
   async function init() {
-    if (_ready) return;
+    if (_ready) {
+      await _openComposerByDefault();
+      return;
+    }
     _bindCards();
     if (!S.labToken && typeof labEnsureSession === 'function') await labEnsureSession();
     var ok = await _loadCapabilities();
     _ready = !!ok;
+    if (_ready) await _openComposerByDefault();
   }
 
   return {

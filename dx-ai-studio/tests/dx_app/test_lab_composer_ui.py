@@ -42,6 +42,16 @@ COMPOSER_I18N_KEYS = {
     "Run Workflow",
     "Export Package",
     "Workflow validation blocked",
+    "Builder",
+    "Runnable Models",
+    "Compatible Assets",
+    "Canvas",
+    "Inspector",
+    "Drop model here",
+    "Drop asset here",
+    "Built-in Factory Component",
+    "Plugin execution requires Factory integration",
+    "The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.",
 }
 LOCALES = ("ko", "ja", "zh-CN", "zh-TW", "es")
 
@@ -107,11 +117,24 @@ def test_workflow_preview_exposes_server_resolved_model_and_input():
     assert "workflow.input" in source
 
 
-def test_graph_is_hidden_until_a_workflow_is_created():
+def test_builder_canvas_is_visible_with_a_fixed_safe_core_chain():
     source = _composer_source()
 
-    assert 'graph.hidden = !currentWorkflow' in source
-    assert 'graph.setAttribute("aria-hidden", String(!currentWorkflow))' in source
+    assert "function renderBuilderCanvas" in source
+    assert "lab-composer-canvas" in source
+    assert "CORE_NODE_ORDER" in source
+    assert "graph.hidden = !currentWorkflow" not in source
+
+
+def test_builder_reuses_trusted_selection_actions_for_lists_and_drag_drop():
+    source = _composer_source()
+
+    assert "function applyModelSelection" in source
+    assert "function applyAssetSelection" in source
+    assert "MODEL_DRAG_MIME" in source
+    assert "ASSET_DRAG_MIME" in source
+    assert "model_selection" in source
+    assert "input_selection" in source
 
 
 def test_blocked_validation_disables_run_and_export_controls():

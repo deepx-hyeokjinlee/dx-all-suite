@@ -3030,6 +3030,40 @@ window._DX_I18N_DICT = {
     'zh-TW': '工作流程驗證已封鎖',
     es: 'La validación del flujo de trabajo está bloqueada',
   },
+  'Builder': {
+    ko: '빌더', ja: 'ビルダー', 'zh-CN': '构建器', 'zh-TW': '建構器', es: 'Constructor',
+  },
+  'Runnable Models': {
+    ko: '실행 가능한 모델', ja: '実行可能なモデル', 'zh-CN': '可运行模型', 'zh-TW': '可執行模型', es: 'Modelos ejecutables',
+  },
+  'Compatible Assets': {
+    ko: '호환 asset', ja: '互換 asset', 'zh-CN': '兼容 asset', 'zh-TW': '相容 asset', es: 'Assets compatibles',
+  },
+  'Canvas': {
+    ko: '캔버스', ja: 'キャンバス', 'zh-CN': '画布', 'zh-TW': '畫布', es: 'Lienzo',
+  },
+  'Inspector': {
+    ko: 'Inspector', ja: 'インスペクター', 'zh-CN': '检查器', 'zh-TW': '檢查器', es: 'Inspector',
+  },
+  'Drop model here': {
+    ko: '여기에 모델 놓기', ja: 'ここにモデルをドロップ', 'zh-CN': '将模型拖放到此处', 'zh-TW': '將模型拖放至此處', es: 'Suelte el modelo aquí',
+  },
+  'Drop asset here': {
+    ko: '여기에 asset 놓기', ja: 'ここに asset をドロップ', 'zh-CN': '将 asset 拖放到此处', 'zh-TW': '將 asset 拖放至此處', es: 'Suelte el asset aquí',
+  },
+  'Built-in Factory Component': {
+    ko: '내장 Factory component', ja: '組み込み Factory component', 'zh-CN': '内置 Factory component', 'zh-TW': '內建 Factory component', es: 'Componente Factory integrado',
+  },
+  'Plugin execution requires Factory integration': {
+    ko: 'Plugin 실행에는 Factory integration이 필요합니다', ja: 'Plugin の実行には Factory integration が必要です', 'zh-CN': 'Plugin 执行需要 Factory integration', 'zh-TW': 'Plugin 執行需要 Factory integration', es: 'La ejecución del plugin requiere integración de Factory',
+  },
+  'The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.': {
+    ko: '선택한 DX App Factory와 SyncRunner가 실행 가능하도록 core chain은 고정됩니다.',
+    ja: '選択した DX App Factory と SyncRunner を実行可能に保つため、core chain は固定されています。',
+    'zh-CN': '为保持所选 DX App Factory 和 SyncRunner 可运行，core chain 固定不变。',
+    'zh-TW': '為維持所選 DX App Factory 與 SyncRunner 可執行，core chain 固定不變。',
+    es: 'La cadena central es fija para que Factory y SyncRunner de DX App seleccionados sigan siendo ejecutables.',
+  },
   'Built-in defaults': { ko: '내장 기본값', ja: '組み込みの既定値', 'zh-CN': '内置默认值', 'zh-TW': '內建預設值', es: 'Valores predeterminados integrados' },
   'Blocked': { ko: '차단됨', ja: 'ブロック済み', 'zh-CN': '已阻止', 'zh-TW': '已封鎖', es: 'Bloqueado' },
   'Plugin scaffold preview': { ko: 'Plugin scaffold 미리보기', ja: 'Plugin scaffold プレビュー', 'zh-CN': 'Plugin scaffold 预览', 'zh-TW': 'Plugin scaffold 預覽', es: 'Vista previa del scaffold de plugin' },

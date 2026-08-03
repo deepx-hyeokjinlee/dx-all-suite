@@ -1293,7 +1293,34 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-result{min-height:100px}
 .lab-composer-result .res-img{display:block;max-width:100%;max-height:520px;margin-top:var(--sp-3);border-radius:var(--radius);border:1px solid var(--border)}
 .lab-composer-error{margin:0;color:#ff8f8f}
+.lab-composer-graph>.lab-composer-history{margin:0 0 var(--sp-3)}
+.lab-composer-builder{display:grid;grid-template-columns:minmax(190px,240px) minmax(0,1fr) minmax(220px,300px);gap:var(--sp-3);align-items:stretch}
+.lab-composer-palette,.lab-composer-inspector{display:flex;min-width:0;flex-direction:column;gap:var(--sp-2);border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-1);padding:var(--sp-3)}
+.lab-composer-palette h3,.lab-composer-inspector h3{margin:0;color:var(--text-1)}
+.lab-composer-palette h4,.lab-composer-inspector h4{margin:var(--sp-2) 0 0;color:var(--text-2);font-family:var(--mono);font-size:var(--fs-2xs);letter-spacing:.08em;text-transform:uppercase}
+.lab-composer-palette .lab-composer-tabs{margin:0 -2px}
+.lab-composer-palette .lab-composer-tab{flex:1;padding:7px 5px;font-size:var(--fs-xs)}
+.lab-composer-palette-item{width:100%;border:1px solid var(--border);border-left:3px solid transparent;border-radius:calc(var(--radius) - 2px);background:var(--bg-2);color:var(--text-2);padding:8px 9px;cursor:pointer;font:inherit;font-size:var(--fs-xs);line-height:1.35;overflow-wrap:anywhere;text-align:left;transition:border-color .15s,background .15s,color .15s}
+.lab-composer-palette-item:hover,.lab-composer-palette-item:focus-visible{border-color:var(--accent);color:var(--text-1);outline:none}
+.lab-composer-palette-item.selected{border-left-color:var(--accent);border-color:rgba(99,140,255,.55);background:var(--accent-dim);color:var(--accent-light)}
+.lab-composer-model-choice{cursor:grab}.lab-composer-model-choice:active{cursor:grabbing}
+.lab-composer-asset-choice{cursor:grab}.lab-composer-asset-choice:active{cursor:grabbing}
+.lab-composer-canvas{position:relative;min-width:0;overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(rgba(99,140,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(99,140,255,.035) 1px,transparent 1px),var(--bg-0);background-size:22px 22px;padding:var(--sp-3)}
+.lab-composer-canvas h3{margin:0 0 var(--sp-2);color:var(--text-1)}
+.lab-composer-canvas>.lab-composer-node-chain{min-width:930px;flex-wrap:nowrap;margin-top:var(--sp-4)}
+.lab-composer-canvas .lab-composer-node{min-width:166px;max-width:190px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.lab-composer-canvas .lab-composer-node:hover,.lab-composer-canvas .lab-composer-node:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,140,255,.16);outline:none;transform:translateY(-1px)}
+.lab-composer-canvas .lab-composer-node.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,140,255,.26)}
+.lab-composer-selection-drop-target{border-style:dashed}
+.lab-composer-drop-active{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(99,140,255,.25)!important}
+.lab-composer-factory-note{margin:0;border-left:2px solid var(--accent);padding-left:var(--sp-2);color:var(--text-2);font-size:var(--fs-xs);line-height:1.5}
+@media(max-width:1100px){
+  .lab-composer-builder{grid-template-columns:minmax(180px,1fr) minmax(0,2fr)}
+  .lab-composer-inspector{grid-column:1/-1}
+}
 @media(max-width:600px){
+  .lab-composer-builder{grid-template-columns:1fr}
+  .lab-composer-inspector{grid-column:auto}
   .lab-composer-tabs{overflow-x:auto}
   .lab-composer-tab{white-space:nowrap}
   .lab-composer-history{justify-content:flex-start;margin:0 0 var(--sp-3)}
