@@ -1233,6 +1233,41 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-status-ok{border-color:rgba(34,197,94,.35)}
 .lab-status-err{border-color:rgba(239,68,68,.35)}
 
+/* DX App Composer */
+.lab-composer{display:flex;flex-direction:column;gap:var(--sp-4)}
+.lab-composer-title{margin:0;color:var(--text-1)}
+.lab-composer-tabs{display:flex;gap:var(--sp-2);border-bottom:1px solid var(--border)}
+.lab-composer-tab{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--text-3);padding:9px 14px;cursor:pointer}
+.lab-composer-tab.active{color:var(--accent-light);border-bottom-color:var(--accent);font-weight:600}
+.lab-composer-panel,.lab-composer-summary,.lab-composer-graph,.lab-composer-result{border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-2);padding:var(--sp-4)}
+.lab-composer-panel h3,.lab-composer-summary h3,.lab-composer-graph h3,.lab-composer-result h3{margin:0 0 var(--sp-2);color:var(--text-1)}
+.lab-composer-summary-details{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 14px;margin:0}
+.lab-composer-summary-details dt{color:var(--text-3);font-size:var(--fs-sm)}
+.lab-composer-summary-details dd{margin:0;color:var(--text-1);overflow-wrap:anywhere}
+.lab-composer-template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--sp-2);margin-top:var(--sp-3)}
+.lab-composer-template{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--text-2);padding:var(--sp-3);cursor:pointer;text-align:left;text-transform:capitalize}
+.lab-composer-template:hover{border-color:var(--accent);color:var(--accent-light)}
+.lab-composer-empty{margin:var(--sp-3) 0 0;border-left:3px solid var(--warn,#d29922);padding-left:var(--sp-3);color:var(--text-2);font-size:var(--fs-sm);line-height:1.6}
+.lab-composer-node-chain{display:flex;align-items:stretch;gap:var(--sp-2);flex-wrap:wrap}
+.lab-composer-node{display:flex;min-width:110px;flex-direction:column;gap:4px;border:1px solid rgba(99,140,255,.3);border-radius:var(--radius);background:var(--accent-dim);padding:var(--sp-3);color:var(--accent-light)}
+.lab-composer-arrow{align-self:center;color:var(--text-4);font-size:var(--fs-lg)}
+.lab-composer-validation{margin:0;border-radius:var(--radius);padding:10px 12px;font-weight:600}
+.lab-composer-validation-ready{border:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.08);color:#58d68d}
+.lab-composer-validation-blocked{border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.08);color:#ff8f8f}
+.lab-composer-blockers,.lab-composer-warnings{margin:0;padding-left:20px;color:var(--text-2);font-size:var(--fs-sm)}
+.lab-composer-actions{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.lab-composer-actions .btn:disabled{cursor:not-allowed;opacity:.5}
+.lab-composer-result{min-height:100px}
+.lab-composer-result .res-img{display:block;max-width:100%;max-height:520px;margin-top:var(--sp-3);border-radius:var(--radius);border:1px solid var(--border)}
+.lab-composer-error{margin:0;color:#ff8f8f}
+@media(max-width:600px){
+  .lab-composer-tabs{overflow-x:auto}
+  .lab-composer-tab{white-space:nowrap}
+  .lab-composer-node-chain{flex-direction:column}
+  .lab-composer-arrow{align-self:flex-start;transform:rotate(90deg)}
+  .lab-composer-actions .btn{width:100%}
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    Run Demo — redesigned cards (design refactor 2026-07)
    4-column grid · per-category hue (--c, set inline) via shared tokens ·
