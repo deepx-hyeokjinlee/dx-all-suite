@@ -475,6 +475,55 @@ def test_composer_run_converts_server_manifest_to_precise_inference_values(monke
     }
 
 
+def test_composer_run_validates_completed_plugins_from_the_controlled_workspace(tmp_path, monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    token = lab_session()["token"]
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path / "outputs")
+    workflow = _ready_workflow()
+    workflow["plugins"] = [{
+        "id": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "python",
+        "entrypoint": "plugins/preprocess/custom_preprocess.py",
+        "interface_version": 1,
+        "enabled": True,
+    }]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=workflow, creator_token=token
+    )
+    plugin = (
+        lab_portal.OUTPUTS_DIR / "lab_composer" / manifest["id"] / "plugins" /
+        "preprocess" / "custom_preprocess.py"
+    )
+    plugin.parent.mkdir(parents=True)
+    plugin.write_text("def preprocess(image, context):\n    return image\n", encoding="utf-8")
+    monkeypatch.setattr(
+        lab_portal,
+        "get_models",
+        lambda: [{
+            "name": "resnet18",
+            "category": "classification",
+            "model_file": "assets/models/resnet18_224x224.dxnn",
+            "model_exists": True,
+            "cpp_sync": True,
+        }],
+    )
+    invoked = {}
+    monkeypatch.setattr(
+        lab_portal,
+        "run_inference",
+        lambda **kwargs: invoked.update(kwargs) or {"status": "ok"},
+    )
+
+    result, code = lab_portal.run_composer_workflow(token, {"manifest_id": manifest["id"]})
+
+    assert code == 200
+    assert result == {"status": "ok"}
+    assert invoked["model_name"] == "resnet18"
+
+
 def test_composer_customize_applies_only_whitelisted_execution_updates():
     import lab_portal
     from developer import lab_session
