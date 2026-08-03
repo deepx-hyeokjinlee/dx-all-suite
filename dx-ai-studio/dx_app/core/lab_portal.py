@@ -1,5 +1,6 @@
 """Lab Extension Portal backend helpers."""
 
+import copy
 import re
 import secrets
 import threading
@@ -27,6 +28,7 @@ from dx_app.core.lab_workflow import (
 from dx_app.core.models import get_models
 from dx_app.core.assets import get_images, get_videos
 from dx_app.core.inference import run_inference
+from dx_app.core.lab_package import build_workflow_package
 
 SCRIPT_DIR = config.SCRIPT_DIR
 
@@ -434,6 +436,128 @@ def run_composer_workflow(tok, payload):
     if isinstance(result, dict) and result.get("error"):
         return _result_with_http_status(result, 400)
     return _result_with_http_status(result)
+
+
+def _composer_plugin_root(manifest):
+    """Return the controlled Composer plugin workspace only when it is safe."""
+    workspace = OUTPUTS_DIR / "lab_composer" / manifest["id"]
+    try:
+        workspace = resolve_under(str(workspace), (OUTPUTS_DIR,))
+    except ValueError as exc:
+        raise ValueError("Composer plugin workspace path is unsafe") from exc
+    if not workspace.exists():
+        return None
+    if _has_symlink_component(workspace, OUTPUTS_DIR) or not workspace.is_dir():
+        raise ValueError("Composer plugin workspace is unsafe")
+    return workspace
+
+
+def _package_download_metadata(package_result):
+    """Publish only a regular archive in the Lab package output namespace."""
+    archive_value = package_result.get("archive_path") if isinstance(package_result, dict) else None
+    try:
+        archive = resolve_existing_file(str(archive_value), (OUTPUTS_DIR,), (".zip",))
+        relative = archive.relative_to(OUTPUTS_DIR)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Package exporter did not create a safe download archive") from exc
+    if (
+        _has_symlink_component(archive, OUTPUTS_DIR)
+        or len(relative.parts) != 2
+        or relative.parts[0] != "lab_packages"
+    ):
+        raise ValueError("Package exporter did not create a safe download archive")
+    return {
+        "name": archive.name,
+        "url": "/outputs/" + relative.as_posix(),
+    }
+
+
+def export_composer_package(tok, payload):
+    """Export an owned ready Composer workflow as a portable package archive."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    package_type = payload.get("package_type")
+    if package_type not in PACKAGE_TYPES:
+        return {
+            "error": "Unsupported package type",
+            "error_code": "package_type_invalid",
+            "allowed_package_types": list(PACKAGE_TYPES),
+        }, 400
+
+    manifest, code = _owned_composer_manifest(tok, payload.get("manifest_id", ""))
+    if code != 200:
+        return manifest, code
+    workflow = manifest.get("workflow")
+    try:
+        plugin_root = _composer_plugin_root(manifest)
+    except ValueError as exc:
+        return {
+            "error": "Composer plugin workspace is unsafe",
+            "error_code": "plugin_workspace_unsafe",
+            "detail": str(exc),
+        }, 400
+
+    validation = validate_workflow(workflow, plugin_root=plugin_root)
+    if validation["status"] != "ready":
+        manifest["status"] = "blocked"
+        if isinstance(workflow, dict):
+            workflow["validation"] = validation
+        return {
+            "error": "Workflow is blocked",
+            "error_code": "workflow_blocked",
+            "validation": validation,
+        }, 400
+
+    model = resolve_runnable_model(workflow.get("model", {}), get_models())
+    if not model:
+        return {
+            "error": "Runnable model not found in the current registry",
+            "error_code": "runnable_model_not_found",
+        }, 400
+
+    package_workflow = copy.deepcopy(workflow)
+    package_workflow["model"] = {
+        "name": model.get("name", ""),
+        "category": model.get("category", ""),
+        "model_file": model.get("model_file", ""),
+        "language": "cpp" if model.get("cpp_sync") else "python",
+        "variant": "sync",
+    }
+    package_validation = validate_workflow(package_workflow, plugin_root=plugin_root)
+    if package_validation["status"] != "ready":
+        return {
+            "error": "Workflow is blocked",
+            "error_code": "workflow_blocked",
+            "validation": package_validation,
+        }, 400
+    if package_workflow.get("plugins") and plugin_root is None:
+        return {
+            "error": "Declared plugins have no controlled Composer workspace",
+            "error_code": "plugin_workspace_unavailable",
+        }, 400
+
+    try:
+        package_result = build_workflow_package(
+            workflow=package_workflow,
+            package_type=package_type,
+            source_root=DX_APP_ROOT,
+            output_root=OUTPUTS_DIR,
+            plugin_root=plugin_root,
+        )
+        download = _package_download_metadata(package_result)
+    except (OSError, RuntimeError, ValueError) as exc:
+        return {
+            "error": "Portable package export failed",
+            "error_code": "package_export_failed",
+            "detail": str(exc),
+        }, 400
+    return {
+        "package_type": package_type,
+        "download": download,
+        "copy_out_verified": bool(package_result.get("copy_out_verified")),
+    }, 200
 
 
 def _recipe_plugin_path_safe(plugin):

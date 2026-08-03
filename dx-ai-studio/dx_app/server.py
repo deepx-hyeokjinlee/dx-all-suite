@@ -140,7 +140,7 @@ from dx_app.core.setup_steps import SETUP_STEPS, setup_status, setup_run, deep_d
 from dx_app.core.developer import (lab_session, lab_check, require_lab, _check_origin_local, dev_add,
                        dev_delete, dev_git, dev_extract, extract_model_package,
                        dev_new_task, bug_report, save_capture)
-from dx_app.core.lab_portal import lab_capabilities, plan_add_model, plan_add_model_response, apply_add_model, smoke_add_model, plan_task_scaffold_response, apply_task_scaffold, generated_files_for_manifest, validate_lab_manifest_id, start_experiment_run, get_experiment_run, cancel_experiment_run, active_experiment_run_for_source, list_pending_manifests, change_summary_by_root, rollback_manifest, scoped_git_plan, plan_composer_quick_start, plan_composer_template, plan_composer_plugin_scaffold, run_composer_workflow, export_composer_recipe, import_composer_recipe
+from dx_app.core.lab_portal import lab_capabilities, plan_add_model, plan_add_model_response, apply_add_model, smoke_add_model, plan_task_scaffold_response, apply_task_scaffold, generated_files_for_manifest, validate_lab_manifest_id, start_experiment_run, get_experiment_run, cancel_experiment_run, active_experiment_run_for_source, list_pending_manifests, change_summary_by_root, rollback_manifest, scoped_git_plan, plan_composer_quick_start, plan_composer_template, plan_composer_plugin_scaffold, run_composer_workflow, export_composer_package, export_composer_recipe, import_composer_recipe
 
 _modelzoo_gw = ModelZooGateway()
 
@@ -400,7 +400,8 @@ class Handler(DXBaseHandler):
                            "/api/lab/rollback", "/api/lab/git/plan",
                            "/api/lab/composer/quick_start", "/api/lab/composer/template",
                            "/api/lab/composer/plugin/dry_run",
-                           "/api/lab/composer/run", "/api/lab/composer/recipe/export",
+                           "/api/lab/composer/run", "/api/lab/composer/export",
+                           "/api/lab/composer/recipe/export",
                            "/api/lab/composer/recipe/import"}
             is_lab_route = path in _LAB_ROUTES or (path.startswith('/api/lab/experiment/') and path.endswith('/cancel'))
             if is_lab_route:
@@ -579,6 +580,10 @@ class Handler(DXBaseHandler):
 
             if path == "/api/lab/composer/run":
                 res, code = run_composer_workflow(tok, data)
+                return self.send_json(res, code)
+
+            if path == "/api/lab/composer/export":
+                res, code = export_composer_package(tok, data)
                 return self.send_json(res, code)
 
             if path == "/api/lab/composer/recipe/export":

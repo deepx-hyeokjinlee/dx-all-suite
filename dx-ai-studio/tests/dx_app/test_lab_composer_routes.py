@@ -7,6 +7,7 @@ COMPOSER_ROUTES = (
     "/api/lab/composer/quick_start",
     "/api/lab/composer/template",
     "/api/lab/composer/run",
+    "/api/lab/composer/export",
     "/api/lab/composer/recipe/export",
     "/api/lab/composer/recipe/import",
 )
@@ -411,6 +412,92 @@ def test_composer_run_converts_server_manifest_to_precise_inference_values(monke
         "device_id": None,
         "save_output": True,
     }
+
+
+def test_composer_export_builds_owned_ready_package_and_returns_download_metadata(monkeypatch, tmp_path):
+    import lab_portal
+    from developer import lab_session
+
+    token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+    registry_model = {
+        "name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/current_resnet18.dxnn",
+        "model_exists": True,
+        "cpp_sync": True,
+    }
+    captured_build = {}
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path / "outputs")
+    archive = lab_portal.OUTPUTS_DIR / "lab_packages" / "workflow_route_test-demo.zip"
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    archive.write_bytes(b"portable package archive")
+
+    def build_package(**kwargs):
+        captured_build.update(kwargs)
+        return {
+            "archive_path": archive,
+            "download_name": archive.name,
+            "copy_out_verified": True,
+        }
+
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [registry_model], raising=False)
+    monkeypatch.setattr(lab_portal, "build_workflow_package", build_package, raising=False)
+
+    exported = _post_route(
+        "/api/lab/composer/export",
+        {"manifest_id": manifest["id"], "package_type": "run"},
+        headers={"X-Lab-Token": token, "Origin": "http://localhost:8080"},
+    )
+
+    assert exported["code"] == 200
+    assert captured_build["package_type"] == "run"
+    assert captured_build["source_root"] == lab_portal.DX_APP_ROOT
+    assert captured_build["output_root"] == lab_portal.OUTPUTS_DIR
+    assert captured_build["workflow"]["model"]["model_file"] == registry_model["model_file"]
+    assert exported["data"] == {
+        "package_type": "run",
+        "download": {
+            "name": "workflow_route_test-demo.zip",
+            "url": "/outputs/lab_packages/workflow_route_test-demo.zip",
+        },
+        "copy_out_verified": True,
+    }
+
+
+def test_composer_export_rejects_invalid_type_and_other_session(monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    owner_token = lab_session()["token"]
+    other_token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=owner_token
+    )
+    monkeypatch.setattr(
+        lab_portal,
+        "build_workflow_package",
+        lambda **kwargs: pytest.fail("Invalid export requests must not build a package"),
+        raising=False,
+    )
+
+    invalid = _post_route(
+        "/api/lab/composer/export",
+        {"manifest_id": manifest["id"], "package_type": "shell"},
+        headers={"X-Lab-Token": owner_token, "Origin": "http://localhost:8080"},
+    )
+    forbidden = _post_route(
+        "/api/lab/composer/export",
+        {"manifest_id": manifest["id"], "package_type": "run"},
+        headers={"X-Lab-Token": other_token, "Origin": "http://localhost:8080"},
+    )
+
+    assert invalid["code"] == 400
+    assert invalid["data"]["error_code"] == "package_type_invalid"
+    assert forbidden["code"] == 403
+    assert forbidden["data"]["error_code"] == "manifest_owner_forbidden"
 
 
 @pytest.mark.parametrize(
