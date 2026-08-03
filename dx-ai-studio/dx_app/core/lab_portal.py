@@ -11,6 +11,15 @@ from dx_app.core import config
 from dx_app.core.config import DX_APP_ROOT, CPP_DIR, PY_DIR, OUTPUTS_DIR
 from dx_app.core.developer import require_lab, _require_lab_model_name, _require_lab_category, dev_add, dev_new_task, build_task_file_plan
 from dx_app.core.dx_app_security import resolve_existing_file, resolve_under
+from dx_app.core.lab_workflow import (
+    PACKAGE_TYPES,
+    PLUGIN_INTERFACE_VERSION,
+    PLUGIN_LANGUAGES,
+    PLUGIN_STAGES,
+    SUPPORTED_NODE_KINDS,
+    WORKFLOW_SCHEMA_VERSION,
+    WORKFLOW_TEMPLATES,
+)
 
 SCRIPT_DIR = config.SCRIPT_DIR
 
@@ -119,6 +128,23 @@ def lab_capabilities():
             "experiment_pipeline": False,
             "benchmark_step": False,
             "rollback": False,
+        },
+        "composer": {
+            "schema_version": WORKFLOW_SCHEMA_VERSION,
+            "templates": WORKFLOW_TEMPLATES,
+            "supported_node_kinds": list(SUPPORTED_NODE_KINDS),
+            "package_types": list(PACKAGE_TYPES),
+            "feature_flags": {
+                "quick_start": True,
+                "templates": True,
+                "custom_plugins": True,
+                "recipe_import_export": True,
+                "run_package_export": True,
+                "developer_package_export": "developer" in PACKAGE_TYPES,
+                "plugin_stages": list(PLUGIN_STAGES),
+                "plugin_languages": list(PLUGIN_LANGUAGES),
+                "plugin_interface_version": PLUGIN_INTERFACE_VERSION,
+            },
         },
     }
 
