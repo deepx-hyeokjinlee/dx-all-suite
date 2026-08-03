@@ -7,6 +7,7 @@ import re
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "dx_app" / "templates" / "index.html"
 COMPOSER_JS = ROOT / "dx_app" / "static" / "js" / "lab-composer.js"
+LAB_PORTAL_JS = ROOT / "dx_app" / "static" / "js" / "lab-portal.js"
 I18N_JS = ROOT / "dx_app" / "static" / "js" / "i18n.js"
 COMPOSER_I18N_KEYS = {
     "Quick Start",
@@ -68,6 +69,24 @@ def test_lab_has_composer_card_with_quick_start_and_templates():
     assert 'data-lab-flow="composer"' in html
     assert "Quick Start" in source
     assert "Templates" in source
+
+
+def test_lab_opens_composer_first_with_builder_regions():
+    html = INDEX.read_text(encoding="utf-8")
+    portal = LAB_PORTAL_JS.read_text(encoding="utf-8")
+    source = _composer_source()
+
+    assert html.index('id="lab-card-composer"') < html.index('id="lab-card-add-model"')
+    assert "function _openComposerByDefault" in portal
+    assert "await _openComposerByDefault();" in portal
+    for name in ("ComposerState", "ComposerApi", "ComposerRenderer"):
+        assert name in source
+    for region in (
+        "lab-composer-palette",
+        "lab-composer-canvas",
+        "lab-composer-inspector",
+    ):
+        assert region in source
 
 
 def test_customize_is_progressive_after_initial_workflow_exists():
