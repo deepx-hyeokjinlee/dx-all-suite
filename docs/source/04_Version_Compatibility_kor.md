@@ -40,7 +40,7 @@
       <td>v2.6.0</td>
       <td>v3.4.1</td>
       <td>v3.1.1</td>
-      <td>v3.2.2</td>
+      <td>v3.2.1</td>
     </tr>
     <tr>
       <td rowspan="3">2026-07-22</td>
