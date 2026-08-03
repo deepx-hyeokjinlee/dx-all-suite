@@ -19,7 +19,14 @@ from dx_app.core.lab_workflow import (
     SUPPORTED_NODE_KINDS,
     WORKFLOW_SCHEMA_VERSION,
     WORKFLOW_TEMPLATES,
+    build_quick_start_workflow,
+    build_template_workflow,
+    resolve_runnable_model,
+    validate_workflow,
 )
+from dx_app.core.models import get_models
+from dx_app.core.assets import get_images, get_videos
+from dx_app.core.inference import run_inference
 
 SCRIPT_DIR = config.SCRIPT_DIR
 
@@ -100,6 +107,302 @@ def get_manifest(manifest_id):
             _manifests.pop(manifest_id, None)
             return {"error": "Manifest expired", "error_code": "manifest_expired"}, 404
         return manifest, 200
+
+
+def resolve_manifest(manifest_id, token=None):
+    """Resolve an active manifest and enforce ownership for Composer workflows."""
+    manifest, code = get_manifest(manifest_id)
+    if code != 200:
+        return manifest
+    if manifest.get("kind") == "composer_workflow":
+        if not token or manifest.get("creator_token") != token:
+            raise PermissionError("Manifest owner session does not match creator")
+    return manifest
+
+
+def _owned_composer_manifest(tok, manifest_id):
+    """Return an owned Composer manifest as a route-style (body, status) pair."""
+    manifest, code = get_manifest(manifest_id)
+    if code != 200:
+        return manifest, code
+    if manifest.get("kind") != "composer_workflow":
+        return {"error": "Invalid manifest kind", "error_code": "invalid_manifest_kind"}, 400
+    try:
+        resolve_manifest(manifest_id, token=tok)
+    except PermissionError:
+        return {
+            "error": "Manifest belongs to a different Lab session",
+            "error_code": "manifest_owner_forbidden",
+        }, 403
+    return manifest, 200
+
+
+def _composer_manifest_response(manifest):
+    workflow = manifest.get("workflow", {})
+    validation = workflow.get("validation", {}) if isinstance(workflow, dict) else {}
+    return {
+        "manifest_id": manifest["id"],
+        "workflow": workflow,
+        "status": manifest.get("status", validation.get("status", "blocked")),
+        "validation": validation,
+    }, 200
+
+
+def _workflow_assets(category, input_kind):
+    """Return only the current Lab asset list compatible with an input kind."""
+    if input_kind == "video":
+        return get_videos()
+    return get_images(category)
+
+
+def _refresh_composer_validation(workflow):
+    """Retain default-resolution blockers while adding structural validation."""
+    initial = workflow.get("validation", {}) if isinstance(workflow, dict) else {}
+    validation = validate_workflow(workflow)
+    if initial.get("status") != "blocked":
+        workflow["validation"] = validation
+        return validation
+
+    blockers = []
+    for blocker in initial.get("blockers", []) + validation.get("blockers", []):
+        if blocker not in blockers:
+            blockers.append(blocker)
+    warnings = []
+    for warning in initial.get("warnings", []) + validation.get("warnings", []):
+        if warning not in warnings:
+            warnings.append(warning)
+    workflow["validation"] = {"status": "blocked", "blockers": blockers, "warnings": warnings}
+    return workflow["validation"]
+
+
+def plan_composer_quick_start(tok, payload):
+    """Build a token-bound Composer Quick Start workflow from current server data."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    selection = payload.get("selection")
+    if not isinstance(selection, dict):
+        selection = payload.get("model") if isinstance(payload.get("model"), dict) else {}
+    models = get_models()
+    model = resolve_runnable_model(selection, models)
+    category = (model or selection).get("category", "")
+    input_kind = "video" if "video" in str(category).lower() else "image"
+    workflow = build_quick_start_workflow(selection, models, _workflow_assets(category, input_kind))
+    _refresh_composer_validation(workflow)
+    manifest = create_manifest(
+        "composer_workflow",
+        workflow=workflow,
+        creator_token=tok,
+        status=workflow["validation"]["status"],
+        summary="Composer Quick Start workflow",
+    )
+    return _composer_manifest_response(manifest)
+
+
+def plan_composer_template(tok, payload):
+    """Build a token-bound Composer template workflow from current server data."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    template_id = payload.get("template_id", "")
+    template = WORKFLOW_TEMPLATES.get(template_id, {})
+    category = template.get("category")
+    models = get_models()
+    requested = payload.get("selection")
+    if not isinstance(requested, dict) and payload.get("model_name"):
+        requested = {"name": payload["model_name"]}
+    if isinstance(requested, dict):
+        selected_model = resolve_runnable_model(requested, models)
+        candidate_models = (
+            [selected_model]
+            if selected_model and (not category or selected_model.get("category") == category)
+            else []
+        )
+    else:
+        candidate_models = models
+    workflow = build_template_workflow(
+        template_id,
+        candidate_models,
+        get_images(category),
+        get_videos(),
+    )
+    _refresh_composer_validation(workflow)
+    manifest = create_manifest(
+        "composer_workflow",
+        workflow=workflow,
+        creator_token=tok,
+        status=workflow["validation"]["status"],
+        summary="Composer template workflow",
+    )
+    return _composer_manifest_response(manifest)
+
+
+def run_composer_workflow(tok, payload):
+    """Run an owned, ready workflow using current runnable registry values only."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    manifest, code = _owned_composer_manifest(tok, payload.get("manifest_id", ""))
+    if code != 200:
+        return manifest, code
+
+    workflow = manifest.get("workflow")
+    validation = validate_workflow(workflow)
+    if validation["status"] != "ready":
+        manifest["status"] = "blocked"
+        if isinstance(workflow, dict):
+            workflow["validation"] = validation
+        return {
+            "error": "Workflow is blocked",
+            "error_code": "workflow_blocked",
+            "validation": validation,
+        }, 400
+
+    model = resolve_runnable_model(workflow.get("model", {}), get_models())
+    if not model:
+        return {
+            "error": "Runnable model not found in the current registry",
+            "error_code": "runnable_model_not_found",
+        }, 400
+    input_data = workflow.get("input", {})
+    input_kind = input_data.get("kind")
+    if input_kind not in ("image", "video"):
+        return {
+            "error": "Workflow input is not runnable",
+            "error_code": "workflow_blocked",
+            "validation": validation,
+        }, 400
+
+    result = run_inference(
+        model_name=model.get("name", ""),
+        category=model.get("category", ""),
+        model_file=model.get("model_file", ""),
+        lang="cpp" if model.get("cpp_sync") else "python",
+        variant="sync",
+        input_type=input_kind,
+        image_path=input_data.get("path") if input_kind == "image" else None,
+        video_path=input_data.get("path") if input_kind == "video" else None,
+        device_id=workflow.get("execution", {}).get("device_id"),
+        save_output=workflow.get("execution", {}).get("save_output", True),
+    )
+    if isinstance(result, dict) and result.get("error"):
+        return _result_with_http_status(result, 400)
+    return _result_with_http_status(result)
+
+
+def _recipe_plugin_path_safe(plugin):
+    entrypoint = Path(str(plugin.get("entrypoint", "")))
+    return (
+        bool(plugin.get("entrypoint"))
+        and not entrypoint.is_absolute()
+        and ".." not in entrypoint.parts
+        and len(entrypoint.parts) >= 3
+        and entrypoint.parts[0] == "plugins"
+        and entrypoint.parts[1] == plugin.get("stage")
+    )
+
+
+def export_composer_recipe(tok, payload):
+    """Export an owned validated workflow without binary or asset-path references."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    manifest, code = _owned_composer_manifest(tok, payload.get("manifest_id", ""))
+    if code != 200:
+        return manifest, code
+    workflow = manifest.get("workflow")
+    validation = validate_workflow(workflow)
+    if validation["status"] != "ready":
+        return {
+            "error": "Workflow is blocked",
+            "error_code": "workflow_blocked",
+            "validation": validation,
+        }, 400
+    model = workflow["model"]
+    recipe = {
+        "schema_version": WORKFLOW_SCHEMA_VERSION,
+        "model": {key: model.get(key) for key in ("name", "category", "language", "variant")},
+        "input": {"kind": workflow["input"].get("kind")},
+        "nodes": workflow.get("nodes", []),
+        "plugins": workflow.get("plugins", []),
+        "execution": dict(workflow.get("execution", {})),
+    }
+    return {"recipe": recipe}, 200
+
+
+def import_recipe(recipe, models=None, images=None, videos=None):
+    """Return a canonical workflow or a structured recipe-import error dictionary."""
+    if not isinstance(recipe, dict) or recipe.get("schema_version") != WORKFLOW_SCHEMA_VERSION:
+        return {"error": "Unsupported recipe schema", "error_code": "recipe_schema_unsupported"}
+    plugins = recipe.get("plugins", [])
+    if not isinstance(plugins, list) or any(
+        not isinstance(plugin, dict) or not _recipe_plugin_path_safe(plugin)
+        for plugin in plugins
+    ):
+        return {"error": "Plugin entrypoint is unsafe", "error_code": "plugin_path_unsafe"}
+
+    registry = get_models() if models is None else models
+    selection = recipe.get("model", {})
+    model = resolve_runnable_model(selection, registry)
+    if not model:
+        return {"error": "Runnable model not found", "error_code": "runnable_model_not_found"}
+    requested_input = recipe.get("input", {})
+    input_kind = requested_input.get("kind", "image") if isinstance(requested_input, dict) else "image"
+    if input_kind not in ("image", "video", "camera"):
+        return {"error": "Recipe input is invalid", "error_code": "recipe_input_invalid"}
+    if images is None:
+        images = get_images(model.get("category"))
+    if videos is None:
+        videos = get_videos()
+    assets = videos if input_kind == "video" else images
+    template_id = {"video": "video", "camera": "camera"}.get(input_kind)
+    workflow = build_quick_start_workflow(
+        {"name": model.get("name", "")},
+        registry,
+        assets,
+        template_id=template_id,
+    )
+    workflow["source"] = "recipe"
+    workflow["plugins"] = [dict(plugin) for plugin in plugins]
+    execution = recipe.get("execution", {})
+    if isinstance(execution, dict):
+        workflow["execution"] = {
+            "device_id": execution.get("device_id"),
+            "save_output": bool(execution.get("save_output", True)),
+        }
+    _refresh_composer_validation(workflow)
+    return workflow
+
+
+def import_composer_recipe(tok, payload):
+    """Import a recipe into a new token-bound Composer manifest."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    recipe = payload.get("recipe")
+    selection = recipe.get("model", {}) if isinstance(recipe, dict) else {}
+    category = selection.get("category") if isinstance(selection, dict) else None
+    workflow = import_recipe(
+        recipe,
+        models=get_models(),
+        images=get_images(category),
+        videos=get_videos(),
+    )
+    if workflow.get("error"):
+        return _error_response(workflow, 400)
+    manifest = create_manifest(
+        "composer_workflow",
+        workflow=workflow,
+        creator_token=tok,
+        status=workflow["validation"]["status"],
+        summary="Imported Composer recipe",
+    )
+    return _composer_manifest_response(manifest)
 
 
 def acquire_apply_lock(manifest_id):
