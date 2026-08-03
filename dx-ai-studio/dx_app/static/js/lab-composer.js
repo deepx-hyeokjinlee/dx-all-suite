@@ -6,6 +6,13 @@ window.LabComposer = (function () {
   var models = [];
   var composerCapabilities = null;
   var modelLoadError = false;
+  var customizationHistory = [];
+  var customizationHistoryIndex = -1;
+  var pendingPluginScaffold = null;
+  var compatibleAssets = [];
+  var compatibleAssetKey = '';
+  var MAX_CUSTOMIZATION_HISTORY = 20;
+  var PLUGIN_DRAG_MIME = 'application/x-dx-app-composer-plugin';
   var DEFERRED_COMPOSER_ROUTES = [
     '/api/lab/composer/recipe/export',
     '/api/lab/composer/recipe/import'
@@ -21,6 +28,18 @@ window.LabComposer = (function () {
         quickStart: 'Quick Start',
         templates: 'Templates',
         customize: 'Customize',
+        undo: 'Undo',
+        redo: 'Redo',
+        saveOutput: 'Save Output',
+        selectInputAsset: 'Select input asset',
+        deviceId: 'Device ID',
+        invalidDeviceId: 'Device ID must be a non-negative integer',
+        pluginPalette: 'Plugin palette',
+        dragPlugin: 'Drag a custom plugin to Preprocess or Postprocess',
+        customPlugin: 'Custom plugin',
+        addCustomPreprocess: 'Add custom preprocess',
+        addCustomPostprocess: 'Add custom postprocess',
+        applyPluginScaffold: 'Apply Plugin Scaffold',
         runWorkflow: 'Run Workflow',
         exportPackage: 'Export Package',
         validationBlocked: 'Workflow validation blocked'
@@ -30,6 +49,18 @@ window.LabComposer = (function () {
       quickStart: T('Quick Start'),
       templates: T('Templates'),
       customize: T('Customize'),
+      undo: T('Undo'),
+      redo: T('Redo'),
+      saveOutput: T('Save Output'),
+      selectInputAsset: T('Select input asset'),
+      deviceId: T('Device ID'),
+      invalidDeviceId: T('Device ID must be a non-negative integer'),
+      pluginPalette: T('Plugin palette'),
+      dragPlugin: T('Drag a custom plugin to Preprocess or Postprocess'),
+      customPlugin: T('Custom plugin'),
+      addCustomPreprocess: T('Add custom preprocess'),
+      addCustomPostprocess: T('Add custom postprocess'),
+      applyPluginScaffold: T('Apply Plugin Scaffold'),
       runWorkflow: T('Run Workflow'),
       exportPackage: T('Export Package'),
       validationBlocked: T('Workflow validation blocked')
@@ -134,7 +165,101 @@ window.LabComposer = (function () {
     return select;
   }
 
-  function setWorkflow(response) {
+  function assetKeyFor(workflow) {
+    var input = workflow && workflow.input ? workflow.input : {};
+    var model = workflow && workflow.model ? workflow.model : {};
+    return [input.kind || '', model.category || ''].join(':');
+  }
+
+  async function loadCompatibleAssets(workflow) {
+    var input = workflow && workflow.input ? workflow.input : {};
+    var kind = input.kind;
+    var key = assetKeyFor(workflow);
+    if (key === compatibleAssetKey) return compatibleAssets;
+    compatibleAssetKey = key;
+    compatibleAssets = [];
+    if (kind !== 'image' && kind !== 'video') return compatibleAssets;
+    var url = kind === 'video'
+      ? '/api/videos'
+      : '/api/images?category=' + encodeURIComponent((workflow.model || {}).category || '');
+    try {
+      var response = await fetch(url);
+      var data = response.ok ? await response.json() : [];
+      if (compatibleAssetKey === key) {
+        compatibleAssets = Array.isArray(data) ? data.filter(function (asset) {
+          return typeof asset === 'string' && asset;
+        }) : [];
+      }
+    } catch (err) {
+      if (compatibleAssetKey === key) compatibleAssets = [];
+    }
+    return compatibleAssets;
+  }
+
+  function customizationSnapshot(workflow) {
+    var execution = workflow && workflow.execution ? workflow.execution : {};
+    var plugins = workflow && Array.isArray(workflow.plugins) ? workflow.plugins : [];
+    var model = workflow && workflow.model ? workflow.model : {};
+    var input = workflow && workflow.input ? workflow.input : {};
+    return {
+      model_file: typeof model.model_file === 'string' ? model.model_file : '',
+      input_path: typeof input.path === 'string' ? input.path : '',
+      execution: {
+        device_id: execution.device_id === undefined ? null : execution.device_id,
+        save_output: execution.save_output !== false
+      },
+      plugins: plugins.filter(function (plugin) {
+        return plugin && typeof plugin.id === 'string';
+      }).map(function (plugin) {
+        return { id: plugin.id, enabled: plugin.enabled === true };
+      })
+    };
+  }
+
+  function recordCustomizationState() {
+    if (!currentWorkflow || !currentWorkflow.workflow) return;
+    var snapshot = customizationSnapshot(currentWorkflow.workflow);
+    var current = customizationHistory[customizationHistoryIndex];
+    if (current && JSON.stringify(current) === JSON.stringify(snapshot)) return;
+    customizationHistory = customizationHistory.slice(0, customizationHistoryIndex + 1);
+    customizationHistory.push(snapshot);
+    if (customizationHistory.length > MAX_CUSTOMIZATION_HISTORY) customizationHistory.shift();
+    customizationHistoryIndex = customizationHistory.length - 1;
+  }
+
+  function resetCustomizationHistory() {
+    customizationHistory = [];
+    customizationHistoryIndex = -1;
+    recordCustomizationState();
+  }
+
+  function historyPatch(snapshot) {
+    var workflow = currentWorkflow && currentWorkflow.workflow ? currentWorkflow.workflow : {};
+    var enabledById = {};
+    (snapshot.plugins || []).forEach(function (plugin) {
+      enabledById[plugin.id] = plugin.enabled;
+    });
+    var updates = {
+      execution: {
+        device_id: snapshot.execution.device_id,
+        save_output: snapshot.execution.save_output
+      },
+      plugins: (workflow.plugins || []).filter(function (plugin) {
+        return plugin && typeof plugin.id === 'string';
+      }).map(function (plugin) {
+        return { id: plugin.id, enabled: enabledById[plugin.id] === true };
+      })
+    };
+    if (snapshot.model_file) {
+      updates.model_selection = { model_file: snapshot.model_file };
+    }
+    if (snapshot.input_path) {
+      updates.input_selection = { path: snapshot.input_path };
+    }
+    return updates;
+  }
+
+  function setWorkflow(response, historyAction) {
     if (!response || !response.workflow || !response.manifest_id) {
       renderError(response && response.error ? response.error : text('Workflow validation blocked'));
       return;
@@ -145,7 +270,12 @@ window.LabComposer = (function () {
       validation: response.validation || response.workflow.validation || {},
       status: response.status
     };
+    if (historyAction === 'record') recordCustomizationState();
+    else if (historyAction !== 'preserve') resetCustomizationHistory();
     render();
+    loadCompatibleAssets(currentWorkflow.workflow).then(function () {
+      if (currentWorkflow && compatibleAssetKey === assetKeyFor(currentWorkflow.workflow)) render();
+    });
     var blocked = isBlocked(currentWorkflow.validation);
     setStatus(
       blocked ? composerLabels().validationBlocked : text('Workflow ready'),
@@ -208,6 +338,191 @@ window.LabComposer = (function () {
     parent.appendChild(summary);
   }
 
+  function nodeBlockers(node) {
+    var validation = currentWorkflow && currentWorkflow.validation ? currentWorkflow.validation : {};
+    var blockers = Array.isArray(validation.blockers) ? validation.blockers : [];
+    return blockers.filter(function (blocker) {
+      return blocker && blocker.node_id === node.id;
+    });
+  }
+
+  function nodeParameterSummary(node) {
+    var params = node && node.params && typeof node.params === 'object' ? node.params : {};
+    var entries = Object.keys(params).map(function (key) {
+      return key + ': ' + String(params[key]);
+    });
+    return entries.length ? entries.join(', ') : text('Built-in defaults');
+  }
+
+  function appendPluginControls(card, stage) {
+    var workflow = currentWorkflow && currentWorkflow.workflow ? currentWorkflow.workflow : {};
+    var plugins = Array.isArray(workflow.plugins) ? workflow.plugins : [];
+    plugins.filter(function (plugin) {
+      return plugin && plugin.stage === stage && typeof plugin.id === 'string';
+    }).forEach(function (plugin) {
+      var toggle = make('label', 'lab-composer-plugin-toggle');
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.checked = plugin.enabled === true;
+      checkbox.addEventListener('change', function () {
+        applyCustomization({ plugins: [{ id: plugin.id, enabled: checkbox.checked }] });
+      });
+      toggle.appendChild(checkbox);
+      toggle.appendChild(make('span', '', plugin.id));
+      card.appendChild(toggle);
+    });
+
+    var control = make('div', 'lab-composer-plugin-control');
+    var language = make('select', 'input');
+    appendOption(language, 'python', 'Python');
+    appendOption(language, 'cpp', 'C++');
+    var label = stage === 'preprocess'
+      ? composerLabels().addCustomPreprocess
+      : composerLabels().addCustomPostprocess;
+    var button = appendActionButton(control, 'btn-blue', label, function () {
+      planPluginScaffold(stage, language.value);
+    });
+    button.classList.add('lab-composer-plugin-button');
+    card.appendChild(control);
+  }
+
+  function appendModelCustomization(card, workflow) {
+    var field = make('div', 'lab-composer-node-control');
+    var label = make('label', '', text('Model'));
+    label.setAttribute('for', 'lab-composer-workflow-model');
+    var select = make('select', 'input');
+    select.id = 'lab-composer-workflow-model';
+    appendOption(select, '', text('Select Model'));
+    models.forEach(function (model, index) {
+      appendOption(select, String(index), labelFor(model));
+      if (workflow.model && workflow.model.model_file === model.model_file) select.value = String(index);
+    });
+    select.addEventListener('change', function () {
+      var selected = selectedModel(select);
+      if (!selected) return;
+      applyCustomization({ model_selection: { model_file: selected.model_file } });
+    });
+    field.appendChild(label);
+    field.appendChild(select);
+    card.appendChild(field);
+  }
+
+  function appendAssetCustomization(card, workflow) {
+    var input = workflow.input || {};
+    if (input.kind !== 'image' && input.kind !== 'video') return;
+    var field = make('div', 'lab-composer-node-control');
+    var label = make('label', '', composerLabels().selectInputAsset);
+    label.setAttribute('for', 'lab-composer-input-asset');
+    var select = make('select', 'input');
+    select.id = 'lab-composer-input-asset';
+    var assets = compatibleAssetKey === assetKeyFor(workflow) ? compatibleAssets.slice() : [];
+    if (input.path && assets.indexOf(input.path) === -1) assets.unshift(input.path);
+    appendOption(select, '', composerLabels().selectInputAsset);
+    assets.forEach(function (asset) {
+      appendOption(select, asset, asset);
+    });
+    select.value = input.path || '';
+    select.disabled = !assets.length;
+    select.addEventListener('change', function () {
+      if (!select.value) return;
+      applyCustomization({ input_selection: { path: select.value } });
+    });
+    field.appendChild(label);
+    field.appendChild(select);
+    card.appendChild(field);
+  }
+
+  function appendExecutionControls(card, workflow) {
+    var execution = workflow.execution || {};
+    var field = make('div', 'lab-composer-node-control');
+    var label = make('label', '', composerLabels().deviceId);
+    label.setAttribute('for', 'lab-composer-device-id');
+    var device = document.createElement('input');
+    device.className = 'input';
+    device.id = 'lab-composer-device-id';
+    device.type = 'number';
+    device.min = '0';
+    device.step = '1';
+    device.value = execution.device_id === null || execution.device_id === undefined ? '' : String(execution.device_id);
+    device.addEventListener('change', function () {
+      var deviceId = device.value === '' ? null : Number(device.value);
+      if (deviceId !== null && (!Number.isInteger(deviceId) || deviceId < 0)) {
+        renderError(composerLabels().invalidDeviceId);
+        return;
+      }
+      applyCustomization({ execution: { device_id: deviceId } });
+    });
+    field.appendChild(label);
+    field.appendChild(device);
+    card.appendChild(field);
+  }
+
+  function appendPluginDropTarget(card, stage) {
+    card.classList.add('lab-composer-plugin-drop-target');
+    card.setAttribute('data-plugin-drop-stage', stage);
+    card.appendChild(make('p', 'lab-composer-drop-hint', composerLabels().dragPlugin));
+    card.addEventListener('dragover', function (event) {
+      if (!event.dataTransfer || !Array.prototype.includes.call(event.dataTransfer.types, PLUGIN_DRAG_MIME)) return;
+      event.preventDefault();
+      card.classList.add('lab-composer-plugin-drop-active');
+      event.dataTransfer.dropEffect = 'copy';
+    });
+    card.addEventListener('dragleave', function () {
+      card.classList.remove('lab-composer-plugin-drop-active');
+    });
+    card.addEventListener('drop', function (event) {
+      event.preventDefault();
+      card.classList.remove('lab-composer-plugin-drop-active');
+      var language = event.dataTransfer ? event.dataTransfer.getData(PLUGIN_DRAG_MIME) : '';
+      if (language !== 'python' && language !== 'cpp') return;
+      planPluginScaffold(stage, language);
+    });
+  }
+
+  function renderPluginPalette(graph) {
+    var palette = make('section', 'lab-composer-plugin-palette');
+    palette.appendChild(make('h4', '', composerLabels().pluginPalette));
+    palette.appendChild(make('p', 'txt-dim txt-sm', composerLabels().dragPlugin));
+    ['python', 'cpp'].forEach(function (language) {
+      var chip = make('button', 'lab-composer-plugin-chip', language === 'python' ? 'Python' : 'C++');
+      chip.type = 'button';
+      chip.draggable = true;
+      chip.setAttribute('aria-label', language + ' ' + composerLabels().customPlugin);
+      chip.addEventListener('dragstart', function (event) {
+        if (!event.dataTransfer) return;
+        event.dataTransfer.effectAllowed = 'copy';
+        event.dataTransfer.setData(PLUGIN_DRAG_MIME, language);
+      });
+      palette.appendChild(chip);
+    });
+    graph.appendChild(palette);
+  }
+
+  function renderHistoryControls(graph) {
+    var controls = make('div', 'lab-composer-history');
+    var undo = appendActionButton(controls, 'btn-blue', composerLabels().undo, undoCustomization);
+    undo.disabled = customizationHistoryIndex <= 0;
+    var redo = appendActionButton(controls, 'btn-blue', composerLabels().redo, redoCustomization);
+    redo.disabled = customizationHistoryIndex < 0 || customizationHistoryIndex >= customizationHistory.length - 1;
+    graph.appendChild(controls);
+  }
+
+  function renderPluginScaffoldPreview(graph) {
+    if (!pendingPluginScaffold) return;
+    var preview = make('section', 'lab-composer-plugin-preview');
+    preview.appendChild(make('h4', '', text('Plugin scaffold preview')));
+    (pendingPluginScaffold.operations || []).forEach(function (operation) {
+      preview.appendChild(make('p', 'txt-sm', operation.path || text('Unavailable')));
+    });
+    preview.appendChild(appendActionButton(
+      preview,
+      'btn-acc',
+      composerLabels().applyPluginScaffold,
+      applyPluginScaffold
+    ));
+    graph.appendChild(preview);
+  }
+
   function renderGraph(parent) {
     var graph = make('section', 'lab-composer-graph');
     graph.id = 'lab-composer-graph';
@@ -219,6 +534,8 @@ window.LabComposer = (function () {
       parent.appendChild(graph);
       return;
     }
+    renderHistoryControls(graph);
+    renderPluginPalette(graph);
     var names = {
       input: 'Input',
       builtin_preprocess: 'Preprocess',
@@ -232,13 +549,44 @@ window.LabComposer = (function () {
     nodes.forEach(function (node, index) {
       if (!node || !node.enabled || !names[node.kind]) return;
       if (chain.childNodes.length) chain.appendChild(make('span', 'lab-composer-arrow', '→'));
-      var card = make('div', 'lab-composer-node');
-      card.appendChild(make('strong', '', names[node.kind]));
+      var blockers = nodeBlockers(node);
+      var card = make('article', 'lab-composer-node');
+      card.appendChild(make('strong', '', text(names[node.kind])));
       card.appendChild(make('span', 'txt-dim txt-sm', node.kind));
+      card.appendChild(make(
+        'span',
+        'lab-composer-node-status ' + (blockers.length ? 'lab-composer-node-blocked' : 'lab-composer-node-ready'),
+        blockers.length ? text('Blocked') : text('Ready')
+      ));
+      card.appendChild(make('p', 'lab-composer-node-params', nodeParameterSummary(node)));
+      if (node.kind === 'input') appendAssetCustomization(card, currentWorkflow.workflow);
+      if (node.kind === 'inference') appendModelCustomization(card, currentWorkflow.workflow);
+      if (node.kind === 'builtin_preprocess') {
+        appendPluginControls(card, 'preprocess');
+        appendPluginDropTarget(card, 'preprocess');
+      }
+      if (node.kind === 'builtin_postprocess') {
+        appendPluginControls(card, 'postprocess');
+        appendPluginDropTarget(card, 'postprocess');
+      }
+      if (node.kind === 'builtin_visualizer') {
+        var saveOutput = make('label', 'lab-composer-plugin-toggle');
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = currentWorkflow.workflow.execution && currentWorkflow.workflow.execution.save_output !== false;
+        checkbox.addEventListener('change', function () {
+          applyCustomization({ execution: { save_output: checkbox.checked } });
+        });
+        saveOutput.appendChild(checkbox);
+        saveOutput.appendChild(make('span', '', composerLabels().saveOutput));
+        card.appendChild(saveOutput);
+        appendExecutionControls(card, currentWorkflow.workflow);
+      }
       card.setAttribute('data-node-index', String(index));
       chain.appendChild(card);
     });
     graph.appendChild(chain);
+    renderPluginScaffoldPreview(graph);
     parent.appendChild(graph);
   }
 
@@ -287,6 +635,73 @@ window.LabComposer = (function () {
     if (model) payload.selection = selectionFor(model);
     var result = await request('/api/lab/composer/template', payload);
     setWorkflow(result);
+  }
+
+  async function applyCustomization(updates, historyIndex) {
+    if (!currentWorkflow) return;
+    setStatus(text('Updating workflow'), 'info');
+    var result = await request("/api/lab/composer/customize", {
+      manifest_id: currentWorkflow.manifest_id,
+      updates: updates
+    });
+    if (!result || result.error) {
+      renderError((result && result.error) || text('Workflow validation blocked'));
+      return;
+    }
+    if (typeof historyIndex === 'number') customizationHistoryIndex = historyIndex;
+    setWorkflow(result, typeof historyIndex === 'number' ? 'preserve' : 'record');
+  }
+
+  async function undoCustomization() {
+    if (customizationHistoryIndex <= 0) return;
+    var targetIndex = customizationHistoryIndex - 1;
+    await applyCustomization(historyPatch(customizationHistory[targetIndex]), targetIndex);
+  }
+
+  async function redoCustomization() {
+    if (customizationHistoryIndex < 0 || customizationHistoryIndex >= customizationHistory.length - 1) return;
+    var targetIndex = customizationHistoryIndex + 1;
+    await applyCustomization(historyPatch(customizationHistory[targetIndex]), targetIndex);
+  }
+
+  async function planPluginScaffold(stage, language) {
+    if (!currentWorkflow) return;
+    setStatus(text('Creating Plugin Scaffold'), 'info');
+    var result = await request('/api/lab/composer/plugin/dry_run', {
+      workflow_manifest_id: currentWorkflow.manifest_id,
+      plugin_name: 'custom_' + stage,
+      stage: stage,
+      language: language
+    });
+    if (!result || result.error) {
+      renderError((result && result.error) || text('Plugin scaffold planning failed'));
+      return;
+    }
+    pendingPluginScaffold = result;
+    render();
+  }
+
+  async function applyPluginScaffold() {
+    if (!pendingPluginScaffold) return;
+    var confirmations = {};
+    var required = Array.isArray(pendingPluginScaffold.confirmations)
+      ? pendingPluginScaffold.confirmations : [];
+    for (var index = 0; index < required.length; index += 1) {
+      var confirmation = required[index];
+      if (typeof window.confirm === 'function' && !window.confirm(confirmation.label)) return;
+      confirmations[confirmation.key] = confirmation.expected;
+    }
+    setStatus(text('Applying Plugin Scaffold'), 'info');
+    var result = await request('/api/lab/composer/plugin/apply', {
+      plugin_manifest_id: pendingPluginScaffold.id,
+      confirmations: confirmations
+    });
+    if (!result || result.error) {
+      renderError((result && result.error) || text('Plugin scaffold apply failed'));
+      return;
+    }
+    pendingPluginScaffold = null;
+    setWorkflow(result, 'record');
   }
 
   function renderQuickStart(parent) {

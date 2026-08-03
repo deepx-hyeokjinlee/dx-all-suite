@@ -282,6 +282,11 @@ def plan_composer_plugin_scaffold(tok, payload):
     )
 
 
+def plan_composer_plugin_scaffold_response(tok, payload):
+    """Wrap plugin scaffold planning for HTTP routes without leaking status fields."""
+    return _result_with_http_status(plan_composer_plugin_scaffold(tok, payload))
+
+
 def _composer_manifest_response(manifest):
     workflow = manifest.get("workflow", {})
     validation = workflow.get("validation", {}) if isinstance(workflow, dict) else {}
@@ -300,24 +305,333 @@ def _workflow_assets(category, input_kind):
     return get_images(category)
 
 
-def _refresh_composer_validation(workflow):
-    """Retain default-resolution blockers while adding structural validation."""
+_COMPOSER_RESOLUTION_BLOCKER_CODES = frozenset({
+    "runnable_model_not_found",
+    "compatible_input_not_found",
+    "template_not_found",
+})
+
+
+def _refresh_composer_validation(workflow, plugin_root=None):
+    """Retain immutable resolution blockers while recomputing mutable validation."""
     initial = workflow.get("validation", {}) if isinstance(workflow, dict) else {}
-    validation = validate_workflow(workflow)
-    if initial.get("status") != "blocked":
-        workflow["validation"] = validation
-        return validation
+    validation = validate_workflow(workflow, plugin_root=plugin_root)
 
     blockers = []
-    for blocker in initial.get("blockers", []) + validation.get("blockers", []):
+    resolution_blockers = [
+        blocker for blocker in initial.get("blockers", [])
+        if isinstance(blocker, dict)
+        and blocker.get("code") in _COMPOSER_RESOLUTION_BLOCKER_CODES
+    ]
+    for blocker in resolution_blockers + validation.get("blockers", []):
         if blocker not in blockers:
             blockers.append(blocker)
-    warnings = []
-    for warning in initial.get("warnings", []) + validation.get("warnings", []):
-        if warning not in warnings:
-            warnings.append(warning)
-    workflow["validation"] = {"status": "blocked", "blockers": blockers, "warnings": warnings}
+    workflow["validation"] = {
+        "status": "blocked" if blockers else "ready",
+        "blockers": blockers,
+        "warnings": validation.get("warnings", []),
+    }
     return workflow["validation"]
+
+
+def _composer_patch_error(code, message="Workflow customization is not allowed"):
+    return {"error": message, "error_code": code}, 400
+
+
+def _set_composer_resolution_blocker(workflow, node_id, code, present):
+    """Update only one server-resolution blocker before canonical revalidation."""
+    validation = workflow.get("validation") if isinstance(workflow, dict) else None
+    validation = validation if isinstance(validation, dict) else {}
+    blockers = validation.get("blockers") if isinstance(validation.get("blockers"), list) else []
+    retained = [
+        blocker for blocker in blockers
+        if (
+            not isinstance(blocker, dict)
+            or blocker.get("node_id") != node_id
+            or blocker.get("code") != code
+        )
+    ]
+    if present:
+        retained.append({"node_id": node_id, "code": code})
+    workflow["validation"] = {
+        "status": "blocked" if retained else "ready",
+        "blockers": retained,
+        "warnings": validation.get("warnings") if isinstance(validation.get("warnings"), list) else [],
+    }
+
+
+def _workflow_model_from_registry(model):
+    """Project a verified runnable registry record into canonical workflow identity."""
+    if not isinstance(model, dict):
+        return None
+    name = model.get("name")
+    category = model.get("category")
+    model_file = model.get("model_file")
+    if not all(isinstance(value, str) and value for value in (name, category, model_file)):
+        return None
+    if model.get("cpp_sync"):
+        language = "cpp"
+    elif model.get("py_sync"):
+        language = "python"
+    else:
+        return None
+    return {
+        "name": name,
+        "category": category,
+        "model_file": model_file,
+        "language": language,
+        "variant": "sync",
+    }
+
+
+def _compatible_composer_assets(category, input_kind):
+    """Return trusted, selectable current assets for a workflow input type."""
+    if input_kind not in ("image", "video"):
+        return []
+    return [
+        asset for asset in _workflow_assets(category, input_kind)
+        if isinstance(asset, str) and asset
+    ]
+
+
+def _apply_composer_updates(workflow, updates):
+    """Apply only the fixed, non-executable Composer customization schema."""
+    if not isinstance(updates, dict) or not updates:
+        return None, _composer_patch_error("workflow_patch_invalid", "Workflow updates are required")
+    if set(updates) - {"execution", "plugins", "model_selection", "input_selection"}:
+        return None, _composer_patch_error("workflow_patch_forbidden")
+
+    candidate = copy.deepcopy(workflow)
+    if not isinstance(candidate, dict):
+        return None, _composer_patch_error("workflow_patch_invalid", "Workflow is invalid")
+
+    if "execution" in updates:
+        execution = updates["execution"]
+        if not isinstance(execution, dict) or set(execution) - {"device_id", "save_output"}:
+            return None, _composer_patch_error("workflow_patch_forbidden")
+        current_execution = candidate.get("execution")
+        if not isinstance(current_execution, dict):
+            return None, _composer_patch_error("workflow_patch_invalid", "Workflow execution is invalid")
+        if "device_id" in execution:
+            device_id = execution["device_id"]
+            if isinstance(device_id, bool) or (device_id is not None and (not isinstance(device_id, int) or device_id < 0)):
+                return None, _composer_patch_error("workflow_patch_invalid", "Device ID must be a non-negative integer or null")
+            current_execution["device_id"] = device_id
+        if "save_output" in execution:
+            if not isinstance(execution["save_output"], bool):
+                return None, _composer_patch_error("workflow_patch_invalid", "Save output must be a boolean")
+            current_execution["save_output"] = execution["save_output"]
+
+    if "model_selection" in updates:
+        selection = updates["model_selection"]
+        if (
+            not isinstance(selection, dict)
+            or set(selection) != {"model_file"}
+            or not isinstance(selection.get("model_file"), str)
+            or not selection["model_file"]
+        ):
+            return None, _composer_patch_error("workflow_patch_forbidden")
+        selected_model = resolve_runnable_model(selection, get_models())
+        canonical_model = _workflow_model_from_registry(selected_model)
+        if canonical_model is None:
+            return None, _composer_patch_error(
+                "workflow_patch_invalid",
+                "Selected model is not runnable in the current registry",
+            )
+        candidate["model"] = canonical_model
+        _set_composer_resolution_blocker(candidate, "model", "runnable_model_not_found", False)
+        input_data = candidate.get("input")
+        if not isinstance(input_data, dict):
+            return None, _composer_patch_error("workflow_patch_invalid", "Workflow input is invalid")
+        input_kind = input_data.get("kind")
+        compatible_assets = _compatible_composer_assets(canonical_model["category"], input_kind)
+        if input_kind in ("image", "video"):
+            if compatible_assets:
+                if input_data.get("path") not in compatible_assets:
+                    input_data["path"] = compatible_assets[0]
+                _set_composer_resolution_blocker(candidate, "input", "compatible_input_not_found", False)
+            else:
+                input_data["path"] = ""
+                _set_composer_resolution_blocker(candidate, "input", "compatible_input_not_found", True)
+
+    if "input_selection" in updates:
+        selection = updates["input_selection"]
+        if (
+            not isinstance(selection, dict)
+            or set(selection) != {"path"}
+            or not isinstance(selection.get("path"), str)
+            or not selection["path"]
+        ):
+            return None, _composer_patch_error("workflow_patch_forbidden")
+        input_data = candidate.get("input")
+        model = candidate.get("model")
+        if not isinstance(input_data, dict) or not isinstance(model, dict):
+            return None, _composer_patch_error("workflow_patch_invalid", "Workflow input is invalid")
+        compatible_assets = _compatible_composer_assets(model.get("category"), input_data.get("kind"))
+        if selection["path"] not in compatible_assets:
+            return None, _composer_patch_error(
+                "workflow_patch_invalid",
+                "Selected input is not compatible with the current workflow",
+            )
+        input_data["path"] = selection["path"]
+        _set_composer_resolution_blocker(candidate, "input", "compatible_input_not_found", False)
+
+    if "plugins" in updates:
+        plugin_updates = updates["plugins"]
+        plugins = candidate.get("plugins")
+        if not isinstance(plugin_updates, list) or not isinstance(plugins, list):
+            return None, _composer_patch_error("workflow_patch_invalid", "Plugin updates are invalid")
+        indexed_plugins = {
+            plugin.get("id"): plugin
+            for plugin in plugins
+            if isinstance(plugin, dict) and isinstance(plugin.get("id"), str)
+        }
+        seen_plugin_ids = set()
+        for plugin_update in plugin_updates:
+            if (
+                not isinstance(plugin_update, dict)
+                or set(plugin_update) != {"id", "enabled"}
+                or not isinstance(plugin_update.get("id"), str)
+                or not isinstance(plugin_update.get("enabled"), bool)
+                or plugin_update["id"] in seen_plugin_ids
+                or plugin_update["id"] not in indexed_plugins
+            ):
+                return None, _composer_patch_error("workflow_patch_forbidden")
+            seen_plugin_ids.add(plugin_update["id"])
+            indexed_plugins[plugin_update["id"]]["enabled"] = plugin_update["enabled"]
+
+    return candidate, None
+
+
+def customize_composer_workflow(tok, payload):
+    """Apply a safe patch to an owned workflow, then immediately revalidate it."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    manifest, code = _owned_composer_manifest(tok, payload.get("manifest_id", ""))
+    if code != 200:
+        return manifest, code
+    ok, lock_err = acquire_apply_lock(manifest["id"])
+    if not ok:
+        return lock_err, 409
+    try:
+        workflow, patch_error = _apply_composer_updates(manifest.get("workflow"), payload.get("updates"))
+        if patch_error:
+            return patch_error
+        try:
+            plugin_root = _composer_plugin_root(manifest)
+        except ValueError:
+            return _composer_patch_error("plugin_workspace_unsafe", "Composer plugin workspace is unsafe")
+        validation = _refresh_composer_validation(workflow, plugin_root=plugin_root)
+        manifest["workflow"] = workflow
+        manifest["status"] = validation["status"]
+        response, response_code = _composer_manifest_response(manifest)
+        response["applied_updates"] = copy.deepcopy(payload["updates"])
+        return response, response_code
+    finally:
+        release_apply_lock(manifest["id"])
+
+
+def apply_composer_plugin_scaffold(tok, payload):
+    """Write only a confirmed server-generated scaffold and attach its plugin reference."""
+    err = require_lab(tok)
+    if err:
+        return _error_response(err, 403)
+    payload = payload if isinstance(payload, dict) else {}
+    scaffold, code = get_manifest(payload.get("plugin_manifest_id", ""))
+    if code != 200:
+        return scaffold, code
+    if scaffold.get("kind") != "composer_plugin_scaffold":
+        return {"error": "Invalid manifest kind", "error_code": "invalid_manifest_kind"}, 400
+    if scaffold.get("creator_token") != tok:
+        return {
+            "error": "Manifest belongs to a different Lab session",
+            "error_code": "manifest_owner_forbidden",
+        }, 403
+    if scaffold.get("status") != "ready":
+        return {"error": "Plugin scaffold is not ready", "error_code": "manifest_not_ready"}, 400
+    confirmed, missing = _confirmations_match(scaffold, payload)
+    if not confirmed:
+        return {"error": "Confirmation required", "error_code": "confirmation_required", "missing": missing}, 400
+
+    inputs = scaffold.get("inputs", {})
+    workflow_manifest, code = _owned_composer_manifest(tok, inputs.get("workflow_manifest_id", ""))
+    if code != 200:
+        return workflow_manifest, code
+    stage = inputs.get("stage")
+    language = inputs.get("language")
+    name = inputs.get("plugin_name")
+    if (
+        stage not in PLUGIN_STAGES
+        or language not in PLUGIN_LANGUAGES
+        or not isinstance(name, str)
+        or not _PLUGIN_NAME_RE.fullmatch(name)
+    ):
+        return _composer_patch_error("plugin_scaffold_invalid", "Plugin scaffold is invalid")
+
+    expected_root = Path("lab_composer") / workflow_manifest["id"]
+    expected_path = expected_root / "plugins" / stage / f"{name}{'.py' if language == 'python' else '.hpp'}"
+    operations = scaffold.get("operations", [])
+    if not isinstance(operations, list) or not operations:
+        return _composer_patch_error("plugin_scaffold_invalid", "Plugin scaffold operations are invalid")
+
+    ok, lock_err = acquire_apply_lock(workflow_manifest["id"])
+    if not ok:
+        return lock_err, 409
+    try:
+        written_paths = []
+        for operation in operations:
+            if not isinstance(operation, dict) or operation.get("root") != "OUTPUTS_DIR":
+                return _composer_patch_error("plugin_scaffold_invalid", "Plugin scaffold operation is invalid")
+            relative = Path(str(operation.get("path", "")))
+            preview = operation.get("preview")
+            if not isinstance(preview, str):
+                return _composer_patch_error("plugin_scaffold_invalid", "Plugin scaffold preview is invalid")
+            try:
+                if relative != expected_path and relative != expected_root / "CMakeLists.txt":
+                    raise ValueError("Unexpected plugin scaffold path")
+                target = resolve_under(str(OUTPUTS_DIR / relative), (OUTPUTS_DIR,))
+            except ValueError:
+                return _composer_patch_error("plugin_path_unsafe", "Plugin scaffold path is unsafe")
+            if _has_symlink_component(target, OUTPUTS_DIR):
+                return _composer_patch_error("plugin_path_unsafe", "Plugin scaffold path is unsafe")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if _has_symlink_component(target.parent, OUTPUTS_DIR):
+                return _composer_patch_error("plugin_path_unsafe", "Plugin scaffold path is unsafe")
+            target.write_text(preview, encoding="utf-8")
+            written_paths.append(relative)
+
+        if expected_path not in written_paths:
+            return _composer_patch_error("plugin_scaffold_invalid", "Plugin source was not generated")
+        workflow = copy.deepcopy(workflow_manifest.get("workflow"))
+        if not isinstance(workflow, dict):
+            return _composer_patch_error("workflow_patch_invalid", "Workflow is invalid")
+        plugin = {
+            "id": name,
+            "stage": stage,
+            "language": language,
+            "entrypoint": (Path("plugins") / stage / expected_path.name).as_posix(),
+            "interface_version": PLUGIN_INTERFACE_VERSION,
+            "enabled": True,
+        }
+        existing_plugins = workflow.get("plugins", [])
+        if not isinstance(existing_plugins, list):
+            return _composer_patch_error("workflow_patch_invalid", "Workflow plugins are invalid")
+        workflow["plugins"] = [
+            existing for existing in existing_plugins
+            if not isinstance(existing, dict) or existing.get("stage") != stage
+        ] + [plugin]
+        plugin_root = _composer_plugin_root(workflow_manifest)
+        validation = _refresh_composer_validation(workflow, plugin_root=plugin_root)
+        workflow_manifest["workflow"] = workflow
+        workflow_manifest["status"] = validation["status"]
+        scaffold["status"] = "applied"
+        response, response_code = _composer_manifest_response(workflow_manifest)
+        response["applied_plugin"] = plugin
+        return response, response_code
+    finally:
+        release_apply_lock(workflow_manifest["id"])
 
 
 def plan_composer_quick_start(tok, payload):

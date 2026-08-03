@@ -2934,6 +2934,39 @@ window._DX_I18N_DICT = {
     'zh-TW': '自訂',
     es: 'Personalizar',
   },
+  'Undo': {
+    ko: '실행 취소', ja: '元に戻す', 'zh-CN': '撤销', 'zh-TW': '復原', es: 'Deshacer',
+  },
+  'Redo': {
+    ko: '다시 실행', ja: 'やり直す', 'zh-CN': '重做', 'zh-TW': '重做', es: 'Rehacer',
+  },
+  'Save Output': {
+    ko: '출력 저장', ja: '出力を保存', 'zh-CN': '保存输出', 'zh-TW': '儲存輸出', es: 'Guardar salida',
+  },
+  'Select input asset': {
+    ko: '입력 asset 선택', ja: '入力 asset を選択', 'zh-CN': '选择输入 asset', 'zh-TW': '選取輸入 asset', es: 'Seleccionar asset de entrada',
+  },
+  'Device ID must be a non-negative integer': {
+    ko: 'Device ID는 0 이상의 정수여야 합니다', ja: 'Device ID は 0 以上の整数である必要があります', 'zh-CN': 'Device ID 必须是非负整数', 'zh-TW': 'Device ID 必須是非負整數', es: 'El ID de dispositivo debe ser un entero no negativo',
+  },
+  'Plugin palette': {
+    ko: 'Plugin 팔레트', ja: 'Plugin パレット', 'zh-CN': 'Plugin 调色板', 'zh-TW': 'Plugin 調色盤', es: 'Paleta de plugin',
+  },
+  'Drag a custom plugin to Preprocess or Postprocess': {
+    ko: '사용자 지정 Plugin을 Preprocess 또는 Postprocess로 드래그하세요', ja: 'カスタム Plugin を Preprocess または Postprocess にドラッグしてください', 'zh-CN': '将自定义 Plugin 拖到 Preprocess 或 Postprocess', 'zh-TW': '將自訂 Plugin 拖曳到 Preprocess 或 Postprocess', es: 'Arrastre un plugin personalizado a Preprocess o Postprocess',
+  },
+  'Custom plugin': {
+    ko: '사용자 지정 Plugin', ja: 'カスタム Plugin', 'zh-CN': '自定义 Plugin', 'zh-TW': '自訂 Plugin', es: 'Plugin personalizado',
+  },
+  'Add custom preprocess': {
+    ko: '사용자 지정 전처리 추가', ja: 'カスタム前処理を追加', 'zh-CN': '添加自定义预处理', 'zh-TW': '新增自訂前處理', es: 'Agregar preprocesamiento personalizado',
+  },
+  'Add custom postprocess': {
+    ko: '사용자 지정 후처리 추가', ja: 'カスタム後処理を追加', 'zh-CN': '添加自定义后处理', 'zh-TW': '新增自訂後處理', es: 'Agregar posprocesamiento personalizado',
+  },
+  'Apply Plugin Scaffold': {
+    ko: 'Plugin scaffold 적용', ja: 'Plugin scaffold を適用', 'zh-CN': '应用 Plugin scaffold', 'zh-TW': '套用 Plugin scaffold', es: 'Aplicar scaffold de plugin',
+  },
   'Run Workflow': {
     ko: '워크플로우 실행',
     ja: 'ワークフローを実行',
@@ -2955,6 +2988,14 @@ window._DX_I18N_DICT = {
     'zh-TW': '工作流程驗證已封鎖',
     es: 'La validación del flujo de trabajo está bloqueada',
   },
+  'Built-in defaults': { ko: '내장 기본값', ja: '組み込みの既定値', 'zh-CN': '内置默认值', 'zh-TW': '內建預設值', es: 'Valores predeterminados integrados' },
+  'Blocked': { ko: '차단됨', ja: 'ブロック済み', 'zh-CN': '已阻止', 'zh-TW': '已封鎖', es: 'Bloqueado' },
+  'Plugin scaffold preview': { ko: 'Plugin scaffold 미리보기', ja: 'Plugin scaffold プレビュー', 'zh-CN': 'Plugin scaffold 预览', 'zh-TW': 'Plugin scaffold 預覽', es: 'Vista previa del scaffold de plugin' },
+  'Updating workflow': { ko: '워크플로우 업데이트 중', ja: 'ワークフローを更新中', 'zh-CN': '正在更新工作流', 'zh-TW': '正在更新工作流程', es: 'Actualizando flujo de trabajo' },
+  'Creating Plugin Scaffold': { ko: 'Plugin scaffold 생성 중', ja: 'Plugin scaffold を作成中', 'zh-CN': '正在创建 Plugin scaffold', 'zh-TW': '正在建立 Plugin scaffold', es: 'Creando scaffold de plugin' },
+  'Plugin scaffold planning failed': { ko: 'Plugin scaffold 계획에 실패했습니다', ja: 'Plugin scaffold の計画に失敗しました', 'zh-CN': 'Plugin scaffold 规划失败', 'zh-TW': 'Plugin scaffold 規劃失敗', es: 'Falló la planificación del scaffold de plugin' },
+  'Applying Plugin Scaffold': { ko: 'Plugin scaffold 적용 중', ja: 'Plugin scaffold を適用中', 'zh-CN': '正在应用 Plugin scaffold', 'zh-TW': '正在套用 Plugin scaffold', es: 'Aplicando scaffold de plugin' },
+  'Plugin scaffold apply failed': { ko: 'Plugin scaffold 적용에 실패했습니다', ja: 'Plugin scaffold の適用に失敗しました', 'zh-CN': 'Plugin scaffold 应用失败', 'zh-TW': 'Plugin scaffold 套用失敗', es: 'Falló la aplicación del scaffold de plugin' },
   'DX App Composer': { ko: 'DX App Composer', ja: 'DX App コンポーザー', 'zh-CN': 'DX App 组合器', 'zh-TW': 'DX App 組合器', es: 'Compositor DX App' },
   'Workflow Preview': { ko: '워크플로우 미리보기', ja: 'ワークフロープレビュー', 'zh-CN': '工作流预览', 'zh-TW': '工作流程預覽', es: 'Vista previa del flujo de trabajo' },
   'Workflow ready': { ko: '워크플로우가 준비되었습니다', ja: 'ワークフローの準備ができました', 'zh-CN': '工作流已准备就绪', 'zh-TW': '工作流程已就緒', es: 'El flujo de trabajo está listo' },

@@ -1248,8 +1248,34 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-template{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--text-2);padding:var(--sp-3);cursor:pointer;text-align:left;text-transform:capitalize}
 .lab-composer-template:hover{border-color:var(--accent);color:var(--accent-light)}
 .lab-composer-empty{margin:var(--sp-3) 0 0;border-left:3px solid var(--warn,#d29922);padding-left:var(--sp-3);color:var(--text-2);font-size:var(--fs-sm);line-height:1.6}
+.lab-composer-history{display:flex;gap:var(--sp-2);justify-content:flex-end;margin:-34px 0 var(--sp-3)}
+.lab-composer-history .btn{padding:5px 10px;font-size:var(--fs-xs)}
 .lab-composer-node-chain{display:flex;align-items:stretch;gap:var(--sp-2);flex-wrap:wrap}
-.lab-composer-node{display:flex;min-width:110px;flex-direction:column;gap:4px;border:1px solid rgba(99,140,255,.3);border-radius:var(--radius);background:var(--accent-dim);padding:var(--sp-3);color:var(--accent-light)}
+.lab-composer-node{display:flex;min-width:180px;max-width:260px;flex:1;flex-direction:column;gap:var(--sp-2);border:1px solid rgba(99,140,255,.3);border-radius:var(--radius);background:var(--accent-dim);padding:var(--sp-3);color:var(--accent-light)}
+.lab-composer-node-status{align-self:flex-start;border-radius:999px;padding:2px 7px;font-size:var(--fs-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.lab-composer-node-ready{background:rgba(34,197,94,.15);color:#6ee7a5}
+.lab-composer-node-blocked{background:rgba(239,68,68,.16);color:#ff9b9b}
+.lab-composer-node-params{margin:0;color:var(--text-2);font-size:var(--fs-xs);line-height:1.45;overflow-wrap:anywhere}
+.lab-composer-node-control{display:flex;flex-direction:column;gap:4px}
+.lab-composer-node-control label{color:var(--text-2);font-size:var(--fs-2xs);font-weight:600}
+.lab-composer-node-control .input{width:100%;min-width:0;font-size:var(--fs-xs)}
+.lab-composer-plugin-control{display:flex;gap:var(--sp-2);align-items:center;margin-top:auto}
+.lab-composer-plugin-control .input{min-width:0;flex:1}
+.lab-composer-plugin-button{font-size:var(--fs-xs);padding:6px 8px}
+.lab-composer-plugin-toggle{display:flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-xs);color:var(--text-2);cursor:pointer}
+.lab-composer-plugin-toggle input{accent-color:var(--accent)}
+.lab-composer-plugin-palette{display:flex;align-items:center;flex-wrap:wrap;gap:var(--sp-2);margin:0 0 var(--sp-3);padding:var(--sp-3);border:1px dashed var(--border-hover);border-radius:var(--radius);background:rgba(99,140,255,.04)}
+.lab-composer-plugin-palette h4,.lab-composer-plugin-palette p{margin:0}
+.lab-composer-plugin-palette h4{color:var(--text-1);font-size:var(--fs-sm)}
+.lab-composer-plugin-palette p{flex-basis:100%}
+.lab-composer-plugin-chip{border:1px solid rgba(99,140,255,.5);border-radius:999px;background:var(--accent-dim);padding:4px 9px;color:var(--accent-light);font:inherit;font-size:var(--fs-xs);cursor:grab}
+.lab-composer-plugin-chip:active{cursor:grabbing}
+.lab-composer-plugin-drop-target{border-style:dashed}
+.lab-composer-plugin-drop-active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,140,255,.2)}
+.lab-composer-drop-hint{margin:0;color:var(--text-2);font-size:var(--fs-2xs);line-height:1.4}
+.lab-composer-plugin-preview{margin-top:var(--sp-3);padding:var(--sp-3);border:1px dashed var(--border-hover);border-radius:var(--radius);background:rgba(99,140,255,.06)}
+.lab-composer-plugin-preview h4{margin:0 0 var(--sp-2);color:var(--text-1);font-size:var(--fs-sm)}
+.lab-composer-plugin-preview p{margin:0 0 var(--sp-2);font-family:var(--mono);overflow-wrap:anywhere}
 .lab-composer-arrow{align-self:center;color:var(--text-4);font-size:var(--fs-lg)}
 .lab-composer-validation{margin:0;border-radius:var(--radius);padding:10px 12px;font-weight:600}
 .lab-composer-validation-ready{border:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.08);color:#58d68d}
@@ -1263,7 +1289,10 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 @media(max-width:600px){
   .lab-composer-tabs{overflow-x:auto}
   .lab-composer-tab{white-space:nowrap}
+  .lab-composer-history{justify-content:flex-start;margin:0 0 var(--sp-3)}
   .lab-composer-node-chain{flex-direction:column}
+  .lab-composer-node{max-width:none}
+  .lab-composer-plugin-control{align-items:stretch;flex-direction:column}
   .lab-composer-arrow{align-self:flex-start;transform:rotate(90deg)}
   .lab-composer-actions .btn{width:100%}
 }

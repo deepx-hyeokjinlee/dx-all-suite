@@ -6,6 +6,8 @@ import pytest
 COMPOSER_ROUTES = (
     "/api/lab/composer/quick_start",
     "/api/lab/composer/template",
+    "/api/lab/composer/customize",
+    "/api/lab/composer/plugin/apply",
     "/api/lab/composer/run",
     "/api/lab/composer/export",
     "/api/lab/composer/recipe/export",
@@ -95,6 +97,34 @@ def test_plugin_scaffold_preview_route_requires_local_lab_session():
     assert missing_token["data"]["error"] == "Lab session required"
     assert hostile_origin["code"] == 403
     assert hostile_origin["data"]["error"] == "Cross-origin access denied"
+
+
+def test_plugin_scaffold_preview_route_returns_a_session_bound_dry_run_manifest(tmp_path, monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    planner = getattr(lab_portal, "plan_composer_plugin_scaffold_response", None)
+    assert callable(planner)
+
+    token = lab_session()["token"]
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path / "outputs")
+    workflow_manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+    captured = _post_route(
+        "/api/lab/composer/plugin/dry_run",
+        {
+            "workflow_manifest_id": workflow_manifest["id"],
+            "plugin_name": "custom_preprocess",
+            "stage": "preprocess",
+            "language": "python",
+        },
+        headers={"X-Lab-Token": token, "Origin": "http://localhost:8080"},
+    )
+
+    assert captured["code"] == 200
+    assert captured["data"]["kind"] == "composer_plugin_scaffold"
+    assert captured["data"]["creator_token"] == token
 
 
 def test_composer_run_rejects_expired_workflow_without_invoking_inference(monkeypatch):
@@ -412,6 +442,206 @@ def test_composer_run_converts_server_manifest_to_precise_inference_values(monke
         "device_id": None,
         "save_output": True,
     }
+
+
+def test_composer_customize_applies_only_whitelisted_execution_updates():
+    import lab_portal
+    from developer import lab_session
+
+    customize = getattr(lab_portal, "customize_composer_workflow", None)
+    assert callable(customize)
+
+    token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+    updated, updated_code = customize(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {"execution": {"save_output": False}},
+        },
+    )
+    rejected, rejected_code = customize(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {"model": {"model_file": "/browser-controlled.dxnn"}},
+        },
+    )
+
+    assert updated_code == 200
+    assert updated["status"] == "ready"
+    assert updated["workflow"]["execution"] == {"device_id": None, "save_output": False}
+    assert rejected_code == 400
+    assert rejected["error_code"] == "workflow_patch_forbidden"
+    assert lab_portal.resolve_manifest(manifest["id"], token=token)["workflow"]["model"]["model_file"] == (
+        "assets/models/resnet18_224x224.dxnn"
+    )
+
+
+def test_composer_customize_resolves_only_registry_models_and_compatible_assets(monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    token = lab_session()["token"]
+    selected = {
+        "name": "yolov8n",
+        "category": "object_detection",
+        "model_file": "assets/models/yolov8n.dxnn",
+        "model_exists": True,
+        "cpp_sync": True,
+        "py_sync": False,
+    }
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [selected])
+    monkeypatch.setattr(
+        lab_portal,
+        "_workflow_assets",
+        lambda category, input_kind: ["sample/img/detection.jpg", "sample/img/alternate.jpg"],
+    )
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+
+    updated, code = lab_portal.customize_composer_workflow(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {"model_selection": {"model_file": selected["model_file"]}},
+        },
+    )
+    asset_updated, asset_code = lab_portal.customize_composer_workflow(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {"input_selection": {"path": "sample/img/alternate.jpg"}},
+        },
+    )
+    rejected, rejected_code = lab_portal.customize_composer_workflow(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {"input_selection": {"path": "/browser-controlled.jpg"}},
+        },
+    )
+
+    assert code == 200
+    assert updated["workflow"]["model"] == {
+        "name": "yolov8n",
+        "category": "object_detection",
+        "model_file": "assets/models/yolov8n.dxnn",
+        "language": "cpp",
+        "variant": "sync",
+    }
+    assert updated["workflow"]["input"] == {"kind": "image", "path": "sample/img/detection.jpg"}
+    assert asset_code == 200
+    assert asset_updated["workflow"]["input"]["path"] == "sample/img/alternate.jpg"
+    assert rejected_code == 400
+    assert rejected["error_code"] == "workflow_patch_invalid"
+
+
+def test_composer_customize_retains_default_resolution_blockers():
+    import lab_portal
+    from developer import lab_session
+
+    token = lab_session()["token"]
+    workflow = _ready_workflow()
+    workflow["model"] = {}
+    workflow["plugins"] = [{
+        "id": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "python",
+        "entrypoint": "plugins/preprocess/custom_preprocess.py",
+        "interface_version": 1,
+        "enabled": True,
+    }]
+    workflow["validation"] = {
+        "status": "blocked",
+        "blockers": [
+            {"node_id": "model", "code": "runnable_model_not_found"},
+            {"node_id": "custom_preprocess", "code": "plugin_incomplete"},
+        ],
+        "warnings": [],
+    }
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=workflow, creator_token=token
+    )
+
+    updated, code = lab_portal.customize_composer_workflow(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {
+                "execution": {"save_output": False},
+                "plugins": [{"id": "custom_preprocess", "enabled": False}],
+            },
+        },
+    )
+
+    assert code == 200
+    assert {"node_id": "model", "code": "runnable_model_not_found"} in updated["validation"]["blockers"]
+    assert {"node_id": "custom_preprocess", "code": "plugin_incomplete"} not in updated["validation"]["blockers"]
+
+
+def test_resolution_blocker_updates_are_scoped_to_the_target_node():
+    import lab_portal
+
+    workflow = {
+        "validation": {
+            "status": "blocked",
+            "blockers": [
+                {"node_id": "model", "code": "runnable_model_not_found"},
+                {"node_id": "future_node", "code": "runnable_model_not_found"},
+            ],
+            "warnings": [],
+        },
+    }
+
+    lab_portal._set_composer_resolution_blocker(
+        workflow, "model", "runnable_model_not_found", False
+    )
+
+    assert workflow["validation"]["blockers"] == [
+        {"node_id": "future_node", "code": "runnable_model_not_found"},
+    ]
+
+
+def test_composer_plugin_apply_writes_only_the_confirmed_scaffold_and_blocks_incomplete_plugin(monkeypatch, tmp_path):
+    import lab_portal
+    from developer import lab_session
+
+    apply_scaffold = getattr(lab_portal, "apply_composer_plugin_scaffold", None)
+    assert callable(apply_scaffold)
+
+    token = lab_session()["token"]
+    monkeypatch.setattr(lab_portal, "OUTPUTS_DIR", tmp_path / "outputs")
+    workflow_manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+    scaffold = lab_portal.plan_composer_plugin_scaffold(
+        token,
+        {
+            "workflow_manifest_id": workflow_manifest["id"],
+            "plugin_name": "custom_preprocess",
+            "stage": "preprocess",
+            "language": "python",
+        },
+    )
+    applied, code = apply_scaffold(token, {"plugin_manifest_id": scaffold["id"]})
+
+    assert code == 200
+    assert applied["status"] == "blocked"
+    assert applied["workflow"]["plugins"] == [{
+        "id": "custom_preprocess",
+        "stage": "preprocess",
+        "language": "python",
+        "entrypoint": "plugins/preprocess/custom_preprocess.py",
+        "interface_version": 1,
+        "enabled": True,
+    }]
+    plugin = tmp_path / "outputs" / "lab_composer" / workflow_manifest["id"] / "plugins" / "preprocess" / "custom_preprocess.py"
+    assert plugin.is_file()
+    assert {"node_id": "custom_preprocess", "code": "plugin_incomplete"} in applied["validation"]["blockers"]
 
 
 def test_composer_export_builds_owned_ready_package_and_returns_download_metadata(monkeypatch, tmp_path):

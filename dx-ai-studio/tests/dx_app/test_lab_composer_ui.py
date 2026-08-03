@@ -12,6 +12,18 @@ COMPOSER_I18N_KEYS = {
     "Quick Start",
     "Templates",
     "Customize",
+    "Undo",
+    "Redo",
+    "Save Output",
+    "Select input asset",
+    "Device ID",
+    "Device ID must be a non-negative integer",
+    "Plugin palette",
+    "Drag a custom plugin to Preprocess or Postprocess",
+    "Custom plugin",
+    "Add custom preprocess",
+    "Add custom postprocess",
+    "Apply Plugin Scaffold",
     "Run Workflow",
     "Export Package",
     "Workflow validation blocked",
@@ -21,6 +33,9 @@ LOCALES = ("ko", "ja", "zh-CN", "zh-TW", "es")
 COMPOSER_ROUTES = (
     "/api/lab/composer/quick_start",
     "/api/lab/composer/template",
+    "/api/lab/composer/customize",
+    "/api/lab/composer/plugin/dry_run",
+    "/api/lab/composer/plugin/apply",
     "/api/lab/composer/run",
     "/api/lab/composer/recipe/export",
     "/api/lab/composer/recipe/import",
@@ -92,6 +107,42 @@ def test_composer_distinguishes_model_load_errors_and_safe_package_downloads():
 
     assert "modelLoadError = true" in source
     assert "safeOutputUrl(result.download.url)" in source
+
+
+def test_customize_uses_server_validated_patches_and_confirmed_plugin_scaffolds():
+    source = _composer_source()
+
+    assert "function applyCustomization" in source
+    assert "function applyPluginScaffold" in source
+    assert "customizationHistory" in source
+    assert "Undo" in source
+    assert "Redo" in source
+    assert '"/api/lab/composer/customize"' in source
+    assert "'/api/lab/composer/plugin/dry_run'" in source
+    assert "'/api/lab/composer/plugin/apply'" in source
+    assert "workflow: currentWorkflow.workflow" not in source
+
+
+def test_customize_graph_cards_show_status_parameters_and_plugin_actions():
+    source = _composer_source()
+
+    assert "lab-composer-node-status" in source
+    assert "lab-composer-node-params" in source
+    assert "Add custom preprocess" in source
+    assert "Add custom postprocess" in source
+    assert "save_output" in source
+
+
+def test_customize_supports_server_validated_model_asset_and_plugin_drag_actions():
+    source = _composer_source()
+
+    assert "model_selection" in source
+    assert "input_selection" in source
+    assert "loadCompatibleAssets" in source
+    assert "dragstart" in source
+    assert "dragover" in source
+    assert "drop" in source
+    assert "planPluginScaffold(stage, language)" in source
 
 
 def test_composer_uses_dom_apis_and_text_content_without_inner_html():
