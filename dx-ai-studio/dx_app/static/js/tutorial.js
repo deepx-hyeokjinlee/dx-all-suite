@@ -49,7 +49,7 @@
       setTimeout(function () {
         var card = document.getElementById('run-export-card');
         if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(resolve, 500);
+        setTimeout(resolve, 150);
       }, 100);
     });
   }

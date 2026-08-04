@@ -415,7 +415,9 @@ class DXTutorialEngine {
     window.addEventListener('resize', this._resizeHandler);
     window.addEventListener('scroll', this._scrollHandler, true);
 
-    setTimeout(() => this._showStep(), 400);
+    // 첫 스텝은 다음 프레임에 바로 — overlay 페이드(opacity .3s CSS)와 병행,
+    // 굳이 고정 400ms 기다릴 필요 없음. 타깃 미준비 시 _showStep의 폴링이 처리.
+    requestAnimationFrame(() => this._showStep());
   }
 
   async _showStep() {
@@ -431,7 +433,8 @@ class DXTutorialEngine {
         await beforeResult;
       }
     }
-    await new Promise(r => setTimeout(r, step.beforeStep ? 150 : 80));
+    // beforeStep이 동기 DOM 변경을 했을 수 있어 한 프레임만 양보(paint 반영). 없으면 대기 0.
+    if (step.beforeStep) await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
 
     // 폴링/대기 중에 stop()이나 다른 _showStep이 호출됐으면 중단
     if (this._stepToken !== token || !this._curSection) return;
@@ -469,10 +472,14 @@ class DXTutorialEngine {
     if (target) {
       this._bindScrollRootsFor(target);
       var rect = this._viewportRect(target);
-      var inView = rect && rect.top >= 60 && rect.bottom <= (window.innerHeight - 20);
+      // 완화된 in-view 판정: 타깃이 이미 뷰포트 안에 충분히 보이면 스크롤 생략.
+      // (기존은 top>=60 && bottom<=vh-20로 과하게 엄격 → 대부분 false → 매번 스크롤)
+      var vh = window.innerHeight;
+      var inView = rect && rect.top >= 0 && rect.bottom <= vh && rect.top < vh - 40;
       if (!inView && !step.skipScroll) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        await new Promise(r => setTimeout(r, 450));
+        // instant 스크롤 + 레이아웃 정착용 2프레임 대기(≈32ms). 고정 450ms + smooth 애니 제거.
+        target.scrollIntoView({ block: 'center' });
+        await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
         if (this._stepToken !== token || !this._curSection) return;
       }
       this._applySpotlightBox(target);
@@ -489,13 +496,15 @@ class DXTutorialEngine {
     var needsScroll = rect.top < 60 || rect.bottom > window.innerHeight - 20;
 
     if (needsScroll) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.scrollIntoView({ block: 'center' }); // instant
       var self = this;
-      setTimeout(function() {
-        if (!self._curSection) return;
-        self._applySpotlightBox(el);
-        self._positionTooltip(el);
-      }, 500);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          if (!self._curSection) return;
+          self._applySpotlightBox(el);
+          self._positionTooltip(el);
+        });
+      });
     } else {
       this._applySpotlightBox(el);
     }

@@ -229,17 +229,15 @@ class Handler(DXBaseHandler):
         if method == "GET":
             if path.startswith("/outputs/"):
                 fname=path[9:];fp=OUTPUTS_DIR/fname
-                try:resolve_under(str(fp),(OUTPUTS_DIR,))
+                try:safe_fp=resolve_under(str(fp),(OUTPUTS_DIR,))
                 except ValueError:self.send_error(403);return
-                if fp.exists() and fp.is_file():
-                    cd="attachment" if fp.suffix not in{".mp4",".webm",".jpg",".png"} else "inline"
-                    mime=mimetypes.guess_type(str(fp))[0] or "application/octet-stream"
-                    d=fp.read_bytes();self.send_response(200)
-                    self.send_header("Content-Type",mime);self.send_header("Content-Length",len(d))
-                    self.send_header("Content-Disposition",safe_content_disposition(cd,fname))
-                    self.send_header("Access-Control-Allow-Origin","*");self.end_headers();self.wfile.write(d)
-                else:self.send_error(404)
-                return
+                cd="attachment" if fp.suffix not in{".mp4",".webm",".jpg",".png"} else "inline"
+                # send_file 경유: ETag/Last-Modified/304/청크 스트리밍 획득
+                # (기존은 read_bytes 전량 로드 + 캐시 헤더 없음 → 결과 미디어 매번 재다운로드).
+                # no-cache 강제: 결과가 같은 파일명으로 재생성될 수 있어 max-age(하루 stale) 대신
+                # 항상 ETag 재검증 → 미변경 시 304(재다운로드 없음), 재생성 시 즉시 반영.
+                return self.send_file(safe_fp,cache_control="no-cache, must-revalidate",
+                                      content_disposition=safe_content_disposition(cd,fname))
             if path.startswith("/file/"):
                 fp=DX_APP_ROOT/path[6:]
                 try:
@@ -257,6 +255,16 @@ class Handler(DXBaseHandler):
                 self.send_header("Cache-Control","public, max-age=86400")
                 self.send_header("Access-Control-Allow-Origin","*");self.end_headers();self.wfile.write(d)
                 return
+            if path=="/api/asset-thumb":
+                # Downscaled preview for the composer asset grid (82x54px) — avoids
+                # downloading+decoding full-res sample images. Cached on disk by src+mtime+w.
+                from dx_app.core.assets import sample_thumbnail
+                w=self.read_query_param("w") or "160"
+                try:width=max(32,min(512,int(w)))
+                except (TypeError,ValueError):width=160
+                tp=sample_thumbnail(self.read_query_param("f") or "",width)
+                if not tp:self.send_error(404);return
+                return self.send_file(tp)
             if path=="/api/models":return self.send_json(get_models())
             if path=="/api/catalog":return self.send_json(get_catalog())
             if path=="/api/demos":return self.send_json(build_demos_payload())

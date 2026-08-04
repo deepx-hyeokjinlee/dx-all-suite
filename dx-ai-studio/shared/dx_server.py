@@ -345,8 +345,12 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         "application/json", "application/xml", "image/svg+xml",
     ))
 
-    def send_file(self, filepath, content_type: str | None = None, cache_control: str | None = None):
-        """정적 파일 서빙 + MIME 자동감지 + path 안전검증 + 캐시/ETag/gzip."""
+    def send_file(self, filepath, content_type: str | None = None, cache_control: str | None = None,
+                  content_disposition: str | None = None):
+        """정적 파일 서빙 + MIME 자동감지 + path 안전검증 + 캐시/ETag/gzip.
+
+        content_disposition: 완성된 Content-Disposition 헤더값(예: 'inline; filename="x"').
+        200 응답에만 실림 — /outputs 결과 미디어처럼 다운로드/인라인 구분이 필요한 경로용."""
         p = Path(filepath)
         if not p.exists() or not p.is_file():
             self.send_error(404)
@@ -423,6 +427,8 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         self.send_header("ETag", etag)
         self.send_header("Last-Modified", last_modified)
         self.send_header("Access-Control-Allow-Origin", "*")
+        if content_disposition:
+            self.send_header("Content-Disposition", content_disposition)
         if gzip_eligible:
             self.send_header("Vary", "Accept-Encoding")
 

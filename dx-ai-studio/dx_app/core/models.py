@@ -114,6 +114,28 @@ def _pp_info(lang,cat,mn):
     return i
 
 
+_config_cache = {}  # str(path) -> (mtime_ns, parsed_dict_or_None)
+
+def _read_config_cached(cf):
+    """config.json 파싱 메모이즈 — (경로, mtime_ns) 키. 파일 편집 시 mtime이 바뀌어
+    자동 무효화되므로 테스트/배포에 안전. get_models가 요청마다 모델 수백 개의
+    config.json을 재파싱하던 비용(/api/models·/api/demos·get_catalog가 매번 호출)을 제거."""
+    try:
+        st = cf.stat()
+    except OSError:
+        return None
+    key = str(cf)
+    hit = _config_cache.get(key)
+    if hit is not None and hit[0] == st.st_mtime_ns:
+        return hit[1]
+    try:
+        parsed = json.loads(cf.read_text())
+    except Exception:
+        parsed = None
+    _config_cache[key] = (st.st_mtime_ns, parsed)
+    return parsed
+
+
 def _required_dxnn_exists(model_file):
     if model_file.startswith("-"):
         import shlex as _shlex
@@ -156,15 +178,12 @@ def get_models():
                      "py_sync_cpp_postprocess":False,"py_async_cpp_postprocess":False,"model_file":mf,
                      "model_exists":_mexists,
                      "npu_core":"","dataset":"","input_resolution":"","config":{}}
-                    cf=md/"config.json"
-                    if cf.exists():
-                        try:
-                            cfg=json.loads(cf.read_text())
-                            models[key].update({"config":cfg,
-                             "npu_core":cfg.get("npu_core",cfg.get("NPU_CORE","")),
-                             "dataset":cfg.get("dataset",cfg.get("DATASET","")),
-                             "input_resolution":cfg.get("input_size",cfg.get("INPUT_SIZE",""))})
-                        except Exception:pass
+                    cfg=_read_config_cached(md/"config.json")
+                    if isinstance(cfg,dict):
+                        models[key].update({"config":cfg,
+                         "npu_core":cfg.get("npu_core",cfg.get("NPU_CORE","")),
+                         "dataset":cfg.get("dataset",cfg.get("DATASET","")),
+                         "input_resolution":cfg.get("input_size",cfg.get("INPUT_SIZE",""))})
                 if lang=="cpp":models[key].update({"cpp":True,"cpp_sync":hs,"cpp_async":ha})
                 else:models[key].update({"python":True,"py_sync":hs,"py_async":ha,
                      "py_sync_cpp_postprocess":hsp,"py_async_cpp_postprocess":hap})

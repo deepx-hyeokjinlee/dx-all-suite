@@ -850,8 +850,12 @@ window.LabComposer = (function () {
     var img = document.createElement('img');
     img.className = 'lab-composer-asset-thumb';
     img.loading = 'lazy';
+    img.decoding = 'async';
     img.alt = '';
-    img.src = '/file/' + path;
+    // Server downscales to a small preview (82x54px display) instead of shipping the
+    // full-res original; falls back to hiding the img on any error. Path is from the
+    // trusted server asset list; encode it so subdirs/spaces survive the query string.
+    img.src = '/api/asset-thumb?w=160&f=' + encodeURIComponent(path);
     img.addEventListener('error', function () { img.style.display = 'none'; });
     button.insertBefore(img, button.firstChild);
   }
@@ -1516,7 +1520,12 @@ window.LabComposer = (function () {
   function refreshComposerLanguage() {
     // Composer builds its DOM with T() at render time (no data-i18n attributes), so a
     // language switch cannot be applied by DXI18n.applyLang — re-render to re-translate.
-    if (root()) render();
+    // But only when the composer is actually on screen: LabComposer.open() already
+    // re-renders with the current language every time the composer flow is (re-)selected,
+    // so re-rendering a hidden composer just wastes a full teardown+rebuild plus a re-fetch
+    // of every asset thumbnail. offsetParent === null ⇒ hidden (display:none ancestor).
+    var el = root();
+    if (el && el.offsetParent !== null) render();
   }
 
   function safeOutputUrl(value) {

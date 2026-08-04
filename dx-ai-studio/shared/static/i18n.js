@@ -124,28 +124,30 @@
       else if (_lang === 'en') el.innerHTML = key;
     });
 
-    for (var enPh in _placeholders) {
-      if (!_placeholders.hasOwnProperty(enPh)) continue;
+    // 입력 필드 placeholder 번역: 입력을 한 번만 스캔하고 각 입력의 영문 키를
+    // _placeholders에서 조회. (기존은 placeholder 항목마다 전체 문서를 querySelectorAll —
+    // 항목 N개 × _applyDOM 호출당 N회 풀스캔이라 lang 전환 시 수십 회 중복 스캔이었음.)
+    _queryAll(scope, 'input[placeholder], textarea[placeholder]').forEach(function (el) {
+      if (_lang === 'en') {
+        var orig = el.getAttribute('data-i18n-ph-orig');
+        if (orig) el.setAttribute('placeholder', orig);
+        return;
+      }
+      // 이 입력이 대응하는 영문 키: 이미 번역됐으면 data-i18n-ph-orig, 아니면 현재 placeholder.
+      var origKey = el.getAttribute('data-i18n-ph-orig');
+      var ph = el.getAttribute('placeholder');
+      var enPh = (origKey && _placeholders.hasOwnProperty(origKey)) ? origKey
+               : (ph && _placeholders.hasOwnProperty(ph)) ? ph : null;
+      if (enPh === null) return;
       var phEntry = _placeholders[enPh];
-      _queryAll(scope, 'input[placeholder], textarea[placeholder]').forEach(function (el) {
-        var ph = el.getAttribute('placeholder');
-        if (_lang === 'en') {
-          var orig = el.getAttribute('data-i18n-ph-orig');
-          if (orig) el.setAttribute('placeholder', orig);
-        } else {
-          var target;
-          if (typeof phEntry === 'string') {
-            target = _lang === 'ko' ? phEntry : null;
-          } else if (typeof phEntry === 'object') {
-            target = phEntry[_lang];
-          }
-          if (target && (ph === enPh || el.getAttribute('data-i18n-ph-orig') === enPh)) {
-            el.setAttribute('data-i18n-ph-orig', enPh);
-            el.setAttribute('placeholder', target);
-          }
-        }
-      });
-    }
+      var target;
+      if (typeof phEntry === 'string') target = _lang === 'ko' ? phEntry : null;
+      else if (typeof phEntry === 'object') target = phEntry[_lang];
+      if (target) {
+        el.setAttribute('data-i18n-ph-orig', enPh);
+        el.setAttribute('placeholder', target);
+      }
+    });
 
     _queryAll(scope, '[data-i18n-placeholder]').forEach(function (el) {
       var key = el.getAttribute('data-i18n-placeholder');

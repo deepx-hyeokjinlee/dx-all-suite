@@ -195,7 +195,7 @@
             var tab = document.querySelector('.dashboard-tab[data-tab="fps-compare"]');
             if (tab) tab.click();
             resolve();
-          }, 400);
+          }, 150);
         });
       },
       steps:[
@@ -238,7 +238,7 @@
             var tab = document.querySelector('.dashboard-tab[data-tab="overview"]');
             if (tab) tab.click();
             resolve();
-          }, 400);
+          }, 150);
         });
       },
       steps:[
@@ -286,7 +286,7 @@
             var tab = document.querySelector('.dashboard-tab[data-tab="detail"]');
             if (tab) tab.click();
             resolve();
-          }, 400);
+          }, 150);
         });
       },
       steps:[
@@ -327,7 +327,7 @@
             var tab = document.querySelector('.dashboard-tab[data-tab="version-trend"]');
             if (tab) tab.click();
             resolve();
-          }, 400);
+          }, 150);
         });
       },
       steps:[
@@ -370,7 +370,7 @@
             var tab = document.querySelector('.dashboard-tab[data-tab="ort-compare"]');
             if (tab) tab.click();
             resolve();
-          }, 400);
+          }, 150);
         });
       },
       steps:[
@@ -498,7 +498,7 @@
             var tab = document.querySelector('.dashboard-tab[data-tab="overview"]');
             if (tab) tab.click();
             resolve();
-          }, 400);
+          }, 150);
         });
       },
       steps:[
