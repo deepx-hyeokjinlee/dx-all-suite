@@ -286,6 +286,12 @@ class Handler(DXBaseHandler):
             if path=="/api/cameras":return self.send_json(list_cameras())
             if path=="/api/live_poll":return self.send_json(poll_inference(self.read_query_param("id")))
             if path=="/api/live_result":return self.send_json(get_inference_result(self.read_query_param("id")))
+            if path=="/api/run_poll":
+                from dx_app.core.run_progress import poll_run
+                return self.send_json(poll_run(self.read_query_param("id") or ""))
+            if path=="/api/run_result":
+                from dx_app.core.run_progress import get_run_result
+                return self.send_json(get_run_result(self.read_query_param("id") or ""))
             if path=="/api/live_frame":return self._mjpeg_stream()
             if path=="/api/setup/status":return self.send_json(setup_status())
             if path=="/api/setup/quick-start-plan":return self.send_json({"plan":quick_start_plan()})
@@ -443,6 +449,32 @@ class Handler(DXBaseHandler):
                     save_output=_json_bool(data.get("save_output", True), default=True),
                     image_base64=data.get("image_base64"))
                 return self.send_json(r)
+
+            if path=="/api/run_async":
+                # Non-blocking variant of /api/run: starts the SAME run_inference in a
+                # background thread and returns a job_id the client polls (/api/run_poll,
+                # /api/run_result) for live frame progress. Sync /api/run stays untouched.
+                err, code = _validate_inference_payload(data)
+                if err:
+                    return self.send_json(err, code)
+                params=dict(
+                    model_name=data.get("model_name",""),category=data.get("category",""),
+                    model_file=data.get("model_file",""),lang=data.get("lang","cpp"),
+                    variant=data.get("variant","sync"),input_type=data.get("input_type","image"),
+                    image_path=data.get("image_path"),video_path=data.get("video_path"),
+                    device_id=data.get("device_id"),
+                    conf_threshold=data.get("conf_threshold"),nms_threshold=data.get("nms_threshold"),
+                    config_overrides=data.get("config_overrides"),
+                    upload_path=data.get("upload_path"),loop=data.get("loop"),
+                    camera_id=data.get("camera_id"),rtsp_url=data.get("rtsp_url"),
+                    save_output=_json_bool(data.get("save_output", True), default=True),
+                    image_base64=data.get("image_base64"))
+                from dx_app.core.run_progress import start_run
+                return self.send_json({"job_id":start_run(params),"status":"started"})
+
+            if path=="/api/run_stop":
+                from dx_app.core.run_progress import stop_run
+                return self.send_json(stop_run(data.get("id") or data.get("job_id") or ""))
 
             if path=="/api/run_multi":
                 reqs=data.get("requests",[])

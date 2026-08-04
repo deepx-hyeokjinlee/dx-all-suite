@@ -3148,6 +3148,8 @@ window._DX_I18N_DICT = {
   'Workflow completed': { ko: '워크플로우가 완료되었습니다', ja: 'ワークフローが完了しました', 'zh-CN': '工作流已完成', 'zh-TW': '工作流程已完成', es: 'El flujo de trabajo se completó' },
   'Package export failed': { ko: '패키지 내보내기에 실패했습니다', ja: 'パッケージのエクスポートに失敗しました', 'zh-CN': '软件包导出失败', 'zh-TW': '套件匯出失敗', es: 'La exportación del paquete falló' },
   'Package export completed': { ko: '패키지 내보내기가 완료되었습니다', ja: 'パッケージのエクスポートが完了しました', 'zh-CN': '软件包导出已完成', 'zh-TW': '套件匯出已完成', es: 'La exportación del paquete se completó' },
+  'Running inference…': { ko: '추론 실행 중…', ja: '推論実行中…', 'zh-CN': '正在运行推理…', 'zh-TW': '正在執行推論…', es: 'Ejecutando inferencia…' },
+  'frames': { ko: '프레임', ja: 'フレーム', 'zh-CN': '帧', 'zh-TW': '影格', es: 'fotogramas' },
 };
 
 /* ─── CSS Selectors for DOM translation ─── */
@@ -3742,11 +3744,6 @@ window._DX_I18N_PLACEHOLDERS = {
     ko: '출력', ja: '出力',
     'zh-CN': '输出', 'zh-TW': '輸出',
     es: 'Salida',
-  },
-  'Running inference…': {
-    ko: '추론 실행 중…', ja: '推論実行中…',
-    'zh-CN': '正在运行推理…', 'zh-TW': '正在執行推論…',
-    es: 'Ejecutando inferencia…',
   },
   'Run already in progress': {
     ko: '실행이 이미 진행 중입니다', ja: '実行はすでに進行中です',

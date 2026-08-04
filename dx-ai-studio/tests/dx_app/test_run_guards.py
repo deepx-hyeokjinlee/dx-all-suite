@@ -111,5 +111,5 @@ def test_inference_run_inflight_guard_warns_and_disables_run_button():
     assert "runBtn.disabled=true" in body
     assert "finally" in body
     assert "runBtn.disabled=false" in body
-    assert body.index("runBtn.disabled=true") < body.index("await postJ('/api/run'")
+    assert body.index("runBtn.disabled=true") < body.index("await runWithProgress(")
     assert body.index("runBtn.disabled=false") > body.index("finally")
