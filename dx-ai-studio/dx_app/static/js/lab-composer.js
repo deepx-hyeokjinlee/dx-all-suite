@@ -831,6 +831,31 @@ window.LabComposer = (function () {
     });
   }
 
+  function assetBasename(path) {
+    var value = String(path || '');
+    var slash = value.lastIndexOf('/');
+    return slash >= 0 ? value.slice(slash + 1) : value;
+  }
+
+  function isImageAssetPath(path) {
+    return /\.(jpe?g|png|bmp|webp|gif)$/i.test(String(path || ''));
+  }
+
+  function appendAssetThumbnail(button, path) {
+    // Image inputs get a visual preview so users pick by sight, not filename. dx_app
+    // serves sample inputs at /file/<path>; the path comes from the trusted server asset
+    // list. Lazy-loaded; a non-image (video/pair dir) or missing file hides the img and
+    // falls back to the filename caption. DOM-safe: element APIs only, no HTML strings.
+    if (!isImageAssetPath(path)) return;
+    var img = document.createElement('img');
+    img.className = 'lab-composer-asset-thumb';
+    img.loading = 'lazy';
+    img.alt = '';
+    img.src = '/file/' + path;
+    img.addEventListener('error', function () { img.style.display = 'none'; });
+    button.insertBefore(img, button.firstChild);
+  }
+
   function appendAssetChoices(parent) {
     var workflow = ComposerState.workflow || {};
     var input = workflow.input || {};
@@ -843,17 +868,20 @@ window.LabComposer = (function () {
       parent.appendChild(make('p', 'lab-composer-empty', composerLabels().selectInputAsset));
       return;
     }
+    var grid = make('div', 'lab-composer-asset-grid');
     assets.forEach(function (asset) {
-      appendChoice(
-        parent,
-        asset,
+      var choice = appendChoice(
+        grid,
+        assetBasename(asset),
         'lab-composer-palette-item lab-composer-asset-choice',
         input.path === asset,
         function () { applyAssetSelection(asset); },
         ASSET_DRAG_MIME,
         asset
       );
+      appendAssetThumbnail(choice, asset);
     });
+    parent.appendChild(grid);
   }
 
   function appendSelectionDropTarget(card, kind) {

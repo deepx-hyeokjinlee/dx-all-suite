@@ -1299,6 +1299,9 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-palette-item.selected{border-left-color:var(--accent);border-color:rgba(99,140,255,.55);background:var(--accent-dim);color:var(--accent-light)}
 .lab-composer-model-choice{cursor:grab}.lab-composer-model-choice:active{cursor:grabbing}
 .lab-composer-asset-choice{cursor:grab}.lab-composer-asset-choice:active{cursor:grabbing}
+.lab-composer-asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:var(--sp-1)}
+.lab-composer-asset-grid .lab-composer-asset-choice{display:flex;flex-direction:column;align-items:center;gap:4px;padding:5px;text-align:center;font-size:var(--fs-2xs)}
+.lab-composer-asset-thumb{width:100%;height:54px;object-fit:cover;border-radius:calc(var(--radius) - 3px);background:var(--bg-0);display:block}
 .lab-composer-canvas{position:relative;min-width:0;overflow:hidden;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-0);padding:var(--sp-3)}
 .lab-composer-canvas h3{margin:0 0 var(--sp-2);color:var(--text-1)}
 .lab-composer-graph-host{min-width:0;margin-top:var(--sp-3)}

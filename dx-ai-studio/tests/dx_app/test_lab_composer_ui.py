@@ -437,3 +437,18 @@ def test_inspector_uses_compact_pickers_not_duplicate_full_asset_model_lists():
     # inspector pickers reuse the trusted mutations, not raw workflow payloads
     assert "applyAssetSelection(select.value)" in source
     assert "applyModelSelection(model)" in source
+
+
+def test_asset_picker_renders_lazy_thumbnails_dom_safely():
+    """The Compatible Assets palette shows image thumbnails (served at /file/<path>) so
+    users pick inputs visually, not by filename. Lazy-loaded, DOM-safe, and falls back to
+    the filename caption for non-image or missing files."""
+    source = _composer_source()
+
+    assert "function appendAssetThumbnail" in source
+    assert "function isImageAssetPath" in source
+    assert "lab-composer-asset-grid" in source
+    assert "'/file/' + path" in source
+    assert "img.loading = 'lazy'" in source
+    assert "document.createElement('img')" in source
+    assert "img.style.display = 'none'" in source  # graceful fallback on load error
