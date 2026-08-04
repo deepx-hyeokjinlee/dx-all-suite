@@ -847,8 +847,11 @@ def plan_composer_template(tok, payload):
     return _composer_manifest_response(manifest)
 
 
-def run_composer_workflow(tok, payload):
-    """Run an owned, ready workflow using current runnable registry values only."""
+def run_composer_workflow(tok, payload, job_id=None):
+    """Run an owned, ready workflow using current runnable registry values only.
+
+    job_id (optional): when set, forwarded to run_inference so run_progress can report live
+    frame progress for the async composer run path."""
     err = require_lab(tok)
     if err:
         return _error_response(err, 403)
@@ -917,6 +920,8 @@ def run_composer_workflow(tok, payload):
     }
     if execution.get("config_overrides"):
         inference_request["config_overrides"] = execution["config_overrides"]
+    if job_id is not None:
+        inference_request["job_id"] = job_id
     result = run_inference(**inference_request)
     if isinstance(result, dict) and result.get("error"):
         return _result_with_http_status(result, 400)

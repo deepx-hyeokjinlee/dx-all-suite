@@ -224,12 +224,20 @@ def test_blocked_validation_disables_run_and_export_controls():
 def test_run_posts_only_the_server_issued_manifest_id():
     source = _composer_source()
 
+    # Run is now async-first (progress bar) with a sync fallback; BOTH endpoints must post
+    # ONLY the server-issued manifest_id — no client workflow payload smuggled in.
+    assert '"/api/lab/composer/run_async"' in source
     assert '"/api/lab/composer/run"' in source
     assert re.search(
-        r'await request\(\s*"/api/lab/composer/run",\s*\{\s*'
-        r"manifest_id: currentWorkflow\.manifest_id\s*}\s*\)",
+        r'request\(\s*"/api/lab/composer/run_async",\s*\{\s*manifest_id: manifestId\s*}\s*\)',
         source,
     )
+    assert re.search(
+        r'request\(\s*"/api/lab/composer/run",\s*\{\s*manifest_id: manifestId\s*}\s*\)',
+        source,
+    )
+    # runWorkflow feeds only the server-issued manifest id into the progress runner
+    assert "runComposerWithProgress(currentWorkflow.manifest_id)" in source
     assert "JSON.parse(runPayload)" not in source
     assert "JSON.stringify({ workflow:" not in source
 

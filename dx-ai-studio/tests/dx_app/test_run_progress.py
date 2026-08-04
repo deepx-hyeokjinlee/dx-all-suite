@@ -73,7 +73,7 @@ def _drain(job_id, timeout=5.0):
 
 def test_lifecycle_progress_then_result():
     _install_fake_run(n_frames=8)
-    job_id = rp.start_run({"model_name": "m", "category": "c", "model_file": "x.dxnn"})
+    job_id = rp.start_run(inf.run_inference, {"model_name": "m", "category": "c", "model_file": "x.dxnn"})
     snaps = _drain(job_id)
 
     # frames advanced monotonically and reached the total; pct ended at 100
@@ -90,7 +90,7 @@ def test_lifecycle_progress_then_result():
 
 def test_percentage_reported_when_total_known():
     _install_fake_run(n_frames=10, total=10)
-    job_id = rp.start_run({"model_name": "m", "category": "c", "model_file": "x.dxnn"})
+    job_id = rp.start_run(inf.run_inference, {"model_name": "m", "category": "c", "model_file": "x.dxnn"})
     snaps = _drain(job_id)
     pcts = [s["pct"] for s in snaps if s.get("pct") is not None]
     assert pcts, "expected a real percentage when total is known"
@@ -103,7 +103,7 @@ def test_percentage_reported_when_total_known():
 
 def test_result_says_running_before_completion():
     _install_fake_run(n_frames=6, sleep=0.05)
-    job_id = rp.start_run({"model_name": "m", "category": "c", "model_file": "x.dxnn"})
+    job_id = rp.start_run(inf.run_inference, {"model_name": "m", "category": "c", "model_file": "x.dxnn"})
     early = rp.get_run_result(job_id)
     assert early == {"running": True}
     _drain(job_id)
@@ -118,7 +118,7 @@ def test_unknown_job_ids_are_safe():
 
 def test_stop_kills_running_subprocess():
     proc = _install_fake_run(n_frames=100, sleep=0.05)  # long enough to stop mid-run
-    job_id = rp.start_run({"model_name": "m", "category": "c", "model_file": "x.dxnn"})
+    job_id = rp.start_run(inf.run_inference, {"model_name": "m", "category": "c", "model_file": "x.dxnn"})
     time.sleep(0.1)
     assert rp.stop_run(job_id) == {"status": "stopped"}
     assert proc.killed is True
@@ -134,7 +134,7 @@ def test_janitor_reaps_and_kills_orphan():
                                   "touched": time.time() - 100}
     # starting any new run runs the janitor first
     _install_fake_run(n_frames=1)
-    new_id = rp.start_run({"model_name": "m", "category": "c", "model_file": "x.dxnn"})
+    new_id = rp.start_run(inf.run_inference, {"model_name": "m", "category": "c", "model_file": "x.dxnn"})
     with rp._RUN_JOBS_LOCK:
         assert "orphan" not in rp._RUN_JOBS
     assert orphan.killed is True

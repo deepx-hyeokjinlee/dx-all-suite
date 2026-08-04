@@ -1578,12 +1578,82 @@ window.LabComposer = (function () {
       return;
     }
     setStatus(text('Running workflow'), 'info');
-    var result = await request(
-      "/api/lab/composer/run",
-      { manifest_id: currentWorkflow.manifest_id }
-    );
+    var result = await runComposerWithProgress(currentWorkflow.manifest_id);
     renderRunResult(result);
     setStatus(result && result.error ? result.error : text('Workflow completed'), result && result.error ? 'err' : 'ok');
+  }
+
+  function _composerSleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  function _composerGetJSON(url) {
+    if (typeof api === 'function') return api(url);
+    return fetch(url).then(function (r) { return r.json(); });
+  }
+
+  // Non-blocking composer run: /api/lab/composer/run_async → poll shared /api/run_poll into a
+  // progress bar → /api/run_result. Same result shape as the sync run; falls back to the
+  // blocking /api/lab/composer/run if the async path is unavailable.
+  async function runComposerWithProgress(manifestId) {
+    var start = null;
+    try { start = await request("/api/lab/composer/run_async", { manifest_id: manifestId }); }
+    catch (e) { start = null; }
+    if (!start || start.error || !start.job_id) {
+      return await request("/api/lab/composer/run", { manifest_id: manifestId });
+    }
+    var id = start.job_id;
+    renderComposerProgress();
+    for (;;) {
+      await _composerSleep(600);
+      var poll = null;
+      try { poll = await _composerGetJSON('/api/run_poll?id=' + encodeURIComponent(id)); }
+      catch (e) { poll = null; }
+      if (!poll) continue;
+      if (poll.error) break;
+      updateComposerProgress(poll);
+      if (!poll.running) break;
+    }
+    for (var i = 0; i < 12; i++) {
+      var r = null;
+      try { r = await _composerGetJSON('/api/run_result?id=' + encodeURIComponent(id)); }
+      catch (e) { r = null; }
+      if (r && r.error === 'unknown_job') return { error: 'run_result_unavailable' };
+      if (r && !r.running) return r;
+      await _composerSleep(300);
+    }
+    return { error: 'run_result_timeout' };
+  }
+
+  function renderComposerProgress() {
+    var el = document.getElementById('lab-composer-result');
+    if (!el) return;
+    clear(el);
+    var wrap = make('div', 'run-prog');
+    var track = make('div', 'comp-progress');
+    var bar = make('div', 'comp-progress-bar indeterminate');
+    bar.id = 'composer-prog-bar';
+    track.appendChild(bar);
+    var lbl = make('p', 'txt-dim', text('Running inference…'));
+    lbl.id = 'composer-prog-label';
+    wrap.appendChild(track);
+    wrap.appendChild(lbl);
+    el.appendChild(wrap);
+  }
+
+  function updateComposerProgress(poll) {
+    var bar = document.getElementById('composer-prog-bar');
+    var lbl = document.getElementById('composer-prog-label');
+    if (!bar || !lbl) return;
+    var elp = poll.elapsed != null ? (' · ' + poll.elapsed + 's') : '';
+    if (poll.pct != null) {
+      bar.classList.remove('indeterminate');
+      bar.style.width = poll.pct + '%';
+      var fr = poll.frames ? (' · ' + poll.frames + (poll.total ? ('/' + poll.total) : '') + ' ' + T('frames')) : '';
+      lbl.textContent = poll.pct + '%' + fr + elp;
+    } else {
+      bar.classList.add('indeterminate');
+      var f2 = poll.frames ? (poll.frames + ' ' + T('frames') + ' · ') : '';
+      lbl.textContent = f2 + T('Running inference…') + elp;
+    }
   }
 
   function downloadRecipe(recipe) {

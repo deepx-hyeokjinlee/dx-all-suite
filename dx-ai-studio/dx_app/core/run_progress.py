@@ -67,9 +67,14 @@ def register(job_id, log_file, loop, total, proc, start):
                       "proc": proc, "start": start, "touched": time.time()})
 
 
-def start_run(params):
-    """Kick off run_inference(**params) in a daemon thread; return a job_id to poll.
-    params must NOT contain job_id — this adds it."""
+def start_run(fn, params):
+    """Kick off fn(job_id=<id>, **params) in a daemon thread; return a job_id to poll.
+
+    fn must accept a job_id kwarg and, when set, register its run here (via register()) so
+    poll_run can report progress — run_inference does this, and run_composer_workflow forwards
+    the job_id to its run_inference call. params must NOT contain job_id. Both the Run page
+    (run_inference) and the Composer (run_composer_workflow) share this + the poll/result
+    routes, so one registry serves every batch run."""
     job_id = uuid.uuid4().hex
     now = time.time()
     with _RUN_JOBS_LOCK:
@@ -79,10 +84,9 @@ def start_run(params):
                              "start": now, "proc": None, "touched": now}
 
     def _worker():
-        from dx_app.core import inference as _inf
         try:
-            res = _inf.run_inference(job_id=job_id, **params)
-        except Exception as e:  # defensive — run_inference already traps most failures
+            res = fn(job_id=job_id, **params)
+        except Exception as e:  # defensive — the run fns already trap most failures
             res = {"error": "inference_exception", "message": str(e)}
         with _RUN_JOBS_LOCK:
             entry = _RUN_JOBS.get(job_id)

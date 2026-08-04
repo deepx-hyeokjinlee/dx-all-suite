@@ -415,7 +415,8 @@ class Handler(DXBaseHandler):
                            "/api/lab/composer/quick_start", "/api/lab/composer/template",
                            "/api/lab/composer/customize",
                            "/api/lab/composer/plugin/dry_run", "/api/lab/composer/plugin/apply",
-                           "/api/lab/composer/run", "/api/lab/composer/export",
+                           "/api/lab/composer/run", "/api/lab/composer/run_async",
+                           "/api/lab/composer/export",
                            "/api/lab/composer/recipe/export",
                            "/api/lab/composer/recipe/import"}
             is_lab_route = path in _LAB_ROUTES or (path.startswith('/api/lab/experiment/') and path.endswith('/cancel'))
@@ -470,7 +471,7 @@ class Handler(DXBaseHandler):
                     save_output=_json_bool(data.get("save_output", True), default=True),
                     image_base64=data.get("image_base64"))
                 from dx_app.core.run_progress import start_run
-                return self.send_json({"job_id":start_run(params),"status":"started"})
+                return self.send_json({"job_id":start_run(run_inference,params),"status":"started"})
 
             if path=="/api/run_stop":
                 from dx_app.core.run_progress import stop_run
@@ -630,6 +631,17 @@ class Handler(DXBaseHandler):
             if path == "/api/lab/composer/run":
                 res, code = run_composer_workflow(tok, data)
                 return self.send_json(res, code)
+
+            if path == "/api/lab/composer/run_async":
+                # Non-blocking composer run — same run_progress registry as the Run page, so it
+                # shares /api/run_poll and /api/run_result. The worker unwraps the (result,code)
+                # tuple to store just the result dict (what the composer UI renders).
+                from dx_app.core.run_progress import start_run
+                def _composer_job(job_id=None, tok=None, payload=None):
+                    r = run_composer_workflow(tok, payload, job_id=job_id)
+                    return r[0] if isinstance(r, tuple) else r
+                jid = start_run(_composer_job, {"tok": tok, "payload": data})
+                return self.send_json({"job_id": jid, "status": "started"})
 
             if path == "/api/lab/composer/export":
                 res, code = export_composer_package(tok, data)
