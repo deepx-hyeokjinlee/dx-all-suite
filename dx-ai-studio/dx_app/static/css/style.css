@@ -1250,12 +1250,6 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-empty{margin:var(--sp-3) 0 0;border-left:3px solid var(--warn,#d29922);padding-left:var(--sp-3);color:var(--text-2);font-size:var(--fs-sm);line-height:1.6}
 .lab-composer-history{display:flex;gap:var(--sp-2);justify-content:flex-end;margin:-34px 0 var(--sp-3)}
 .lab-composer-history .btn{padding:5px 10px;font-size:var(--fs-xs)}
-.lab-composer-node-chain{display:flex;align-items:stretch;gap:var(--sp-2);flex-wrap:wrap}
-.lab-composer-node{display:flex;min-width:180px;max-width:260px;flex:1;flex-direction:column;gap:var(--sp-2);border:1px solid rgba(99,140,255,.3);border-radius:var(--radius);background:var(--accent-dim);padding:var(--sp-3);color:var(--accent-light)}
-.lab-composer-node-status{align-self:flex-start;border-radius:999px;padding:2px 7px;font-size:var(--fs-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.lab-composer-node-ready{background:rgba(34,197,94,.15);color:#6ee7a5}
-.lab-composer-node-blocked{background:rgba(239,68,68,.16);color:#ff9b9b}
-.lab-composer-node-params{margin:0;color:var(--text-2);font-size:var(--fs-xs);line-height:1.45;overflow-wrap:anywhere}
 .lab-composer-node-control{display:flex;flex-direction:column;gap:4px}
 .lab-composer-node-control label{color:var(--text-2);font-size:var(--fs-2xs);font-weight:600}
 .lab-composer-node-control .input{width:100%;min-width:0;font-size:var(--fs-xs)}
@@ -1305,12 +1299,23 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-palette-item.selected{border-left-color:var(--accent);border-color:rgba(99,140,255,.55);background:var(--accent-dim);color:var(--accent-light)}
 .lab-composer-model-choice{cursor:grab}.lab-composer-model-choice:active{cursor:grabbing}
 .lab-composer-asset-choice{cursor:grab}.lab-composer-asset-choice:active{cursor:grabbing}
-.lab-composer-canvas{position:relative;min-width:0;overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(rgba(99,140,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(99,140,255,.035) 1px,transparent 1px),var(--bg-0);background-size:22px 22px;padding:var(--sp-3)}
+.lab-composer-canvas{position:relative;min-width:0;overflow:hidden;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-0);padding:var(--sp-3)}
 .lab-composer-canvas h3{margin:0 0 var(--sp-2);color:var(--text-1)}
-.lab-composer-canvas>.lab-composer-node-chain{min-width:930px;flex-wrap:nowrap;margin-top:var(--sp-4)}
-.lab-composer-canvas .lab-composer-node{min-width:166px;max-width:190px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
-.lab-composer-canvas .lab-composer-node:hover,.lab-composer-canvas .lab-composer-node:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,140,255,.16);outline:none;transform:translateY(-1px)}
-.lab-composer-canvas .lab-composer-node.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,140,255,.26)}
+.lab-composer-graph-host{min-width:0;margin-top:var(--sp-3)}
+.lab-composer-graph-editor{position:relative;min-height:460px;border:1px solid rgba(99,140,255,.26);border-radius:calc(var(--radius) - 2px);overflow:hidden;background:var(--bg-0)}
+.lab-composer-graph-toolbar{position:absolute;z-index:2;top:10px;left:10px;right:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;pointer-events:none}
+.lab-composer-graph-toolbar .btn{pointer-events:auto;background:rgba(15,23,42,.88);backdrop-filter:blur(6px)}
+.lab-composer-graph-status{margin-left:auto;border:1px solid var(--border);border-radius:999px;background:rgba(15,23,42,.88);padding:4px 8px;font-size:var(--fs-2xs);font-weight:700;letter-spacing:.03em;pointer-events:auto}
+.lab-composer-graph-status.ready{border-color:rgba(34,197,94,.45);color:#6ee7a5}
+.lab-composer-graph-status.blocked{border-color:rgba(239,68,68,.45);color:#ff9b9b}
+.lab-composer-graph-surface{display:block;width:100%;height:420px;cursor:grab;outline:none;touch-action:none}
+.lab-composer-graph-surface:active{cursor:grabbing}
+.lab-composer-graph-surface:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.lab-composer-graph-surface.drop-active{box-shadow:inset 0 0 0 3px rgba(99,140,255,.7)}
+.lab-composer-graph-minimap{position:absolute;z-index:2;right:12px;bottom:12px;width:150px;height:92px;border:1px solid rgba(148,163,184,.45);border-radius:6px;background:#0b1220;box-shadow:0 6px 18px rgba(0,0,0,.24);pointer-events:none}
+.lab-composer-graph-blocked .lab-composer-graph-surface{box-shadow:inset 0 0 0 1px rgba(239,68,68,.4)}
+.lab-composer-graph-invalid-link .lab-composer-graph-surface{animation:lab-composer-graph-shake .32s ease-in-out}
+@keyframes lab-composer-graph-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .lab-composer-selection-drop-target{border-style:dashed}
 .lab-composer-drop-active{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(99,140,255,.25)!important}
 .lab-composer-factory-note{margin:0;border-left:2px solid var(--accent);padding-left:var(--sp-2);color:var(--text-2);font-size:var(--fs-xs);line-height:1.5}
@@ -1324,8 +1329,12 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
   .lab-composer-tabs{overflow-x:auto}
   .lab-composer-tab{white-space:nowrap}
   .lab-composer-history{justify-content:flex-start;margin:0 0 var(--sp-3)}
-  .lab-composer-node-chain{flex-direction:column}
-  .lab-composer-node{max-width:none}
+  .lab-composer-graph-editor{min-height:390px}
+  .lab-composer-graph-surface{height:350px}
+  .lab-composer-graph-toolbar{right:6px;top:6px;gap:4px}
+  .lab-composer-graph-toolbar .btn{padding:4px 6px;font-size:var(--fs-2xs)}
+  .lab-composer-graph-status{order:2;margin-left:0}
+  .lab-composer-graph-minimap{width:112px;height:69px;right:8px;bottom:8px}
   .lab-composer-plugin-control{align-items:stretch;flex-direction:column}
   .lab-composer-recipe-actions .btn,.lab-composer-export-actions .btn{width:100%}
   .lab-composer-arrow{align-self:flex-start;transform:rotate(90deg)}

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import copy
 import json
+import math
 import os
 import re
 import shutil
@@ -17,6 +18,8 @@ import tempfile
 import uuid
 import zipfile
 from pathlib import Path, PurePosixPath
+
+from dx_app.core.run_config import RUN_TUNABLE_KEYS
 
 
 _PACKAGE_TYPES = {"run", "developer", "recipe"}
@@ -112,10 +115,16 @@ def _model_identifier(model: dict) -> tuple[str, str]:
     return category, name
 
 
-def _runner_source(source_root: Path, category: str, model: str, language: str) -> Path | None:
+def _runner_source(
+    source_root: Path, category: str, model: str, language: str, variant: str
+) -> Path | None:
     if language == "python":
-        relative = PurePosixPath("src/python_example") / category / model / f"{model}_sync.py"
+        if variant not in {"sync", "sync_cpp_postprocess"}:
+            return None
+        relative = PurePosixPath("src/python_example") / category / model / f"{model}_{variant}.py"
     else:
+        if variant != "sync":
+            return None
         relative = PurePosixPath("src/cpp_example") / category / model / f"{model}_sync.cpp"
     try:
         return _safe_source_file(source_root, relative.as_posix(), "exact runner source")
@@ -138,19 +147,30 @@ def _bundle_exact_runner(package_dir: Path, source_root: Path, model: dict) -> d
     category, name = _model_identifier(model)
     requested = model.get("language")
     requested = "python" if requested in {"python", "py"} else "cpp" if requested == "cpp" else "python"
-    candidates = [requested]
+    requested_variant = model.get("variant", "sync")
+    if not isinstance(requested_variant, str):
+        raise ValueError("workflow model variant is invalid")
+    if requested == "cpp" and requested_variant != "sync":
+        raise ValueError("workflow C++ runner variant is invalid")
+    candidates = [(requested, requested_variant)]
     if requested != "python":
-        candidates.append("python")
+        candidates.append(("python", "sync"))
 
-    selected = next(((language, _runner_source(source_root, category, name, language))
-                     for language in candidates if _runner_source(source_root, category, name, language)), None)
+    selected = next(
+        (
+            (language, variant, _runner_source(source_root, category, name, language, variant))
+            for language, variant in candidates
+            if _runner_source(source_root, category, name, language, variant)
+        ),
+        None,
+    )
     if selected is None:
         raise ValueError(
             f"exact runner source is unavailable for {category}/{name}; expected "
-            f"src/{'cpp' if requested == 'cpp' else 'python'}_example/{category}/{name}/{name}_sync."
+            f"src/{'cpp' if requested == 'cpp' else 'python'}_example/{category}/{name}/{name}_{requested_variant}."
             f"{'cpp' if requested == 'cpp' else 'py'}"
         )
-    language, runner_source = selected
+    language, variant, runner_source = selected
     runtime_root = PurePosixPath("runtime") / language / category / name
     destination = _safe_destination(package_dir, runtime_root)
     extractor = source_root / "scripts" / "extract_model_package.sh"
@@ -165,7 +185,7 @@ def _bundle_exact_runner(package_dir: Path, source_root: Path, model: dict) -> d
                 stderr=subprocess.STDOUT,
                 check=False,
             )
-            runner_name = f"{name}_sync.{'py' if language == 'python' else 'cpp'}"
+            runner_name = runner_source.name
             if completed.returncode != 0 or not _copy_extracted_runner(Path(extracted), runner_name, destination):
                 raise ValueError("extract_model_package.sh did not produce the exact requested runner source")
     else:
@@ -180,9 +200,12 @@ def _bundle_exact_runner(package_dir: Path, source_root: Path, model: dict) -> d
         raise ValueError("exact C++ runner source lacks CMakeLists.txt")
     return {
         "language": language,
+        "variant": variant,
         "path": runner_relative.as_posix(),
         "requested_language": requested,
+        "requested_variant": requested_variant,
         "executable": name + "_sync" if language == "cpp" else None,
+        "source_dir": runner_source.parent,
     }
 
 
@@ -270,6 +293,50 @@ def _write_cpp_plugin_cmake(package_dir: Path, copied_plugins: list[dict], runne
     )
     runtime_cmake.write_text(cmake.rstrip() + integration, encoding="utf-8")
 
+def _validated_config_overrides(workflow: dict) -> dict:
+    execution = workflow.get("execution") if isinstance(workflow, dict) else None
+    if not isinstance(execution, dict):
+        raise ValueError("workflow execution is invalid")
+    overrides = execution.get("config_overrides")
+    if overrides is None:
+        return {}
+    if not isinstance(overrides, dict):
+        raise ValueError("workflow config_overrides is invalid")
+    clean = {}
+    for key, value in overrides.items():
+        if (
+            key not in RUN_TUNABLE_KEYS
+            or isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+        ):
+            raise ValueError("workflow config_overrides is invalid")
+        clean[key] = value
+    return clean
+
+
+def _write_packaged_config(package_dir: Path, runner: dict, workflow: dict) -> str | None:
+    overrides = _validated_config_overrides(workflow)
+    if not overrides:
+        return None
+    source_dir = runner.get("source_dir")
+    source_config = Path(source_dir) / "config.json" if isinstance(source_dir, Path) else None
+    merged = {}
+    if source_config is not None and source_config.exists():
+        if source_config.is_symlink() or not source_config.is_file():
+            raise ValueError("unsafe runner configuration source")
+        try:
+            loaded = json.loads(source_config.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ValueError("runner configuration is invalid") from exc
+        if not isinstance(loaded, dict):
+            raise ValueError("runner configuration is invalid")
+        merged.update(loaded)
+    merged.update(overrides)
+    relative = "config.json"
+    _write_text(package_dir, relative, json.dumps(merged, indent=2, sort_keys=True) + "\n")
+    return relative
+
 
 def _setup_script(runner: dict) -> str:
     if runner["language"] == "cpp":
@@ -294,6 +361,11 @@ def _run_script(runner: dict, workflow: dict) -> str:
     input_flag = "--video" if input_data.get("kind") == "video" else "--image"
     if not isinstance(input_path, str):
         raise ValueError("workflow input path is invalid")
+    config_argument = (
+        f' --config "$SCRIPT_DIR/{runner["config_path"]}"'
+        if isinstance(runner.get("config_path"), str) and runner["config_path"]
+        else ""
+    )
     if runner["language"] == "cpp":
         return f"""#!/usr/bin/env sh
 set -eu
@@ -309,7 +381,7 @@ if [ ! -x \"$RUNNER\" ]; then
     printf '%s\\n' 'ERROR: C++ runner is not built. Run ./setup.sh with CMake and the DEEPX runtime installed.' >&2
     exit 1
 fi
-exec \"$RUNNER\" --model \"$SCRIPT_DIR/models/{PurePosixPath(workflow['model']['model_file']).name}\" {input_flag} \"$SCRIPT_DIR/{input_path}\" --no-display \"$@\"
+exec \"$RUNNER\" --model \"$SCRIPT_DIR/models/{PurePosixPath(workflow['model']['model_file']).name}\" {input_flag} \"$SCRIPT_DIR/{input_path}\" --no-display{config_argument} \"$@\"
 """
     return f"""#!/usr/bin/env sh
 set -eu
@@ -324,7 +396,7 @@ if ! python3 -c 'import dx_engine' >/dev/null 2>&1; then
     printf '%s\\n' 'ERROR: dx_engine is required. Install a compatible DEEPX runtime.' >&2
     exit 1
 fi
-exec python3 \"$SCRIPT_DIR/{runner['path']}\" --model \"$SCRIPT_DIR/models/{PurePosixPath(workflow['model']['model_file']).name}\" {input_flag} \"$SCRIPT_DIR/{input_path}\" --no-display \"$@\"
+exec python3 \"$SCRIPT_DIR/{runner['path']}\" --model \"$SCRIPT_DIR/models/{PurePosixPath(workflow['model']['model_file']).name}\" {input_flag} \"$SCRIPT_DIR/{input_path}\" --no-display{config_argument} \"$@\"
 """
 
 
@@ -521,8 +593,12 @@ def build_workflow_package(workflow, package_type, source_root, output_root, *, 
                 Path(plugin_root).resolve() if plugin_root is not None else None,
             )
             local_workflow["plugins"] = copied_plugins
+            config_path = _write_packaged_config(package_dir, runner, local_workflow)
+            if config_path:
+                runner["config_path"] = config_path
             local_workflow["packaged_runner"] = {
-                key: value for key, value in runner.items() if value is not None
+                key: value for key, value in runner.items()
+                if value is not None and key != "source_dir"
             }
             _write_text(package_dir, "workflow.json", json.dumps(local_workflow, indent=2, sort_keys=True) + "\n")
             _write_text(package_dir, "setup.sh", _setup_script(runner), executable=True)

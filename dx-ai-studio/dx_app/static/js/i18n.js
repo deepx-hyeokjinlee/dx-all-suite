@@ -3057,12 +3057,70 @@ window._DX_I18N_DICT = {
   'Plugin execution requires Factory integration': {
     ko: 'Plugin 실행에는 Factory integration이 필요합니다', ja: 'Plugin の実行には Factory integration が必要です', 'zh-CN': 'Plugin 执行需要 Factory integration', 'zh-TW': 'Plugin 執行需要 Factory integration', es: 'La ejecución del plugin requiere integración de Factory',
   },
+  'Preprocessing is resolved by the selected model Factory.': {
+    ko: 'Preprocessing은 선택한 모델 Factory에서 결정됩니다.', ja: 'Preprocessing は選択したモデル Factory により決まります。', 'zh-CN': 'Preprocessing 由所选模型 Factory 决定。', 'zh-TW': 'Preprocessing 由所選模型 Factory 決定。', es: 'El preprocessing lo resuelve la Factory del modelo seleccionado.',
+  },
+  'Postprocess settings': {
+    ko: 'Postprocess 설정', ja: 'Postprocess 設定', 'zh-CN': 'Postprocess 设置', 'zh-TW': 'Postprocess 設定', es: 'Configuración de postprocess',
+  },
+  'No postprocess settings are available for this model.': {
+    ko: '이 모델에서는 사용할 수 있는 Postprocess 설정이 없습니다.', ja: 'このモデルで利用できる Postprocess 設定はありません。', 'zh-CN': '此模型没有可用的 Postprocess 设置。', 'zh-TW': '此模型沒有可用的 Postprocess 設定。', es: 'No hay configuración de postprocess disponible para este modelo.',
+  },
+  'Postprocess implementation': {
+    ko: 'Postprocess 구현', ja: 'Postprocess 実装', 'zh-CN': 'Postprocess 实现', 'zh-TW': 'Postprocess 實作', es: 'Implementación de postprocess',
+  },
+  'Standard postprocess': {
+    ko: '표준 Postprocess', ja: '標準 Postprocess', 'zh-CN': '标准 Postprocess', 'zh-TW': '標準 Postprocess', es: 'Postprocess estándar',
+  },
+  'C++ postprocess': {
+    ko: 'C++ Postprocess', ja: 'C++ Postprocess', 'zh-CN': 'C++ Postprocess', 'zh-TW': 'C++ Postprocess', es: 'Postprocess C++',
+  },
   'The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.': {
     ko: '선택한 DX App Factory와 SyncRunner가 실행 가능하도록 core chain은 고정됩니다.',
     ja: '選択した DX App Factory と SyncRunner を実行可能に保つため、core chain は固定されています。',
     'zh-CN': '为保持所选 DX App Factory 和 SyncRunner 可运行，core chain 固定不变。',
     'zh-TW': '為維持所選 DX App Factory 與 SyncRunner 可執行，core chain 固定不變。',
     es: 'La cadena central es fija para que Factory y SyncRunner de DX App seleccionados sigan siendo ejecutables.',
+  },
+  'Fit view': {
+    ko: '화면에 맞추기', ja: '画面に合わせる', 'zh-CN': '适应视图', 'zh-TW': '符合檢視', es: 'Ajustar vista',
+  },
+  'Zoom in': {
+    ko: '확대', ja: '拡大', 'zh-CN': '放大', 'zh-TW': '放大', es: 'Acercar',
+  },
+  'Zoom out': {
+    ko: '축소', ja: '縮小', 'zh-CN': '缩小', 'zh-TW': '縮小', es: 'Alejar',
+  },
+  'Validate graph': {
+    ko: '그래프 검증', ja: 'グラフを検証', 'zh-CN': '验证图形', 'zh-TW': '驗證圖形', es: 'Validar grafo',
+  },
+  'Graph ready': {
+    ko: '그래프 준비 완료', ja: 'グラフの準備完了', 'zh-CN': '图形已就绪', 'zh-TW': '圖形已就緒', es: 'Grafo listo',
+  },
+  'Pick a runnable model to build and run a workflow.': {
+    ko: '실행 가능한 모델을 선택하면 워크플로우를 만들고 실행할 수 있습니다.',
+    ja: '実行可能なモデルを選ぶとワークフローを作成して実行できます。',
+    'zh-CN': '选择一个可运行的模型即可创建并运行工作流。',
+    'zh-TW': '選擇一個可執行的模型即可建立並執行工作流程。',
+    es: 'Elige un modelo ejecutable para crear y ejecutar un flujo de trabajo.',
+  },
+  'Graph blocked': {
+    ko: '그래프가 차단됨', ja: 'グラフがブロックされています', 'zh-CN': '图形已阻止', 'zh-TW': '圖形已封鎖', es: 'Grafo bloqueado',
+  },
+  'Missing required connection': {
+    ko: '필수 연결이 없습니다', ja: '必要な接続がありません', 'zh-CN': '缺少必需连接', 'zh-TW': '缺少必要連線', es: 'Falta una conexión obligatoria',
+  },
+  'Connection is not allowed': {
+    ko: '허용되지 않는 연결입니다', ja: 'この接続は許可されていません', 'zh-CN': '不允许此连接', 'zh-TW': '不允許此連線', es: 'La conexión no está permitida',
+  },
+  'Core stages are fixed': {
+    ko: 'Core 단계는 고정됩니다', ja: 'Core ステージは固定です', 'zh-CN': 'Core 阶段固定', 'zh-TW': 'Core 階段固定', es: 'Las etapas centrales son fijas',
+  },
+  'Plugin scaffold': {
+    ko: '플러그인 스캐폴드', ja: 'プラグインスキャフォールド', 'zh-CN': '插件脚手架', 'zh-TW': '外掛程式鷹架', es: 'Scaffold de plugin',
+  },
+  'Minimap': {
+    ko: '미니맵', ja: 'ミニマップ', 'zh-CN': '小地图', 'zh-TW': '小地圖', es: 'Minimapa',
   },
   'Built-in defaults': { ko: '내장 기본값', ja: '組み込みの既定値', 'zh-CN': '内置默认值', 'zh-TW': '內建預設值', es: 'Valores predeterminados integrados' },
   'Blocked': { ko: '차단됨', ja: 'ブロック済み', 'zh-CN': '已阻止', 'zh-TW': '已封鎖', es: 'Bloqueado' },

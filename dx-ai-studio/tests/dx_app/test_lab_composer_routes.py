@@ -41,6 +41,26 @@ def _ready_workflow():
         "validation": {"status": "ready", "blockers": [], "warnings": []},
     }
 
+
+def _canonical_graph_layout():
+    return {
+        "version": 1,
+        "nodes": [
+            {"id": "input", "x": 120, "y": 160},
+            {"id": "preprocess", "x": 360, "y": 160},
+            {"id": "inference", "x": 600, "y": 160},
+            {"id": "postprocess", "x": 840, "y": 160},
+            {"id": "visualize", "x": 1080, "y": 160},
+        ],
+        "edges": [
+            {"id": "input-preprocess", "from": "input", "to": "preprocess"},
+            {"id": "preprocess-inference", "from": "preprocess", "to": "inference"},
+            {"id": "inference-postprocess", "from": "inference", "to": "postprocess"},
+            {"id": "postprocess-visualize", "from": "postprocess", "to": "visualize"},
+        ],
+        "viewport": {"zoom": 1.25, "offset_x": 12, "offset_y": -20},
+    }
+
 def _post_route(path, payload, headers=None):
     import server
 
@@ -558,6 +578,335 @@ def test_composer_customize_applies_only_whitelisted_execution_updates():
     assert lab_portal.resolve_manifest(manifest["id"], token=token)["workflow"]["model"]["model_file"] == (
         "assets/models/resnet18_224x224.dxnn"
     )
+
+
+def test_composer_customize_accepts_model_supported_postprocess_settings_and_exposes_capabilities(monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    model = {
+        "name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/resnet18_224x224.dxnn",
+        "model_exists": True,
+        "cpp_sync": True,
+    }
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [model])
+    monkeypatch.setattr(
+        lab_portal, "load_model_config", lambda category, name: {"top_k": 5}, raising=False
+    )
+    token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+
+    updated, status = lab_portal.customize_composer_workflow(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {
+                "execution": {
+                    "config_overrides": {"top_k": 3},
+                    "postprocess_implementation": "standard",
+                },
+            },
+        },
+    )
+
+    assert status == 200
+    assert updated["workflow"]["execution"] == {
+        "device_id": None,
+        "save_output": True,
+        "config_overrides": {"top_k": 3},
+        "postprocess_implementation": "standard",
+    }
+    assert updated["processor_capabilities"] == {
+        "preprocess": {"factory_owned": True},
+        "postprocess": {
+            "implementation_options": ["standard"],
+            "tunable_defaults": {"top_k": 5},
+            "tunable_keys": ["top_k"],
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"unknown": 1},
+        {"top_k": True},
+        {"top_k": "3"},
+        {"top_k": float("nan")},
+        {"top_k": float("inf")},
+        {"top_k": []},
+        {"top_k": {"value": 3}},
+    ],
+)
+def test_composer_customize_rejects_unsafe_or_unsupported_postprocess_overrides(monkeypatch, overrides):
+    import lab_portal
+    from developer import lab_session
+
+    model = {
+        "name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/resnet18_224x224.dxnn",
+        "model_exists": True,
+        "cpp_sync": True,
+    }
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [model])
+    monkeypatch.setattr(
+        lab_portal, "load_model_config", lambda category, name: {"top_k": 5}, raising=False
+    )
+    token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+
+    result, status = lab_portal.customize_composer_workflow(
+        token,
+        {"manifest_id": manifest["id"], "updates": {"execution": {"config_overrides": overrides}}},
+    )
+
+    assert status == 400
+    assert result["error_code"] == "workflow_patch_invalid"
+    assert lab_portal.resolve_manifest(manifest["id"], token=token)["workflow"]["execution"] == {
+        "device_id": None,
+        "save_output": True,
+    }
+
+
+def test_composer_postprocess_implementation_is_registry_gated_and_resets_on_model_change(monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    cpp_postprocess_model = {
+        "name": "supported_model",
+        "category": "classification",
+        "model_file": "assets/models/supported_model.dxnn",
+        "model_exists": True,
+        "py_sync": True,
+        "py_sync_cpp_postprocess": True,
+    }
+    standard_model = {
+        "name": "standard_model",
+        "category": "classification",
+        "model_file": "assets/models/standard_model.dxnn",
+        "model_exists": True,
+        "cpp_sync": True,
+    }
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [cpp_postprocess_model, standard_model])
+    monkeypatch.setattr(
+        lab_portal, "load_model_config", lambda category, name: {}, raising=False
+    )
+    monkeypatch.setattr(
+        lab_portal,
+        "_workflow_assets",
+        lambda category, input_kind: ["sample/img/sample_dog.jpg"],
+    )
+    token = lab_session()["token"]
+    workflow = _ready_workflow()
+    workflow["model"] = {
+        "name": "supported_model",
+        "category": "classification",
+        "model_file": "assets/models/supported_model.dxnn",
+        "language": "python",
+        "variant": "sync",
+    }
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=workflow, creator_token=token
+    )
+
+    configured, configured_status = lab_portal.customize_composer_workflow(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {"execution": {"postprocess_implementation": "cpp_postprocess"}},
+        },
+    )
+    reset, reset_status = lab_portal.customize_composer_workflow(
+        token,
+        {
+            "manifest_id": manifest["id"],
+            "updates": {"model_selection": {"model_file": standard_model["model_file"]}},
+        },
+    )
+
+    assert configured_status == reset_status == 200
+    assert configured["workflow"]["execution"]["postprocess_implementation"] == "cpp_postprocess"
+    assert reset["workflow"]["execution"]["postprocess_implementation"] == "standard"
+    assert reset["processor_capabilities"]["postprocess"]["implementation_options"] == ["standard"]
+
+
+def test_composer_run_passes_validated_postprocess_settings_to_the_registry_runner(monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    model = {
+        "name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/current_resnet18.dxnn",
+        "model_exists": True,
+        "py_sync": True,
+        "py_sync_cpp_postprocess": True,
+    }
+    workflow = _ready_workflow()
+    workflow["execution"].update({
+        "config_overrides": {"top_k": 3},
+        "postprocess_implementation": "cpp_postprocess",
+    })
+    token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=workflow, creator_token=token
+    )
+    invoked = {}
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [model])
+    monkeypatch.setattr(
+        lab_portal, "load_model_config", lambda category, name: {"top_k": 5}, raising=False
+    )
+    monkeypatch.setattr(
+        lab_portal,
+        "run_inference",
+        lambda **kwargs: invoked.update(kwargs) or {"status": "ok"},
+    )
+
+    result, status = lab_portal.run_composer_workflow(token, {"manifest_id": manifest["id"]})
+
+    assert status == 200
+    assert result == {"status": "ok"}
+    assert invoked == {
+        "model_name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/current_resnet18.dxnn",
+        "lang": "python",
+        "variant": "sync_cpp_postprocess",
+        "input_type": "image",
+        "image_path": "sample/img/sample_dog.jpg",
+        "video_path": None,
+        "device_id": None,
+        "save_output": True,
+        "config_overrides": {"top_k": 3},
+    }
+
+
+def test_composer_recipe_round_trips_validated_processor_settings(monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    model = {
+        "name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/resnet18_224x224.dxnn",
+        "model_exists": True,
+        "py_sync": True,
+        "py_sync_cpp_postprocess": True,
+    }
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [model])
+    monkeypatch.setattr(lab_portal, "get_images", lambda category: ["sample/img/sample_dog.jpg"])
+    monkeypatch.setattr(lab_portal, "get_videos", lambda: [])
+    monkeypatch.setattr(
+        lab_portal, "load_model_config", lambda category, name: {"top_k": 5}, raising=False
+    )
+    token = lab_session()["token"]
+    workflow = _ready_workflow()
+    workflow["execution"].update({
+        "config_overrides": {"top_k": 3},
+        "postprocess_implementation": "cpp_postprocess",
+    })
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=workflow, creator_token=token
+    )
+
+    exported, export_status = lab_portal.export_composer_recipe(
+        token, {"manifest_id": manifest["id"]}
+    )
+    imported, import_status = lab_portal.import_composer_recipe(
+        token, {"recipe": exported["recipe"]}
+    )
+
+    assert export_status == import_status == 200
+    assert exported["recipe"]["execution"] == workflow["execution"]
+    assert imported["workflow"]["execution"] == workflow["execution"]
+
+
+def test_composer_customize_persists_only_a_canonical_graph_layout():
+    import lab_portal
+    from developer import lab_session
+
+    token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+    layout = _canonical_graph_layout()
+
+    updated, status = lab_portal.customize_composer_workflow(
+        token,
+        {"manifest_id": manifest["id"], "updates": {"graph_layout": layout}},
+    )
+
+    assert status == 200
+    assert updated["status"] == "ready"
+    assert updated["workflow"]["graph_layout"] == layout
+    assert lab_portal.resolve_manifest(manifest["id"], token=token)["workflow"]["graph_layout"] == layout
+
+
+@pytest.mark.parametrize(
+    "layout",
+    [
+        None,
+        [],
+        {**_canonical_graph_layout(), "unexpected": True},
+    ],
+)
+def test_composer_customize_rejects_malformed_graph_layout_patches(layout):
+    import lab_portal
+    from developer import lab_session
+
+    token = lab_session()["token"]
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=_ready_workflow(), creator_token=token
+    )
+
+    result, status = lab_portal.customize_composer_workflow(
+        token,
+        {"manifest_id": manifest["id"], "updates": {"graph_layout": layout}},
+    )
+
+    assert status == 400
+    assert result["error_code"] == "workflow_patch_invalid"
+    assert "graph_layout" not in lab_portal.resolve_manifest(manifest["id"], token=token)["workflow"]
+
+
+def test_composer_recipe_round_trips_canonical_graph_layout(monkeypatch):
+    import lab_portal
+    from developer import lab_session
+
+    model = {
+        "name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/resnet18_224x224.dxnn",
+        "model_exists": True,
+        "cpp_sync": True,
+    }
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [model])
+    monkeypatch.setattr(lab_portal, "get_images", lambda category: ["sample/img/sample_dog.jpg"])
+    monkeypatch.setattr(lab_portal, "get_videos", lambda: [])
+    token = lab_session()["token"]
+    workflow = _ready_workflow()
+    workflow["graph_layout"] = _canonical_graph_layout()
+    manifest = lab_portal.create_manifest(
+        "composer_workflow", workflow=workflow, creator_token=token
+    )
+
+    exported, export_status = lab_portal.export_composer_recipe(
+        token, {"manifest_id": manifest["id"]}
+    )
+    imported, import_status = lab_portal.import_composer_recipe(
+        token, {"recipe": exported["recipe"]}
+    )
+
+    assert export_status == import_status == 200
+    assert exported["recipe"]["graph_layout"] == _canonical_graph_layout()
+    assert imported["workflow"]["graph_layout"] == _canonical_graph_layout()
 
 
 def test_composer_customize_resolves_only_registry_models_and_compatible_assets(monkeypatch):

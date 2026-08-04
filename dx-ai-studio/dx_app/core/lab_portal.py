@@ -1,6 +1,7 @@
 """Lab Extension Portal backend helpers."""
 
 import copy
+import math
 import re
 import secrets
 import threading
@@ -22,13 +23,16 @@ from dx_app.core.lab_workflow import (
     WORKFLOW_TEMPLATES,
     build_quick_start_workflow,
     build_template_workflow,
+    normalize_graph_layout,
     resolve_runnable_model,
+    validate_graph_layout,
     validate_workflow,
 )
 from dx_app.core.models import get_models
 from dx_app.core.assets import get_images, get_videos
 from dx_app.core.inference import run_inference
 from dx_app.core.lab_package import build_workflow_package
+from dx_app.core.run_config import RUN_TUNABLE_KEYS, load_model_config
 
 SCRIPT_DIR = config.SCRIPT_DIR
 
@@ -61,6 +65,13 @@ _CPP_PLUGIN_SOURCE_RE = re.compile(
     r"^\s*(plugins/(?:preprocess|postprocess)/[A-Za-z][A-Za-z0-9_]*\.hpp)\s*$",
     re.MULTILINE,
 )
+_POSTPROCESS_IMPLEMENTATIONS = frozenset({"standard", "cpp_postprocess"})
+_COMPOSER_EXECUTION_KEYS = frozenset({
+    "device_id",
+    "save_output",
+    "config_overrides",
+    "postprocess_implementation",
+})
 
 
 def _safe_lab_id(prefix):
@@ -287,6 +298,111 @@ def plan_composer_plugin_scaffold_response(tok, payload):
     return _result_with_http_status(plan_composer_plugin_scaffold(tok, payload))
 
 
+def _is_finite_numeric_scalar(value):
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, (int, float))
+        and math.isfinite(float(value))
+    )
+
+
+def _postprocess_tunable_defaults(model):
+    """Return only numeric Factory config fields explicitly supported by the Run UI."""
+    if not isinstance(model, dict):
+        return {}
+    category = model.get("category")
+    name = model.get("name")
+    if not isinstance(category, str) or not category or not isinstance(name, str) or not name:
+        return {}
+    config_values = load_model_config(category, name)
+    if not isinstance(config_values, dict):
+        return {}
+    return {
+        key: config_values[key]
+        for key in sorted(RUN_TUNABLE_KEYS)
+        if key in config_values and _is_finite_numeric_scalar(config_values[key])
+    }
+
+
+def _postprocess_implementation_options(model):
+    options = ["standard"]
+    if isinstance(model, dict) and model.get("py_sync_cpp_postprocess") is True:
+        options.append("cpp_postprocess")
+    return options
+
+
+def _processor_capabilities(model):
+    """Describe only server-resolved built-in processor controls for the Inspector."""
+    defaults = _postprocess_tunable_defaults(model)
+    return {
+        "preprocess": {"factory_owned": True},
+        "postprocess": {
+            "implementation_options": _postprocess_implementation_options(model),
+            "tunable_defaults": defaults,
+            "tunable_keys": sorted(defaults),
+        },
+    }
+
+
+def _workflow_registry_model(workflow):
+    if not isinstance(workflow, dict):
+        return None
+    return resolve_runnable_model(workflow.get("model", {}), get_models())
+
+
+def _normalize_processor_execution(execution, model, *, strict):
+    """Validate or safely reset processor settings against the current model registry entry."""
+    if not isinstance(execution, dict):
+        return None, "Workflow execution is invalid"
+    normalized = copy.deepcopy(execution)
+    defaults = _postprocess_tunable_defaults(model)
+    allowed_keys = set(defaults)
+
+    if "config_overrides" in normalized:
+        overrides = normalized["config_overrides"]
+        if not isinstance(overrides, dict):
+            return None, "Postprocess overrides must be an object"
+        clean_overrides = {}
+        for key, value in overrides.items():
+            if key not in allowed_keys:
+                if strict:
+                    return None, "Postprocess override is not supported by the selected model"
+                continue
+            if not _is_finite_numeric_scalar(value):
+                if strict:
+                    return None, "Postprocess overrides must be finite numeric values"
+                continue
+            clean_overrides[key] = value
+        normalized["config_overrides"] = clean_overrides
+
+    implementation = normalized.get("postprocess_implementation", "standard")
+    if not isinstance(implementation, str) or implementation not in _POSTPROCESS_IMPLEMENTATIONS:
+        if strict:
+            return None, "Postprocess implementation is invalid"
+        implementation = "standard"
+    if implementation not in _postprocess_implementation_options(model):
+        if strict:
+            return None, "Postprocess implementation is not supported by the selected model"
+        implementation = "standard"
+    if "postprocess_implementation" in normalized or implementation != "standard":
+        normalized["postprocess_implementation"] = implementation
+    return normalized, None
+
+
+def _effective_composer_runner(model, execution):
+    """Map normalized settings to a registry-authorized runner, never client metadata."""
+    if (
+        isinstance(execution, dict)
+        and execution.get("postprocess_implementation") == "cpp_postprocess"
+        and isinstance(model, dict)
+        and model.get("py_sync_cpp_postprocess") is True
+    ):
+        return "python", "sync_cpp_postprocess"
+    if isinstance(model, dict) and model.get("cpp_sync"):
+        return "cpp", "sync"
+    return "python", "sync"
+
+
 def _composer_manifest_response(manifest):
     workflow = manifest.get("workflow", {})
     validation = workflow.get("validation", {}) if isinstance(workflow, dict) else {}
@@ -295,6 +411,7 @@ def _composer_manifest_response(manifest):
         "workflow": workflow,
         "status": manifest.get("status", validation.get("status", "blocked")),
         "validation": validation,
+        "processor_capabilities": _processor_capabilities(_workflow_registry_model(workflow)),
     }, 200
 
 
@@ -314,6 +431,8 @@ _COMPOSER_RESOLUTION_BLOCKER_CODES = frozenset({
 
 def _refresh_composer_validation(workflow, plugin_root=None):
     """Retain immutable resolution blockers while recomputing mutable validation."""
+    if isinstance(workflow, dict):
+        workflow["graph_layout"] = normalize_graph_layout(workflow.get("graph_layout"))
     initial = workflow.get("validation", {}) if isinstance(workflow, dict) else {}
     validation = validate_workflow(workflow, plugin_root=plugin_root)
 
@@ -398,16 +517,25 @@ def _apply_composer_updates(workflow, updates):
     """Apply only the fixed, non-executable Composer customization schema."""
     if not isinstance(updates, dict) or not updates:
         return None, _composer_patch_error("workflow_patch_invalid", "Workflow updates are required")
-    if set(updates) - {"execution", "plugins", "model_selection", "input_selection"}:
+    if set(updates) - {"execution", "plugins", "model_selection", "input_selection", "graph_layout"}:
         return None, _composer_patch_error("workflow_patch_forbidden")
 
     candidate = copy.deepcopy(workflow)
     if not isinstance(candidate, dict):
         return None, _composer_patch_error("workflow_patch_invalid", "Workflow is invalid")
 
+    if "graph_layout" in updates:
+        graph_layout = updates["graph_layout"]
+        if not isinstance(graph_layout, dict):
+            return None, _composer_patch_error("workflow_patch_invalid", "Graph layout is invalid")
+        if validate_graph_layout(graph_layout):
+            return None, _composer_patch_error("workflow_patch_invalid", "Graph layout is invalid")
+        candidate["graph_layout"] = copy.deepcopy(graph_layout)
+
+    processor_settings_updated = False
     if "execution" in updates:
         execution = updates["execution"]
-        if not isinstance(execution, dict) or set(execution) - {"device_id", "save_output"}:
+        if not isinstance(execution, dict) or set(execution) - _COMPOSER_EXECUTION_KEYS:
             return None, _composer_patch_error("workflow_patch_forbidden")
         current_execution = candidate.get("execution")
         if not isinstance(current_execution, dict):
@@ -421,6 +549,12 @@ def _apply_composer_updates(workflow, updates):
             if not isinstance(execution["save_output"], bool):
                 return None, _composer_patch_error("workflow_patch_invalid", "Save output must be a boolean")
             current_execution["save_output"] = execution["save_output"]
+        if "config_overrides" in execution:
+            current_execution["config_overrides"] = copy.deepcopy(execution["config_overrides"])
+            processor_settings_updated = True
+        if "postprocess_implementation" in execution:
+            current_execution["postprocess_implementation"] = execution["postprocess_implementation"]
+            processor_settings_updated = True
 
     if "model_selection" in updates:
         selection = updates["model_selection"]
@@ -453,6 +587,21 @@ def _apply_composer_updates(workflow, updates):
             else:
                 input_data["path"] = ""
                 _set_composer_resolution_blocker(candidate, "input", "compatible_input_not_found", True)
+
+    if processor_settings_updated or "model_selection" in updates:
+        model = _workflow_registry_model(candidate)
+        if model is None:
+            return None, _composer_patch_error(
+                "workflow_patch_invalid", "Selected model is not runnable in the current registry"
+            )
+        normalized_execution, processor_error = _normalize_processor_execution(
+            candidate.get("execution"),
+            model,
+            strict=processor_settings_updated,
+        )
+        if processor_error:
+            return None, _composer_patch_error("workflow_patch_invalid", processor_error)
+        candidate["execution"] = normalized_execution
 
     if "input_selection" in updates:
         selection = updates["input_selection"]
@@ -709,6 +858,8 @@ def run_composer_workflow(tok, payload):
         return manifest, code
 
     workflow = manifest.get("workflow")
+    if isinstance(workflow, dict):
+        workflow["graph_layout"] = normalize_graph_layout(workflow.get("graph_layout"))
     try:
         plugin_root = _composer_plugin_root(manifest)
     except ValueError as exc:
@@ -734,6 +885,14 @@ def run_composer_workflow(tok, payload):
             "error": "Runnable model not found in the current registry",
             "error_code": "runnable_model_not_found",
         }, 400
+    execution, processor_error = _normalize_processor_execution(
+        workflow.get("execution"), model, strict=True
+    )
+    if processor_error:
+        return {
+            "error": processor_error,
+            "error_code": "workflow_processor_settings_invalid",
+        }, 400
     input_data = workflow.get("input", {})
     input_kind = input_data.get("kind")
     if input_kind not in ("image", "video"):
@@ -743,18 +902,22 @@ def run_composer_workflow(tok, payload):
             "validation": validation,
         }, 400
 
-    result = run_inference(
-        model_name=model.get("name", ""),
-        category=model.get("category", ""),
-        model_file=model.get("model_file", ""),
-        lang="cpp" if model.get("cpp_sync") else "python",
-        variant="sync",
-        input_type=input_kind,
-        image_path=input_data.get("path") if input_kind == "image" else None,
-        video_path=input_data.get("path") if input_kind == "video" else None,
-        device_id=workflow.get("execution", {}).get("device_id"),
-        save_output=workflow.get("execution", {}).get("save_output", True),
-    )
+    language, variant = _effective_composer_runner(model, execution)
+    inference_request = {
+        "model_name": model.get("name", ""),
+        "category": model.get("category", ""),
+        "model_file": model.get("model_file", ""),
+        "lang": language,
+        "variant": variant,
+        "input_type": input_kind,
+        "image_path": input_data.get("path") if input_kind == "image" else None,
+        "video_path": input_data.get("path") if input_kind == "video" else None,
+        "device_id": execution.get("device_id"),
+        "save_output": execution.get("save_output", True),
+    }
+    if execution.get("config_overrides"):
+        inference_request["config_overrides"] = execution["config_overrides"]
+    result = run_inference(**inference_request)
     if isinstance(result, dict) and result.get("error"):
         return _result_with_http_status(result, 400)
     return _result_with_http_status(result)
@@ -812,6 +975,8 @@ def export_composer_package(tok, payload):
     if code != 200:
         return manifest, code
     workflow = manifest.get("workflow")
+    if isinstance(workflow, dict):
+        workflow["graph_layout"] = normalize_graph_layout(workflow.get("graph_layout"))
     try:
         plugin_root = _composer_plugin_root(manifest)
     except ValueError as exc:
@@ -838,15 +1003,25 @@ def export_composer_package(tok, payload):
             "error": "Runnable model not found in the current registry",
             "error_code": "runnable_model_not_found",
         }, 400
+    execution, processor_error = _normalize_processor_execution(
+        workflow.get("execution"), model, strict=True
+    )
+    if processor_error:
+        return {
+            "error": processor_error,
+            "error_code": "workflow_processor_settings_invalid",
+        }, 400
+    language, variant = _effective_composer_runner(model, execution)
 
     package_workflow = copy.deepcopy(workflow)
     package_workflow["model"] = {
         "name": model.get("name", ""),
         "category": model.get("category", ""),
         "model_file": model.get("model_file", ""),
-        "language": "cpp" if model.get("cpp_sync") else "python",
-        "variant": "sync",
+        "language": language,
+        "variant": variant,
     }
+    package_workflow["execution"] = execution
     package_validation = validate_workflow(package_workflow, plugin_root=plugin_root)
     if package_validation["status"] != "ready":
         return {
@@ -904,6 +1079,8 @@ def export_composer_recipe(tok, payload):
     if code != 200:
         return manifest, code
     workflow = manifest.get("workflow")
+    if isinstance(workflow, dict):
+        workflow["graph_layout"] = normalize_graph_layout(workflow.get("graph_layout"))
     try:
         plugin_root = _composer_plugin_root(manifest)
     except ValueError as exc:
@@ -927,6 +1104,7 @@ def export_composer_recipe(tok, payload):
         "nodes": workflow.get("nodes", []),
         "plugins": workflow.get("plugins", []),
         "execution": dict(workflow.get("execution", {})),
+        "graph_layout": copy.deepcopy(workflow["graph_layout"]),
     }
     return {"recipe": recipe}, 200
 
@@ -935,6 +1113,9 @@ def import_recipe(recipe, models=None, images=None, videos=None):
     """Return a canonical workflow or a structured recipe-import error dictionary."""
     if not isinstance(recipe, dict) or recipe.get("schema_version") != WORKFLOW_SCHEMA_VERSION:
         return {"error": "Unsupported recipe schema", "error_code": "recipe_schema_unsupported"}
+    graph_layout = recipe.get("graph_layout")
+    if graph_layout is not None and validate_graph_layout(graph_layout):
+        return {"error": "Recipe graph layout is invalid", "error_code": "graph_layout_invalid"}
     plugins = recipe.get("plugins", [])
     if not isinstance(plugins, list) or any(
         not isinstance(plugin, dict) or not _recipe_plugin_path_safe(plugin)
@@ -964,13 +1145,30 @@ def import_recipe(recipe, models=None, images=None, videos=None):
         template_id=template_id,
     )
     workflow["source"] = "recipe"
+    workflow["graph_layout"] = copy.deepcopy(normalize_graph_layout(graph_layout))
     workflow["plugins"] = [dict(plugin) for plugin in plugins]
     execution = recipe.get("execution", {})
-    if isinstance(execution, dict):
-        workflow["execution"] = {
-            "device_id": execution.get("device_id"),
-            "save_output": bool(execution.get("save_output", True)),
-        }
+    if not isinstance(execution, dict) or set(execution) - _COMPOSER_EXECUTION_KEYS:
+        return {"error": "Recipe execution is invalid", "error_code": "recipe_execution_invalid"}
+    imported_execution = dict(workflow.get("execution", {}))
+    if "device_id" in execution:
+        device_id = execution["device_id"]
+        if isinstance(device_id, bool) or (device_id is not None and (not isinstance(device_id, int) or device_id < 0)):
+            return {"error": "Recipe device ID is invalid", "error_code": "recipe_execution_invalid"}
+        imported_execution["device_id"] = device_id
+    if "save_output" in execution:
+        if not isinstance(execution["save_output"], bool):
+            return {"error": "Recipe save output is invalid", "error_code": "recipe_execution_invalid"}
+        imported_execution["save_output"] = execution["save_output"]
+    for key in ("config_overrides", "postprocess_implementation"):
+        if key in execution:
+            imported_execution[key] = copy.deepcopy(execution[key])
+    normalized_execution, processor_error = _normalize_processor_execution(
+        imported_execution, model, strict=True
+    )
+    if processor_error:
+        return {"error": processor_error, "error_code": "recipe_execution_invalid"}
+    workflow["execution"] = normalized_execution
     _refresh_composer_validation(workflow)
     return workflow
 

@@ -9,6 +9,7 @@ from dx_app.core.lab_workflow import (
     _is_runnable,
     build_quick_start_workflow,
     build_template_workflow,
+    default_graph_layout,
     validate_workflow,
 )
 
@@ -73,7 +74,130 @@ def test_quick_start_uses_runnable_registry_identity_only():
     ]
     assert workflow["plugins"] == []
     assert workflow["execution"] == {"device_id": None, "save_output": True}
+    assert workflow["graph_layout"] == {
+        "version": 1,
+        "nodes": [
+            {"id": "input", "x": 80, "y": 220},
+            {"id": "preprocess", "x": 310, "y": 220},
+            {"id": "inference", "x": 540, "y": 220},
+            {"id": "postprocess", "x": 770, "y": 220},
+            {"id": "visualize", "x": 1000, "y": 220},
+        ],
+        "edges": [
+            {"id": "input-preprocess", "from": "input", "to": "preprocess"},
+            {"id": "preprocess-inference", "from": "preprocess", "to": "inference"},
+            {"id": "inference-postprocess", "from": "inference", "to": "postprocess"},
+            {"id": "postprocess-visualize", "from": "postprocess", "to": "visualize"},
+        ],
+        "viewport": {"zoom": 1, "offset_x": 0, "offset_y": 0},
+    }
     assert validate_workflow(workflow, plugin_root=None)["status"] == "ready"
+
+
+@pytest.mark.parametrize(
+    ("layout", "blocker"),
+    [
+        (
+            {
+                "version": 1,
+                "nodes": [
+                    {"id": "input", "x": 0, "y": 0},
+                    {"id": "preprocess", "x": 0, "y": 0},
+                    {"id": "inference", "x": 0, "y": 0},
+                    {"id": "postprocess", "x": 0, "y": 0},
+                    {"id": "unknown", "x": 0, "y": 0},
+                ],
+                "edges": [],
+                "viewport": {"zoom": 1, "offset_x": 0, "offset_y": 0},
+            },
+            {"node_id": "graph", "code": "graph_node_invalid"},
+        ),
+        (
+            {
+                "version": 1,
+                "nodes": [
+                    {"id": "input", "x": 0, "y": 0},
+                    {"id": "preprocess", "x": 0, "y": 0},
+                    {"id": "inference", "x": 0, "y": 0},
+                    {"id": "postprocess", "x": 0, "y": 0},
+                    {"id": "visualize", "x": 0, "y": 0},
+                ],
+                "edges": [
+                    {"id": "input-preprocess", "from": "input", "to": "preprocess"},
+                    {"id": "preprocess-inference", "from": "preprocess", "to": "inference"},
+                    {"id": "inference-postprocess", "from": "inference", "to": "postprocess"},
+                    {"id": "visualize-postprocess", "from": "visualize", "to": "postprocess"},
+                ],
+                "viewport": {"zoom": 1, "offset_x": 0, "offset_y": 0},
+            },
+            {"node_id": "graph", "code": "graph_edge_invalid"},
+        ),
+        (
+            {
+                "version": 1,
+                "nodes": [
+                    {"id": "input", "x": float("nan"), "y": 0},
+                    {"id": "preprocess", "x": 0, "y": 0},
+                    {"id": "inference", "x": 0, "y": 0},
+                    {"id": "postprocess", "x": 0, "y": 0},
+                    {"id": "visualize", "x": 0, "y": 0},
+                ],
+                "edges": [
+                    {"id": "input-preprocess", "from": "input", "to": "preprocess"},
+                    {"id": "preprocess-inference", "from": "preprocess", "to": "inference"},
+                    {"id": "inference-postprocess", "from": "inference", "to": "postprocess"},
+                    {"id": "postprocess-visualize", "from": "postprocess", "to": "visualize"},
+                ],
+                "viewport": {"zoom": 1, "offset_x": 0, "offset_y": 0},
+            },
+            {"node_id": "graph", "code": "graph_position_invalid"},
+        ),
+    ],
+)
+def test_workflow_rejects_noncanonical_graph_layouts(layout, blocker):
+    result = validate_workflow(_workflow(graph_layout=layout), plugin_root=None)
+
+    assert result["status"] == "blocked"
+    assert blocker in result["blockers"]
+
+
+def test_workflow_rejects_missing_duplicate_out_of_range_and_malformed_graph_metadata():
+    cases = [
+        (
+            "missing edge",
+            lambda layout: layout["edges"].pop(),
+            {"node_id": "graph", "code": "graph_edge_invalid"},
+        ),
+        (
+            "duplicate edge",
+            lambda layout: layout["edges"].append(dict(layout["edges"][0])),
+            {"node_id": "graph", "code": "graph_edge_invalid"},
+        ),
+        (
+            "out-of-range position",
+            lambda layout: layout["nodes"][0].update({"x": 5001}),
+            {"node_id": "graph", "code": "graph_position_invalid"},
+        ),
+        (
+            "unknown top-level field",
+            lambda layout: layout.update({"unexpected": True}),
+            {"node_id": "graph", "code": "graph_layout_invalid"},
+        ),
+        (
+            "malformed viewport",
+            lambda layout: layout.update({"viewport": {"zoom": 1, "offset_x": 0, "offset_y": 0, "extra": 1}}),
+            {"node_id": "graph", "code": "graph_viewport_invalid"},
+        ),
+    ]
+
+    for _, mutate, blocker in cases:
+        layout = default_graph_layout()
+        mutate(layout)
+
+        result = validate_workflow(_workflow(graph_layout=layout), plugin_root=None)
+
+        assert result["status"] == "blocked"
+        assert blocker in result["blockers"]
 
 
 def test_quick_start_does_not_fall_back_to_display_only_catalog_rows():

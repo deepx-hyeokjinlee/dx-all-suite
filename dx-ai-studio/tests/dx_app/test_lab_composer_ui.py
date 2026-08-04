@@ -7,6 +7,7 @@ import re
 ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "dx_app" / "templates" / "index.html"
 COMPOSER_JS = ROOT / "dx_app" / "static" / "js" / "lab-composer.js"
+GRAPH_JS = ROOT / "dx_app" / "static" / "js" / "lab-composer-graph.js"
 LAB_PORTAL_JS = ROOT / "dx_app" / "static" / "js" / "lab-portal.js"
 I18N_JS = ROOT / "dx_app" / "static" / "js" / "i18n.js"
 COMPOSER_I18N_KEYS = {
@@ -51,7 +52,24 @@ COMPOSER_I18N_KEYS = {
     "Drop asset here",
     "Built-in Factory Component",
     "Plugin execution requires Factory integration",
+    "Preprocessing is resolved by the selected model Factory.",
+    "Postprocess settings",
+    "No postprocess settings are available for this model.",
+    "Postprocess implementation",
+    "Standard postprocess",
+    "C++ postprocess",
     "The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.",
+    "Fit view",
+    "Zoom in",
+    "Zoom out",
+    "Validate graph",
+    "Graph ready",
+    "Graph blocked",
+    "Missing required connection",
+    "Connection is not allowed",
+    "Core stages are fixed",
+    "Plugin scaffold",
+    "Pick a runnable model to build and run a workflow.",
 }
 LOCALES = ("ko", "ja", "zh-CN", "zh-TW", "es")
 
@@ -70,6 +88,10 @@ COMPOSER_ROUTES = (
 
 def _composer_source():
     return COMPOSER_JS.read_text(encoding="utf-8")
+
+
+def _graph_source():
+    return GRAPH_JS.read_text(encoding="utf-8")
 
 
 def test_lab_has_composer_card_with_quick_start_and_templates():
@@ -97,6 +119,7 @@ def test_lab_opens_composer_first_with_builder_regions():
         "lab-composer-inspector",
     ):
         assert region in source
+    assert GRAPH_JS.exists()
 
 
 def test_customize_is_progressive_after_initial_workflow_exists():
@@ -117,13 +140,65 @@ def test_workflow_preview_exposes_server_resolved_model_and_input():
     assert "workflow.input" in source
 
 
-def test_builder_canvas_is_visible_with_a_fixed_safe_core_chain():
+def test_builder_canvas_is_a_real_constrained_visual_graph():
     source = _composer_source()
+    graph = _graph_source()
 
     assert "function renderBuilderCanvas" in source
     assert "lab-composer-canvas" in source
-    assert "CORE_NODE_ORDER" in source
+    assert "LabComposerGraph.create" in source
+    assert "graph_layout" in source
+    assert "fixedBuilderNodes" not in source
+    assert "lab-composer-node-chain" not in source
     assert "graph.hidden = !currentWorkflow" not in source
+    for contract in (
+        "window.LabComposerGraph",
+        "ComposerGraphState",
+        "document.createElement('canvas')",
+        "drawEdges",
+        "drawPorts",
+        "pointerdown",
+        "pointermove",
+        "wheel",
+        "minimap",
+        "historyIndex",
+        "validateLegalEdges",
+        "getLayout",
+        "setWorkflow",
+        "destroy",
+    ):
+        assert contract in graph
+
+
+def test_graph_editor_is_loaded_before_composer_and_remains_dom_safe():
+    html = INDEX.read_text(encoding="utf-8")
+    graph = _graph_source()
+
+    assert html.index("lab-composer-graph.js") < html.index("lab-composer.js")
+    assert "innerHTML" not in graph
+    assert "document.createElement" in graph
+    assert ".textContent" in graph
+
+
+def test_graph_editor_removes_the_fallback_resize_listener_on_destroy():
+    graph = _graph_source()
+
+    assert "window.addEventListener('resize', resize);" in graph
+    assert "window.removeEventListener('resize', resize);" in graph
+
+
+def test_graph_node_click_does_not_sync_layout_without_movement():
+    graph = _graph_source()
+
+    assert "moved: false" in graph
+    assert "state.drag.moved = true;" in graph
+    assert "state.pan.moved = true;" in graph
+    assert re.search(
+        r"var changed = Boolean\(\s*"
+        r"\(state\.drag && state\.drag\.moved\) \|\|\s*"
+        r"\(state\.pan && state\.pan\.moved\)\s*\);",
+        graph,
+    )
 
 
 def test_builder_reuses_trusted_selection_actions_for_lists_and_drag_drop():
@@ -143,6 +218,7 @@ def test_blocked_validation_disables_run_and_export_controls():
     assert 'validation.status !== "ready"' in source
     assert "runButton.disabled = blocked" in source
     assert "exportButton.disabled = blocked" in source
+    assert "graphValidation.blocked" in source
 
 
 def test_run_posts_only_the_server_issued_manifest_id():
@@ -179,14 +255,35 @@ def test_customize_uses_server_validated_patches_and_confirmed_plugin_scaffolds(
     assert "workflow: currentWorkflow.workflow" not in source
 
 
-def test_customize_graph_cards_show_status_parameters_and_plugin_actions():
+def test_customize_graph_inspector_keeps_plugin_actions_and_local_status():
     source = _composer_source()
 
-    assert "lab-composer-node-status" in source
-    assert "lab-composer-node-params" in source
+    assert "lab-composer-graph-status" in _graph_source()
+    assert "updateGraphActionState" in source
     assert "Add custom preprocess" in source
     assert "Add custom postprocess" in source
     assert "save_output" in source
+
+
+def test_builtin_processor_inspector_uses_server_capabilities_and_persists_safe_settings():
+    source = _composer_source()
+
+    assert "processor_capabilities" in source
+    assert "function processorCapabilities" in source
+    assert "function appendBuiltInProcessorControls" in source
+    assert "Preprocessing is resolved by the selected model Factory." in source
+    assert "Postprocess settings" in source
+    assert "No postprocess settings are available for this model." in source
+    assert "Postprocess implementation" in source
+    assert "Standard postprocess" in source
+    assert "C++ postprocess" in source
+    assert "implementation_options" in source
+    assert "tunable_keys" in source
+    assert "tunable_defaults" in source
+    assert "config_overrides" in source
+    assert "postprocess_implementation" in source
+    assert "execution: { config_overrides:" in source
+    assert "execution: { postprocess_implementation:" in source
 
 
 def test_customize_supports_server_validated_model_asset_and_plugin_drag_actions():
@@ -249,7 +346,7 @@ def test_composer_ui_names_every_server_composer_route():
 
 
 def test_all_composer_strings_have_six_locale_coverage():
-    source = _composer_source()
+    source = _composer_source() + "\n" + _graph_source()
     translations = I18N_JS.read_text(encoding="utf-8")
 
     for key in COMPOSER_I18N_KEYS:
@@ -279,3 +376,64 @@ def test_package_type_choices_have_localized_non_english_labels():
             localized = re.search(rf"'?{re.escape(locale)}'?\s*:\s*'([^']+)'", entry)
             assert localized, f"{key}: {locale}"
             assert localized.group(1) != key, f"{key}: {locale}"
+
+def test_runnable_model_palette_dedupes_shared_model_file():
+    """A single .dxnn reachable via both an SDK example name and a registry alias
+    (yolov5 / yolov5s) must appear once in the palette. Dedup is applied to the
+    server model list before it becomes the palette source."""
+    source = _composer_source()
+
+    assert "function dedupeRunnableModels" in source
+    assert "dedupeRunnableModels(data.filter(isRunnable))" in source
+    assert "model.model_file" in source
+    # keeps the config-bearing entry; server still re-resolves identity at run time
+    assert "function hasConfig" in source
+
+
+def test_empty_canvas_shows_actionable_start_hint():
+    """Before a model is chosen the fixed chain renders greyed 'Unavailable' nodes; an
+    actionable hint must tell the user the single action that starts a workflow."""
+    source = _composer_source()
+
+    assert "startHint" in source
+    assert "lab-composer-start-hint" in source
+    assert "if (!currentWorkflow)" in source
+
+
+def test_composer_reregisters_language_change_to_retranslate():
+    """Composer renders with T() at build time, so it must re-render on a language
+    switch (DXI18n.applyLang cannot swap already-built text nodes)."""
+    source = _composer_source()
+
+    assert "function refreshComposerLanguage" in source
+    assert "onLangChange" in source
+    assert "_DX_I18N_CALLBACKS" in source
+
+
+def test_result_panel_sits_directly_under_run_actions():
+    """The run→result feedback loop must not require scrolling past recipe/export."""
+    source = _composer_source()
+
+    render_body = source[source.index("function render()"):]
+    render_body = render_body[:render_body.index("container.appendChild(shell);")]
+    assert render_body.index("renderActions(shell);") \
+        < render_body.index("renderResult(shell);") \
+        < render_body.index("renderRecipeControls(shell);")
+
+
+def test_inspector_uses_compact_pickers_not_duplicate_full_asset_model_lists():
+    """The full browseable/draggable model+asset lists live once in the palette; the
+    Inspector shows compact per-node pickers so the same long list is not rendered
+    twice at once. Trusted server-validated mutations are preserved."""
+    source = _composer_source()
+
+    assert "function appendInspectorAssetPicker" in source
+    assert "function appendInspectorModelPicker" in source
+    assert "appendInspectorAssetPicker(inspector)" in source
+    assert "appendInspectorModelPicker(inspector)" in source
+    # palette keeps the full draggable lists
+    assert "appendAssetChoices(palette)" in source
+    assert "appendModelChoices(palette)" in source
+    # inspector pickers reuse the trusted mutations, not raw workflow payloads
+    assert "applyAssetSelection(select.value)" in source
+    assert "applyModelSelection(model)" in source

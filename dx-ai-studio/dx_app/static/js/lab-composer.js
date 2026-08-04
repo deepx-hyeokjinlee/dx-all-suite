@@ -12,17 +12,13 @@ window.LabComposer = (function () {
   var savedRecipe = null;
   var compatibleAssets = [];
   var compatibleAssetKey = '';
+  var graphEditor = null;
+  var graphValidation = { blocked: false, blockers: [] };
+  var graphSyncTimer = 0;
   var MAX_CUSTOMIZATION_HISTORY = 20;
   var PLUGIN_DRAG_MIME = 'application/x-dx-app-composer-plugin';
   var MODEL_DRAG_MIME = 'application/x-dx-app-composer-model';
   var ASSET_DRAG_MIME = 'application/x-dx-app-composer-asset';
-  var CORE_NODE_ORDER = [
-    'input',
-    'builtin_preprocess',
-    'inference',
-    'builtin_postprocess',
-    'builtin_visualizer'
-  ];
   var DEFERRED_COMPOSER_ROUTES = [
     '/api/lab/composer/recipe/export',
     '/api/lab/composer/recipe/import'
@@ -61,6 +57,7 @@ window.LabComposer = (function () {
         customize: 'Customize',
         undo: 'Undo',
         redo: 'Redo',
+        startHint: 'Pick a runnable model to build and run a workflow.',
         saveOutput: 'Save Output',
         selectInputAsset: 'Select input asset',
         deviceId: 'Device ID',
@@ -97,7 +94,23 @@ window.LabComposer = (function () {
         dropAssetHere: 'Drop asset here',
         builtInFactoryComponent: 'Built-in Factory Component',
         pluginFactoryIntegration: 'Plugin execution requires Factory integration',
-        fixedCoreChain: 'The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.'
+        preprocessResolvedByFactory: 'Preprocessing is resolved by the selected model Factory.',
+        postprocessSettings: 'Postprocess settings',
+        noPostprocessSettings: 'No postprocess settings are available for this model.',
+        postprocessImplementation: 'Postprocess implementation',
+        standardPostprocess: 'Standard postprocess',
+        cppPostprocess: 'C++ postprocess',
+        fixedCoreChain: 'The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.',
+        fitView: 'Fit view',
+        zoomIn: 'Zoom in',
+        zoomOut: 'Zoom out',
+        validateGraph: 'Validate graph',
+        graphReady: 'Graph ready',
+        graphBlocked: 'Graph blocked',
+        missingConnection: 'Missing required connection',
+        connectionNotAllowed: 'Connection is not allowed',
+        coreStagesFixed: 'Core stages are fixed',
+        pluginScaffold: 'Plugin scaffold'
       };
     }
     return {
@@ -106,6 +119,7 @@ window.LabComposer = (function () {
       customize: T('Customize'),
       undo: T('Undo'),
       redo: T('Redo'),
+      startHint: T('Pick a runnable model to build and run a workflow.'),
       saveOutput: T('Save Output'),
       selectInputAsset: T('Select input asset'),
       deviceId: T('Device ID'),
@@ -142,7 +156,23 @@ window.LabComposer = (function () {
       dropAssetHere: T('Drop asset here'),
       builtInFactoryComponent: T('Built-in Factory Component'),
       pluginFactoryIntegration: T('Plugin execution requires Factory integration'),
-      fixedCoreChain: T('The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.')
+      preprocessResolvedByFactory: T('Preprocessing is resolved by the selected model Factory.'),
+      postprocessSettings: T('Postprocess settings'),
+      noPostprocessSettings: T('No postprocess settings are available for this model.'),
+      postprocessImplementation: T('Postprocess implementation'),
+      standardPostprocess: T('Standard postprocess'),
+      cppPostprocess: T('C++ postprocess'),
+      fixedCoreChain: T('The core chain is fixed so the selected DX App Factory and SyncRunner remain executable.'),
+      fitView: T('Fit view'),
+      zoomIn: T('Zoom in'),
+      zoomOut: T('Zoom out'),
+      validateGraph: T('Validate graph'),
+      graphReady: T('Graph ready'),
+      graphBlocked: T('Graph blocked'),
+      missingConnection: T('Missing required connection'),
+      connectionNotAllowed: T('Connection is not allowed'),
+      coreStagesFixed: T('Core stages are fixed'),
+      pluginScaffold: T('Plugin scaffold')
     };
   }
 
@@ -218,6 +248,41 @@ window.LabComposer = (function () {
     return postJ(path, payload);
   }
 
+  function hasConfig(model) {
+    return !!(model && model.config && typeof model.config === 'object'
+      && Object.keys(model.config).length);
+  }
+
+  function dedupeRunnableModels(list) {
+    // One .dxnn can be reached by both an SDK example-dir name and a registry alias
+    // (e.g. 'yolov5' + 'yolov5s' → yolov5-s_640x640.dxnn). The palette must offer that
+    // runnable binary once; keep the entry that carries a real config (server still
+    // re-resolves the runner and identity at Run/Export time). Models with no
+    // model_file are preserved individually.
+    var byFile = {};
+    var order = [];
+    list.forEach(function (model) {
+      var mf = model && model.model_file ? model.model_file : '';
+      if (!mf) { order.push({ model: model }); return; }
+      if (!Object.prototype.hasOwnProperty.call(byFile, mf)) {
+        byFile[mf] = model;
+        order.push({ file: mf });
+      } else if (!hasConfig(byFile[mf]) && hasConfig(model)) {
+        byFile[mf] = model;
+      }
+    });
+    var out = [];
+    var seen = {};
+    order.forEach(function (item) {
+      if (item.file) {
+        if (!seen[item.file]) { seen[item.file] = true; out.push(byFile[item.file]); }
+      } else {
+        out.push(item.model);
+      }
+    });
+    return out;
+  }
+
   async function loadModels() {
     if (models.length) return models;
     modelLoadError = false;
@@ -225,7 +290,7 @@ window.LabComposer = (function () {
       var response = await fetch('/api/models');
       if (!response.ok) throw new Error('models_http_' + response.status);
       var data = await response.json();
-      models = Array.isArray(data) ? data.filter(isRunnable) : [];
+      models = Array.isArray(data) ? dedupeRunnableModels(data.filter(isRunnable)) : [];
     } catch (err) {
       models = [];
       modelLoadError = true;
@@ -315,8 +380,14 @@ window.LabComposer = (function () {
       input_path: typeof input.path === 'string' ? input.path : '',
       execution: {
         device_id: execution.device_id === undefined ? null : execution.device_id,
-        save_output: execution.save_output !== false
+        save_output: execution.save_output !== false,
+        config_overrides: execution.config_overrides && typeof execution.config_overrides === 'object'
+          && !Array.isArray(execution.config_overrides)
+          ? JSON.parse(JSON.stringify(execution.config_overrides)) : {},
+        postprocess_implementation: typeof execution.postprocess_implementation === 'string'
+          ? execution.postprocess_implementation : 'standard'
       },
+      graph_layout: workflow && workflow.graph_layout ? JSON.parse(JSON.stringify(workflow.graph_layout)) : null,
       plugins: plugins.filter(function (plugin) {
         return plugin && typeof plugin.id === 'string';
       }).map(function (plugin) {
@@ -351,7 +422,9 @@ window.LabComposer = (function () {
     var updates = {
       execution: {
         device_id: snapshot.execution.device_id,
-        save_output: snapshot.execution.save_output
+        save_output: snapshot.execution.save_output,
+        config_overrides: snapshot.execution.config_overrides || {},
+        postprocess_implementation: snapshot.execution.postprocess_implementation || 'standard'
       },
       plugins: (workflow.plugins || []).filter(function (plugin) {
         return plugin && typeof plugin.id === 'string';
@@ -365,6 +438,7 @@ window.LabComposer = (function () {
     if (snapshot.input_path) {
       updates.input_selection = { path: snapshot.input_path };
     }
+    if (snapshot.graph_layout) updates.graph_layout = snapshot.graph_layout;
     return updates;
   }
 
@@ -377,9 +451,11 @@ window.LabComposer = (function () {
       manifest_id: response.manifest_id,
       workflow: response.workflow,
       validation: response.validation || response.workflow.validation || {},
-      status: response.status
+      status: response.status,
+      processorCapabilities: response.processor_capabilities || {}
     };
     savedRecipe = null;
+    graphValidation = { blocked: false, blockers: [] };
     if (historyAction === 'record') recordCustomizationState();
     else if (historyAction !== 'preserve') resetCustomizationHistory();
     render();
@@ -462,6 +538,106 @@ window.LabComposer = (function () {
       return key + ': ' + String(params[key]);
     });
     return entries.length ? entries.join(', ') : text('Built-in defaults');
+  }
+
+  function processorCapabilities() {
+    var capabilities = currentWorkflow && currentWorkflow.processorCapabilities;
+    if (!capabilities || typeof capabilities !== 'object') {
+      return { preprocess: { factory_owned: true }, postprocess: {} };
+    }
+    return capabilities;
+  }
+
+  function postprocessExecution(workflow) {
+    var execution = workflow && workflow.execution && typeof workflow.execution === 'object'
+      ? workflow.execution : {};
+    var overrides = execution.config_overrides;
+    return {
+      config_overrides: overrides && typeof overrides === 'object' && !Array.isArray(overrides)
+        ? JSON.parse(JSON.stringify(overrides)) : {},
+      postprocess_implementation: typeof execution.postprocess_implementation === 'string'
+        ? execution.postprocess_implementation : 'standard'
+    };
+  }
+
+  function appendPostprocessTunableControl(parent, key, fallbackValue, workflow) {
+    var field = make('div', 'lab-composer-node-control');
+    var id = 'lab-composer-postprocess-' + key;
+    var label = make('label', '', key);
+    label.setAttribute('for', id);
+    var input = document.createElement('input');
+    var state = postprocessExecution(workflow);
+    var value = Object.prototype.hasOwnProperty.call(state.config_overrides, key)
+      ? state.config_overrides[key] : fallbackValue;
+    input.className = 'input';
+    input.id = id;
+    input.type = 'number';
+    input.step = 'any';
+    input.value = value === undefined || value === null ? '' : String(value);
+    input.addEventListener('change', function () {
+      var nextValue = Number(input.value);
+      if (!Number.isFinite(nextValue)) {
+        renderError(composerLabels().validationBlocked);
+        return;
+      }
+      var next = postprocessExecution(currentWorkflow && currentWorkflow.workflow);
+      next.config_overrides[key] = nextValue;
+      ComposerApi.update({ execution: { config_overrides: next.config_overrides } });
+    });
+    field.appendChild(label);
+    field.appendChild(input);
+    parent.appendChild(field);
+  }
+
+  function appendPostprocessImplementationControl(parent, options, workflow) {
+    if (!Array.isArray(options) || options.length < 2) return;
+    var field = make('div', 'lab-composer-node-control');
+    var label = make('label', '', composerLabels().postprocessImplementation);
+    label.setAttribute('for', 'lab-composer-postprocess-implementation');
+    var select = make('select', 'input');
+    select.id = 'lab-composer-postprocess-implementation';
+    options.forEach(function (option) {
+      if (option === 'standard') appendOption(select, option, composerLabels().standardPostprocess);
+      if (option === 'cpp_postprocess') appendOption(select, option, composerLabels().cppPostprocess);
+    });
+    var state = postprocessExecution(workflow);
+    select.value = options.indexOf(state.postprocess_implementation) !== -1
+      ? state.postprocess_implementation : 'standard';
+    select.addEventListener('change', function () {
+      if (options.indexOf(select.value) === -1) return;
+      ComposerApi.update({ execution: { postprocess_implementation: select.value } });
+    });
+    field.appendChild(label);
+    field.appendChild(select);
+    parent.appendChild(field);
+  }
+
+  function appendBuiltInProcessorControls(parent, stage) {
+    var workflow = currentWorkflow && currentWorkflow.workflow ? currentWorkflow.workflow : {};
+    if (stage === 'preprocess') {
+      parent.appendChild(make(
+        'p', 'lab-composer-factory-note', composerLabels().preprocessResolvedByFactory
+      ));
+      return;
+    }
+
+    var capabilities = processorCapabilities().postprocess || {};
+    var keys = Array.isArray(capabilities.tunable_keys) ? capabilities.tunable_keys : [];
+    var defaults = capabilities.tunable_defaults && typeof capabilities.tunable_defaults === 'object'
+      ? capabilities.tunable_defaults : {};
+    var options = Array.isArray(capabilities.implementation_options)
+      ? capabilities.implementation_options : ['standard'];
+    parent.appendChild(make('h4', '', composerLabels().postprocessSettings));
+    if (!keys.length) {
+      parent.appendChild(make('p', 'lab-composer-factory-note', composerLabels().noPostprocessSettings));
+    } else {
+      keys.forEach(function (key) {
+        if (typeof key === 'string' && Object.prototype.hasOwnProperty.call(defaults, key)) {
+          appendPostprocessTunableControl(parent, key, defaults[key], workflow);
+        }
+      });
+    }
+    appendPostprocessImplementationControl(parent, options, workflow);
   }
 
   function appendPluginControls(card, stage) {
@@ -728,13 +904,19 @@ window.LabComposer = (function () {
     }[kind] || kind;
   }
 
-  function fixedBuilderNodes() {
+  function builderNodes() {
     var workflow = ComposerState.workflow || {};
     var nodes = Array.isArray(workflow.nodes) ? workflow.nodes : [];
-    return CORE_NODE_ORDER.map(function (kind) {
-      return nodes.find(function (node) { return node && node.kind === kind; }) || {
-        id: nodeIdForKind(kind),
-        kind: kind,
+    var kinds = [
+      'input',
+      'builtin_preprocess',
+      'inference',
+      'builtin_postprocess',
+      'builtin_visualizer'
+    ];
+    return kinds.map(function (kind) {
+      return nodes.find(function (node) { return node && node.id === nodeIdForKind(kind); }) || {
+        id: nodeIdForKind(kind), kind: kind,
         enabled: true,
         params: {}
       };
@@ -756,7 +938,11 @@ window.LabComposer = (function () {
 
   function selectBuilderNode(nodeId) {
     ComposerState.selectedNodeId = nodeId;
-    render();
+    var inspector = document.getElementById('lab-composer-inspector');
+    if (!inspector || !inspector.parentNode) return;
+    var parent = inspector.parentNode;
+    inspector.remove();
+    renderBuilderInspector(parent);
   }
 
   function renderBuilderPalette(parent) {
@@ -791,67 +977,181 @@ window.LabComposer = (function () {
     parent.appendChild(palette);
   }
 
+  function selectedBuilderNode() {
+    var nodes = builderNodes();
+    return nodes.find(function (node) { return node.id === ComposerState.selectedNodeId; }) || nodes[0];
+  }
+
+  function graphEditorLabels() {
+    var labels = composerLabels();
+    return {
+      undo: labels.undo,
+      redo: labels.redo,
+      fitView: labels.fitView,
+      zoomIn: labels.zoomIn,
+      zoomOut: labels.zoomOut,
+      validate: labels.validateGraph,
+      graphReady: labels.graphReady,
+      graphBlocked: labels.graphBlocked,
+      input: text('Input'),
+      preprocess: text('Preprocess'),
+      inference: text('Inference'),
+      postprocess: text('Postprocess'),
+      visualize: text('Visualize'),
+      builtIn: labels.builtInFactoryComponent,
+      unavailable: text('Unavailable'),
+      canvas: labels.canvas,
+      minimap: text('Minimap')
+    };
+  }
+
+  function updateGraphActionState() {
+    var blocked = !currentWorkflow || isBlocked(currentWorkflow.validation) || graphValidation.blocked;
+    [
+      document.getElementById('lab-composer-run'),
+      document.getElementById('lab-composer-export')
+    ].forEach(function (button) {
+      if (button) button.disabled = blocked;
+    });
+  }
+
+  function scheduleGraphLayoutSync(layout) {
+    if (!currentWorkflow || graphValidation.blocked) return;
+    if (graphSyncTimer) window.clearTimeout(graphSyncTimer);
+    graphSyncTimer = window.setTimeout(function () {
+      graphSyncTimer = 0;
+      if (currentWorkflow && !graphValidation.blocked) {
+        ComposerApi.update({ graph_layout: layout });
+      }
+    }, 250);
+  }
+
+  function handleGraphDrop(drop) {
+    if (!drop) return;
+    if (drop.mime === MODEL_DRAG_MIME && drop.targetId === 'inference') {
+      var model = modelForFile(drop.value);
+      if (model) applyModelSelection(model);
+      return;
+    }
+    if (drop.mime === ASSET_DRAG_MIME && drop.targetId === 'input') {
+      if (availableAssets().indexOf(drop.value) !== -1) applyAssetSelection(drop.value);
+      return;
+    }
+    if (drop.mime === PLUGIN_DRAG_MIME && (drop.targetId === 'preprocess' || drop.targetId === 'postprocess')) {
+      if (drop.value === 'python' || drop.value === 'cpp') planPluginScaffold(drop.targetId, drop.value);
+    }
+  }
+
   function renderBuilderCanvas(parent) {
     var canvas = make('section', 'lab-composer-canvas');
     canvas.appendChild(make('h3', '', composerLabels().canvas));
     canvas.appendChild(make('p', 'txt-dim txt-sm', composerLabels().fixedCoreChain));
-    var chain = make('div', 'lab-composer-node-chain');
-    fixedBuilderNodes().forEach(function (node, index) {
-      if (index) chain.appendChild(make('span', 'lab-composer-arrow', '→'));
-      var blockers = nodeBlockers(node);
-      var card = make(
-        'article',
-        'lab-composer-node' + (ComposerState.selectedNodeId === node.id ? ' selected' : '')
-      );
-      card.tabIndex = 0;
-      card.setAttribute('data-node-id', node.id);
-      card.setAttribute('aria-label', text(nodeLabel(node.kind)));
-      card.addEventListener('click', function () { selectBuilderNode(node.id); });
-      card.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          selectBuilderNode(node.id);
-        }
-      });
-      card.appendChild(make('strong', '', text(nodeLabel(node.kind))));
-      card.appendChild(make('span', 'txt-dim txt-sm', node.kind));
-      card.appendChild(make(
-        'span',
-        'lab-composer-node-status ' + (blockers.length ? 'lab-composer-node-blocked' : 'lab-composer-node-ready'),
-        blockers.length ? text('Blocked') : text('Ready')
-      ));
-      card.appendChild(make('p', 'lab-composer-node-params', builderNodeSummary(node)));
-      if (node.kind === 'input') appendSelectionDropTarget(card, 'asset');
-      if (node.kind === 'inference') appendSelectionDropTarget(card, 'model');
-      if (node.kind === 'builtin_preprocess') appendPluginDropTarget(card, 'preprocess');
-      if (node.kind === 'builtin_postprocess') appendPluginDropTarget(card, 'postprocess');
-      chain.appendChild(card);
+    if (!currentWorkflow) {
+      // Actionable empty state: the fixed chain renders greyed "Unavailable" nodes before
+      // a model is chosen, which reads as broken. Tell the user the one action that starts it.
+      canvas.appendChild(make('p', 'lab-composer-start-hint', composerLabels().startHint));
+    }
+    var host = make('div', 'lab-composer-graph-host');
+    canvas.appendChild(host);
+    if (!window.LabComposerGraph || typeof window.LabComposerGraph.create !== 'function') {
+      host.appendChild(make('p', 'lab-composer-error', text('Workflow validation blocked')));
+      parent.appendChild(canvas);
+      return;
+    }
+    if (graphEditor) graphEditor.destroy();
+    var workflow = ComposerState.workflow || {};
+    graphEditor = window.LabComposerGraph.create(host, workflow.graph_layout, {
+      labels: graphEditorLabels(),
+      onSelect: selectBuilderNode,
+      onDrop: handleGraphDrop,
+      onValidationChange: function (validation) {
+        graphValidation = validation;
+        updateGraphActionState();
+      },
+      onLayoutChange: function (layout, validation) {
+        graphValidation = validation;
+        updateGraphActionState();
+        scheduleGraphLayoutSync(layout);
+      }
     });
-    canvas.appendChild(chain);
+    graphEditor.setWorkflow(workflow);
+    graphValidation = graphEditor.validate();
     parent.appendChild(canvas);
   }
 
-  function selectedBuilderNode() {
-    var nodes = fixedBuilderNodes();
-    return nodes.find(function (node) { return node.id === ComposerState.selectedNodeId; }) || nodes[0];
+  function appendInspectorAssetPicker(parent) {
+    // Compact per-node picker. The full browseable/draggable Compatible Assets list
+    // lives once in the Builder palette; the Inspector only needs to show and change
+    // THIS node's selected asset (no duplicate long list). Reuses the trusted,
+    // server-validated applyAssetSelection mutation.
+    if (!currentWorkflow) {
+      parent.appendChild(make('p', 'txt-dim txt-sm', text('Choose a model to create a workflow first.')));
+      return;
+    }
+    var assets = availableAssets();
+    if (!assets.length) {
+      parent.appendChild(make('p', 'lab-composer-empty', composerLabels().selectInputAsset));
+      return;
+    }
+    var workflow = ComposerState.workflow || {};
+    var current = (workflow.input || {}).path || '';
+    var field = make('div', 'fg');
+    var select = make('select', 'input');
+    select.id = 'lab-composer-inspector-asset';
+    assets.forEach(function (asset) { appendOption(select, asset, asset); });
+    if (assets.indexOf(current) !== -1) select.value = current;
+    select.addEventListener('change', function () {
+      if (availableAssets().indexOf(select.value) !== -1) applyAssetSelection(select.value);
+    });
+    field.appendChild(select);
+    parent.appendChild(field);
+  }
+
+  function appendInspectorModelPicker(parent) {
+    // Compact per-node model picker; the full draggable Runnable Models list stays in
+    // the palette. Reuses the trusted applyModelSelection mutation (server re-resolves).
+    if (!models.length) {
+      parent.appendChild(make('p', 'lab-composer-empty', modelLoadError
+        ? text('Unable to load runnable models. Check the Lab connection and try again.')
+        : text('No runnable models are installed. Download a DXNN model before creating a workflow.')));
+      return;
+    }
+    var current = selectedPaletteModel();
+    var currentIndex = -1;
+    var field = make('div', 'fg');
+    var select = make('select', 'input');
+    select.id = 'lab-composer-inspector-model';
+    models.forEach(function (model, index) {
+      appendOption(select, String(index), labelFor(model));
+      if (current && current.model_file === model.model_file) currentIndex = index;
+    });
+    if (currentIndex !== -1) select.value = String(currentIndex);
+    select.addEventListener('change', function () {
+      var model = models[Number(select.value)];
+      if (model) applyModelSelection(model);
+    });
+    field.appendChild(select);
+    parent.appendChild(field);
   }
 
   function renderBuilderInspector(parent) {
     var inspector = make('aside', 'lab-composer-inspector');
+    inspector.id = 'lab-composer-inspector';
     var node = selectedBuilderNode();
     inspector.appendChild(make('h3', '', composerLabels().inspector));
     inspector.appendChild(make('h4', '', text(nodeLabel(node.kind))));
     inspector.appendChild(make('p', 'txt-dim txt-sm', builderNodeSummary(node)));
     if (node.kind === 'input') {
       inspector.appendChild(make('h4', '', composerLabels().compatibleAssets));
-      appendAssetChoices(inspector);
+      appendInspectorAssetPicker(inspector);
     } else if (node.kind === 'inference') {
       inspector.appendChild(make('h4', '', composerLabels().runnableModels));
-      appendModelChoices(inspector);
+      appendInspectorModelPicker(inspector);
     } else if (node.kind === 'builtin_preprocess' || node.kind === 'builtin_postprocess') {
       var stage = node.kind === 'builtin_preprocess' ? 'preprocess' : 'postprocess';
       inspector.appendChild(make('p', 'lab-composer-factory-note', composerLabels().builtInFactoryComponent));
       inspector.appendChild(make('p', 'lab-composer-factory-note', composerLabels().pluginFactoryIntegration));
+      appendBuiltInProcessorControls(inspector, stage);
       if (currentWorkflow) appendPluginControls(inspector, stage);
     } else if (node.kind === 'builtin_visualizer' && currentWorkflow) {
       var workflow = currentWorkflow.workflow || {};
@@ -929,19 +1229,21 @@ window.LabComposer = (function () {
   function renderActions(parent) {
     var actions = make('div', 'lab-composer-actions');
     var validation = currentWorkflow && currentWorkflow.validation ? currentWorkflow.validation : {};
-    var blocked = !currentWorkflow || isBlocked(validation);
+    var blocked = !currentWorkflow || isBlocked(validation) || graphValidation.blocked;
     var runButton = appendActionButton(actions, 'btn-acc', composerLabels().runWorkflow, runWorkflow);
+    runButton.id = 'lab-composer-run';
     runButton.disabled = blocked;
     var exportButton = appendActionButton(actions, 'btn-blue', composerLabels().exportPackage, function () {
       exportPackage('run');
     });
+    exportButton.id = 'lab-composer-export';
     exportButton.disabled = blocked;
     parent.appendChild(actions);
   }
 
   function renderRecipeControls(parent) {
     var validation = currentWorkflow && currentWorkflow.validation ? currentWorkflow.validation : {};
-    if (!currentWorkflow || isBlocked(validation)) return;
+    if (!currentWorkflow || isBlocked(validation) || graphValidation.blocked) return;
     var section = make('section', 'lab-composer-recipe-controls');
     section.appendChild(make('h3', '', composerLabels().saveRecipe));
     var actions = make('div', 'lab-composer-recipe-actions');
@@ -987,7 +1289,7 @@ window.LabComposer = (function () {
 
   function renderExportPanel(parent) {
     var validation = currentWorkflow && currentWorkflow.validation ? currentWorkflow.validation : {};
-    if (!currentWorkflow || isBlocked(validation)) return;
+    if (!currentWorkflow || isBlocked(validation) || graphValidation.blocked) return;
     var workflow = currentWorkflow.workflow || {};
     var model = workflow.model || {};
     var input = workflow.input || {};
@@ -1164,6 +1466,10 @@ window.LabComposer = (function () {
   function render() {
     var container = root();
     if (!container) return;
+    if (graphEditor) {
+      graphEditor.destroy();
+      graphEditor = null;
+    }
     clear(container);
     var shell = make('section', 'lab-composer');
     shell.appendChild(make('h2', 'lab-composer-title', text('DX App Composer')));
@@ -1171,10 +1477,18 @@ window.LabComposer = (function () {
     renderWorkflowSummary(shell);
     if (currentWorkflow) renderValidation(shell, currentWorkflow.validation);
     renderActions(shell);
+    // Result sits directly under Run/Export so the run→result feedback loop needs no
+    // scroll past the recipe and export-preflight panels.
+    renderResult(shell);
     renderRecipeControls(shell);
     renderExportPanel(shell);
-    renderResult(shell);
     container.appendChild(shell);
+  }
+
+  function refreshComposerLanguage() {
+    // Composer builds its DOM with T() at render time (no data-i18n attributes), so a
+    // language switch cannot be applied by DXI18n.applyLang — re-render to re-translate.
+    if (root()) render();
   }
 
   function safeOutputUrl(value) {
@@ -1222,7 +1536,10 @@ window.LabComposer = (function () {
   }
 
   async function runWorkflow() {
-    if (!currentWorkflow) return;
+    if (!currentWorkflow || graphValidation.blocked) {
+      renderError(composerLabels().graphBlocked);
+      return;
+    }
     setStatus(text('Running workflow'), 'info');
     var result = await request(
       "/api/lab/composer/run",
@@ -1286,7 +1603,10 @@ window.LabComposer = (function () {
   }
 
   async function exportPackage(packageType) {
-    if (!currentWorkflow) return;
+    if (!currentWorkflow || graphValidation.blocked) {
+      renderError(composerLabels().graphBlocked);
+      return;
+    }
     setStatus(composerLabels().exportPreflight, 'info');
     var result = await request('/api/lab/composer/export', {
       manifest_id: currentWorkflow.manifest_id,
@@ -1318,6 +1638,15 @@ window.LabComposer = (function () {
     await loadModels();
     loadCapabilities();
     render();
+  }
+
+  // Re-translate the Composer when the studio language changes (it renders with T()
+  // at build time, so DXI18n.applyLang alone cannot swap its strings live).
+  if (window.DXI18n && typeof window.DXI18n.onLangChange === 'function') {
+    window.DXI18n.onLangChange(refreshComposerLanguage);
+  } else {
+    window._DX_I18N_CALLBACKS = window._DX_I18N_CALLBACKS || [];
+    window._DX_I18N_CALLBACKS.push(refreshComposerLanguage);
   }
 
   return { open: open };

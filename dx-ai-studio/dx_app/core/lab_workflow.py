@@ -1,12 +1,15 @@
 """Canonical, side-effect-free workflow helpers for the Lab Composer."""
 
 import ast
+import math
 import re
 import secrets
+from numbers import Real
 from pathlib import Path
 
 
 WORKFLOW_SCHEMA_VERSION = 1
+GRAPH_LAYOUT_VERSION = 1
 CORE_STAGES = (
     "input",
     "builtin_preprocess",
@@ -19,6 +22,19 @@ PLUGIN_LANGUAGES = ("python", "cpp")
 PLUGIN_INTERFACE_VERSION = 1
 SUPPORTED_NODE_KINDS = CORE_STAGES
 PACKAGE_TYPES = ("recipe", "run", "developer")
+CORE_GRAPH_NODE_IDS = ("input", "preprocess", "inference", "postprocess", "visualize")
+CORE_GRAPH_EDGES = (
+    ("input", "preprocess"),
+    ("preprocess", "inference"),
+    ("inference", "postprocess"),
+    ("postprocess", "visualize"),
+)
+_GRAPH_POSITION_MIN = -5000
+_GRAPH_POSITION_MAX = 5000
+_GRAPH_VIEWPORT_OFFSET_MIN = -10000
+_GRAPH_VIEWPORT_OFFSET_MAX = 10000
+_GRAPH_VIEWPORT_ZOOM_MIN = 0.3
+_GRAPH_VIEWPORT_ZOOM_MAX = 3.0
 
 # Keep template data declarative so routes/UI can present it without duplicating
 # the category and input compatibility rules.
@@ -142,6 +158,105 @@ def _core_nodes():
     ]
 
 
+def default_graph_layout():
+    """Return a fresh deterministic visual projection of the fixed core chain."""
+    positions = (80, 310, 540, 770, 1000)
+    return {
+        "version": GRAPH_LAYOUT_VERSION,
+        "nodes": [
+            {"id": node_id, "x": x, "y": 220}
+            for node_id, x in zip(CORE_GRAPH_NODE_IDS, positions)
+        ],
+        "edges": [
+            {"id": f"{source}-{target}", "from": source, "to": target}
+            for source, target in CORE_GRAPH_EDGES
+        ],
+        "viewport": {"zoom": 1, "offset_x": 0, "offset_y": 0},
+    }
+
+
+def normalize_graph_layout(layout):
+    """Supply the deterministic legacy default without changing execution stages."""
+    return default_graph_layout() if layout is None else layout
+
+
+def _finite_number(value, minimum, maximum):
+    return (
+        isinstance(value, Real)
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+        and minimum <= value <= maximum
+    )
+
+
+def validate_graph_layout(layout):
+    """Return stable blockers for non-canonical presentation-only graph metadata."""
+    layout = normalize_graph_layout(layout)
+    blockers = []
+    if not isinstance(layout, dict) or set(layout) != {"version", "nodes", "edges", "viewport"}:
+        return [{"node_id": "graph", "code": "graph_layout_invalid"}]
+    if layout.get("version") != GRAPH_LAYOUT_VERSION:
+        blockers.append({"node_id": "graph", "code": "graph_layout_invalid"})
+
+    nodes = layout.get("nodes")
+    if not isinstance(nodes, list) or len(nodes) != len(CORE_GRAPH_NODE_IDS):
+        blockers.append({"node_id": "graph", "code": "graph_node_invalid"})
+    else:
+        node_ids = []
+        positions_valid = True
+        for node in nodes:
+            if not isinstance(node, dict) or set(node) != {"id", "x", "y"}:
+                node_ids.append(None)
+                positions_valid = False
+                continue
+            node_ids.append(node.get("id"))
+            positions_valid = positions_valid and _finite_number(
+                node.get("x"), _GRAPH_POSITION_MIN, _GRAPH_POSITION_MAX
+            ) and _finite_number(
+                node.get("y"), _GRAPH_POSITION_MIN, _GRAPH_POSITION_MAX
+            )
+        if set(node_ids) != set(CORE_GRAPH_NODE_IDS) or len(set(node_ids)) != len(CORE_GRAPH_NODE_IDS):
+            blockers.append({"node_id": "graph", "code": "graph_node_invalid"})
+        if not positions_valid:
+            blockers.append({"node_id": "graph", "code": "graph_position_invalid"})
+
+    edges = layout.get("edges")
+    expected_edges = set(CORE_GRAPH_EDGES)
+    if not isinstance(edges, list) or len(edges) != len(CORE_GRAPH_EDGES):
+        blockers.append({"node_id": "graph", "code": "graph_edge_invalid"})
+    else:
+        edge_pairs = []
+        edge_ids = []
+        edge_shape_valid = True
+        for edge in edges:
+            if not isinstance(edge, dict) or set(edge) != {"id", "from", "to"}:
+                edge_shape_valid = False
+                continue
+            source, target = edge.get("from"), edge.get("to")
+            edge_pairs.append((source, target))
+            edge_ids.append(edge.get("id"))
+            if edge.get("id") != f"{source}-{target}":
+                edge_shape_valid = False
+        if (
+            not edge_shape_valid
+            or set(edge_pairs) != expected_edges
+            or len(set(edge_pairs)) != len(CORE_GRAPH_EDGES)
+            or len(set(edge_ids)) != len(CORE_GRAPH_EDGES)
+        ):
+            blockers.append({"node_id": "graph", "code": "graph_edge_invalid"})
+
+    viewport = layout.get("viewport")
+    if (
+        not isinstance(viewport, dict)
+        or set(viewport) != {"zoom", "offset_x", "offset_y"}
+        or not _finite_number(viewport.get("zoom"), _GRAPH_VIEWPORT_ZOOM_MIN, _GRAPH_VIEWPORT_ZOOM_MAX)
+        or not _finite_number(viewport.get("offset_x"), _GRAPH_VIEWPORT_OFFSET_MIN, _GRAPH_VIEWPORT_OFFSET_MAX)
+        or not _finite_number(viewport.get("offset_y"), _GRAPH_VIEWPORT_OFFSET_MIN, _GRAPH_VIEWPORT_OFFSET_MAX)
+    ):
+        blockers.append({"node_id": "graph", "code": "graph_viewport_invalid"})
+    return blockers
+
+
 def _workflow(model, input_kind, input_path, source, template_id):
     return {
         "schema_version": WORKFLOW_SCHEMA_VERSION,
@@ -151,6 +266,7 @@ def _workflow(model, input_kind, input_path, source, template_id):
         "model": _canonical_model(model),
         "input": {"kind": input_kind, "path": input_path or ""},
         "nodes": _core_nodes(),
+        "graph_layout": default_graph_layout(),
         "plugins": [],
         "execution": {"device_id": None, "save_output": True},
     }
@@ -294,6 +410,8 @@ def validate_workflow(workflow, plugin_root=None):
         return {"status": "blocked", "blockers": [{"node_id": "workflow", "code": "workflow_invalid"}], "warnings": warnings}
     if workflow.get("schema_version") != WORKFLOW_SCHEMA_VERSION:
         _add(blockers, "workflow", "schema_version_unsupported")
+    for blocker in validate_graph_layout(workflow.get("graph_layout")):
+        _add(blockers, blocker["node_id"], blocker["code"])
 
     model = workflow.get("model")
     if not isinstance(model, dict) or not all(model.get(key) for key in ("name", "category", "model_file")):

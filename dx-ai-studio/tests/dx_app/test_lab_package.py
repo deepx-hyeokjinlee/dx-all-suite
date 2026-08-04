@@ -152,6 +152,49 @@ def test_run_package_bundles_exact_runner_and_help_works_from_copy_out(tmp_path)
     assert "Usage: run.sh" in completed.stdout
 
 
+def test_run_package_bundles_selected_cpp_postprocess_runner_and_merged_config(tmp_path):
+    source, _, _ = _source_tree(tmp_path)
+    model_dir = source / "src" / "python_example" / "classification" / "model"
+    (model_dir / "model_sync_cpp_postprocess.py").write_text(
+        "import argparse\n"
+        "parser = argparse.ArgumentParser()\n"
+        "parser.add_argument('--model', required=True)\n"
+        "parser.add_argument('--config')\n"
+        "parser.add_argument('--image')\n"
+        "parser.add_argument('--video')\n"
+        "parser.add_argument('--no-display', action='store_true')\n"
+        "parser.parse_args()\n",
+        encoding="utf-8",
+    )
+    (model_dir / "config.json").write_text(
+        json.dumps({"top_k": 5, "model_default": "preserved"}), encoding="utf-8"
+    )
+    workflow = _workflow()
+    workflow["model"].update({"language": "python", "variant": "sync_cpp_postprocess"})
+    workflow["execution"]["config_overrides"] = {"top_k": 3}
+
+    result = build_workflow_package(
+        workflow=workflow,
+        package_type="run",
+        source_root=source,
+        output_root=tmp_path / "output",
+    )
+
+    package = result["package_dir"]
+    manifest = json.loads((package / "workflow.json").read_text(encoding="utf-8"))
+    assert manifest["packaged_runner"]["path"] == (
+        "runtime/python/classification/model/model_sync_cpp_postprocess.py"
+    )
+    assert (package / manifest["packaged_runner"]["path"]).is_file()
+    assert json.loads((package / "config.json").read_text(encoding="utf-8")) == {
+        "top_k": 3,
+        "model_default": "preserved",
+    }
+    run_script = (package / "run.sh").read_text(encoding="utf-8")
+    assert "model_sync_cpp_postprocess.py" in run_script
+    assert '--config "$SCRIPT_DIR/config.json"' in run_script
+
+
 def test_run_package_rejects_missing_exact_runner(tmp_path):
     source, _, _ = _source_tree(tmp_path)
     for path in (source / "src").rglob("model_sync.py"):
