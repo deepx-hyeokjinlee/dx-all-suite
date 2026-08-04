@@ -592,3 +592,31 @@ def test_plugin_scaffold_plan_rejects_symlinked_session_workspace(tmp_path, monk
 
     assert result["status"] == 400
     assert result["error_code"] == "plugin_path_unsafe"
+
+def test_compatible_asset_prefers_task_appropriate_default():
+    """Quick Start's default input should suit the task: a generic detector must not
+    default to a face crop just because it sorts first; a face model should get a face."""
+    from dx_app.core.lab_workflow import _compatible_asset
+
+    assets = [
+        "sample/img/face_pair",
+        "sample/img/sample_crowd.jpg",
+        "sample/img/sample_dog.jpg",
+        "sample/img/sample_face.jpg",
+    ]
+    # generic object detection → general scene, not the alphabetically-first face crop
+    assert _compatible_asset(assets, "image", "object_detection") == "sample/img/sample_dog.jpg"
+    # classification (no specific family) → general default
+    assert _compatible_asset(assets, "image", "classification") == "sample/img/sample_dog.jpg"
+    # face task → a face sample
+    assert _compatible_asset(assets, "image", "face_detection") == "sample/img/sample_face.jpg"
+
+
+def test_compatible_asset_falls_back_to_first_when_no_preferred_present():
+    from dx_app.core.lab_workflow import _compatible_asset
+
+    only = ["sample/img/face_pair"]
+    # nothing preferred/general installed → keep working, return the first compatible
+    assert _compatible_asset(only, "image", "object_detection") == "sample/img/face_pair"
+    # no compatible asset at all
+    assert _compatible_asset([], "image", "object_detection") is None

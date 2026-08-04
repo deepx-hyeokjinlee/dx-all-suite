@@ -140,12 +140,45 @@ def _asset_details(asset):
     return str(path), kind
 
 
-def _compatible_asset(assets, input_kind):
+# Preferred default sample per task family (matched as a substring against the asset
+# path). A general scene is a better first impression than the alphabetically-first
+# asset — e.g. a generic object detector should not default to a face crop. Always
+# falls back to the first compatible asset when nothing preferred is installed.
+_PREFERRED_DEFAULT_SAMPLES = (
+    ("face", ("sample_face", "face_pair")),
+    ("hand", ("sample_hand",)),
+    ("pose", ("sample_people", "sample_person")),
+    ("keypoint", ("sample_people", "sample_person")),
+    ("reid", ("sample_people", "sample_person")),
+    ("super_resolution", ("sample_lowres", "sample_lowlight")),
+    ("denois", ("sample_denoising",)),
+    ("enhanc", ("sample_lowlight", "sample_denoising")),
+    ("depth", ("sample_kitchen", "sample_dog")),
+    ("segmentation", ("sample_dog", "sample_kitchen")),
+)
+_GENERAL_DEFAULT_SAMPLES = ("sample_dog", "sample_people", "sample_crowd", "sample_horse")
+
+
+def _compatible_asset(assets, input_kind, category=None):
+    compatible = []
     for asset in assets or ():
         path, kind = _asset_details(asset)
         if path and kind == input_kind:
-            return path
-    return None
+            compatible.append(path)
+    if not compatible:
+        return None
+    cat = str(category or "").lower()
+    preferred_stems = ()
+    for key, stems in _PREFERRED_DEFAULT_SAMPLES:
+        if key in cat:
+            preferred_stems = stems
+            break
+    for stems in (preferred_stems, _GENERAL_DEFAULT_SAMPLES):
+        for stem in stems:
+            for path in compatible:
+                if stem in path:
+                    return path
+    return compatible[0]
 
 
 def _core_nodes():
@@ -279,7 +312,7 @@ def build_quick_start_workflow(selection, models, assets, template_id=None):
         WORKFLOW_TEMPLATES.get(template_id, {}).get("input_kind")
         if template_id else None
     ) or _input_kind_for_category((model or selection or {}).get("category"))
-    asset = _compatible_asset(assets, input_kind)
+    asset = _compatible_asset(assets, input_kind, (model or selection or {}).get("category"))
     workflow = _workflow(model, input_kind, asset, "quick_start", template_id)
 
     blockers = []
