@@ -19,6 +19,8 @@ window.LabComposer = (function () {
   var PLUGIN_DRAG_MIME = 'application/x-dx-app-composer-plugin';
   var MODEL_DRAG_MIME = 'application/x-dx-app-composer-model';
   var ASSET_DRAG_MIME = 'application/x-dx-app-composer-asset';
+  var modelSearchQuery = '';
+  var expandedModelCategories = {};
   var DEFERRED_COMPOSER_ROUTES = [
     '/api/lab/composer/recipe/export',
     '/api/lab/composer/recipe/import'
@@ -810,25 +812,96 @@ window.LabComposer = (function () {
     return assets;
   }
 
-  function appendModelChoices(parent) {
+  function modelGroupKey(model) {
+    return (model && model.category) || '';
+  }
+
+  function modelGroupLabel(model) {
+    return (model && (model.category_label || model.category)) || text('Uncategorized');
+  }
+
+  function modelMatchesQuery(model, query) {
+    if (!query) return true;
+    var haystack = (labelFor(model) + ' ' + modelGroupKey(model)).toLowerCase();
+    return haystack.indexOf(query) !== -1;
+  }
+
+  function renderModelGroups(list) {
+    clear(list);
+    var query = modelSearchQuery.trim().toLowerCase();
     var selected = selectedPaletteModel();
+    var groups = {};
+    var order = [];
+    models.forEach(function (model) {
+      if (!modelMatchesQuery(model, query)) return;
+      var key = modelGroupKey(model);
+      if (!Object.prototype.hasOwnProperty.call(groups, key)) {
+        groups[key] = [];
+        order.push(key);
+      }
+      groups[key].push(model);
+    });
+    if (!order.length) {
+      list.appendChild(make('p', 'lab-composer-empty', text('No models match your search.')));
+      return;
+    }
+    order.sort(function (a, b) {
+      return modelGroupLabel(groups[a][0]).localeCompare(modelGroupLabel(groups[b][0]));
+    });
+    order.forEach(function (key) {
+      var groupModels = groups[key];
+      var expanded = !!query || !!expandedModelCategories[key];
+      var group = make('div', 'lab-composer-model-group');
+      group.setAttribute('data-collapsed', String(!expanded));
+      var head = make('button', 'lab-composer-model-group-head',
+        modelGroupLabel(groupModels[0]) + ' (' + groupModels.length + ')');
+      head.type = 'button';
+      head.setAttribute('aria-expanded', String(expanded));
+      head.addEventListener('click', function () {
+        var isCollapsed = group.getAttribute('data-collapsed') === 'true';
+        expandedModelCategories[key] = isCollapsed;
+        group.setAttribute('data-collapsed', String(!isCollapsed));
+        head.setAttribute('aria-expanded', String(isCollapsed));
+      });
+      group.appendChild(head);
+      groupModels.forEach(function (model) {
+        appendChoice(
+          group,
+          labelFor(model),
+          'lab-composer-palette-item lab-composer-model-choice',
+          !!selected && selected.model_file === model.model_file,
+          function () { applyModelSelection(model); },
+          MODEL_DRAG_MIME,
+          model.model_file
+        );
+      });
+      list.appendChild(group);
+    });
+  }
+
+  function appendModelChoices(parent) {
     if (!models.length) {
       parent.appendChild(make('p', 'lab-composer-empty', modelLoadError
         ? text('Unable to load runnable models. Check the Lab connection and try again.')
         : text('No runnable models are installed. Download a DXNN model before creating a workflow.')));
       return;
     }
-    models.forEach(function (model) {
-      appendChoice(
-        parent,
-        labelFor(model),
-        'lab-composer-palette-item lab-composer-model-choice',
-        !!selected && selected.model_file === model.model_file,
-        function () { applyModelSelection(model); },
-        MODEL_DRAG_MIME,
-        model.model_file
-      );
+    var section = make('div', 'lab-composer-model-palette');
+    var search = document.createElement('input');
+    search.type = 'search';
+    search.className = 'lab-composer-model-search';
+    search.placeholder = text('Search models…');
+    search.setAttribute('aria-label', text('Search models…'));
+    search.value = modelSearchQuery;
+    var list = make('div', 'lab-composer-model-list');
+    search.addEventListener('input', function (event) {
+      modelSearchQuery = event.target.value;
+      renderModelGroups(list);
     });
+    section.appendChild(search);
+    section.appendChild(list);
+    parent.appendChild(section);
+    renderModelGroups(list);
   }
 
   function assetBasename(path) {
