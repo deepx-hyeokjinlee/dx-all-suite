@@ -303,12 +303,13 @@ def test_composer_template_honors_requested_compatible_model_without_fallback(mo
         {"template_id": "detection_image", "model_name": "resnet18"},
     )
 
-    assert selected_code == incompatible_code == 200
+    assert selected_code == 200
     assert selected["status"] == "ready"
     assert selected["workflow"]["model"]["name"] == "requested_detection"
-    assert incompatible["status"] == "blocked"
-    assert incompatible["workflow"]["model"] == {}
-    assert {"node_id": "model", "code": "runnable_model_not_found"} in incompatible["validation"]["blockers"]
+    assert incompatible_code == 400
+    assert incompatible["error_key"] == "template_model_mismatch"
+    assert "resnet18" in incompatible["error"]
+    assert "object_detection" in incompatible["error"]
 
 
 def test_composer_route_rejects_cross_token_manifest_owner(monkeypatch):
