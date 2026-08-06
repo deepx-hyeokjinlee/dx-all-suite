@@ -112,7 +112,8 @@ window.LabComposer = (function () {
         missingConnection: 'Missing required connection',
         connectionNotAllowed: 'Connection is not allowed',
         coreStagesFixed: 'Core stages are fixed',
-        pluginScaffold: 'Plugin scaffold'
+        pluginScaffold: 'Plugin scaffold',
+        genericAssetsHint: 'No category-specific asset found — showing generic sample assets.'
       };
     }
     return {
@@ -174,7 +175,8 @@ window.LabComposer = (function () {
       missingConnection: T('Missing required connection'),
       connectionNotAllowed: T('Connection is not allowed'),
       coreStagesFixed: T('Core stages are fixed'),
-      pluginScaffold: T('Plugin scaffold')
+      pluginScaffold: T('Plugin scaffold'),
+      genericAssetsHint: T('No category-specific asset found — showing generic sample assets.')
     };
   }
 
@@ -355,9 +357,10 @@ window.LabComposer = (function () {
     compatibleAssetKey = key;
     compatibleAssets = [];
     if (kind !== 'image' && kind !== 'video') return compatibleAssets;
+    var category = encodeURIComponent((workflow.model || {}).category || '');
     var url = kind === 'video'
-      ? '/api/videos'
-      : '/api/images?category=' + encodeURIComponent((workflow.model || {}).category || '');
+      ? '/api/videos?category=' + category
+      : '/api/images?category=' + category;
     try {
       var response = await fetch(url);
       var data = response.ok ? await response.json() : [];
@@ -947,6 +950,12 @@ window.LabComposer = (function () {
     if (!assets.length) {
       parent.appendChild(make('p', 'lab-composer-empty', composerLabels().selectInputAsset));
       return;
+    }
+    // input_generic is a sibling key set by the workflow resolver (lab_portal.py) when no
+    // model-demo or category default asset was available/installed, so it fell back to the
+    // generic asset gallery. Surface that here rather than implying these are model-specific.
+    if (workflow.input_generic === true) {
+      parent.appendChild(make('p', 'lab-composer-generic-hint txt-dim txt-sm', composerLabels().genericAssetsHint));
     }
     var grid = make('div', 'lab-composer-asset-grid');
     assets.forEach(function (asset) {

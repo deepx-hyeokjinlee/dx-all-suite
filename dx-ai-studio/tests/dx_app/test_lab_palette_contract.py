@@ -38,3 +38,8 @@ def test_templates_filter_by_selected_model_category():
 
 def test_template_model_mismatch_is_surfaced_in_ui():
     assert "template_model_mismatch" in JS
+
+def test_compatible_assets_pass_category_to_both_endpoints():
+    seg = JS.split("loadCompatibleAssets", 1)[1][:1200]
+    assert "/api/images?category=" in seg
+    assert "/api/videos?category=" in seg  # videos must now be category-aware too

@@ -3119,6 +3119,13 @@ window._DX_I18N_DICT = {
   'Plugin scaffold': {
     ko: '플러그인 스캐폴드', ja: 'プラグインスキャフォールド', 'zh-CN': '插件脚手架', 'zh-TW': '外掛程式鷹架', es: 'Scaffold de plugin',
   },
+  'No category-specific asset found — showing generic sample assets.': {
+    ko: '카테고리별 자산을 찾지 못해 일반 샘플 자산을 표시합니다.',
+    ja: 'カテゴリ別のアセットが見つからないため、汎用サンプルアセットを表示しています。',
+    'zh-CN': '未找到特定类别的素材，正在显示通用样例素材。',
+    'zh-TW': '未找到特定類別的素材，正在顯示通用範例素材。',
+    es: 'No se encontró un recurso específico de la categoría; se muestran recursos de ejemplo genéricos.',
+  },
   'Minimap': {
     ko: '미니맵', ja: 'ミニマップ', 'zh-CN': '小地图', 'zh-TW': '小地圖', es: 'Minimapa',
   },
