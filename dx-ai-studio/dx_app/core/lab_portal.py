@@ -886,11 +886,18 @@ def plan_composer_template(tok, payload):
         requested = {"name": payload["model_name"]}
     if isinstance(requested, dict):
         selected_model = resolve_runnable_model(requested, models)
-        candidate_models = (
-            [selected_model]
-            if selected_model and (not category or selected_model.get("category") == category)
-            else []
-        )
+        if selected_model and category and selected_model.get("category") != category:
+            # Explicit model request whose category conflicts with the template: surface
+            # this to the caller rather than silently falling back to a different model.
+            return {
+                "error": (
+                    f"Model '{selected_model.get('name', '')}' is category "
+                    f"'{selected_model.get('category', '')}', which does not match "
+                    f"template '{template_id}' (requires category '{category}')"
+                ),
+                "error_key": "template_model_mismatch",
+            }, 400
+        candidate_models = [selected_model] if selected_model else []
     else:
         candidate_models = models
     workflow = build_template_workflow(
@@ -1297,7 +1304,13 @@ def lab_capabilities():
         },
         "composer": {
             "schema_version": WORKFLOW_SCHEMA_VERSION,
-            "templates": WORKFLOW_TEMPLATES,
+            "templates": {
+                template_id: {
+                    "category": template.get("category"),
+                    "input_kind": template.get("input_kind"),
+                }
+                for template_id, template in WORKFLOW_TEMPLATES.items()
+            },
             "supported_node_kinds": list(SUPPORTED_NODE_KINDS),
             "package_types": list(PACKAGE_TYPES),
             "feature_flags": {
