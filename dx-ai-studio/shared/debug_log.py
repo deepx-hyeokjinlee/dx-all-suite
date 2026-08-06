@@ -5,7 +5,7 @@ rotating log so a developer can reproduce a user-reported issue from a server-si
 trace. Never raises into a request path; never logs bodies, tokens, or passwords.
 """
 from __future__ import annotations
-import json, logging, os, time
+import json, logging, os, threading, time
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -13,6 +13,7 @@ from shared.paths import STUDIO_ROOT
 
 _ENABLED = os.environ.get("DX_STUDIO_DEBUG") == "1"
 _logger = None
+_logger_lock = threading.Lock()
 
 
 def enabled() -> bool:
@@ -28,20 +29,23 @@ def _get_logger():
     global _logger
     if _logger is not None:
         return _logger
-    path = _log_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    lg = logging.getLogger("dx_studio_debug")
-    lg.setLevel(logging.INFO)
-    lg.propagate = False
-    # Clear old handlers to allow reinitializing with a new path
-    for h in lg.handlers[:]:
-        lg.removeHandler(h)
-        h.close()
-    h = RotatingFileHandler(str(path), maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
-    h.setFormatter(logging.Formatter("%(message)s"))
-    lg.addHandler(h)
-    _logger = lg
-    return lg
+    with _logger_lock:
+        if _logger is not None:
+            return _logger
+        path = _log_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        lg = logging.getLogger("dx_studio_debug")
+        lg.setLevel(logging.INFO)
+        lg.propagate = False
+        # Clear old handlers to allow reinitializing with a new path
+        for h in lg.handlers[:]:
+            lg.removeHandler(h)
+            h.close()
+        h = RotatingFileHandler(str(path), maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
+        h.setFormatter(logging.Formatter("%(message)s"))
+        lg.addHandler(h)
+        _logger = lg
+        return lg
 
 
 _NOISE_EXACT = {
@@ -64,7 +68,7 @@ def _is_secret_key(k) -> bool:
     return any(h in kl for h in _SECRET_HINTS)
 
 
-_ACTION_WHITELIST = ("model_name", "category", "variant", "input_type", "step", "manifest_id", "name", "lang")
+_ACTION_WHITELIST = ("model_name", "category", "variant", "input_type", "step", "manifest_id", "name", "lang", "count")
 
 
 def _whitelist(params) -> dict:

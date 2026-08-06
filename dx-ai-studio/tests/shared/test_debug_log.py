@@ -48,3 +48,10 @@ def test_disabled_is_noop(tmp_path, monkeypatch):
     mod.log_http("proxy", "GET", "/dx_app/", 200, 1.0, "127.0.0.1")
     mod.log_action("dx_app", "run", {"model_name": "x"})
     assert not logf.exists()
+
+
+def test_count_field_whitelisted_for_run_multi(dl):
+    mod, logf = dl
+    mod.log_action("dx_app", "run_multi", {"count": 3, "password": "p"})
+    rows = _lines(logf)
+    assert rows[-1]["action"] == "run_multi" and rows[-1]["params"] == {"count": 3}

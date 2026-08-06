@@ -30,8 +30,6 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from shared import debug_log
-
 _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 
 if __name__ == "__main__" and not __package__:
@@ -44,6 +42,7 @@ from shared.dx_server import DXBaseHandler
 from shared.auth_policy import map_launcher_proxy
 from shared.chat import ChatEngine
 from shared.runtime_gate import module_start_policy as _runtime_module_start_policy
+from shared import debug_log
 
 # Ports are env-overridable so the studio can coexist with other services on a
 # shared host (defaults unchanged → release behavior + tests unaffected). Set e.g.
