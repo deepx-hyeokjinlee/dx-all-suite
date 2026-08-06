@@ -14,3 +14,15 @@ def test_palette_is_scroll_capped():
     assert len(block) > 1, "expected a .lab-composer-model-list rule in CSS"
     rule = block[1][:200]
     assert "max-height" in rule and "overflow" in rule
+
+def test_palette_groups_default_expanded_not_collapsed():
+    # Regression guard: groups must default OPEN on first paint (stored === undefined ->
+    # expanded), and only collapse once the user explicitly toggles a header. A prior bug
+    # defaulted every group to collapsed, hiding all model buttons until interaction.
+    assert "stored === undefined ? true : stored" in JS
+
+def test_palette_search_matches_category_label():
+    # The visible (translated/humanized) category name must be searchable, not just the
+    # raw category slug.
+    seg = JS.split("function modelMatchesQuery", 1)[1][:400]
+    assert "modelGroupLabel(model)" in seg

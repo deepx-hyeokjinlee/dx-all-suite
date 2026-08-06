@@ -822,7 +822,7 @@ window.LabComposer = (function () {
 
   function modelMatchesQuery(model, query) {
     if (!query) return true;
-    var haystack = (labelFor(model) + ' ' + modelGroupKey(model)).toLowerCase();
+    var haystack = (labelFor(model) + ' ' + modelGroupKey(model) + ' ' + modelGroupLabel(model)).toLowerCase();
     return haystack.indexOf(query) !== -1;
   }
 
@@ -850,7 +850,10 @@ window.LabComposer = (function () {
     });
     order.forEach(function (key) {
       var groupModels = groups[key];
-      var expanded = !!query || !!expandedModelCategories[key];
+      // Default OPEN: a category stays expanded until the user explicitly collapses it
+      // (expandedModelCategories[key] is undefined on first paint / for untouched groups).
+      var stored = expandedModelCategories[key];
+      var expanded = !!query || (stored === undefined ? true : stored);
       var group = make('div', 'lab-composer-model-group');
       group.setAttribute('data-collapsed', String(!expanded));
       var head = make('button', 'lab-composer-model-group-head',
@@ -858,10 +861,10 @@ window.LabComposer = (function () {
       head.type = 'button';
       head.setAttribute('aria-expanded', String(expanded));
       head.addEventListener('click', function () {
-        var isCollapsed = group.getAttribute('data-collapsed') === 'true';
-        expandedModelCategories[key] = isCollapsed;
-        group.setAttribute('data-collapsed', String(!isCollapsed));
-        head.setAttribute('aria-expanded', String(isCollapsed));
+        var currentlyExpanded = group.getAttribute('data-collapsed') !== 'true';
+        expandedModelCategories[key] = !currentlyExpanded;
+        group.setAttribute('data-collapsed', String(currentlyExpanded));
+        head.setAttribute('aria-expanded', String(!currentlyExpanded));
       });
       group.appendChild(head);
       groupModels.forEach(function (model) {
@@ -890,8 +893,8 @@ window.LabComposer = (function () {
     var search = document.createElement('input');
     search.type = 'search';
     search.className = 'lab-composer-model-search';
-    search.placeholder = text('Search models…');
-    search.setAttribute('aria-label', text('Search models…'));
+    search.placeholder = text('Search models...');
+    search.setAttribute('aria-label', text('Search models...'));
     search.value = modelSearchQuery;
     var list = make('div', 'lab-composer-model-list');
     search.addEventListener('input', function (event) {
