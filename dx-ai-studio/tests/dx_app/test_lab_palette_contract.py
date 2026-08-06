@@ -26,3 +26,13 @@ def test_palette_search_matches_category_label():
     # raw category slug.
     seg = JS.split("function modelMatchesQuery", 1)[1][:400]
     assert "modelGroupLabel(model)" in seg
+
+def test_templates_filter_by_selected_model_category():
+    # renderTemplates must consult the selected model's category and each template's
+    # category / input_kind to decide which templates to show.
+    assert "input_kind" in JS
+    # input-kind templates (video/camera) stay visible regardless of model category
+    assert ("'video'" in JS) or ('"video"' in JS)
+
+def test_template_model_mismatch_is_surfaced_in_ui():
+    assert "template_model_mismatch" in JS

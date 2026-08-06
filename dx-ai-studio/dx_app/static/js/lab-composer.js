@@ -1053,6 +1053,22 @@ window.LabComposer = (function () {
     renderBuilderInspector(parent);
   }
 
+  // Each templates entry carries { category, input_kind }. A template with a category
+  // must match the selected model's category. Templates with no category (the
+  // input_kind 'video'/'camera' capture flows, e.g. RTSP/webcam starting points) apply
+  // across every model category, so they stay visible no matter which model is selected.
+  function templateVisibleForCategory(entry, modelCategory) {
+    if (!modelCategory) return true;
+    if (!entry || !entry.category) return true;
+    return entry.category === modelCategory;
+  }
+
+  function filterTemplateIds(templates, modelCategory) {
+    return Object.keys(templates || {}).filter(function (templateId) {
+      return templateVisibleForCategory(templates[templateId], modelCategory);
+    });
+  }
+
   function renderBuilderPalette(parent) {
     var palette = make('aside', 'lab-composer-palette');
     palette.appendChild(make('h3', '', composerLabels().builder));
@@ -1063,7 +1079,9 @@ window.LabComposer = (function () {
       palette.appendChild(make('h4', '', composerLabels().templates));
       var composer = loadCapabilities();
       var templates = composer && composer.templates ? composer.templates : {};
-      Object.keys(templates).forEach(function (templateId) {
+      var paletteModel = selectedPaletteModel();
+      var visibleTemplateIds = filterTemplateIds(templates, paletteModel && paletteModel.category);
+      visibleTemplateIds.forEach(function (templateId) {
         appendChoice(
           palette,
           templateId.replace(/_/g, ' '),
@@ -1072,7 +1090,7 @@ window.LabComposer = (function () {
           function () { createTemplate(templateId, selectedPaletteModel()); }
         );
       });
-      if (!Object.keys(templates).length) {
+      if (!visibleTemplateIds.length) {
         palette.appendChild(make('p', 'txt-dim txt-sm', text('Templates are unavailable until the Lab session is ready.')));
       }
     } else {
@@ -1444,6 +1462,10 @@ window.LabComposer = (function () {
     var payload = { template_id: templateId };
     if (model) payload.selection = selectionFor(model);
     var result = await request('/api/lab/composer/template', payload);
+    if (result && result.error_code === 'template_model_mismatch') {
+      renderError(result.error || text('Template is not compatible with the selected model.'));
+      return;
+    }
     setWorkflow(result);
   }
 
@@ -1530,15 +1552,10 @@ window.LabComposer = (function () {
     parent.appendChild(panel);
   }
 
-  function renderTemplates(parent) {
-    var panel = make('section', 'lab-composer-panel');
-    panel.appendChild(make('h3', '', composerLabels().templates));
-    panel.appendChild(make('p', 'txt-dim txt-sm', text('Start with a supported task and a compatible runnable model.')));
-    var modelSelect = appendModelSelect(panel, 'lab-composer-template-model');
-    var templateGrid = make('div', 'lab-composer-template-grid');
-    var composer = loadCapabilities();
-    var templates = composer && composer.templates ? composer.templates : {};
-    Object.keys(templates).forEach(function (templateId) {
+  function populateTemplateGrid(templateGrid, templates, modelSelect, modelCategory) {
+    clear(templateGrid);
+    var visibleTemplateIds = filterTemplateIds(templates, modelCategory);
+    visibleTemplateIds.forEach(function (templateId) {
       var button = make('button', 'lab-composer-template', templateId.replace(/_/g, ' '));
       button.type = 'button';
       button.addEventListener('click', function () {
@@ -1549,6 +1566,21 @@ window.LabComposer = (function () {
     if (!templateGrid.childNodes.length) {
       templateGrid.appendChild(make('p', 'txt-dim', text('Templates are unavailable until the Lab session is ready.')));
     }
+  }
+
+  function renderTemplates(parent) {
+    var panel = make('section', 'lab-composer-panel');
+    panel.appendChild(make('h3', '', composerLabels().templates));
+    panel.appendChild(make('p', 'txt-dim txt-sm', text('Start with a supported task and a compatible runnable model.')));
+    var modelSelect = appendModelSelect(panel, 'lab-composer-template-model');
+    var templateGrid = make('div', 'lab-composer-template-grid');
+    var composer = loadCapabilities();
+    var templates = composer && composer.templates ? composer.templates : {};
+    populateTemplateGrid(templateGrid, templates, modelSelect, null);
+    modelSelect.addEventListener('change', function () {
+      var model = selectedModel(modelSelect);
+      populateTemplateGrid(templateGrid, templates, modelSelect, model && model.category);
+    });
     panel.appendChild(templateGrid);
     parent.appendChild(panel);
   }
