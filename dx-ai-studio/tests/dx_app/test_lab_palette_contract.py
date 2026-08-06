@@ -28,11 +28,13 @@ def test_palette_search_matches_category_label():
     assert "modelGroupLabel(model)" in seg
 
 def test_templates_filter_by_selected_model_category():
-    # renderTemplates must consult the selected model's category and each template's
-    # category / input_kind to decide which templates to show.
-    assert "input_kind" in JS
-    # input-kind templates (video/camera) stay visible regardless of model category
-    assert ("'video'" in JS) or ('"video"' in JS)
+    # The live builder palette must filter templates using the real category-matching
+    # function, not just show every template unconditionally.
+    assert "function templateVisibleForCategory" in JS
+    assert "entry.category" in JS
+    # renderBuilderPalette (the live path) must apply the filter via filterTemplateIds(...)
+    seg = JS.split("function renderBuilderPalette", 1)[1][:1500]
+    assert "filterTemplateIds(" in seg
 
 def test_template_model_mismatch_is_surfaced_in_ui():
     assert "template_model_mismatch" in JS

@@ -1552,10 +1552,15 @@ window.LabComposer = (function () {
     parent.appendChild(panel);
   }
 
-  function populateTemplateGrid(templateGrid, templates, modelSelect, modelCategory) {
-    clear(templateGrid);
-    var visibleTemplateIds = filterTemplateIds(templates, modelCategory);
-    visibleTemplateIds.forEach(function (templateId) {
+  function renderTemplates(parent) {
+    var panel = make('section', 'lab-composer-panel');
+    panel.appendChild(make('h3', '', composerLabels().templates));
+    panel.appendChild(make('p', 'txt-dim txt-sm', text('Start with a supported task and a compatible runnable model.')));
+    var modelSelect = appendModelSelect(panel, 'lab-composer-template-model');
+    var templateGrid = make('div', 'lab-composer-template-grid');
+    var composer = loadCapabilities();
+    var templates = composer && composer.templates ? composer.templates : {};
+    Object.keys(templates).forEach(function (templateId) {
       var button = make('button', 'lab-composer-template', templateId.replace(/_/g, ' '));
       button.type = 'button';
       button.addEventListener('click', function () {
@@ -1566,21 +1571,6 @@ window.LabComposer = (function () {
     if (!templateGrid.childNodes.length) {
       templateGrid.appendChild(make('p', 'txt-dim', text('Templates are unavailable until the Lab session is ready.')));
     }
-  }
-
-  function renderTemplates(parent) {
-    var panel = make('section', 'lab-composer-panel');
-    panel.appendChild(make('h3', '', composerLabels().templates));
-    panel.appendChild(make('p', 'txt-dim txt-sm', text('Start with a supported task and a compatible runnable model.')));
-    var modelSelect = appendModelSelect(panel, 'lab-composer-template-model');
-    var templateGrid = make('div', 'lab-composer-template-grid');
-    var composer = loadCapabilities();
-    var templates = composer && composer.templates ? composer.templates : {};
-    populateTemplateGrid(templateGrid, templates, modelSelect, null);
-    modelSelect.addEventListener('change', function () {
-      var model = selectedModel(modelSelect);
-      populateTemplateGrid(templateGrid, templates, modelSelect, model && model.category);
-    });
     panel.appendChild(templateGrid);
     parent.appendChild(panel);
   }
