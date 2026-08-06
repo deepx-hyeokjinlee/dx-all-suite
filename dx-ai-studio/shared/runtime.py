@@ -184,8 +184,11 @@ def ensure_inference_venv(log=None) -> str | None:
     if venv_py.is_file() and _has_numpy_cv2_dxengine(str(venv_py)):
         return str(venv_py)
 
-    # Find an interpreter with a WORKING dx_engine — the source of truth for an ABI-consistent
-    # install (a self-contained wheel, or a matching system install).
+    # Pick a seed interpreter for the isolated venv. Two ways to get a known-good dx_engine into
+    # it (see _install_working_dx_engine): install a matching self-contained WHEEL, or COPY a
+    # working install. So a seed qualifies if EITHER a dx_engine wheel matches its ABI (no
+    # pre-existing dx_engine needed — this covers a freshly built wheel on a box where nothing is
+    # installed yet) OR it already imports dx_engine (for the copy path).
     seeds = []
     for root in runtime_venv_roots():
         p = root / "bin" / "python3"
@@ -196,10 +199,14 @@ def ensure_inference_venv(log=None) -> str | None:
         w = shutil.which(name)
         if w:
             seeds.append(w)
-    seed = next((s for s in dict.fromkeys(seeds) if runtime_python_has_dx_engine(s)), None)
+    seed = next(
+        (s for s in dict.fromkeys(seeds)
+         if _find_dx_engine_wheel(_abi_tag(s)) is not None or runtime_python_has_dx_engine(s)),
+        None,
+    )
     if not seed:
-        _say("No interpreter with a working dx_engine found — install the DX runtime first "
-             "(dx_engine is not on PyPI).")
+        _say("No dx_engine wheel and no interpreter with a working dx_engine — build/install the "
+             "DX runtime python package first (dx_engine is not on PyPI).")
         return None
 
     # A previous partial/broken attempt (e.g. a --system-site-packages venv that inherited a
