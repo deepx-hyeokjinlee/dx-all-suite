@@ -105,10 +105,16 @@ def get_images(category=None):
                 return out
     return _scan_sample_img()
 
-def get_videos():
+def get_videos(category=None):
     d=ASSETS_DIR/"videos"
     if not d.is_dir():return[]
-    return[str(f.relative_to(DX_APP_ROOT)) for f in sorted(d.iterdir()) if f.suffix.lower() in{".mp4",".mov",".avi",".mkv"}]
+    allv=[str(f.relative_to(DX_APP_ROOT)) for f in sorted(d.iterdir()) if f.suffix.lower() in{".mp4",".mov",".avi",".mkv"}]
+    if category:
+        from dx_app.core.config import CAT_VIDEO
+        pref=CAT_VIDEO.get(category,"")
+        if pref and pref in allv:
+            return [pref]+[v for v in allv if v!=pref]
+    return allv
 
 def list_outputs():
     _IMG_EXT={".jpg",".jpeg",".png",".bmp",".webp"}
