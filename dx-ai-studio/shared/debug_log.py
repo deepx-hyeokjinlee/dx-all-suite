@@ -5,7 +5,7 @@ rotating log so a developer can reproduce a user-reported issue from a server-si
 trace. Never raises into a request path; never logs bodies, tokens, or passwords.
 """
 from __future__ import annotations
-import json, logging, os, threading, time
+import json, logging, os, re, threading, time
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
@@ -41,6 +41,10 @@ def _get_logger():
         for h in lg.handlers[:]:
             lg.removeHandler(h)
             h.close()
+        # NOTE: launcher + each module process each own a handler on this one file.
+        # Per-process append+lock keeps records intact; at the 10MB rollover the
+        # processes can race (a lost line / clobbered backup). Accepted: debug-only,
+        # rollover-boundary-only, errors swallowed — single-file keeps the timeline chronological.
         h = RotatingFileHandler(str(path), maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8")
         h.setFormatter(logging.Formatter("%(message)s"))
         lg.addHandler(h)
@@ -82,6 +86,9 @@ def _whitelist(params) -> dict:
     return out
 
 
+_USERINFO_RE = re.compile(r"://[^/@\s]*@")
+
+
 def _redact_cmd(cmd) -> str:
     try:
         parts = cmd if isinstance(cmd, (list, tuple)) else [str(cmd)]
@@ -90,6 +97,13 @@ def _redact_cmd(cmd) -> str:
             a = str(a)
             if mask_next:
                 red.append("***"); mask_next = False; continue
+            # scheme://user:pass@host -> scheme://***@host (RTSP/HTTP creds never hit disk)
+            a = _USERINFO_RE.sub("://***@", a)
+            # inline secret form --token=VALUE / password=VALUE -> mask only the value
+            if "=" in a:
+                k = a.partition("=")[0]
+                if _is_secret_key(k):
+                    red.append(f"{k}=***"); continue
             red.append(a)
             if _is_secret_key(a):
                 mask_next = True
@@ -111,7 +125,10 @@ def log_http(src, method, path, status, ms, client, extra=None):
     if not _ENABLED:
         return
     try:
-        if _is_noise(path) and int(status) < 400:
+        st = int(status)
+        if st == 304:
+            return
+        if _is_noise(path) and st < 400:
             return
         ev = {"type": "http", "src": src, "method": method,
               "path": (path or "").split("?", 1)[0], "status": int(status),

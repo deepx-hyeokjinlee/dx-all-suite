@@ -55,3 +55,19 @@ def test_count_field_whitelisted_for_run_multi(dl):
     mod.log_action("dx_app", "run_multi", {"count": 3, "password": "p"})
     rows = _lines(logf)
     assert rows[-1]["action"] == "run_multi" and rows[-1]["params"] == {"count": 3}
+
+
+def test_exec_redacts_rtsp_credentials_and_inline_secrets(dl):
+    mod, logf = dl
+    mod.log_exec("dx_app", ["/bin/run", "rtsp://admin:pass123@10.0.0.5/stream", "--token=SEKRET"], 0, 5.0)
+    blob = json.dumps(_lines(logf)[-1])
+    assert "pass123" not in blob and "SEKRET" not in blob
+    assert "rtsp://***@10.0.0.5/stream" in blob and "--token=***" in blob
+
+
+def test_304_on_nonnoise_path_is_dropped(dl):
+    mod, logf = dl
+    mod.log_http("proxy", "GET", "/dx_app/", 304, 1.0, "127.0.0.1")
+    mod.log_http("proxy", "GET", "/dx_app/", 200, 1.0, "127.0.0.1")
+    rows = [(r["path"], r["status"]) for r in _lines(logf)]
+    assert rows == [("/dx_app/", 200)]
