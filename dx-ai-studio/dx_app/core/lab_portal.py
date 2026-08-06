@@ -895,7 +895,7 @@ def plan_composer_template(tok, payload):
                     f"'{selected_model.get('category', '')}', which does not match "
                     f"template '{template_id}' (requires category '{category}')"
                 ),
-                "error_key": "template_model_mismatch",
+                "error_code": "template_model_mismatch",
             }, 400
         candidate_models = [selected_model] if selected_model else []
     else:

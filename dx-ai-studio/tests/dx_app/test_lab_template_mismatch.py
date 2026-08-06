@@ -15,7 +15,32 @@ def test_capabilities_templates_expose_category_and_input_kind():
         assert "category" in t
 
 
-def test_explicit_model_category_mismatch_is_surfaced_not_silent():
-    src_wf = (ROOT / "dx_app" / "core" / "lab_workflow.py").read_text(encoding="utf-8")
-    src_port = (ROOT / "dx_app" / "core" / "lab_portal.py").read_text(encoding="utf-8")
-    assert "template_model_mismatch" in (src_wf + src_port)
+def test_category_less_template_with_explicit_model_does_not_falsely_mismatch(monkeypatch):
+    """`video`/`camera` templates carry no category constraint (category is None) — an
+    explicit model of ANY category must proceed normally, never be rejected as a
+    template_model_mismatch (the guard must skip the comparison when the template's
+    category is None)."""
+    import lab_portal
+    from developer import lab_session
+
+    classification_model = {
+        "name": "resnet18",
+        "category": "classification",
+        "model_file": "assets/models/resnet18_224x224.dxnn",
+        "model_exists": True,
+        "cpp_sync": True,
+    }
+    monkeypatch.setattr(lab_portal, "get_models", lambda: [classification_model], raising=False)
+    monkeypatch.setattr(lab_portal, "get_images", lambda category: [], raising=False)
+    monkeypatch.setattr(
+        lab_portal, "get_videos", lambda *a, **k: ["sample/video/sample.mp4"], raising=False
+    )
+    token = lab_session()["token"]
+
+    result, code = lab_portal.plan_composer_template(
+        token, {"template_id": "video", "model_name": "resnet18"},
+    )
+
+    assert code == 200
+    assert "error_code" not in result
+    assert result["workflow"]["model"]["name"] == "resnet18"

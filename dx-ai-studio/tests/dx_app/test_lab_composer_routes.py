@@ -307,7 +307,7 @@ def test_composer_template_honors_requested_compatible_model_without_fallback(mo
     assert selected["status"] == "ready"
     assert selected["workflow"]["model"]["name"] == "requested_detection"
     assert incompatible_code == 400
-    assert incompatible["error_key"] == "template_model_mismatch"
+    assert incompatible["error_code"] == "template_model_mismatch"
     assert "resnet18" in incompatible["error"]
     assert "object_detection" in incompatible["error"]
 
