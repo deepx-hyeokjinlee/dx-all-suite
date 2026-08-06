@@ -859,7 +859,11 @@ def plan_composer_quick_start(tok, payload):
     if isinstance(input_data, dict) and input_data.get("kind") in ("image", "video"):
         # Sibling top-level key (see _apply_composer_updates) — leaves the input={"kind","path"}
         # shape untouched.
-        workflow["input_generic"] = not (preferred and input_data.get("path") == preferred)
+        # "generic" = no category-specific default is available among the compatible
+        # assets — same semantics as the customize path (_apply_composer_updates). Do NOT
+        # compare to the chosen input path: build_quick_start_workflow may pick a different
+        # (still valid) asset via its own stem-matching, which would falsely flag generic.
+        workflow["input_generic"] = not (preferred and preferred in assets)
     _refresh_composer_validation(workflow)
     manifest = create_manifest(
         "composer_workflow",
