@@ -30,6 +30,8 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
+from shared import debug_log
+
 _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 
 if __name__ == "__main__" and not __package__:
@@ -759,6 +761,8 @@ def _proxy(handler, target_port, path, inject_widget=True):
     SSE (text/event-stream) streams are flushed line-by-line so events
     reach the browser immediately instead of being buffered."""
     conn = None
+    _t0 = time.monotonic()
+    _status = 502
     try:
         conn = http.client.HTTPConnection("127.0.0.1", target_port, timeout=180)
 
@@ -784,6 +788,7 @@ def _proxy(handler, target_port, path, inject_widget=True):
 
         conn.request(handler.command, path, body=body, headers=headers)
         resp = conn.getresponse()
+        _status = resp.status
 
         # Detect SSE stream
         content_type = resp.getheader("Content-Type", "")
@@ -855,6 +860,11 @@ def _proxy(handler, target_port, path, inject_widget=True):
     finally:
         if conn:
             conn.close()
+        try:
+            debug_log.log_http("proxy", handler.command, path, _status,
+                               (time.monotonic() - _t0) * 1000.0, handler.client_address[0])
+        except Exception:
+            pass
 
 
 def _accepts_html(headers):
@@ -1606,6 +1616,7 @@ def main():
         try:
             srv = _LauncherServer((_bind_host, port), LauncherHandler)
             _LAUNCHER_BOOT_ID = f"{port}-{os.getpid()}"
+            os.environ["DX_STUDIO_BOOT"] = _LAUNCHER_BOOT_ID
             break
         except OSError as e:
             if attempt < 4:
