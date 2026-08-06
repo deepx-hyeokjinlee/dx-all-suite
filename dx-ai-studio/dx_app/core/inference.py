@@ -19,6 +19,7 @@ from dx_app.core.config import (DX_APP_ROOT, CPP_DIR, PY_DIR, BUILD_DIR, ASSETS_
                     SAMPLE_DIR, OUTPUTS_DIR, SCRIPTS_DIR, CAT_IMAGE, CAT_VIDEO,
                     _RUNTIME_PYTHON, _RUNTIME_PYTHONPATH)
 from shared.runtime import ld_library_path
+from shared import debug_log
 from dx_app.core.dx_app_security import resolve_existing_file
 from dx_app.core.performance import _parse_perf, _cvt_video
 from shared.hardware import get_hw
@@ -408,6 +409,14 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
         if _multi and proc is not None: _multi_unregister(proc)
         return _err("inference_exception", str(e), model=model_name)
     finally:
+        try:
+            debug_log.log_exec("dx_app",
+                               cmd if 'cmd' in dir() else None,
+                               proc.returncode if proc is not None else None,
+                               (time.time() - t0) * 1000.0 if 't0' in dir() else 0.0,
+                               {"model_name": model_name, "category": category})
+        except Exception:
+            pass
         # Single cleanup point for every exit path (success/timeout/exception):
         # remove whatever temp artifacts this run created.
         for _p in (_stdout_file, tmp_config, _b64_tmp, res_img):

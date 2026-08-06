@@ -5,6 +5,7 @@ import shutil
 from pathlib import Path
 
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
+from shared import debug_log
 
 from dx_app.core import config
 from dx_app.core.config import (SCRIPT_DIR, DX_APP_ROOT, STATIC_DIR, TEMPLATES_DIR, SERVER_NAME, OUTPUTS_DIR,
@@ -434,6 +435,7 @@ class Handler(DXBaseHandler):
                 tok = self.headers.get("X-Lab-Token") or self.headers.get("X-Dev-Token", "")
 
             if path=="/api/run":
+                debug_log.log_action("dx_app", "run", data)
                 err, code = _validate_inference_payload(data)
                 if err:
                     return self.send_json(err, code)
@@ -452,6 +454,7 @@ class Handler(DXBaseHandler):
                 return self.send_json(r)
 
             if path=="/api/run_async":
+                debug_log.log_action("dx_app", "run_async", data)
                 # Non-blocking variant of /api/run: starts the SAME run_inference in a
                 # background thread and returns a job_id the client polls (/api/run_poll,
                 # /api/run_result) for live frame progress. Sync /api/run stays untouched.
@@ -478,6 +481,7 @@ class Handler(DXBaseHandler):
                 return self.send_json(stop_run(data.get("id") or data.get("job_id") or ""))
 
             if path=="/api/run_multi":
+                debug_log.log_action("dx_app", "run_multi", {"count": len(data.get("requests", []))})
                 reqs=data.get("requests",[])
                 if not reqs:return self.send_json({"error":"requests required"},400)
                 for idx, req in enumerate(reqs):
@@ -629,10 +633,12 @@ class Handler(DXBaseHandler):
                 return self.send_json(res, code)
 
             if path == "/api/lab/composer/run":
+                debug_log.log_action("dx_app", "composer_run", data)
                 res, code = run_composer_workflow(tok, data)
                 return self.send_json(res, code)
 
             if path == "/api/lab/composer/run_async":
+                debug_log.log_action("dx_app", "composer_run_async", data)
                 # Non-blocking composer run — same run_progress registry as the Run page, so it
                 # shares /api/run_poll and /api/run_result. The worker unwraps the (result,code)
                 # tuple to store just the result dict (what the composer UI renders).
@@ -656,6 +662,7 @@ class Handler(DXBaseHandler):
                 return self.send_json(res, code)
 
             if path=="/api/setup/run":
+                debug_log.log_action("dx_app", "setup_run", data)
                 return self.send_json(setup_run(data.get("step",""),data))
 
             if path=="/api/setup/input":
