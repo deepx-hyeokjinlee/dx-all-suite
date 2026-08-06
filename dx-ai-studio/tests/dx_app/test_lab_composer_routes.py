@@ -206,7 +206,7 @@ def test_composer_planners_issue_owner_bound_manifests_from_current_registry(mon
     monkeypatch.setattr(
         lab_portal, "get_images", lambda category: ["sample/img/sample_dog.jpg"], raising=False
     )
-    monkeypatch.setattr(lab_portal, "get_videos", lambda: ["sample/video/sample.mp4"], raising=False)
+    monkeypatch.setattr(lab_portal, "get_videos", lambda *a, **k: ["sample/video/sample.mp4"], raising=False)
     token = lab_session()["token"]
 
     quick, quick_code = lab_portal.plan_composer_quick_start(
@@ -291,7 +291,7 @@ def test_composer_template_honors_requested_compatible_model_without_fallback(mo
     monkeypatch.setattr(
         lab_portal, "get_images", lambda category: ["sample/img/sample_dog.jpg"], raising=False
     )
-    monkeypatch.setattr(lab_portal, "get_videos", lambda: [], raising=False)
+    monkeypatch.setattr(lab_portal, "get_videos", lambda *a, **k: [], raising=False)
     token = lab_session()["token"]
 
     selected, selected_code = lab_portal.plan_composer_template(
@@ -802,7 +802,7 @@ def test_composer_recipe_round_trips_validated_processor_settings(monkeypatch):
     }
     monkeypatch.setattr(lab_portal, "get_models", lambda: [model])
     monkeypatch.setattr(lab_portal, "get_images", lambda category: ["sample/img/sample_dog.jpg"])
-    monkeypatch.setattr(lab_portal, "get_videos", lambda: [])
+    monkeypatch.setattr(lab_portal, "get_videos", lambda *a, **k: [])
     monkeypatch.setattr(
         lab_portal, "load_model_config", lambda category, name: {"top_k": 5}, raising=False
     )
@@ -889,7 +889,7 @@ def test_composer_recipe_round_trips_canonical_graph_layout(monkeypatch):
     }
     monkeypatch.setattr(lab_portal, "get_models", lambda: [model])
     monkeypatch.setattr(lab_portal, "get_images", lambda category: ["sample/img/sample_dog.jpg"])
-    monkeypatch.setattr(lab_portal, "get_videos", lambda: [])
+    monkeypatch.setattr(lab_portal, "get_videos", lambda *a, **k: [])
     token = lab_session()["token"]
     workflow = _ready_workflow()
     workflow["graph_layout"] = _canonical_graph_layout()

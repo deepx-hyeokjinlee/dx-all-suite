@@ -30,6 +30,7 @@ from dx_app.core.lab_workflow import (
 )
 from dx_app.core.models import get_models
 from dx_app.core.assets import get_images, get_videos
+from dx_app.core.demos import build_demos_payload
 from dx_app.core.inference import run_inference
 from dx_app.core.lab_package import build_workflow_package
 from dx_app.core.run_config import RUN_TUNABLE_KEYS, load_model_config
@@ -422,7 +423,6 @@ def _demo_default_asset(model_name, category, input_kind):
     if not model_name or not category:
         return None
     try:
-        from dx_app.core.demos import build_demos_payload
         demos = build_demos_payload().get("demos", [])
     except Exception:
         return None
@@ -542,9 +542,13 @@ def _workflow_model_from_registry(model):
 
 def _compatible_composer_assets(category, input_kind, model_name=None):
     """Return trusted, selectable current assets for a workflow input type, ordered by
-    _workflow_assets (model demo default, then category default, then generic gallery)."""
+    _workflow_assets (model demo default, then category default, then generic gallery).
+
+    Returns (assets, preferred) — the resolved default preference is handed back so
+    callers can derive a `generic` marker without a second _preferred_default_asset (and
+    thus build_demos_payload) call."""
     if input_kind not in ("image", "video"):
-        return []
+        return [], None
     assets = [
         asset for asset in _workflow_assets(category, input_kind)
         if isinstance(asset, str) and asset
@@ -552,7 +556,7 @@ def _compatible_composer_assets(category, input_kind, model_name=None):
     preferred = _preferred_default_asset(model_name, category, input_kind)
     if preferred and preferred in assets and assets[0] != preferred:
         assets = [preferred] + [a for a in assets if a != preferred]
-    return assets
+    return assets, preferred
 
 
 def _apply_composer_updates(workflow, updates):
@@ -620,7 +624,7 @@ def _apply_composer_updates(workflow, updates):
         if not isinstance(input_data, dict):
             return None, _composer_patch_error("workflow_patch_invalid", "Workflow input is invalid")
         input_kind = input_data.get("kind")
-        compatible_assets = _compatible_composer_assets(
+        compatible_assets, preferred = _compatible_composer_assets(
             canonical_model["category"], input_kind, canonical_model["name"]
         )
         if input_kind in ("image", "video"):
@@ -631,7 +635,6 @@ def _apply_composer_updates(workflow, updates):
                 # available/installed, so the resolver fell back to the generic gallery.
                 # Added as a sibling top-level key (not under "input") so it does not
                 # disturb the existing input={"kind","path"} shape the frontend reads.
-                preferred = _preferred_default_asset(canonical_model["name"], canonical_model["category"], input_kind)
                 candidate["input_generic"] = not (preferred and preferred in compatible_assets)
                 _set_composer_resolution_blocker(candidate, "input", "compatible_input_not_found", False)
             else:
@@ -667,7 +670,7 @@ def _apply_composer_updates(workflow, updates):
         model = candidate.get("model")
         if not isinstance(input_data, dict) or not isinstance(model, dict):
             return None, _composer_patch_error("workflow_patch_invalid", "Workflow input is invalid")
-        compatible_assets = _compatible_composer_assets(
+        compatible_assets, _preferred = _compatible_composer_assets(
             model.get("category"), input_data.get("kind"), model.get("name")
         )
         if selection["path"] not in compatible_assets:
@@ -850,13 +853,12 @@ def plan_composer_quick_start(tok, payload):
     category = (model or selection).get("category", "")
     model_name = (model or selection).get("name")
     input_kind = "video" if "video" in str(category).lower() else "image"
-    assets = _compatible_composer_assets(category, input_kind, model_name)
+    assets, preferred = _compatible_composer_assets(category, input_kind, model_name)
     workflow = build_quick_start_workflow(selection, models, assets)
     input_data = workflow.get("input")
     if isinstance(input_data, dict) and input_data.get("kind") in ("image", "video"):
         # Sibling top-level key (see _apply_composer_updates) — leaves the input={"kind","path"}
         # shape untouched.
-        preferred = _preferred_default_asset(model_name, category, input_data["kind"])
         workflow["input_generic"] = not (preferred and input_data.get("path") == preferred)
     _refresh_composer_validation(workflow)
     manifest = create_manifest(
