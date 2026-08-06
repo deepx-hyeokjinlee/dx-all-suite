@@ -207,10 +207,26 @@ def validate_base_runtime(
 class RuntimeCandidateValidator:
     """Bootstrap adapter that retains details while returning the required boolean."""
 
-    def __init__(self, **validation_options: object) -> None:
+    def __init__(self, *, self_heal: bool = True, **validation_options: object) -> None:
+        self.self_heal = self_heal
         self.validation_options = validation_options
         self.last_result: Optional[ContractResult] = None
 
     def validate(self, _definition: RuntimeDefinition) -> bool:
         self.last_result = validate_base_runtime(**self.validation_options)
+        if not self.last_result.passed and self.self_heal:
+            # Self-heal the one prerequisite the Studio can provision itself: the isolated
+            # inference venv (numpy+cv2+dx_engine, the `app.python` check). On a fresh pull or a
+            # mixed/partial runtime install the venv may not exist yet, so build it once and
+            # re-validate — activation then succeeds without a manual "run Setup, relaunch"
+            # dance. gst.*/postprocess failures need real build/install steps and are left to
+            # surface as-is. ensure_inference_venv is idempotent (fast no-op once satisfied).
+            failed = {c.check_id for c in self.last_result.checks if not c.passed}
+            if "app.python" in failed:
+                try:
+                    from shared.runtime import ensure_inference_venv
+                    ensure_inference_venv()
+                except Exception:
+                    pass
+                self.last_result = validate_base_runtime(**self.validation_options)
         return self.last_result.passed
