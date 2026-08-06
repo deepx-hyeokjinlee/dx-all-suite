@@ -194,7 +194,7 @@ class TestDiagnostics(unittest.TestCase):
             ),
             patch.object(
                 diagnostics,
-                "_gi_capable_python",
+                "gi_capable_python",
                 return_value=gi_python,
                 create=True,
             ),
@@ -218,7 +218,7 @@ class TestDiagnostics(unittest.TestCase):
         self.assertEqual(captured["environment"], environment)
 
     def test_gi_capable_python_returns_interpreter_that_imports_gi(self):
-        from dx_stream.core import diagnostics
+        from dx_stream.core.gst_env import gi_capable_python
         import subprocess
 
         if subprocess.run(
@@ -226,7 +226,7 @@ class TestDiagnostics(unittest.TestCase):
         ).returncode != 0:
             self.skipTest("PyGObject (gi) not available in this test environment")
 
-        chosen = diagnostics._gi_capable_python(Path("/nonexistent/python3"))
+        chosen = gi_capable_python(Path("/nonexistent/python3"))
         proof = subprocess.run(
             [str(chosen), "-c", "import gi"], capture_output=True
         )

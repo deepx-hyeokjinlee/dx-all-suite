@@ -2,40 +2,11 @@
 import glob as _glob
 import shutil
 import subprocess
-import sys
-from pathlib import Path
 
+from dx_stream.core.gst_env import gi_capable_python
 from shared.runtime_context import RuntimeContextError, resolve_active_runtime_context
 from shared.runtime_environment import RuntimeEnvironmentError, build_child_environment
 from shared.runtime_validation import validate_stream_pipeline
-
-
-def _gi_capable_python(fallback):
-    """Interpreter able to ``import gi`` (PyGObject), for the GStreamer parse probe.
-
-    The active runtime context's python is the isolated dx_app inference venv — built
-    WITHOUT ``--system-site-packages`` to pin dx_engine's ABI — so it has no system
-    PyGObject. dx_stream's admission probe runs ``Gst.parse_launch`` and needs ``gi``.
-    Prefer the Studio server's own interpreter (its ``.venv`` is --system-site-packages
-    → gi is importable), then a system ``python3``, else the given fallback. The isolated
-    venv stays correct for dx_app inference; only the Stream probe diverges here.
-    """
-    candidates = [Path(sys.executable)]
-    for name in ("python3", "python"):
-        found = shutil.which(name)
-        if found:
-            candidates.append(Path(found))
-    for candidate in candidates:
-        try:
-            probe = subprocess.run(
-                [str(candidate), "-c", "import gi"],
-                capture_output=True, timeout=5,
-            )
-        except (OSError, subprocess.SubprocessError):
-            continue
-        if probe.returncode == 0:
-            return candidate
-    return fallback
 
 
 _DXINFER_PARSE_PROBE = "videotestsrc num-buffers=1 ! dxinfer ! fakesink"
@@ -235,7 +206,7 @@ def _check_gst_pipeline():
         context = resolve_active_runtime_context()
         result = validate_stream_pipeline(
             _DXINFER_PARSE_PROBE,
-            python_executable=_gi_capable_python(context.python_executable),
+            python_executable=gi_capable_python(context.python_executable),
             environment=build_child_environment(context),
         )
         ok = result.passed
