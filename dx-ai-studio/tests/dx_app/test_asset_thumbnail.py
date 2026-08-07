@@ -58,3 +58,43 @@ def test_width_is_bounded_by_caller():
     assert tp is not None
     thumb = cv2.imread(str(tp))
     assert thumb.shape[1] <= 96
+
+
+
+def test_tmp_file_cleaned_on_replace_failure(monkeypatch):
+    """If os.replace fails (e.g. permission error), the .<pid>.tmp file must not be
+    left behind polluting the cache directory."""
+    import os
+    from unittest.mock import patch
+    from dx_app.core import assets
+    from dx_app.core.config import DX_APP_ROOT
+
+    rel = _a_sample_image()
+    if rel is None:
+        pytest.skip("no sample image available in this checkout")
+
+    # Clear any cached result and leftover tmp files so we force regeneration
+    src = (DX_APP_ROOT / rel).resolve()
+    import hashlib
+    mtime_ns = src.stat().st_mtime_ns
+    key = hashlib.sha1(f"{src}|{mtime_ns}|160".encode("utf-8")).hexdigest()
+    expected_out = assets._THUMB_CACHE_DIR / (key + ".jpg")
+    expected_out.unlink(missing_ok=True)
+    for old_tmp in assets._THUMB_CACHE_DIR.glob(f"{key}.jpg.*.tmp"):
+        old_tmp.unlink(missing_ok=True)
+
+    original_replace = os.replace
+
+    def failing_replace(src_path, dst_path):
+        raise OSError("simulated permission denied on replace")
+
+    monkeypatch.setattr(os, "replace", failing_replace)
+
+    result = sample_thumbnail(rel, 160)
+    # Should return None on failure
+    assert result is None
+
+    # The .<pid>.tmp file must NOT exist
+    import glob
+    tmp_files = list(assets._THUMB_CACHE_DIR.glob(f"{key}.jpg.*.tmp"))
+    assert tmp_files == [], f"Leaked tmp files: {tmp_files}"

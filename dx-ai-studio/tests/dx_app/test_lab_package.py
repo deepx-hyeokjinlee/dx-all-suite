@@ -442,3 +442,52 @@ def test_package_builder_prevents_publication_when_copy_out_verification_fails(t
     assert calls
     assert not list((published / "lab_packages").rglob("*.zip"))
     assert not list((published / "lab_packages").rglob("*.download"))
+
+def test_validation_failure_cleans_temporary_copy_out_directory(tmp_path, monkeypatch):
+    """When validate_copy_out raises (e.g. verification script fails), the temporary
+    copy-out directory must be cleaned up - not leaked on disk."""
+    import tempfile
+    from dx_app.core import lab_package
+
+    source, _, _ = _source_tree(tmp_path)
+    published = tmp_path / "output"
+
+    created_temps = []
+    original_mkdtemp = tempfile.mkdtemp
+
+    def tracking_mkdtemp(**kwargs):
+        d = original_mkdtemp(**kwargs)
+        created_temps.append(d)
+        return d
+
+    monkeypatch.setattr(tempfile, "mkdtemp", tracking_mkdtemp)
+
+    # Make the verify.py inside the package fail so validate_copy_out raises
+    original_validate = lab_package.validate_copy_out
+
+    def fail_validate(package_dir, source_root=None):
+        # Call real validate but inject a failing verify.py
+        from pathlib import Path
+        package_dir = Path(package_dir)
+        (package_dir / "verify.py").write_text(
+            "import sys\nprint('RESULT: FAIL')\nsys.exit(1)\n"
+        )
+        return original_validate(package_dir, source_root=source_root)
+
+    monkeypatch.setattr(lab_package, "validate_copy_out", fail_validate)
+
+    with pytest.raises(RuntimeError, match="copy-out verification failed"):
+        build_workflow_package(
+            workflow=_workflow(),
+            package_type="run",
+            source_root=source,
+            output_root=published,
+        )
+
+    # The temporary copy-out directory must have been cleaned up
+    from pathlib import Path
+    for temp_dir in created_temps:
+        if "dx-app-lab-copy-out" in temp_dir:
+            assert not Path(temp_dir).exists(), (
+                f"Temp copy-out dir was leaked: {temp_dir}"
+            )

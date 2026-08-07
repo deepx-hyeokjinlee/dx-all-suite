@@ -49,7 +49,11 @@ def sample_thumbnail(rel, width=160):
         # atomic publish so a concurrent reader never sees a half-written file
         tmp = out.with_name(out.name + f".{os.getpid()}.tmp")
         tmp.write_bytes(buf.tobytes())
-        os.replace(str(tmp), str(out))
+        try:
+            os.replace(str(tmp), str(out))
+        except Exception:
+            tmp.unlink(missing_ok=True)
+            return None
         return out
     except Exception:
         return None

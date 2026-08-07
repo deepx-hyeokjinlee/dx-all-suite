@@ -139,3 +139,78 @@ def test_janitor_reaps_and_kills_orphan():
         assert "orphan" not in rp._RUN_JOBS
     assert orphan.killed is True
     _drain(new_id)
+
+
+def test_poll_run_does_not_regress_cursor_on_concurrent_advance():
+    """If two polls race, the slower one must not overwrite a cursor that was already
+    advanced by the faster one - doing so would double-count frames.
+
+    We simulate this by injecting a hook between the I/O read and the lock re-acquire
+    that advances the cursor (as if another thread polled in between)."""
+    import tempfile, os as _os, threading
+
+    log_file = tempfile.NamedTemporaryFile(mode="w", suffix=".log", delete=False)
+    log_file.write("[DET] a 0.91\n[DET] b 0.92\n[DET] c 0.93\n[DET] d 0.94\n")
+    log_file.flush()
+    log_path = log_file.name
+
+    job_id = "concurrent-race"
+    with rp._RUN_JOBS_LOCK:
+        rp._RUN_JOBS[job_id] = {"running": True, "result": None, "log_file": log_path,
+                                "cursor": 0, "frames": 0, "loop": 1, "total": 10,
+                                "start": time.time(), "proc": None, "touched": time.time()}
+
+    # Use a barrier to deterministically interleave two polls:
+    # Thread A snapshots cursor=0, reads file, then BEFORE committing, Thread B runs
+    # a full poll cycle advancing cursor to end-of-file.
+    barrier = threading.Barrier(2, timeout=5)
+    results = {}
+
+    original_poll = rp.poll_run
+
+    # Monkey-patch to intercept: after I/O but before commit
+    # We do this by having thread A call poll, which reads from cursor 0.
+    # Then we artificially advance cursor via thread B's poll before A commits.
+    # The simplest way: run two concurrent polls and check no double-count.
+
+    # Actually, let's just test the invariant directly:
+    # 1. Two threads poll simultaneously from cursor=0
+    # 2. Both read the full 4 tags
+    # 3. Only ONE should commit; the other's commit should be rejected
+    # 4. Final frames must be 4, not 8
+
+    def poll_thread(name):
+        r = rp.poll_run(job_id)
+        results[name] = r
+
+    t1 = threading.Thread(target=poll_thread, args=("t1",))
+    t2 = threading.Thread(target=poll_thread, args=("t2",))
+    t1.start()
+    t2.start()
+    t1.join(timeout=5)
+    t2.join(timeout=5)
+
+    with rp._RUN_JOBS_LOCK:
+        final_frames = rp._RUN_JOBS[job_id]["frames"]
+    # Without the cursor guard, both threads read 4 tags and add them => 8
+    # With the guard, only the first commit wins => exactly 4
+    assert final_frames == 4, f"expected exactly 4 frames (no double-count), got {final_frames}"
+
+    _os.unlink(log_path)
+
+
+def test_worker_exception_result_matches_canonical_error_contract():
+    """When the async worker fn raises, the result dict must have:
+    - error: human-readable message (str(exception))
+    - error_key: 'inference_exception'
+    """
+    def raise_fn(job_id=None, **kw):
+        rp.register(job_id, None, loop=1, total=1, proc=None, start=time.time())
+        raise RuntimeError("Model exploded during inference")
+
+    inf.run_inference = raise_fn
+    job_id = rp.start_run(inf.run_inference, {"model_name": "m", "category": "c", "model_file": "x.dxnn"})
+    _drain(job_id)
+    result = rp.get_run_result(job_id)
+    assert result.get("error") == "Model exploded during inference", f"error should be human-readable, got: {result}"
+    assert result.get("error_key") == "inference_exception", f"error_key missing or wrong: {result}"

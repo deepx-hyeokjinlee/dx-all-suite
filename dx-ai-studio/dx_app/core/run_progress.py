@@ -87,7 +87,7 @@ def start_run(fn, params):
         try:
             res = fn(job_id=job_id, **params)
         except Exception as e:  # defensive — the run fns already trap most failures
-            res = {"error": "inference_exception", "message": str(e)}
+            res = {"error": str(e), "error_key": "inference_exception"}
         with _RUN_JOBS_LOCK:
             entry = _RUN_JOBS.get(job_id)
             if entry is not None:
@@ -128,9 +128,11 @@ def poll_run(job_id):
                 added = _count_tags(buf[:nl + 1].decode("utf-8", "replace"))
                 with _RUN_JOBS_LOCK:
                     e2 = _RUN_JOBS.get(job_id)
-                    if e2 is not None:
+                    if e2 is not None and e2["cursor"] == cursor:
                         e2["cursor"] = cursor + nl + 1
                         e2["frames"] += added
+                        frames = e2["frames"]
+                    elif e2 is not None:
                         frames = e2["frames"]
 
     pct = None

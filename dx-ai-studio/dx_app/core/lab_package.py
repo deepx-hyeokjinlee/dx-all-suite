@@ -492,42 +492,46 @@ def validate_copy_out(package_dir, source_root=None):
 
     copy_parent = Path(tempfile.mkdtemp(prefix="dx-app-lab-copy-out-"))
     copy_dir = copy_parent / package_dir.name
-    if source_root is not None and _is_under(copy_dir.resolve(strict=False), source_root):
-        raise RuntimeError("copy-out directory is inside source root")
-    shutil.copytree(package_dir, copy_dir, symlinks=False)
+    try:
+        if source_root is not None and _is_under(copy_dir.resolve(strict=False), source_root):
+            raise RuntimeError("copy-out directory is inside source root")
+        shutil.copytree(package_dir, copy_dir, symlinks=False)
 
-    forbidden = [str(source_root)] if source_root is not None else []
-    for path in copy_dir.rglob("*"):
-        if path.is_symlink():
-            raise ValueError("copy-out package contains symlink")
-        if path.is_file() and path.suffix in {".py", ".sh", ".json", ".md", ".txt"}:
-            content = path.read_text(encoding="utf-8", errors="replace")
-            if any(reference and reference in content for reference in forbidden):
-                raise ValueError("copy-out package references source root")
+        forbidden = [str(source_root)] if source_root is not None else []
+        for path in copy_dir.rglob("*"):
+            if path.is_symlink():
+                raise ValueError("copy-out package contains symlink")
+            if path.is_file() and path.suffix in {".py", ".sh", ".json", ".md", ".txt"}:
+                content = path.read_text(encoding="utf-8", errors="replace")
+                if any(reference and reference in content for reference in forbidden):
+                    raise ValueError("copy-out package references source root")
 
-    verifier = copy_dir / "verify.py"
-    if verifier.exists():
-        completed = subprocess.run(
-            [sys.executable, str(verifier)], cwd=copy_dir, text=True,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False,
-        )
-        if completed.returncode != 0 or "RESULT: PASS" not in completed.stdout:
-            raise RuntimeError("copy-out verification failed: " + completed.stdout.strip())
-    scripts = [script for script in (copy_dir / "setup.sh", copy_dir / "run.sh") if script.is_file()]
-    for script in scripts:
-        completed = subprocess.run(
-            ["sh", "-n", str(script)], cwd=copy_dir, text=True,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False,
-        )
-        if completed.returncode != 0:
-            raise RuntimeError("copy-out script syntax failed: " + completed.stdout.strip())
-    if (copy_dir / "run.sh").is_file():
-        completed = subprocess.run(
-            ["sh", "run.sh", "--help"], cwd=copy_dir, text=True,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False,
-        )
-        if completed.returncode != 0:
-            raise RuntimeError("copy-out runner help failed: " + completed.stdout.strip())
+        verifier = copy_dir / "verify.py"
+        if verifier.exists():
+            completed = subprocess.run(
+                [sys.executable, str(verifier)], cwd=copy_dir, text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False,
+            )
+            if completed.returncode != 0 or "RESULT: PASS" not in completed.stdout:
+                raise RuntimeError("copy-out verification failed: " + completed.stdout.strip())
+        scripts = [script for script in (copy_dir / "setup.sh", copy_dir / "run.sh") if script.is_file()]
+        for script in scripts:
+            completed = subprocess.run(
+                ["sh", "-n", str(script)], cwd=copy_dir, text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False,
+            )
+            if completed.returncode != 0:
+                raise RuntimeError("copy-out script syntax failed: " + completed.stdout.strip())
+        if (copy_dir / "run.sh").is_file():
+            completed = subprocess.run(
+                ["sh", "run.sh", "--help"], cwd=copy_dir, text=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False,
+            )
+            if completed.returncode != 0:
+                raise RuntimeError("copy-out runner help failed: " + completed.stdout.strip())
+    except Exception:
+        shutil.rmtree(copy_parent, ignore_errors=True)
+        raise
     return copy_dir
 
 
@@ -627,6 +631,8 @@ def build_workflow_package(workflow, package_type, source_root, output_root, *, 
         shutil.rmtree(package_dir, ignore_errors=True)
         archive_path = package_root / f"{package_dir.name}.zip"
         archive_path.unlink(missing_ok=True)
+        if "copy_out_dir" in dir() and copy_out_dir is not None:
+            shutil.rmtree(copy_out_dir.parent, ignore_errors=True)
         raise
 
     return {
