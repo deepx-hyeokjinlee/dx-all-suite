@@ -29,20 +29,20 @@ This hotfix release resolves centralized runtime sanity checks, Windows build an
 
 **Performance & Efficiency**
 
-- Windows packaging/staging idempotency reduces unnecessary rebuilds and reconfigure failures; Ninja-forced wheel builds avoid Visual Studio generator detection issues on CI.
+- **DX-RT**: Windows packaging/staging idempotency reduces unnecessary rebuilds and reconfigure failures; Ninja-forced wheel builds avoid Visual Studio generator detection issues on CI.
 
 **Stability & Fixes**
 
-- Centralized sanity checks prevent divergent driver detection logic between `install.sh` and standalone runs.
-- Staged generated headers (`gen.h`) into public include path with copy fallback when symlinks are unavailable on Windows.
-- Fixed Windows all-build parallelism by consolidating shared-file copies.
-- DX-Stream and dxosd fixes improve plugin path handling and depth rendering stability on Windows.
+- **DX-RUNTIME(installer)**: Centralized sanity checks prevent divergent driver detection logic between `install.sh` and standalone runs.
+- **DX-RT**: Staged generated headers (`gen.h`) into public include path with copy fallback when symlinks are unavailable on Windows.
+- **DX-STREAM**: DX-Stream and dxosd fixes improve plugin path handling and depth rendering stability on Windows.
+- **DX-APP**: Fixed Windows all-build parallelism by consolidating shared-file copies.
 
 **New Features & Tools**
 
-- `release.ver` added to Windows DXRT binaries for explicit versioning.
-- YOLO26 depth-estimation demo pipeline and depth metadata/rendering support added to DX-Stream.
-- YOLO26-Depth example suite and model registry entries added to DX-APP (n/s/m/l/x variants).
+- **DX-RT**: `release.ver` added to Windows DXRT binaries for explicit versioning.
+- **DX-STREAM**: YOLO26 depth-estimation demo pipeline and depth metadata/rendering support added to DX-Stream.
+- **DX-APP**: YOLO26-Depth example suite and model registry entries added to DX-APP (n/s/m/l/x variants).
 
 ---
 
