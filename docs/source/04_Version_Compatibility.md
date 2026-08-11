@@ -36,7 +36,7 @@ Since the **DEEPX SDK** maintains strict version dependencies between modules, i
     <tr>
       <td>v2.4.1</td>
       <td>v2.0.1</td>
-      <td>v2.7.3</td>
+      <td>v2.7.4</td>
       <td>v2.6.0</td>
       <td>v3.4.2</td>
       <td>v3.1.2</td>
