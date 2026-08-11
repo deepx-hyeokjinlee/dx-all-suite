@@ -1,5 +1,51 @@
 # RELEASE_NOTES
 
+## DX-All-Suite v2.4.2 / 2026-08-11
+
+- DX-Compiler: v2.4.1
+    - DX-COM: v2.4.0
+    - DX-TRON: v2.0.1 (Deprecated)
+- DX-Runtime: v2.4.2
+    - DX_FW: v2.7.4
+    - NPU Driver: v2.6.0
+    - DX-RT: v3.4.2
+    - DX-Stream: v3.1.2
+    - DX-APP: v3.2.2
+
+---
+
+Here are the **DX-All-Suite v2.4.2** Release Notes.
+
+### What's New?
+
+This hotfix release resolves centralized runtime sanity checks, Windows build and packaging reliability (DX-RT), depth-estimation and depth-map metadata/rendering in DX-Stream, and DX-APP demo and model updates including YOLO26-Depth examples.
+
+#### **DX AI Studio (Beta) improvements**
+- TBD
+
+---
+
+### Key Updates
+
+**Performance & Efficiency**
+
+- Windows packaging/staging idempotency reduces unnecessary rebuilds and reconfigure failures; Ninja-forced wheel builds avoid Visual Studio generator detection issues on CI.
+
+**Stability & Fixes**
+
+- Centralized sanity checks prevent divergent driver detection logic between `install.sh` and standalone runs.
+- Staged generated headers (`gen.h`) into public include path with copy fallback when symlinks are unavailable on Windows.
+- Fixed Windows all-build parallelism by consolidating shared-file copies.
+- DX-Stream and dxosd fixes improve plugin path handling and depth rendering stability on Windows.
+
+**New Features & Tools**
+
+- `release.ver` added to Windows DXRT binaries for explicit versioning.
+- YOLO26 depth-estimation demo pipeline and depth metadata/rendering support added to DX-Stream.
+- YOLO26-Depth example suite and model registry entries added to DX-APP (n/s/m/l/x variants).
+
+---
+
 ## DX-All-Suite v2.4.1 / 2026-08-03
 
 - DX-Compiler: v2.4.1
