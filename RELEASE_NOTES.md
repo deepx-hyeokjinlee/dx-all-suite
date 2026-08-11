@@ -21,7 +21,10 @@ Here are the **DX-All-Suite v2.4.2** Release Notes.
 This hotfix release resolves centralized runtime sanity checks, Windows build and packaging reliability (DX-RT), depth-estimation and depth-map metadata/rendering in DX-Stream, and DX-APP demo and model updates including YOLO26-Depth examples.
 
 #### **DX AI Studio (Beta) improvements**
-- TBD
+- **Lab Composer** — build, validate, and run inference workflows in one workspace.
+- **Plugin workflow** — scaffold custom plugins and export reusable Lab packages.
+- **Batch runs** — follow asynchronous inference jobs with live progress and result status.
+- **Runtime diagnostics** — improved bootstrap and structured debug logging simplify setup and troubleshooting.
 
 ---
 
