@@ -52,7 +52,7 @@ RUN if [ "$USE_INTRANET" = "true" ]; then \
 
 # Setup Python 3.8.2 or higher
 #   - Unified installation flow: apt → source build fallback
-#   - Ubuntu 18.04, 20.04, 22.04, 24.04, 26.04 supported
+#   - Ubuntu 20.04, 22.04, 24.04, 26.04 supported
 #   - Debian 12, 13 supported
 ENV MIN_PY_VERSION=3.8.2
 ARG TARGET_INSTALL_PY_VERSION=""
@@ -75,7 +75,7 @@ RUN set -x && \
     fi && \
     PY_MAJOR_MINOR=$(echo "${TARGET_INSTALL_PY_VERSION}" | cut -d. -f1,2) && \
     DX_PYTHON_EXEC="" && \
-    if { [ "${BASE_IMAGE_NAME}" = "ubuntu" ] && { [ "$(lsb_release -rs)" = "26.04" ] || [ "$(lsb_release -rs)" = "24.04" ] || [ "$(lsb_release -rs)" = "22.04" ] || [ "$(lsb_release -rs)" = "20.04" ] || [ "$(lsb_release -rs)" = "18.04" ]; }; } || \
+    if { [ "${BASE_IMAGE_NAME}" = "ubuntu" ] && { [ "$(lsb_release -rs)" = "26.04" ] || [ "$(lsb_release -rs)" = "24.04" ] || [ "$(lsb_release -rs)" = "22.04" ] || [ "$(lsb_release -rs)" = "20.04" ]; }; } || \
        { [ "${BASE_IMAGE_NAME}" = "debian" ] && { [ "$(lsb_release -rs)" = "13" ] || [ "$(lsb_release -rs)" = "12" ]; }; }; then \
         echo "Supported OS: ${BASE_IMAGE_NAME} $(lsb_release -rs)" && \
         apt-get update && \
@@ -145,7 +145,7 @@ RUN set -x && \
         echo "*** OS_VERSION(${OS_VERSION}) ***" && \
         if [ "$OS_VERSION" = "26.04" ] || [ "$OS_VERSION" = "24.04" ]; then \
             pip install --upgrade setuptools; \
-        elif [ "$OS_VERSION" = "22.04" ] || [ "$OS_VERSION" = "20.04" ] || [ "$OS_VERSION" = "18.04" ]; then \
+        elif [ "$OS_VERSION" = "22.04" ] || [ "$OS_VERSION" = "20.04" ]; then \
             pip install --upgrade pip wheel setuptools; \
         else \
             echo "Unsupported Ubuntu version: $OS_VERSION" && exit 1; \
@@ -163,47 +163,32 @@ RUN set -x && \
 WORKDIR /deepx/dx-runtime/dx_rt
 ADD archives/dx_rt.tar.gz /deepx/dx-runtime/dx_rt/
 
-# --- BEGIN: Ubuntu 18.04 legacy fallback (glibc 2.27, prebuilt .deb incompatible) ---
-# Delete this whole RUN block (and this comment) when 18.04 support is dropped.
+# Install dx_rt via Debian package: prefer the arch-specific prebuilt package
+# (libdxrt-bin_<ver>_<arch>.deb), fall back to the legacy arch-independent source
+# package (libdxrt_<ver>_all.deb, whose postinst builds and installs dx_rt with
+# USE_ORT=ON baked in). The matching 'dx_engine' Python API is installed into
+# the venv in the same step.
 RUN set -x && \
     . /venv-dxnn/bin/activate && \
-    if [ "$(lsb_release -rs)" = "18.04" ]; then \
-        echo "Ubuntu 18.04 detected — building dx_rt from source..." && \
-        ./install.sh --all && \
-        ./build.sh && \
-        pip install ./python_package && \
-        rm -rf build_* ; \
-    fi
-# --- END: Ubuntu 18.04 legacy fallback ---
-
-# Install dx_rt via Debian package (all OSes except Ubuntu 18.04, handled above):
-# prefer the arch-specific prebuilt package (libdxrt-bin_<ver>_<arch>.deb), fall
-# back to the legacy arch-independent source package (libdxrt_<ver>_all.deb,
-# whose postinst builds and installs dx_rt with USE_ORT=ON baked in). The
-# matching 'dx_engine' Python API is installed into the venv in the same step.
-RUN set -x && \
-    . /venv-dxnn/bin/activate && \
-    if [ "$(lsb_release -rs)" != "18.04" ]; then \
-        echo "Install dx_rt via Debian package..." && \
-        DEB_ARCH=$(dpkg --print-architecture) && \
-        DEB_FILE=$(find -L release/latest -maxdepth 1 -type f -name "libdxrt*_${DEB_ARCH}.deb" | sort | head -1) && \
-        if [ -z "$DEB_FILE" ]; then \
-            DEB_FILE=$(find -L release/latest -maxdepth 1 -type f -name "libdxrt*_all.deb" | sort | head -1); \
-        fi && \
-        if [ -z "$DEB_FILE" ]; then \
-            echo "ERROR: dx_rt Debian package not found under release/latest" && exit 1; \
-        fi && \
-        apt-get update && \
-        apt-get install -y "$(realpath "$DEB_FILE")" && \
-        rm -rf /usr/share/libdxrt/build_* && \
-        rm -rf /var/lib/apt/lists/* && \
-        PYTAG="cp$(python -c 'import sys;print(f"{sys.version_info[0]}{sys.version_info[1]}")')" && \
-        WHL=$(find -L /usr/share/libdxrt-bin/python -maxdepth 1 -type f -name "dx_engine-*-${PYTAG}-${PYTAG}-*.whl" 2>/dev/null | sort | head -1) && \
-        if [ -n "$WHL" ]; then \
-            pip install --force-reinstall "$WHL"; \
-        else \
-            pip install /usr/share/libdxrt/python_package; \
-        fi ; \
+    echo "Install dx_rt via Debian package..." && \
+    DEB_ARCH=$(dpkg --print-architecture) && \
+    DEB_FILE=$(find -L release/latest -maxdepth 1 -type f -name "libdxrt*_${DEB_ARCH}.deb" | sort | head -1) && \
+    if [ -z "$DEB_FILE" ]; then \
+        DEB_FILE=$(find -L release/latest -maxdepth 1 -type f -name "libdxrt*_all.deb" | sort | head -1); \
+    fi && \
+    if [ -z "$DEB_FILE" ]; then \
+        echo "ERROR: dx_rt Debian package not found under release/latest" && exit 1; \
+    fi && \
+    apt-get update && \
+    apt-get install -y "$(realpath "$DEB_FILE")" && \
+    rm -rf /usr/share/libdxrt/build_* && \
+    rm -rf /var/lib/apt/lists/* && \
+    PYTAG="cp$(python -c 'import sys;print(f"{sys.version_info[0]}{sys.version_info[1]}")')" && \
+    WHL=$(find -L /usr/share/libdxrt-bin/python -maxdepth 1 -type f -name "dx_engine-*-${PYTAG}-${PYTAG}-*.whl" 2>/dev/null | sort | head -1) && \
+    if [ -n "$WHL" ]; then \
+        pip install --force-reinstall "$WHL"; \
+    else \
+        pip install /usr/share/libdxrt/python_package; \
     fi
 
 WORKDIR /deepx/dx-runtime/dx_app
