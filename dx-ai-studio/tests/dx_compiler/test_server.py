@@ -1131,3 +1131,193 @@ def test_checkpoint_backend_symbols_removed():
     assert not hasattr(job, "is_checkpoint")
     assert not hasattr(job, "checkpoint_output_name")
     assert hasattr(job, "qxnn_checkpoint_path")
+
+
+# ── Filesystem picker routes: /api/listdir, /api/mkdir, /validate/path ──────
+#
+# These back the Output Directory picker and the config wizard's path advisory.
+# They are the compiler server's only routes that touch arbitrary user paths, so
+# the allowed-roots checks are what keeps a localhost tool from browsing or
+# creating anywhere. tmp_path lives under /tmp, which is an allowed root.
+
+
+def _api(method: str, path: str, body=None):
+    """Return (status, payload), including for 4xx which urlopen raises on."""
+    data = json.dumps(body).encode() if body is not None else None
+    headers = {"Content-Type": "application/json"} if data else {}
+    req = Request(f"{BASE_URL}{path}", data=data, headers=headers, method=method)
+    try:
+        resp = urlopen(req, timeout=5)
+        raw = resp.read()
+        return resp.status, (json.loads(raw) if raw else None)
+    except HTTPError as e:
+        raw = e.read()
+        try:
+            return e.code, json.loads(raw)
+        except json.JSONDecodeError:
+            return e.code, raw.decode(errors="replace")
+
+
+@pytest.fixture()
+def browse_root(tmp_path):
+    """A populated, allowed-root directory to browse."""
+    (tmp_path / "beta").mkdir()
+    (tmp_path / "Alpha").mkdir()
+    (tmp_path / ".hidden").mkdir()
+    (tmp_path / "config.json").write_text("{}")
+    (tmp_path / "notes.txt").write_text("x")
+    (tmp_path / ".secret.json").write_text("{}")
+    return tmp_path
+
+
+class TestListDirRoute:
+    def test_lists_subdirectories_case_insensitively_sorted(self, server, browse_root):
+        status, body = _api("GET", f"/api/listdir?path={browse_root}")
+        assert status == 200 and body["ok"] is True
+        assert body["dirs"] == ["Alpha", "beta"], "sorted by lowercased name"
+
+    def test_dotfiles_and_dotdirs_are_hidden(self, server, browse_root):
+        _, body = _api("GET", f"/api/listdir?path={browse_root}")
+        assert ".hidden" not in body["dirs"]
+        _, with_ext = _api("GET", f"/api/listdir?path={browse_root}&ext=.json")
+        assert ".secret.json" not in with_ext["files"]
+
+    def test_files_are_empty_without_an_ext_filter(self, server, browse_root):
+        """The picker is folder-only by default; leaking files would make the
+        directory chooser show unselectable entries."""
+        _, body = _api("GET", f"/api/listdir?path={browse_root}")
+        assert body["files"] == []
+
+    def test_ext_filter_selects_matching_files_only(self, server, browse_root):
+        _, body = _api("GET", f"/api/listdir?path={browse_root}&ext=.json")
+        assert body["files"] == ["config.json"]
+        assert "notes.txt" not in body["files"]
+
+    def test_ext_without_a_leading_dot_is_normalised(self, server, browse_root):
+        """The UI sends "json"; without normalisation the endswith() check would
+        still match "config.json" by accident but miss e.g. "ajson" cases."""
+        _, dotted = _api("GET", f"/api/listdir?path={browse_root}&ext=.json")
+        _, bare = _api("GET", f"/api/listdir?path={browse_root}&ext=json")
+        assert bare["files"] == dotted["files"] == ["config.json"]
+
+    def test_reports_parent_and_writability(self, server, browse_root):
+        _, body = _api("GET", f"/api/listdir?path={browse_root}")
+        assert body["path"] == str(browse_root)
+        assert body["parent"] == str(browse_root.parent)
+        assert body["writable"] is True
+
+    def test_unsafe_path_is_refused(self, server):
+        """/etc is outside the allowed roots — the picker must not browse it."""
+        status, _ = _api("GET", "/api/listdir?path=/etc")
+        assert status == 400
+
+    def test_missing_directory_is_refused(self, server, tmp_path):
+        status, _ = _api("GET", f"/api/listdir?path={tmp_path}/does-not-exist")
+        assert status == 400
+
+    def test_file_path_is_not_a_directory(self, server, browse_root):
+        status, _ = _api("GET", f"/api/listdir?path={browse_root}/config.json")
+        assert status == 400
+
+    def test_no_path_falls_back_to_a_safe_default(self, server):
+        status, body = _api("GET", "/api/listdir")
+        assert status == 200 and body["ok"] is True
+        assert body["path"], "the default start directory must be reported"
+
+
+class TestMkdirRoute:
+    def test_creates_a_subdirectory(self, server, tmp_path):
+        status, body = _api("POST", "/api/mkdir", {"path": str(tmp_path), "name": "outdir"})
+        assert status == 200 and body["ok"] is True
+        assert (tmp_path / "outdir").is_dir()
+        assert body["path"] == str(tmp_path / "outdir")
+
+    def test_is_idempotent(self, server, tmp_path):
+        (tmp_path / "already").mkdir()
+        status, body = _api("POST", "/api/mkdir", {"path": str(tmp_path), "name": "already"})
+        assert status == 200 and body["ok"] is True
+
+    @pytest.mark.parametrize("bad", ["", ".", "..", ".hidden", "a/b", "a\\b", "../escape"])
+    def test_rejects_unsafe_names(self, server, tmp_path, bad):
+        status, _ = _api("POST", "/api/mkdir", {"path": str(tmp_path), "name": bad})
+        assert status == 400, f"{bad!r} must not be accepted as a directory name"
+        assert list(tmp_path.iterdir()) == [], "a rejected mkdir must create nothing"
+
+    def test_rejects_unsafe_parent_at_the_parent_check(self, server):
+        """make_directory guards twice — the parent must be an allowed root, AND
+        the resolved target must stay directly under it. Asserting only the 400
+        cannot tell the layers apart: deleting the parent check still yields 400
+        because the target check catches it. Pin the message so a lost layer is
+        visible."""
+        status, body = _api("POST", "/api/mkdir", {"path": "/etc", "name": "newdir"})
+        assert status == 400
+        assert body["error"] == "unsafe parent", (
+            "expected the parent-root check to reject this; "
+            f"got {body['error']!r} — a guard layer may have been removed"
+        )
+        assert not Path("/etc/newdir").exists()
+
+    def test_target_check_backs_up_the_parent_check(self, server, tmp_path):
+        """Defence in depth: even for an allowed parent, the resolved target must
+        remain directly beneath it."""
+        from dx_compiler.core import fs_browse
+
+        with pytest.raises(ValueError, match="invalid name"):
+            fs_browse.make_directory(str(tmp_path), "../sneaky")
+        assert not (tmp_path.parent / "sneaky").exists()
+
+    def test_rejects_missing_parent(self, server, tmp_path):
+        status, _ = _api("POST", "/api/mkdir",
+                         {"path": str(tmp_path / "nope"), "name": "x"})
+        assert status == 400
+
+    def test_invalid_json_body_is_400(self, server):
+        req = Request(f"{BASE_URL}/api/mkdir", data=b"{not json",
+                      headers={"Content-Type": "application/json"}, method="POST")
+        try:
+            urlopen(req, timeout=5)
+            raise AssertionError("expected 400")
+        except HTTPError as e:
+            assert e.code == 400
+
+
+class TestValidatePathRoute:
+    def test_empty_path_is_not_an_error(self, server):
+        """The wizard calls this on every keystroke, including an empty field —
+        it must stay quiet rather than flashing a warning."""
+        status, body = _api("GET", "/validate/path?path=")
+        assert status == 200 and body["warnings"] == []
+
+    def test_unsafe_path_is_403(self, server):
+        status, _ = _api("GET", "/validate/path?path=/etc/passwd&kind=file")
+        assert status == 403
+
+    def test_existing_directory_has_no_warnings(self, server, tmp_path):
+        status, body = _api("GET", f"/validate/path?path={tmp_path}&kind=dir")
+        assert status == 200 and body["warnings"] == []
+
+    def test_missing_path_warns_but_still_200(self, server, tmp_path):
+        """Advisory, never blocking: the user may be typing a path they intend
+        to create, so this returns 200 with a warning rather than an error."""
+        status, body = _api("GET", f"/validate/path?path={tmp_path}/nope&kind=dir")
+        assert status == 200
+        assert any("does not exist" in w for w in body["warnings"])
+
+    def test_file_kind_on_a_directory_warns(self, server, tmp_path):
+        status, body = _api("GET", f"/validate/path?path={tmp_path}&kind=file")
+        assert status == 200
+        assert any("not a file" in w for w in body["warnings"])
+
+    def test_dir_kind_on_a_file_warns(self, server, tmp_path):
+        f = tmp_path / "a.json"
+        f.write_text("{}")
+        status, body = _api("GET", f"/validate/path?path={f}&kind=dir")
+        assert status == 200
+        assert any("not a directory" in w for w in body["warnings"])
+
+    def test_extension_mismatch_warns_for_file_kind(self, server, tmp_path):
+        f = tmp_path / "dataset.txt"
+        f.write_text("x")
+        status, body = _api("GET", f"/validate/path?path={f}&kind=file&ext=.json")
+        assert status == 200
+        assert any("does not end in .json" in w for w in body["warnings"])

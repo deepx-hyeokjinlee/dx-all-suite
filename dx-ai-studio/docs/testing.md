@@ -177,9 +177,9 @@ Baseline (`config/coverage_baseline.json`, branch coverage over 20,346 statement
 |---|---|---|---|---|
 | dx_planner | 91.7% | | shared | 74.8% |
 | dx_benchmark | 91.2% | | launcher | 70.7% |
-| dx_monitor | 85.0% | | dx_app | 66.6% |
-| dx_modelzoo | 83.8% | | dx_stream | 62.1% |
-| dx_agent_dev | 79.9% | | dx_compiler | 55.9% |
+| dx_monitor | 85.0% | | dx_app | 66.7% |
+| dx_modelzoo | 83.8% | | dx_stream | 65.0% |
+| dx_agent_dev | 79.9% | | dx_compiler | 57.6% |
 
 `dx_compiler` and `dx_stream` remain the thinnest. The largest remaining gaps are
 the two module servers (`dx_stream/server.py` 45%, `dx_compiler/server.py` 36%) and
