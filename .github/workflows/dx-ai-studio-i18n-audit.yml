@@ -1,0 +1,62 @@
+# dx-all-suite/.github/workflows/dx-ai-studio-i18n-audit.yml
+#
+# Manual-dispatch only by contract (tests/shared/test_ci_contracts.py::
+# test_i18n_smoke_workflow_is_manual_dispatch_only). The static i18n gate already
+# runs as stage 4/6 inside run_ci.sh on every PR; this workflow is the heavier
+# opt-in variant (full smoke matrix + optional Playwright copy audit) that is far
+# too slow to block a merge.
+name: dx-ai-studio i18n audit
+run-name: dx-ai-studio i18n audit — ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_browser_audit:
+        description: 'Also run the Playwright browser copy audit (slow)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dx-ai-studio-i18n-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  i18n-audit:
+    name: i18n smoke matrix
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provision test venv
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Static i18n gate
+        run: bash scripts/i18n_audit_gate.sh
+
+      - name: Full i18n smoke matrix
+        run: bash scripts/i18n_smoke_matrix.sh
+
+      - name: Playwright copy audit (opt-in)
+        if: ${{ inputs.run_browser_audit }}
+        run: bash scripts/i18n_browser_audit.sh

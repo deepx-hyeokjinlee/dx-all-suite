@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtualenvs — created by launcher.sh / run_ci.sh / i18n_browser_audit.sh
+.venv/
+.venv-i18n-audit/
+docs/.venv-docs/
+
+# Coverage
+.coverage
+coverage.xml
+htmlcov/
+
+# Studio runtime state (shared/paths.py: outputs_dir() / var_dir())
+outputs/
+var/
+var/log/
+
+# Agent-generated session output (CLAUDE.md Output Isolation)
+dx-agent-dev/
+
+# ModelZoo sync artifacts.
+# NOTE: dx_modelzoo/data/generated_catalog.json is a SHIPPED release artifact
+# (sync_release_catalog.sh) and must stay COMMITTED — the air-gapped build reads
+# official accuracy/fps/onnx URLs from that snapshot. Only the build-local
+# per-run cache and the sync report are ignored. See
+# tests/dx_modelzoo/test_server.py::test_sync_generated_artifacts_are_gitignored.
+dx_modelzoo/data/generated_catalog.cache.json
+dx_modelzoo/data/sync_report.json
+
+# Editors / OS
+.DS_Store
+*.swp
