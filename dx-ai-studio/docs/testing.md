@@ -171,17 +171,20 @@ process — launcher and dx_agent_dev collide on the `18xxx` ports and `tests/e2
 (0.5%p tolerance). Report-only during the staged rollout; set `DX_COVERAGE_ENFORCE=1`
 to make a drop fail. Refresh the baseline with `python scripts/coverage_gate.py --update`.
 
-Baseline (2026-08-27, branch coverage, 20,346 statements, total **66.9%**):
+Baseline (`config/coverage_baseline.json`, branch coverage over 20,346 statements):
 
 | module | cover | | module | cover |
 |---|---|---|---|---|
 | dx_planner | 91.7% | | shared | 74.8% |
 | dx_benchmark | 91.2% | | launcher | 70.7% |
 | dx_monitor | 85.0% | | dx_app | 66.6% |
-| dx_modelzoo | 83.8% | | dx_stream | 59.5% |
-| dx_agent_dev | 79.9% | | dx_compiler | 52.5% |
+| dx_modelzoo | 83.8% | | dx_stream | 62.1% |
+| dx_agent_dev | 79.9% | | dx_compiler | 55.9% |
 
-`dx_compiler` and `dx_stream` are the thinnest — the obvious next targets.
+`dx_compiler` and `dx_stream` remain the thinnest. The largest remaining gaps are
+the two module servers (`dx_stream/server.py` 45%, `dx_compiler/server.py` 36%) and
+`compiler_service.py` (55%) — route-level contract tests against a live `18xxx`
+server, the pattern the rest of the repo already uses, are the natural next step.
 
 Additional helper/manual checks, not part of `run_ci.sh`:
 
