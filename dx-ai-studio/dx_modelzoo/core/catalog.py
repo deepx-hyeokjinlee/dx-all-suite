@@ -134,6 +134,32 @@ def _enrich_summary(model):
     disp["summary"] = summary
 
 
+def _enrich_input_resolution(model):
+    """Fill specification.input_{width,height} from the .dxnn filename when the
+    official sync carried no spec at all.
+
+    Source-derived models (present in the dx_app tree but not yet in the ModelZoo
+    sync snapshot — e.g. the yolo26-depth family) arrive with `specification: {}`,
+    so the catalog showed no resolution for them. The resolution is right there in
+    the artifact name: `yolo26-depth-n_768x768.dxnn`.
+
+    Only width/height are derived. The channel count is NOT guessed: the other 347
+    models report `WxHxC` because dx_engine read the real input tensor, and inventing
+    a `x3` here would fabricate a fact rather than fill a gap. Once dx_engine can
+    introspect the .dxnn at sync time, this fallback becomes redundant.
+    """
+    spec = model.get("specification")
+    if not isinstance(spec, dict):
+        spec = model.setdefault("specification", {})
+    if spec.get("input_resolution") or spec.get("input_width"):
+        return
+    match = re.search(r"_(\d+)x(\d+)(?:[._]|$)", model.get("model_file") or "")
+    if not match:
+        return
+    spec["input_width"] = int(match.group(1))
+    spec["input_height"] = int(match.group(2))
+
+
 def _enrich_input_shape(model):
     """Derive technical.input_shape (NHWC, matching the .dxnn input tensor) from the
     resolved input_resolution. Done at serve time because the merge overwrites `technical`
@@ -616,6 +642,7 @@ def reload_catalog():
 
     for model in merged:
         _enrich_legal(model)
+        _enrich_input_resolution(model)
         _enrich_input_shape(model)
         _enrich_postprocessor(model)
         _enrich_summary(model)

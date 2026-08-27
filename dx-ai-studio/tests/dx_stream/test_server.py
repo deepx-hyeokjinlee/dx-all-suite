@@ -82,10 +82,10 @@ def test_api_status_returns_json(server):
 
 
 def test_api_demos_returns_list(server):
-    """GET /api/demos 는 dev-backed 11개 데모 목록을 반환해야 한다."""
+    """GET /api/demos 는 dev-backed 12개 데모 목록을 반환해야 한다."""
     data = _get_json("/api/demos")
     assert isinstance(data, list)
-    assert len(data) == 11
+    assert len(data) == 12
 
 
 def test_api_models_returns_catalog_object(server):

@@ -44,6 +44,14 @@ _EMBEDDED_MODELS = [
      "description_ko": "EfficientNet Lite0 분류", "description_en": "EfficientNet Lite0 classification"},
     {"name": "YOLO26n OBB", "file": "yolo26n-obb.dxnn", "category": "obb_detection",
      "description_ko": "YOLOv26n 회전 바운딩 박스 감지", "description_en": "YOLOv26n oriented bounding box detection"},
+    # Keyed by its MANIFEST filename, not a legacy name: yolo26-depth shipped after the
+    # v2_4_0 rename, so it never had an old-style name and needs no _MANIFEST_ALIAS entry
+    # (_build_catalog tries the exact filename first). dx-runtime/dx_stream ships the full
+    # pipeline for it — pipelines/single_network/depth_estimation/run_yolo26n-depth.sh,
+    # libpostprocess_yolo26depth.so, and DxOsd::draw_depth's MAGMA colormap — so the studio
+    # exposing it is catching up with the runtime, not adding an unusable card.
+    {"name": "YOLO26n Depth", "file": "yolo26-depth-n_768x768.dxnn", "category": "depth_estimation",
+     "description_ko": "YOLOv26n 깊이 추정", "description_en": "YOLOv26n depth estimation"},
 ]
 
 

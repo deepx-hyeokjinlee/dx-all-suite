@@ -6,9 +6,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "dx_strea
 
 
 class TestDemoList:
-    def test_has_11_dev_backed_demos(self):
+    def test_has_12_dev_backed_demos(self):
         from core.demos import DEMOS
-        assert len(DEMOS) == 11
+        assert len(DEMOS) == 12
 
     def test_removed_standalone_demos_are_not_exposed(self):
         from core.demos import DEMOS
@@ -135,6 +135,9 @@ def test_dev_demo_ids_and_categories():
         (8, "multi_stream"),
         (9, "multi_stream"),
         (10, "secondary"),
+        # dx-runtime ships pipelines/single_network/depth_estimation/run_yolo26n-depth.sh
+        # and libpostprocess_yolo26depth.so, so the studio exposes it too.
+        (11, "depth_estimation"),
     ]
 
 
