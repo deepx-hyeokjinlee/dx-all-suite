@@ -200,7 +200,7 @@ Baseline (`config/coverage_baseline.json`, branch coverage over 20,346 statement
 | dx_benchmark | 91.2% | | launcher | 70.7% |
 | dx_monitor | 85.0% | | dx_app | 66.7% |
 | dx_modelzoo | 83.8% | | dx_stream | 68.8% |
-| dx_agent_dev | 79.9% | | dx_compiler | 57.6% |
+| dx_agent_dev | 79.9% | | dx_compiler | 59.6% |
 
 `dx_compiler` is now the thinnest. The largest remaining gaps are
 `compiler_service.py` (~55%) and `compiler_bridge.py`/`setup_service.py` (~35%) —

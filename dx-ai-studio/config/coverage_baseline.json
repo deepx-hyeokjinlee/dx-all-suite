@@ -1,12 +1,12 @@
 {
   "dx_agent_dev": 79.9,
-  "dx_app": 66.6,
+  "dx_app": 66.7,
   "dx_benchmark": 91.2,
-  "dx_compiler": 57.6,
+  "dx_compiler": 59.6,
   "dx_modelzoo": 83.8,
   "dx_monitor": 85.0,
   "dx_planner": 91.7,
   "dx_stream": 68.8,
   "launcher": 70.7,
-  "shared": 74.8
+  "shared": 74.9
 }
