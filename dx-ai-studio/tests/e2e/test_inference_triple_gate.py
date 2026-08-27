@@ -33,8 +33,16 @@ from tests.e2e import fake_app_root as F  # noqa: E402
 # silently returns 0, or a units slip that turns 92.6 FPS into 92600).
 FPS_MIN, FPS_MAX = 0.1, 100_000.0
 
-# renderInferenceResult() emits either a comparison slider or a plain result <img>.
-RESULT_IMG_SELECTOR = "#r-result .cmp-after-clip img, #r-result img.res-img"
+# renderInferenceResult() has THREE shapes, and the gate must accept all of them:
+#   1. .cmp-after-clip img  — the before/after comparison slider
+#   2. img.res-img          — a plain result image (no "before" to compare against)
+#   3. .cmp-fallback img    — the slider is REPLACED by this when the original and
+#                             the result have different aspect ratios
+# Shape 3 only showed up once the NPU tier ran a real model: the mock fixture's
+# input and output are both 640x384, so it never leaves the slider path.
+RESULT_IMG_SELECTOR = (
+    "#r-result .cmp-after-clip img, #r-result img.res-img, #r-result .cmp-fallback img"
+)
 
 # The fake runner returns in ~1s, so the happy path finishes in ~5s. Keep the
 # mock budget tight: it is what a BROKEN render costs the PR gate, and 180s of
@@ -90,16 +98,44 @@ def _first_option(page, select_id: str) -> str:
     )
 
 
-def _select_model(page) -> str:
-    """Walk the real dependency chain: #r-cat drives onRCat(), which populates
-    #r-model AND loads the sample-image grid. Selecting #r-model directly would
-    find an empty <select>."""
-    category = _first_option(page, "r-cat")
-    page.select_option("#r-cat", category)
+def _select_model(page, model_name: str | None = None) -> str:
+    """Drive the real dependency chain: choosing #r-cat fires onRCat(), which
+    populates #r-model AND loads the sample-image grid.
 
-    value = _first_option(page, "r-model")
-    page.select_option("#r-model", value)
-    return value
+    Always targets a NAMED model. Picking "the first option" looked fine against
+    the single-model mock fixture, but the NPU tier overlays the full dx_app tree
+    — 24 categories and 415 registry rows with only ONE .dxnn actually present —
+    so the first entry is a model whose file is missing, doRun() bails with a
+    toast, and the gate waits for a result image that will never render.
+    """
+    if model_name is None:
+        category = _first_option(page, "r-cat")
+        page.select_option("#r-cat", category)
+        value = _first_option(page, "r-model")
+        page.select_option("#r-model", value)
+        return value
+
+    # Ask the API rather than reading the page's module-scoped `S` — that state
+    # is not exposed on window, and depending on an internal would make this
+    # test break on an unrelated refactor.
+    category = page.evaluate(
+        """async (name) => {
+             const payload = await (await fetch('/api/models')).json();
+             const models = Array.isArray(payload) ? payload : (payload.models || []);
+             const hit = models.find(m => m.name === name);
+             return hit ? hit.category : null;
+           }""",
+        model_name,
+    )
+    assert category, f"model {model_name!r} is not in /api/models"
+    page.select_option("#r-cat", category)
+    page.wait_for_function(
+        "name => [...document.getElementById('r-model').options].some(o => o.value === name)",
+        arg=model_name,
+        timeout=30_000,
+    )
+    page.select_option("#r-model", model_name)
+    return model_name
 
 
 def _select_image(page):
@@ -118,9 +154,9 @@ def _to_number(text: str) -> float:
     return float(m.group())
 
 
-def _run_triple_gate(page, base_url, *, run_timeout_ms: int):
+def _run_triple_gate(page, base_url, *, run_timeout_ms: int, model_name=None):
     _open_run_tab(page, base_url)
-    model = _select_model(page)
+    model = _select_model(page, model_name)
     _select_image(page)
 
     # ---- layer 1: network ------------------------------------------------
@@ -187,10 +223,20 @@ def _run_triple_gate(page, base_url, *, run_timeout_ms: int):
         RESULT_IMG_SELECTOR,
     )
     assert dims[0] > 0 and dims[1] > 0, f"result image has no decoded pixels: {dims}"
+    # This also separates the two .cmp-fallback modes. The same markup is used
+    # when the result CANNOT be decoded, except it then shows the ORIGINAL
+    # (src="/file/...") — which would otherwise sail through as a pass.
     assert page.evaluate(
         "sel => document.querySelector(sel).src.startsWith('data:image/jpeg;base64,')",
         RESULT_IMG_SELECTOR,
-    ), "result image is not an inline base64 JPEG"
+    ), (
+        "the displayed image is not the inline base64 result — if a .cmp-fallback "
+        "is shown, this is the 'could not be decoded' variant showing the input"
+    )
+    note = page.evaluate(
+        "() => document.querySelector('#r-result .cmp-fallback-note')?.textContent || ''"
+    )
+    assert "could not be decoded" not in note, f"result image failed to decode: {note!r}"
 
     # ---- layer 3: metrics -------------------------------------------------
     def _card_value(label: str):
@@ -218,7 +264,8 @@ def _run_triple_gate(page, base_url, *, run_timeout_ms: int):
 @pytest.mark.e2e_mock
 def test_inference_triple_gate_mock(page, dx_app_server):
     """Blocking PR gate: full UI -> API -> render -> metrics against the fake runner."""
-    got = _run_triple_gate(page, dx_app_server, run_timeout_ms=MOCK_RUN_TIMEOUT_MS)
+    got = _run_triple_gate(page, dx_app_server, run_timeout_ms=MOCK_RUN_TIMEOUT_MS,
+                           model_name=F.MODEL_NAME)
 
     # The mock tier is deterministic, so pin the exact numbers the fake runner
     # emitted. This is what proves the real _parse_perf ran instead of the test
@@ -231,20 +278,26 @@ def test_inference_triple_gate_mock(page, dx_app_server):
 @pytest.mark.e2e
 @pytest.mark.e2e_npu
 @pytest.mark.requires_dx_runtime
-def test_inference_triple_gate_npu(page, dx_app_server):
-    """Nightly / run-npu tier: identical assertions against real NPU inference.
+def test_inference_triple_gate_npu(page, dx_app_server, npu_model):
+    """Nightly / run-npu tier: the SAME three assertions against real inference.
 
-    Opt-in: set DX_E2E_NPU_MODEL to a model name present in the REAL dx_app tree
-    and run with DX_APP_ROOT unset (or pointed at dx-runtime/dx_app).
+    Opt in with DX_E2E_NPU_MODEL=<registry name>. If the .dxnn is not already
+    under dx-runtime/dx_app/assets/models (that directory is root-owned on a
+    provisioned board), also pass DX_E2E_NPU_MODEL_FILE=<path to the .dxnn> and
+    the fixture builds a symlink overlay instead of mutating the runtime tree.
     """
-    import os
+    got = _run_triple_gate(page, dx_app_server, run_timeout_ms=NPU_RUN_TIMEOUT_MS,
+                           model_name=npu_model)
 
-    if not os.environ.get("DX_E2E_NPU_MODEL"):
-        pytest.skip("DX_E2E_NPU_MODEL not set — real-NPU tier is opt-in")
-    if not os.path.exists("/dev/dxrt0"):
-        pytest.skip("no NPU device node (/dev/dxrt0)")
-
-    got = _run_triple_gate(page, dx_app_server, run_timeout_ms=NPU_RUN_TIMEOUT_MS)
-    # No exact pinning here — real throughput varies per host and thermal state.
-    assert got["fps"] > FPS_MIN
+    assert got["model"] == npu_model
+    # Real throughput varies with host and thermal state, so only sanity-bound it.
+    assert FPS_MIN < got["fps"] < FPS_MAX
     assert got["latency"] > 0
+
+    # Guard against a misconfiguration silently running the MOCK runner and
+    # reporting a green "NPU" result: the fake emits these exact constants.
+    assert got["fps"] != pytest.approx(F.EXPECTED_FPS), (
+        "NPU tier produced the fake runner's FPS — DX_APP_ROOT is pointing at the "
+        "mock fixture, so this test proved nothing about the NPU"
+    )
+    assert got["latency"] != pytest.approx(F.EXPECTED_LATENCY_MS)

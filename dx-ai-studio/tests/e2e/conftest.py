@@ -21,15 +21,27 @@ from pathlib import Path
 import pytest
 
 from tests.browser_support import launch_browser, selected_engines
-from tests.e2e import fake_app_root
+from tests.e2e import fake_app_root, npu_app_root
 
 # --- import-time activation (order matters) ---------------------------------
 # Failure traces land in the repo (gitignored) so CI can upload them as artifacts.
 TRACE_DIR = Path(__file__).resolve().parents[2] / "var" / "e2e-traces"
 
-_FIXTURE_ROOT = Path(tempfile.mkdtemp(prefix="dx-e2e-approot-"))
-atexit.register(shutil.rmtree, _FIXTURE_ROOT, True)
-fake_app_root.build(_FIXTURE_ROOT)
+# Which DX_APP_ROOT this process gets is decided ONCE, here, because
+# dx_app.core.config freezes BUILD_DIR/CATEGORIES on first import. The two tiers
+# therefore cannot share a pytest process — run them as separate invocations
+# (run_ci.sh already does: stage 6 is `-m e2e_mock`).
+NPU_TARGET = npu_app_root.resolve()
+
+if NPU_TARGET is not None:
+    _FIXTURE_ROOT, NPU_MODEL_NAME, NPU_MODEL_FILE = NPU_TARGET
+    atexit.register(npu_app_root.cleanup)
+else:
+    NPU_MODEL_NAME = NPU_MODEL_FILE = None
+    _FIXTURE_ROOT = Path(tempfile.mkdtemp(prefix="dx-e2e-approot-"))
+    atexit.register(shutil.rmtree, _FIXTURE_ROOT, True)
+    fake_app_root.build(_FIXTURE_ROOT)
+
 fake_app_root.activate(_FIXTURE_ROOT)
 
 for _name in [n for n in sys.modules
@@ -42,6 +54,18 @@ for _name in [n for n in sys.modules
 @pytest.fixture(scope="session")
 def fixture_app_root() -> Path:
     return _FIXTURE_ROOT
+
+
+@pytest.fixture(scope="session")
+def npu_model() -> str:
+    """The registry model name the NPU tier will drive, or skip with the reason.
+
+    Resolution happened at import time (DX_APP_ROOT must be bound before dx_app
+    is imported), so this only reports the outcome.
+    """
+    if NPU_TARGET is None:
+        pytest.skip(npu_app_root.unavailable_reason())
+    return NPU_MODEL_NAME
 
 
 @pytest.fixture(scope="session")

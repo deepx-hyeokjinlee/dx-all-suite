@@ -100,11 +100,32 @@ asserted on three independent layers so a regression in any one fails the gate:
 modified** — only the NPU binary is swapped, so the real `subprocess.Popen`, the real
 `_parse_perf`, the real result-image pipeline and the real `/api/run` route all run.
 
-Run the real-NPU tier with:
+#### The real-NPU tier
+
+`DX_E2E_NPU_MODEL` is a **registry name** from dx_app's `config/test_models.conf`
+(e.g. `yolov11n`), not a filename. The tier skips — with the specific reason — when
+the model is unknown, `/dev/dxrt0` is absent, or no `.dxnn` can be found.
 
 ```bash
-DX_E2E_NPU_MODEL=<model> ./.venv/bin/python -m pytest tests/e2e/ -m e2e_npu -q
+# The model is already installed (dx_app setup.sh has run): the real tree is used.
+DX_E2E_NPU_MODEL=yolov11n ./.venv/bin/python -m pytest tests/e2e/ -m e2e_npu -q
+
+# The .dxnn lives elsewhere — e.g. a ModelZoo download cache. dx_app/assets/ is
+# root-owned on a provisioned board, so instead of needing sudo to drop a model in,
+# the fixture builds a symlink overlay and leaves the runtime tree untouched.
+DX_E2E_NPU_MODEL=yolov11n \
+DX_E2E_NPU_MODEL_FILE=../workspace/res/models/yolo11-n_640x640.dxnn \
+  ./.venv/bin/python -m pytest tests/e2e/ -m e2e_npu -q
 ```
+
+Which root a process gets is decided ONCE at conftest import, because
+`dx_app.core.config` freezes `BUILD_DIR`/`CATEGORIES` on first import. The two tiers
+therefore cannot share a pytest process — run them as separate invocations, which
+`run_ci.sh` already does (stage 6 is `-m e2e_mock`).
+
+The NPU test also asserts its FPS/latency are **not** the fake runner's constants,
+so a misconfiguration that silently falls back to the mock cannot report a green
+"NPU verified".
 
 Extra flags: `--browser` (adds the Playwright copy/lang-switch/tutorial suites,
 needs `chromium` installed), `--ux` (full UX acceptance gate, slow, release only).
