@@ -199,13 +199,13 @@ Baseline (`config/coverage_baseline.json`, branch coverage over 20,346 statement
 | dx_planner | 91.7% | | shared | 74.8% |
 | dx_benchmark | 91.2% | | launcher | 70.7% |
 | dx_monitor | 85.0% | | dx_app | 66.7% |
-| dx_modelzoo | 83.8% | | dx_stream | 65.0% |
+| dx_modelzoo | 83.8% | | dx_stream | 68.8% |
 | dx_agent_dev | 79.9% | | dx_compiler | 57.6% |
 
-`dx_compiler` and `dx_stream` remain the thinnest. The largest remaining gaps are
-the two module servers (`dx_stream/server.py` 45%, `dx_compiler/server.py` 36%) and
-`compiler_service.py` (55%) — route-level contract tests against a live `18xxx`
-server, the pattern the rest of the repo already uses, are the natural next step.
+`dx_compiler` is now the thinnest. The largest remaining gaps are
+`compiler_service.py` (~55%) and `compiler_bridge.py`/`setup_service.py` (~35%) —
+all dx_com orchestration, so they need the fake-subprocess treatment rather than a
+live server. `dx_stream/core/webrtc.py` (~39%) needs GStreamer GI bindings.
 
 Additional helper/manual checks, not part of `run_ci.sh`:
 
