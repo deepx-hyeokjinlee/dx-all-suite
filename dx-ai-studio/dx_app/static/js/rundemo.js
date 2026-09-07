@@ -507,7 +507,7 @@ function rundemoRunLive(idx, d, body, resultEl) {
       '<img id="rundemo-live-img-' + idx + '" src="/api/live_frame?slot=0&t=' + Date.now() + '" ' +
         'style="width:100%;display:block;border-radius:8px;background:#000" alt="live"/>' +
       '<div id="rundemo-live-perf-' + idx + '" class="rundemo-live-perf txt-xs txt-dim mt8"></div>' +
-      '<button class="btn btn-sm mt8" onclick="rundemoStopLive(' + idx + ')">■ ' +
+      '<button class="btn btn-neutral btn-sm mt8" onclick="rundemoStopLive(' + idx + ')">■ ' +
         _T6('중지', 'Stop', '停止', '停止', '停止', 'Detener') + '</button>' +
       '</div>';
     if (RUNDEMO._live && RUNDEMO._live.pollInt) clearInterval(RUNDEMO._live.pollInt);

@@ -1527,15 +1527,16 @@ COMPONENT_OWNER = "shared/static/dx-components.css"
 
 # 이미 shared 소유자가 있는데 모듈이 덮어쓰는 셀렉터.
 OWNED_COMPONENT_OVERRIDES = {
-    ".btn": {
-        "dx_benchmark/static/css/style.css",
-        "dx_planner/static/css/style.css",
-    },
+    ".btn": set(),
+    ".btn-ghost": set(),
+    ".btn-danger": set(),
     # .card 는 dx-components.css 로 올라갔고 네 모듈의 사본은 전부 제거됐다.
     # 빈 집합이 곧 "이 컴포넌트는 끝났다"는 뜻이고, 새 재정의가 생기면 실패한다.
     ".card": set(),
     ".btn-primary": set(),
     ".btn-acc": set(),
+    ".btn-sm": set(),
+    ".btn-neutral": set(),
 }
 
 # shared 소유자가 아직 없어 모듈마다 재발명 중인 셀렉터.
@@ -1748,3 +1749,69 @@ def test_light_theme_loads_right_after_the_semantic_layer(name, rel):
             "/static/shared/dx-base.css",
         ],
     )
+
+
+
+# ── 버튼 체계 계약 ──────────────────────────────────────────────
+def test_button_size_modifier_carries_no_appearance():
+    """.btn-sm 은 크기만 바꾼다.
+
+    dx_app 사본이 여기에 background 와 border 색까지 넣는 바람에, 같은 요소에
+    붙은 .btn-ghost 41개가 ghost 로 렌더되지 않았다 — 모듈 CSS가 공유 CSS보다
+    뒤에 로드되기 때문이다. 크기 변형이 외형을 건드리면 그 조합은 전부 조용히 깨진다.
+    """
+    body = _css_rule_last(read_text(SHARED_STATIC / "dx-components.css"), ".btn-sm")
+    flat = body.replace(" ", "")
+    for prop in ("background:", "border-color:", "color:"):
+        assert prop not in flat, f".btn-sm 이 외형을 건드린다: {prop}"
+
+
+def test_button_base_reserves_a_transparent_border():
+    """테두리 있는 변형과 없는 변형 사이에서 1px 크기 점프가 생기지 않아야 한다."""
+    body = _css_rule_last(read_text(SHARED_STATIC / "dx-components.css"), ".btn")
+    assert "border:1pxsolidtransparent" in body.replace(" ", "")
+
+
+def test_no_module_ships_a_standalone_button_outside_the_shared_system():
+    """`.btn` 없이 홀로 쓰이던 버튼 이름들은 공유 체계로 흡수됐다.
+
+    이름이 `.btn-` 으로 시작하면서 `.btn` 체계 밖에 있는 클래스는 같은 것을
+    두 번 만들게 만든다 — dx_compiler 의 .btn-small / .btn-secondary 가 그랬다.
+    """
+    retired = (".btn-small", ".btn-secondary", ".btn-acc-standalone")
+    for path in _module_css_paths():
+        css = read_text(path)
+        for selector in retired:
+            assert not _defines_selector(css, selector), (
+                f"{path.relative_to(ROOT)} 가 은퇴한 {selector} 를 다시 정의한다"
+            )
+
+
+
+# ── 공유 컴포넌트 CSS 도달 범위 ─────────────────────────────────
+COMPONENT_CSS_HREF = "/static/shared/dx-components.css"
+
+ALL_SURFACES = {
+    **SEMANTIC_SURFACES,
+    "dx_agent_dev": "dx_agent_dev/templates/index.html",
+}
+
+
+@pytest.mark.parametrize("name,rel", sorted(ALL_SURFACES.items()))
+def test_every_surface_loads_the_shared_component_layer(name, rel):
+    """공유 컴포넌트 CSS 를 로드하지 않는 서피스가 있으면 통합이 그 모듈만 비켜간다.
+
+    실측(2026-08-31): 9개 서피스 중 5개가 이 파일을 로드하지 않고 있었고,
+    그 상태에서 .card / .btn 을 공유로 올리자 그 다섯 곳의 버튼이 브라우저
+    기본 스타일로 돌아갔다 — 파운데이션 계약이 tokens/base/utilities 만 강제하고
+    components 는 강제하지 않아 아무도 눈치채지 못했다.
+    """
+    html = head_html(read_text(ROOT / rel))
+    assert COMPONENT_CSS_HREF.split("?")[0] in html, f"{name} 이 공유 컴포넌트 CSS를 로드하지 않는다"
+
+
+@pytest.mark.parametrize("name,rel", sorted(ALL_SURFACES.items()))
+def test_component_css_loads_after_the_foundation_and_before_module_css(name, rel):
+    """모듈이 여전히 덮을 수 있어야 하고, 파운데이션 토큰은 이미 있어야 한다."""
+    html = head_html(read_text(ROOT / rel))
+    assert html.index("/static/shared/dx-utilities.css") < html.index(COMPONENT_CSS_HREF), name

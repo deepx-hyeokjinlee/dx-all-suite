@@ -605,34 +605,9 @@ tbody tr:hover {
 }
 
 /* ═══ Buttons ═══ */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  border-radius: var(--radius);
-  border: 1px solid transparent;
-  font-size: var(--fs-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-
-.btn:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-
 .btn-primary:hover:not(:disabled) {
   filter: brightness(1.12);
   box-shadow: 0 4px 20px var(--accent-glow);
-}
-
-.btn-danger {
-  background: rgba(var(--error-rgb),.15);
-  color: var(--error);
-  border-color: rgba(var(--error-rgb),.3);
 }
 
 .btn-danger:hover:not(:disabled) {
@@ -640,21 +615,10 @@ tbody tr:hover {
   border-color: var(--error);
 }
 
-.btn-ghost {
-  background: transparent;
-  color: var(--text-2);
-  border-color: var(--border);
-}
-
 .btn-ghost:hover:not(:disabled) {
   background: var(--bg-2);
   color: var(--text-1);
   border-color: var(--border-hover);
-}
-
-.btn-sm {
-  padding: 4px 12px;
-  font-size: var(--fs-sm);
 }
 
 /* ═══ Results Tab ═══ */

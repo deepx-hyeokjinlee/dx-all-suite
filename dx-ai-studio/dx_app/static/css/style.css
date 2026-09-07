@@ -355,11 +355,6 @@ tbody tr:hover td{background:var(--bg-3)}
 .img-item--data .img-data-ext{font-size:13px;font-weight:700;color:var(--accent)}
 .img-item--data .img-data-name{font-size:8px;line-height:1.1;color:var(--text-3);word-break:break-all}
 .fg-inline{display:flex;align-items:center;gap:8px;margin:4px 0}
-.btn-sm{
-  font-size:12px;padding:4px 10px;border-radius:var(--radius);cursor:pointer;
-  border:1px solid var(--border-hover);background:var(--bg-2);color:var(--text-1);
-}
-.btn-sm:hover{border-color:var(--accent)}
 .img-item .img-dir-badge{
   position:absolute;top:2px;right:2px;font-size:11px;line-height:1;z-index:1;
   background:rgba(0,0,0,.55);border-radius:4px;padding:1px 3px;pointer-events:none;

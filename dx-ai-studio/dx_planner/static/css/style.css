@@ -1680,20 +1680,6 @@ body.lang-zh-TW .zh-CN { display: none; }
 .tooltip:hover::after { opacity: 1; }
 
 /* Button base */
-.btn {
-  padding: var(--sp-2) var(--sp-4);
-  border-radius: var(--radius);
-  font-size: var(--fs-base);
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--bg-2);
-  color: var(--text-1);
-  transition: var(--transition);
-  font-family: var(--font);
-}
-.btn:hover { border-color: var(--border-hover); background: var(--bg-3); }
-
 /* Toast */
 .toast-wrap {
   position: fixed;

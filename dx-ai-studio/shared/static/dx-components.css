@@ -9,18 +9,46 @@
 /* ═══ Buttons ═══ */
 .btn{
   display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:var(--radius);
-  border:none;cursor:pointer;font-size:var(--fs-base);font-weight:600;transition:var(--transition);font-family:var(--font);
-  position:relative;
+  /* 투명한 1px 테두리를 미리 깔아 둔다. 변형은 border-color 만 바꾸면 되고,
+     테두리 있는 변형(.btn-ghost)과 없는 변형(.btn-primary) 사이에서 1px 만큼
+     크기가 튀지 않는다. dx_benchmark 가 자기 사본에서만 이렇게 하고 있었다. */
+  border:1px solid transparent;
+  cursor:pointer;white-space:nowrap;
+  font-size:var(--fs-base);font-weight:600;font-family:var(--font);
+  transition:var(--transition);position:relative;
 }
 .btn:hover{transform:translateY(-1px)}
 .btn:active{transform:translateY(0);filter:brightness(.92)}
 .btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none;transform:none!important;filter:none!important}
 
-/* Ghost / secondary outline button */
-.btn-ghost{background:transparent;color:var(--text-3);border:1px solid var(--border)}
+/* Ghost / secondary outline button.
+   base 가 투명 테두리를 깔아 두므로 여기서는 색만 바꾼다. */
+.btn-ghost{background:transparent;color:var(--text-muted);border-color:var(--border-subtle)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
 
+/* Destructive. 색은 파괴적 동작에만 쓰고, 채워진 빨강 대신 옅은 배경 + 빨간
+   글자로 간다 — 실수로 누르기 쉬운 위치에서 시선을 덜 끌면서도 의미는 분명하다. */
+.btn-danger{
+  background:rgba(var(--error-rgb),.15);
+  color:var(--status-error);
+  border-color:rgba(var(--error-rgb),.3);
+}
+.btn-danger:hover{background:rgba(var(--error-rgb),.24);border-color:var(--status-error)}
+
+/* Neutral filled button — accent 도 ghost 도 아닌 세 번째 자리.
+   dx_app 은 .btn-sm 안에 이 외형을 숨겨 두고 있었고(그 바람에 같은 요소의
+   .btn-ghost 를 조용히 덮었다), dx_compiler 는 .btn 없이 쓰는 독립 버튼
+   .btn-secondary 로 갖고 있었다. 둘을 여기로 합친다. */
+.btn-neutral{
+  background:var(--control-bg);
+  color:var(--text-primary);
+  border-color:var(--border-strong);
+}
+.btn-neutral:hover{border-color:var(--accent);color:var(--accent)}
+
 /* Small size modifier */
+/* 크기만 바꾼다. 외형(배경·테두리 색)은 변형의 몫이다 — dx_app 사본이
+   여기에 배경까지 넣는 바람에 .btn-ghost 41개가 ghost 로 보이지 않았다. */
 .btn-sm{padding:5px 12px;font-size:var(--fs-sm);border-radius:var(--radius-sm)}
 
 /* ═══ Form fields (.fg = field group) ═══ */
