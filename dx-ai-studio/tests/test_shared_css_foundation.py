@@ -1476,7 +1476,6 @@ def test_app_stream_final_card_rules_use_shared_raised_depth():
     """App/Stream의 실제 최종 카드 rule이 hard-coded gradient로 depth를 덮어쓰지 않는다."""
     SURFACE_SPECS = {
         "dx_app/static/css/style.css": [
-            ".stat",
             ".detail-info-card",
             ".pp-card",
             ".setup-card",
@@ -1488,7 +1487,6 @@ def test_app_stream_final_card_rules_use_shared_raised_depth():
             ".ref-topic-card",
         ],
         "dx_stream/static/css/stream.css": [
-            ".stat",
             ".setup-card",
             ".demo-card",
             ".ref-topic-card",
@@ -1537,6 +1535,11 @@ OWNED_COMPONENT_OVERRIDES = {
     ".btn-acc": set(),
     ".btn-sm": set(),
     ".btn-neutral": set(),
+    ".toast": set(),
+    ".toast-wrap": set(),
+    ".modal": set(),
+    ".modal-overlay": set(),
+    ".stat": set(),
 }
 
 # shared 소유자가 아직 없어 모듈마다 재발명 중인 셀렉터.

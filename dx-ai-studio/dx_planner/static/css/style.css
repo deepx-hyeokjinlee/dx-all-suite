@@ -1681,34 +1681,6 @@ body.lang-zh-TW .zh-CN { display: none; }
 
 /* Button base */
 /* Toast */
-.toast-wrap {
-  position: fixed;
-  top: var(--sp-4);
-  right: var(--sp-4);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  pointer-events: none;
-}
-.toast {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: 10px var(--sp-4);
-  border-radius: var(--radius);
-  font-size: var(--fs-base);
-  font-weight: 500;
-  pointer-events: auto;
-  transform: translateX(120%);
-  opacity: 0;
-  transition: var(--transition);
-  background: var(--bg-1);
-  border: 1px solid var(--border);
-  color: var(--text-1);
-  box-shadow: var(--shadow);
-}
-.toast.show { transform: translateX(0); opacity: 1; }
 .toast-ok { border-color: var(--success); background: rgba(var(--success-rgb), .1); }
 .toast-err { border-color: var(--error); background: rgba(var(--error-rgb), .1); }
 .toast-close {

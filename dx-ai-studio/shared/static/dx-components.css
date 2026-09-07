@@ -121,3 +121,54 @@
 }
 .btn-primary:hover,
 .btn-acc:hover{ box-shadow:var(--glow-accent);filter:brightness(1.08); }
+
+
+/* ═══ Toast ═══
+   dx_app / dx_stream 이 같은 정의를 각자 갖고 있었고(stream 은 action/close 가
+   빠진 부분집합), dx_planner 만 반대 위치였다 — 상단 우측, column, z-index 9999.
+   하단 우측으로 통일한다: 3개 중 2개가 그렇고, 헤더와 겹치지 않으며,
+   column-reverse 라 새 토스트가 항상 시선이 머무는 아래쪽에 쌓인다. */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column-reverse;gap:var(--sp-2);pointer-events:none}
+.toast{padding:10px 16px;border-radius:10px;font-size:var(--fs-base);box-shadow:var(--shadow);
+  transform:translateX(120%);transition:.3s cubic-bezier(.4,0,.2,1);max-width:420px;
+  display:flex;align-items:center;gap:var(--sp-2);backdrop-filter:blur(12px);pointer-events:auto;}
+.toast.show{transform:none}
+.toast-icon{flex-shrink:0;font-size:15px}
+.toast-msg{flex:1;line-height:1.4}
+.toast-action{background:var(--accent);border:none;color:var(--text-on-accent);padding:4px 12px;border-radius:var(--radius-sm);font-size:var(--fs-xs);font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none}
+.toast-action:hover{background:var(--accent);filter:brightness(1.15)}
+.toast-close{background:none;border:none;color:var(--text-4);font-size:var(--fs-md);cursor:pointer;padding:0 2px;margin-left:4px;line-height:1}
+.toast-close:hover{color:var(--text-1)}
+.toast-ok{background:rgba(var(--bg-1-rgb),.92);border:1px solid rgba(var(--success-rgb),.4);color:var(--success)}
+.toast-err{background:rgba(var(--bg-1-rgb),.92);border:1px solid rgba(var(--error-rgb),.4);color:var(--error)}
+.toast-warn{background:rgba(var(--bg-1-rgb),.92);border:1px solid rgba(var(--warning-rgb),.4);color:var(--warning)}
+.toast-info{background:rgba(var(--bg-1-rgb),.92);border:1px solid rgba(var(--info-rgb),.4);color:var(--info)}
+
+/* ═══ Modal ═══ dx_app / dx_stream 정의가 일곱 rule 전부 동일했다. */
+.modal-overlay{border:none;background:transparent;padding:0;max-width:100%;max-height:100%;
+  width:100%;height:100%;}
+.modal-overlay[open]{display:flex;align-items:center;justify-content:center;}
+.modal-overlay::backdrop{background:rgba(6,9,15,.8);backdrop-filter:blur(6px)}
+.modal{background:var(--glass-bg);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:var(--radius-lg);
+  padding:var(--sp-5);width:680px;max-width:92vw;max-height:85vh;overflow-y:auto;
+  box-shadow:var(--shadow-lg),0 0 60px rgba(99,140,255,.04);
+  color:var(--text-1);animation:modalIn .2s ease;}
+.modal h2{margin-top:0;font-size:var(--fs-lg)}
+.modal-x{float:right;cursor:pointer;font-size:22px;color:var(--text-3);background:none;border:none;line-height:1}
+.modal-x:hover{color:var(--text-1);background:rgba(99,140,255,.08);border-radius:var(--radius-sm)}
+
+/* ═══ Stat tile ═══
+   dx_monitor 만 --surface-raised-bg 대신 같은 값을 손으로 적고 그림자를 inset 만
+   남겨 두었다 — .card 와 똑같은 우회다. 배치(flex 여부)는 컴포넌트가 아니라
+   담는 쪽의 몫이라 여기 넣지 않는다. */
+.stat{background: var(--surface-raised-bg);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 20px;position:relative;overflow:hidden;transition:var(--transition);
+  box-shadow: var(--surface-raised-shadow);}
+
+/* stat 내부. :hover 만 dx_monitor 가 토큰 대신 값을 손으로 적고 있었다. */
+.stat:hover{transform:translateY(-1px);box-shadow:var(--surface-hover-shadow);border-color:var(--border-hover)}
+.stat::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(135deg,rgba(99,140,255,.06),transparent 60%);pointer-events:none;z-index:0}
+.stat::after{content:'';position:absolute;top:0;left:0;width:100%;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-light),transparent);}
+.stat .val{font-size:26px;font-weight:700;color:var(--accent);text-shadow:0 0 12px rgba(99,140,255,.2)}
+.stat .label{font-size:var(--fs-xs);color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
