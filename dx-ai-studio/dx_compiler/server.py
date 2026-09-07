@@ -40,6 +40,8 @@ from dx_compiler.core.compiler_service import (
 )
 from dx_compiler.core.setup_service import setup_service
 from dx_compiler.core import fs_browse
+from shared import shell as _shell
+from shared.shell import ShellSpec
 
 # Replaces Jinja2 so DX AI Studio has ZERO third-party runtime dependencies.
 # Supports exactly the constructs the compiler templates use:
@@ -204,6 +206,12 @@ def _compiler_feature_status() -> dict:
     }
 
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 컴파일 워크플로 단일 화면이라 탭 행이 없다 — base.html 루트에
+# .dx-shell--no-tabs 를 붙였다.
+DX_COMPILER_SHELL = ShellSpec(module_key="compiler")
+
 class CompilerHandler(DXBaseHandler):
     """Route HTTP requests for DX Compiler GUI."""
 
@@ -217,6 +225,11 @@ class CompilerHandler(DXBaseHandler):
         # serve stale cached scripts until the process restarts (e.g. the sudo modal not
         # appearing). static_version() is a cheap hash of ~9 small files.
         ctx.setdefault("v", static_version())
+        # 통합 App Shell 주입. 이 모듈은 자체 미니 템플릿 엔진을 쓰고 그 변수
+        # 패턴이 {{DX_SHELL_*}} 와 겹치므로, 문자열 치환을 따로 돌리지 않고
+        # 렌더 컨텍스트로 넘겨 한 번에 채운다.
+        for key, markup in _shell.context(DX_COMPILER_SHELL).items():
+            ctx.setdefault(key, markup)
         return _render_template(template_name, ctx)
 
 

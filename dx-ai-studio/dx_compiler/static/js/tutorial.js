@@ -68,7 +68,7 @@
   }
 
   var quickStartSteps = [
-    { target: '#header', position: 'bottom',
+    { target: '.dx-shell-header', position: 'bottom',
       title: { en: 'Welcome', ko: 'DX Compiler에 오신 걸 환영합니다', ja: 'ようこそ', 'zh-CN': '欢迎', 'zh-TW': '歡迎', es: 'Bienvenido' },
       content: { en: 'Welcome to DX Compiler. You can switch language at the top right.', ko: 'DX Compiler에 오신 걸 환영합니다. 우측 상단에서 언어를 전환할 수 있습니다.', ja: 'DX Compilerへようこそ。右上で言語を切り替えられます。', 'zh-CN': '欢迎使用DX Compiler。您可以在右上角切换语言。', 'zh-TW': '歡迎使用DX Compiler。您可以在右上角切換語言。', es: 'Bienvenido a DX Compiler. Puede cambiar el idioma en la esquina superior derecha.' } },
     { target: '#setup-panel', position: 'left',

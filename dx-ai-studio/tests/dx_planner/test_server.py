@@ -84,7 +84,8 @@ def test_index_html_serves_html(server):
 def test_local_css_served(server):
     body, status = _get_raw("/static/css/style.css")
     assert status == 200
-    assert ".planner-topbar" in body
+    # .planner-topbar 는 통합 shell(dx-shell.css)로 옮겼다 — 모듈 CSS는 콘텐츠만 소유한다.
+    assert ".planner-main" in body
 
 
 def test_shared_foundation_css_served(server):

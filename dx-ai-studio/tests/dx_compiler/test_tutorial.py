@@ -35,13 +35,22 @@ def read_text(path: Path) -> str:
 
 
 def _compiler_template_html() -> str:
+    """템플릿 조각 + 서버가 주입하는 shell 마크업.
+
+    레일·헤더는 shared/shell.py 가 렌더 컨텍스트로 들어가므로 템플릿 파일만
+    읽으면 튜토리얼이 가리키는 shell 셀렉터가 보이지 않는다.
+    """
+    from dx_compiler.server import DX_COMPILER_SHELL
+    from shared.shell import context as shell_context
+
     parts = (
         TEMPLATES / "index.html",
         TEMPLATES / "base.html",
         TEMPLATES / "partials" / "setup_panel.html",
         TEMPLATES / "partials" / "config_wizard.html",
     )
-    return "\n".join(read_text(p) for p in parts)
+    rendered = "\n".join(shell_context(DX_COMPILER_SHELL).values())
+    return "\n".join(read_text(p) for p in parts) + "\n" + rendered
 
 
 def _extract_braced_body(source: str, anchor: str) -> str:

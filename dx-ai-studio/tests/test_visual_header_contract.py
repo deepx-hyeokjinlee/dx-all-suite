@@ -14,11 +14,11 @@ SURFACES = {
     # dx_app 은 통합 App Shell(Option A)로 이관되어 헤더를 dx-shell.css가 소유한다.
     "dx_app": ("dx_app/templates/index.html", "shared/static/dx-shell.css"),
     "dx_stream": ("dx_stream/templates/index.html", "shared/static/dx-shell.css"),
-    "dx_compiler": ("dx_compiler/templates/base.html", "dx_compiler/static/css/style.css"),
+    "dx_compiler": ("dx_compiler/templates/base.html", "shared/static/dx-shell.css"),
     "dx_monitor": ("dx_monitor/templates/index.html", "shared/static/dx-shell.css"),
-    "dx_planner": ("dx_planner/templates/index.html", "dx_planner/static/css/style.css"),
+    "dx_planner": ("dx_planner/templates/index.html", "shared/static/dx-shell.css"),
     "dx_benchmark": ("dx_benchmark/templates/index.html", "shared/static/dx-shell.css"),
-    "dx_modelzoo": ("dx_modelzoo/templates/index.html", "dx_modelzoo/static/css/style.css"),
+    "dx_modelzoo": ("dx_modelzoo/templates/index.html", "shared/static/dx-shell.css"),
 }
 
 # 모듈별 topbar 셀렉터
@@ -26,11 +26,11 @@ HEADER_SELECTORS = {
     "launcher": ".top-bar",
     "dx_app": ".dx-shell-header",
     "dx_stream": ".dx-shell-header",
-    "dx_compiler": "#header",
+    "dx_compiler": ".dx-shell-header",
     "dx_monitor": ".dx-shell-header",
-    "dx_planner": ".planner-topbar",
+    "dx_planner": ".dx-shell-header",
     "dx_benchmark": ".dx-shell-header",
-    "dx_modelzoo": ".mz-topbar",
+    "dx_modelzoo": ".dx-shell-header",
 }
 
 # DXBrand.mount를 사용하는 모듈 (launcher는 커스텀 .logo 허용)
@@ -58,6 +58,9 @@ MIGRATED_SHELL_MODULES = {
     "dx_benchmark": ("dx_benchmark.server", "DX_BENCHMARK_SHELL"),
     "dx_monitor": ("dx_monitor.server", "DX_MONITOR_SHELL"),
     "dx_agent_dev": ("dx_agent_dev.server", "DX_AGENT_DEV_SHELL"),
+    "dx_modelzoo": ("dx_modelzoo.server", "DX_MODELZOO_SHELL"),
+    "dx_planner": ("dx_planner.server", "DX_PLANNER_SHELL"),
+    "dx_compiler": ("dx_compiler.server", "DX_COMPILER_SHELL"),
 }
 
 
@@ -346,6 +349,9 @@ class TestShellHeaderZIndexLayerLadder:
             "dx_benchmark": "dx_benchmark/static/css/style.css",
             "dx_monitor": "dx_monitor/static/css/style.css",
             "dx_agent_dev": "dx_agent_dev/static/css/console.css",
+            "dx_modelzoo": "dx_modelzoo/static/css/style.css",
+            "dx_planner": "dx_planner/static/css/style.css",
+            "dx_compiler": "dx_compiler/static/css/style.css",
         }[name]
         css = read_text(ROOT / module_css_rel)
         header_z = self._shell_header_z()
@@ -379,11 +385,15 @@ class TestKnownExceptions:
             f"--launcher-topbar-h must reference --dx-module-header-h, got: {val}"
         )
 
-    def test_compiler_hash_header_selector_allowed(self):
-        """compiler의 #header 셀렉터는 허용된다."""
+    def test_compiler_no_longer_needs_the_hash_header_exception(self):
+        """compiler 의 #header 예외는 shell 이관으로 해소됐다.
+
+        예외 목록은 남겨두면 다음 사람이 그대로 답습한다 — 근거가 사라지면 지운다.
+        """
         css = read_text(ROOT / "dx_compiler/static/css/style.css")
-        body = _css_rule(css, "#header")
-        assert "var(--dx-module-header-bg)" in body
+        assert not re.search(r"^\s*#header\s*\{", css, re.M), (
+            "#header 가 다시 생겼다 — 헤더는 shared/static/dx-shell.css 가 소유한다"
+        )
 
     def test_benchmark_responsive_88px_via_named_alias(self):
         """benchmark의 반응형 88px 동작은 명명된 로컬 별칭 또는 명시적 미디어 규칙을 통해서만 허용된다."""

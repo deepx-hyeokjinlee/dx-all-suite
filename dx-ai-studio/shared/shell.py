@@ -71,11 +71,20 @@ def render_rail(active_key: str) -> str:
     )
 
 
-def render_header(module_name: str, page_title: str, toolbar_extra: str = "") -> str:
+def render_header(
+    module_name: str,
+    page_title: str,
+    toolbar_extra: str = "",
+    header_extra: str = "",
+) -> str:
     """56px 헤더 — 브랜드 > 페이지명 + 툴바 슬롯.
 
     module_name 은 브랜드가 마운트되기 전/실패 시를 위한 aria-label 로 쓴다
     (표시 텍스트는 brand.js 가 넣는다 — 둘 다 쓰면 이름이 두 번 보인다).
+
+    header_extra 는 페이지명 오른쪽, 헤더 좌측 그룹 안에 들어간다 — 페이지 수준
+    상태(dx_modelzoo 의 모델 개수 등)의 자리다. toolbar_extra 와 마찬가지로
+    모듈이 소유한 신뢰 가능한 마크업이므로 escape 하지 않는다.
 
     .toolbar 는 DXToolbar.init 이 붙는 자리다. 문서 전체에 정확히 하나만
     있어야 하고(tests/test_shared_css_foundation.py 계약), 모듈 고유 컨트롤
@@ -93,6 +102,7 @@ def render_header(module_name: str, page_title: str, toolbar_extra: str = "") ->
         f'<div class="dx-brand-slot" id="dxBrand" aria-label="{escape(module_name)}"></div>'
         f'<span class="dx-shell-sep">{_icon("chev")}</span>'
         f'<span class="dx-shell-page" id="dxShellPage">{escape(page_title)}</span>'
+        f"{header_extra}"
         "</div>"
         '<div class="dx-shell-header-right toolbar">'
         f"{toolbar_extra}"
@@ -141,6 +151,7 @@ class ShellSpec:
     pages: tuple[tuple[str, str, str], ...] = ()
     active_page: str | None = None
     toolbar_extra: str = ""
+    header_extra: str = ""
 
     def page_title(self) -> str:
         for page_id, label, _icon_id in self.pages:
@@ -161,7 +172,31 @@ def apply(html: str, spec: ShellSpec | None) -> str:
         html.replace(RAIL_SLOT, render_rail(spec.module_key))
         .replace(
             HEADER_SLOT,
-            render_header(module.name, spec.page_title(), spec.toolbar_extra),
+            render_header(
+                module.name,
+                spec.page_title(),
+                spec.toolbar_extra,
+                spec.header_extra,
+            ),
         )
         .replace(TABS_SLOT, render_tabs(list(spec.pages), spec.active_page))
     )
+
+
+def context(spec: "ShellSpec | None") -> dict[str, str]:
+    """슬롯 이름 → 마크업 매핑.
+
+    dx_compiler 처럼 자체 템플릿 엔진이 `{{ var }}` 를 컨텍스트에서 치환하는
+    모듈용이다. 그쪽 엔진의 변수 패턴이 우리 슬롯 이름과 겹치므로, 문자열
+    치환(apply)을 또 돌리는 대신 렌더 컨텍스트로 넘겨 한 번에 채운다.
+    """
+    if spec is None:
+        return {}
+    module = _BY_KEY[spec.module_key]
+    return {
+        "DX_SHELL_RAIL": render_rail(spec.module_key),
+        "DX_SHELL_HEADER": render_header(
+            module.name, spec.page_title(), spec.toolbar_extra, spec.header_extra
+        ),
+        "DX_SHELL_TABS": render_tabs(list(spec.pages), spec.active_page),
+    }

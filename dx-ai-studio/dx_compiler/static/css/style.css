@@ -4,16 +4,6 @@
 body{overflow-x:auto;overflow-y:hidden}
 
 /* ═══ Header (glass morphism) ═══ */
-#header {
-  background: var(--dx-module-header-bg); backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--dx-module-header-border);
-  color: var(--text-1); height: var(--dx-module-header-h); display: flex; align-items: center;
-  padding: 0 var(--dx-module-header-px); gap: var(--dx-module-header-gap); flex-shrink: 0;
-  box-shadow: var(--dx-module-header-elevation);
-}
-.header-left { display: flex; align-items: center; gap: var(--dx-module-header-gap); flex-shrink: 0; min-width: 0; }
-.header-right { margin-left: auto; display: flex; align-items: center; }
-
 main { display: flex; height: calc(100vh - var(--dx-module-header-h)); overflow: auto; min-width: 0; }
 
 /* ═══ Compile Form ═══ */

@@ -69,6 +69,19 @@ EXPECTED_SECTION_IDS = [
 TARGET_LANGS = ("ko", "ja", "zh-CN", "zh-TW", "es")
 
 
+def rendered_index() -> str:
+    """서버가 실제로 내보내는 index.html (shell 주입 후).
+
+    레일·헤더·툴바는 shared/shell.py 가 서버 렌더 시점에 주입한다.
+    """
+    from dx_modelzoo.server import DX_MODELZOO_SHELL
+    from shared.shell import apply as apply_shell
+
+    return apply_shell(
+        (TEMPLATES / "index.html").read_text(encoding="utf-8"), DX_MODELZOO_SHELL
+    )
+
+
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
@@ -160,7 +173,7 @@ def test_get_lang_uses_local_storage_and_en_default():
 
 
 def test_tutorial_targets_exist_or_are_runtime_injected():
-    html = read_text(TEMPLATES / "index.html")
+    html = rendered_index()
     source = read_text(JS_DIR / "tutorial.js")
     template_tokens = _template_ids_and_classes(html)
     all_known = template_tokens | _js_rendered_selectors() | RUNTIME_SELECTOR_ALLOWLIST

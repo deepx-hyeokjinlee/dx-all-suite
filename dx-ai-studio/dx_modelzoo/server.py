@@ -22,6 +22,7 @@ from dx_modelzoo.core.catalog import (
 )
 from dx_modelzoo.core.proxy import proxy_request, is_dx_app_alive, is_safe_model_id
 from dx_modelzoo.metadata.sanitize import sanitize_browser_model
+from shared.shell import ShellSpec
 
 
 def _collect_demo_files(demo):
@@ -83,10 +84,32 @@ _chat_engine = ChatEngine(
 )
 
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 카탈로그 단일 화면이라 탭 행이 없다 — 템플릿 루트에 .dx-shell--no-tabs 를 붙였다.
+# 모델 개수는 페이지 수준 상태라 헤더 좌측(페이지명 옆)에, 홈페이지 링크와
+# dx_app 연결 상태 점은 툴바 슬롯에 둔다.
+_MODEL_COUNT = '<span class="mz-model-count" id="modelCount"></span>'
+
+_ZOO_TOOLBAR = (
+    '<a href="https://developer.deepx.ai/modelzoo/" target="_blank" rel="noopener"'
+    ' class="mz-btn mz-btn-outline" style="gap:4px;white-space:nowrap;text-decoration:none"'
+    ' data-i18n-title="ModelZoo public site" title="ModelZoo public site">'
+    '<span data-i18n="ModelZoo Homepage">ModelZoo Homepage</span> ↗</a>'
+    '<span class="mz-dx-app-status" id="dxAppStatus"></span>'
+)
+
+DX_MODELZOO_SHELL = ShellSpec(
+    module_key="zoo",
+    toolbar_extra=_ZOO_TOOLBAR,
+    header_extra=_MODEL_COUNT,
+)
+
 class ModelZooHandler(DXBaseHandler):
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_MODELZOO_SHELL
     log_silent = True
 
     def route(self):

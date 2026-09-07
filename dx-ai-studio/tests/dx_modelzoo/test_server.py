@@ -355,7 +355,8 @@ class TestServerRoutes:
         resp = urlopen(f"http://127.0.0.1:{TEST_PORT}/static/css/style.css")
         css = resp.read().decode()
         assert resp.status == 200
-        assert ".mz-topbar" in css
+        # .mz-topbar 는 통합 shell(dx-shell.css)로 옮겼다.
+        assert ".mz-explorer-shell" in css
         assert ".mz-card" in css
 
     def test_path_traversal_blocked(self, server):

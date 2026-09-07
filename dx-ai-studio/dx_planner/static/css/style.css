@@ -3,39 +3,10 @@ body { overflow-x: auto; overflow-y: hidden; }
 :root { --topbar-h: var(--dx-module-header-h); }
 
 /* ═══ 5. Header / Topbar — Glassmorphism ═══ */
-.planner-topbar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--topbar-h);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--sp-5);
-  background: var(--dx-module-header-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--dx-module-header-border);
-  box-shadow: var(--dx-module-header-elevation);
-}
-.planner-logo {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-.planner-controls {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-
 /* ═══ 6. Main Content Area ═══ */
+/* 통합 shell(Option A)에서는 .dx-shell-main 이 이미 남은 공간을 채우고 스크롤한다.
+   구 position:fixed + top 오프셋은 left:0 이라 56px 모듈 레일 위를 덮었다. */
 .planner-main {
-  position: fixed;
-  top: var(--topbar-h);
-  left: 0; right: 0; bottom: 0;
-  overflow-x: auto;
-  overflow-y: auto;
   padding: var(--sp-5);
 }
 .requirements-panel {
@@ -1649,8 +1620,7 @@ body.lang-zh-TW .zh-CN { display: none; }
 }
 @media (max-width: 767px) {
   body { overflow: auto; }
-  .planner-topbar { padding: 0 var(--sp-3); }
-  .planner-main {
+.planner-main {
     position: static;
     min-height: 100vh;
     padding: calc(var(--topbar-h) + var(--sp-3)) var(--sp-3) var(--sp-3);

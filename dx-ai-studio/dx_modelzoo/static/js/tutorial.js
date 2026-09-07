@@ -189,7 +189,7 @@
       title: { ko: '🔝 상단 바', en: '🔝 Top Bar', ja: '🔝 トップバー', 'zh-CN': '🔝 顶部栏', 'zh-TW': '🔝 頂部列', es: '🔝 Barra superior' },
       description: { ko: '상단 바 UI 요소 소개', en: 'Top bar UI elements overview', ja: 'トップバーUI要素の紹介', 'zh-CN': '顶部栏UI元素概览', 'zh-TW': '頂部列UI元素概覽', es: 'Descripción general de los elementos de la barra superior' },
       steps: [
-        { target: '.mz-topbar', position: 'bottom',
+        { target: '.dx-shell-header', position: 'bottom',
           title: { ko: '상단 바', en: 'Top Bar', ja: 'トップバー', 'zh-CN': '顶部栏', 'zh-TW': '頂部列', es: 'Barra superior' },
           content: { ko: 'ModelZoo의 <strong>상단 바</strong>입니다. 모델 카운트, 테마/언어 전환, DX App 연결 상태를 한눈에 확인할 수 있습니다.', en: 'The ModelZoo <strong>top bar</strong>. View model count, theme/language toggle, and DX App connection status at a glance.', ja: 'ModelZoo の<strong>トップバー</strong>です。モデル数、テーマ/言語切替、DX App接続状態を一目で確認できます。', 'zh-CN': '模型库<strong>顶部栏</strong>。一目了然地查看模型数量、主题/语言切换和DX App连接状态。', 'zh-TW': '模型庫<strong>頂部列</strong>。一目了然地查看模型數量、主題/語言切換和DX App連線狀態。', es: 'La <strong>barra superior</strong> de ModelZoo. Vea de un vistazo el recuento de modelos, el selector de tema/idioma y el estado de conexión de DX App.' } },
         { target: '#modelCount', position: 'bottom',

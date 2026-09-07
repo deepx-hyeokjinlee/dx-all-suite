@@ -42,6 +42,9 @@ MIGRATED_SHELL_MODULES = {
     "dx_benchmark": ("dx_benchmark/templates/index.html", "dx_benchmark.server", "DX_BENCHMARK_SHELL"),
     "dx_monitor": ("dx_monitor/templates/index.html", "dx_monitor.server", "DX_MONITOR_SHELL"),
     "dx_agent_dev": ("dx_agent_dev/templates/index.html", "dx_agent_dev.server", "DX_AGENT_DEV_SHELL"),
+    "dx_modelzoo": ("dx_modelzoo/templates/index.html", "dx_modelzoo.server", "DX_MODELZOO_SHELL"),
+    "dx_planner": ("dx_planner/templates/index.html", "dx_planner.server", "DX_PLANNER_SHELL"),
+    "dx_compiler": ("dx_compiler/templates/base.html", "dx_compiler.server", "DX_COMPILER_SHELL"),
 }
 
 
@@ -143,9 +146,6 @@ def descendants(nodes: list[dict[str, object]], index: int) -> list[int]:
 
 
 TOOLBAR_TARGETS = [
-    ("dx_modelzoo", ROOT / "dx_modelzoo" / "templates" / "index.html", ("mz-topbar-right", "toolbar")),
-    ("dx_compiler", ROOT / "dx_compiler" / "templates" / "base.html", ("header-right", "toolbar")),
-    ("dx_planner", ROOT / "dx_planner" / "templates" / "index.html", ("planner-controls", "toolbar")),
     ("launcher", ROOT / "launcher" / "static" / "index.html", ("toolbar",)),
 ]
 
@@ -358,7 +358,9 @@ def test_modelzoo_css_no_longer_defines_shared_foundation():
     assert_shared_foundation_removed(css)
     assert ":root{" not in css
     assert "@keyframes spin" not in css
-    assert ".mz-topbar" in css
+    # .mz-topbar 는 shared/static/dx-shell.css 로 옮겼다 (Option A 이관).
+    assert not re.search(r"^\s*" + re.escape(".mz-topbar") + r"\s*\{", css, re.M)
+    assert ".mz-explorer-shell" in css, "모듈 고유 레이아웃은 계속 소유한다"
     assert ".mz-card" in css
     assert ".mz-detail-view" in css
     assert ".mz-btn" in css
@@ -489,7 +491,9 @@ def test_planner_css_no_longer_defines_shared_foundation():
     assert_shared_foundation_removed(css)
     assert_local_topbar_token(css)
     assert "body { overflow-x: auto; overflow-y: hidden; }" in css
-    assert ".planner-topbar" in css
+    # .planner-topbar 는 shared/static/dx-shell.css 로 옮겼다 (Option A 이관).
+    assert not re.search(r"^\s*" + re.escape(".planner-topbar") + r"\s*\{", css, re.M)
+    assert ".planner-main" in css, "모듈 고유 레이아웃은 계속 소유한다"
     assert ".planner-main" in css
     assert ".cfg-card" in css
     assert ".task-btn" in css
@@ -617,9 +621,11 @@ def test_compiler_css_no_longer_defines_shared_foundation():
     for fragment in forbidden_fragments:
         assert fragment not in css, fragment
 
+    # #header 는 shared/static/dx-shell.css 로 옮겼다 (Option A 이관).
+    assert not re.search(r"^\s*#header\s*\{", css, re.M)
+
     for fragment in (
         "body{overflow-x:auto;overflow-y:hidden}",
-        "#header",
         ".compile-form",
         ".dropzone",
         ".dxq-fieldset",
@@ -1040,17 +1046,14 @@ def test_module_chrome_metrics_are_shared_and_loaded():
         ])
 
 
-def test_compiler_app_stream_use_module_chrome_metrics():
-    compiler_css = read_text(ROOT / "dx_compiler" / "static" / "css" / "style.css")
+def test_migrated_modules_leave_header_metrics_to_the_shell():
+    """이관된 모듈에 헤더 치수가 남아 있으면 shell 정의와 싸운다.
+
+    8개 모듈이 전부 이관된 지금 --dx-module-header-* 를 참조하는 곳은
+    module-chrome.css(정의)와 dx-shell.css(사용) 둘뿐이어야 한다.
+    """
     app_css = read_text(ROOT / "dx_app" / "static" / "css" / "style.css")
     stream_css = read_text(ROOT / "dx_stream" / "static" / "css" / "stream.css")
-
-    compiler_header = re.search(r"#header\s*\{(?P<body>.*?)\}", compiler_css, re.S).group("body")
-    compiler_left = re.search(r"\.header-left\s*\{(?P<body>.*?)\}", compiler_css, re.S).group("body")
-    assert "height: var(--dx-module-header-h)" in compiler_header
-    assert "padding: 0 var(--dx-module-header-px)" in compiler_header
-    assert "box-shadow: var(--dx-module-header-elevation)" in compiler_header
-    assert "gap: var(--dx-module-header-gap)" in compiler_left
 
     # 이관 모듈은 dx-shell.css 가 헤더 치수를 소유한다 — 로컬에 남아 있으면 두 정의가 싸운다.
     for css, name in ((app_css, "dx_app"), (stream_css, "dx_stream")):
@@ -1150,15 +1153,12 @@ def test_brand_topbars_use_unified_metrics_and_shadow():
         in benchmark_css
     ), "benchmark chrome height must include the shell tab row"
 
-    for css in (planner_css,):
-        has_shared = "--topbar-h: var(--dx-module-header-h)" in css
-        has_benchmark = "--benchmark-topbar-h: var(--dx-module-header-h)" in css
-        assert has_shared or has_benchmark
+    # planner 도 이관됐다 — 남은 미이관 topbar 모듈이 없다.
+    # 다음 모듈이 이관 전 상태로 들어오면 여기에 다시 추가한다.
     # dx_monitor 는 이관됐다 — 헤더 높이/오프셋은 dx-shell.css 가 소유한다.
-    assert "height: var(--dx-module-header-h)" in compiler_css
     # dx_benchmark 는 이관됐다 — 헤더 elevation 은 dx-shell.css 가 소유한다.
-    for css in (planner_css, sdk_css, compiler_css, modelzoo_css):
-        assert "box-shadow: var(--dx-module-header-elevation)" in css
+    # 8개 모듈이 모두 이관돼 남은 topbar 서피스는 SDK Library 뿐이다.
+    assert "box-shadow: var(--dx-module-header-elevation)" in sdk_css
 
 
 def test_modules_load_shared_brand_assets_and_mount_brand():
@@ -1276,9 +1276,14 @@ def test_touched_modules_use_block_brand_slots():
         assert '<span class="dx-brand-slot"' not in html, rel
 
 
-def test_modelzoo_brand_slot_semantic_cleanup_is_deferred():
-    html = read_text(ROOT / "dx_modelzoo/templates/index.html")
-    assert 'class="dx-brand-slot"' in html
+def test_modelzoo_brand_slot_is_a_block_element_after_the_shell_migration():
+    """구 템플릿은 브랜드 슬롯을 <span> 으로 갖고 있었고 정리가 미뤄져 있었다.
+
+    shell 헤더가 <div> 로 그리면서 그 부채가 자동으로 해소됐다.
+    """
+    html = rendered_index("dx_modelzoo")
+    assert '<div class="dx-brand-slot"' in html
+    assert '<span class="dx-brand-slot"' not in html
 
 
 def test_shared_brand_css_load_order_is_consistent_for_touched_modules():
@@ -1401,9 +1406,6 @@ def test_all_module_topbars_use_shared_depth_elevation():
         ("launcher/static/style.css", ".top-bar"),
         ("launcher/static/sdk-library.css", ".sdk-topbar"),
         ("launcher/static/about-deepx.css", ".about-topbar"),
-        ("dx_modelzoo/static/css/style.css", ".mz-topbar"),
-        ("dx_compiler/static/css/style.css", "#header"),
-        ("dx_planner/static/css/style.css", ".planner-topbar"),
     ]
     for css_rel, selector in TOPBAR_SPECS:
         css = read_text(ROOT / css_rel)

@@ -99,7 +99,7 @@
       title: { ko: '🏠 전체 소개', en: '🏠 Overview', ja: '🏠 概要', 'zh-CN': '🏠 概述', 'zh-TW': '🏠 概述', es: '🏠 Resumen general' },
       description: { ko: 'EdgeGuide 한 화면 워크스페이스 구성 소개', en: 'Introduction to the EdgeGuide single-screen workspace', ja: 'EdgeGuideの1画面ワークスペースの紹介', 'zh-CN': 'EdgeGuide单屏工作区介绍', 'zh-TW': 'EdgeGuide單一畫面工作區介紹', es: 'Introducción al espacio de trabajo de una sola pantalla de DX EdgeGuide' },
       steps: [
-        { target: '.planner-topbar', position: 'bottom',
+        { target: '.dx-shell-header', position: 'bottom',
           title: { ko: 'DX EdgeGuide', en: 'DX EdgeGuide', ja: 'DX EdgeGuide', 'zh-CN': 'DX EdgeGuide', 'zh-TW': 'DX EdgeGuide', es: 'DX EdgeGuide' },
           content: { ko: '워크로드 조건을 입력하면 DEEPX Edge AI 제품을 추천하고, 선택한 추천의 상세 수치까지 한 화면에서 확인합니다.', en: 'Enter workload requirements, get DEEPX Edge AI recommendations, and inspect selected metrics in one workspace.', ja: 'ワークロード条件を入力し、DEEPX Edge AI製品の推奨と選択項目の詳細指標を1つのワークスペースで確認します。', 'zh-CN': '输入工作负载条件，在一个工作区中查看DEEPX Edge AI推荐和所选指标详情。', 'zh-TW': '輸入工作負載條件，在一個工作區中查看DEEPX Edge AI推薦和所選指標詳情。', es: 'Ingrese los requisitos de la carga de trabajo, obtenga recomendaciones de productos DEEPX Edge AI y consulte las métricas seleccionadas en un solo espacio de trabajo.' } },
         { target: '#plannerWorkspace', position: 'bottom',

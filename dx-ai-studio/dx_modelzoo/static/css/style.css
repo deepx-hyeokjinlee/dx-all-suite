@@ -2,18 +2,6 @@
 body{overflow-x:auto;overflow-y:auto}
 
 /* ═══ Topbar ═══ */
-.mz-topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 var(--sp-5);height:var(--dx-module-header-h);
-  background: var(--dx-module-header-bg);backdrop-filter:var(--glass-blur);
-  -webkit-backdrop-filter:var(--glass-blur);
-  border-bottom: 1px solid var(--dx-module-header-border);
-  box-shadow: var(--dx-module-header-elevation);
-  position:sticky;top:0;z-index:100;
-  flex-wrap:wrap;gap:var(--sp-2);min-width:0;overflow-x:auto;
-}
-.mz-topbar-left{display:flex;align-items:center;gap:var(--sp-4);flex-shrink:0;min-width:0}
-.mz-topbar-right{display:flex;align-items:center;gap:var(--sp-3);flex-shrink:0;flex-wrap:wrap}
 .mz-model-count{font-size:var(--fs-base);color:var(--text-3);padding:2px 10px;
   background:var(--accent-dim);border-radius:20px}
 .mz-btn-icon{background:none;border:1px solid var(--border);border-radius:var(--radius);

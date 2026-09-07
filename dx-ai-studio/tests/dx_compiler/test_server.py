@@ -85,6 +85,9 @@ class ReusableThreadingHTTPServer(ThreadingHTTPServer):
 @pytest.fixture(scope="module")
 def server():
     _clear_stale_modules()
+    # Snapshot BEFORE _reset_sys_path() reorders things, so teardown can put back
+    # exactly what was there — see the restore in this fixture's finally block.
+    _saved_sys_path = list(sys.path)
     _reset_sys_path()
 
     spec = importlib.util.spec_from_file_location(
@@ -121,9 +124,13 @@ def server():
         srv.server_close()
         sys.modules.pop("dx_compiler_server_for_tests", None)
         _clear_stale_modules()
-        for p in (str(COMPILER_DIR), str(ROOT)):
-            while p in sys.path:
-                sys.path.remove(p)
+        # Restore, do NOT blind-remove. The old code stripped every copy of ROOT,
+        # including the ones tests/conftest.py and this package's conftest.py own,
+        # and never put them back — so for the REST of the pytest process the repo
+        # root was off sys.path and any later `import shared` (which production code
+        # in setup_service._run_install_sh does at call time) died with
+        # ModuleNotFoundError, far from the test that caused it.
+        sys.path[:] = _saved_sys_path
 
 
 def _get_raw(path: str):
