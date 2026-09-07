@@ -81,7 +81,9 @@ def _dismiss_tutorial(page):
 def _open_run_tab(page, base_url):
     page.goto(base_url, wait_until="load", timeout=60_000)
     _dismiss_tutorial(page)
-    page.click('.nav-item[data-page="run"]')
+    # 통합 shell(Option A)에는 사이드바가 없다 — 페이지 전환은 상단 탭 행이다.
+    # 이관 때 이 셀렉터가 낡은 채 남아 게이트가 30초 타임아웃으로 죽고 있었다.
+    page.click('.dx-tab[data-page="run"]')
     expect(page.locator("#r-run-btn")).to_be_visible(timeout=30_000)
 
 
