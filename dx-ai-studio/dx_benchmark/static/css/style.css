@@ -54,20 +54,6 @@ body { overflow-x: auto; overflow-y: hidden; }
   padding-bottom: var(--sp-2);
 }
 
-.card {
-  background: var(--surface-raised-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--sp-4);
-  transition: var(--transition);
-  box-shadow: var(--surface-raised-shadow);
-}
-
-.card:hover {
-  border-color: var(--border-hover);
-  box-shadow: var(--surface-hover-shadow);
-}
-
 /* ═══ Dashboard ═══ */
 .dashboard-grid {
   display: grid;

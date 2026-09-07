@@ -21,13 +21,6 @@ body{overflow-x:auto;overflow-y:hidden}
 h1{font-size:var(--fs-2xl);margin-bottom:18px;font-weight:700;display:flex;align-items:center;gap:10px}
 h1 .accent{color:var(--accent)}
 h2{font-size:var(--fs-md);margin:16px 0 10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px}
-.card{
-  background: var(--surface-raised-bg);border:1px solid var(--border);border-radius:var(--radius-lg);
-  padding:20px;margin-bottom:16px;transition:var(--transition);
-  box-shadow: var(--surface-raised-shadow);
-}
-.card:hover{transform:translateY(-2px);box-shadow:var(--surface-hover-shadow);border-color:var(--border-hover)}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(99,140,255,.06)}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
@@ -1384,3 +1377,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .rd-card.rd-collapsed .rd-chev{transform:rotate(0deg)}
 .rd-card.rd-collapsed .rundemo-result{display:none}
 .rd-result-lbl{flex:1}
+
+/* 카드가 세로로 쌓이는 페이지 흐름. .card 자체는 여백을 갖지 않는다
+   (shared/static/dx-components.css 참조) — 여백은 배치의 몫이다. */
+.page > .card{margin-bottom:var(--sp-4)}

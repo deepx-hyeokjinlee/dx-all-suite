@@ -1423,7 +1423,7 @@ def test_flat_modules_use_shared_surface_depth_tokens():
     """카드/패널 등 평면 모듈이 공유 surface 깊이 토큰을 사용한다."""
     # 기본 raised surface 검증
     RAISED_SPECS = [
-        ("dx_benchmark/static/css/style.css", [".panel", ".card", ".stat-card", ".meta-card", ".controls"]),
+        ("dx_benchmark/static/css/style.css", [".panel", ".stat-card", ".meta-card", ".controls"]),
         ("dx_compiler/static/css/style.css", [".compile-form", ".progress-container", ".mode-card"]),
         ("dx_modelzoo/static/css/style.css", [".mz-detail-header", ".mz-detail-section", ".mz-inference-panel"]),
         ("launcher/static/about-deepx.css", [".about-value-card", ".about-quote"]),
@@ -1474,7 +1474,6 @@ def test_app_stream_final_card_rules_use_shared_raised_depth():
     """App/Stream의 실제 최종 카드 rule이 hard-coded gradient로 depth를 덮어쓰지 않는다."""
     SURFACE_SPECS = {
         "dx_app/static/css/style.css": [
-            ".card",
             ".stat",
             ".detail-info-card",
             ".pp-card",
@@ -1487,7 +1486,6 @@ def test_app_stream_final_card_rules_use_shared_raised_depth():
             ".ref-topic-card",
         ],
         "dx_stream/static/css/stream.css": [
-            ".card",
             ".stat",
             ".setup-card",
             ".demo-card",
@@ -1531,18 +1529,14 @@ OWNED_COMPONENT_OVERRIDES = {
         "dx_benchmark/static/css/style.css",
         "dx_planner/static/css/style.css",
     },
+    # .card 는 dx-components.css 로 올라갔고 네 모듈의 사본은 전부 제거됐다.
+    # 빈 집합이 곧 "이 컴포넌트는 끝났다"는 뜻이고, 새 재정의가 생기면 실패한다.
+    ".card": set(),
 }
 
 # shared 소유자가 아직 없어 모듈마다 재발명 중인 셀렉터.
-# Phase 6에서 dx-components.css로 올린 뒤 OWNED_COMPONENT_OVERRIDES로 옮긴다.
-UNOWNED_COMPONENTS = {
-    ".card": {
-        "dx_app/static/css/style.css",
-        "dx_benchmark/static/css/style.css",
-        "dx_monitor/static/css/style.css",
-        "dx_stream/static/css/stream.css",
-    },
-}
+# dx-components.css 로 올린 뒤 OWNED_COMPONENT_OVERRIDES 로 옮긴다.
+UNOWNED_COMPONENTS = {}
 
 MODULE_CSS_GLOBS = ("launcher/static/*.css", "dx_*/static/css/*.css")
 

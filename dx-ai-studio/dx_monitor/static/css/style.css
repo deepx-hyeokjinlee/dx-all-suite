@@ -6,13 +6,6 @@ body{overflow-x:auto;overflow-y:auto}
 .sse-status.degraded{background:rgba(245,158,11,.15);color:var(--warning)}
 
 /*═══ Cards ═══*/
-.card{
-  background:linear-gradient(145deg,var(--bg-1),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);
-  padding:20px;margin-bottom:16px;transition:var(--transition);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-}
-.card:hover{transform:translateY(-2px);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.03);border-color:var(--border-hover)}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(99,140,255,.06)}
 
 /*═══ Grid ═══*/
@@ -251,3 +244,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
   word-break: break-word;
   flex: 1;
 }
+
+/* 카드가 세로로 쌓이는 페이지 흐름. .card 자체는 여백을 갖지 않는다
+   (shared/static/dx-components.css 참조) — 여백은 배치의 몫이다. */
+.monitor-main > .card{margin-bottom:var(--sp-4)}

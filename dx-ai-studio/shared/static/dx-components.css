@@ -35,3 +35,37 @@
 
 /* ═══ Badge ═══ */
 .badge{display:inline-block;padding:2px 8px;border-radius:var(--radius-xs);font-size:var(--fs-xs);font-weight:600;letter-spacing:.2px}
+
+/* ═══ Card ═══
+   네 모듈이 각자 정의하던 것을 하나로 합쳤다. 합치기 전 실측 차이:
+     padding      20px (app/stream/monitor) vs var(--sp-4)=16px (benchmark)
+     margin-bottom 16px (app/monitor) vs 없음 (stream/benchmark)
+     box-shadow   var(--surface-raised-shadow) (셋) vs inset만 (monitor — 그림자 없음)
+
+   결정:
+   - padding 은 20px 을 따른다(4개 중 3개). 다만 20px 은 spacing 스케일
+     (4/8/12/16/24/32/48)에 없는 값이라 --card-padding 으로 명시해 둔다 —
+     스케일 밖 값이 리터럴로 흩어져 있는 것이 애초에 이 편차의 원인이었다.
+   - margin 은 갖지 않는다. 컴포넌트가 자기 바깥 여백을 소유하면 grid gap 과
+     이중으로 걸려 모듈마다 다른 보정이 생긴다 — 실제로 그렇게 갈라졌다.
+     흐름 배치가 필요한 모듈은 컨테이너 쪽에서 준다.
+   - 그림자는 공유 depth 토큰을 쓴다. monitor 만 그림자가 없던 것은 의도가
+     아니라 토큰을 안 쓴 결과다. */
+:root{ --card-padding:20px; }
+
+.card{
+  background:var(--surface-raised);
+  border:1px solid var(--border-subtle);
+  border-radius:var(--radius-lg);
+  padding:var(--card-padding);
+  transition:var(--transition);
+  box-shadow:var(--surface-raised-shadow);
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--surface-hover-shadow);
+  border-color:var(--border-strong);
+}
+.card-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;
+}
