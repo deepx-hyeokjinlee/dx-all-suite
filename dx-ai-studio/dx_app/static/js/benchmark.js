@@ -142,7 +142,7 @@ function showBenchDetail(name){
   }
   h+='<div class="flex gap8 mb12">';
   h+='<span class="badge b-cat">'+(r.cat||r.category||'')+'</span>';
-  h+='<span class="badge" style="background:var(--bg-3);color:var(--text-1)">'+(r.lang||'cpp')+'</span>';
+  h+='<span class="badge" style="background:var(--surface-hover);color:var(--text-1)">'+(r.lang||'cpp')+'</span>';
   if(r.elapsed_s)h+='<span class="txt-dim txt-sm">'+T('elapsed: ')+r.elapsed_s+'s</span>';
   h+='</div>';
   var hasOrig=(r._inputType==='image'&&r._imgPath)||(r._inputType==='video'&&r._vidPath);

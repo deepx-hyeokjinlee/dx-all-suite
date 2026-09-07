@@ -124,8 +124,8 @@ const PlannerWorkspace = {
     // boundaryFlag is measured-only now. '+' means even the top tested stream
     // sustained, so the real ceiling is "at least this many".
     const evidence = top.boundaryFlag === '+'
-      ? '<span class="ko">(실측 상한+)</span><span class="en">(measured, likely higher)</span><span class="ja">(実測上限+)</span><span class="zh-CN">(实测上限+)</span><span class="zh-TW">(實測上限+)</span><span class="es">(medido, probablemente más)</span>'
-      : '<span class="ko">(실측)</span><span class="en">(measured)</span><span class="ja">(実測)</span><span class="zh-CN">(实测)</span><span class="zh-TW">(實測)</span><span class="es">(medido)</span>';
+      ? '<span data-i18n="(measured, likely higher)">(measured, likely higher)</span>'
+      : '<span data-i18n="(measured)">(measured)</span>';
     // Informational: where the NPU starts to throttle (never affects ranking).
     const throttleNote = top.throttleOnset
       ? '<span class="ko"> · ' + top.throttleOnset + '채널↑ throttle</span><span class="en"> · throttles at ' + top.throttleOnset + '+ ch</span><span class="ja"> · ' + top.throttleOnset + 'ch↑ スロットル</span><span class="zh-CN"> · ' + top.throttleOnset + ' 路↑ 降频</span><span class="zh-TW"> · ' + top.throttleOnset + ' 路↑ 降頻</span><span class="es"> · limita desde ' + top.throttleOnset + ' ch</span>'
@@ -160,7 +160,7 @@ const PlannerWorkspace = {
     } else {
       el.innerHTML =
         '<p class="verdict-line">' +
-          '<strong><span class="ko">조건 미충족</span><span class="en">No exact match</span><span class="ja">条件未充足</span><span class="zh-CN">无完全匹配</span><span class="zh-TW">無完全匹配</span><span class="es">Sin coincidencia exacta</span></strong>: ' +
+          '<strong data-i18n="No exact match">No exact match</strong>: ' +
           this._escHtml(name) + ' — ' +
           '<span class="ko">최대 ' + channels + '채널 (요청 ' + inputs.cameras + '채널)</span>' +
           '<span class="en">max ' + channels + ' ch (requested ' + inputs.cameras + ')</span>' +

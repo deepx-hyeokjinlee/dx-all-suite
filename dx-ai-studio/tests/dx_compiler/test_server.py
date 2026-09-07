@@ -14,6 +14,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import pytest
+from tests.i18n_markup import assert_translatable
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -696,8 +697,9 @@ def test_compiler_dxnn_download_control_has_all_languages():
     html = (COMPILER_DIR / "templates" / "index.html").read_text(encoding="utf-8")
     assert 'id="download-dxnn-btn"' in html
     control = html[html.index('id="download-dxnn-btn"'):html.index("</button>", html.index('id="download-dxnn-btn"'))]
-    for language in ("ko", "en", "ja", "zh-CN", "zh-TW", "es"):
-        assert f'class="{language}"' in control
+    assert_translatable(
+        control, "dx_compiler/static/js/compiler-i18n.js", "download-dxnn-btn"
+    )
     assert "window.location.href = '/compile/' + jobId + '/dxnn'" in html
     assert "dxnnBtn.disabled = true" in html
     assert "delete dxnnBtn.dataset.jobId" in html

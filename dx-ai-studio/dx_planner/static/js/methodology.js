@@ -64,7 +64,7 @@ const MethodologyDialog = {
     this.liveSummary.hidden = false;
     this.liveSummary.innerHTML =
       '<p class="methodology-live-kicker panel-kicker">' +
-        '<span class="ko">현재 세션</span><span class="en">This session</span><span class="ja">このセッション</span>' +
+        '<span data-i18n="This session">This session</span>' +
         '<span class="zh-CN">当前会话</span><span class="zh-TW">目前工作階段</span><span class="es">Esta sesión</span>' +
       '</p>' +
       '<ul class="methodology-live-list">' +

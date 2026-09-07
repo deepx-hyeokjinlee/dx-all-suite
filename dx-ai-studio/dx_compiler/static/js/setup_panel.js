@@ -216,7 +216,7 @@ class SetupPanel {
       overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;' +
         'align-items:center;justify-content:center;z-index:100001;padding:20px';
       const box = document.createElement('div');
-      box.style.cssText = 'width:min(460px,92vw);background:var(--bg-1,var(--bg-2));' +
+      box.style.cssText = 'width:min(460px,92vw);background:var(--surface-panel,var(--control-bg));' +
         'border:1px solid var(--border);border-radius:12px;padding:20px;' +
         'box-shadow:0 20px 60px rgba(0,0,0,.35)';
       box.innerHTML =
@@ -227,7 +227,7 @@ class SetupPanel {
           t('Enter your sudo password to download and install the DX Compiler SDK.') + '</p>' +
         '<input id="_sudo-pw" type="password" autocomplete="current-password" ' +
           'style="width:100%;box-sizing:border-box;padding:9px 11px;border-radius:8px;' +
-          'border:1px solid var(--border);background:var(--bg-0);color:var(--text-1)" ' +
+          'border:1px solid var(--border);background:var(--surface-page);color:var(--text-1)" ' +
           'placeholder="' + t('Enter password') + '">' +
         '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">' +
           '<button id="_sudo-cancel" class="fp-btn" type="button">' + t('Cancel') + '</button>' +

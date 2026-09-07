@@ -1,4 +1,5 @@
 from pathlib import Path
+from tests.i18n_markup import assert_translatable
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -349,16 +350,11 @@ def test_doRun_has_inflight_guard_before_await():
 
 
 def test_setup_run_all_button_has_exactly_one_span_per_language():
-    """setup-run-all button must have exactly one span per language."""
+    """setup-run-all button label must resolve in every supported language."""
     html = (ROOT / "dx_app/templates/index.html").read_text(encoding="utf-8")
     import re
-    # Extract the setup-run-all button element
     match = re.search(r'id="setup-run-all"[^>]*>(.*?)</button>', html, re.DOTALL)
     assert match, "setup-run-all button not found in index.html"
-    btn_content = match.group(1)
-    expected_langs = ["ko", "en", "es", "ja", "zh-CN", "zh-TW"]
-    for lang in expected_langs:
-        count = btn_content.count(f'class="{lang}"')
-        assert count == 1, (
-            f"setup-run-all button has {count} <span class=\"{lang}\"> elements, expected exactly 1"
-        )
+    assert_translatable(
+        match.group(1), "dx_app/static/js/i18n.js", "setup-run-all"
+    )

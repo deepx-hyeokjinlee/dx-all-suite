@@ -69,7 +69,7 @@ async function doPipeRun(){
       h+='<p class="txt-dim txt-sm mb8">'+T('Running stage-2 inference on ')+r.crop_count+T(' detected region(s)')+'</p>';
       h+='<div style="display:flex;gap:10px;flex-wrap:wrap">';
       (r.cascade_crops||[]).forEach(function(cr,ci){
-        h+='<div style="flex:0 0 220px;background:var(--bg-3);border-radius:8px;padding:8px;text-align:center">';
+        h+='<div style="flex:0 0 220px;background:var(--surface-hover);border-radius:8px;padding:8px;text-align:center">';
         h+='<div class="txt-sm" style="font-weight:600;margin-bottom:4px">'+esc(cr.crop_class||'#'+ci)+' <span class="txt-dim">('+((cr.crop_conf||0)*100).toFixed(1)+'%)</span></div>';
         if(cr.result_image)h+='<img src="data:image/jpeg;base64,'+cr.result_image+'" class="res-img" style="max-height:200px" onclick="previewImg(this.src)"/>';
         if(cr.fps)h+='<div class="txt-sm txt-acc mt4">'+cr.fps+' FPS</div>';

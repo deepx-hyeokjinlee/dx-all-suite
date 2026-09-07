@@ -15,7 +15,7 @@ var _draftSaveTimer = null;
 function _cachePipelineThemeColors() {
     var cs = getComputedStyle(document.documentElement);
     _pipelineThemeColors = {
-        bg0: cs.getPropertyValue('--bg-0').trim() || '#0f0f1a',
+        bg0: cs.getPropertyValue('--surface-page').trim() || '#0f0f1a',
         success: cs.getPropertyValue('--success').trim(),
         warning: cs.getPropertyValue('--warning').trim(),
         raw: {},
@@ -29,7 +29,7 @@ function _themeColor(name) {
 
 function _cv(k) {
     var colors = _pipelineThemeColors || _cachePipelineThemeColors();
-    if (k === '--bg-0') return colors.bg0;
+    if (k === '--surface-page') return colors.bg0;
     if (k === '--success') return colors.success;
     if (k === '--warning') return colors.warning;
     if (!colors.raw[k]) {

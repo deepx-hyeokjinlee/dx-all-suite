@@ -1,9 +1,9 @@
 window._DX_I18N_DICT = {
   'NPU Topology': {
     ko: 'NPU 토폴로지',
-    ja: 'NPU トポロジー',
-    'zh-CN': 'NPU 拓扑',
-    'zh-TW': 'NPU 拓撲',
+    ja: 'NPUトポロジー',
+    'zh-CN': 'NPU拓扑',
+    'zh-TW': 'NPU拓撲',
     es: 'Topología NPU',
   },
   'Realtime Monitor': {
@@ -22,9 +22,9 @@ window._DX_I18N_DICT = {
   },
   'CPU Load': {
     ko: 'CPU 부하',
-    ja: 'CPU 負荷',
-    'zh-CN': 'CPU 负载',
-    'zh-TW': 'CPU 負載',
+    ja: 'CPU負荷',
+    'zh-CN': 'CPU负载',
+    'zh-TW': 'CPU負載',
     es: 'Carga de CPU',
   },
   'Memory': {
@@ -36,9 +36,9 @@ window._DX_I18N_DICT = {
   },
   'NPU Temp': {
     ko: 'NPU 온도',
-    ja: 'NPU 温度',
-    'zh-CN': 'NPU 温度',
-    'zh-TW': 'NPU 溫度',
+    ja: 'NPU温度',
+    'zh-CN': 'NPU温度',
+    'zh-TW': 'NPU溫度',
     es: 'Temp. NPU',
   },
   'Disk': {
@@ -57,7 +57,7 @@ window._DX_I18N_DICT = {
   },
   'Property': {
     ko: '속성',
-    ja: 'プロパティ',
+    ja: '属性',
     'zh-CN': '属性',
     'zh-TW': '屬性',
     es: 'Propiedad',
@@ -148,14 +148,14 @@ window._DX_I18N_DICT = {
   },
   'NPU Util': {
     ko: 'NPU 사용률',
-    ja: 'NPU 使用率',
-    'zh-CN': 'NPU 利用率',
-    'zh-TW': 'NPU 使用率',
+    ja: 'NPU使用率',
+    'zh-CN': 'NPU利用率',
+    'zh-TW': 'NPU使用率',
     es: 'Util. NPU',
   },
   'View All': {
     ko: '전체 보기',
-    ja: '全て表示',
+    ja: '全体表示',
     'zh-CN': '查看全部',
     'zh-TW': '檢視全部',
     es: 'Ver todo',
@@ -540,5 +540,20 @@ window._DX_I18N_DICT = {
     es: 'Conf. media',
     'zh-CN': '平均置信度',
     'zh-TW': '平均信賴度',
+  },
+  // ── 마크업 lang-span 에서 옮겨온 항목 ──
+  'All': {
+    ko: '전체',
+    ja: '全体',
+    'zh-CN': '全部',
+    'zh-TW': '全部',
+    es: 'Todo',
+  },
+  'System Info': {
+    ko: '시스템 정보',
+    ja: 'システム情報',
+    'zh-CN': '系统信息',
+    'zh-TW': '系統資訊',
+    es: 'Información del sistema',
   },
 };

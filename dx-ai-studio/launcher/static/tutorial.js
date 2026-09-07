@@ -144,21 +144,10 @@
       <span class="dxt-lc-icon">🎓</span>
       <div class="dxt-lc-text">
         <div class="dxt-lc-title">
-          <span class="ko">Tutorial Mode</span>
-          <span class="en">Tutorial Mode</span>
-          <span class="ja">Tutorial Mode</span>
-          <span class="zh-CN">Tutorial Mode</span>
-          <span class="zh-TW">Tutorial Mode</span>
-          <span class="es">Modo tutorial</span>
+          <span data-i18n="Tutorial Mode">Tutorial Mode</span>
           <span id="dxt-mode-label" style="margin-left:6px;font-size:12px;color:${_tutorialMode ? '#58a6ff' : '#888'}">${_tutorialMode ? 'ON' : 'OFF'}</span>
         </div>
-        <div class="dxt-lc-desc">
-          <span class="ko">앱 실행 시 인터랙티브 튜토리얼을 자동으로 시작합니다</span>
-          <span class="en">Automatically start interactive tutorials when launching apps</span>
-          <span class="ja">アプリ起動時にインタラクティブチュートリアルを自動的に開始します</span>
-          <span class="zh-CN">启动应用时自动开始交互式教程</span>
-          <span class="zh-TW">啟動應用程式時自動開始互動式教學</span>
-          <span class="es">Inicia automáticamente tutoriales interactivos al abrir aplicaciones</span>
+        <div class="dxt-lc-desc" data-i18n="Automatically start interactive tutorials when launching apps">Automatically start interactive tutorials when launching apps
         </div>
       </div>
       <button class="dxt-lc-switch ${_tutorialMode ? 'on' : ''}" id="dxt-mode-switch"

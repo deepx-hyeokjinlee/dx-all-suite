@@ -73,11 +73,11 @@ function setupPromptSudoPassword(authFailed){
     overlay.id='setup-sudo-modal';
     overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:20px';
     var box=document.createElement('div');
-    box.style.cssText='width:min(420px,100%);background:var(--bg-1,var(--bg-2));border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35)';
+    box.style.cssText='width:min(420px,100%);background:var(--surface-panel,var(--control-bg));border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35)';
     box.innerHTML='<h3 style="margin:0 0 8px">🔒 '+_T5('sudo 인증','sudo Authentication','sudo認証','sudo 认证','sudo 認證')+'</h3>'
       +(authFailed?('<p class="txt-sm" style="margin:0 0 8px;color:var(--danger,#e5484d)">'+_T5('비밀번호가 올바르지 않습니다. 다시 입력하세요.','Incorrect password. Please try again.','パスワードが正しくありません。もう一度入力してください。','密码不正确，请重新输入。','密碼不正確，請重新輸入。')+'</p>'):'')
       +'<p class="txt-sm txt-dim" style="margin:0 0 12px">'+_T5('이 설치 단계는 관리자 권한이 필요합니다. 비밀번호는 이 실행 요청에만 사용됩니다.','This setup step requires administrator privileges. The password is used only for this run.','この設定ステップには管理者権限が必要です。パスワードはこの実行にのみ使用されます。','此安装步骤需要管理员权限。密码仅用于本次运行。','此安裝步驟需要管理員權限。密碼僅用於本次執行。')+'</p>'
-      +'<input id="setup-sudo-password" type="password" style="width:100%;box-sizing:border-box;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:var(--bg-0);color:var(--text-1)" placeholder="sudo password">'
+      +'<input id="setup-sudo-password" type="password" style="width:100%;box-sizing:border-box;padding:9px 11px;border-radius:8px;border:1px solid var(--border);background:var(--surface-page);color:var(--text-1)" placeholder="sudo password">'
       +'<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">'
       +'<button class="btn btn-ghost btn-sm" id="setup-sudo-cancel">'+_T5('취소','Cancel','キャンセル','取消','取消')+'</button>'
       +'<button class="btn btn-primary btn-sm" id="setup-sudo-ok">'+_T5('계속','Continue','続行','继续','繼續')+'</button>'
@@ -388,7 +388,7 @@ async function setupLoadVersions() {
       var labels={dx_app:'DX-APP',dx_runtime:'DX-Runtime',npu_driver:'NPU Driver',compiler:'DX-COM',kernel:'Kernel',python:'Python'};
       vg.innerHTML='';
       Object.keys(st.versions).forEach(function(k){
-        vg.innerHTML+='<div style="padding:6px 10px;background:var(--bg-2);border-radius:var(--radius);font-size:12px">'
+        vg.innerHTML+='<div style="padding:6px 10px;background:var(--control-bg);border-radius:var(--radius);font-size:12px">'
           +'<div class="txt-dim" style="font-size:10px">'+(labels[k]||k)+'</div>'
           +'<div style="font-family:var(--mono)">'+esc(st.versions[k])+'</div></div>';
       });

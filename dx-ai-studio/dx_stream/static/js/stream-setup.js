@@ -473,7 +473,7 @@ DXStream.runDiagnostics = async function() {
     }
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '▶ <span class="ko">진단 실행</span><span class="en">Run</span><span class="ja">実行</span><span class="zh-CN">运行</span><span class="zh-TW">執行</span>';
+        btn.innerHTML = '▶ <span data-i18n="Run">Run</span>';
     }
 };
 

@@ -82,7 +82,7 @@ DXStream.demoInit = async function () {
     DXStream.setPlaybackMode(DXStream._playbackMode); // sync toggle UI with persisted choice
     var grid = DXStream.$('demo-grid');
     if (grid) grid.innerHTML = '<div class="loading-placeholder"><span class="spin"></span>' +
-        '<span class="ko">데모 로드 중…</span><span class="en">Loading demos…</span></div>';
+        '<span data-i18n="Loading demos…">Loading demos…</span></div>';
     var demos = await DXStream.api('/api/demos');
     if (demos.error) {
         if (grid) grid.innerHTML = '<div class="empty-state"><span class="txt-dim">' +
@@ -124,16 +124,14 @@ function _renderDemoCards(demos) {
                 <span class="demo-card-cat">${_escHtml(_demoCatLabel(d.category))}</span>
             </div>
             ${!d.available && reason ? '<p class="txt-xs txt-warn demo-unavailable-reason">' + _escHtml(reason) + '</p>' : ''}
-            ${d.pipeline_type === 'rtsp' ? '<input class="demo-rtsp-input" id="rtsp-url-' + d.id + '" type="text" placeholder="rtsp://host:port/path" title="RTSP" style="width:100%;box-sizing:border-box;margin:2px 0 6px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg-0,var(--bg-2));color:var(--text-1);font-size:12px"><p class="txt-xs txt-dim" style="margin:0 0 6px"><span class="ko">RTSP 주소 입력 (비우면 데모 CCTV 사용)</span><span class="en">Enter an RTSP URL (blank = demo CCTV)</span><span class="ja">RTSP URLを入力 (空欄=デモCCTV)</span><span class="zh-CN">输入RTSP地址 (留空=演示CCTV)</span><span class="zh-TW">輸入RTSP位址 (留空=示範CCTV)</span><span class="es">Ingrese URL RTSP (vacío = CCTV demo)</span></p>' : ''}
+            ${d.pipeline_type === 'rtsp' ? '<input class="demo-rtsp-input" id="rtsp-url-' + d.id + '" type="text" placeholder="rtsp://host:port/path" title="RTSP" style="width:100%;box-sizing:border-box;margin:2px 0 6px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-page,var(--control-bg));color:var(--text-1);font-size:12px"><p class="txt-xs txt-dim" style="margin:0 0 6px" data-i18n="Enter an RTSP URL (blank = demo CCTV)">Enter an RTSP URL (blank = demo CCTV)</p>' : ''}
             <div class="demo-card-actions">
                 <button class="btn btn-primary btn-sm" onclick="DXStream._startDemo(${d.id})"
                     ${!d.available || d.id === runId ? 'disabled' : ''} id="start-demo-${d.id}"
-                    ${d.id === runId ? 'style="display:none"' : ''}>
-                    <span class="ko">실행</span><span class="en">Start</span>
+                    ${d.id === runId ? 'style="display:none"' : ''} data-i18n="Start">Start
                 </button>
                 <button class="btn btn-ghost btn-sm" onclick="DXStream._stopDemo(${d.id})"
-                    ${d.id !== runId ? 'style="display:none"' : ''} id="stop-demo-${d.id}">
-                    <span class="ko">중지</span><span class="en">Stop</span>
+                    ${d.id !== runId ? 'style="display:none"' : ''} id="stop-demo-${d.id}" data-i18n="Stop">Stop
                 </button>
             </div>
         </div>

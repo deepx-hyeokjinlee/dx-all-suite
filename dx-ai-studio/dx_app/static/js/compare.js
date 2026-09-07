@@ -123,7 +123,7 @@ async function doABRun(){
   if(isLive){
     origHtml='<div class="txt-dim txt-sm" style="padding:8px">📹 Live source ('+(inputType==='camera'?'/dev/video'+($('ab-camera').value||'0'):'RTSP')+')</div>';
   }else if(inputType==='image'){
-    origHtml='<img src="/file/'+inputPath+'" class="res-img mb8" onclick="previewImg(this.src)" style="max-width:100%;border:1px solid var(--bg-2);border-radius:6px"/>';
+    origHtml='<img src="/file/'+inputPath+'" class="res-img mb8" onclick="previewImg(this.src)" style="max-width:100%;border:1px solid var(--control-bg);border-radius:6px"/>';
   }else{
     origHtml='<video src="/file/'+inputPath+'" controls style="max-width:100%;border-radius:6px" class="mb8"></video>';
   }

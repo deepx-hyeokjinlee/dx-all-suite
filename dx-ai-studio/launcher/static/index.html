@@ -93,12 +93,7 @@
       <div class="splash-subtitle" id="splashSubtitle">AI Studio</div>
     </div>
     <!-- 코어 활성화 텍스트 -->
-    <div class="splash-core-text" id="splashCoreText">
-      <span class="ko">전체 시스템 가동</span>
-      <span class="en">ALL SYSTEMS ONLINE</span>
-      <span class="ja">全システム起動完了</span>
-      <span class="zh-CN">所有系统已上线</span>
-      <span class="zh-TW">所有系統已上線</span><span class="es">TODOS LOS SISTEMAS EN LÍNEA</span>
+    <div class="splash-core-text" id="splashCoreText" data-i18n="ALL SYSTEMS ONLINE">ALL SYSTEMS ONLINE
     </div>
     <!-- 에너지 빔 + 모듈 부팅 영역 -->
     <svg class="splash-beams" id="splashBeams"></svg>
@@ -106,12 +101,7 @@
     <!-- 에너지 버스트 플래시 -->
     <div class="splash-burst" id="splashBurst"></div>
     <!-- 스킵 안내 -->
-    <div class="splash-skip">
-      <span class="ko">클릭하여 건너뛰기</span>
-      <span class="en">Click to skip</span>
-      <span class="ja">クリックしてスキップ</span>
-      <span class="zh-CN">点击跳过</span>
-      <span class="zh-TW">點擊跳過</span><span class="es">Clic para omitir</span>
+    <div class="splash-skip" data-i18n="Click to skip">Click to skip
     </div>
   </div>
 
@@ -129,7 +119,7 @@
     </div>
     <div class="top-bar-right">
       <a class="buy-topbar-btn" id="buyTopbarBtn" href="https://deepx.ai/buy-now/" target="_blank" rel="noopener noreferrer" aria-label="Purchase DEEPX NPU" data-i18n-aria-label="Purchase DEEPX NPU">
-        🛒 <span class="ko">구매</span><span class="en">Buy</span><span class="ja">購入</span><span class="zh-CN">购买</span><span class="zh-TW">購買</span><span class="es">Comprar</span>
+        🛒 <span data-i18n="Buy">Buy</span>
       </a>
       <div id="launcherToolbar" class="toolbar"></div>
       <div class="status-dots">
@@ -179,12 +169,7 @@
       <div class="orbital-hub">
         <div class="hub-logo">DEEPX</div>
         <div class="hub-subtitle">AI Studio</div>
-        <div class="hub-tagline">
-          <span class="ko">8개 모듈 · 올인원 Edge AI 플랫폼</span>
-          <span class="en">8 Modules · All-in-One Edge AI Platform</span>
-          <span class="ja">8 モジュール · オールインワン Edge AI プラットフォーム</span>
-          <span class="zh-CN">8 个模块 · 一体化 Edge AI 平台</span>
-          <span class="zh-TW">8 個模組 · 全方位 Edge AI 平台</span><span class="es">8 módulos · Plataforma Edge AI todo en uno</span>
+        <div class="hub-tagline" data-i18n="8 Modules · All-in-One Edge AI Platform">8 Modules · All-in-One Edge AI Platform
         </div>
         <div class="hub-version">DXNN SDK {{SDK_VERSION}}</div>
         <div class="hub-studio-version" id="studioVersionHub"></div>
@@ -198,17 +183,12 @@
         <div class="orbital-name">DX App</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">NPU 실시간 추론 및 모델 컴파일</span>
-            <span class="en">Real-time NPU inference & model compiler</span>
-            <span class="ja">NPU リアルタイム推論 &amp; モデルコンパイラ</span>
-            <span class="zh-CN">NPU 实时推理 &amp; 模型编译器</span>
-            <span class="zh-TW">NPU 即時推論 &amp; 模型編譯器</span><span class="es">Inferencia NPU en tiempo real y compilador de modelos</span>
+          <div class="detail-title" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler
           </div>
           <ul class="detail-features">
-            <li><span class="ko">340+ 사전 컴파일 AI 모델 실행</span><span class="en">Run 340+ pre-compiled AI models</span><span class="ja">340+ 事前コンパイル済み AI モデルを実行</span><span class="zh-CN">运行 340+ 个预编译 AI 模型</span><span class="zh-TW">執行 340+ 個預編譯 AI 模型</span><span class="es">Ejecutar más de 340 modelos de IA precompilados</span></li>
-            <li><span class="ko">C++ / Python 코드 템플릿 자동 생성</span><span class="en">Auto-generate C++/Python code templates</span><span class="ja">C++ / Python コードテンプレートを自動生成</span><span class="zh-CN">自动生成 C++ / Python 代码模板</span><span class="zh-TW">自動產生 C++ / Python 程式碼範本</span><span class="es">Generar automáticamente plantillas de código C++/Python</span></li>
-            <li><span class="ko">실시간 추론 성능 대시보드</span><span class="en">Real-time inference performance dashboard</span><span class="ja">リアルタイム推論性能ダッシュボード</span><span class="zh-CN">实时推理性能仪表板</span><span class="zh-TW">即時推論效能儀表板</span><span class="es">Panel de rendimiento de inferencia en tiempo real</span></li>
+            <li data-i18n="Run 340+ pre-compiled AI models">Run 340+ pre-compiled AI models</li>
+            <li data-i18n="Auto-generate C++/Python code templates">Auto-generate C++/Python code templates</li>
+            <li data-i18n="Real-time inference performance dashboard">Real-time inference performance dashboard</li>
           </ul>
         </div>
       </div>
@@ -219,17 +199,12 @@
         <div class="orbital-name">DX Stream</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">비전 AI 스트리밍 파이프라인</span>
-            <span class="en">Vision AI streaming pipeline</span>
-            <span class="ja">ビジョン AI ストリーミングパイプライン</span>
-            <span class="zh-CN">视觉 AI 流媒体管道</span>
-            <span class="zh-TW">視覺 AI 串流管線</span><span class="es">Pipeline de streaming de IA visual</span>
+          <div class="detail-title" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline
           </div>
           <ul class="detail-features">
-            <li><span class="ko">GStreamer 기반 13개 커스텀 플러그인</span><span class="en">13 custom GStreamer plugins</span><span class="ja">GStreamer ベース 13 個のカスタムプラグイン</span><span class="zh-CN">基于 GStreamer 的 13 个自定义插件</span><span class="zh-TW">基於 GStreamer 的 13 個自訂外掛程式</span><span class="es">13 plugins GStreamer personalizados</span></li>
-            <li><span class="ko">RTSP / USB 카메라 실시간 연결</span><span class="en">RTSP / USB camera live connection</span><span class="ja">RTSP / USB カメラリアルタイム接続</span><span class="zh-CN">RTSP / USB 摄像头实时连接</span><span class="zh-TW">RTSP / USB 攝影機即時連線</span><span class="es">Conexión en vivo de cámara RTSP / USB</span></li>
-            <li><span class="ko">멀티 스트림 동시 처리</span><span class="en">Multi-stream concurrent processing</span><span class="ja">マルチストリーム同時処理</span><span class="zh-CN">多路流同时处理</span><span class="zh-TW">多路串流同時處理</span><span class="es">Procesamiento concurrente de múltiples flujos</span></li>
+            <li data-i18n="13 custom GStreamer plugins">13 custom GStreamer plugins</li>
+            <li data-i18n="RTSP / USB camera live connection">RTSP / USB camera live connection</li>
+            <li data-i18n="Multi-stream concurrent processing">Multi-stream concurrent processing</li>
           </ul>
         </div>
       </div>
@@ -240,17 +215,12 @@
         <div class="orbital-name">DX Model Zoo</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">340개 AI 모델 카탈로그</span>
-            <span class="en">340 AI model catalog</span>
-            <span class="ja">340 AI モデルカタログ</span>
-            <span class="zh-CN">340 个 AI 模型目录</span>
-            <span class="zh-TW">340 個 AI 模型目錄</span><span class="es">Catálogo de 340 modelos de IA</span>
+          <div class="detail-title" data-i18n="340 AI model catalog">340 AI model catalog
           </div>
           <ul class="detail-features">
-            <li><span class="ko">270+ .dxnn 사전 컴파일 모델</span><span class="en">270+ pre-compiled .dxnn models</span><span class="ja">270+ 事前コンパイル済み .dxnn モデル</span><span class="zh-CN">270+ 个预编译 .dxnn 模型</span><span class="zh-TW">270+ 個預編譯 .dxnn 模型</span><span class="es">Más de 270 modelos .dxnn precompilados</span></li>
-            <li><span class="ko">YOLO · ResNet · EfficientNet 등</span><span class="en">YOLO · ResNet · EfficientNet etc.</span><span class="ja">YOLO · ResNet · EfficientNet など</span><span class="zh-CN">YOLO · ResNet · EfficientNet 等</span><span class="zh-TW">YOLO · ResNet · EfficientNet 等</span><span class="es">YOLO · ResNet · EfficientNet, etc.</span></li>
-            <li><span class="ko">원클릭 다운로드 & 배포</span><span class="en">One-click download & deploy</span><span class="ja">ワンクリックでダウンロード &amp; デプロイ</span><span class="zh-CN">一键下载 &amp; 部署</span><span class="zh-TW">一鍵下載 &amp; 部署</span><span class="es">Descarga e implementación con un clic</span></li>
+            <li data-i18n="270+ pre-compiled .dxnn models">270+ pre-compiled .dxnn models</li>
+            <li data-i18n="YOLO · ResNet · EfficientNet etc.">YOLO · ResNet · EfficientNet etc.</li>
+            <li data-i18n="One-click download &amp; deploy">One-click download &amp; deploy</li>
           </ul>
         </div>
       </div>
@@ -261,17 +231,12 @@
         <div class="orbital-name">DX Compiler</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">ONNX 모델 컴파일러 GUI</span>
-            <span class="en">ONNX model compiler GUI</span>
-            <span class="ja">ONNX モデルコンパイラ GUI</span>
-            <span class="zh-CN">ONNX 模型编译器 GUI</span>
-            <span class="zh-TW">ONNX 模型編譯器 GUI</span><span class="es">GUI del compilador de modelos ONNX</span>
+          <div class="detail-title" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI
           </div>
           <ul class="detail-features">
-            <li><span class="ko">ONNX → .dxnn 자동 변환</span><span class="en">ONNX → .dxnn auto conversion</span><span class="ja">ONNX → .dxnn 自動変換</span><span class="zh-CN">ONNX → .dxnn 自动转换</span><span class="zh-TW">ONNX → .dxnn 自動轉換</span><span class="es">Conversión automática ONNX → .dxnn</span></li>
-            <li><span class="ko">INT8 지능형 양자화</span><span class="en">INT8 Intelligent Quantization</span><span class="ja">INT8 インテリジェント量子化</span><span class="zh-CN">INT8 智能量化</span><span class="zh-TW">INT8 智慧量化</span><span class="es">Cuantización inteligente INT8</span></li>
-            <li><span class="ko">DX-TRON 그래프 시각화</span><span class="en">DX-TRON graph visualization</span><span class="ja">DX-TRON グラフ可視化</span><span class="zh-CN">DX-TRON 图形可视化</span><span class="zh-TW">DX-TRON 圖形視覺化</span><span class="es">Visualización de grafos DX-TRON</span></li>
+            <li data-i18n="ONNX → .dxnn auto conversion">ONNX → .dxnn auto conversion</li>
+            <li data-i18n="INT8 Intelligent Quantization">INT8 Intelligent Quantization</li>
+            <li data-i18n="DX-TRON graph visualization">DX-TRON graph visualization</li>
           </ul>
         </div>
       </div>
@@ -282,17 +247,12 @@
         <div class="orbital-name">DX EdgeGuide</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">NPU 구성 계산 & TCO 분석</span>
-            <span class="en">NPU config calculator & TCO analysis</span>
-            <span class="ja">NPU 構成計算 &amp; TCO 分析</span>
-            <span class="zh-CN">NPU 配置计算 &amp; TCO 分析</span>
-            <span class="zh-TW">NPU 組態計算 &amp; TCO 分析</span><span class="es">Calculadora de configuración NPU y análisis TCO</span>
+          <div class="detail-title" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis
           </div>
           <ul class="detail-features">
-            <li><span class="ko">워크로드 기반 최적 NPU 추천</span><span class="en">Workload-based optimal NPU recommendation</span><span class="ja">ワークロードベース最適 NPU 推奨</span><span class="zh-CN">基于工作负载的最优 NPU 推荐</span><span class="zh-TW">基於工作負載的最佳 NPU 推薦</span><span class="es">Recomendación óptima de NPU basada en carga de trabajo</span></li>
-            <li><span class="ko">총 소유 비용(TCO) 분석</span><span class="en">Total cost of ownership analysis</span><span class="ja">総所有コスト (TCO) 分析</span><span class="zh-CN">总拥有成本 (TCO) 分析</span><span class="zh-TW">總擁有成本 (TCO) 分析</span><span class="es">Análisis del costo total de propiedad</span></li>
-            <li><span class="ko">DX-M1 / DX-H1 Quattro 비교</span><span class="en">DX-M1 / DX-H1 Quattro comparison</span><span class="ja">DX-M1 / DX-H1 Quattro 比較</span><span class="zh-CN">DX-M1 / DX-H1 Quattro 对比</span><span class="zh-TW">DX-M1 / DX-H1 Quattro 比較</span><span class="es">Comparación DX-M1 / DX-H1 Quattro</span></li>
+            <li data-i18n="Workload-based optimal NPU recommendation">Workload-based optimal NPU recommendation</li>
+            <li data-i18n="Total cost of ownership analysis">Total cost of ownership analysis</li>
+            <li data-i18n="DX-M1 / DX-H1 Quattro comparison">DX-M1 / DX-H1 Quattro comparison</li>
           </ul>
         </div>
       </div>
@@ -303,17 +263,12 @@
         <div class="orbital-name">DX Benchmark</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">하드웨어 성능 벤치마크</span>
-            <span class="en">Hardware performance benchmark</span>
-            <span class="ja">ハードウェア性能ベンチマーク</span>
-            <span class="zh-CN">硬件性能基准测试</span>
-            <span class="zh-TW">硬體效能基準測試</span><span class="es">Benchmark de rendimiento de hardware</span>
+          <div class="detail-title" data-i18n="Hardware performance benchmark">Hardware performance benchmark
           </div>
           <ul class="detail-features">
-            <li><span class="ko">6개 보드 × YOLO 시리즈 크로스 테스트</span><span class="en">6 boards × YOLO series cross-testing</span><span class="ja">6 ボード × YOLO シリーズクロステスト</span><span class="zh-CN">6 块板 × YOLO 系列交叉测试</span><span class="zh-TW">6 塊板 × YOLO 系列交叉測試</span><span class="es">6 placas × pruebas cruzadas de la serie YOLO</span></li>
-            <li><span class="ko">FPS · 지연시간 · 전력 측정</span><span class="en">FPS · latency · power measurement</span><span class="ja">FPS · レイテンシ · 消費電力測定</span><span class="zh-CN">FPS · 延迟 · 功耗测量</span><span class="zh-TW">FPS · 延遲 · 功耗量測</span><span class="es">Medición de FPS · latencia · consumo</span></li>
-            <li><span class="ko">자동 리포트 생성 (Markdown)</span><span class="en">Auto report generation (Markdown)</span><span class="ja">自動レポート生成 (Markdown)</span><span class="zh-CN">自动报告生成 (Markdown)</span><span class="zh-TW">自動報告產生 (Markdown)</span><span class="es">Generación automática de informes (Markdown)</span></li>
+            <li data-i18n="6 boards × YOLO series cross-testing">6 boards × YOLO series cross-testing</li>
+            <li data-i18n="FPS · latency · power measurement">FPS · latency · power measurement</li>
+            <li data-i18n="Auto report generation (Markdown)">Auto report generation (Markdown)</li>
           </ul>
         </div>
       </div>
@@ -324,17 +279,12 @@
         <div class="orbital-name">DX Monitor</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">NPU 하드웨어 실시간 모니터링</span>
-            <span class="en">Real-time NPU hardware monitoring</span>
-            <span class="ja">NPU ハードウェアリアルタイムモニタリング</span>
-            <span class="zh-CN">NPU 硬件实时监控</span>
-            <span class="zh-TW">NPU 硬體即時監控</span><span class="es">Monitoreo de hardware NPU en tiempo real</span>
+          <div class="detail-title" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring
           </div>
           <ul class="detail-features">
-            <li><span class="ko">NPU 온도 · 전압 · 클럭 실시간 차트</span><span class="en">NPU temp · voltage · clock real-time charts</span><span class="ja">NPU 温度 · 電圧 · クロックリアルタイムチャート</span><span class="zh-CN">NPU 温度 · 电压 · 时钟实时图表</span><span class="zh-TW">NPU 溫度 · 電壓 · 時脈即時圖表</span><span class="es">Gráficos en tiempo real de temperatura · voltaje · reloj NPU</span></li>
-            <li><span class="ko">CPU / 메모리 / 디스크 게이지</span><span class="en">CPU / memory / disk gauges</span><span class="ja">CPU / メモリ / ディスクゲージ</span><span class="zh-CN">CPU / 内存 / 磁盘仪表</span><span class="zh-TW">CPU / 記憶體 / 磁碟儀表</span><span class="es">Indicadores de CPU / memoria / disco</span></li>
-            <li><span class="ko">5분~1시간 히스토리 분석</span><span class="en">5min~1hr history analysis</span><span class="ja">5分～1時間履歴分析</span><span class="zh-CN">5分钟～1小时历史分析</span><span class="zh-TW">5分鐘～1小時歷史分析</span><span class="es">Análisis histórico de 5 min~1 h</span></li>
+            <li data-i18n="NPU temp · voltage · clock real-time charts">NPU temp · voltage · clock real-time charts</li>
+            <li data-i18n="CPU / memory / disk gauges">CPU / memory / disk gauges</li>
+            <li data-i18n="5min~1hr history analysis">5min~1hr history analysis</li>
           </ul>
         </div>
       </div>
@@ -345,17 +295,12 @@
         <div class="orbital-name">DX Agent Dev</div>
         <div class="orbital-port">:—</div>
         <div class="orbital-detail">
-          <div class="detail-title">
-            <span class="ko">자연어 명령으로 NPU 앱 빌드</span>
-            <span class="en">Build NPU apps with natural-language commands</span>
-            <span class="ja">自然言語コマンドで NPU アプリをビルド</span>
-            <span class="zh-CN">用自然语言命令构建 NPU 应用</span>
-            <span class="zh-TW">用自然語言命令建構 NPU 應用</span><span class="es">Crea apps NPU con comandos en lenguaje natural</span>
+          <div class="detail-title" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands
           </div>
           <ul class="detail-features">
-            <li><span class="ko">명령 한 줄로 파이프라인 자동 생성</span><span class="en">One-line command auto-generates pipelines</span><span class="ja">1 行のコマンドでパイプライン自動生成</span><span class="zh-CN">一行命令自动生成流水线</span><span class="zh-TW">一行命令自動產生管線</span><span class="es">Un comando genera pipelines automáticamente</span></li>
-            <li><span class="ko">대화형 콘솔 · 실시간 빌드 로그</span><span class="en">Interactive console · real-time build logs</span><span class="ja">対話型コンソール · リアルタイムビルドログ</span><span class="zh-CN">交互式控制台 · 实时构建日志</span><span class="zh-TW">互動式主控台 · 即時建構日誌</span><span class="es">Consola interactiva · registros en tiempo real</span></li>
-            <li><span class="ko">쇼케이스 갤러리 (오프라인)</span><span class="en">Showcase gallery (offline)</span><span class="ja">ショーケースギャラリー (オフライン)</span><span class="zh-CN">展示库 (离线)</span><span class="zh-TW">展示庫 (離線)</span><span class="es">Galería de ejemplos (sin conexión)</span></li>
+            <li data-i18n="One-line command auto-generates pipelines">One-line command auto-generates pipelines</li>
+            <li data-i18n="Interactive console · real-time build logs">Interactive console · real-time build logs</li>
+            <li data-i18n="Showcase gallery (offline)">Showcase gallery (offline)</li>
           </ul>
         </div>
       </div>
@@ -367,24 +312,14 @@
         <span class="orbital-status"></span>
         <div class="orbital-icon">📖</div>
         <div class="orbital-name" data-i18n-module="about" data-i18n-variant="poster"></div>
-        <div class="orbital-port" style="color: #ffb832;">
-          <span class="ko">백과사전</span>
-          <span class="en">Encyclopedia</span>
-          <span class="ja">百科事典</span>
-          <span class="zh-CN">百科全书</span>
-          <span class="zh-TW">百科全書</span><span class="es">Enciclopedia</span>
+        <div class="orbital-port" style="color: #ffb832;" data-i18n="Encyclopedia">Encyclopedia
         </div>
       </div>
       <div class="about-book-card sdk-card" tabindex="0" role="button">
         <span class="orbital-status"></span>
         <div class="orbital-icon">📚</div>
         <div class="orbital-name" data-i18n-module="sdk-library" data-i18n-variant="poster"></div>
-        <div class="orbital-port">
-          <span class="ko">기술 도서관</span>
-          <span class="en">Tech Library</span>
-          <span class="ja">技術ライブラリ</span>
-          <span class="zh-CN">技术库</span>
-          <span class="zh-TW">技術資料庫</span><span class="es">Biblioteca técnica</span>
+        <div class="orbital-port" data-i18n="Tech Library">Tech Library
         </div>
       </div>
     </div>
@@ -392,13 +327,13 @@
     <!-- ── Physical AI Ecosystem Poster (left side; mirrors the right platform poster) ── -->
     <div class="landing-poster landing-poster--left" id="ecosystemPoster" role="button" tabindex="0" data-i18n-title="DEEPX Physical AI ecosystem">
       <img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="DEEPX Connects the Physical AI Ecosystem" loading="lazy" onclick="openEcosystemInfo()" tabindex="0" role="button">
-      <span class="poster-hint" onclick="openEcosystemInfo()" tabindex="0" role="button"><span class="poster-hint-icon">🌐</span><span class="ko">Physical AI 생태계</span><span class="en">Physical AI Ecosystem</span><span class="ja">Physical AI エコシステム</span><span class="zh-CN">Physical AI 生态系统</span><span class="zh-TW">Physical AI 生態系統</span><span class="es">Ecosistema de IA física</span></span>
+      <span class="poster-hint" onclick="openEcosystemInfo()" tabindex="0" role="button"><span class="poster-hint-icon">🌐</span><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></span>
     </div>
 
     <!-- ── Platform Info Poster (right side) ── -->
     <div class="landing-poster" id="landingPoster" role="button" tabindex="0" data-i18n-title="DX-M1 and DX-M2 NPU lineup">
       <img src="/static/img/about/marketing/m1_m2.webp" alt="DX-M1 and DX-M2 NPU lineup" loading="lazy" onclick="openPlatformInfo()" tabindex="0" role="button">
-      <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span class="poster-hint-icon">🧭</span><span class="ko">DX AI Studio 둘러보기</span><span class="en">Explore DX AI Studio</span><span class="ja">DX AI Studio を探索</span><span class="zh-CN">探索 DX AI Studio</span><span class="zh-TW">探索 DX AI Studio</span><span class="es">Explorar DX AI Studio</span></span>
+      <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span class="poster-hint-icon">🧭</span><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></span>
     </div>
 
     <footer class="landing-footer">
@@ -413,8 +348,8 @@
   <footer class="deepx-footer" id="deepxFooter">
   <div class="deepx-footer-lead" aria-hidden="true">
     <span class="deepx-lead-icon">🔗</span>
-    <span class="deepx-lead-text"><span class="ko">DEEPX 더 알아보기</span><span class="en">More on DEEPX</span><span class="ja">DEEPXをもっと知る</span><span class="zh-CN">了解更多 DEEPX</span><span class="zh-TW">了解更多 DEEPX</span><span class="es">Más sobre DEEPX</span></span>
-    <span class="deepx-lead-badge"><span class="ko">홈페이지</span><span class="en">Homepage</span><span class="ja">ホームページ</span><span class="zh-CN">主页</span><span class="zh-TW">首頁</span><span class="es">Sitio web</span></span>
+    <span class="deepx-lead-text" data-i18n="More on DEEPX">More on DEEPX</span>
+    <span class="deepx-lead-badge" data-i18n="Homepage">Homepage</span>
     <span class="deepx-lead-arrow">→</span>
   </div>
   <nav class="deepx-links" id="deepxLinks" aria-label="DEEPX resources" data-i18n-aria-label="DEEPX resources">
@@ -466,33 +401,33 @@
       </div>
       <div class="platform-info-right">
         <h2>🚀 DX AI Studio</h2>
-        <p class="platform-tagline"><span class="ko">올인원 Edge AI 개발 플랫폼</span><span class="en">All-in-One Edge AI Development Platform</span><span class="ja">オールインワン Edge AI 開発プラットフォーム</span><span class="zh-CN">一站式 Edge AI 开发平台</span><span class="zh-TW">一站式 Edge AI 開發平台</span><span class="es">Plataforma de desarrollo Edge AI todo en uno</span></p>
-        <p class="platform-desc"><span class="ko">DX AI Studio는 DEEPX NPU를 활용한 Edge AI 개발을 위한 올인원 데스크톱 플랫폼입니다. 8개의 전문 모듈이 하나의 통합 환경에서 동작합니다.</span><span class="en">DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.</span><span class="ja">DX AI Studioは、DEEPX NPUを活用したEdge AI開発のためのオールインワンデスクトッププラットフォームです。8つの専門モジュールが統合環境で動作します。</span><span class="zh-CN">DX AI Studio 是一个利用 DEEPX NPU 的 Edge AI 开发一站式桌面平台。8个专业模块在统一环境中协同工作。</span><span class="zh-TW">DX AI Studio 是一個利用 DEEPX NPU 的 Edge AI 開發一站式桌面平台。8個專業模組在統一環境中協同運作。</span><span class="es">DX AI Studio es una plataforma de escritorio todo en uno para el desarrollo de Edge AI con DEEPX NPU. 8 módulos especializados trabajan juntos en un entorno unificado.</span></p>
+        <p class="platform-tagline" data-i18n="All-in-One Edge AI Development Platform">All-in-One Edge AI Development Platform</p>
+        <p class="platform-desc" data-i18n="DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.">DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.</p>
         <div class="platform-modules">
-          <div class="pm-item" data-help-id="pm-dx-app" tabindex="0" role="button"><span class="pm-icon">🖥️</span><span class="pm-name">DX App</span><span class="pm-desc"><span class="ko"><strong>NPU 실시간 추론 엔진</strong><br>• 340+ 사전 컴파일된 AI 모델 즉시 실행<br>• C++/Python 추론 코드 템플릿 자동 생성<br>• FPS, 지연시간, 메모리 실시간 대시보드</span><span class="en"><strong>NPU Real-time Inference Engine</strong><br>• Run 340+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard</span><span class="ja"><strong>NPU リアルタイム推論エンジン</strong><br>• 340以上のプリコンパイル済みAIモデルを即時実行<br>• C++/Python推論コードテンプレート自動生成<br>• FPS・レイテンシ・メモリのリアルタイムダッシュボード</span><span class="zh-CN"><strong>NPU 实时推理引擎</strong><br>• 即时运行340+预编译AI模型<br>• 自动生成C++/Python推理代码模板<br>• FPS、延迟、内存实时仪表盘</span><span class="zh-TW"><strong>NPU 即時推論引擎</strong><br>• 即時執行340+預編譯AI模型<br>• 自動產生C++/Python推論程式碼範本<br>• FPS、延遲、記憶體即時儀表板</span><span class="es"><strong>Motor de inferencia NPU en tiempo real</strong><br>• Ejecutar más de 340 modelos de IA precompilados al instante<br>• Generar automáticamente plantillas de código de inferencia C++/Python<br>• Panel en tiempo real de FPS, latencia y memoria</span></span></div>
-          <div class="pm-item" data-help-id="pm-dx-stream"><span class="pm-icon">🎬</span><span class="pm-name">DX Stream</span><span class="pm-desc"><span class="ko"><strong>비전 AI 스트리밍 파이프라인</strong><br>• GStreamer 기반 13개 커스텀 플러그인 제공<br>• RTSP/USB/IP 카메라 실시간 영상 연결<br>• 다채널 멀티스트림 동시 AI 처리</span><span class="en"><strong>Vision AI Streaming Pipeline</strong><br>• 13 custom GStreamer-based plugins<br>• Real-time RTSP/USB/IP camera connection<br>• Multi-channel simultaneous AI processing</span><span class="ja"><strong>ビジョンAIストリーミングパイプライン</strong><br>• GStreamerベース13個のカスタムプラグイン<br>• RTSP/USB/IPカメラのリアルタイム映像接続<br>• マルチチャンネル同時AI処理</span><span class="zh-CN"><strong>视觉AI流式管道</strong><br>• 基于GStreamer的13个定制插件<br>• RTSP/USB/IP摄像头实时视频连接<br>• 多通道多流同时AI处理</span><span class="zh-TW"><strong>視覺AI串流管線</strong><br>• 基於GStreamer的13個客製化外掛<br>• RTSP/USB/IP攝影機即時影像連接<br>• 多通道多串流同時AI處理</span><span class="es"><strong>Pipeline de streaming de IA visual</strong><br>• 13 plugins personalizados basados en GStreamer<br>• Conexión en tiempo real de cámara RTSP/USB/IP<br>• Procesamiento de IA simultáneo multicanal</span></span></div>
-          <div class="pm-item" data-help-id="pm-model-zoo"><span class="pm-icon">🧬</span><span class="pm-name">Model Zoo</span><span class="pm-desc"><span class="ko"><strong>340개 AI 모델 카탈로그</strong><br>• YOLO·ResNet·EfficientNet 등 .dxnn 제공<br>• 모델 성능 비교표 및 호환성 정보<br>• 원클릭 다운로드 & Edge 디바이스 배포</span><span class="en"><strong>340 AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment</span><span class="ja"><strong>340個AIモデルカタログ</strong><br>• YOLO・ResNet・EfficientNet等の.dxnnモデル<br>• モデル性能比較表と互換性情報<br>• ワンクリックダウンロード＆Edgeデバイスデプロイ</span><span class="zh-CN"><strong>340个AI模型目录</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型性能对比表及兼容性信息<br>• 一键下载与Edge设备部署</span><span class="zh-TW"><strong>340個AI模型目錄</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型效能比較表及相容性資訊<br>• 一鍵下載與Edge裝置部署</span><span class="es"><strong>Catálogo de 340 modelos de IA</strong><br>• Modelos .dxnn YOLO, ResNet, EfficientNet<br>• Comparativa de rendimiento e información de compatibilidad<br>• Descarga con un clic e implementación en dispositivos Edge</span></span></div>
-          <div class="pm-item" data-help-id="pm-compiler"><span class="pm-icon">⚙️</span><span class="pm-name">Compiler</span><span class="pm-desc"><span class="ko"><strong>ONNX → .dxnn 컴파일러 GUI</strong><br>• INT8 지능형 양자화로 최적 성능 달성<br>• DX-TRON 연산 그래프 시각화 도구<br>• 배치 컴파일 및 프로파일링 지원</span><span class="en"><strong>ONNX → .dxnn Compiler GUI</strong><br>• INT8 intelligent quantization for optimal performance<br>• DX-TRON computational graph visualization<br>• Batch compilation & profiling support</span><span class="ja"><strong>ONNX → .dxnn コンパイラ GUI</strong><br>• INT8インテリジェント量子化で最適性能を実現<br>• DX-TRON演算グラフ可視化ツール<br>• バッチコンパイル＆プロファイリング対応</span><span class="zh-CN"><strong>ONNX → .dxnn 编译器 GUI</strong><br>• INT8智能量化实现最优性能<br>• DX-TRON计算图可视化工具<br>• 批量编译与性能分析支持</span><span class="zh-TW"><strong>ONNX → .dxnn 編譯器 GUI</strong><br>• INT8智慧量化實現最佳效能<br>• DX-TRON運算圖視覺化工具<br>• 批次編譯與效能分析支援</span><span class="es"><strong>GUI del compilador ONNX → .dxnn</strong><br>• Cuantización inteligente INT8 para un rendimiento óptimo<br>• Visualización del grafo computacional DX-TRON<br>• Compilación por lotes y soporte de perfilado</span></span></div>
-          <div class="pm-item" data-help-id="pm-edgeguide"><span class="pm-icon">💰</span><span class="pm-name">EdgeGuide</span><span class="pm-desc"><span class="ko"><strong>NPU 구성 & TCO 분석 도구</strong><br>• 워크로드 기반 최적 NPU 칩 자동 추천<br>• 총 소유 비용(TCO) 비교 분석 리포트<br>• DX-M1 vs DX-H1 Quattro 성능 비교</span><span class="en"><strong>NPU Configuration & TCO Analysis</strong><br>• Workload-based optimal NPU chip recommendation<br>• Total Cost of Ownership (TCO) comparison report<br>• DX-M1 vs DX-H1 Quattro performance comparison</span><span class="ja"><strong>NPU構成＆TCO分析ツール</strong><br>• ワークロードに基づく最適NPUチップ自動推薦<br>• 総所有コスト（TCO）比較分析レポート<br>• DX-M1 vs DX-H1 Quattro性能比較</span><span class="zh-CN"><strong>NPU配置与TCO分析工具</strong><br>• 基于工作负载的最优NPU芯片自动推荐<br>• 总拥有成本(TCO)对比分析报告<br>• DX-M1 vs DX-H1 Quattro性能对比</span><span class="zh-TW"><strong>NPU配置與TCO分析工具</strong><br>• 基於工作負載的最佳NPU晶片自動推薦<br>• 總擁有成本(TCO)比較分析報告<br>• DX-M1 vs DX-H1 Quattro效能比較</span><span class="es"><strong>Configuración NPU y análisis TCO</strong><br>• Recomendación automática del chip NPU óptimo según la carga de trabajo<br>• Informe comparativo del costo total de propiedad (TCO)<br>• Comparación de rendimiento DX-M1 vs DX-H1 Quattro</span></span></div>
-          <div class="pm-item" data-help-id="pm-benchmark"><span class="pm-icon">📊</span><span class="pm-name">Benchmark</span><span class="pm-desc"><span class="ko"><strong>HW 성능 크로스 벤치마크</strong><br>• 6개 보드 × YOLO 시리즈 자동 테스트<br>• FPS·지연시간·전력 소비 정밀 측정<br>• Markdown 자동 리포트 & 차트 생성</span><span class="en"><strong>HW Performance Cross Benchmark</strong><br>• 6 boards × YOLO series automated testing<br>• FPS, latency, power consumption precision measurement<br>• Markdown auto-report & chart generation</span><span class="ja"><strong>HW性能クロスベンチマーク</strong><br>• 6ボード × YOLOシリーズ自動テスト<br>• FPS・レイテンシ・消費電力の精密測定<br>• Markdownレポート＆チャート自動生成</span><span class="zh-CN"><strong>HW性能交叉基准测试</strong><br>• 6块开发板×YOLO系列自动测试<br>• FPS·延迟·功耗精确测量<br>• Markdown自动报告与图表生成</span><span class="zh-TW"><strong>HW效能交叉基準測試</strong><br>• 6塊開發板×YOLO系列自動測試<br>• FPS·延遲·功耗精確量測<br>• Markdown自動報告與圖表產生</span><span class="es"><strong>Benchmark cruzado de rendimiento HW</strong><br>• Pruebas automatizadas de 6 placas × serie YOLO<br>• Medición precisa de FPS, latencia y consumo energético<br>• Informe Markdown automático y generación de gráficos</span></span></div>
-          <div class="pm-item" data-help-id="pm-monitor"><span class="pm-icon">📡</span><span class="pm-name">Monitor</span><span class="pm-desc"><span class="ko"><strong>NPU 하드웨어 실시간 모니터링</strong><br>• NPU 온도·전압·클럭 실시간 차트<br>• CPU/메모리/디스크 시스템 게이지<br>• 5분~1시간 히스토리 추세 분석</span><span class="en"><strong>NPU Hardware Real-time Monitoring</strong><br>• NPU temperature, voltage, clock real-time charts<br>• CPU/memory/disk system gauges<br>• 5min~1hr history trend analysis</span><span class="ja"><strong>NPUハードウェアリアルタイムモニタリング</strong><br>• NPU温度・電圧・クロックのリアルタイムチャート<br>• CPU/メモリ/ディスクのシステムゲージ<br>• 5分～1時間の履歴トレンド分析</span><span class="zh-CN"><strong>NPU硬件实时监控</strong><br>• NPU温度·电压·时钟实时图表<br>• CPU/内存/磁盘系统仪表<br>• 5分钟～1小时历史趋势分析</span><span class="zh-TW"><strong>NPU硬體即時監控</strong><br>• NPU溫度·電壓·時脈即時圖表<br>• CPU/記憶體/磁碟系統儀表<br>• 5分鐘～1小時歷史趨勢分析</span><span class="es"><strong>Monitoreo de hardware NPU en tiempo real</strong><br>• Gráficos en tiempo real de temperatura, voltaje y reloj NPU<br>• Indicadores del sistema de CPU/memoria/disco<br>• Análisis de tendencias históricas de 5 min~1 h</span></span></div>
-          <div class="pm-item" data-help-id="pm-agent-dev"><span class="pm-icon">🤖</span><span class="pm-name">Agent Dev</span><span class="pm-desc"><span class="ko"><strong>자연어 NPU 앱 빌더</strong><br>• 명령 한 줄로 파이프라인·앱 자동 생성<br>• 대화형 콘솔 · 실시간 빌드 로그<br>• 오프라인 쇼케이스 갤러리</span><span class="en"><strong>Natural-Language NPU App Builder</strong><br>• One-line commands auto-generate pipelines & apps<br>• Interactive console · real-time build logs<br>• Offline showcase gallery</span><span class="ja"><strong>自然言語NPUアプリビルダー</strong><br>• 1行のコマンドでパイプライン・アプリ自動生成<br>• 対話型コンソール · リアルタイムビルドログ<br>• オフラインショーケースギャラリー</span><span class="zh-CN"><strong>自然语言NPU应用构建器</strong><br>• 一行命令自动生成流水线与应用<br>• 交互式控制台 · 实时构建日志<br>• 离线展示库</span><span class="zh-TW"><strong>自然語言NPU應用建構器</strong><br>• 一行命令自動產生管線與應用<br>• 互動式主控台 · 即時建構日誌<br>• 離線展示庫</span><span class="es"><strong>Constructor de apps NPU en lenguaje natural</strong><br>• Comandos de una línea generan pipelines y apps automáticamente<br>• Consola interactiva · registros de compilación en tiempo real<br>• Galería de ejemplos sin conexión</span></span></div>
-          <div class="pm-item" data-help-id="pm-sdk-library"><span class="pm-icon">📚</span><span class="pm-name">SDK Library</span><span class="pm-desc"><span class="ko"><strong>DXNN SDK 기술 도서관</strong><br>• 120개 공식 SDK 문서 큐레이션 수록<br>• 4개 책장 분류 체계 (Runtime/Compiler/Zoo/Suite)<br>• 실시간 검색 & 책 형태 뷰어</span><span class="en"><strong>DXNN SDK Tech Library</strong><br>• 120 official SDK documents curated<br>• 4-shelf classification (Runtime/Compiler/Zoo/Suite)<br>• Real-time search & book-style viewer</span><span class="ja"><strong>DXNN SDK技術ライブラリ</strong><br>• 120件の公式SDKドキュメントを収録<br>• 4つの本棚分類体系（Runtime/Compiler/Zoo/Suite）<br>• リアルタイム検索＆書籍形式ビューア</span><span class="zh-CN"><strong>DXNN SDK技术资料库</strong><br>• 收录120份官方SDK文档<br>• 4个书架分类体系（Runtime/Compiler/Zoo/Suite）<br>• 实时搜索与书籍式阅读器</span><span class="zh-TW"><strong>DXNN SDK技術資料庫</strong><br>• 收錄120份官方SDK文件<br>• 4個書架分類體系（Runtime/Compiler/Zoo/Suite）<br>• 即時搜尋與書籍式閱讀器</span><span class="es"><strong>Biblioteca técnica del SDK DXNN</strong><br>• 120 documentos oficiales del SDK seleccionados<br>• Clasificación en 4 estantes (Runtime/Compiler/Zoo/Suite)<br>• Búsqueda en tiempo real y visor estilo libro</span></span></div>
-          <div class="pm-item" data-help-id="pm-about-deepx"><span class="pm-icon">🔬</span><span class="pm-name">About DEEPX</span><span class="pm-desc"><span class="ko"><strong>DEEPX 인터랙티브 백과사전</strong><br>• DX-M1/DX-M2 칩 다이 핫스팟 탐험<br>• 클릭으로 기술·제품·비전 스토리 탐색<br>• 고해상도 칩 다이 사진 & 기술 설명</span><span class="en"><strong>DEEPX Interactive Encyclopedia</strong><br>• DX-M1/DX-M2 chip die hotspot exploration<br>• Click to explore tech, product, vision stories<br>• High-res chip die photos & technical descriptions</span><span class="ja"><strong>DEEPXインタラクティブ百科事典</strong><br>• DX-M1/DX-M2チップダイのホットスポット探索<br>• クリックで技術・製品・ビジョンストーリーを閲覧<br>• 高解像度チップダイ写真＆技術解説</span><span class="zh-CN"><strong>DEEPX交互式百科全书</strong><br>• DX-M1/DX-M2芯片裸片热点探索<br>• 点击探索技术·产品·愿景故事<br>• 高分辨率芯片裸片照片与技术说明</span><span class="zh-TW"><strong>DEEPX互動式百科全書</strong><br>• DX-M1/DX-M2晶片裸晶熱點探索<br>• 點擊探索技術·產品·願景故事<br>• 高解析度晶片裸晶照片與技術說明</span><span class="es"><strong>Enciclopedia interactiva DEEPX</strong><br>• Exploración de puntos clave del die de los chips DX-M1/DX-M2<br>• Haga clic para explorar historias de tecnología, productos y visión<br>• Fotos de alta resolución del die y descripciones técnicas</span></span></div>
+          <div class="pm-item" data-help-id="pm-dx-app" tabindex="0" role="button"><span class="pm-icon">🖥️</span><span class="pm-name">DX App</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Real-time Inference Engine&lt;/strong&gt;&lt;br&gt;• Run 340+ pre-compiled AI models instantly&lt;br&gt;• Auto-generate C++/Python inference code templates&lt;br&gt;• FPS, latency, memory real-time dashboard"><strong>NPU Real-time Inference Engine</strong><br>• Run 340+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard</span></div>
+          <div class="pm-item" data-help-id="pm-dx-stream"><span class="pm-icon">🎬</span><span class="pm-name">DX Stream</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Vision AI Streaming Pipeline&lt;/strong&gt;&lt;br&gt;• 13 custom GStreamer-based plugins&lt;br&gt;• Real-time RTSP/USB/IP camera connection&lt;br&gt;• Multi-channel simultaneous AI processing"><strong>Vision AI Streaming Pipeline</strong><br>• 13 custom GStreamer-based plugins<br>• Real-time RTSP/USB/IP camera connection<br>• Multi-channel simultaneous AI processing</span></div>
+          <div class="pm-item" data-help-id="pm-model-zoo"><span class="pm-icon">🧬</span><span class="pm-name">Model Zoo</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;340 AI Model Catalog&lt;/strong&gt;&lt;br&gt;• YOLO, ResNet, EfficientNet .dxnn models&lt;br&gt;• Model performance comparison &amp; compatibility info&lt;br&gt;• One-click download &amp; Edge device deployment"><strong>340 AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment</span></div>
+          <div class="pm-item" data-help-id="pm-compiler"><span class="pm-icon">⚙️</span><span class="pm-name">Compiler</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;ONNX → .dxnn Compiler GUI&lt;/strong&gt;&lt;br&gt;• INT8 intelligent quantization for optimal performance&lt;br&gt;• DX-TRON computational graph visualization&lt;br&gt;• Batch compilation &amp; profiling support"><strong>ONNX → .dxnn Compiler GUI</strong><br>• INT8 intelligent quantization for optimal performance<br>• DX-TRON computational graph visualization<br>• Batch compilation & profiling support</span></div>
+          <div class="pm-item" data-help-id="pm-edgeguide"><span class="pm-icon">💰</span><span class="pm-name">EdgeGuide</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Configuration &amp; TCO Analysis&lt;/strong&gt;&lt;br&gt;• Workload-based optimal NPU chip recommendation&lt;br&gt;• Total Cost of Ownership (TCO) comparison report&lt;br&gt;• DX-M1 vs DX-H1 Quattro performance comparison"><strong>NPU Configuration & TCO Analysis</strong><br>• Workload-based optimal NPU chip recommendation<br>• Total Cost of Ownership (TCO) comparison report<br>• DX-M1 vs DX-H1 Quattro performance comparison</span></div>
+          <div class="pm-item" data-help-id="pm-benchmark"><span class="pm-icon">📊</span><span class="pm-name">Benchmark</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;HW Performance Cross Benchmark&lt;/strong&gt;&lt;br&gt;• 6 boards × YOLO series automated testing&lt;br&gt;• FPS, latency, power consumption precision measurement&lt;br&gt;• Markdown auto-report &amp; chart generation"><strong>HW Performance Cross Benchmark</strong><br>• 6 boards × YOLO series automated testing<br>• FPS, latency, power consumption precision measurement<br>• Markdown auto-report & chart generation</span></div>
+          <div class="pm-item" data-help-id="pm-monitor"><span class="pm-icon">📡</span><span class="pm-name">Monitor</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Hardware Real-time Monitoring&lt;/strong&gt;&lt;br&gt;• NPU temperature, voltage, clock real-time charts&lt;br&gt;• CPU/memory/disk system gauges&lt;br&gt;• 5min~1hr history trend analysis"><strong>NPU Hardware Real-time Monitoring</strong><br>• NPU temperature, voltage, clock real-time charts<br>• CPU/memory/disk system gauges<br>• 5min~1hr history trend analysis</span></div>
+          <div class="pm-item" data-help-id="pm-agent-dev"><span class="pm-icon">🤖</span><span class="pm-name">Agent Dev</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Natural-Language NPU App Builder&lt;/strong&gt;&lt;br&gt;• One-line commands auto-generate pipelines &amp; apps&lt;br&gt;• Interactive console · real-time build logs&lt;br&gt;• Offline showcase gallery"><strong>Natural-Language NPU App Builder</strong><br>• One-line commands auto-generate pipelines & apps<br>• Interactive console · real-time build logs<br>• Offline showcase gallery</span></div>
+          <div class="pm-item" data-help-id="pm-sdk-library"><span class="pm-icon">📚</span><span class="pm-name">SDK Library</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DXNN SDK Tech Library&lt;/strong&gt;&lt;br&gt;• 120 official SDK documents curated&lt;br&gt;• 4-shelf classification (Runtime/Compiler/Zoo/Suite)&lt;br&gt;• Real-time search &amp; book-style viewer"><strong>DXNN SDK Tech Library</strong><br>• 120 official SDK documents curated<br>• 4-shelf classification (Runtime/Compiler/Zoo/Suite)<br>• Real-time search & book-style viewer</span></div>
+          <div class="pm-item" data-help-id="pm-about-deepx"><span class="pm-icon">🔬</span><span class="pm-name">About DEEPX</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DEEPX Interactive Encyclopedia&lt;/strong&gt;&lt;br&gt;• DX-M1/DX-M2 chip die hotspot exploration&lt;br&gt;• Click to explore tech, product, vision stories&lt;br&gt;• High-res chip die photos &amp; technical descriptions"><strong>DEEPX Interactive Encyclopedia</strong><br>• DX-M1/DX-M2 chip die hotspot exploration<br>• Click to explore tech, product, vision stories<br>• High-res chip die photos & technical descriptions</span></div>
         </div>
         <div class="platform-values">
-          <span class="pv-badge"><span class="ko">🚀 제로코드 배포</span><span class="en">🚀 Zero-Code Deploy</span><span class="ja">🚀 ゼロコードデプロイ</span><span class="zh-CN">🚀 零代码部署</span><span class="zh-TW">🚀 零程式碼部署</span><span class="es">🚀 Implementación sin código</span></span>
-          <span class="pv-badge"><span class="ko">📦 엔드투엔드 솔루션</span><span class="en">📦 End-to-End Solution</span><span class="ja">📦 エンドツーエンドソリューション</span><span class="zh-CN">📦 端到端解决方案</span><span class="zh-TW">📦 端到端解決方案</span><span class="es">📦 Solución de extremo a extremo</span></span>
+          <span class="pv-badge" data-i18n="🚀 Zero-Code Deploy">🚀 Zero-Code Deploy</span>
+          <span class="pv-badge" data-i18n="📦 End-to-End Solution">📦 End-to-End Solution</span>
           <span class="pv-badge">⚡ 25~100+ TOPS</span>
-          <span class="pv-badge"><span class="ko">🧠 온디바이스 AI</span><span class="en">🧠 On-Device AI</span><span class="ja">🧠 オンデバイスAI</span><span class="zh-CN">🧠 端侧AI</span><span class="zh-TW">🧠 端側AI</span><span class="es">🧠 IA en el dispositivo</span></span>
-          <span class="pv-badge"><span class="ko">🔧 ONNX→DXNN 컴파일</span><span class="en">🔧 ONNX→DXNN Compile</span><span class="ja">🔧 ONNX→DXNNコンパイル</span><span class="zh-CN">🔧 ONNX→DXNN编译</span><span class="zh-TW">🔧 ONNX→DXNN編譯</span><span class="es">🔧 Compilación ONNX→DXNN</span></span>
-          <span class="pv-badge"><span class="ko">🎛️ 시뮬레이션 준비</span><span class="en">🎛️ Simulation Ready</span><span class="ja">🎛️ シミュレーション対応</span><span class="zh-CN">🎛️ 仿真就绪</span><span class="zh-TW">🎛️ 模擬就緒</span><span class="es">🎛️ Listo para simulación</span></span>
-          <span class="pv-badge"><span class="ko">📊 실시간 모니터링</span><span class="en">📊 Real-Time Monitor</span><span class="ja">📊 リアルタイムモニター</span><span class="zh-CN">📊 实时监控</span><span class="zh-TW">📊 即時監控</span><span class="es">📊 Monitor en tiempo real</span></span>
+          <span class="pv-badge" data-i18n="🧠 On-Device AI">🧠 On-Device AI</span>
+          <span class="pv-badge" data-i18n="🔧 ONNX→DXNN Compile">🔧 ONNX→DXNN Compile</span>
+          <span class="pv-badge" data-i18n="🎛️ Simulation Ready">🎛️ Simulation Ready</span>
+          <span class="pv-badge" data-i18n="📊 Real-Time Monitor">📊 Real-Time Monitor</span>
         </div>
         <div class="platform-usecases">
-          <h4 class="pu-title"><span class="ko">🎯 적용 분야</span><span class="en">🎯 Use Cases</span><span class="ja">🎯 適用分野</span><span class="zh-CN">🎯 应用领域</span><span class="zh-TW">🎯 應用領域</span><span class="es">🎯 Casos de uso</span></h4>
+          <h4 class="pu-title" data-i18n="🎯 Use Cases">🎯 Use Cases</h4>
           <div class="pu-tags">
-            <span><span class="ko">스마트팩토리</span><span class="en">Smart Factory</span><span class="ja">スマートファクトリー</span><span class="zh-CN">智能工厂</span><span class="zh-TW">智慧工廠</span><span class="es">Fábrica inteligente</span></span><span><span class="ko">보안·CCTV</span><span class="en">Security·CCTV</span><span class="ja">セキュリティ·CCTV</span><span class="zh-CN">安防·CCTV</span><span class="zh-TW">安全監控·CCTV</span><span class="es">Seguridad·CCTV</span></span><span><span class="ko">자율주행</span><span class="en">Autonomous Driving</span><span class="ja">自動運転</span><span class="zh-CN">自动驾驶</span><span class="zh-TW">自動駕駛</span><span class="es">Conducción autónoma</span></span><span><span class="ko">스마트시티</span><span class="en">Smart City</span><span class="ja">スマートシティ</span><span class="zh-CN">智慧城市</span><span class="zh-TW">智慧城市</span><span class="es">Ciudad inteligente</span></span><span><span class="ko">의료영상</span><span class="en">Medical Imaging</span><span class="ja">医療画像</span><span class="zh-CN">医疗影像</span><span class="zh-TW">醫療影像</span><span class="es">Imágenes médicas</span></span><span><span class="ko">물류·로보틱스</span><span class="en">Logistics·Robotics</span><span class="ja">物流·ロボティクス</span><span class="zh-CN">物流·机器人</span><span class="zh-TW">物流·機器人</span><span class="es">Logística·Robótica</span></span><span><span class="ko">리테일</span><span class="en">Retail</span><span class="ja">リテール</span><span class="zh-CN">零售</span><span class="zh-TW">零售</span><span class="es">Comercio</span></span><span><span class="ko">국방</span><span class="en">Defense</span><span class="ja">防衛</span><span class="zh-CN">国防</span><span class="zh-TW">國防</span><span class="es">Defensa</span></span>
+            <span data-i18n="Smart Factory">Smart Factory</span><span data-i18n="Security·CCTV">Security·CCTV</span><span data-i18n="Autonomous Driving">Autonomous Driving</span><span data-i18n="Smart City">Smart City</span><span data-i18n="Medical Imaging">Medical Imaging</span><span data-i18n="Logistics·Robotics">Logistics·Robotics</span><span data-i18n="Retail">Retail</span><span data-i18n="Defense">Defense</span>
           </div>
           <div class="pu-images">
             <img src="/static/img/about/use-cases/usecase-smart-factory-agv-robot.jpg" alt="Smart Factory" loading="lazy">
@@ -517,20 +452,20 @@
 
       <div class="eco-right">
       <div class="eco-head">
-        <h2>🌐 <span class="ko">DEEPX가 잇는 Physical AI 생태계</span><span class="en">DEEPX Connects the Physical AI Ecosystem</span><span class="ja">DEEPXがつなぐ Physical AI エコシステム</span><span class="zh-CN">DEEPX 连接 Physical AI 生态系统</span><span class="zh-TW">DEEPX 連接 Physical AI 生態系統</span><span class="es">DEEPX conecta el ecosistema de la IA física</span></h2>
-        <p class="eco-sub"><span class="ko">개방적이고 확장 가능한 엣지 AI 플랫폼</span><span class="en">An open, scalable edge-AI platform</span><span class="ja">オープンで拡張可能なエッジAIプラットフォーム</span><span class="zh-CN">开放、可扩展的边缘 AI 平台</span><span class="zh-TW">開放、可擴展的邊緣 AI 平台</span><span class="es">Una plataforma de IA en el edge, abierta y escalable</span></p>
-        <p class="eco-intro"><span class="ko">초저전력 NPU로 소프트웨어(AI 모델)와 하드웨어 생태계를 하나로 연결.</span><span class="en">An ultra-low-power NPU linking the software and hardware ecosystems into one.</span><span class="ja">超低消費電力NPUでソフトとハードのエコシステムを一つに接続。</span><span class="zh-CN">以超低功耗 NPU 连接软件与硬件生态。</span><span class="zh-TW">以超低功耗 NPU 連接軟體與硬體生態。</span><span class="es">Una NPU de ultrabajo consumo que une los ecosistemas de software y hardware.</span></p>
+        <h2>🌐 <span data-i18n="DEEPX Connects the Physical AI Ecosystem">DEEPX Connects the Physical AI Ecosystem</span></h2>
+        <p class="eco-sub" data-i18n="An open, scalable edge-AI platform">An open, scalable edge-AI platform</p>
+        <p class="eco-intro" data-i18n="An ultra-low-power NPU linking the software and hardware ecosystems into one.">An ultra-low-power NPU linking the software and hardware ecosystems into one.</p>
       </div>
 
       <div class="eco-pillars">
         <section class="eco-pillar">
-          <h3 class="eco-pillar-title"><span class="ko">① AI 모델 생태계 <em>(소프트웨어)</em></span><span class="en">① AI Model Ecosystem <em>(Software)</em></span><span class="ja">① AIモデルエコシステム <em>(ソフトウェア)</em></span><span class="zh-CN">① AI 模型生态系统 <em>(软件)</em></span><span class="zh-TW">① AI 模型生態系統 <em>(軟體)</em></span><span class="es">① Ecosistema de modelos de IA <em>(Software)</em></span></h3>
+          <h3 class="eco-pillar-title" data-i18n-html="① AI Model Ecosystem &lt;em&gt;(Software)&lt;/em&gt;">① AI Model Ecosystem <em>(Software)</em></h3>
 
           <div class="eco-partner">
             <div class="eco-partner-name">Ultralytics — YOLO</div>
-            <p class="eco-partner-desc"><span class="ko">비전 AI 글로벌 리더. <em class="hl">YOLO</em>를 <em class="hl">명령 한 줄</em>로 DEEPX NPU에 배포.</span><span class="en">Vision-AI leader — deploy <em class="hl">YOLO</em> to DEEPX NPUs with <em class="hl">one command</em>.</span><span class="ja">ビジョンAIの世界的リーダー。<em class="hl">YOLO</em>を<em class="hl">1コマンド</em>でDEEPX NPUへ。</span><span class="zh-CN">视觉 AI 全球领导者，<em class="hl">一条命令</em>将 <em class="hl">YOLO</em> 部署到 DEEPX NPU。</span><span class="zh-TW">視覺 AI 全球領導者，<em class="hl">一條命令</em>將 <em class="hl">YOLO</em> 部署到 DEEPX NPU。</span><span class="es">Líder en IA de visión: despliega <em class="hl">YOLO</em> en NPU DEEPX con <em class="hl">un comando</em>.</span></p>
+            <p class="eco-partner-desc" data-i18n-html="Vision-AI leader — deploy &lt;em class=&quot;hl&quot;&gt;YOLO&lt;/em&gt; to DEEPX NPUs with &lt;em class=&quot;hl&quot;&gt;one command&lt;/em&gt;.">Vision-AI leader — deploy <em class="hl">YOLO</em> to DEEPX NPUs with <em class="hl">one command</em>.</p>
             <div class="eco-links">
-              <a class="eco-link" href="https://www.ultralytics.com/blog/ultralytics-yolo-partners-with-deepx-edge-ai-inference-for-physical-ai" target="_blank" rel="noopener noreferrer">🔗 <span class="ko">공식 사이트</span><span class="en">Official site</span><span class="ja">公式サイト</span><span class="zh-CN">官方网站</span><span class="zh-TW">官方網站</span><span class="es">Sitio oficial</span></a>
+              <a class="eco-link" href="https://www.ultralytics.com/blog/ultralytics-yolo-partners-with-deepx-edge-ai-inference-for-physical-ai" target="_blank" rel="noopener noreferrer">🔗 <span data-i18n="Official site">Official site</span></a>
               <a class="eco-link" href="https://docs.ultralytics.com/integrations/deepx" target="_blank" rel="noopener noreferrer">📄 Docs</a>
               <a class="eco-link" href="https://github.com/ultralytics/ultralytics" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
             </div>
@@ -538,28 +473,28 @@
 
           <div class="eco-partner">
             <div class="eco-partner-name">Baidu 百度 · PaddlePaddle 飞桨</div>
-            <p class="eco-partner-desc"><span class="ko"><em class="hl">4억+</em> 개발자의 산업용 프레임워크. DEEPX NPU에서 구동.</span><span class="en">Industrial framework with <em class="hl">400M+</em> developers, running on DEEPX NPUs.</span><span class="ja"><em class="hl">4億人超</em>の産業向けフレームワーク。DEEPX NPUで動作。</span><span class="zh-CN">拥有 <em class="hl">4 亿+</em> 开发者的工业框架，运行于 DEEPX NPU。</span><span class="zh-TW">擁有 <em class="hl">4 億+</em> 開發者的工業框架，運行於 DEEPX NPU。</span><span class="es">Framework industrial con <em class="hl">+400M</em> de desarrolladores, sobre NPU DEEPX.</span></p>
+            <p class="eco-partner-desc" data-i18n-html="Industrial framework with &lt;em class=&quot;hl&quot;&gt;400M+&lt;/em&gt; developers, running on DEEPX NPUs.">Industrial framework with <em class="hl">400M+</em> developers, running on DEEPX NPUs.</p>
           </div>
         </section>
 
         <section class="eco-pillar eco-pillar--npu">
-          <h3 class="eco-pillar-title"><span class="ko">② DEEPX NPU <em>(중심)</em></span><span class="en">② DEEPX NPU <em>(Core)</em></span><span class="ja">② DEEPX NPU <em>(中核)</em></span><span class="zh-CN">② DEEPX NPU <em>(核心)</em></span><span class="zh-TW">② DEEPX NPU <em>(核心)</em></span><span class="es">② DEEPX NPU <em>(Núcleo)</em></span></h3>
-          <p class="eco-partner-desc"><span class="ko"><em class="hl">5W</em> 초저전력 · 엣지 최적화. SDK · 컴파일러 · 툴로 모델을 하드웨어로.</span><span class="en"><em class="hl">5W</em>, edge-optimized; SDK, compiler and tools bridge models to hardware.</span><span class="ja"><em class="hl">5W</em>・エッジ最適化。SDK・コンパイラ・ツールで実機へ橋渡し。</span><span class="zh-CN"><em class="hl">5W</em> 边缘优化；SDK、编译器与工具将模型桥接到硬件。</span><span class="zh-TW"><em class="hl">5W</em> 邊緣最佳化；SDK、編譯器與工具將模型橋接到硬體。</span><span class="es"><em class="hl">5W</em> optimizado para edge; SDK, compilador y herramientas al hardware.</span></p>
+          <h3 class="eco-pillar-title" data-i18n-html="② DEEPX NPU &lt;em&gt;(Core)&lt;/em&gt;">② DEEPX NPU <em>(Core)</em></h3>
+          <p class="eco-partner-desc" data-i18n-html="&lt;em class=&quot;hl&quot;&gt;5W&lt;/em&gt;, edge-optimized; SDK, compiler and tools bridge models to hardware."><em class="hl">5W</em>, edge-optimized; SDK, compiler and tools bridge models to hardware.</p>
         </section>
 
         <section class="eco-pillar">
-          <h3 class="eco-pillar-title"><span class="ko">③ 개발자 하드웨어 생태계 <em>(하드웨어)</em></span><span class="en">③ Developer Hardware Ecosystem <em>(Hardware)</em></span><span class="ja">③ 開発者ハードウェアエコシステム <em>(ハードウェア)</em></span><span class="zh-CN">③ 开发者硬件生态系统 <em>(硬件)</em></span><span class="zh-TW">③ 開發者硬體生態系統 <em>(硬體)</em></span><span class="es">③ Ecosistema de hardware para desarrolladores <em>(Hardware)</em></span></h3>
+          <h3 class="eco-pillar-title" data-i18n-html="③ Developer Hardware Ecosystem &lt;em&gt;(Hardware)&lt;/em&gt;">③ Developer Hardware Ecosystem <em>(Hardware)</em></h3>
           <div class="eco-partner">
             <div class="eco-partner-name">Raspberry Pi + DEEPX AI HAT</div>
-            <p class="eco-partner-desc"><span class="ko"><em class="hl">7,300만+</em> 판매. DEEPX AI HAT으로 라즈베리파이5에서 최대 <em class="hl">25 TOPS</em>.</span><span class="en"><em class="hl">73M+</em> sold — the DEEPX AI HAT brings up to <em class="hl">25 TOPS</em> to Raspberry Pi 5.</span><span class="ja"><em class="hl">7,300万台超</em>。DEEPX AI HATでRaspberry Pi 5に最大 <em class="hl">25 TOPS</em>。</span><span class="zh-CN">销量超 <em class="hl">7300 万</em>；DEEPX AI HAT 为树莓派 5 带来最高 <em class="hl">25 TOPS</em>。</span><span class="zh-TW">銷量超 <em class="hl">7300 萬</em>；DEEPX AI HAT 為樹莓派 5 帶來最高 <em class="hl">25 TOPS</em>。</span><span class="es"><em class="hl">+73M</em> vendidas; el DEEPX AI HAT lleva hasta <em class="hl">25 TOPS</em> a la Raspberry Pi 5.</span></p>
+            <p class="eco-partner-desc" data-i18n-html="&lt;em class=&quot;hl&quot;&gt;73M+&lt;/em&gt; sold — the DEEPX AI HAT brings up to &lt;em class=&quot;hl&quot;&gt;25 TOPS&lt;/em&gt; to Raspberry Pi 5."><em class="hl">73M+</em> sold — the DEEPX AI HAT brings up to <em class="hl">25 TOPS</em> to Raspberry Pi 5.</p>
           </div>
         </section>
       </div>
 
       <div class="eco-apps">
-        <h4 class="eco-apps-title"><span class="ko">🎯 Physical AI 응용 분야</span><span class="en">🎯 Physical AI Applications</span><span class="ja">🎯 Physical AI 応用分野</span><span class="zh-CN">🎯 Physical AI 应用领域</span><span class="zh-TW">🎯 Physical AI 應用領域</span><span class="es">🎯 Aplicaciones de IA física</span></h4>
+        <h4 class="eco-apps-title" data-i18n="🎯 Physical AI Applications">🎯 Physical AI Applications</h4>
         <div class="eco-app-tags">
-          <span><span class="ko">스마트 카메라</span><span class="en">Smart Cameras</span><span class="ja">スマートカメラ</span><span class="zh-CN">智能摄像头</span><span class="zh-TW">智慧攝影機</span><span class="es">Cámaras inteligentes</span></span><span><span class="ko">로보틱스</span><span class="en">Robotics</span><span class="ja">ロボティクス</span><span class="zh-CN">机器人</span><span class="zh-TW">機器人</span><span class="es">Robótica</span></span><span><span class="ko">스마트 제조</span><span class="en">Smart Manufacturing</span><span class="ja">スマート製造</span><span class="zh-CN">智能制造</span><span class="zh-TW">智慧製造</span><span class="es">Fabricación inteligente</span></span><span><span class="ko">스마트 시티</span><span class="en">Smart Cities</span><span class="ja">スマートシティ</span><span class="zh-CN">智慧城市</span><span class="zh-TW">智慧城市</span><span class="es">Ciudades inteligentes</span></span><span><span class="ko">드론·물류</span><span class="en">Drones &amp; Logistics</span><span class="ja">ドローン・物流</span><span class="zh-CN">无人机·物流</span><span class="zh-TW">無人機·物流</span><span class="es">Drones y logística</span></span><span><span class="ko">헬스케어</span><span class="en">Healthcare</span><span class="ja">ヘルスケア</span><span class="zh-CN">医疗健康</span><span class="zh-TW">醫療健康</span><span class="es">Salud</span></span>
+          <span data-i18n="Smart Cameras">Smart Cameras</span><span data-i18n="Robotics">Robotics</span><span data-i18n="Smart Manufacturing">Smart Manufacturing</span><span data-i18n="Smart Cities">Smart Cities</span><span data-i18n="Drones &amp; Logistics">Drones &amp; Logistics</span><span data-i18n="Healthcare">Healthcare</span>
         </div>
       </div>
       </div>
@@ -630,8 +565,632 @@
     'Ctrl+F': { ko:'Ctrl+F', ja:'Ctrl+F', es:'Ctrl+F', 'zh-CN':'Ctrl+F', 'zh-TW':'Ctrl+F' },
     'Close': { ko:'닫기', ja:'閉じる', es:'Cerrar', 'zh-CN':'关闭', 'zh-TW':'關閉' },
     'Launcher gateway': { ko:'Launcher gateway', ja:'Launcher gateway', es:'Puerta de enlace Launcher', 'zh-CN':'Launcher 网关', 'zh-TW':'Launcher 閘道' },
-    'DEEPX resources': { ko:'DEEPX 리소스', ja:'DEEPXリソース', es:'Recursos DEEPX', 'zh-CN':'DEEPX 资源', 'zh-TW':'DEEPX 資源' }
-  };
+    'DEEPX resources': { ko:'DEEPX 리소스', ja:'DEEPXリソース', es:'Recursos DEEPX', 'zh-CN':'DEEPX 资源', 'zh-TW':'DEEPX 資源' },
+  // ── 마크업 lang-span 에서 옮겨온 항목 ──
+  '13 custom GStreamer plugins': {
+    ko: 'GStreamer 기반 13개 커스텀 플러그인',
+    ja: 'GStreamer ベース 13 個のカスタムプラグイン',
+    'zh-CN': '基于 GStreamer 的 13 个自定义插件',
+    'zh-TW': '基於 GStreamer 的 13 個自訂外掛程式',
+    es: '13 plugins GStreamer personalizados',
+  },
+  '270+ pre-compiled .dxnn models': {
+    ko: '270+ .dxnn 사전 컴파일 모델',
+    ja: '270+ 事前コンパイル済み .dxnn モデル',
+    'zh-CN': '270+ 个预编译 .dxnn 模型',
+    'zh-TW': '270+ 個預編譯 .dxnn 模型',
+    es: 'Más de 270 modelos .dxnn precompilados',
+  },
+  '340 AI model catalog': {
+    ko: '340개 AI 모델 카탈로그',
+    ja: '340 AI モデルカタログ',
+    'zh-CN': '340 个 AI 模型目录',
+    'zh-TW': '340 個 AI 模型目錄',
+    es: 'Catálogo de 340 modelos de IA',
+  },
+  '5min~1hr history analysis': {
+    ko: '5분~1시간 히스토리 분석',
+    ja: '5分～1時間履歴分析',
+    'zh-CN': '5分钟～1小时历史分析',
+    'zh-TW': '5分鐘～1小時歷史分析',
+    es: 'Análisis histórico de 5 min~1 h',
+  },
+  '6 boards × YOLO series cross-testing': {
+    ko: '6개 보드 × YOLO 시리즈 크로스 테스트',
+    ja: '6 ボード × YOLO シリーズクロステスト',
+    'zh-CN': '6 块板 × YOLO 系列交叉测试',
+    'zh-TW': '6 塊板 × YOLO 系列交叉測試',
+    es: '6 placas × pruebas cruzadas de la serie YOLO',
+  },
+  '8 Modules · All-in-One Edge AI Platform': {
+    ko: '8개 모듈 · 올인원 Edge AI 플랫폼',
+    ja: '8 モジュール · オールインワン Edge AI プラットフォーム',
+    'zh-CN': '8 个模块 · 一体化 Edge AI 平台',
+    'zh-TW': '8 個模組 · 全方位 Edge AI 平台',
+    es: '8 módulos · Plataforma Edge AI todo en uno',
+  },
+  '<em class="hl">5W</em>, edge-optimized; SDK, compiler and tools bridge models to hardware.': {
+    ko: '<em class="hl">5W</em> 초저전력 · 엣지 최적화. SDK · 컴파일러 · 툴로 모델을 하드웨어로.',
+    ja: '<em class="hl">5W</em>・エッジ最適化。SDK・コンパイラ・ツールで実機へ橋渡し。',
+    'zh-CN': '<em class="hl">5W</em> 边缘优化；SDK、编译器与工具将模型桥接到硬件。',
+    'zh-TW': '<em class="hl">5W</em> 邊緣最佳化；SDK、編譯器與工具將模型橋接到硬體。',
+    es: '<em class="hl">5W</em> optimizado para edge; SDK, compilador y herramientas al hardware.',
+  },
+  '<em class="hl">73M+</em> sold — the DEEPX AI HAT brings up to <em class="hl">25 TOPS</em> to Raspberry Pi 5.': {
+    ko: '<em class="hl">7,300만+</em> 판매. DEEPX AI HAT으로 라즈베리파이5에서 최대 <em class="hl">25 TOPS</em>.',
+    ja: '<em class="hl">7,300万台超</em>。DEEPX AI HATでRaspberry Pi 5に最大 <em class="hl">25 TOPS</em>。',
+    'zh-CN': '销量超 <em class="hl">7300 万</em>；DEEPX AI HAT 为树莓派 5 带来最高 <em class="hl">25 TOPS</em>。',
+    'zh-TW': '銷量超 <em class="hl">7300 萬</em>；DEEPX AI HAT 為樹莓派 5 帶來最高 <em class="hl">25 TOPS</em>。',
+    es: '<em class="hl">+73M</em> vendidas; el DEEPX AI HAT lleva hasta <em class="hl">25 TOPS</em> a la Raspberry Pi 5.',
+  },
+  '<strong>340 AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment': {
+    ko: '<strong>340개 AI 모델 카탈로그</strong><br>• YOLO·ResNet·EfficientNet 등 .dxnn 제공<br>• 모델 성능 비교표 및 호환성 정보<br>• 원클릭 다운로드 & Edge 디바이스 배포',
+    ja: '<strong>340個AIモデルカタログ</strong><br>• YOLO・ResNet・EfficientNet等の.dxnnモデル<br>• モデル性能比較表と互換性情報<br>• ワンクリックダウンロード＆Edgeデバイスデプロイ',
+    'zh-CN': '<strong>340个AI模型目录</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型性能对比表及兼容性信息<br>• 一键下载与Edge设备部署',
+    'zh-TW': '<strong>340個AI模型目錄</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型效能比較表及相容性資訊<br>• 一鍵下載與Edge裝置部署',
+    es: '<strong>Catálogo de 340 modelos de IA</strong><br>• Modelos .dxnn YOLO, ResNet, EfficientNet<br>• Comparativa de rendimiento e información de compatibilidad<br>• Descarga con un clic e implementación en dispositivos Edge',
+  },
+  '<strong>DEEPX Interactive Encyclopedia</strong><br>• DX-M1/DX-M2 chip die hotspot exploration<br>• Click to explore tech, product, vision stories<br>• High-res chip die photos & technical descriptions': {
+    ko: '<strong>DEEPX 인터랙티브 백과사전</strong><br>• DX-M1/DX-M2 칩 다이 핫스팟 탐험<br>• 클릭으로 기술·제품·비전 스토리 탐색<br>• 고해상도 칩 다이 사진 & 기술 설명',
+    ja: '<strong>DEEPXインタラクティブ百科事典</strong><br>• DX-M1/DX-M2チップダイのホットスポット探索<br>• クリックで技術・製品・ビジョンストーリーを閲覧<br>• 高解像度チップダイ写真＆技術解説',
+    'zh-CN': '<strong>DEEPX交互式百科全书</strong><br>• DX-M1/DX-M2芯片裸片热点探索<br>• 点击探索技术·产品·愿景故事<br>• 高分辨率芯片裸片照片与技术说明',
+    'zh-TW': '<strong>DEEPX互動式百科全書</strong><br>• DX-M1/DX-M2晶片裸晶熱點探索<br>• 點擊探索技術·產品·願景故事<br>• 高解析度晶片裸晶照片與技術說明',
+    es: '<strong>Enciclopedia interactiva DEEPX</strong><br>• Exploración de puntos clave del die de los chips DX-M1/DX-M2<br>• Haga clic para explorar historias de tecnología, productos y visión<br>• Fotos de alta resolución del die y descripciones técnicas',
+  },
+  '<strong>DXNN SDK Tech Library</strong><br>• 120 official SDK documents curated<br>• 4-shelf classification (Runtime/Compiler/Zoo/Suite)<br>• Real-time search & book-style viewer': {
+    ko: '<strong>DXNN SDK 기술 도서관</strong><br>• 120개 공식 SDK 문서 큐레이션 수록<br>• 4개 책장 분류 체계 (Runtime/Compiler/Zoo/Suite)<br>• 실시간 검색 & 책 형태 뷰어',
+    ja: '<strong>DXNN SDK技術ライブラリ</strong><br>• 120件の公式SDKドキュメントを収録<br>• 4つの本棚分類体系（Runtime/Compiler/Zoo/Suite）<br>• リアルタイム検索＆書籍形式ビューア',
+    'zh-CN': '<strong>DXNN SDK技术资料库</strong><br>• 收录120份官方SDK文档<br>• 4个书架分类体系（Runtime/Compiler/Zoo/Suite）<br>• 实时搜索与书籍式阅读器',
+    'zh-TW': '<strong>DXNN SDK技術資料庫</strong><br>• 收錄120份官方SDK文件<br>• 4個書架分類體系（Runtime/Compiler/Zoo/Suite）<br>• 即時搜尋與書籍式閱讀器',
+    es: '<strong>Biblioteca técnica del SDK DXNN</strong><br>• 120 documentos oficiales del SDK seleccionados<br>• Clasificación en 4 estantes (Runtime/Compiler/Zoo/Suite)<br>• Búsqueda en tiempo real y visor estilo libro',
+  },
+  '<strong>HW Performance Cross Benchmark</strong><br>• 6 boards × YOLO series automated testing<br>• FPS, latency, power consumption precision measurement<br>• Markdown auto-report & chart generation': {
+    ko: '<strong>HW 성능 크로스 벤치마크</strong><br>• 6개 보드 × YOLO 시리즈 자동 테스트<br>• FPS·지연시간·전력 소비 정밀 측정<br>• Markdown 자동 리포트 & 차트 생성',
+    ja: '<strong>HW性能クロスベンチマーク</strong><br>• 6ボード × YOLOシリーズ自動テスト<br>• FPS・レイテンシ・消費電力の精密測定<br>• Markdownレポート＆チャート自動生成',
+    'zh-CN': '<strong>HW性能交叉基准测试</strong><br>• 6块开发板×YOLO系列自动测试<br>• FPS·延迟·功耗精确测量<br>• Markdown自动报告与图表生成',
+    'zh-TW': '<strong>HW效能交叉基準測試</strong><br>• 6塊開發板×YOLO系列自動測試<br>• FPS·延遲·功耗精確量測<br>• Markdown自動報告與圖表產生',
+    es: '<strong>Benchmark cruzado de rendimiento HW</strong><br>• Pruebas automatizadas de 6 placas × serie YOLO<br>• Medición precisa de FPS, latencia y consumo energético<br>• Informe Markdown automático y generación de gráficos',
+  },
+  '<strong>NPU Configuration & TCO Analysis</strong><br>• Workload-based optimal NPU chip recommendation<br>• Total Cost of Ownership (TCO) comparison report<br>• DX-M1 vs DX-H1 Quattro performance comparison': {
+    ko: '<strong>NPU 구성 & TCO 분석 도구</strong><br>• 워크로드 기반 최적 NPU 칩 자동 추천<br>• 총 소유 비용(TCO) 비교 분석 리포트<br>• DX-M1 vs DX-H1 Quattro 성능 비교',
+    ja: '<strong>NPU構成＆TCO分析ツール</strong><br>• ワークロードに基づく最適NPUチップ自動推薦<br>• 総所有コスト（TCO）比較分析レポート<br>• DX-M1 vs DX-H1 Quattro性能比較',
+    'zh-CN': '<strong>NPU配置与TCO分析工具</strong><br>• 基于工作负载的最优NPU芯片自动推荐<br>• 总拥有成本(TCO)对比分析报告<br>• DX-M1 vs DX-H1 Quattro性能对比',
+    'zh-TW': '<strong>NPU配置與TCO分析工具</strong><br>• 基於工作負載的最佳NPU晶片自動推薦<br>• 總擁有成本(TCO)比較分析報告<br>• DX-M1 vs DX-H1 Quattro效能比較',
+    es: '<strong>Configuración NPU y análisis TCO</strong><br>• Recomendación automática del chip NPU óptimo según la carga de trabajo<br>• Informe comparativo del costo total de propiedad (TCO)<br>• Comparación de rendimiento DX-M1 vs DX-H1 Quattro',
+  },
+  '<strong>NPU Hardware Real-time Monitoring</strong><br>• NPU temperature, voltage, clock real-time charts<br>• CPU/memory/disk system gauges<br>• 5min~1hr history trend analysis': {
+    ko: '<strong>NPU 하드웨어 실시간 모니터링</strong><br>• NPU 온도·전압·클럭 실시간 차트<br>• CPU/메모리/디스크 시스템 게이지<br>• 5분~1시간 히스토리 추세 분석',
+    ja: '<strong>NPUハードウェアリアルタイムモニタリング</strong><br>• NPU温度・電圧・クロックのリアルタイムチャート<br>• CPU/メモリ/ディスクのシステムゲージ<br>• 5分～1時間の履歴トレンド分析',
+    'zh-CN': '<strong>NPU硬件实时监控</strong><br>• NPU温度·电压·时钟实时图表<br>• CPU/内存/磁盘系统仪表<br>• 5分钟～1小时历史趋势分析',
+    'zh-TW': '<strong>NPU硬體即時監控</strong><br>• NPU溫度·電壓·時脈即時圖表<br>• CPU/記憶體/磁碟系統儀表<br>• 5分鐘～1小時歷史趨勢分析',
+    es: '<strong>Monitoreo de hardware NPU en tiempo real</strong><br>• Gráficos en tiempo real de temperatura, voltaje y reloj NPU<br>• Indicadores del sistema de CPU/memoria/disco<br>• Análisis de tendencias históricas de 5 min~1 h',
+  },
+  '<strong>NPU Real-time Inference Engine</strong><br>• Run 340+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard': {
+    ko: '<strong>NPU 실시간 추론 엔진</strong><br>• 340+ 사전 컴파일된 AI 모델 즉시 실행<br>• C++/Python 추론 코드 템플릿 자동 생성<br>• FPS, 지연시간, 메모리 실시간 대시보드',
+    ja: '<strong>NPU リアルタイム推論エンジン</strong><br>• 340以上のプリコンパイル済みAIモデルを即時実行<br>• C++/Python推論コードテンプレート自動生成<br>• FPS・レイテンシ・メモリのリアルタイムダッシュボード',
+    'zh-CN': '<strong>NPU 实时推理引擎</strong><br>• 即时运行340+预编译AI模型<br>• 自动生成C++/Python推理代码模板<br>• FPS、延迟、内存实时仪表盘',
+    'zh-TW': '<strong>NPU 即時推論引擎</strong><br>• 即時執行340+預編譯AI模型<br>• 自動產生C++/Python推論程式碼範本<br>• FPS、延遲、記憶體即時儀表板',
+    es: '<strong>Motor de inferencia NPU en tiempo real</strong><br>• Ejecutar más de 340 modelos de IA precompilados al instante<br>• Generar automáticamente plantillas de código de inferencia C++/Python<br>• Panel en tiempo real de FPS, latencia y memoria',
+  },
+  '<strong>Natural-Language NPU App Builder</strong><br>• One-line commands auto-generate pipelines & apps<br>• Interactive console · real-time build logs<br>• Offline showcase gallery': {
+    ko: '<strong>자연어 NPU 앱 빌더</strong><br>• 명령 한 줄로 파이프라인·앱 자동 생성<br>• 대화형 콘솔 · 실시간 빌드 로그<br>• 오프라인 쇼케이스 갤러리',
+    ja: '<strong>自然言語NPUアプリビルダー</strong><br>• 1行のコマンドでパイプライン・アプリ自動生成<br>• 対話型コンソール · リアルタイムビルドログ<br>• オフラインショーケースギャラリー',
+    'zh-CN': '<strong>自然语言NPU应用构建器</strong><br>• 一行命令自动生成流水线与应用<br>• 交互式控制台 · 实时构建日志<br>• 离线展示库',
+    'zh-TW': '<strong>自然語言NPU應用建構器</strong><br>• 一行命令自動產生管線與應用<br>• 互動式主控台 · 即時建構日誌<br>• 離線展示庫',
+    es: '<strong>Constructor de apps NPU en lenguaje natural</strong><br>• Comandos de una línea generan pipelines y apps automáticamente<br>• Consola interactiva · registros de compilación en tiempo real<br>• Galería de ejemplos sin conexión',
+  },
+  '<strong>ONNX → .dxnn Compiler GUI</strong><br>• INT8 intelligent quantization for optimal performance<br>• DX-TRON computational graph visualization<br>• Batch compilation & profiling support': {
+    ko: '<strong>ONNX → .dxnn 컴파일러 GUI</strong><br>• INT8 지능형 양자화로 최적 성능 달성<br>• DX-TRON 연산 그래프 시각화 도구<br>• 배치 컴파일 및 프로파일링 지원',
+    ja: '<strong>ONNX → .dxnn コンパイラ GUI</strong><br>• INT8インテリジェント量子化で最適性能を実現<br>• DX-TRON演算グラフ可視化ツール<br>• バッチコンパイル＆プロファイリング対応',
+    'zh-CN': '<strong>ONNX → .dxnn 编译器 GUI</strong><br>• INT8智能量化实现最优性能<br>• DX-TRON计算图可视化工具<br>• 批量编译与性能分析支持',
+    'zh-TW': '<strong>ONNX → .dxnn 編譯器 GUI</strong><br>• INT8智慧量化實現最佳效能<br>• DX-TRON運算圖視覺化工具<br>• 批次編譯與效能分析支援',
+    es: '<strong>GUI del compilador ONNX → .dxnn</strong><br>• Cuantización inteligente INT8 para un rendimiento óptimo<br>• Visualización del grafo computacional DX-TRON<br>• Compilación por lotes y soporte de perfilado',
+  },
+  '<strong>Vision AI Streaming Pipeline</strong><br>• 13 custom GStreamer-based plugins<br>• Real-time RTSP/USB/IP camera connection<br>• Multi-channel simultaneous AI processing': {
+    ko: '<strong>비전 AI 스트리밍 파이프라인</strong><br>• GStreamer 기반 13개 커스텀 플러그인 제공<br>• RTSP/USB/IP 카메라 실시간 영상 연결<br>• 다채널 멀티스트림 동시 AI 처리',
+    ja: '<strong>ビジョンAIストリーミングパイプライン</strong><br>• GStreamerベース13個のカスタムプラグイン<br>• RTSP/USB/IPカメラのリアルタイム映像接続<br>• マルチチャンネル同時AI処理',
+    'zh-CN': '<strong>视觉AI流式管道</strong><br>• 基于GStreamer的13个定制插件<br>• RTSP/USB/IP摄像头实时视频连接<br>• 多通道多流同时AI处理',
+    'zh-TW': '<strong>視覺AI串流管線</strong><br>• 基於GStreamer的13個客製化外掛<br>• RTSP/USB/IP攝影機即時影像連接<br>• 多通道多串流同時AI處理',
+    es: '<strong>Pipeline de streaming de IA visual</strong><br>• 13 plugins personalizados basados en GStreamer<br>• Conexión en tiempo real de cámara RTSP/USB/IP<br>• Procesamiento de IA simultáneo multicanal',
+  },
+  'ALL SYSTEMS ONLINE': {
+    ko: '전체 시스템 가동',
+    ja: '全システム起動完了',
+    'zh-CN': '所有系统已上线',
+    'zh-TW': '所有系統已上線',
+    es: 'TODOS LOS SISTEMAS EN LÍNEA',
+  },
+  'All-in-One Edge AI Development Platform': {
+    ko: '올인원 Edge AI 개발 플랫폼',
+    ja: 'オールインワン Edge AI 開発プラットフォーム',
+    'zh-CN': '一站式 Edge AI 开发平台',
+    'zh-TW': '一站式 Edge AI 開發平台',
+    es: 'Plataforma de desarrollo Edge AI todo en uno',
+  },
+  'An open, scalable edge-AI platform': {
+    ko: '개방적이고 확장 가능한 엣지 AI 플랫폼',
+    ja: 'オープンで拡張可能なエッジAIプラットフォーム',
+    'zh-CN': '开放、可扩展的边缘 AI 平台',
+    'zh-TW': '開放、可擴展的邊緣 AI 平台',
+    es: 'Una plataforma de IA en el edge, abierta y escalable',
+  },
+  'An ultra-low-power NPU linking the software and hardware ecosystems into one.': {
+    ko: '초저전력 NPU로 소프트웨어(AI 모델)와 하드웨어 생태계를 하나로 연결.',
+    ja: '超低消費電力NPUでソフトとハードのエコシステムを一つに接続。',
+    'zh-CN': '以超低功耗 NPU 连接软件与硬件生态。',
+    'zh-TW': '以超低功耗 NPU 連接軟體與硬體生態。',
+    es: 'Una NPU de ultrabajo consumo que une los ecosistemas de software y hardware.',
+  },
+  'Auto report generation (Markdown)': {
+    ko: '자동 리포트 생성 (Markdown)',
+    ja: '自動レポート生成 (Markdown)',
+    'zh-CN': '自动报告生成 (Markdown)',
+    'zh-TW': '自動報告產生 (Markdown)',
+    es: 'Generación automática de informes (Markdown)',
+  },
+  'Auto-generate C++/Python code templates': {
+    ko: 'C++ / Python 코드 템플릿 자동 생성',
+    ja: 'C++ / Python コードテンプレートを自動生成',
+    'zh-CN': '自动生成 C++ / Python 代码模板',
+    'zh-TW': '自動產生 C++ / Python 程式碼範本',
+    es: 'Generar automáticamente plantillas de código C++/Python',
+  },
+  'Automatically start interactive tutorials when launching apps': {
+    ko: '앱 실행 시 인터랙티브 튜토리얼을 자동으로 시작합니다',
+    ja: 'アプリ起動時にインタラクティブチュートリアルを自動的に開始します',
+    'zh-CN': '启动应用时自动开始交互式教程',
+    'zh-TW': '啟動應用程式時自動開始互動式教學',
+    es: 'Inicia automáticamente tutoriales interactivos al abrir aplicaciones',
+  },
+  'Autonomous Driving': {
+    ko: '자율주행',
+    ja: '自動運転',
+    'zh-CN': '自动驾驶',
+    'zh-TW': '自動駕駛',
+    es: 'Conducción autónoma',
+  },
+  'Build NPU apps with natural-language commands': {
+    ko: '자연어 명령으로 NPU 앱 빌드',
+    ja: '自然言語コマンドで NPU アプリをビルド',
+    'zh-CN': '用自然语言命令构建 NPU 应用',
+    'zh-TW': '用自然語言命令建構 NPU 應用',
+    es: 'Crea apps NPU con comandos en lenguaje natural',
+  },
+  'Buy': {
+    ko: '구매',
+    ja: '購入',
+    'zh-CN': '购买',
+    'zh-TW': '購買',
+    es: 'Comprar',
+  },
+  'CPU / memory / disk gauges': {
+    ko: 'CPU / 메모리 / 디스크 게이지',
+    ja: 'CPU / メモリ / ディスクゲージ',
+    'zh-CN': 'CPU / 内存 / 磁盘仪表',
+    'zh-TW': 'CPU / 記憶體 / 磁碟儀表',
+    es: 'Indicadores de CPU / memoria / disco',
+  },
+  'Click to skip': {
+    ko: '클릭하여 건너뛰기',
+    ja: 'クリックしてスキップ',
+    'zh-CN': '点击跳过',
+    'zh-TW': '點擊跳過',
+    es: 'Clic para omitir',
+  },
+  'DEEPX Connects the Physical AI Ecosystem': {
+    ko: 'DEEPX가 잇는 Physical AI 생태계',
+    ja: 'DEEPXがつなぐ Physical AI エコシステム',
+    'zh-CN': 'DEEPX 连接 Physical AI 生态系统',
+    'zh-TW': 'DEEPX 連接 Physical AI 生態系統',
+    es: 'DEEPX conecta el ecosistema de la IA física',
+  },
+  'DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.': {
+    ko: 'DX AI Studio는 DEEPX NPU를 활용한 Edge AI 개발을 위한 올인원 데스크톱 플랫폼입니다. 8개의 전문 모듈이 하나의 통합 환경에서 동작합니다.',
+    ja: 'DX AI Studioは、DEEPX NPUを活用したEdge AI開発のためのオールインワンデスクトッププラットフォームです。8つの専門モジュールが統合環境で動作します。',
+    'zh-CN': 'DX AI Studio 是一个利用 DEEPX NPU 的 Edge AI 开发一站式桌面平台。8个专业模块在统一环境中协同工作。',
+    'zh-TW': 'DX AI Studio 是一個利用 DEEPX NPU 的 Edge AI 開發一站式桌面平台。8個專業模組在統一環境中協同運作。',
+    es: 'DX AI Studio es una plataforma de escritorio todo en uno para el desarrollo de Edge AI con DEEPX NPU. 8 módulos especializados trabajan juntos en un entorno unificado.',
+  },
+  'DX-M1 / DX-H1 Quattro comparison': {
+    ko: 'DX-M1 / DX-H1 Quattro 비교',
+    ja: 'DX-M1 / DX-H1 Quattro 比較',
+    'zh-CN': 'DX-M1 / DX-H1 Quattro 对比',
+    'zh-TW': 'DX-M1 / DX-H1 Quattro 比較',
+    es: 'Comparación DX-M1 / DX-H1 Quattro',
+  },
+  'DX-TRON graph visualization': {
+    ko: 'DX-TRON 그래프 시각화',
+    ja: 'DX-TRON グラフ可視化',
+    'zh-CN': 'DX-TRON 图形可视化',
+    'zh-TW': 'DX-TRON 圖形視覺化',
+    es: 'Visualización de grafos DX-TRON',
+  },
+  'Defense': {
+    ko: '국방',
+    ja: '防衛',
+    'zh-CN': '国防',
+    'zh-TW': '國防',
+    es: 'Defensa',
+  },
+  'Drones & Logistics': {
+    ko: '드론·물류',
+    ja: 'ドローン・物流',
+    'zh-CN': '无人机·物流',
+    'zh-TW': '無人機·物流',
+    es: 'Drones y logística',
+  },
+  'Encyclopedia': {
+    ko: '백과사전',
+    ja: '百科事典',
+    'zh-CN': '百科全书',
+    'zh-TW': '百科全書',
+    es: 'Enciclopedia',
+  },
+  'Explore DX AI Studio': {
+    ko: 'DX AI Studio 둘러보기',
+    ja: 'DX AI Studio を探索',
+    'zh-CN': '探索 DX AI Studio',
+    'zh-TW': '探索 DX AI Studio',
+    es: 'Explorar DX AI Studio',
+  },
+  'FPS · latency · power measurement': {
+    ko: 'FPS · 지연시간 · 전력 측정',
+    ja: 'FPS · レイテンシ · 消費電力測定',
+    'zh-CN': 'FPS · 延迟 · 功耗测量',
+    'zh-TW': 'FPS · 延遲 · 功耗量測',
+    es: 'Medición de FPS · latencia · consumo',
+  },
+  'Hardware performance benchmark': {
+    ko: '하드웨어 성능 벤치마크',
+    ja: 'ハードウェア性能ベンチマーク',
+    'zh-CN': '硬件性能基准测试',
+    'zh-TW': '硬體效能基準測試',
+    es: 'Benchmark de rendimiento de hardware',
+  },
+  'Healthcare': {
+    ko: '헬스케어',
+    ja: 'ヘルスケア',
+    'zh-CN': '医疗健康',
+    'zh-TW': '醫療健康',
+    es: 'Salud',
+  },
+  'Homepage': {
+    ko: '홈페이지',
+    ja: 'ホームページ',
+    'zh-CN': '主页',
+    'zh-TW': '首頁',
+    es: 'Sitio web',
+  },
+  'INT8 Intelligent Quantization': {
+    ko: 'INT8 지능형 양자화',
+    ja: 'INT8 インテリジェント量子化',
+    'zh-CN': 'INT8 智能量化',
+    'zh-TW': 'INT8 智慧量化',
+    es: 'Cuantización inteligente INT8',
+  },
+  'Industrial framework with <em class="hl">400M+</em> developers, running on DEEPX NPUs.': {
+    ko: '<em class="hl">4억+</em> 개발자의 산업용 프레임워크. DEEPX NPU에서 구동.',
+    ja: '<em class="hl">4億人超</em>の産業向けフレームワーク。DEEPX NPUで動作。',
+    'zh-CN': '拥有 <em class="hl">4 亿+</em> 开发者的工业框架，运行于 DEEPX NPU。',
+    'zh-TW': '擁有 <em class="hl">4 億+</em> 開發者的工業框架，運行於 DEEPX NPU。',
+    es: 'Framework industrial con <em class="hl">+400M</em> de desarrolladores, sobre NPU DEEPX.',
+  },
+  'Interactive console · real-time build logs': {
+    ko: '대화형 콘솔 · 실시간 빌드 로그',
+    ja: '対話型コンソール · リアルタイムビルドログ',
+    'zh-CN': '交互式控制台 · 实时构建日志',
+    'zh-TW': '互動式主控台 · 即時建構日誌',
+    es: 'Consola interactiva · registros en tiempo real',
+  },
+  'Logistics·Robotics': {
+    ko: '물류·로보틱스',
+    ja: '物流·ロボティクス',
+    'zh-CN': '物流·机器人',
+    'zh-TW': '物流·機器人',
+    es: 'Logística·Robótica',
+  },
+  'Medical Imaging': {
+    ko: '의료영상',
+    ja: '医療画像',
+    'zh-CN': '医疗影像',
+    'zh-TW': '醫療影像',
+    es: 'Imágenes médicas',
+  },
+  'More on DEEPX': {
+    ko: 'DEEPX 더 알아보기',
+    ja: 'DEEPXをもっと知る',
+    'zh-CN': '了解更多 DEEPX',
+    'zh-TW': '了解更多 DEEPX',
+    es: 'Más sobre DEEPX',
+  },
+  'Multi-stream concurrent processing': {
+    ko: '멀티 스트림 동시 처리',
+    ja: 'マルチストリーム同時処理',
+    'zh-CN': '多路流同时处理',
+    'zh-TW': '多路串流同時處理',
+    es: 'Procesamiento concurrente de múltiples flujos',
+  },
+  'NPU config calculator & TCO analysis': {
+    ko: 'NPU 구성 계산 & TCO 분석',
+    ja: 'NPU 構成計算 & TCO 分析',
+    'zh-CN': 'NPU 配置计算 & TCO 分析',
+    'zh-TW': 'NPU 組態計算 & TCO 分析',
+    es: 'Calculadora de configuración NPU y análisis TCO',
+  },
+  'NPU temp · voltage · clock real-time charts': {
+    ko: 'NPU 온도 · 전압 · 클럭 실시간 차트',
+    ja: 'NPU 温度 · 電圧 · クロックリアルタイムチャート',
+    'zh-CN': 'NPU 温度 · 电压 · 时钟实时图表',
+    'zh-TW': 'NPU 溫度 · 電壓 · 時脈即時圖表',
+    es: 'Gráficos en tiempo real de temperatura · voltaje · reloj NPU',
+  },
+  'ONNX model compiler GUI': {
+    ko: 'ONNX 모델 컴파일러 GUI',
+    ja: 'ONNX モデルコンパイラ GUI',
+    'zh-CN': 'ONNX 模型编译器 GUI',
+    'zh-TW': 'ONNX 模型編譯器 GUI',
+    es: 'GUI del compilador de modelos ONNX',
+  },
+  'ONNX → .dxnn auto conversion': {
+    ko: 'ONNX → .dxnn 자동 변환',
+    ja: 'ONNX → .dxnn 自動変換',
+    'zh-CN': 'ONNX → .dxnn 自动转换',
+    'zh-TW': 'ONNX → .dxnn 自動轉換',
+    es: 'Conversión automática ONNX → .dxnn',
+  },
+  'Official site': {
+    ko: '공식 사이트',
+    ja: '公式サイト',
+    'zh-CN': '官方网站',
+    'zh-TW': '官方網站',
+    es: 'Sitio oficial',
+  },
+  'One-click download & deploy': {
+    ko: '원클릭 다운로드 & 배포',
+    ja: 'ワンクリックでダウンロード & デプロイ',
+    'zh-CN': '一键下载 & 部署',
+    'zh-TW': '一鍵下載 & 部署',
+    es: 'Descarga e implementación con un clic',
+  },
+  'One-line command auto-generates pipelines': {
+    ko: '명령 한 줄로 파이프라인 자동 생성',
+    ja: '1 行のコマンドでパイプライン自動生成',
+    'zh-CN': '一行命令自动生成流水线',
+    'zh-TW': '一行命令自動產生管線',
+    es: 'Un comando genera pipelines automáticamente',
+  },
+  'Physical AI Ecosystem': {
+    ko: 'Physical AI 생태계',
+    ja: 'Physical AI エコシステム',
+    'zh-CN': 'Physical AI 生态系统',
+    'zh-TW': 'Physical AI 生態系統',
+    es: 'Ecosistema de IA física',
+  },
+  'RTSP / USB camera live connection': {
+    ko: 'RTSP / USB 카메라 실시간 연결',
+    ja: 'RTSP / USB カメラリアルタイム接続',
+    'zh-CN': 'RTSP / USB 摄像头实时连接',
+    'zh-TW': 'RTSP / USB 攝影機即時連線',
+    es: 'Conexión en vivo de cámara RTSP / USB',
+  },
+  'Real-time NPU hardware monitoring': {
+    ko: 'NPU 하드웨어 실시간 모니터링',
+    ja: 'NPU ハードウェアリアルタイムモニタリング',
+    'zh-CN': 'NPU 硬件实时监控',
+    'zh-TW': 'NPU 硬體即時監控',
+    es: 'Monitoreo de hardware NPU en tiempo real',
+  },
+  'Real-time NPU inference & model compiler': {
+    ko: 'NPU 실시간 추론 및 모델 컴파일',
+    ja: 'NPU リアルタイム推論 & モデルコンパイラ',
+    'zh-CN': 'NPU 实时推理 & 模型编译器',
+    'zh-TW': 'NPU 即時推論 & 模型編譯器',
+    es: 'Inferencia NPU en tiempo real y compilador de modelos',
+  },
+  'Real-time inference performance dashboard': {
+    ko: '실시간 추론 성능 대시보드',
+    ja: 'リアルタイム推論性能ダッシュボード',
+    'zh-CN': '实时推理性能仪表板',
+    'zh-TW': '即時推論效能儀表板',
+    es: 'Panel de rendimiento de inferencia en tiempo real',
+  },
+  'Retail': {
+    ko: '리테일',
+    ja: 'リテール',
+    'zh-CN': '零售',
+    'zh-TW': '零售',
+    es: 'Comercio',
+  },
+  'Robotics': {
+    ko: '로보틱스',
+    ja: 'ロボティクス',
+    'zh-CN': '机器人',
+    'zh-TW': '機器人',
+    es: 'Robótica',
+  },
+  'Run 340+ pre-compiled AI models': {
+    ko: '340+ 사전 컴파일 AI 모델 실행',
+    ja: '340+ 事前コンパイル済み AI モデルを実行',
+    'zh-CN': '运行 340+ 个预编译 AI 模型',
+    'zh-TW': '執行 340+ 個預編譯 AI 模型',
+    es: 'Ejecutar más de 340 modelos de IA precompilados',
+  },
+  'Security·CCTV': {
+    ko: '보안·CCTV',
+    ja: 'セキュリティ·CCTV',
+    'zh-CN': '安防·CCTV',
+    'zh-TW': '安全監控·CCTV',
+    es: 'Seguridad·CCTV',
+  },
+  'Showcase gallery (offline)': {
+    ko: '쇼케이스 갤러리 (오프라인)',
+    ja: 'ショーケースギャラリー (オフライン)',
+    'zh-CN': '展示库 (离线)',
+    'zh-TW': '展示庫 (離線)',
+    es: 'Galería de ejemplos (sin conexión)',
+  },
+  'Smart Cameras': {
+    ko: '스마트 카메라',
+    ja: 'スマートカメラ',
+    'zh-CN': '智能摄像头',
+    'zh-TW': '智慧攝影機',
+    es: 'Cámaras inteligentes',
+  },
+  'Smart Cities': {
+    ko: '스마트 시티',
+    ja: 'スマートシティ',
+    'zh-CN': '智慧城市',
+    'zh-TW': '智慧城市',
+    es: 'Ciudades inteligentes',
+  },
+  'Smart City': {
+    ko: '스마트시티',
+    ja: 'スマートシティ',
+    'zh-CN': '智慧城市',
+    'zh-TW': '智慧城市',
+    es: 'Ciudad inteligente',
+  },
+  'Smart Factory': {
+    ko: '스마트팩토리',
+    ja: 'スマートファクトリー',
+    'zh-CN': '智能工厂',
+    'zh-TW': '智慧工廠',
+    es: 'Fábrica inteligente',
+  },
+  'Smart Manufacturing': {
+    ko: '스마트 제조',
+    ja: 'スマート製造',
+    'zh-CN': '智能制造',
+    'zh-TW': '智慧製造',
+    es: 'Fabricación inteligente',
+  },
+  'Tech Library': {
+    ko: '기술 도서관',
+    ja: '技術ライブラリ',
+    'zh-CN': '技术库',
+    'zh-TW': '技術資料庫',
+    es: 'Biblioteca técnica',
+  },
+  'Total cost of ownership analysis': {
+    ko: '총 소유 비용(TCO) 분석',
+    ja: '総所有コスト (TCO) 分析',
+    'zh-CN': '总拥有成本 (TCO) 分析',
+    'zh-TW': '總擁有成本 (TCO) 分析',
+    es: 'Análisis del costo total de propiedad',
+  },
+  'Tutorial Mode': {
+    ko: 'Tutorial Mode',
+    ja: 'Tutorial Mode',
+    'zh-CN': 'Tutorial Mode',
+    'zh-TW': 'Tutorial Mode',
+    es: 'Modo tutorial',
+  },
+  'Vision AI streaming pipeline': {
+    ko: '비전 AI 스트리밍 파이프라인',
+    ja: 'ビジョン AI ストリーミングパイプライン',
+    'zh-CN': '视觉 AI 流媒体管道',
+    'zh-TW': '視覺 AI 串流管線',
+    es: 'Pipeline de streaming de IA visual',
+  },
+  'Vision-AI leader — deploy <em class="hl">YOLO</em> to DEEPX NPUs with <em class="hl">one command</em>.': {
+    ko: '비전 AI 글로벌 리더. <em class="hl">YOLO</em>를 <em class="hl">명령 한 줄</em>로 DEEPX NPU에 배포.',
+    ja: 'ビジョンAIの世界的リーダー。<em class="hl">YOLO</em>を<em class="hl">1コマンド</em>でDEEPX NPUへ。',
+    'zh-CN': '视觉 AI 全球领导者，<em class="hl">一条命令</em>将 <em class="hl">YOLO</em> 部署到 DEEPX NPU。',
+    'zh-TW': '視覺 AI 全球領導者，<em class="hl">一條命令</em>將 <em class="hl">YOLO</em> 部署到 DEEPX NPU。',
+    es: 'Líder en IA de visión: despliega <em class="hl">YOLO</em> en NPU DEEPX con <em class="hl">un comando</em>.',
+  },
+  'Workload-based optimal NPU recommendation': {
+    ko: '워크로드 기반 최적 NPU 추천',
+    ja: 'ワークロードベース最適 NPU 推奨',
+    'zh-CN': '基于工作负载的最优 NPU 推荐',
+    'zh-TW': '基於工作負載的最佳 NPU 推薦',
+    es: 'Recomendación óptima de NPU basada en carga de trabajo',
+  },
+  'YOLO · ResNet · EfficientNet etc.': {
+    ko: 'YOLO · ResNet · EfficientNet 등',
+    ja: 'YOLO · ResNet · EfficientNet など',
+    'zh-CN': 'YOLO · ResNet · EfficientNet 等',
+    'zh-TW': 'YOLO · ResNet · EfficientNet 等',
+    es: 'YOLO · ResNet · EfficientNet, etc.',
+  },
+  '① AI Model Ecosystem <em>(Software)</em>': {
+    ko: '① AI 모델 생태계 <em>(소프트웨어)</em>',
+    ja: '① AIモデルエコシステム <em>(ソフトウェア)</em>',
+    'zh-CN': '① AI 模型生态系统 <em>(软件)</em>',
+    'zh-TW': '① AI 模型生態系統 <em>(軟體)</em>',
+    es: '① Ecosistema de modelos de IA <em>(Software)</em>',
+  },
+  '② DEEPX NPU <em>(Core)</em>': {
+    ko: '② DEEPX NPU <em>(중심)</em>',
+    ja: '② DEEPX NPU <em>(中核)</em>',
+    'zh-CN': '② DEEPX NPU <em>(核心)</em>',
+    'zh-TW': '② DEEPX NPU <em>(核心)</em>',
+    es: '② DEEPX NPU <em>(Núcleo)</em>',
+  },
+  '③ Developer Hardware Ecosystem <em>(Hardware)</em>': {
+    ko: '③ 개발자 하드웨어 생태계 <em>(하드웨어)</em>',
+    ja: '③ 開発者ハードウェアエコシステム <em>(ハードウェア)</em>',
+    'zh-CN': '③ 开发者硬件生态系统 <em>(硬件)</em>',
+    'zh-TW': '③ 開發者硬體生態系統 <em>(硬體)</em>',
+    es: '③ Ecosistema de hardware para desarrolladores <em>(Hardware)</em>',
+  },
+  '🎛️ Simulation Ready': {
+    ko: '🎛️ 시뮬레이션 준비',
+    ja: '🎛️ シミュレーション対応',
+    'zh-CN': '🎛️ 仿真就绪',
+    'zh-TW': '🎛️ 模擬就緒',
+    es: '🎛️ Listo para simulación',
+  },
+  '🎯 Physical AI Applications': {
+    ko: '🎯 Physical AI 응용 분야',
+    ja: '🎯 Physical AI 応用分野',
+    'zh-CN': '🎯 Physical AI 应用领域',
+    'zh-TW': '🎯 Physical AI 應用領域',
+    es: '🎯 Aplicaciones de IA física',
+  },
+  '🎯 Use Cases': {
+    ko: '🎯 적용 분야',
+    ja: '🎯 適用分野',
+    'zh-CN': '🎯 应用领域',
+    'zh-TW': '🎯 應用領域',
+    es: '🎯 Casos de uso',
+  },
+  '📊 Real-Time Monitor': {
+    ko: '📊 실시간 모니터링',
+    ja: '📊 リアルタイムモニター',
+    'zh-CN': '📊 实时监控',
+    'zh-TW': '📊 即時監控',
+    es: '📊 Monitor en tiempo real',
+  },
+  '📦 End-to-End Solution': {
+    ko: '📦 엔드투엔드 솔루션',
+    ja: '📦 エンドツーエンドソリューション',
+    'zh-CN': '📦 端到端解决方案',
+    'zh-TW': '📦 端到端解決方案',
+    es: '📦 Solución de extremo a extremo',
+  },
+  '🔧 ONNX→DXNN Compile': {
+    ko: '🔧 ONNX→DXNN 컴파일',
+    ja: '🔧 ONNX→DXNNコンパイル',
+    'zh-CN': '🔧 ONNX→DXNN编译',
+    'zh-TW': '🔧 ONNX→DXNN編譯',
+    es: '🔧 Compilación ONNX→DXNN',
+  },
+  '🚀 Zero-Code Deploy': {
+    ko: '🚀 제로코드 배포',
+    ja: '🚀 ゼロコードデプロイ',
+    'zh-CN': '🚀 零代码部署',
+    'zh-TW': '🚀 零程式碼部署',
+    es: '🚀 Implementación sin código',
+  },
+  '🧠 On-Device AI': {
+    ko: '🧠 온디바이스 AI',
+    ja: '🧠 オンデバイスAI',
+    'zh-CN': '🧠 端侧AI',
+    'zh-TW': '🧠 端側AI',
+    es: '🧠 IA en el dispositivo',
+  },
+};
   </script>
   <script src="/static/shared/i18n.js"></script>
   <script src="/static/shared/brand.js"></script>

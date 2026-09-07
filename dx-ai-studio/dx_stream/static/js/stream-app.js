@@ -114,7 +114,7 @@ const DXStream = (() => {
                     '<div class="modal-body"><p id="confirm-modal-msg"></p></div>' +
                     '<div class="modal-footer">' +
                         '<button class="btn btn-ghost btn-sm" id="confirm-modal-cancel">' +
-                            '<span class="ko">취소</span><span class="en">Cancel</span></button>' +
+                            '<span data-i18n="Cancel">Cancel</span></button>' +
                         '<button class="btn btn-primary btn-sm" id="confirm-modal-ok">' +
                             '<span class="ko">확인</span><span class="en">OK</span></button>' +
                     '</div></div>';

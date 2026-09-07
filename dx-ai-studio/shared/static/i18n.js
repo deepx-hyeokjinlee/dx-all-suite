@@ -228,6 +228,11 @@
   function _translateEl(el) {
     if (!el.childNodes.length) return;
     if (el.querySelector('.ko, .en, .ja, .es, .zh-CN, .zh-TW')) return;
+    // 이 아래는 el.textContent 를 통째로 갈아끼운다 — 자식 엘리먼트가 같이
+    // 지워진다. 자기 key 를 든 자식이 있으면 번역의 주인은 그쪽이다.
+    // (.legend-item 은 색 점 span + 라벨 span 인데, 여기서 평평해지면
+    //  점이 사라진다.)
+    if (el.querySelector('[data-i18n], [data-i18n-html]')) return;
     var text = el.textContent.trim();
     if (!text) return;
     if (!el.dataset.i18nOrig) el.dataset.i18nOrig = text;

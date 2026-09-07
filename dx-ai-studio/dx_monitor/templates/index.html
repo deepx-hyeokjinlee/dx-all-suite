@@ -37,26 +37,26 @@
     <div class="card mt16">
       <div class="controls-row">
         <div class="btn-group" id="time-range-btns">
-          <button id="tr-rt" class="active" onclick="setTimeRange('rt')">⏱ <span class="ko">실시간</span><span class="en">Realtime</span><span class="es">Tiempo real</span><span class="ja">リアルタイム</span><span class="zh-CN">实时</span><span class="zh-TW">即時</span></button>
+          <button id="tr-rt" class="active" onclick="setTimeRange('rt')">⏱ <span data-i18n="Realtime">Realtime</span></button>
           <button id="tr-5m" onclick="setTimeRange('5m')">5m</button>
           <button id="tr-15m" onclick="setTimeRange('15m')">15m</button>
           <button id="tr-30m" onclick="setTimeRange('30m')">30m</button>
           <button id="tr-1h" onclick="setTimeRange('1h')">1h</button>
-          <button id="tr-all" onclick="setTimeRange('all')"><span class="ko">전체</span><span class="en">All</span><span class="es">Todo</span><span class="ja">全体</span><span class="zh-CN">全部</span><span class="zh-TW">全部</span></button>
+          <button id="tr-all" onclick="setTimeRange('all')" data-i18n="All">All</button>
         </div>
         <div class="btn-group" id="chart-mode-btns">
-          <button id="cm-temp" class="active" onclick="setChartMode('temp')">🌡️ <span class="ko">NPU 온도</span><span class="en">NPU Temp</span><span class="es">Temp. NPU</span><span class="ja">NPU温度</span><span class="zh-CN">NPU温度</span><span class="zh-TW">NPU溫度</span></button>
-          <button id="cm-volt" onclick="setChartMode('volt')">⚡ <span class="ko">전압</span><span class="en">Volt</span><span class="es">Voltio</span><span class="ja">電圧</span><span class="zh-CN">电压</span><span class="zh-TW">電壓</span></button>
-          <button id="cm-clock" onclick="setChartMode('clock')"><span class="icon-clock" aria-hidden="true"></span> <span class="ko">클럭</span><span class="en">Clock</span><span class="es">Reloj</span><span class="ja">クロック</span><span class="zh-CN">时钟</span><span class="zh-TW">時脈</span></button>
+          <button id="cm-temp" class="active" onclick="setChartMode('temp')">🌡️ <span data-i18n="NPU Temp">NPU Temp</span></button>
+          <button id="cm-volt" onclick="setChartMode('volt')">⚡ <span data-i18n="Volt">Volt</span></button>
+          <button id="cm-clock" onclick="setChartMode('clock')"><span class="icon-clock" aria-hidden="true"></span> <span data-i18n="Clock">Clock</span></button>
           <button id="cm-dram" onclick="setChartMode('dram')">💾 NPU DRAM</button>
-          <button id="cm-util" onclick="setChartMode('util')">⚙️ <span class="ko">NPU 사용률</span><span class="en">NPU Util</span><span class="es">Util. NPU</span><span class="ja">NPU使用率</span><span class="zh-CN">NPU利用率</span><span class="zh-TW">NPU使用率</span></button>
-          <button id="cm-ctemp" onclick="setChartMode('ctemp')">🌡️ <span class="ko">코어 온도</span><span class="en">Core Temp</span><span class="es">Temp. del núcleo</span><span class="ja">コア温度</span><span class="zh-CN">核心温度</span><span class="zh-TW">核心溫度</span></button>
+          <button id="cm-util" onclick="setChartMode('util')">⚙️ <span data-i18n="NPU Util">NPU Util</span></button>
+          <button id="cm-ctemp" onclick="setChartMode('ctemp')">🌡️ <span data-i18n="Core Temp">Core Temp</span></button>
           <span class="btn-sep">|</span>
-          <button id="cm-cpu" onclick="setChartMode('cpu')">💻 <span class="ko">CPU 부하</span><span class="en">CPU Load</span><span class="es">Carga de CPU</span><span class="ja">CPU負荷</span><span class="zh-CN">CPU负载</span><span class="zh-TW">CPU負載</span></button>
-          <button id="cm-mem" onclick="setChartMode('mem')">🧠 <span class="ko">메모리</span><span class="en">Memory</span><span class="es">Memoria</span><span class="ja">メモリ</span><span class="zh-CN">内存</span><span class="zh-TW">記憶體</span></button>
+          <button id="cm-cpu" onclick="setChartMode('cpu')">💻 <span data-i18n="CPU Load">CPU Load</span></button>
+          <button id="cm-mem" onclick="setChartMode('mem')">🧠 <span data-i18n="Memory">Memory</span></button>
           <button id="cm-cpucores" onclick="setChartMode('cpucores')">🖥️ <span class="ko">CPU 코어별</span><span class="en">CPU Cores</span><span class="es">Núcleos de CPU</span><span class="ja">CPUコア別</span><span class="zh-CN">CPU各核心</span><span class="zh-TW">CPU各核心</span></button>
           <span class="btn-sep">|</span>
-          <button id="cm-all" onclick="setChartMode('all')">⊞ <span class="ko">전체 보기</span><span class="en">View All</span><span class="es">Ver todo</span><span class="ja">全体表示</span><span class="zh-CN">查看全部</span><span class="zh-TW">檢視全部</span></button>
+          <button id="cm-all" onclick="setChartMode('all')">⊞ <span data-i18n="View All">View All</span></button>
         </div>
       </div>
     </div>
@@ -68,19 +68,19 @@
     <div class="grid2 mt16">
       <div class="card">
         <div class="card-header">
-          <h2><span class="ko">NPU 토폴로지</span><span class="en">NPU Topology</span><span class="es">Topología NPU</span><span class="ja">NPUトポロジー</span><span class="zh-CN">NPU拓扑</span><span class="zh-TW">NPU拓撲</span></h2>
+          <h2 data-i18n="NPU Topology">NPU Topology</h2>
           <span id="npu-status-label" class="badge b-cat">--</span>
         </div>
         <div id="npu-topo"></div>
         <!-- 시스템 정보 (토폴로지 아래 통합) -->
         <div class="card-header mt16">
-          <h2><span class="ko">시스템 정보</span><span class="en">System Info</span><span class="es">Información del sistema</span><span class="ja">システム情報</span><span class="zh-CN">系统信息</span><span class="zh-TW">系統資訊</span></h2>
+          <h2 data-i18n="System Info">System Info</h2>
         </div>
         <div class="tbl-wrap">
           <table id="sysinfo-table">
             <thead><tr>
-              <th><span class="ko">속성</span><span class="en">Property</span><span class="es">Propiedad</span><span class="ja">属性</span><span class="zh-CN">属性</span><span class="zh-TW">屬性</span></th>
-              <th><span class="ko">값</span><span class="en">Value</span><span class="es">Valor</span><span class="ja">値</span><span class="zh-CN">值</span><span class="zh-TW">值</span></th>
+              <th data-i18n="Property">Property</th>
+              <th data-i18n="Value">Value</th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -88,7 +88,7 @@
       </div>
       <div class="card">
         <div class="card-header">
-          <h2><span class="ko">런타임 이벤트</span><span class="en">Runtime Events</span><span class="es">Eventos de tiempo de ejecución</span><span class="ja">ランタイムイベント</span><span class="zh-CN">运行时事件</span><span class="zh-TW">執行時事件</span></h2>
+          <h2 data-i18n="Runtime Events">Runtime Events</h2>
           <span id="event-count" class="badge b-cat">--</span>
         </div>
         <div id="event-log" class="event-log">

@@ -29,7 +29,7 @@ window._DX_I18N_DICT = {
   },
   'A/B Compare': {
     ko: 'A/B 비교', ja: 'A/B 比較',
-    'zh-CN': 'A/B 比较', 'zh-TW': 'A/B 比較',
+    'zh-CN': 'A/B 对比', 'zh-TW': 'A/B 比較',
     es: 'Comparación A/B',
   },
   'Compiler': {
@@ -68,7 +68,7 @@ window._DX_I18N_DICT = {
   /* ==== Page titles ==== */
   'Setup & Install': {
     ko: '설정 & 설치', ja: 'セットアップ & インストール',
-    'zh-CN': '设置 & 安装', 'zh-TW': '設定 & 安裝',
+    'zh-CN': '设置和安装', 'zh-TW': '設定與安裝',
     es: 'Configuración e instalación',
   },
   'Run Inference': {
@@ -90,7 +90,7 @@ window._DX_I18N_DICT = {
   /* ==== Setup page ==== */
   'DX-APP Dependencies': {
     ko: 'DX-APP 종속성', ja: 'DX-APP 依存関係',
-    'zh-CN': 'DX-APP 依赖项', 'zh-TW': 'DX-APP 相依性',
+    'zh-CN': 'DX-APP 依赖项', 'zh-TW': 'DX-APP 相依套件',
     es: 'Dependencias de DX-APP',
   },
   'DX-APP Build': {
@@ -99,18 +99,18 @@ window._DX_I18N_DICT = {
     es: 'Compilación DX-APP',
   },
   'Sample Assets Setup': {
-    ko: '샘플 에셋 설정', ja: 'サンプルアセットセットアップ',
+    ko: '샘플 에셋 설정', ja: 'サンプルアセットのセットアップ',
     'zh-CN': '示例资源设置', 'zh-TW': '範例資源設定',
     es: 'Configuración de activos de muestra',
   },
   'DX-Runtime Dependencies': {
     ko: 'DX-Runtime 종속성', ja: 'DX-Runtime 依存関係',
-    'zh-CN': 'DX-Runtime 依赖项', 'zh-TW': 'DX-Runtime 相依性',
+    'zh-CN': 'DX-Runtime 依赖项', 'zh-TW': 'DX-Runtime 相依套件',
     es: 'Dependencias de DX-Runtime',
   },
   'NPU Linux Driver': {
-    ko: 'NPU 리눅스 드라이버', ja: 'NPU Linux ドライバ',
-    'zh-CN': 'NPU Linux 驱动', 'zh-TW': 'NPU Linux 驅動程式',
+    ko: 'NPU 리눅스 드라이버', ja: 'NPU Linux ドライバー',
+    'zh-CN': 'NPU Linux 驱动程序', 'zh-TW': 'NPU Linux 驅動程式',
     es: 'Controlador Linux NPU',
   },
   'Install': {
@@ -134,7 +134,7 @@ window._DX_I18N_DICT = {
     es: 'Entrada manual',
   },
   'Refresh Status': {
-    ko: '상태 새로고침', ja: 'ステータス更新',
+    ko: '상태 새로고침', ja: '状態を更新',
     'zh-CN': '刷新状态', 'zh-TW': '重新整理狀態',
     es: 'Actualizar estado',
   },
@@ -160,7 +160,7 @@ window._DX_I18N_DICT = {
   },
   'Select an item to run — logs will appear here.': {
     ko: '실행할 항목을 선택하세요 — 로그가 여기에 표시됩니다.', ja: '実行する項目を選択してください — ログがここに表示されます。',
-    'zh-CN': '选择要运行的项目 — 日志将显示在此处。', 'zh-TW': '選擇要執行的項目 — 日誌將顯示在此處。',
+    'zh-CN': '选择要运行的项目 — 日志将在此显示。', 'zh-TW': '選擇要執行的項目 — 日誌將在此顯示。',
     es: 'Seleccione un elemento para ejecutar — los registros aparecerán aquí.',
   },
   /* ==== Dashboard ==== */
@@ -383,7 +383,7 @@ window._DX_I18N_DICT = {
   'Meta': {
     ko: '메타', ja: 'メタ',
     'zh-CN': '元数据', 'zh-TW': '中繼資料',
-    es: 'Meta',
+    es: 'Metadatos',
   },
   'File': {
     ko: '파일', ja: 'ファイル',
@@ -392,7 +392,7 @@ window._DX_I18N_DICT = {
   },
   /* ==== Run Inference ==== */
   'Single': {
-    ko: '단일', ja: 'シングル',
+    ko: '단일', ja: '単一',
     'zh-CN': '单次', 'zh-TW': '單次',
     es: 'Individual',
   },
@@ -483,12 +483,12 @@ window._DX_I18N_DICT = {
   },
   'No additional parameters required for this task.': {
     ko: '이 작업에는 추가 매개변수가 필요하지 않습니다.', ja: 'このタスクに追加パラメータは不要です。',
-    'zh-CN': '此任务不需要额外参数。', 'zh-TW': '此任務不需要額外參數。',
+    'zh-CN': '此任务无需额外参数。', 'zh-TW': '此任務無需額外參數。',
     es: 'No se requieren parámetros adicionales para esta tarea.',
   },
   'Continuous Config': {
-    ko: '연속 구성', ja: '連続設定',
-    'zh-CN': '连续配置', 'zh-TW': '連續設定',
+    ko: '연속 구성', ja: '連続構成',
+    'zh-CN': '连续配置', 'zh-TW': '連續組態',
     es: 'Configuración continua',
   },
   'Model Slots': {
@@ -498,7 +498,7 @@ window._DX_I18N_DICT = {
   },
   'Start Continuous': {
     ko: '연속 시작', ja: '連続開始',
-    'zh-CN': '启动连续', 'zh-TW': '啟動連續',
+    'zh-CN': '开始连续', 'zh-TW': '開始連續',
     es: 'Iniciar continuo',
   },
   'Stop': {
@@ -561,7 +561,7 @@ window._DX_I18N_DICT = {
   },
   'Performance Comparison': {
     ko: '성능 비교', ja: 'パフォーマンス比較',
-    'zh-CN': '性能比较', 'zh-TW': '效能比較',
+    'zh-CN': '性能对比', 'zh-TW': '效能比較',
     es: 'Comparación de rendimiento',
   },
   'Slot': {
@@ -849,20 +849,20 @@ window._DX_I18N_DICT = {
     es: 'Tamaño',
   },
   'Modified': {
-    ko: '수정일', ja: '更新日',
+    ko: '수정일', ja: '更新日時',
     'zh-CN': '修改日期', 'zh-TW': '修改日期',
     es: 'Modificado',
   },
   'No output files yet.': {
-    ko: '아직 출력 파일이 없습니다.', ja: 'まだ出力ファイルがありません。',
-    'zh-CN': '暂无输出文件。', 'zh-TW': '尚無輸出檔案。',
+    ko: '아직 출력 파일이 없습니다.', ja: '出力ファイルはまだありません。',
+    'zh-CN': '尚无输出文件。', 'zh-TW': '尚無輸出檔案。',
     es: 'Sin archivos de salida aún.',
   },
 
   /* ==== Planner ==== */
   'Configuration': {
-    ko: '구성', ja: '設定',
-    'zh-CN': '配置', 'zh-TW': '設定',
+    ko: '구성', ja: '構成',
+    'zh-CN': '配置', 'zh-TW': '組態',
     es: 'Configuración',
   },
   'Workload Tasks': {
@@ -1108,12 +1108,12 @@ window._DX_I18N_DICT = {
     es: 'Autenticar',
   },
   'Add Model': {
-    ko: '모델 추가', ja: 'モデル追加',
+    ko: '모델 추가', ja: 'モデルを追加',
     'zh-CN': '添加模型', 'zh-TW': '新增模型',
     es: 'Agregar modelo',
   },
   'Delete Model': {
-    ko: '모델 삭제', ja: 'モデル削除',
+    ko: '모델 삭제', ja: 'モデルを削除',
     'zh-CN': '删除模型', 'zh-TW': '刪除模型',
     es: 'Eliminar modelo',
   },
@@ -1129,7 +1129,7 @@ window._DX_I18N_DICT = {
   },
   'Extract Pkg': {
     ko: '패키지 추출', ja: 'パッケージ抽出',
-    'zh-CN': '提取包', 'zh-TW': '提取套件',
+    'zh-CN': '提取包', 'zh-TW': '擷取套件',
     es: 'Extraer paquete',
   },
   'Model Name': {
@@ -1143,7 +1143,7 @@ window._DX_I18N_DICT = {
     es: 'Tipo de tarea',
   },
   'Postprocessor': {
-    ko: '후처리기', ja: 'ポストプロセッサー',
+    ko: '후처리기', ja: '後処理',
     'zh-CN': '后处理器', 'zh-TW': '後處理器',
     es: 'Post-procesador',
   },
@@ -1183,7 +1183,7 @@ window._DX_I18N_DICT = {
     es: 'Extraer paquete',
   },
   'Select Model': {
-    ko: '모델 선택', ja: 'モデル選択',
+    ko: '모델 선택', ja: 'モデルを選択',
     'zh-CN': '选择模型', 'zh-TW': '選擇模型',
     es: 'Seleccionar modelo',
   },
@@ -1211,7 +1211,7 @@ window._DX_I18N_DICT = {
   },
   /* ==== File browser ==== */
   'Select File': {
-    ko: '파일 선택', ja: 'ファイル選択',
+    ko: '파일 선택', ja: 'ファイルを選択',
     'zh-CN': '选择文件', 'zh-TW': '選擇檔案',
     es: 'Seleccionar archivo',
   },
@@ -1245,7 +1245,7 @@ window._DX_I18N_DICT = {
     es: 'Ejecución de prueba — Seleccionar pipeline',
   },
   'Preprocessor': {
-    ko: '전처리기', ja: 'プリプロセッサ',
+    ko: '전처리기', ja: '前処理',
     'zh-CN': '预处理器', 'zh-TW': '前處理器',
     es: 'Pre-procesador',
   },
@@ -1255,22 +1255,22 @@ window._DX_I18N_DICT = {
     es: 'Visualizador',
   },
   'Recommended Pipelines by Category': {
-    ko: '카테고리별 권장 파이프라인', ja: 'カテゴリ別おすすめパイプライン',
-    'zh-CN': '按类别推荐的流水线', 'zh-TW': '按類別推薦的管線',
+    ko: '카테고리별 권장 파이프라인', ja: 'カテゴリ別の推奨パイプライン',
+    'zh-CN': '按类别推荐的流水线', 'zh-TW': '依類別推薦的管線',
     es: 'Pipelines recomendados por categoría',
   },
   'Deploy?': {
-    ko: '배포?', ja: 'デプロイしますか?',
-    'zh-CN': '部署？', 'zh-TW': '部署？',
+    ko: '배포?', ja: 'デプロイしますか？',
+    'zh-CN': '是否部署？', 'zh-TW': '是否部署？',
     es: '¿Desplegar?',
   },
   'Reconfigure': {
-    ko: '재구성', ja: '再設定',
-    'zh-CN': '重新配置', 'zh-TW': '重新設定',
+    ko: '재구성', ja: '再構成',
+    'zh-CN': '重新配置', 'zh-TW': '重新組態',
     es: 'Reconfigurar',
   },
   'Confirm Deploy': {
-    ko: '배포 확인', ja: 'デプロイ確認',
+    ko: '배포 확인', ja: 'デプロイを確認',
     'zh-CN': '确认部署', 'zh-TW': '確認部署',
     es: 'Confirmar despliegue',
   },
@@ -1704,13 +1704,13 @@ window._DX_I18N_DICT = {
     es: 'Resultados',
   },
   'click row for detail': {
-    ko: '행을 클릭하면 상세 보기', ja: '行をクリックして詳細を表示',
-    'zh-CN': '点击行查看详情', 'zh-TW': '點擊行查看詳情',
+    ko: '상세 보기는 행을 클릭하세요', ja: '行をクリックして詳細を表示',
+    'zh-CN': '点击行查看详情', 'zh-TW': '點擊列查看詳細資訊',
     es: 'haga clic en la fila para detalles',
   },
   'FPS Comparison': {
     ko: 'FPS 비교', ja: 'FPS 比較',
-    'zh-CN': 'FPS 比较', 'zh-TW': 'FPS 比較',
+    'zh-CN': 'FPS 对比', 'zh-TW': 'FPS 比較',
     es: 'Comparación de FPS',
   },
   'Original': {
@@ -1754,7 +1754,7 @@ window._DX_I18N_DICT = {
     es: 'Detalle del benchmark',
   },
   'Export Report': {
-    ko: '리포트 내보내기', ja: 'レポートエクスポート',
+    ko: '리포트 내보내기', ja: 'レポートをエクスポート',
     'zh-CN': '导出报告', 'zh-TW': '匯出報告',
     es: 'Exportar informe',
   },
@@ -2691,8 +2691,8 @@ window._DX_I18N_DICT = {
     es: 'Haga preguntas al equipo de DeepX o comparta experiencias con otros usuarios. 🌐',
   },
   'Detailed guides, parameters, workflows, and tips for each DX-APP feature — all in one place.': {
-    ko: 'DX-APP 기능별 상세 가이드 · 파라미터 · 워크플로우 · 팁을 한 곳에서 확인하세요.', ja: 'DX-APP 機能ごとの詳細ガイド・パラメータ・ワークフロー・ヒントをまとめて確認できます。',
-    'zh-CN': 'DX-APP 各功能的详细指南、参数、工作流程和技巧 — 一站式查阅。', 'zh-TW': 'DX-APP 各功能的詳細指南、參數、工作流程和技巧 — 一站式查閱。',
+    ko: 'DX-APP 기능별 상세 가이드 · 파라미터 · 워크플로우 · 팁을 한 곳에서 확인하세요.', ja: 'DX-APP の各機能の詳細ガイド・パラメータ・ワークフロー・ヒントをすべて一か所で確認できます。',
+    'zh-CN': 'DX-APP 各功能的详细指南、参数、工作流和提示 — 一站式查阅。', 'zh-TW': 'DX-APP 各功能的詳細指南、參數、工作流程和提示 — 一站式查閱。',
     es: 'Guías detalladas, parámetros, flujos de trabajo y consejos para cada característica de DX-APP — todo en un solo lugar.',
   },
 
@@ -2706,18 +2706,18 @@ window._DX_I18N_DICT = {
 
   /* ─── Additional i18n entries ─── */
   'Model Demo Runner': { ko: '모델 예제 실행', ja: 'モデルデモランナー', 'zh-CN': '模型演示运行器', 'zh-TW': '模型展示執行器',es:'Ejecutor de demo de modelo'},
-  'ModelZoo': { ko: 'ModelZoo', ja: 'ModelZoo', 'zh-CN': 'ModelZoo', 'zh-TW': 'ModelZoo',es:'ModelZoo'},
+  'ModelZoo': { ko: '모델 저장소', ja: 'ModelZoo', 'zh-CN': 'ModelZoo', 'zh-TW': 'ModelZoo',es:'ModelZoo'},
   'Install dependencies and build each component from this page. Run top-to-bottom, left-to-right.': {
     ko: '이 페이지에서 종속성을 설치하고 각 구성 요소를 빌드하세요. 위에서 아래로, 왼쪽에서 오른쪽으로 실행합니다.',
-    ja: 'このページから依存関係をインストールし、各コンポーネントをビルドしてください。上から下、左から右の順に実行します。',
-    'zh-CN': '从此页面安装依赖项并构建各组件。按从上到下、从左到右的顺序执行。',
-    'zh-TW': '從此頁面安裝相依套件並建置各元件。按從上到下、從左到右的順序執行。',
+    ja: 'このページから依存関係をインストールし、各コンポーネントをビルドします。上から下、左から右に実行してください。',
+    'zh-CN': '从此页面安装依赖并构建各组件。从上到下、从左到右执行。',
+    'zh-TW': '從此頁面安裝相依套件並建置各元件。由上至下、由左至右執行。',
     es: 'Instale dependencias y compile cada componente desde esta página. Ejecute de arriba a abajo, de izquierda a derecha.',
   },
   'Install system packages required for C++ build (cmake, gcc, ninja, OpenCV, …) →': {
     ko: 'C++ 빌드에 필요한 시스템 패키지 설치 (cmake, gcc, ninja, OpenCV, …) →',
     ja: 'C++ ビルドに必要なシステムパッケージをインストール (cmake, gcc, ninja, OpenCV, …) →',
-    'zh-CN': '安装 C++ 构建所需的系统包 (cmake, gcc, ninja, OpenCV, …) →',
+    'zh-CN': '安装 C++ 构建所需的系统软件包 (cmake, gcc, ninja, OpenCV, …) →',
     'zh-TW': '安裝 C++ 建置所需的系統套件 (cmake, gcc, ninja, OpenCV, …) →',
     es: 'Instale los paquetes del sistema requeridos para la compilación C++ (cmake, gcc, ninja, OpenCV, …) →',
   },
@@ -2725,28 +2725,28 @@ window._DX_I18N_DICT = {
     ko: 'C++ 데모 바이너리 컴파일 (cmake) →',
     ja: 'C++ デモバイナリをコンパイル (cmake) →',
     'zh-CN': '编译 C++ 演示二进制文件 (cmake) →',
-    'zh-TW': '編譯 C++ 展示二進位檔 (cmake) →',
+    'zh-TW': '編譯 C++ 演示二進位檔案 (cmake) →',
     es: 'Compile binarios de demo C++ (cmake) →',
   },
   'Download sample models & videos for Run / Benchmark demos →': {
     ko: 'Run / Benchmark 데모용 샘플 모델 및 비디오 다운로드 →',
     ja: 'Run / Benchmark デモ用のサンプルモデルと動画をダウンロード →',
     'zh-CN': '下载 Run / Benchmark 演示用的示例模型和视频 →',
-    'zh-TW': '下載 Run / Benchmark 展示用的範例模型和影片 →',
+    'zh-TW': '下載 Run / Benchmark 示範用的範例模型和影片 →',
     es: 'Descargue modelos y videos de ejemplo para demos de Ejecución / Benchmark →',
   },
   'Install packages required for NPU runtime (cmake, ONNX Runtime, …) →': {
     ko: 'NPU 런타임에 필요한 패키지 설치 (cmake, ONNX Runtime, …) →',
     ja: 'NPU ランタイムに必要なパッケージをインストール (cmake, ONNX Runtime, …) →',
     'zh-CN': '安装 NPU 运行时所需的软件包 (cmake, ONNX Runtime, …) →',
-    'zh-TW': '安裝 NPU 執行環境所需的套件 (cmake, ONNX Runtime, …) →',
+    'zh-TW': '安裝 NPU 執行階段所需的套件 (cmake, ONNX Runtime, …) →',
     es: 'Instale los paquetes requeridos para el runtime NPU (cmake, ONNX Runtime, …) →',
   },
   'Install DEEPX NPU kernel driver (requires sudo) →': {
     ko: 'DEEPX NPU 커널 드라이버 설치 (sudo 필요) →',
-    ja: 'DEEPX NPU カーネルドライバをインストール (sudo 必要) →',
-    'zh-CN': '安装 DEEPX NPU 内核驱动 (需要 sudo) →',
-    'zh-TW': '安裝 DEEPX NPU 核心驅動 (需要 sudo) →',
+    ja: 'DEEPX NPU カーネルドライバーをインストール (sudo 必要) →',
+    'zh-CN': '安装 DEEPX NPU 内核驱动程序 (需要 sudo) →',
+    'zh-TW': '安裝 DEEPX NPU 核心驅動程式 (需要 sudo) →',
     es: 'Instale el controlador del kernel del NPU DEEPX (requiere sudo) →',
   },
   'ONNX→.dxnn converter. Requires DEEPX Developers Portal account →': {
@@ -2757,53 +2757,53 @@ window._DX_I18N_DICT = {
     es: 'Conversor ONNX→.dxnn. Requiere cuenta de DEEPX Developers Portal →',
   },
   'Deep Diagnostics': { ko: '심층 진단', ja: '詳細診断', 'zh-CN': '深度诊断', 'zh-TW': '深度診斷',es:'Diagnóstico profundo'},
-  'Run Diagnostics': { ko: '진단 실행', ja: '診断を実行', 'zh-CN': '运行诊断', 'zh-TW': '執行診斷',es:'Ejecutar diagnóstico'},
+  'Run Diagnostics': { ko: '진단 실행', ja: '診断実行', 'zh-CN': '运行诊断', 'zh-TW': '執行診斷',es:'Ejecutar diagnóstico'},
   'Comprehensive system health check: PCIe link, kernel modules, DKMS, services, CLI tools, Python venv, disk, memory, model integrity.': {
     ko: '시스템 종합 진단: PCIe 링크, 커널 모듈, DKMS, 서비스, CLI 도구, Python 가상환경, 디스크, 메모리, 모델 무결성.',
-    ja: 'システム総合ヘルスチェック：PCIe リンク、カーネルモジュール、DKMS、サービス、CLI ツール、Python 仮想環境、ディスク、メモリ、モデル整合性。',
+    ja: 'システム総合診断: PCIe リンク、カーネルモジュール、DKMS、サービス、CLI ツール、Python 仮想環境、ディスク、メモリ、モデル整合性。',
     'zh-CN': '系统综合健康检查：PCIe 链路、内核模块、DKMS、服务、CLI 工具、Python 虚拟环境、磁盘、内存、模型完整性。',
     'zh-TW': '系統綜合健康檢查：PCIe 連結、核心模組、DKMS、服務、CLI 工具、Python 虛擬環境、磁碟、記憶體、模型完整性。',
     es: 'Verificación integral del estado del sistema: enlace PCIe, módulos del kernel, DKMS, servicios, herramientas CLI, Python venv, disco, memoria, integridad del modelo.',
   },
-  'Actions': { ko: '작업', ja: 'アクション', 'zh-CN': '操作', 'zh-TW': '操作',es:'Acciones'},
+  'Actions': { ko: '작업', ja: '操作', 'zh-CN': '操作', 'zh-TW': '操作',es:'Acciones'},
   'Passed to the model\'s config.json as score_threshold / nms_threshold': {
     ko: '모델의 config.json에 score_threshold / nms_threshold로 전달됩니다',
     ja: 'モデルの config.json に score_threshold / nms_threshold として渡されます',
     es: 'Se pasa al config.json del modelo como score_threshold / nms_threshold',
-    'zh-CN': '作为 score_threshold / nms_threshold 传递给模型的 config.json',
-    'zh-TW': '作為 score_threshold / nms_threshold 傳遞給模型的 config.json'
+    'zh-CN': '作为 score_threshold / nms_threshold 传递到模型的 config.json',
+    'zh-TW': '作為 score_threshold / nms_threshold 傳遞至模型的 config.json'
   },
   'Profiler': { ko: '프로파일러', ja: 'プロファイラー', 'zh-CN': '性能分析器', 'zh-TW': '分析器',es:'Perfilador'},
   'Profiler Timeline': { ko: '프로파일러 타임라인', ja: 'プロファイラー タイムライン', 'zh-CN': '性能分析器时间轴', 'zh-TW': '分析器時間軸',es:'Línea de tiempo del perfilador'},
   'Reset Zoom': { ko: '줌 초기화', ja: 'ズームをリセット', 'zh-CN': '重置缩放', 'zh-TW': '重設縮放',es:'Restablecer zoom'},
   'Extract the selected model\'s source code, config, and model file as a package. Available for download on the Outputs page.': {
     ko: '선택한 모델의 소스 코드, 설정, 모델 파일을 패키지로 추출합니다. Outputs 페이지에서 다운로드할 수 있습니다.',
-    ja: '選択したモデルのソースコード、設定、モデルファイルをパッケージとして抽出します。Outputs ページでダウンロードできます。',
-    'zh-CN': '将所选模型的源代码、配置和模型文件打包提取。可在 Outputs 页面下载。',
-    'zh-TW': '將所選模型的原始碼、設定和模型檔案打包匯出。可在 Outputs 頁面下載。',
+    ja: '選択したモデルのソースコード、設定、モデルファイルをパッケージとして抽出します。Outputs ページからダウンロードできます。',
+    'zh-CN': '将所选模型的源代码、配置和模型文件提取为软件包。可在 Outputs 页面下载。',
+    'zh-TW': '將所選模型的原始碼、組態和模型檔案擷取為套件。可在 Outputs 頁面下載。',
     es: 'Extraiga el código fuente, configuración y archivo de modelo del modelo seleccionado como paquete. Disponible para descarga en la página de Salidas.',
   },
   'Camera Device': { ko: '카메라 장치', ja: 'カメラデバイス', 'zh-CN': '摄像头设备', 'zh-TW': '攝影機裝置',es:'Dispositivo de cámara'},
   'RTSP Server': { ko: 'RTSP 서버', ja: 'RTSP サーバー', 'zh-CN': 'RTSP 服务器', 'zh-TW': 'RTSP 伺服器',es:'Servidor RTSP'},
-  'Stream': { ko: '스트림', ja: 'ストリーム', 'zh-CN': '串流', 'zh-TW': '串流',es:'Flujo'},
+  'Stream': { ko: '스트림', ja: 'ストリーム', 'zh-CN': '流', 'zh-TW': '串流',es:'Flujo'},
   'Settings': { ko: '설정', ja: '設定', 'zh-CN': '设置', 'zh-TW': '設定',es:'Configuración'},
   'None': { ko: '해제', ja: 'なし', 'zh-CN': '无', 'zh-TW': '無',es:'Ninguno'},
   'Latency(ms)': { ko: '지연시간(ms)', ja: 'レイテンシ(ms)', 'zh-CN': '延迟(ms)', 'zh-TW': '延遲(ms)',es:'Latencia (ms)'},
-  'Slots:': { ko: '슬롯:', ja: 'スロット:', 'zh-CN': '插槽:', 'zh-TW': '插槽:',es:'Ranuras:'},
-  'Shared Input (Image / Video)': { ko: '공유 입력 (이미지 / 동영상)', ja: '共有入力 (画像 / 動画)', 'zh-CN': '共享输入 (图片 / 视频)', 'zh-TW': '共用輸入 (影像 / 影片)',es:'Entrada compartida (Imagen / Vídeo)'},
+  'Slots:': { ko: '슬롯:', ja: 'スロット:', 'zh-CN': '槽位:', 'zh-TW': '插槽:',es:'Ranuras:'},
+  'Shared Input (Image / Video)': { ko: '공유 입력 (이미지 / 동영상)', ja: '共有入力 (画像 / 動画)', 'zh-CN': '共享输入 (图像 / 视频)', 'zh-TW': '共用輸入 (影像 / 影片)',es:'Entrada compartida (Imagen / Vídeo)'},
   'Camera': { ko: '카메라', ja: 'カメラ', 'zh-CN': '摄像头', 'zh-TW': '攝影機',es:'Cámara'},
   'Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro DXNN files directly.': {
     ko: 'DEEPX 모델 저장소를 탐색하세요 — 모델을 선택하고 Q-Lite / Q-Pro DXNN 파일을 직접 다운로드합니다.',
-    ja: 'DEEPX ModelZoo を閲覧 — モデルを選択し、Q-Lite / Q-Pro DXNN ファイルを直接ダウンロードできます。',
-    'zh-CN': '浏览 DEEPX 模型库 — 选择模型并直接下载 Q-Lite / Q-Pro DXNN 文件。',
-    'zh-TW': '瀏覽 DEEPX 模型庫 — 選擇模型並直接下載 Q-Lite / Q-Pro DXNN 檔案。',
+    ja: 'DEEPX ModelZoo を閲覧 — モデルを選択し、Q-Lite / Q-Pro DXNN ファイルを直接ダウンロードします。',
+    'zh-CN': '浏览 DEEPX ModelZoo — 选择模型并直接下载 Q-Lite / Q-Pro DXNN 文件。',
+    'zh-TW': '瀏覽 DEEPX ModelZoo — 選擇模型並直接下載 Q-Lite / Q-Pro DXNN 檔案。',
     es: 'Explore el DEEPX ModelZoo — seleccione modelos y descargue archivos DXNN Q-Lite / Q-Pro directamente.',
   },
   'ModelZoo Homepage': { ko: 'ModelZoo 홈페이지', ja: 'ModelZoo ホームページ', 'zh-CN': 'ModelZoo 主页', 'zh-TW': 'ModelZoo 首頁',es:'Página principal de ModelZoo'},
   'Source': { ko: '소스', ja: 'ソース', 'zh-CN': '来源', 'zh-TW': '來源',es:'Fuente'},
-  'New Only': { ko: '새 항목만', ja: '新規のみ', 'zh-CN': '仅新增', 'zh-TW': '僅新增',es:'Solo nuevos'},
-  'Q-Lite All': { ko: 'Q-Lite 전체', ja: 'Q-Lite 全て', 'zh-CN': 'Q-Lite 全部', 'zh-TW': 'Q-Lite 全部',es:'Todo Q-Lite'},
-  'Q-Pro All': { ko: 'Q-Pro 전체', ja: 'Q-Pro 全て', 'zh-CN': 'Q-Pro 全部', 'zh-TW': 'Q-Pro 全部',es:'Todo Q-Pro'},
+  'New Only': { ko: '새 항목만', ja: '新規のみ', 'zh-CN': '仅新增项', 'zh-TW': '僅新增項',es:'Solo nuevos'},
+  'Q-Lite All': { ko: 'Q-Lite 전체', ja: 'Q-Lite すべて', 'zh-CN': 'Q-Lite 全部', 'zh-TW': 'Q-Lite 全部',es:'Todo Q-Lite'},
+  'Q-Pro All': { ko: 'Q-Pro 전체', ja: 'Q-Pro すべて', 'zh-CN': 'Q-Pro 全部', 'zh-TW': 'Q-Pro 全部',es:'Todo Q-Pro'},
   'Task': { ko: '작업', ja: 'タスク', 'zh-CN': '任务', 'zh-TW': '任務',es:'Tarea'},
   'Name': { ko: '이름', ja: '名前', 'zh-CN': '名称', 'zh-TW': '名稱',es:'Nombre'},
   'Dataset': { ko: '데이터셋', ja: 'データセット', 'zh-CN': '数据集', 'zh-TW': '資料集',es:'Conjunto de datos'},
@@ -2849,8 +2849,8 @@ window._DX_I18N_DICT = {
     es: 'Haga clic en "ONNX Graph" o "DXNN Graph" arriba para visualizar',
   },
   'Download': { ko: '다운로드', ja: 'ダウンロード', 'zh-CN': '下载', 'zh-TW': '下載',es:'Descargar'},
-  'Before': { ko: '이전', ja: '変換前', 'zh-CN': '转换前', 'zh-TW': '轉換前',es:'Antes'},
-  'After': { ko: '이후', ja: '変換後', 'zh-CN': '转换后', 'zh-TW': '轉換後',es:'Después'},
+  'Before': { ko: '이전', ja: '変更前', 'zh-CN': '变更前', 'zh-TW': '變更前',es:'Antes'},
+  'After': { ko: '이후', ja: '変更後', 'zh-CN': '变更后', 'zh-TW': '變更後',es:'Después'},
   'Detail': { ko: '상세', ja: '詳細', 'zh-CN': '详情', 'zh-TW': '詳情',es:'Detalle'},
   'Run': { ko: '실행', ja: '実行', 'zh-CN': '运行', 'zh-TW': '執行', es: 'Ejecutar'},
   'Re-download': { ko: '다시 다운로드', ja: '再ダウンロード', 'zh-CN': '重新下载', 'zh-TW': '重新下載', es: 'Volver a descargar'},
@@ -2887,7 +2887,7 @@ window._DX_I18N_DICT = {
   },
   'This will permanently delete model source files from disk.': {
     ko: '디스크에서 모델 소스 파일이 영구적으로 삭제됩니다.',
-    ja: 'ディスクからモデルソースファイルが永久に削除されます。',
+    ja: 'ディスクからモデルソースファイルが完全に削除されます。',
     'zh-CN': '这将从磁盘永久删除模型源文件。',
     'zh-TW': '這將從磁碟永久刪除模型原始檔案。',
     es: 'Esto eliminará permanentemente los archivos fuente del modelo del disco.',
@@ -2901,9 +2901,9 @@ window._DX_I18N_DICT = {
   },
   'Files to generate: Factory interface, Postprocessor, Visualizer, Sync/Async Runner (C++), Postprocessor/Visualizer (Python)': {
     ko: '생성할 파일: Factory 인터페이스, Postprocessor, Visualizer, Sync/Async Runner (C++), Postprocessor/Visualizer (Python)',
-    ja: '生成するファイル：Factory インターフェース、Postprocessor、Visualizer、Sync/Async Runner (C++)、Postprocessor/Visualizer (Python)',
-    'zh-CN': '将生成的文件：Factory 接口、Postprocessor、Visualizer、Sync/Async Runner (C++)、Postprocessor/Visualizer (Python)',
-    'zh-TW': '將產生的檔案：Factory 介面、Postprocessor、Visualizer、Sync/Async Runner (C++)、Postprocessor/Visualizer (Python)',
+    ja: '生成するファイル: Factory インターフェース、Postprocessor、Visualizer、Sync/Async Runner (C++)、Postprocessor/Visualizer (Python)',
+    'zh-CN': '要生成的文件：Factory 接口、Postprocessor、Visualizer、Sync/Async Runner (C++)、Postprocessor/Visualizer (Python)',
+    'zh-TW': '要產生的檔案：Factory 介面、Postprocessor、Visualizer、Sync/Async Runner (C++)、Postprocessor/Visualizer (Python)',
     es: 'Archivos a generar: interfaz Factory, Postprocessor, Visualizer, Runner Sync/Async (C++), Postprocessor/Visualizer (Python)',
   },
   'Packages are saved to outputs/ directory. Use the Outputs page to download.': {
@@ -3157,6 +3157,231 @@ window._DX_I18N_DICT = {
   'Package export completed': { ko: '패키지 내보내기가 완료되었습니다', ja: 'パッケージのエクスポートが完了しました', 'zh-CN': '软件包导出已完成', 'zh-TW': '套件匯出已完成', es: 'La exportación del paquete se completó' },
   'Running inference…': { ko: '추론 실행 중…', ja: '推論実行中…', 'zh-CN': '正在运行推理…', 'zh-TW': '正在執行推論…', es: 'Ejecutando inferencia…' },
   'frames': { ko: '프레임', ja: 'フレーム', 'zh-CN': '帧', 'zh-TW': '影格', es: 'fotogramas' },
+  // ── 마크업 lang-span 에서 옮겨온 항목 ──
+  'Advanced Tools': {
+    ko: '고급 도구',
+    ja: '高度なツール',
+    'zh-CN': '高级工具',
+    'zh-TW': '進階工具',
+    es: 'Herramientas avanzadas',
+  },
+  'Auto-generate skeleton code (Factory, Postprocessor, Visualizer, Runner) for a new task type.<br>To add a model to an existing task, use the <strong>Add Model</strong> tab.': {
+    ko: '새 작업 유형에 대한 스켈레톤 코드 (Factory, Postprocessor, Visualizer, Runner)를 자동 생성합니다.<br>기존 작업에 모델을 추가하려면 <strong>모델 추가</strong> 탭을 사용하세요.',
+    ja: '新しいタスクタイプのスケルトンコード (Factory, Postprocessor, Visualizer, Runner) を自動生成します。<br>既存タスクにモデルを追加するには<strong>モデル追加</strong>タブを使用してください。',
+    'zh-CN': '为新任务类型自动生成骨架代码 (Factory, Postprocessor, Visualizer, Runner)。<br>要向现有任务添加模型，请使用<strong>添加模型</strong>选项卡。',
+    'zh-TW': '為新任務類型自動產生骨架程式碼 (Factory, Postprocessor, Visualizer, Runner)。<br>要將模型新增至現有任務，請使用<strong>新增模型</strong>分頁。',
+    es: 'Generación automática de código esqueleto (Factory, Postprocessor, Visualizer, Runner) para un nuevo tipo de tarea.<br>Para añadir un modelo a una tarea existente, use la pestaña <strong>Añadir modelo</strong>.',
+  },
+  'Build the DX-RT runtime and install the dx_engine Python API into venv-dx-runtime →': {
+    ko: 'DX-RT 런타임을 빌드하고 dx_engine Python API를 venv-dx-runtime에 설치 →',
+    ja: 'DX-RT ランタイムをビルドし、dx_engine Python API を venv-dx-runtime にインストール →',
+    'zh-CN': '构建 DX-RT 运行时并将 dx_engine Python API 安装到 venv-dx-runtime →',
+    'zh-TW': '建置 DX-RT 執行環境並將 dx_engine Python API 安裝到 venv-dx-runtime →',
+    es: 'Compile el runtime DX-RT e instale la API de Python dx_engine en venv-dx-runtime →',
+  },
+  'Choose a model and input, run the workflow, then export a package.': {
+    ko: '모델과 입력을 선택해 워크플로우를 실행하고 패키지로 내보냅니다.',
+    ja: 'モデルと入力を選択し、ワークフローを実行してパッケージをエクスポートします。',
+    'zh-CN': '选择模型和输入，运行工作流，然后导出软件包。',
+    'zh-TW': '選擇模型與輸入，執行工作流程後匯出套件。',
+    es: 'Elija un modelo y una entrada, ejecute el flujo y exporte un paquete.',
+  },
+  'Choose a pre-configured demo scenario and see the results instantly.': {
+    ko: '사전 구성된 데모 시나리오를 선택하고 실행 결과를 바로 확인하세요.',
+    ja: '事前設定済みのデモシナリオを選択し、実行結果をすぐに確認できます。',
+    'zh-CN': '选择预配置的演示场景，立即查看运行结果。',
+    'zh-TW': '選擇預先設定的示範情境，立即查看執行結果。',
+    es: 'Elija un escenario de demostración preconfigurado y vea los resultados al instante.',
+  },
+  'Class': {
+    ko: '클래스',
+    ja: 'クラス',
+    'zh-CN': '类别',
+    'zh-TW': '類別',
+    es: 'Clase',
+  },
+  'Code Language': {
+    ko: '코드 언어',
+    ja: 'コード言語',
+    'zh-CN': '代码语言',
+    'zh-TW': '程式語言',
+    es: 'Lenguaje de código',
+  },
+  'Create Task': {
+    ko: '작업 생성',
+    ja: 'タスク作成',
+    'zh-CN': '创建任务',
+    'zh-TW': '建立任務',
+    es: 'Crear tarea',
+  },
+  'DX-Runtime Build': {
+    ko: 'DX-Runtime 빌드',
+    ja: 'DX-Runtime ビルド',
+    'zh-CN': 'DX-Runtime 构建',
+    'zh-TW': 'DX-Runtime 建置',
+    es: 'Compilación de DX-Runtime',
+  },
+  'Demo Quick Start': {
+    ko: '데모만 빠르게 시작',
+    ja: 'デモ クイックスタート',
+    'zh-CN': '演示快速开始',
+    'zh-TW': '示範快速開始',
+    es: 'Inicio rápido de la demo',
+  },
+  'Experiment': {
+    ko: '실험 실행',
+    ja: '実験',
+    'zh-CN': '实验',
+    'zh-TW': '實驗',
+    es: 'Experiment',
+  },
+  'Frames': {
+    ko: '프레임',
+    ja: 'フレーム',
+    'zh-CN': '帧',
+    'zh-TW': '影格',
+    es: 'Cuadros',
+  },
+  'Generate a new task skeleton': {
+    ko: '새 작업 유형 스켈레톤 생성',
+    ja: '新しいタスクスケルトンを生成',
+    'zh-CN': '生成新的任务骨架',
+    'zh-TW': '產生新的任務骨架',
+    es: 'Generar un esqueleto de tarea nuevo',
+  },
+  'Generated Files': {
+    ko: '생성 파일',
+    ja: '生成ファイル',
+    'zh-CN': '生成的文件',
+    'zh-TW': '產生的檔案',
+    es: 'Archivos generados',
+  },
+  'Inspect change plans and rollback guidance': {
+    ko: '변경 계획과 롤백 안내 확인',
+    ja: '変更計画とロールバックガイドを確認',
+    'zh-CN': '检查变更计划和回滚指引',
+    'zh-TW': '檢查變更計畫和復原指引',
+    es: 'Inspeccione planes de cambio y guía de reversión',
+  },
+  'Install only what the demo needs, in one go — downloads only the required models and skips steps already done': {
+    ko: '데모에 필요한 것만 한 번에 설치 — 필요한 모델만 다운로드, 이미 된 단계는 건너뜀',
+    ja: 'デモに必要なものだけを一度にインストール — 必要なモデルのみダウンロードし、完了済みの手順はスキップします',
+    'zh-CN': '一次性只安装演示所需内容 — 仅下载所需模型，跳过已完成的步骤',
+    'zh-TW': '一次只安裝示範所需內容 — 僅下載所需模型，略過已完成的步驟',
+    es: 'Instale solo lo que la demo necesita, de una vez — descarga solo los modelos necesarios y omite los pasos ya completados',
+  },
+  'Lab': {
+    ko: '실험실',
+    ja: 'ラボ',
+    'zh-CN': '实验室',
+    'zh-TW': '實驗室',
+    es: 'Laboratorio',
+  },
+  'Manage model/task extensions, experiments, and safe change previews in one place.': {
+    ko: '모델·작업 확장, 실험 실행, 안전한 변경 미리보기를 한 곳에서 관리합니다.',
+    ja: 'モデル・タスク拡張、実験、安全な変更プレビューを一か所で管理します。',
+    'zh-CN': '在一处管理模型/任务扩展、实验和安全变更预览。',
+    'zh-TW': '在一處管理模型/任務擴充、實驗和安全變更預覽。',
+    es: 'Gestione extensiones de modelos y tareas, experimentos y vistas previas seguras de cambios en un solo lugar.',
+  },
+  'Objectness Threshold': {
+    ko: 'Objectness 임계값',
+    ja: 'Objectness しきい値',
+    'zh-CN': 'Objectness 阈值',
+    'zh-TW': 'Objectness 閾值',
+    es: 'Umbral de objectness',
+  },
+  'Output Language': {
+    ko: '출력 언어',
+    ja: '出力言語',
+    'zh-CN': '输出语言',
+    'zh-TW': '輸出語言',
+    es: 'Idioma de salida',
+  },
+  'Packages are saved to <code>outputs/</code> directory. Use the Outputs page to download.': {
+    ko: '패키지는 <code>outputs/</code> 디렉토리에 저장됩니다. Outputs 페이지에서 다운로드하세요.',
+    ja: 'パッケージは <code>outputs/</code> ディレクトリに保存されます。Outputs ページからダウンロードしてください。',
+    'zh-CN': '包保存在 <code>outputs/</code> 目录中。请使用 Outputs 页面下载。',
+    'zh-TW': '套件儲存在 <code>outputs/</code> 目錄中。請使用 Outputs 頁面下載。',
+    es: 'Los paquetes se guardan en el directorio <code>outputs/</code>. Use la página Salidas para descargarlos.',
+  },
+  'Preparing Lab session': {
+    ko: 'Lab 세션 준비 중',
+    ja: 'Lab セッション準備中',
+    'zh-CN': '正在准备 Lab 会话',
+    'zh-TW': '正在準備 Lab 工作階段',
+    es: 'Preparando sesión de laboratorio',
+  },
+  'Preview manifest before applying': {
+    ko: '매니페스트 미리보기 후 적용',
+    ja: '適用前にマニフェストをプレビュー',
+    'zh-CN': '应用前预览清单',
+    'zh-TW': '套用前預覽資訊清單',
+    es: 'Vista previa del manifiesto antes de aplicar',
+  },
+  'Review generated artifacts': {
+    ko: '생성된 산출물 확인',
+    ja: '生成された成果物を確認',
+    'zh-CN': '查看生成的产物',
+    'zh-TW': '檢閱產生的產出物',
+    es: 'Revisar artefactos generados',
+  },
+  'Run DXNN experiment pipeline': {
+    ko: 'DXNN 실험 파이프라인 실행',
+    ja: 'DXNN 実験パイプラインを実行',
+    'zh-CN': '运行 DXNN 实验流水线',
+    'zh-TW': '執行 DXNN 實驗管線',
+    es: 'Ejecutar pipeline de experimentos DXNN',
+  },
+  'Run Demo': {
+    ko: '데모 실행',
+    ja: 'デモ実行',
+    'zh-CN': '运行演示',
+    'zh-TW': '執行示範',
+    es: 'Ejecutar demo',
+  },
+  'Safety Center': {
+    ko: '안전 센터',
+    ja: '安全センター',
+    'zh-CN': '安全中心',
+    'zh-TW': '安全中心',
+    es: 'Centro de seguridad',
+  },
+  'Start Demo Setup': {
+    ko: '데모 설정 시작',
+    ja: 'デモ設定を開始',
+    'zh-CN': '开始演示设置',
+    'zh-TW': '開始示範設定',
+    es: 'Iniciar configuración de demo',
+  },
+  'Try demo': {
+    ko: '데모 사용해보기',
+    ja: 'デモを試す',
+    'zh-CN': '试用演示',
+    'zh-TW': '試用示範',
+    es: 'Probar demo',
+  },
+  'Type input to send to the process (press Enter)': {
+    ko: '프로세스에 보낼 입력을 입력하세요 (Enter 키)',
+    ja: 'プロセスに送信する入力を入力してください (Enter キー)',
+    'zh-CN': '输入要发送到进程的内容 (按 Enter)',
+    'zh-TW': '輸入要傳送至程序的內容 (按 Enter)',
+    es: 'Escriba la entrada para enviar al proceso (presione Enter)',
+  },
+  'Upload image': {
+    ko: '이미지 업로드',
+    ja: '画像アップロード',
+    'zh-CN': '上传图像',
+    'zh-TW': '上傳影像',
+    es: 'Subir imagen',
+  },
+  'Version Info': {
+    ko: '버전 정보',
+    ja: 'バージョン情報',
+    'zh-CN': '版本信息',
+    'zh-TW': '版本資訊',
+    es: 'Información de versión',
+  },
 };
 
 /* ─── CSS Selectors for DOM translation ─── */
