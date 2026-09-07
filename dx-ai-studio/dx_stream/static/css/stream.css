@@ -19,9 +19,6 @@ body{overflow-x:auto;overflow-y:hidden}
 /* ═══════════════════════════════════════════════════════════════════
    Pages
    ═══════════════════════════════════════════════════════════════════ */
-.page{display:none;animation:dx-fade-in .25s ease;min-width:0;max-width:100%}
-.page.active{display:block}
-
 /* ═══════════════════════════════════════════════════════════════════
    Cards
    ═══════════════════════════════════════════════════════════════════ */
@@ -29,9 +26,6 @@ h1{font-size:var(--fs-2xl);margin-bottom:18px;font-weight:700;display:flex;align
 h1 .accent{color:var(--accent)}
 h2{font-size:var(--fs-md);margin:16px 0 10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px}
 
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--sp-4)}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .card-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media(max-width:1100px){.grid2,.grid3,.grid4,.card-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.grid2,.grid3,.grid4,.card-grid{grid-template-columns:1fr}}
@@ -57,7 +51,6 @@ h2{font-size:var(--fs-md);margin:16px 0 10px;font-weight:600;color:var(--text-3)
 /* ═══════════════════════════════════════════════════════════════════
    Tables
    ═══════════════════════════════════════════════════════════════════ */
-.tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-base)}
 th{text-align:left;color:var(--text-3);font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;border-bottom:2px solid var(--accent);background:var(--bg-1);position:sticky;top:0;z-index:2}
 td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
@@ -68,13 +61,6 @@ tbody tr:hover td{background:var(--bg-3)}
 /* ═══════════════════════════════════════════════════════════════════
    Badges
    ═══════════════════════════════════════════════════════════════════ */
-.b-ok{background:rgba(63,185,80,.12);color:var(--success);border:1px solid rgba(63,185,80,.2)}
-.b-no{background:rgba(148,163,184,.08);color:var(--text-4);border:1px solid rgba(148,163,184,.1)}
-.b-cat{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(99,140,255,.15)}
-.b-blue{background:rgba(88,166,255,.1);color:var(--info);border:1px solid rgba(88,166,255,.15)}
-.b-warn{background:rgba(210,153,34,.1);color:var(--warning);border:1px solid rgba(210,153,34,.15)}
-.b-red{background:rgba(248,81,73,.1);color:var(--error);border:1px solid rgba(248,81,73,.15)}
-
 .comp-status-badge{display:inline-flex;align-items:center;gap:var(--sp-1);padding:3px 10px;border-radius:var(--radius-lg);font-size:var(--fs-xs);font-weight:700}
 .comp-status-badge.cs-ok{background:rgba(63,185,80,.12);color:var(--success);border:1px solid rgba(63,185,80,.3)}
 .comp-status-badge.cs-err{background:rgba(248,81,73,.12);color:var(--error);border:1px solid rgba(248,81,73,.3)}
@@ -114,13 +100,10 @@ tbody tr:hover td{background:var(--bg-3)}
 /* ═══════════════════════════════════════════════════════════════════
    Utility Classes
    ═══════════════════════════════════════════════════════════════════ */
-.flex{display:flex}.gap8{gap:var(--sp-2)}.gap12{gap:var(--sp-3)}.gap16{gap:var(--sp-4)}
-.wrap{flex-wrap:wrap}.between{justify-content:space-between}.items-c{align-items:center}
-.mt8{margin-top:8px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}
-.txt-dim{color:var(--text-3)}.txt-acc{color:var(--accent)}.txt-sm{font-size:var(--fs-sm)}
-.w100{width:100%}.rel{position:relative}
-.hidden{display:none !important}
-
+.gap12{gap:var(--sp-3)}.gap16{gap:var(--sp-4)}
+.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}
+.txt-sm{font-size:var(--fs-sm)}
+.rel{position:relative}
 /* ═══════════════════════════════════════════════════════════════════
    DX Stream — Video Container
    ═══════════════════════════════════════════════════════════════════ */
@@ -277,8 +260,6 @@ tbody tr:hover td{background:var(--bg-3)}
 
 /* Dashboard helper */
 .pipeline-placeholder{padding:40px 20px;text-align:center;border:2px dashed var(--border);border-radius:var(--radius);color:var(--text-4)}
-.mt16{margin-top:16px}
-
 /* Element detail card */
 .element-detail-card{
   background:var(--bg-2);border:1px solid var(--accent);border-radius:var(--radius-lg);
@@ -291,12 +272,6 @@ tbody tr:hover td{background:var(--bg-3)}
 .element-detail-section p{font-size:var(--fs-sm);color:var(--text-3);line-height:1.5;margin:0}
 .filter-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;overflow-x:auto;max-width:100%}
 .badge{display:inline-block;padding:2px 8px;border-radius:var(--radius-xs);font-size:var(--fs-2xs);font-weight:600}
-.b-ok{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
-.b-cat{background:rgba(99,140,255,.12);color:var(--accent);border:1px solid rgba(99,140,255,.2)}
-.b-warn{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
-.b-blue{background:rgba(56,189,248,.12);color:#38bdf8;border:1px solid rgba(56,189,248,.2)}
-.b-red{background:rgba(251,113,133,.12);color:#fb7185;border:1px solid rgba(251,113,133,.2)}
-
 /* ═══ i18n Language Toggle (6-lang) ═══ */
 html[lang="en"] .ko, html[lang="en"] .ja, html[lang="en"] .es, html[lang="en"] [class*="zh-"],
 .lang-en .ko, .lang-en .ja, .lang-en .es, .lang-en [class*="zh-"]{display:none!important}

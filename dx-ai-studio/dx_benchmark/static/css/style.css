@@ -8,14 +8,6 @@ body { overflow-x: auto; overflow-y: hidden; }
 /* ═══ Layout: Top Bar ═══ */
 /* ═══ Main Tab Navigation ═══ */
 /* ═══ Toolbar container ═══ */
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
 /* ═══ Main Content Area ═══ */
 .main-tab-content {
   display: none;
@@ -775,9 +767,7 @@ tbody tr:hover {
 /* ═══ Responsive ═══ */
 @media (max-width: 980px) {
   :root { --benchmark-topbar-h: 88px; }
-.toolbar   { order: 3; margin-left: auto; }
-
-  .page { padding: var(--sp-4); }
+.benchmark-workspace { padding: var(--sp-4); }
   .hero { flex-direction: column; }
   .controls { flex-direction: column; }
   .meta-card { min-width: 100%; }
@@ -834,18 +824,16 @@ tbody tr:hover {
 .gap-3 { gap: var(--sp-3); }
 .mt-4  { margin-top: var(--sp-4); }
 .mb-4  { margin-bottom: var(--sp-4); }
-.flex  { display: flex; }
 .flex-col { flex-direction: column; }
 .items-center { align-items: center; }
 .justify-between { justify-content: space-between; }
-.hidden { display: none !important; }
 .w-full { width: 100%; }
 
 /* ═══ Print ═══ */
 @media print {
   :root { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: #fff; overflow: visible; }
-.page { max-width: none !important; padding: 0 !important; }
+.benchmark-workspace { max-width: none !important; padding: 0 !important; }
   .tabs, .chart-hint, .controls { display: none !important; }
   .hero, .panel, .task-section { break-inside: avoid; page-break-inside: avoid; }
   .hero { margin-bottom: 14px; }
@@ -871,7 +859,7 @@ body.lang-zh-TW .zh-CN { display: none; }
 /* ═══════════════════════════════════════════════════════════════════
    Dashboard Sub-Tabs & Shell
    ═══════════════════════════════════════════════════════════════════ */
-.page { max-width: 1400px; margin: 0 auto; padding: var(--sp-5); }
+.benchmark-workspace { max-width: 1400px; margin: 0 auto; padding: var(--sp-5); }
 
 /* Wide workspace layout */
 .benchmark-workspace { width: 100%; max-width: none; margin: 0; padding: var(--sp-5); }

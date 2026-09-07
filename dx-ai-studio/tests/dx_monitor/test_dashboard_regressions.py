@@ -6,6 +6,7 @@ import shutil
 import subprocess
 
 import pytest
+from tests.css_rules import css_rule
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -158,12 +159,6 @@ def extract_braced_body(source: str, anchor: str) -> str:
             if depth == 0:
                 return source[open_pos + 1:pos]
     raise AssertionError(f"unmatched braces after {anchor!r}")
-
-
-def css_rule(css: str, selector: str) -> str:
-    match = re.search(rf"{re.escape(selector)}\s*\{{([^}}]+)\}}", css)
-    assert match, f"{selector} rule not found"
-    return match.group(1)
 
 
 def test_dashboard_never_renders_negative_npu_dram_percent():
@@ -362,8 +357,9 @@ def test_monitor_z_index_ladder_no_shared_toolbar_conflict():
     .toolbar should position children but NOT use the same z-index as the shared
     lang-menu popup (10000 in toolbar.css).
     """
-    css = read_text(MONITOR / "static" / "css" / "style.css")
-    toolbar_rule = css_rule(css, ".toolbar")
+    # .toolbar 는 통합 shell 이 소유한다 (.dx-shell-header-right 와 같은 요소).
+    shell_css = read_text(MONITOR.parent / "shared" / "static" / "dx-shell.css")
+    toolbar_rule = css_rule(shell_css, ".toolbar")
 
     # Shared toolbar.css .dx-lang-menu uses z-index:10000
     # Monitor .toolbar must NOT also declare z-index:10000

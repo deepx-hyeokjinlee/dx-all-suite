@@ -76,7 +76,12 @@
 .dx-shell-header-left{
   display:flex;align-items:center;gap: var(--dx-module-header-gap);min-width:0;flex-shrink:0;
 }
-.dx-shell-header-right{
+/* .toolbar 는 같은 요소의 두 번째 이름이다 — DXToolbar 가 container 로 그 이름을
+   찾아 여기에 붙는다. 네 모듈이 각자 .toolbar 를 정의하며 gap 을 8px/16px 로
+   달리 잡고 있었고, 이제 셸이 한 번만 정한다.
+   (CSS 주석 안에 중괄호를 쓰지 않는다 — 계약 테스트의 rule 파서가 깨진다.) */
+.dx-shell-header-right,
+.toolbar{
   display:flex;align-items:center;gap:var(--sp-4);flex-shrink:0;
   position:relative;z-index:1;
 }
@@ -151,3 +156,11 @@
   .dx-shell-tabs{padding:0 var(--sp-4)}
   .dx-tab-menu{right:var(--sp-4)}
 }
+
+/* ═══ 페이지 전환 ═══
+   탭 행과 짝을 이루는 계약: 활성 페이지만 보인다. dx_app / dx_stream 이 같은
+   정의를 각자 갖고 있었고, dx_benchmark 는 같은 이름을 정반대 뜻으로
+   (max-width 를 가진 콘텐츠 컨테이너) 쓰고 있었다 — 두 규칙이 만나면
+   benchmark 화면이 통째로 사라진다. benchmark 쪽은 .benchmark-workspace 로 옮겼다. */
+.page{display:none;animation:dx-fade-in .25s ease;min-width:0;max-width:100%}
+.page.active{display:block}

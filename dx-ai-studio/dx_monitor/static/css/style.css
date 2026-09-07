@@ -9,9 +9,6 @@ body{overflow-x:auto;overflow-y:auto}
 .card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(99,140,255,.06)}
 
 /*═══ Grid ═══*/
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--sp-4)}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media(max-width:1100px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
 
@@ -125,7 +122,6 @@ body{overflow-x:auto;overflow-y:auto}
 @media(max-width:600px) { .chart-all-grid { grid-template-columns: 1fr; } }
 
 /*═══ Tables ═══*/
-.tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-base)}
 th{text-align:left;color:var(--text-3);font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;border-bottom:2px solid var(--accent);background:var(--bg-1);position:sticky;top:0;z-index:2}
 td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
@@ -144,21 +140,10 @@ tbody tr:hover td{background:var(--bg-3)}
 .btn-group button.active{background:var(--accent);color:var(--bg-0);border-color:var(--accent)}
 
 /*═══ Badges ═══*/
-.b-ok{background:rgba(63,185,80,.12);color:var(--success);border:1px solid rgba(63,185,80,.2)}
-.b-no{background:rgba(148,163,184,.08);color:var(--text-4);border:1px solid rgba(148,163,184,.1)}
-.b-cat{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(99,140,255,.15)}
-.b-blue{background:rgba(88,166,255,.1);color:var(--info);border:1px solid rgba(88,166,255,.15)}
-.b-warn{background:rgba(210,153,34,.1);color:var(--warning);border:1px solid rgba(210,153,34,.15)}
-.b-red{background:rgba(248,81,73,.1);color:var(--error);border:1px solid rgba(248,81,73,.15)}
-
 /*═══ Utilities ═══*/
-.flex{display:flex}.gap8{gap:var(--sp-2)}.gap12{gap:var(--sp-3)}.gap16{gap:var(--sp-4)}
-.wrap{flex-wrap:wrap}.between{justify-content:space-between}.items-c{align-items:center}
-.mt8{margin-top:8px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}
-.txt-dim{color:var(--text-3)}.txt-acc{color:var(--accent)}.txt-sm{font-size:var(--fs-sm)}
-.w100{width:100%}
-.hidden{display:none !important}
-
+.gap12{gap:var(--sp-3)}.gap16{gap:var(--sp-4)}
+.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}
+.txt-sm{font-size:var(--fs-sm)}
 /*═══ i18n (6-lang) ═══*/
 html[lang="en"] .ko, html[lang="en"] .ja, html[lang="en"] .es, html[lang="en"] [class*="zh-"]{display:none!important}
 html[lang="ko"] .en, html[lang="ko"] .ja, html[lang="ko"] .es, html[lang="ko"] [class*="zh-"]{display:none!important}
@@ -169,15 +154,6 @@ html[lang="zh-CN"] .zh-TW{display:none!important}
 html[lang="zh-TW"] .zh-CN{display:none!important}
 
 /* DX Monitor layout */
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-left: auto;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-}
 /* 통합 shell(Option A)에서는 .dx-shell-main 이 이미 남은 공간을 채우고 스크롤한다.
    구 position:fixed + top 오프셋은 56px 모듈 레일을 무시하고 그 위를 덮었다. */
 .monitor-main {

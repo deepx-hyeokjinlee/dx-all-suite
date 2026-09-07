@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 
 import pytest
+from tests.css_rules import css_rule as _css_rule
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -77,17 +78,6 @@ def surface_html(name: str) -> str:
     from shared.shell import apply as apply_shell
 
     return apply_shell(html, getattr(importlib.import_module(mod_path), spec_name))
-
-
-def _css_rule(css: str, selector: str) -> str:
-    """selector에 해당하는 CSS 규칙 본문을 추출한다."""
-    escaped = re.escape(selector)
-    # 중첩되지 않은 단순 셀렉터 매칭
-    pattern = escaped + r"\s*\{([^}]+)\}"
-    matches = list(re.finditer(pattern, css))
-    assert matches, f"selector {selector!r} not found in CSS"
-    return matches[0].group(1)
-
 
 
 class TestSharedCSSLoadOrder:

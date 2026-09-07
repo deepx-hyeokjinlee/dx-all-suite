@@ -125,7 +125,7 @@ function _appendEdgeGuideLink(parentEl, overrides) {
 }
 
 function _buildDashboardHTML() {
-  return '<div class="page benchmark-workspace dashboard-workspace">' +
+  return '<div class="benchmark-workspace dashboard-workspace">' +
     '<header class="hero benchmark-workspace-hero">' +
       '<div>' +
         '<p class="eyebrow">YOLO26 Benchmark</p>' +

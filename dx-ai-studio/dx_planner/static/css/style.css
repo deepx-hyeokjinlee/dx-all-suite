@@ -1652,7 +1652,6 @@ body.lang-zh-TW .zh-CN { display: none; }
 }
 
 /* ═══ 13. Utility / Toast ═══ */
-.txt-dim { color: var(--text-3); }
 .txt-sm { font-size: var(--fs-sm); }
 
 .tooltip {

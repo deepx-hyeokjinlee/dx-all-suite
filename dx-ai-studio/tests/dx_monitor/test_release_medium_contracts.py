@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import re
+from tests.css_rules import css_rule
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -12,12 +13,6 @@ HW_WIDGET_HTML = ROOT / "shared" / "hw_widget" / "widget.html"
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
-
-
-def css_rule(css: str, selector: str) -> str:
-    match = re.search(rf"{re.escape(selector)}\s*\{{([^}}]+)\}}", css)
-    assert match, f"{selector} rule not found"
-    return match.group(1)
 
 
 def z_index(rule: str, selector: str) -> int:

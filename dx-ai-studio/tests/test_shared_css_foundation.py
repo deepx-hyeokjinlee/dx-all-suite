@@ -5,6 +5,8 @@ from pathlib import Path
 import re
 
 import pytest
+from tests.css_rules import css_rule as _css_rule
+from tests.css_rules import css_rule_last as _css_rule_last
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -719,10 +721,8 @@ def test_dx_app_css_no_longer_defines_shared_foundation():
             f"{selector} 는 shared/static/dx-shell.css 로 옮겼다"
         )
     # 모듈이 계속 소유하는 셀렉터
+    # .toolbar / .card / .btn 은 공유 계층으로 올라갔다.
     for selector in (
-        ".toolbar",
-        ".card",
-        ".btn",
         ".ref-layout",
         ".ref-topic-card",
     ):
@@ -1312,21 +1312,6 @@ def test_sdk_library_shell_uses_deepx_tokens_not_github_palette():
 
 
 
-def _css_rule(css: str, selector: str) -> str:
-    """Return the body (content between braces) of the first rule matching *selector*."""
-    # Escape special regex chars in selector, then find the block.
-    escaped = re.escape(selector)
-    m = re.search(escaped + r"\s*\{([^}]*)\}", css)
-    assert m is not None, f"selector {selector!r} not found in CSS"
-    return m.group(1)
-
-
-def _css_rule_last(css: str, selector: str) -> str:
-    """Return the body of the last matching rule so late overrides are covered."""
-    escaped = re.escape(selector)
-    matches = list(re.finditer(r"^\s*" + escaped + r"\s*\{([^}]*)\}", css, re.M | re.S))
-    assert matches, f"selector {selector!r} not found in CSS"
-    return matches[-1].group(1)
 
 
 def test_shared_depth_tokens_define_surface_contract():
@@ -1523,6 +1508,18 @@ def test_app_stream_local_css_urls_bust_pre_depth_cache():
 
 COMPONENT_OWNER = "shared/static/dx-components.css"
 
+# 컴포넌트가 아니라 유틸리티/셸이 소유하는 것들.
+ALT_OWNERS = {
+    ".flex": "shared/static/dx-utilities.css",
+    ".hidden": "shared/static/dx-utilities.css",
+    ".txt-dim": "shared/static/dx-utilities.css",
+    ".b-ok": "shared/static/dx-utilities.css",
+    ".b-warn": "shared/static/dx-utilities.css",
+    ".b-red": "shared/static/dx-utilities.css",
+    ".toolbar": "shared/static/dx-shell.css",
+    ".page": "shared/static/dx-shell.css",
+}
+
 # 이미 shared 소유자가 있는데 모듈이 덮어쓰는 셀렉터.
 OWNED_COMPONENT_OVERRIDES = {
     ".btn": set(),
@@ -1540,6 +1537,14 @@ OWNED_COMPONENT_OVERRIDES = {
     ".modal": set(),
     ".modal-overlay": set(),
     ".stat": set(),
+    ".toolbar": set(),
+    ".page": set(),
+    ".flex": set(),
+    ".hidden": set(),
+    ".txt-dim": set(),
+    ".b-ok": set(),
+    ".b-warn": set(),
+    ".b-red": set(),
 }
 
 # shared 소유자가 아직 없어 모듈마다 재발명 중인 셀렉터.
@@ -1576,8 +1581,9 @@ def _redefining_files(selector: str) -> set[str]:
 
 @pytest.mark.parametrize("selector", sorted(OWNED_COMPONENT_OVERRIDES))
 def test_owned_component_is_defined_by_the_shared_owner(selector):
-    assert _defines_selector(read_text(ROOT / COMPONENT_OWNER), selector), (
-        f"{COMPONENT_OWNER} 가 {selector} 를 정의하지 않는다"
+    owner = ALT_OWNERS.get(selector, COMPONENT_OWNER)
+    assert _defines_selector(read_text(ROOT / owner), selector), (
+        f"{owner} 가 {selector} 를 정의하지 않는다"
     )
 
 
