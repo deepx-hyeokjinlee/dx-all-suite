@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/shared/dx-tokens.css">
     <link rel="stylesheet" href="/static/shared/dx-semantic.css">
     <link rel="stylesheet" href="/static/shared/dx-theme-light.css">
+    <link rel="stylesheet" href="/static/shared/dx-shell.css">
     <link rel="stylesheet" href="/static/shared/dx-base.css">
     <link rel="stylesheet" href="/static/shared/dx-utilities.css">
     <link rel="stylesheet" href="/static/shared/module-chrome.css">
@@ -16,70 +17,18 @@
     <link rel="stylesheet" href="/static/shared/tutorial.css">
     <link rel="stylesheet" href="/static/shared/toolbar.css">
     <link rel="stylesheet" href="/static/shared/chat-widget.css">
-    <link rel="stylesheet" href="/static/css/stream.css?m=dx_stream_depth">
+    <link rel="stylesheet" href="/static/css/stream.css?m=dx_stream_shell_a">
     <link rel="stylesheet" href="/static/css/pipeline-iso.css?m=dx_stream">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 <script src="/static/shared/dx-theme.js"></script>
 </head>
 <body class="lang-en">
-<div class="app">
-
-<!-- ═══ Sidebar ═══ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <div class="dx-brand-slot" id="dxBrand"></div>
-  </div>
-  <nav class="nav-section">
-    <button class="nav-item" data-page="setup" onclick="DXStream.nav('setup')">
-      <span class="nav-icon">⚙️</span>
-      <span class="nav-label"><span class="ko">설정</span><span class="en">Setup</span><span class="es">Configuración</span><span class="ja">セットアップ</span><span class="zh-CN">设置</span><span class="zh-TW">設定</span></span>
-    </button>
-    <button class="nav-item active" data-page="dashboard" onclick="DXStream.nav('dashboard')">
-      <span class="nav-icon">📊</span>
-      <span class="nav-label"><span class="ko">대시보드</span><span class="en">Dashboard</span><span class="es">Panel de control</span><span class="ja">ダッシュボード</span><span class="zh-CN">仪表盘</span><span class="zh-TW">儀表板</span></span>
-    </button>
-    <button class="nav-item" data-page="demo" onclick="DXStream.nav('demo')">
-      <span class="nav-icon">▶️</span>
-      <span class="nav-label"><span class="ko">데모 실행</span><span class="en">Demo Launcher</span><span class="es">Lanzador de demo</span><span class="ja">デモランチャー</span><span class="zh-CN">演示启动器</span><span class="zh-TW">示範啟動器</span></span>
-    </button>
-    <button class="nav-item" data-page="pipeline" onclick="DXStream.nav('pipeline')">
-      <span class="nav-icon">🔧</span>
-      <span class="nav-label"><span class="ko">파이프라인 빌더</span><span class="en">Pipeline Builder</span><span class="es">Constructor de pipeline</span><span class="ja">パイプラインビルダー</span><span class="zh-CN">管道构建器</span><span class="zh-TW">管線建置器</span></span>
-    </button>
-    <button class="nav-item" data-page="models" onclick="DXStream.nav('models')">
-      <span class="nav-icon">📦</span>
-      <span class="nav-label"><span class="ko">모델 카탈로그</span><span class="en">Model Catalog</span><span class="es">Catálogo de modelos</span><span class="ja">モデルカタログ</span><span class="zh-CN">模型目录</span><span class="zh-TW">模型目錄</span></span>
-    </button>
-    <button class="nav-item" data-page="elements" onclick="DXStream.nav('elements')">
-      <span class="nav-icon">🧩</span>
-      <span class="nav-label"><span class="ko">요소 레퍼런스</span><span class="en">Element Reference</span><span class="es">Referencia de elemento</span><span class="ja">エレメントリファレンス</span><span class="zh-CN">元素参考</span><span class="zh-TW">元素參考</span></span>
-    </button>
-    <button class="nav-item" data-page="custom" onclick="DXStream.nav('custom')">
-      <span class="nav-icon">🔩</span>
-      <span class="nav-label"><span class="ko">커스텀 라이브러리</span><span class="en">Custom Library</span><span class="es">Biblioteca personalizada</span><span class="ja">カスタムライブラリ</span><span class="zh-CN">自定义库</span><span class="zh-TW">自訂函式庫</span></span>
-    </button>
-    <button class="nav-item" data-page="reference" onclick="DXStream.nav('reference')">
-      <span class="nav-icon">📖</span>
-      <span class="nav-label"><span class="ko">레퍼런스</span><span class="en">Reference</span><span class="es">Referencia</span><span class="ja">リファレンス</span><span class="zh-CN">参考指南</span><span class="zh-TW">參考指南</span></span>
-    </button>
-  </nav>
-  <div class="sidebar-footer">
-  </div>
-</aside>
-
-<!-- ═══ Content ═══ -->
-<div class="content-wrap">
-<header class="topbar">
-  <div class="topbar-left">
-    <button style="cursor:pointer;font-size:18px;background:none;border:none;color:inherit" onclick="DXStream.toggleSidebar()">☰</button>
-    <span class="topbar-title" id="topbar-title"><span class="ko">대시보드</span><span class="en">Dashboard</span><span class="es">Panel de control</span><span class="ja">ダッシュボード</span><span class="zh-CN">仪表盘</span><span class="zh-TW">儀表板</span></span>
-  </div>
-  <div class="topbar-right toolbar">
-    <span class="stream-badge" id="pipeline-status"><span class="ko">대기</span><span class="en">Idle</span><span class="es">Inactivo</span><span class="ja">待機</span><span class="zh-CN">待机</span><span class="zh-TW">待機</span></span>
-  </div>
-</header>
-
-<main class="main" id="main-area">
+<div class="dx-shell">
+{{DX_SHELL_RAIL}}
+<div class="dx-shell-body">
+{{DX_SHELL_HEADER}}
+{{DX_SHELL_TABS}}
+<main class="dx-shell-main" id="main-area">
 
 <!-- ═══ PAGE: Dashboard ═══ -->
 <div class="page active" id="page-dashboard">
@@ -788,9 +737,9 @@
   </div>
 </div>
 
-</main>
-</div><!-- /content-wrap -->
-</div><!-- /app -->
+</main><!-- /dx-shell-main -->
+</div><!-- /dx-shell-body -->
+</div><!-- /dx-shell -->
 
 <!-- Toast Container -->
 <div class="toast-wrap" id="toast-container"></div>
@@ -818,6 +767,14 @@ DXBrand.mount({
 </script>
 <script src="/static/shared/toolbar.js"></script>
 <script>DXToolbar.init({ container: '.toolbar', onSettings: function(){ DXStream.nav('setup'); } });</script>
+<script src="/static/shared/dx-tabs.js"></script>
+<script>
+// 탭 행 오버플로: 라벨을 자르지 않고 넘치는 만큼 +N 드롭다운으로 옮긴다.
+DXTabs.init({ row: '.dx-shell-tabs' });
+document.querySelectorAll('.dx-tab').forEach(function (t) {
+  t.addEventListener('click', function () { DXStream.nav(t.dataset.page); });
+});
+</script>
 <script src="/static/js/stream-app.js?m=dx_stream"></script>
 <script src="/static/js/webrtc-client.js?m=dx_stream"></script>
 <!-- ═══ 공용 입력 모달 ═══ -->

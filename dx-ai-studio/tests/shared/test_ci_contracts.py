@@ -138,7 +138,6 @@ def test_run_ci_excludes_e2e_from_shared_process_stages():
 # waved through, which is exactly what the gate exists to prevent.
 QUARANTINED = {
     "tests/dx_modelzoo/test_legal_enrich.py::test_all_models_have_complete_legal_block",
-    "tests/test_shared_css_foundation.py::test_dx_app_css_no_longer_defines_shared_foundation",
 }
 
 
@@ -194,19 +193,68 @@ def _coveragerc_sources() -> set:
     }
 
 
-def test_coverage_stanza_measures_every_declared_source():
-    """--coverage must measure all ten .coveragerc sources, not just two.
+def test_coverage_measures_from_a_single_root_so_paths_stay_qualified():
+    """coverage.xml must keep the module in every path.
 
-    Regression guard: the stanza used to pass only --cov=shared --cov=launcher
-    while .coveragerc declared ten sources, so eight well-tested modules reported
-    as uncovered and the number was meaningless.
+    Supersedes the old "measure all ten declared sources" contract. Ten `source`
+    roots (or ten `--cov=<pkg>` flags, which OVERRIDE the config) make coverage.py
+    strip whichever root a file came from, so all nine modules' `server.py`
+    render as filename="server.py" and collapse into ONE entry in coverage.xml —
+    measured: 9 distinct files on disk and in the terminal report, 1 in the XML.
+    SonarQube then attributes that entry to whichever root resolves first and
+    reports the other eight at 0%.
+
+    The fix is a single root plus relative_files, which yields
+    filename="dx_app/server.py" and is also what coverage_gate.py splits on.
     """
+    cfg = (ROOT / ".coveragerc").read_text(encoding="utf-8")
     script = (ROOT / "scripts" / "run_ci.sh").read_text(encoding="utf-8")
+
+    assert "source = ." in cfg, ".coveragerc must declare exactly one source root"
+    assert "relative_files = True" in cfg, (
+        "without relative_files the XML carries this machine's absolute paths, "
+        "which do not resolve on the CI runner"
+    )
+
     block = script.split("COV_ARGS=(", 1)[1].split(")", 1)[0]
-    measured = {tok.split("=", 1)[1] for tok in block.split() if tok.startswith("--cov=")}
-    declared = _coveragerc_sources()
-    missing = sorted(declared - measured)
-    assert not missing, f"declared in .coveragerc but never measured: {missing}"
+    cov_flags = {tok.split("=", 1)[1] for tok in block.split() if tok.startswith("--cov=")}
+    assert cov_flags == {"."}, (
+        f"--cov must name the repo root and nothing else, got {sorted(cov_flags)} — "
+        "a per-package flag overrides .coveragerc's source and re-creates the collapse"
+    )
+
+
+def test_coverage_omits_the_non_module_directories():
+    """`source = .` measures everything under the root, so the non-modules must be
+    named — otherwise `tools` and `scripts` appear as modules in the per-module
+    baseline and the gate starts tracking things nobody ships."""
+    cfg = (ROOT / ".coveragerc").read_text(encoding="utf-8")
+    for path in ("tests/*", "tools/*", "scripts/*", "docs/*", "var/*", "outputs/*"):
+        assert path in cfg, f".coveragerc must omit {path}"
+
+
+def test_every_shipped_module_is_still_covered_by_the_baseline():
+    """The single-root switch must not silently drop a module from the ledger.
+
+    "Shipped" is taken from pyproject's package list — the actual install
+    manifest — rather than "any dir with an __init__.py", which also matches
+    tests/ and would demand a baseline for the test tree itself.
+    """
+    import json
+    import tomllib
+
+    baseline = json.loads(
+        (ROOT / "config" / "coverage_baseline.json").read_text(encoding="utf-8")
+    )
+    with (ROOT / "pyproject.toml").open("rb") as fh:
+        packages = tomllib.load(fh)["tool"]["setuptools"]["packages"]
+    shipped = {pkg.split(".", 1)[0] for pkg in packages}
+
+    missing = sorted(shipped - set(baseline))
+    assert not missing, f"shipped package with no coverage baseline entry: {missing}"
+
+    stale = sorted(set(baseline) - shipped)
+    assert not stale, f"baseline tracks something that is not shipped: {stale}"
 
 
 def test_coverage_uses_append_across_isolated_processes():
@@ -237,13 +285,241 @@ def test_cross_browser_and_coverage_jobs_are_advisory():
     workflow = (
         ROOT.parent / ".github" / "workflows" / "dx-ai-studio-pytest.yml"
     ).read_text(encoding="utf-8")
-    for job in ("cross-browser:", "coverage:"):
+    for job in ("cross-browser:", "visual:", "coverage:"):
         assert job in workflow, f"{job} job missing from the PR workflow"
-    assert workflow.count("continue-on-error: true") == 2, (
-        "exactly the two advisory jobs (cross-browser, coverage) may be "
+    assert workflow.count("continue-on-error: true") == 3, (
+        "exactly the three advisory jobs (cross-browser, visual, coverage) may be "
         "continue-on-error — the pytest gate must block"
     )
+    # Report-only coverage stays green through a drop, which is the same as not
+    # running it. Advisory means "does not block", not "does not notice".
+    assert "DX_COVERAGE_ENFORCE: '1'" in workflow
     assert "DX_BROWSER_ENGINES: chromium,firefox" in workflow
     assert "playwright-traces-shard-" in workflow, (
         "failure traces must be uploaded as artifacts (Trace Viewer)"
     )
+
+
+def _npu_workflow() -> str:
+    return (
+        ROOT.parent / ".github" / "workflows" / "dx-ai-studio-npu.yml"
+    ).read_text(encoding="utf-8")
+
+
+def test_npu_workflow_runs_on_hardware_runner():
+    workflow = _npu_workflow()
+    assert "self-hosted" in workflow
+    assert "run_ci.sh --npu" in workflow
+    assert "ubuntu-latest" not in workflow
+
+
+def test_npu_workflow_is_scheduled_and_opt_in_not_a_blocking_pr_gate():
+    """The hardware tier must never gate every PR.
+
+    One DX-M1 backs it, so making every merge depend on that board's health is
+    exactly the fragility the mock tier exists to avoid. It may run on a schedule,
+    on demand, and on a PR that explicitly opts in with the `run-npu` label.
+    """
+    workflow = _npu_workflow()
+    assert "schedule:" in workflow, "the hardware tier must run on a schedule"
+    assert "workflow_dispatch:" in workflow
+    assert "types: [labeled]" in workflow, (
+        "pull_request must be limited to `labeled`, otherwise every PR waits on the NPU"
+    )
+    assert "github.event.label.name == 'run-npu'" in workflow, (
+        "the PR path must be gated on the opt-in label"
+    )
+
+
+def test_npu_workflow_serialises_on_the_single_board():
+    """Two concurrent runs would contend for the one NPU."""
+    workflow = _npu_workflow()
+    assert "group: dx-ai-studio-npu" in workflow
+    assert "cancel-in-progress: false" in workflow
+
+
+def test_run_ci_npu_stage_cannot_silently_skip():
+    """`--npu` must set DX_E2E_NPU_STRICT=1.
+
+    pytest exits 0 when every test skips, so a scheduled hardware job on a board
+    with a dead NPU would report green while proving nothing — the precise failure
+    this tier exists to close. Strict mode turns that skip into a failure.
+    """
+    script = (ROOT / "scripts" / "run_ci.sh").read_text(encoding="utf-8")
+    assert "--npu) RUN_NPU=1 ;;" in script
+    npu_stage = script.split('if [ "$RUN_NPU" = "1" ]; then', 1)
+    assert len(npu_stage) == 2, "run_ci.sh must have an --npu stage"
+    stage = npu_stage[1]
+    assert "DX_E2E_NPU_STRICT=1" in stage
+    assert "-m e2e_npu" in stage
+    assert "DX_E2E_NPU_MODEL" in stage, "the stage must refuse to run without a model"
+
+
+def test_blocking_pr_gate_does_not_depend_on_the_npu():
+    """The merge-blocking workflow must stay hardware-independent."""
+    workflow = (
+        ROOT.parent / ".github" / "workflows" / "dx-ai-studio-pytest.yml"
+    ).read_text(encoding="utf-8")
+    assert "--npu" not in workflow
+    assert "e2e_npu" not in workflow
+
+
+# --- pixel visual regression -------------------------------------------------
+
+VISUAL_BASELINE_DIR = ROOT / "tests" / "visual" / "baselines"
+
+
+def test_run_ci_has_an_advisory_visual_stage():
+    script = (ROOT / "scripts" / "run_ci.sh").read_text(encoding="utf-8")
+    assert "--visual) RUN_VISUAL=1 ;;" in script
+    assert '"$PY" -m pytest tests/visual/ -q --tb=short -m visual' in script
+    # It must sit behind the flag, never in the default blocking path. The
+    # blocking part is everything before the FIRST optional block.
+    first_optional = min(
+        script.index('if [ "$%s" = "1" ]; then' % flag)
+        for flag in ("RUN_VISUAL", "RUN_NPU", "RUN_COVERAGE", "RUN_BROWSER", "RUN_UX")
+    )
+    default_gate = script[:first_optional]
+    assert "tests/visual/" not in default_gate, (
+        "the visual suite must stay opt-in — baselines are per-host, so it cannot "
+        "gate a merge"
+    )
+
+
+def test_visual_baselines_are_committed_for_the_default_engine():
+    """A suite with no baselines skips every test and reports green.
+
+    Baselines are captured per (module, theme, locale): a single-axis set would
+    let a light-theme or long-translation regression through unnoticed.
+    """
+    from tests.browser_support import DEFAULT_ENGINE
+    from tests.visual.baseline_spec import axes, baseline_name
+
+    engine_dir = VISUAL_BASELINE_DIR / DEFAULT_ENGINE
+    assert engine_dir.is_dir(), f"no baselines for {DEFAULT_ENGINE}"
+    missing = sorted(
+        baseline_name(*combo)
+        for combo in axes()
+        if not (engine_dir / baseline_name(*combo)).is_file()
+    )
+    assert not missing, (
+        f"axes with no {DEFAULT_ENGINE} baseline: {missing} "
+        "(create with DX_VISUAL_UPDATE=1 pytest tests/visual/)"
+    )
+
+
+def test_visual_baselines_have_no_orphans():
+    """A baseline for an axis no longer captured is never compared — drop it.
+
+    Stale files are worse than missing ones: they look like coverage in the
+    directory listing while nothing ever reads them.
+    """
+    from tests.visual.baseline_spec import axes, baseline_name
+
+    expected = {baseline_name(*combo) for combo in axes()}
+    for engine_dir in VISUAL_BASELINE_DIR.glob("*"):
+        if not engine_dir.is_dir():
+            continue
+        orphans = sorted(p.name for p in engine_dir.glob("*.png") if p.name not in expected)
+        assert not orphans, f"{engine_dir.name}: baselines with no axis entry: {orphans}"
+
+
+def test_mock_e2e_stage_is_hermetic_against_npu_env():
+    """Stage 6 must ignore ambient DX_E2E_NPU_* vars.
+
+    tests/e2e/conftest.py binds DX_APP_ROOT at import time and selects the NPU
+    overlay whenever DX_E2E_NPU_MODEL is set. Without stripping them, running
+    `run_ci.sh --npu` fails its own BLOCKING stage — the mock tier goes looking for
+    its fixture model in the real dx_app tree ("model 'e2eyolo' is not in
+    /api/models"). The blocking gate cannot depend on what the caller exported.
+    """
+    script = (ROOT / "scripts" / "run_ci.sh").read_text(encoding="utf-8")
+    stage = script.split("== 6/7 Inference E2E triple gate", 1)[1].split("if [", 1)[0]
+    for var in ("DX_E2E_NPU_MODEL", "DX_E2E_NPU_MODEL_FILE", "DX_E2E_NPU_STRICT"):
+        assert f"-u {var}" in stage, (
+            f"the mock stage must run with {var} unset (env -u) so it stays hermetic"
+        )
+    assert "-m e2e_mock" in stage
+
+# --- SonarQube ---------------------------------------------------------------
+
+
+def _sonar_properties() -> dict:
+    text = (ROOT / "sonar-project.properties").read_text(encoding="utf-8")
+    # Join the backslash continuations the exclusion lists use.
+    text = text.replace("\\\n", "")
+    out = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        out[k.strip()] = v.strip()
+    return out
+
+
+def test_sonar_properties_never_commits_an_endpoint_or_token():
+    """The host and credentials belong in secrets, not in the repo."""
+    props = _sonar_properties()
+    for forbidden in ("sonar.host.url", "sonar.token", "sonar.login", "sonar.password"):
+        assert forbidden not in props, (
+            f"{forbidden} must be passed at scan time, never committed"
+        )
+
+
+def test_sonar_sources_match_the_shipped_packages():
+    """A module missing from sonar.sources is silently never analysed."""
+    import tomllib
+
+    props = _sonar_properties()
+    with (ROOT / "pyproject.toml").open("rb") as fh:
+        packages = tomllib.load(fh)["tool"]["setuptools"]["packages"]
+    shipped = {pkg.split(".", 1)[0] for pkg in packages}
+    declared = {s.strip() for s in props["sonar.sources"].split(",") if s.strip()}
+    assert declared == shipped, (
+        f"sonar.sources drifted from pyproject packages: "
+        f"missing={sorted(shipped - declared)} extra={sorted(declared - shipped)}"
+    )
+    for src in declared:
+        assert (ROOT / src).is_dir(), f"sonar.sources names a missing directory: {src}"
+
+
+def test_sonar_reads_the_coverage_report_run_ci_actually_writes():
+    props = _sonar_properties()
+    script = (ROOT / "scripts" / "run_ci.sh").read_text(encoding="utf-8")
+    report = props["sonar.python.coverage.reportPaths"]
+    assert f"--cov-report=xml:{report}" in script, (
+        f"sonar expects {report}, which run_ci.sh --coverage must produce"
+    )
+
+
+def test_sonar_carries_no_version_copy():
+    """release.ver is the SSOT; a second copy here drifts silently."""
+    props = _sonar_properties()
+    assert "sonar.projectVersion" not in props
+
+
+def test_sonar_excludes_vendored_and_generated_assets():
+    """Without these the first report is thousands of findings in code nobody
+    maintains, which buries the real ones."""
+    props = _sonar_properties()
+    exclusions = props["sonar.exclusions"]
+    for pattern in ("**/static/vendor/**", "**/*.min.js", "**/static/js/i18n.js", "**/.venv/**"):
+        assert pattern in exclusions, f"sonar.exclusions must cover {pattern}"
+
+
+def test_sonar_workflow_is_a_noop_without_secrets():
+    """Hard-coding a guessed endpoint would fail every PR; the job must skip."""
+    workflow = (
+        ROOT.parent / ".github" / "workflows" / "dx-ai-studio-sonar.yml"
+    ).read_text(encoding="utf-8")
+    assert "secrets.SONAR_HOST_URL" in workflow
+    assert "secrets.SONAR_TOKEN" in workflow
+    assert "enabled=false" in workflow, "the job must detect missing secrets and skip"
+    assert workflow.count("steps.check.outputs.enabled == 'true'") >= 4, (
+        "every step that needs the server must be gated on the secret check"
+    )
+    assert "continue-on-error: true" in workflow, (
+        "Sonar stays advisory until its first backlog is triaged"
+    )
+    assert "self-hosted" in workflow and "ubuntu-latest" not in workflow

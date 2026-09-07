@@ -115,6 +115,7 @@ window._DX_I18N_DICT = {
 
   'Real-time Vision AI': { ko: '실시간 비전 AI', ja: 'リアルタイム ビジョン AI', 'zh-CN': '实时视觉 AI', 'zh-TW': '即時視覺 AI',es:'IA de visión en tiempo real'},
   'Setup': { ko: '설정', ja: 'セットアップ', 'zh-CN': '设置', 'zh-TW': '設定',es:'Configuración'},
+  'Reference': { ko: '레퍼런스', ja: 'リファレンス', 'zh-CN': '参考指南', 'zh-TW': '參考指南',es:'Referencia'},
   'Dashboard': { ko: '대시보드', ja: 'ダッシュボード', 'zh-CN': '仪表板', 'zh-TW': '儀表板',es:'Panel de control'},
   'Demo Launcher': { ko: '데모 실행', ja: 'デモランチャー', 'zh-CN': '演示启动器', 'zh-TW': '展示啟動器',es:'Lanzador de demo'},
   'Pipeline Builder': { ko: '파이프라인 빌더', ja: 'パイプラインビルダー', 'zh-CN': '管道构建器', 'zh-TW': '管道建構器',es:'Constructor de pipeline'},

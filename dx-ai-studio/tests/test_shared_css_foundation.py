@@ -31,18 +31,30 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def rendered_dx_app_index() -> str:
-    """서버가 실제로 내보내는 dx_app index.html.
+# ── 통합 App Shell(Option A)로 이관된 모듈 ─────────────────────
+# 이관된 모듈은 레일·헤더·탭·툴바 슬롯이 shared/shell.py 에서 서버 렌더
+# 시점에 주입되므로, 템플릿 파일만 읽는 계약이 성립하지 않는다. 아래 목록에
+# 한 줄 추가하면 이 파일의 계약들이 알아서 렌더된 HTML을 보고, 구 사이드바/
+# topbar 를 전제한 검사에서 그 모듈을 빼준다.
+MIGRATED_SHELL_MODULES = {
+    "dx_app": ("dx_app/templates/index.html", "dx_app.server", "DX_APP_SHELL"),
+    "dx_stream": ("dx_stream/templates/index.html", "dx_stream.server", "DX_STREAM_SHELL"),
+}
 
-    dx_app은 통합 App Shell(Option A)로 옮겨져 레일·헤더·탭이
-    shared/shell.py 에서 서버 렌더 시점에 주입된다. 툴바 슬롯도 그 안에 있으므로
-    템플릿 파일만 읽는 계약은 dx_app에 대해 더는 성립하지 않는다.
-    """
-    from dx_app.server import DX_APP_SHELL
+
+def rendered_index(module: str) -> str:
+    """서버가 실제로 내보내는 index.html (이관 모듈은 shell 주입 후)."""
+    import importlib
+
+    template_rel, mod_path, spec_name = MIGRATED_SHELL_MODULES[module]
     from shared.shell import apply as apply_shell
 
-    template = read_text(ROOT / "dx_app" / "templates" / "index.html")
-    return apply_shell(template, DX_APP_SHELL)
+    spec = getattr(importlib.import_module(mod_path), spec_name)
+    return apply_shell(read_text(ROOT / template_rel), spec)
+
+
+def rendered_dx_app_index() -> str:
+    return rendered_index("dx_app")
 
 
 def assert_ordered(html: str, hrefs: list[str]) -> None:
@@ -128,7 +140,6 @@ def descendants(nodes: list[dict[str, object]], index: int) -> list[int]:
 
 
 TOOLBAR_TARGETS = [
-    ("dx_stream", ROOT / "dx_stream" / "templates" / "index.html", ("topbar-right", "toolbar")),
     ("dx_modelzoo", ROOT / "dx_modelzoo" / "templates" / "index.html", ("mz-topbar-right", "toolbar")),
     ("dx_compiler", ROOT / "dx_compiler" / "templates" / "base.html", ("header-right", "toolbar")),
     ("dx_planner", ROOT / "dx_planner" / "templates" / "index.html", ("planner-controls", "toolbar")),
@@ -142,12 +153,13 @@ def toolbar_nodes(nodes: list[dict[str, object]]) -> list[int]:
     return [idx for idx, node in enumerate(nodes) if "toolbar" in node["classes"]]
 
 
-def test_dx_app_toolbar_target_lives_in_the_shared_shell_header():
-    """dx_app 툴바는 shared/shell.py 가 그리므로 렌더된 HTML로 검증한다."""
-    html = rendered_dx_app_index()
+@pytest.mark.parametrize("module", sorted(MIGRATED_SHELL_MODULES))
+def test_migrated_toolbar_target_lives_in_the_shared_shell_header(module):
+    """이관 모듈의 툴바는 shared/shell.py 가 그리므로 렌더된 HTML로 검증한다."""
+    html = rendered_index(module)
     nodes = parse_html_nodes(html)
     targets = toolbar_nodes(nodes)
-    assert len(targets) == 1, "dx_app should expose exactly one .toolbar target"
+    assert len(targets) == 1, f"{module} should expose exactly one .toolbar target"
     assert has_classes(nodes[targets[0]], "dx-shell-header-right", "toolbar")
     assert re.search(
         r"DXToolbar\.init\(\{[^}]*container:\s*['\"]\.toolbar['\"]", html, re.S
@@ -185,8 +197,10 @@ def test_app_toolbar_preserves_notification_controls():
 
 
 def test_stream_toolbar_preserves_pipeline_status_badge():
-    nodes = parse_html_nodes(read_text(ROOT / "dx_stream" / "templates" / "index.html"))
-    toolbar = find_one(nodes, lambda node: has_classes(node, "topbar-right", "toolbar"), "stream toolbar")
+    nodes = parse_html_nodes(rendered_index("dx_stream"))
+    toolbar = find_one(
+        nodes, lambda node: has_classes(node, "dx-shell-header-right", "toolbar"), "stream toolbar"
+    )
     badge = find_one(nodes, lambda node: has_id(node, "pipeline-status"), "pipeline status")
     assert_descendant(nodes, toolbar, badge, "pipeline status remains inside stream toolbar")
 
@@ -478,11 +492,14 @@ def test_planner_css_no_longer_defines_shared_foundation():
 def test_stream_css_no_longer_defines_shared_foundation():
     css = read_text(ROOT / "dx_stream" / "static" / "css" / "stream.css")
     assert_shared_foundation_removed(css)
+    for selector in (".app", ".sidebar", ".topbar", ".topbar-right", ".nav-item", ".content-wrap"):
+        assert not re.search(r"^\s*" + re.escape(selector) + r"\s*\{", css, re.M), (
+            f"{selector} 는 shared/static/dx-shell.css 로 옮겼다"
+        )
     assert "color-scheme:dark" not in css
     assert "--stream-color:#10B981" in css
     assert "body{overflow-x:auto;overflow-y:hidden}" in css
-    assert ".sidebar" in css
-    assert ".topbar" in css
+    # .sidebar / .topbar 는 shared/static/dx-shell.css 로 옮겼다 (Option A 이관).
     assert ".stream-badge" in css
     assert ".demo-card.cat-stream" in css
     assert ".element-card" in css
@@ -1023,28 +1040,29 @@ def test_compiler_app_stream_use_module_chrome_metrics():
     assert "box-shadow: var(--dx-module-header-elevation)" in compiler_header
     assert "gap: var(--dx-module-header-gap)" in compiler_left
 
-    # dx_app 은 통합 shell(dx-shell.css)이 헤더 치수를 소유하므로 제외한다.
-    assert "--dx-module-header-h" not in app_css, (
-        "dx_app 은 shell로 이관됐다 — 헤더 치수는 dx-shell.css가 소유한다"
-    )
+    # 이관 모듈은 dx-shell.css 가 헤더 치수를 소유한다 — 로컬에 남아 있으면 두 정의가 싸운다.
+    for css, name in ((app_css, "dx_app"), (stream_css, "dx_stream")):
+        assert "--dx-module-header-h" not in css, (
+            f"{name} 은 shell로 이관됐다 — 헤더 치수는 dx-shell.css가 소유한다"
+        )
 
-    for css in (stream_css,):
-        sidebar_brand = re.search(r"\.sidebar-brand\s*\{(?P<body>.*?)\}", css, re.S).group("body")
-        topbar = re.search(r"\.topbar\s*\{(?P<body>.*?)\}", css, re.S).group("body")
-        assert "height: var(--dx-module-header-h)" in sidebar_brand
-        assert "height: var(--dx-module-header-h)" in topbar
-        assert "min-height: var(--dx-module-header-h)" in topbar
-        assert "box-shadow: var(--dx-module-header-elevation)" in topbar
+    shell_css = read_text(SHARED_STATIC / "dx-shell.css")
+    shell_header = re.search(r"\.dx-shell-header\s*\{(?P<body>.*?)\}", shell_css, re.S).group("body")
+    assert "height: var(--dx-module-header-h)" in shell_header
+    assert "min-height: var(--dx-module-header-h)" in shell_header
+    assert "box-shadow: var(--dx-module-header-elevation)" in shell_header
 
 
-def test_dx_app_brand_sits_in_the_shell_header_before_the_page_name():
+@pytest.mark.parametrize("module", sorted(MIGRATED_SHELL_MODULES))
+def test_migrated_brand_sits_in_the_shell_header_before_the_page_name(module):
     """사이드바가 사라졌으므로 브랜드 자리는 헤더 좌측이 물려받는다."""
-    template = read_text(ROOT / "dx_app" / "templates" / "index.html")
-    assert_loads_shared_brand_after_i18n(template, "dx_app/templates/index.html")
+    template_rel = MIGRATED_SHELL_MODULES[module][0]
+    template = read_text(ROOT / template_rel)
+    assert_loads_shared_brand_after_i18n(template, template_rel)
     assert "DXBrand.mount({" in template
     assert "sidebar-brand" not in template
 
-    html = rendered_dx_app_index()
+    html = rendered_index(module)
     left = re.search(r'<div class="dx-shell-header-left">(?P<body>.*?)</header>', html, re.S)
     assert left is not None
     body = left.group("body")
@@ -1054,8 +1072,8 @@ def test_dx_app_brand_sits_in_the_shell_header_before_the_page_name():
     )
 
 
-def test_stream_uses_sidebar_brand_for_position_alignment():
-    for rel in ("dx_stream/templates/index.html",):
+def test_unmigrated_modules_use_sidebar_brand_for_position_alignment():
+    for rel in ():
         html = read_text(ROOT / rel)
         assert_loads_shared_brand_after_i18n(html, rel)
         assert "DXBrand.mount({" in html
@@ -1090,7 +1108,9 @@ def test_stream_uses_sidebar_brand_for_position_alignment():
         r"\.sidebar\.collapsed\s+\.logo\b",
         r"\.sidebar\.collapsed\s+\.logo-text\b",
     )
-    for css_rel in ("dx_stream/static/css/stream.css",):
+    # dx_app / dx_stream 이관 후 사이드바를 가진 모듈은 남아 있지 않다.
+    # 다음 모듈이 이관 전 상태로 여기 들어오면 다시 채운다.
+    for css_rel in ():
         css_path = ROOT / css_rel
         assert css_path.is_file(), css_rel
         css_content = read_text(css_path)
@@ -1228,10 +1248,9 @@ BRAND_SLOT_BLOCK_TEMPLATES = (
 def test_touched_modules_use_block_brand_slots():
     for rel in BRAND_SLOT_BLOCK_TEMPLATES:
         # dx_app 은 shell 헤더가 슬롯을 그리므로 렌더된 HTML로 본다.
+        migrated = {v[0]: k for k, v in MIGRATED_SHELL_MODULES.items()}
         html = (
-            rendered_dx_app_index()
-            if rel == "dx_app/templates/index.html"
-            else read_text(ROOT / rel)
+            rendered_index(migrated[rel]) if rel in migrated else read_text(ROOT / rel)
         )
         assert '<div class="dx-brand-slot"' in html, rel
         assert '<span class="dx-brand-slot"' not in html, rel
@@ -1362,7 +1381,6 @@ def test_all_module_topbars_use_shared_depth_elevation():
         ("launcher/static/style.css", ".top-bar"),
         ("launcher/static/sdk-library.css", ".sdk-topbar"),
         ("launcher/static/about-deepx.css", ".about-topbar"),
-        ("dx_stream/static/css/stream.css", ".topbar"),
         ("dx_modelzoo/static/css/style.css", ".mz-topbar"),
         ("dx_compiler/static/css/style.css", "#header"),
         ("dx_planner/static/css/style.css", ".planner-topbar"),
@@ -1406,7 +1424,6 @@ def test_flat_modules_use_shared_surface_depth_tokens():
     # active state 검증
     ACTIVE_SPECS = [
         ("dx_benchmark/static/css/style.css", ".main-tab.active"),
-        ("dx_stream/static/css/stream.css", ".nav-item.active"),
         ("dx_planner/static/css/style.css", ".task-btn.selected"),
         ("dx_planner/static/css/style.css", ".size-btn.selected"),
     ]
@@ -1418,11 +1435,11 @@ def test_flat_modules_use_shared_surface_depth_tokens():
         )
 
 
-def test_stream_sidebar_brand_uses_shared_header_depth():
-    """Stream의 좌측 브랜드 영역도 상단 chrome과 같은 depth를 사용한다.
+def test_unmigrated_sidebar_brand_uses_shared_header_depth():
+    """아직 사이드바를 가진 모듈은 상단 chrome과 같은 depth를 쓴다.
 
-    dx_app 은 통합 shell로 이관되어 사이드바가 없다."""
-    for css_rel in ("dx_stream/static/css/stream.css",):
+    dx_app / dx_stream 은 통합 shell로 이관되어 사이드바가 없다."""
+    for css_rel in ():
         css = read_text(ROOT / css_rel)
         body = _css_rule(css, ".sidebar-brand")
         assert "background: var(--dx-module-header-bg)" in body, (
@@ -1478,7 +1495,7 @@ def test_app_stream_local_css_urls_bust_pre_depth_cache():
     stream_html = read_text(ROOT / "dx_stream" / "templates" / "index.html")
 
     assert 'href="/static/css/style.css?m=dx_app_shell_a' in app_html
-    assert 'href="/static/css/stream.css?m=dx_stream_depth' in stream_html
+    assert 'href="/static/css/stream.css?m=dx_stream_shell_a' in stream_html
 
 
 # ── 공통 컴포넌트 단일 소유 계약 ────────────────────────────────

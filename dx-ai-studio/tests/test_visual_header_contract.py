@@ -13,7 +13,7 @@ SURFACES = {
     "launcher": ("launcher/static/index.html", "launcher/static/style.css"),
     # dx_app 은 통합 App Shell(Option A)로 이관되어 헤더를 dx-shell.css가 소유한다.
     "dx_app": ("dx_app/templates/index.html", "shared/static/dx-shell.css"),
-    "dx_stream": ("dx_stream/templates/index.html", "dx_stream/static/css/stream.css"),
+    "dx_stream": ("dx_stream/templates/index.html", "shared/static/dx-shell.css"),
     "dx_compiler": ("dx_compiler/templates/base.html", "dx_compiler/static/css/style.css"),
     "dx_monitor": ("dx_monitor/templates/index.html", "dx_monitor/static/css/style.css"),
     "dx_planner": ("dx_planner/templates/index.html", "dx_planner/static/css/style.css"),
@@ -25,7 +25,7 @@ SURFACES = {
 HEADER_SELECTORS = {
     "launcher": ".top-bar",
     "dx_app": ".dx-shell-header",
-    "dx_stream": ".topbar",
+    "dx_stream": ".dx-shell-header",
     "dx_compiler": "#header",
     "dx_monitor": ".top-bar",
     "dx_planner": ".planner-topbar",
@@ -50,20 +50,27 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def surface_html(name: str) -> str:
-    """서버가 실제로 내보내는 HTML.
+# 통합 App Shell(Option A)로 이관된 모듈 — 헤더/브랜드/툴바가 서버 렌더
+# 시점에 주입되므로 템플릿 파일만 읽으면 보이지 않는다. 이관할 때 한 줄 추가한다.
+MIGRATED_SHELL_MODULES = {
+    "dx_app": ("dx_app.server", "DX_APP_SHELL"),
+    "dx_stream": ("dx_stream.server", "DX_STREAM_SHELL"),
+}
 
-    통합 App Shell로 옮긴 모듈은 헤더/브랜드 슬롯이 shared/shell.py 에서
-    서버 렌더 시점에 주입되므로 템플릿 파일만 읽으면 보이지 않는다.
-    """
+
+def surface_html(name: str) -> str:
+    """서버가 실제로 내보내는 HTML."""
     template_rel, _ = SURFACES[name]
     html = read_text(ROOT / template_rel)
-    if name == "dx_app":
-        from dx_app.server import DX_APP_SHELL
-        from shared.shell import apply as apply_shell
+    if name not in MIGRATED_SHELL_MODULES:
+        return html
 
-        return apply_shell(html, DX_APP_SHELL)
-    return html
+    import importlib
+
+    mod_path, spec_name = MIGRATED_SHELL_MODULES[name]
+    from shared.shell import apply as apply_shell
+
+    return apply_shell(html, getattr(importlib.import_module(mod_path), spec_name))
 
 
 def _css_rule(css: str, selector: str) -> str:
