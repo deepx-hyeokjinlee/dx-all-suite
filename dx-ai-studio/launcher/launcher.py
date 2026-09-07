@@ -1416,6 +1416,10 @@ class LauncherHandler(DXBaseHandler):
 
         if path == "/" or path == "/index.html" or path == "/sdk-library" or path == "/about":
             self._serve_index()
+        elif path == "/design-system":
+            # 살아있는 토큰/컴포넌트 카탈로그. 공유 파운데이션만 로드하므로
+            # 여기 보이는 것이 제품에서 보이는 것이다.
+            self._send_shell_asset(BASE_DIR.parent / "docs/design-system.html", "text/html")
         elif path == "/style.css":
             self._send_shell_asset(BASE_DIR / "static/style.css", "text/css")
         elif path == "/launcher.js":

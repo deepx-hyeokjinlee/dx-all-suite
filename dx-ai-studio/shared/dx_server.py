@@ -52,6 +52,8 @@ from urllib.parse import urlparse, parse_qs, parse_qsl, unquote, urlencode, urlu
 
 from shared.paths import is_safe_path as _shared_is_safe_path
 
+from shared import shell as _shell
+
 
 # Behind a TLS-inspecting proxy (e.g. FortiGate) the OS trust store holds the
 # inspection root CA, but Python's `requests`/certifi bundle does not — so HTTPS
@@ -111,6 +113,9 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
     server_name: str = "DXServer"
     static_dir: Path | None = None
     templates_dir: Path | None = None
+    # shared.shell.ShellSpec — 통합 App Shell(Option A)을 쓰는 모듈만 설정한다.
+    # None이면 serve_template이 템플릿을 그대로 통과시킨다.
+    shell_spec: "_shell.ShellSpec | None" = None
 
     # 로깅: 해당 경로 포함 시 로그 생략
     log_filter: list[str] | None = None
@@ -495,6 +500,10 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
             self.send_error(404)
             return
         html = filepath.read_text(encoding="utf-8")
+        # 통합 App Shell 주입: 모듈이 shell_spec 을 선언하면 템플릿의
+        # {{DX_SHELL_*}} 자리가 shared/shell.py 마크업으로 채워진다.
+        # 선언하지 않은 모듈은 그대로 통과한다 (아직 이관 전).
+        html = _shell.apply(html, self.shell_spec)
         asset_scope = None
         if self.static_dir is not None:
             asset_scope = self.static_dir.parent.name

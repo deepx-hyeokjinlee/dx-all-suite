@@ -188,6 +188,16 @@
 
     toolbar.appendChild(_makeLangDropdown());
 
+    if (typeof DXTheme !== 'undefined') {
+      var THEME_GLYPH = { dark: '◒', light: '◓', system: '◑' };
+      var themeBtn = _makeIconBtn(THEME_GLYPH[DXTheme.getTheme()], 'Theme', function () {
+        DXTheme.cycle();
+      });
+      themeBtn.id = 'dxToolbarTheme';
+      DXTheme.onThemeChange(function (t) { themeBtn.textContent = THEME_GLYPH[t]; });
+      toolbar.appendChild(themeBtn);
+    }
+
     if (_opts.tutorial) {
       _tutorialClickHandler = function () {
         if (_opts.tutorial && typeof _opts.tutorial.toggleTOC === 'function') {

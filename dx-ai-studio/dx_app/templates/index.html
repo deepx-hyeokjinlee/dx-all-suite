@@ -6,6 +6,9 @@
 <title>DX-APP Dashboard</title>
 <link rel="stylesheet" href="/static/shared/dx-fonts.css">
 <link rel="stylesheet" href="/static/shared/dx-tokens.css">
+<link rel="stylesheet" href="/static/shared/dx-semantic.css">
+<link rel="stylesheet" href="/static/shared/dx-theme-light.css">
+<link rel="stylesheet" href="/static/shared/dx-shell.css">
 <link rel="stylesheet" href="/static/shared/dx-base.css">
 <link rel="stylesheet" href="/static/shared/dx-utilities.css">
 <link rel="stylesheet" href="/static/shared/module-chrome.css">
@@ -14,46 +17,17 @@
 <link rel="stylesheet" href="/static/shared/tutorial.css">
 <link rel="stylesheet" href="/static/shared/toolbar.css">
 <link rel="stylesheet" href="/static/shared/chat-widget.css">
-<link rel="stylesheet" href="/static/css/style.css?m=dx_app_mzhdr">
+<link rel="stylesheet" href="/static/css/style.css?m=dx_app_shell_a">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔷</text></svg>">
+<script src="/static/shared/dx-theme.js"></script>
 </head>
 <body>
-<div class="app">
-<!-- ═══ Sidebar ═══ -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-brand">
-    <div class="dx-brand-slot" id="dxBrand"></div>
-  </div>
-  <nav class="nav-section">
-    <button class="nav-item" data-page="setup" onclick="nav('setup')"><span class="nav-icon">⚙️</span><span class="nav-label"><span class="ko">설정</span><span class="en">Setup</span><span class="es">Configuración</span><span class="ja">セットアップ</span><span class="zh-CN">设置</span><span class="zh-TW">設定</span></span></button>
-    <button class="nav-item active" data-page="models" onclick="nav('models')"><span class="nav-icon">📦</span><span class="nav-label"><span class="ko">모델</span><span class="en">Models</span><span class="es">Modelos</span><span class="ja">モデル</span><span class="zh-CN">模型</span><span class="zh-TW">模型</span></span></button>
-    <button class="nav-item" data-page="run" onclick="nav('run')"><span class="nav-icon">▶️</span><span class="nav-label"><span class="ko">추론 실행</span><span class="en">Run Inference</span><span class="es">Ejecutar inferencia</span><span class="ja">推論実行</span><span class="zh-CN">运行推理</span><span class="zh-TW">執行推論</span></span></button>
-    <button class="nav-item" data-page="rundemo" onclick="nav('rundemo')"><span class="nav-icon">🎬</span><span class="nav-label"><span class="ko">데모 실행</span><span class="en">Run Demo</span><span class="es">Ejecutar demo</span><span class="ja">デモ実行</span><span class="zh-CN">运行演示</span><span class="zh-TW">執行示範</span></span></button>
-    <button class="nav-item" data-page="bench" onclick="nav('bench')"><span class="nav-icon">⏱️</span><span class="nav-label"><span class="ko">벤치마크</span><span class="en">Benchmark</span><span class="es">Evaluación de rendimiento</span><span class="ja">ベンチマーク</span><span class="zh-CN">基准测试</span><span class="zh-TW">基準測試</span></span></button>
-    <button class="nav-item" data-page="compare" onclick="nav('compare')"><span class="nav-icon">🔀</span><span class="nav-label"><span class="ko">A/B 비교</span><span class="en">A/B Compare</span><span class="es">Comparación A/B</span><span class="ja">A/B 比較</span><span class="zh-CN">A/B 对比</span><span class="zh-TW">A/B 比較</span></span></button>
-    <button class="nav-item" data-page="modelzoo" onclick="nav('modelzoo')"><span class="nav-icon">📥</span><span class="nav-label"><span class="ko">모델 저장소</span><span class="en">ModelZoo</span><span class="es">ModelZoo</span><span class="ja">ModelZoo</span><span class="zh-CN">ModelZoo</span><span class="zh-TW">ModelZoo</span></span></button>
-    <button class="nav-item" data-page="lab" onclick="nav('lab')"><span class="nav-icon">🧪</span><span class="nav-label"><span class="ko">실험실</span><span class="en">Lab</span><span class="es">Laboratorio</span><span class="ja">ラボ</span><span class="zh-CN">实验室</span><span class="zh-TW">實驗室</span></span></button>
-    <button class="nav-item" data-page="outputs" onclick="nav('outputs')"><span class="nav-icon">📁</span><span class="nav-label"><span class="ko">출력물</span><span class="en">Outputs</span><span class="es">Salidas</span><span class="ja">出力</span><span class="zh-CN">输出</span><span class="zh-TW">輸出</span></span></button>
-    <button class="nav-item" data-page="reference" onclick="nav('reference')"><span class="nav-icon">📖</span><span class="nav-label"><span class="ko">레퍼런스</span><span class="en">Reference</span><span class="es">Referencia</span><span class="ja">リファレンス</span><span class="zh-CN">参考</span><span class="zh-TW">參考</span></span></button>
-  </nav>
-  <button class="sidebar-footer" onclick="openDev()">
-    <span class="nav-icon">🔧</span><span><span class="ko">개발자</span><span class="en">Developer</span><span class="es">Desarrollador</span><span class="ja">開発者</span><span class="zh-CN">开发者</span><span class="zh-TW">開發者</span></span>
-  </button>
-</aside>
-
-<!-- ═══ Content ═══ -->
-<div class="content-wrap">
-<header class="topbar">
-  <div class="topbar-left">
-    <button style="cursor:pointer;font-size:18px;background:none;border:none;color:inherit" onclick="document.getElementById('sidebar').classList.toggle('collapsed')">☰</button>
-    <span class="topbar-title" id="topbar-title">Dashboard</span>
-  </div>
-  <div class="topbar-right toolbar">
-
-    <button class="notif-bell" onclick="toggleNotifDrawer()" title="Notifications" data-i18n-title="Notifications">🔔<span class="notif-badge" id="notif-badge" style="display:none"></span></button>
-  </div>
-</header>
-<main class="main" id="main-area">
+<div class="dx-shell">
+{{DX_SHELL_RAIL}}
+<div class="dx-shell-body">
+{{DX_SHELL_HEADER}}
+{{DX_SHELL_TABS}}
+<main class="dx-shell-main" id="main-area">
 <!-- ═══ PAGE: Setup & Install ═══ -->
 <div id="page-setup" class="page">
   <h1>⚙️ <span class="accent"><span class="ko">설정 &amp; 설치</span><span class="en">Setup &amp; Install</span><span class="es">Configuración e instalación</span><span class="ja">セットアップ &amp; インストール</span><span class="zh-CN">设置和安装</span><span class="zh-TW">設定與安裝</span></span></h1>
@@ -739,9 +713,9 @@
   <p class="txt-dim txt-sm mb16"><span class="ko">사전 구성된 데모 시나리오를 선택하고 실행 결과를 바로 확인하세요.</span><span class="en">Choose a pre-configured demo scenario and see the results instantly.</span><span class="es">Elija un escenario de demostración preconfigurado y vea los resultados al instante.</span><span class="ja">事前設定済みのデモシナリオを選択し、実行結果をすぐに確認できます。</span><span class="zh-CN">选择预配置的演示场景，立即查看运行结果。</span><span class="zh-TW">選擇預先設定的示範情境，立即查看執行結果。</span></p>
   <div id="rundemo-root"></div>
 </div>
-</main><!-- /main -->
-</div><!-- /content-wrap -->
-</div><!-- /app -->
+</main><!-- /dx-shell-main -->
+</div><!-- /dx-shell-body -->
+</div><!-- /dx-shell -->
 
 <!-- ═══ MODAL: Detail / Code viewer ═══ -->
 <dialog class="modal-overlay" id="modal-detail">
@@ -809,6 +783,15 @@ DXBrand.mount({
 </script>
 <script src="/static/shared/toolbar.js"></script>
 <script>DXToolbar.init({ container: '.toolbar', onSettings: function(){ nav('setup'); } });</script>
+<script src="/static/shared/dx-tabs.js"></script>
+<script>
+// 탭 행 오버플로: 라벨을 자르지 않고 넘치는 만큼 +N 드롭다운으로 옮긴다.
+// 페이지 10개 x 6개 언어라 폭이 아니라 번역 길이가 한계를 정한다.
+DXTabs.init({ row: '.dx-shell-tabs' });
+document.querySelectorAll('.dx-tab').forEach(function (t) {
+  t.addEventListener('click', function () { nav(t.dataset.page); });
+});
+</script>
 <script src="/static/js/utils.js?m=dx_app"></script>
 <script src="/static/js/lang-refresh.js?m=dx_app"></script>
 <script src="/static/shared/vendor/chart.umd.min.js"></script>

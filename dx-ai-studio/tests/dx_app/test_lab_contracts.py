@@ -17,14 +17,22 @@ def _read(path: Path) -> str:
 def test_lab_nav_is_between_modelzoo_and_outputs():
     # The in-app DX-COM compiler nav was removed (dx-compiler is the single source);
     # Lab now sits between ModelZoo and Outputs.
+    #
+    # 통합 shell(Option A)로 옮기면서 좌측 nav가 상단 탭 행이 되었고,
+    # 페이지 순서의 원본은 템플릿이 아니라 dx_app/server.py 의 DX_APP_PAGES 다.
+    from dx_app.server import DX_APP_PAGES
+
+    order = [page_id for page_id, _label, _icon in DX_APP_PAGES]
+    assert order.index("modelzoo") < order.index("lab") < order.index("outputs")
+    assert "compiler" not in order
+
+    labels = {page_id: label for page_id, label, _icon in DX_APP_PAGES}
+    assert labels["lab"] == "Lab", "탭 라벨은 i18n 사전 키(영문 원문)여야 한다"
+
+    # 페이지 본문은 여전히 템플릿이 소유한다.
     html = _read(INDEX)
-    modelzoo = html.index('data-page="modelzoo"')
-    lab = html.index('data-page="lab"')
-    outputs = html.index('data-page="outputs"')
-    assert modelzoo < lab < outputs
-    assert 'data-page="compiler"' not in html
-    assert '<span class="en">Lab</span>' in html
-    assert '<span class="ko">실험실</span>' in html
+    for page_id in order:
+        assert f'id="page-{page_id}"' in html, f"page-{page_id} 본문이 사라졌다"
 
 
 def test_lab_has_no_password_gate_or_dev_auth_modal():

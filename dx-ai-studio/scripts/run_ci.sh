@@ -6,6 +6,8 @@
 #   bash scripts/run_ci.sh --coverage # + Python coverage report (non-blocking threshold)
 #   bash scripts/run_ci.sh --browser    # + Playwright browser/UX audits (needs chromium)
 #   bash scripts/run_ci.sh --ux         # + full UX acceptance gate (slow, release only)
+#   bash scripts/run_ci.sh --npu        # + real-NPU inference tier (nightly / run-npu)
+#   bash scripts/run_ci.sh --visual     # + pixel visual-regression vs committed baselines
 #   bash scripts/run_ci.sh --browser --shard=1/3   # browser suites, shard 1 of 3
 #
 # Cross-browser is env-driven: DX_BROWSER_ENGINES=chromium,firefox[,webkit].
@@ -18,6 +20,8 @@ cd "$ROOT"
 RUN_COVERAGE=0
 RUN_BROWSER=0
 RUN_UX=0
+RUN_NPU=0
+RUN_VISUAL=0
 SHARD_INDEX=""
 SHARD_TOTAL=""
 
@@ -26,6 +30,8 @@ for arg in "$@"; do
     --coverage) RUN_COVERAGE=1 ;;
     --browser) RUN_BROWSER=1 ;;
     --ux) RUN_UX=1 ;;
+    --npu) RUN_NPU=1 ;;
+    --visual) RUN_VISUAL=1 ;;
     --shard=*)
       _spec="${arg#--shard=}"
       SHARD_INDEX="${_spec%%/*}"
@@ -39,7 +45,9 @@ for arg in "$@"; do
       fi
       ;;
     -h|--help)
-      sed -n '2,9p' "$0"
+      # Print the whole leading comment block, so a newly added flag shows up in
+      # --help without anyone remembering to bump a hard-coded line range.
+      sed -n '2,/^set -euo pipefail/p' "$0" | sed '/^set -euo pipefail/d'
       exit 0
       ;;
     *)
@@ -99,6 +107,10 @@ for _root_test in tests/test_*.py; do
   fi
 done
 
+echo "== CSS token ratchet =="
+"$PY" scripts/css_token_gate.py || exit 1
+
+echo ""
 echo "== 0/7 Infra + release contracts =="
 "$PY" -m pytest \
   tests/test_pytest_infra_contract.py \
@@ -134,7 +146,6 @@ echo ""
 # can only ever SHRINK. See docs/testing.md "Quarantined pre-existing failures".
 QUARANTINE=(
   --deselect tests/dx_modelzoo/test_legal_enrich.py::test_all_models_have_complete_legal_block
-  --deselect tests/test_shared_css_foundation.py::test_dx_app_css_no_longer_defines_shared_foundation
 )
 
 echo "== 5/7 Module + shared + root contract suites (no browser) =="
@@ -162,7 +173,36 @@ echo "== 6/7 Inference E2E triple gate (e2e_mock, isolated) =="
 # import time (and dx_app.core.config freezes paths on first import), so sharing
 # a process with the module suites would pin the wrong tree for one of them.
 # Skips itself when playwright/chromium are unavailable rather than failing.
-"$PY" -m pytest tests/e2e/ -q --tb=short -m e2e_mock
+# `env -u` is load-bearing, not defensive: tests/e2e/conftest.py binds DX_APP_ROOT
+# at import time and picks the NPU overlay whenever DX_E2E_NPU_MODEL is set. Running
+# `run_ci.sh --npu` therefore used to fail THIS stage — the mock tier looked for its
+# fixture model in the real dx_app tree ("model 'e2eyolo' is not in /api/models").
+# The blocking stage must be hermetic no matter what the caller exported.
+env -u DX_E2E_NPU_MODEL -u DX_E2E_NPU_MODEL_FILE -u DX_E2E_NPU_STRICT \
+  "$PY" -m pytest tests/e2e/ -q --tb=short -m e2e_mock
+
+if [ "$RUN_VISUAL" = "1" ]; then
+  echo ""
+  echo "== Optional: pixel visual regression =="
+  # Advisory, not blocking: baselines are per-host (font rendering differs across
+  # machines), so a green run only means "matches the baselines captured on THIS
+  # runner". Refresh with DX_VISUAL_UPDATE=1 after an intentional design change.
+  "$PY" -m pytest tests/visual/ -q --tb=short -m visual
+fi
+
+if [ "$RUN_NPU" = "1" ]; then
+  echo ""
+  echo "== Optional: real-NPU inference tier (e2e_npu) =="
+  # DX_E2E_NPU_STRICT turns "no NPU / no model" from a skip into a failure. Asking
+  # for this tier and getting a silent green would defeat the point of scheduling it.
+  if [ -z "${DX_E2E_NPU_MODEL:-}" ]; then
+    echo "--npu requires DX_E2E_NPU_MODEL=<registry model name>" >&2
+    echo "(optionally DX_E2E_NPU_MODEL_FILE=<path to .dxnn> when it is not installed" >&2
+    echo " under dx-runtime/dx_app/assets/models)" >&2
+    exit 2
+  fi
+  DX_E2E_NPU_STRICT=1 "$PY" -m pytest tests/e2e/ -q --tb=short -m e2e_npu
+fi
 
 if [ "$RUN_COVERAGE" = "1" ]; then
   echo ""
@@ -174,10 +214,14 @@ if [ "$RUN_COVERAGE" = "1" ]; then
   # The suites cannot share one pytest process (launcher and dx_agent_dev collide
   # on the 18xxx test ports, and tests/e2e rebinds DX_APP_ROOT), so each group runs
   # separately and appends into one data file, reported once at the end.
+  # --cov=. (ONE root), not ten --cov=<pkg> flags: a per-package flag OVERRIDES
+  # .coveragerc's `source`, which re-creates the ten-root problem — coverage.xml
+  # then renders every module's server.py as filename="server.py" and nine files
+  # collapse into one entry. With a single root the module stays in the path, so
+  # the XML is usable by SonarQube and by scripts/coverage_gate.py alike.
+  # The omit list in .coveragerc is what keeps tools/ and scripts/ out.
   COV_ARGS=(
-    --cov=shared --cov=launcher --cov=dx_app --cov=dx_stream --cov=dx_compiler
-    --cov=dx_modelzoo --cov=dx_planner --cov=dx_benchmark --cov=dx_monitor
-    --cov=dx_agent_dev
+    --cov=.
     --cov-config=.coveragerc
   )
   rm -f .coverage coverage.xml

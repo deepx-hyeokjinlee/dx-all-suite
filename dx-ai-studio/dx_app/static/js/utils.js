@@ -137,14 +137,30 @@ function _applyLangToActivePage(){
   const active=document.querySelector('.page.active');
   DXI18n.applyLang(active||document);
 }
+// 헤더의 페이지명은 활성 탭 라벨을 그대로 쓴다. PAGE_TITLES 는 이모지 접두사를
+// 달고 있어(예: '📥 ModelZoo') 탭의 SVG 아이콘과 겹쳐 보이고, 탭과 헤더가
+// 서로 다른 번역 경로를 타면 어긋난다. 탭이 없을 때만 PAGE_TITLES 로 떨어진다.
+function _shellPageLabel(page){
+  const tab=document.querySelector('.dx-tab[data-page="'+page+'"] span');
+  const fromTab=tab&&tab.textContent&&tab.textContent.trim();
+  return fromTab||T(PAGE_TITLES[page]||page);
+}
 function nav(page){
   // Auto-stop continuous inference when leaving Run page
   if(CONT.running)contStop();
   PAGES.forEach(p=>{
     const el=$('page-'+p);if(el)el.classList.toggle('active',p===page);
   });
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
-  $('topbar-title').textContent=T(PAGE_TITLES[page]||page);
+  // 통합 shell: 좌측 nav 대신 상단 탭 행. 활성 표시는 aria-current로 간다
+  // (dx-shell.css가 그걸로 스타일을 건다 — class="active"가 아니다).
+  document.querySelectorAll('.dx-tab').forEach(function(t){
+    if(t.dataset.page===page)t.setAttribute('aria-current','page');
+    else t.removeAttribute('aria-current');
+  });
+  const _pageSlot=document.getElementById('dxShellPage');
+  if(_pageSlot)_pageSlot.textContent=_shellPageLabel(page);
+  // 활성 탭이 오버플로 메뉴에 있었다면 행으로 되돌려야 한다.
+  if(window.DXTabs)DXTabs.reflowAll();
   if(page==='outputs')loadOutputs();
   if(page==='models')renderModelsPage();
   if(page==='run'){initRunPage();loadRunImages()}
@@ -160,12 +176,9 @@ function nav(page){
 // openDev is defined in developer.js (with auth logic)
 
 
-function toggleSidebar(){
-  const sb=document.querySelector('.sidebar');
-  const ml=document.querySelector('.main');
-  sb.classList.toggle('collapsed');
-  ml.style.marginLeft=sb.classList.contains('collapsed')?'60px':'220px';
-}
+// 통합 shell(Option A)에는 접을 사이드바가 없다 — 56px 레일은 항상 보인다.
+// 외부 호출자가 남아 있을 수 있어 no-op으로 유지한다.
+function toggleSidebar(){ /* no sidebar in the unified shell */ }
 
 
 
@@ -176,8 +189,8 @@ function refreshActivePageLanguage(){
   _applyLangToActivePage();
   const active=document.querySelector('.page.active');
   const page=active&&active.id?active.id.replace(/^page-/,''):'';
-  const titleEl=$('topbar-title');
-  if(titleEl&&page)titleEl.textContent=T(PAGE_TITLES[page]||page);
+  const titleEl=$('dxShellPage');
+  if(titleEl&&page)titleEl.textContent=_shellPageLabel(page);
   if(typeof _i18nOptions==='function')_i18nOptions();
   if(_isNotifDrawerOpen())_renderNotifHistory();
   if(page==='models'&&typeof renderModelsPage==='function')renderModelsPage();

@@ -67,6 +67,7 @@ bash scripts/run_ci.sh
 ```
 
 ```
+--   CSS token ratchet — scripts/css_token_gate.py (runs before stage 0/7)
 0/7  Infra + release contracts — tests/test_pytest_infra_contract.py,
      tests/shared/test_ci_contracts.py, tests/shared/test_studio_version_contracts.py,
      tests/release/
@@ -183,29 +184,55 @@ playwright show-trace var/e2e-traces/<file>.trace.zip
 bash scripts/run_ci.sh --coverage
 ```
 
-Measures **all ten** `.coveragerc` sources (it used to measure only `shared` + `launcher`,
+Measures **all ten** shipped packages (it used to measure only `shared` + `launcher`,
 which made eight well-tested modules look uncovered). The suites cannot share one pytest
 process — launcher and dx_agent_dev collide on the `18xxx` ports and `tests/e2e` rebinds
 `DX_APP_ROOT` — so it runs four groups with `--cov-append` and reports once.
+
+**One source root, not ten.** `.coveragerc` sets `source = .` with `relative_files = True`,
+and `run_ci.sh` passes a single `--cov=.`. This is not cosmetic: coverage.py strips whichever
+declared root a file came from, so with ten roots every module's `server.py` rendered as
+`filename="server.py"` and the nine distinct files **collapsed into one entry** in
+`coverage.xml` — 9 files in the terminal report, 1 in the XML. Anything consuming that XML
+(SonarQube) attributes the coverage to whichever root resolves first and reports the other
+eight at 0%. A single root keeps the module in the path (`dx_app/server.py`), which is also
+what `coverage_gate.py` splits on. A per-package `--cov=<pkg>` flag OVERRIDES the config's
+`source`, so adding one back re-creates the collapse; `tests/shared/test_ci_contracts.py`
+pins this.
 
 `scripts/coverage_gate.py` then compares against `config/coverage_baseline.json`
 (0.5%p tolerance). Report-only during the staged rollout; set `DX_COVERAGE_ENFORCE=1`
 to make a drop fail. Refresh the baseline with `python scripts/coverage_gate.py --update`.
 
-Baseline (`config/coverage_baseline.json`, branch coverage over 20,346 statements):
+Baseline (`config/coverage_baseline.json`, branch coverage over 20,146 statements
+across 152 files):
 
 | module | cover | | module | cover |
 |---|---|---|---|---|
 | dx_planner | 91.7% | | shared | 74.8% |
 | dx_benchmark | 91.2% | | launcher | 70.7% |
-| dx_monitor | 85.0% | | dx_app | 66.7% |
-| dx_modelzoo | 83.8% | | dx_stream | 68.8% |
-| dx_agent_dev | 79.9% | | dx_compiler | 59.6% |
+| dx_monitor | 85.0% | | dx_stream | 68.7% |
+| dx_modelzoo | 83.8% | | dx_app | 68.2% |
+| dx_agent_dev | 79.9% | | dx_compiler | 64.5% |
 
-`dx_compiler` is now the thinnest. The largest remaining gaps are
-`compiler_service.py` (~55%) and `compiler_bridge.py`/`setup_service.py` (~35%) —
-all dx_com orchestration, so they need the fake-subprocess treatment rather than a
-live server. `dx_stream/core/webrtc.py` (~39%) needs GStreamer GI bindings.
+`dx_compiler` is still the thinnest, but the biggest wins are now per-FILE rather than
+per-module — the module averages hide a few very large, very uncovered files:
+
+| file | cover | uncovered statements |
+|---|---|---|
+| `dx_compiler/server.py` | 41.4% | 384 |
+| `dx_stream/server.py` | 55.1% | 365 |
+| `dx_app/core/live.py` | 17.3% | 337 |
+| `launcher/launcher.py` | 67.2% | 334 |
+| `dx_compiler/core/compiler_service.py` | 54.8% | 296 |
+| `dx_app/core/modelzoo.py` | 28.5% | 206 |
+
+The two `server.py` files and `compiler_service.py` are request handlers and dx_com
+orchestration — reachable with the fake-subprocess / live-test-server treatment already
+used by `tests/dx_compiler/test_setup_service.py` and `tests/dx_stream/test_server.py`.
+`dx_app/core/live.py` drives camera/RTSP capture and needs either a fake capture source or
+hardware. `dx_stream/core/webrtc.py` (42.7%) needs GStreamer GI bindings, which are absent
+here.
 
 Additional helper/manual checks, not part of `run_ci.sh`:
 
@@ -217,9 +244,183 @@ Additional helper/manual checks, not part of `run_ci.sh`:
 - Hardening checks: `DX_BIND_LOCAL=1 ./launcher.sh` (loopback only) and
   `DX_API_TOKEN=secret ./launcher.sh` (401 without a bearer token).
 
+## SonarQube
+
+`sonar-project.properties` is committed; the server is not configured in it. The endpoint
+and credentials for the DEEPX SonarQube are not in any repository here, so they are passed
+at scan time:
+
+```bash
+sonar-scanner \
+  -Dsonar.host.url="$SONAR_HOST_URL" \
+  -Dsonar.token="$SONAR_TOKEN" \
+  -Dsonar.projectVersion="$(cat release.ver)"
+```
+
+`.github/workflows/dx-ai-studio-sonar.yml` does exactly that and is a deliberate **no-op
+until the `SONAR_HOST_URL` / `SONAR_TOKEN` secrets exist** — every step that needs the
+server is gated on a secret check, so the job reports success rather than failing every PR
+on a guessed endpoint. It is advisory (`continue-on-error`) because a first scan of a
+codebase this size surfaces a backlog, and blocking merges on it before that is triaged
+just teaches people to ignore the gate.
+
+Notes:
+
+- **Coverage.** Sonar reads `coverage.xml` from `run_ci.sh --coverage`. That report is only
+  usable because coverage now measures from a single root — see the Coverage section above.
+- **Version.** Not in the properties file: `release.ver` is the SSOT and a copy would drift.
+- **Exclusions.** The studio ships ~6 MB of JS, most of it vendored (`mermaid.min.js`) or
+  generated (`i18n.js` is 5,175 lines with three functions — a translation table). Scanning
+  it produces thousands of findings nobody will act on and buries the real ones.
+- **Contracts.** `tests/shared/test_ci_contracts.py` pins that no endpoint or token is ever
+  committed, that `sonar.sources` matches pyproject's package list, and that the report path
+  is the one `run_ci.sh` actually writes.
+
+### CSS token ratchet (`scripts/css_token_gate.py`)
+
+Module CSS must take colour from tokens, not literal hex — a literal is invisible
+to the theme switch, so it silently keeps the dark value on a light page. The gate
+counts raw hex per module stylesheet and compares against
+`config/css_token_baseline.json`:
+
+```bash
+python scripts/css_token_gate.py          # check (exits 1 on any increase)
+python scripts/css_token_gate.py --write  # re-record after a reduction
+```
+
+The baseline can only go **down**. `tests/test_css_token_gate.py` enforces both
+directions: `test_no_module_exceeds_its_baseline` fails on a new literal, and
+`test_baseline_has_no_stale_headroom` fails when a file improved but the baseline
+was not tightened — stale headroom would silently re-admit the literals you removed.
+
+Baseline at the time the gate landed: **244 raw hex across 12 files**
+(`sdk-library.css` 95, `launcher/style.css` 52, `dx_compiler` 20, `dx_app` 20, …).
+`shared/static/` is deliberately out of scope — `dx-tokens.css` is where the
+palette is *supposed* to live.
+
+### Shared component ownership
+
+`tests/test_shared_css_foundation.py` also tracks which stylesheets redefine a
+component that `shared/static/dx-components.css` owns. Two allowlists carry the
+current state, and a `..._has_no_stale_entries` test forces each entry to be removed
+as the migration lands, so the lint keeps catching the next regression:
+
+- `OWNED_COMPONENT_OVERRIDES` — shared owns the selector, a module overrides it
+  (`.btn`: dx_benchmark, dx_planner).
+- `UNOWNED_COMPONENTS` — no shared owner yet, modules each reinvent it
+  (`.card`: dx_app, dx_benchmark, dx_monitor, dx_stream).
+
+### Unified app shell (`tests/test_dx_shell.py`, `tests/shared/test_shell.py`)
+
+`shared/static/dx-shell.css` + `shared/shell.py` render one skeleton (56px module
+rail, 56px header, 42px page-tab row) that modules inherit. dx_app is the first
+module on it. The contracts worth knowing about:
+
+- The shell's markup is injected **server-side** (`DXBaseHandler.shell_spec` →
+  `shared.shell.apply` inside `serve_template`), so any test that asserts on dx_app's
+  header, toolbar or brand slot must read the **rendered** HTML, not the template —
+  see `rendered_dx_app_index()` in `tests/test_shared_css_foundation.py`.
+- Tab labels are never truncated. Overflow is a function of translation length, not
+  window width (`Benchmark` is 9 characters in English and 25 in Spanish —
+  `Evaluación de rendimiento`), so `shared/static/dx-tabs.js` moves whole tabs into a
+  `+N` menu on both `ResizeObserver` and `dx-lang-applied`, and keeps the active tab
+  in the row.
+- `dx-shell.css` may not contain a literal colour; `dx-icons.svg` may not either
+  (`currentColor` only) — both are theme-switch correctness, enforced by tests.
+
+### Theme (`tests/test_dx_theme.py`)
+
+`shared/static/dx-theme.js` holds three states — `dark`, `light`, `system` — under
+`localStorage['dx-theme']`, mirroring the `dx-lang` convention. `system` removes the
+`data-theme` attribute so `prefers-color-scheme` decides. `dx-theme-light.css` must
+define **every** semantic token in **both** its blocks (`:root[data-theme="light"]`
+and the `prefers-color-scheme` block guarded by `:not([data-theme="dark"])`); a token
+present in only one block breaks solely for viewers on OS-light with no explicit
+choice, which is the hardest case to notice by hand.
+
+## Optional stages
+
+`run_ci.sh` takes four opt-in flags. None of them run in the blocking PR gate.
+
+| Flag | What it runs | Why it does not block |
+|------|--------------|----------------------|
+| `--npu` | `tests/e2e/ -m e2e_npu` — the triple gate against real DX-M1 inference | One board backs it; a merge must not depend on that board's health |
+| `--visual` | `tests/visual/` — pixel diff vs committed screenshots | Baselines are per-host (font rasterisation differs) |
+| `--browser` | the ten Playwright suites, shardable with `--shard=i/N` | Slow; advisory until the engines are stable in CI |
+| `--coverage` | all ten `.coveragerc` sources vs `config/coverage_baseline.json` | Staged: visible, not yet gating |
+
+### Real-NPU tier (`--npu`)
+
+```bash
+DX_E2E_NPU_MODEL=<registry name> bash scripts/run_ci.sh --npu
+# model not under dx_app/assets/models (root-owned on a board)? add:
+DX_E2E_NPU_MODEL_FILE=/path/to/model.dxnn
+```
+
+`--npu` exports `DX_E2E_NPU_STRICT=1`, which turns "no NPU / no model" from a skip
+into a **failure**. pytest exits 0 when everything skips, so without it a scheduled
+run on a board with a dead NPU would report green while proving nothing.
+
+`--npu` runs the blocking stages first, and stage 6 (the mock tier) is invoked with
+`env -u DX_E2E_NPU_MODEL -u DX_E2E_NPU_MODEL_FILE -u DX_E2E_NPU_STRICT`. That is
+load-bearing: `tests/e2e/conftest.py` binds `DX_APP_ROOT` at import time and selects
+the NPU overlay whenever `DX_E2E_NPU_MODEL` is set, so without stripping them the
+mock tier looks for its fixture model in the real dx_app tree and the run fails its
+own blocking stage (`model 'e2eyolo' is not in /api/models`).
+
+It runs in CI from `dx-ai-studio-npu.yml`: nightly, on `workflow_dispatch`, and on a
+PR labelled `run-npu`.
+
+### Pixel visual regression (`--visual`)
+
+`tests/visual/` screenshots each module's landing page at 1280x800 and compares it
+to `tests/visual/baselines/<engine>/<module>.png`.
+
+This is **not** what `tests/test_ux_visual_gate.py` does — that audits tutorial
+spotlight geometry through the DOM. It catches "the highlight points at nothing";
+it cannot catch "the header lost its border".
+
+Determinism was measured, not assumed. With a fresh browser context per capture,
+reduced motion, `animations="disabled"` and the tutorial TOC closed, repeat captures
+of the same commit differ by **0 pixels** on all nine modules. Two findings shaped
+the harness:
+
+- **Reusing a browser context breaks it.** The second page in a context renders as a
+  return visit (splash seen, panels remembered) — 48.8% of the launcher hub's pixels
+  moved between two captures of the same commit until each got its own context.
+- **Two modules need masks.** `dx_monitor`'s live telemetry drifts 0.0788%, and
+  `dx_agent_dev`'s animated showcase thumbnails drift 0.97-2.16%. The latter only
+  appears against a *stored* baseline — back-to-back captures agree — so it survived
+  the first round of probing.
+
+The threshold is 0.02% (`DX_VISUAL_MAX_RATIO`), chosen by measurement: at 0.1% a
+global `--accent` change moved only one of nine modules past the limit. At 0.02% a
+0.2px `letter-spacing` change is caught on **all nine**.
+
+Refresh baselines after an intentional design change:
+
+```bash
+DX_VISUAL_UPDATE=1 ./.venv/bin/python -m pytest tests/visual/ -q
+```
+
+## Pre-commit hook
+
+The Node-free stand-in for the ticket's Husky step. Runs in ~4s on a normal commit.
+
+```bash
+bash scripts/install-hooks.sh     # symlinks scripts/pre-commit-hook.sh
+git commit --no-verify            # bypass once
+```
+
+It checks only what is proportional to the staged diff — `py_compile` on `.py`,
+`json.load` on `.json`, `bash -n` on `.sh` — plus `test_pytest_infra_contract.py`
+and `test_ci_contracts.py`, which are what actually break when someone edits
+`run_ci.sh`, `pytest.ini` or a workflow without updating its ledger. The full gate
+stays in CI.
+
 ## Quarantined pre-existing failures
 
-Stage 5/7 deselects two tests that were **already failing before the PR gate existed**.
+Stage 5/7 deselects one test that was **already failing before the PR gate existed**.
 They are real content defects, not environment gaps, so they are NOT papered over with
 skip guards — they are deselected in `scripts/run_ci.sh` (`QUARANTINE=(...)`) where they
 stay visible and counted.
@@ -231,7 +432,6 @@ gate. So the debt cannot quietly grow.
 | Test | Defect | Needs |
 |------|--------|-------|
 | `test_all_models_have_complete_legal_block` | The `yolo26-depth-*` family reaches the catalog from the dx_app source tree, not the ModelZoo sync snapshot, so it carries only `commercial_use: restricted` and no full legal block. | Upstream licence data. **Do not fabricate** — a wrong licence claim is worse than a missing one. |
-| `test_dx_app_css_no_longer_defines_shared_foundation` | `dx_app` CSS re-defines shared-foundation rules (`:focus-visible`). | Design call: move the rules back to `shared/`, or update the contract. |
 
 **Resolved 2026-08-27** (removed from the quarantine): the three dx_stream/dx_modelzoo
 failures all traced to one cause — dx-runtime shipped the `yolo26-depth` family

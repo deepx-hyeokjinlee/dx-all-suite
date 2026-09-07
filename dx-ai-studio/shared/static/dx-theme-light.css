@@ -1,0 +1,113 @@
+/* Light 테마 — semantic 토큰만 재정의한다. 레거시 alias는 건드리지 않는다
+   (dx-semantic.css의 alias가 자동으로 따라온다).
+
+   dark의 단순 반전이 아니라 대비 재매핑이다: accent(#638CFF)는 밝은 바탕에서
+   너무 옅어지므로 한 단계 어둡게(#4A6FE0), 상태색은 흰 바탕에서 WCAG AA를
+   유지하도록 각각 낮췄다(#3FB950 -> #1A7F37 등). 그림자는 검정 대신
+   푸른기 도는 잉크(23,37,72)로 깔아야 페이지 색조와 어긋나지 않는다.
+
+   뷰어 상태는 셋이다:
+     data-theme="light"  명시적 light 선택
+     data-theme="dark"   명시적 dark 선택 (기본값이므로 여기서 다루지 않음)
+     (스탬프 없음)        system — prefers-color-scheme가 결정
+   아래 두 블록이 1번과 3번을 덮는다. */
+
+:root[data-theme="light"]{
+  color-scheme:light;
+
+  --surface-page:#F5F7FB;
+  --surface-panel:#FFFFFF;
+  --surface-raised:linear-gradient(145deg,#FFFFFF,#F2F5FB);
+  --surface-sunken:#EDF1F8;
+  --surface-overlay:rgba(255,255,255,.78);
+
+  --text-primary:#111827;
+  --text-secondary:#374151;
+  --text-muted:#5B6577;
+  --text-faint:#6B7488;
+  --text-on-accent:#FFFFFF;
+
+  --border-subtle:rgba(37,71,152,.14);
+  --border-strong:rgba(37,71,152,.30);
+
+  --control-bg:#FFFFFF;
+  --control-border:rgba(37,71,152,.18);
+  --control-border-focus:#4A6FE0;
+  --control-ring:rgba(74,111,224,.18);
+
+  --status-ok:#1A7F37;
+  --status-warn:#8A6100;
+  --status-error:#C1121F;
+  --status-info:#1F6FD0;
+
+  --accent:#4A6FE0;
+  --accent-light:#6B8AEA;
+  --accent-dim:rgba(74,111,224,.12);
+  --accent-glow:rgba(74,111,224,.26);
+  --accent-strong:#6B4FE0;
+  --accent-rgb:74,111,224;
+  --gradient-accent:linear-gradient(135deg,#4A6FE0,#6B4FE0);
+
+  --shadow:0 4px 20px rgba(23,37,72,.10);
+  --shadow-sm:0 1px 6px rgba(23,37,72,.08);
+  --shadow-lg:0 10px 34px rgba(23,37,72,.14);
+  --shadow-xl:0 20px 60px rgba(23,37,72,.18);
+  --inset-highlight:inset 0 1px 0 rgba(255,255,255,.9);
+  --inset-highlight-strong:inset 0 1px 0 rgba(255,255,255,1);
+  --surface-raised-shadow:var(--shadow-sm),var(--inset-highlight);
+  --surface-glass-shadow:var(--shadow-sm),var(--inset-highlight);
+  --surface-hover-shadow:var(--shadow),var(--inset-highlight);
+  --glass-border:rgba(37,71,152,.12);
+}
+
+/* system = light 인데 사용자가 dark를 명시하지 않은 경우.
+   :not([data-theme="dark"]) 가드가 있어야 명시적 dark 선택이 이긴다. */
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+
+    --surface-page:#F5F7FB;
+    --surface-panel:#FFFFFF;
+    --surface-raised:linear-gradient(145deg,#FFFFFF,#F2F5FB);
+    --surface-sunken:#EDF1F8;
+    --surface-overlay:rgba(255,255,255,.78);
+
+    --text-primary:#111827;
+    --text-secondary:#374151;
+    --text-muted:#5B6577;
+    --text-faint:#6B7488;
+    --text-on-accent:#FFFFFF;
+
+    --border-subtle:rgba(37,71,152,.14);
+    --border-strong:rgba(37,71,152,.30);
+
+    --control-bg:#FFFFFF;
+    --control-border:rgba(37,71,152,.18);
+    --control-border-focus:#4A6FE0;
+    --control-ring:rgba(74,111,224,.18);
+
+    --status-ok:#1A7F37;
+    --status-warn:#8A6100;
+    --status-error:#C1121F;
+    --status-info:#1F6FD0;
+
+    --accent:#4A6FE0;
+    --accent-light:#6B8AEA;
+    --accent-dim:rgba(74,111,224,.12);
+    --accent-glow:rgba(74,111,224,.26);
+    --accent-strong:#6B4FE0;
+    --accent-rgb:74,111,224;
+    --gradient-accent:linear-gradient(135deg,#4A6FE0,#6B4FE0);
+
+    --shadow:0 4px 20px rgba(23,37,72,.10);
+    --shadow-sm:0 1px 6px rgba(23,37,72,.08);
+    --shadow-lg:0 10px 34px rgba(23,37,72,.14);
+    --shadow-xl:0 20px 60px rgba(23,37,72,.18);
+    --inset-highlight:inset 0 1px 0 rgba(255,255,255,.9);
+    --inset-highlight-strong:inset 0 1px 0 rgba(255,255,255,1);
+    --surface-raised-shadow:var(--shadow-sm),var(--inset-highlight);
+    --surface-glass-shadow:var(--shadow-sm),var(--inset-highlight);
+    --surface-hover-shadow:var(--shadow),var(--inset-highlight);
+    --glass-border:rgba(37,71,152,.12);
+  }
+}

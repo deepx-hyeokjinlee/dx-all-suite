@@ -31,6 +31,20 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def rendered_dx_app_index() -> str:
+    """서버가 실제로 내보내는 dx_app index.html.
+
+    dx_app은 통합 App Shell(Option A)로 옮겨져 레일·헤더·탭이
+    shared/shell.py 에서 서버 렌더 시점에 주입된다. 툴바 슬롯도 그 안에 있으므로
+    템플릿 파일만 읽는 계약은 dx_app에 대해 더는 성립하지 않는다.
+    """
+    from dx_app.server import DX_APP_SHELL
+    from shared.shell import apply as apply_shell
+
+    template = read_text(ROOT / "dx_app" / "templates" / "index.html")
+    return apply_shell(template, DX_APP_SHELL)
+
+
 def assert_ordered(html: str, hrefs: list[str]) -> None:
     positions = []
     for href in hrefs:
@@ -114,7 +128,6 @@ def descendants(nodes: list[dict[str, object]], index: int) -> list[int]:
 
 
 TOOLBAR_TARGETS = [
-    ("dx_app", ROOT / "dx_app" / "templates" / "index.html", ("topbar-right", "toolbar")),
     ("dx_stream", ROOT / "dx_stream" / "templates" / "index.html", ("topbar-right", "toolbar")),
     ("dx_modelzoo", ROOT / "dx_modelzoo" / "templates" / "index.html", ("mz-topbar-right", "toolbar")),
     ("dx_compiler", ROOT / "dx_compiler" / "templates" / "base.html", ("header-right", "toolbar")),
@@ -127,6 +140,18 @@ TOOLBAR_TARGETS = [
 
 def toolbar_nodes(nodes: list[dict[str, object]]) -> list[int]:
     return [idx for idx, node in enumerate(nodes) if "toolbar" in node["classes"]]
+
+
+def test_dx_app_toolbar_target_lives_in_the_shared_shell_header():
+    """dx_app 툴바는 shared/shell.py 가 그리므로 렌더된 HTML로 검증한다."""
+    html = rendered_dx_app_index()
+    nodes = parse_html_nodes(html)
+    targets = toolbar_nodes(nodes)
+    assert len(targets) == 1, "dx_app should expose exactly one .toolbar target"
+    assert has_classes(nodes[targets[0]], "dx-shell-header-right", "toolbar")
+    assert re.search(
+        r"DXToolbar\.init\(\{[^}]*container:\s*['\"]\.toolbar['\"]", html, re.S
+    )
 
 
 @pytest.mark.parametrize(("app_name", "path", "required_classes"), TOOLBAR_TARGETS)
@@ -151,8 +176,8 @@ def assert_descendant(nodes: list[dict[str, object]], ancestor: int, descendant:
 
 
 def test_app_toolbar_preserves_notification_controls():
-    nodes = parse_html_nodes(read_text(ROOT / "dx_app" / "templates" / "index.html"))
-    toolbar = find_one(nodes, lambda node: has_classes(node, "topbar-right", "toolbar"), "app toolbar")
+    nodes = parse_html_nodes(rendered_dx_app_index())
+    toolbar = find_one(nodes, lambda node: has_classes(node, "dx-shell-header-right", "toolbar"), "app toolbar")
     bell = find_one(nodes, lambda node: has_classes(node, "notif-bell"), "notif bell")
     badge = find_one(nodes, lambda node: has_id(node, "notif-badge"), "notif badge")
     assert_descendant(nodes, toolbar, bell, "notif bell remains inside app toolbar")
@@ -334,6 +359,15 @@ def assert_local_topbar_token(css: str) -> None:
     )
 
 
+# A module must not RE-DEFINE the global focus ring (shared/static/dx-base.css
+# ships `:focus-visible{...}` as a bare selector). Styling the pseudo-class on a
+# module's own component — `.lab-composer-palette-item:focus-visible` — is normal
+# CSS and must stay allowed, so match only a STANDALONE `:focus-visible`, i.e. one
+# not attached to a preceding selector. A plain substring check cannot tell the two
+# apart; every other fragment below is a token unique to the foundation.
+_BARE_FOCUS_VISIBLE = re.compile(r"(?:^|[\s,{}])(:focus-visible)\b")
+
+
 def assert_shared_foundation_removed(css: str) -> None:
     forbidden_fragments = [
         "@font-face",
@@ -344,11 +378,16 @@ def assert_shared_foundation_removed(css: str) -> None:
         "--font:",
         "--mono:",
         "scrollbar-color:",
-        ":focus-visible",
         "::-webkit-scrollbar",
     ]
     for fragment in forbidden_fragments:
         assert fragment not in css, fragment
+
+    bare = _BARE_FOCUS_VISIBLE.search(css)
+    assert not bare, (
+        "module CSS re-defines the global :focus-visible ring "
+        f"(shared/static/dx-base.css owns it): ...{css[max(0, bare.start() - 40):bare.end() + 60]}..."
+    )
 
 
 def test_benchmark_template_uses_canonical_css_order():
@@ -598,9 +637,19 @@ def test_dx_app_template_uses_canonical_css_order():
 
 def test_dx_app_template_uses_shared_script_order_and_chat_widget():
     html = read_text(ROOT / "dx_app" / "templates" / "index.html")
-    assert '<div class="topbar-right toolbar">' in html
+    # 툴바 컨테이너는 shell 헤더가 소유한다 (렌더 검증은 위 전용 테스트).
+    assert '<div class="topbar-right toolbar">' not in html
     assert "DXToolbar.init({ container: '.toolbar'" in html
     assert "DXToolbar.init({ container: '.topbar-right'" not in html
+    # 탭 오버플로는 toolbar.js 이후에 초기화되어야 헤더 폭이 확정된 뒤 잰다.
+    assert_ordered_tokens(
+        html,
+        [
+            "DXToolbar.init({ container: '.toolbar'",
+            'src="/static/shared/dx-tabs.js"',
+            "DXTabs.init(",
+        ],
+    )
     assert_ordered_tokens(
         html,
         [
@@ -629,14 +678,14 @@ def test_dx_app_css_no_longer_defines_shared_foundation():
     assert "@keyframes dx-pulse" not in css
     assert "@keyframes dx-fade-in" not in css
     assert "@keyframes dx-spin" not in css
+    # shell(Option A)로 옮긴 셀렉터는 모듈에 남으면 두 정의가 싸운다.
+    for selector in (".app", ".sidebar", ".topbar", ".topbar-right", ".nav-item", ".content-wrap"):
+        assert not re.search(r"^\s*" + re.escape(selector) + r"\s*\{", css, re.M), (
+            f"{selector} 는 shared/static/dx-shell.css 로 옮겼다"
+        )
+    # 모듈이 계속 소유하는 셀렉터
     for selector in (
-        ".app",
-        ".sidebar",
-        ".topbar",
-        ".topbar-right",
         ".toolbar",
-        ".nav-item",
-        ".content-wrap",
         ".card",
         ".btn",
         ".ref-layout",
@@ -974,7 +1023,12 @@ def test_compiler_app_stream_use_module_chrome_metrics():
     assert "box-shadow: var(--dx-module-header-elevation)" in compiler_header
     assert "gap: var(--dx-module-header-gap)" in compiler_left
 
-    for css in (app_css, stream_css):
+    # dx_app 은 통합 shell(dx-shell.css)이 헤더 치수를 소유하므로 제외한다.
+    assert "--dx-module-header-h" not in app_css, (
+        "dx_app 은 shell로 이관됐다 — 헤더 치수는 dx-shell.css가 소유한다"
+    )
+
+    for css in (stream_css,):
         sidebar_brand = re.search(r"\.sidebar-brand\s*\{(?P<body>.*?)\}", css, re.S).group("body")
         topbar = re.search(r"\.topbar\s*\{(?P<body>.*?)\}", css, re.S).group("body")
         assert "height: var(--dx-module-header-h)" in sidebar_brand
@@ -983,8 +1037,25 @@ def test_compiler_app_stream_use_module_chrome_metrics():
         assert "box-shadow: var(--dx-module-header-elevation)" in topbar
 
 
-def test_app_stream_use_sidebar_brand_for_position_alignment():
-    for rel in ("dx_app/templates/index.html", "dx_stream/templates/index.html"):
+def test_dx_app_brand_sits_in_the_shell_header_before_the_page_name():
+    """사이드바가 사라졌으므로 브랜드 자리는 헤더 좌측이 물려받는다."""
+    template = read_text(ROOT / "dx_app" / "templates" / "index.html")
+    assert_loads_shared_brand_after_i18n(template, "dx_app/templates/index.html")
+    assert "DXBrand.mount({" in template
+    assert "sidebar-brand" not in template
+
+    html = rendered_dx_app_index()
+    left = re.search(r'<div class="dx-shell-header-left">(?P<body>.*?)</header>', html, re.S)
+    assert left is not None
+    body = left.group("body")
+    assert 'id="dxBrand"' in body, "브랜드가 헤더 좌측에 없다"
+    assert body.index('id="dxBrand"') < body.index('id="dxShellPage"'), (
+        "브랜드는 페이지명 왼쪽에 온다"
+    )
+
+
+def test_stream_uses_sidebar_brand_for_position_alignment():
+    for rel in ("dx_stream/templates/index.html",):
         html = read_text(ROOT / rel)
         assert_loads_shared_brand_after_i18n(html, rel)
         assert "DXBrand.mount({" in html
@@ -1019,7 +1090,7 @@ def test_app_stream_use_sidebar_brand_for_position_alignment():
         r"\.sidebar\.collapsed\s+\.logo\b",
         r"\.sidebar\.collapsed\s+\.logo-text\b",
     )
-    for css_rel in ("dx_app/static/css/style.css", "dx_stream/static/css/stream.css"):
+    for css_rel in ("dx_stream/static/css/stream.css",):
         css_path = ROOT / css_rel
         assert css_path.is_file(), css_rel
         css_content = read_text(css_path)
@@ -1156,7 +1227,12 @@ BRAND_SLOT_BLOCK_TEMPLATES = (
 
 def test_touched_modules_use_block_brand_slots():
     for rel in BRAND_SLOT_BLOCK_TEMPLATES:
-        html = read_text(ROOT / rel)
+        # dx_app 은 shell 헤더가 슬롯을 그리므로 렌더된 HTML로 본다.
+        html = (
+            rendered_dx_app_index()
+            if rel == "dx_app/templates/index.html"
+            else read_text(ROOT / rel)
+        )
         assert '<div class="dx-brand-slot"' in html, rel
         assert '<span class="dx-brand-slot"' not in html, rel
 
@@ -1286,7 +1362,6 @@ def test_all_module_topbars_use_shared_depth_elevation():
         ("launcher/static/style.css", ".top-bar"),
         ("launcher/static/sdk-library.css", ".sdk-topbar"),
         ("launcher/static/about-deepx.css", ".about-topbar"),
-        ("dx_app/static/css/style.css", ".topbar"),
         ("dx_stream/static/css/stream.css", ".topbar"),
         ("dx_modelzoo/static/css/style.css", ".mz-topbar"),
         ("dx_compiler/static/css/style.css", "#header"),
@@ -1331,7 +1406,6 @@ def test_flat_modules_use_shared_surface_depth_tokens():
     # active state 검증
     ACTIVE_SPECS = [
         ("dx_benchmark/static/css/style.css", ".main-tab.active"),
-        ("dx_app/static/css/style.css", ".nav-item.active"),
         ("dx_stream/static/css/stream.css", ".nav-item.active"),
         ("dx_planner/static/css/style.css", ".task-btn.selected"),
         ("dx_planner/static/css/style.css", ".size-btn.selected"),
@@ -1344,9 +1418,11 @@ def test_flat_modules_use_shared_surface_depth_tokens():
         )
 
 
-def test_app_stream_sidebar_brand_uses_shared_header_depth():
-    """App/Stream의 좌측 브랜드 영역도 상단 chrome과 같은 depth를 사용한다."""
-    for css_rel in ("dx_app/static/css/style.css", "dx_stream/static/css/stream.css"):
+def test_stream_sidebar_brand_uses_shared_header_depth():
+    """Stream의 좌측 브랜드 영역도 상단 chrome과 같은 depth를 사용한다.
+
+    dx_app 은 통합 shell로 이관되어 사이드바가 없다."""
+    for css_rel in ("dx_stream/static/css/stream.css",):
         css = read_text(ROOT / css_rel)
         body = _css_rule(css, ".sidebar-brand")
         assert "background: var(--dx-module-header-bg)" in body, (
@@ -1401,5 +1477,237 @@ def test_app_stream_local_css_urls_bust_pre_depth_cache():
     app_html = read_text(ROOT / "dx_app" / "templates" / "index.html")
     stream_html = read_text(ROOT / "dx_stream" / "templates" / "index.html")
 
-    assert 'href="/static/css/style.css?m=dx_app_mzhdr' in app_html
+    assert 'href="/static/css/style.css?m=dx_app_shell_a' in app_html
     assert 'href="/static/css/stream.css?m=dx_stream_depth' in stream_html
+
+
+# ── 공통 컴포넌트 단일 소유 계약 ────────────────────────────────
+# 목표: 공통 컴포넌트는 shared/static/dx-components.css 한 곳만 정의한다.
+# 실측(2026-08-31): dx-components.css가 소유한 것은 .btn/.btn-ghost/.btn-sm/.fg/.badge뿐.
+#   .btn  → dx_benchmark, dx_planner가 각자 다시 정의해 공유 정의를 덮는다.
+#   .card → 소유자가 아예 없고 4개 모듈이 제각각 정의한다
+#           (padding 20px vs var(--sp-4)=16px, dx_monitor는 shadow를 토큰 대신 하드코딩).
+# 이관이 끝난 파일부터 allowlist에서 지운다 — stale 테스트가 그걸 강제한다.
+
+COMPONENT_OWNER = "shared/static/dx-components.css"
+
+# 이미 shared 소유자가 있는데 모듈이 덮어쓰는 셀렉터.
+OWNED_COMPONENT_OVERRIDES = {
+    ".btn": {
+        "dx_benchmark/static/css/style.css",
+        "dx_planner/static/css/style.css",
+    },
+}
+
+# shared 소유자가 아직 없어 모듈마다 재발명 중인 셀렉터.
+# Phase 6에서 dx-components.css로 올린 뒤 OWNED_COMPONENT_OVERRIDES로 옮긴다.
+UNOWNED_COMPONENTS = {
+    ".card": {
+        "dx_app/static/css/style.css",
+        "dx_benchmark/static/css/style.css",
+        "dx_monitor/static/css/style.css",
+        "dx_stream/static/css/stream.css",
+    },
+}
+
+MODULE_CSS_GLOBS = ("launcher/static/*.css", "dx_*/static/css/*.css")
+
+
+def _module_css_paths() -> list[Path]:
+    paths: list[Path] = []
+    for pattern in MODULE_CSS_GLOBS:
+        paths.extend(sorted(ROOT.glob(pattern)))
+    return paths
+
+
+def _defines_selector(css: str, selector: str) -> bool:
+    """줄머리에서 정확히 그 셀렉터로 시작하는 rule이 있는가 (.card-header 제외)."""
+    return re.search(r"^\s*" + re.escape(selector) + r"\s*\{", css, re.M) is not None
+
+
+def _redefining_files(selector: str) -> set[str]:
+    return {
+        path.relative_to(ROOT).as_posix()
+        for path in _module_css_paths()
+        if _defines_selector(read_text(path), selector)
+    }
+
+
+@pytest.mark.parametrize("selector", sorted(OWNED_COMPONENT_OVERRIDES))
+def test_owned_component_is_defined_by_the_shared_owner(selector):
+    assert _defines_selector(read_text(ROOT / COMPONENT_OWNER), selector), (
+        f"{COMPONENT_OWNER} 가 {selector} 를 정의하지 않는다"
+    )
+
+
+@pytest.mark.parametrize("selector", sorted(UNOWNED_COMPONENTS))
+def test_unowned_component_is_tracked_until_it_gets_an_owner(selector):
+    """소유자가 생기면 이 테스트가 실패한다 — OWNED_COMPONENT_OVERRIDES로 옮기라는 신호."""
+    assert not _defines_selector(read_text(ROOT / COMPONENT_OWNER), selector), (
+        f"{selector} 가 {COMPONENT_OWNER} 로 올라갔다. "
+        "UNOWNED_COMPONENTS에서 OWNED_COMPONENT_OVERRIDES로 옮겨라"
+    )
+
+
+@pytest.mark.parametrize(
+    "selector,allowed",
+    sorted({**OWNED_COMPONENT_OVERRIDES, **UNOWNED_COMPONENTS}.items()),
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_no_new_module_redefines_a_shared_component(selector, allowed):
+    offenders = _redefining_files(selector) - allowed
+    assert not offenders, (
+        f"{selector} 를 새로 재정의한 모듈: {sorted(offenders)}. "
+        f"{COMPONENT_OWNER} 의 정의를 쓰세요"
+    )
+
+
+@pytest.mark.parametrize(
+    "selector,allowed",
+    sorted({**OWNED_COMPONENT_OVERRIDES, **UNOWNED_COMPONENTS}.items()),
+    ids=lambda v: v if isinstance(v, str) else "",
+)
+def test_component_allowlist_has_no_stale_entries(selector, allowed):
+    """이관이 끝났는데 allowlist에 남아 있으면 다음 회귀를 못 잡는다."""
+    stale = allowed - _redefining_files(selector)
+    assert not stale, f"{selector} allowlist에서 지울 것: {sorted(stale)}"
+
+
+# ── semantic 토큰 계층 ──────────────────────────────────────────
+# primitive(dx-tokens.css) → semantic(dx-semantic.css) 2층 분리.
+# 모듈 CSS는 semantic만 참조해야 재테마가 가능하다.
+SEMANTIC_TOKENS = (
+    "--surface-page",
+    "--surface-panel",
+    "--surface-raised",
+    "--surface-sunken",
+    "--surface-overlay",
+    "--text-primary",
+    "--text-secondary",
+    "--text-muted",
+    "--text-faint",
+    "--text-on-accent",
+    "--border-subtle",
+    "--border-strong",
+    "--control-bg",
+    "--control-border",
+    "--control-border-focus",
+    "--control-ring",
+    "--status-ok",
+    "--status-warn",
+    "--status-error",
+    "--status-info",
+)
+
+# 모듈 CSS 14,300줄이 아직 쓰는 물리적 이름. semantic 위 alias여야 한다.
+# --bg-3 / --bg-4 는 대응하는 역할이 없어 dx-tokens.css의 리터럴을 그대로 둔다
+# (semantic이 재정의하지 않으므로 primitive 값이 살아남는다).
+LEGACY_ALIASES = (
+    "--bg-0", "--bg-1", "--bg-2", "--bg-input",
+    "--text-1", "--text-2", "--text-3", "--text-4",
+    "--border", "--border-hover",
+    "--success", "--warning", "--error", "--info",
+    "--surface-raised-bg", "--glass-bg",
+)
+
+SEMANTIC_SURFACES = {
+    "dx_app": "dx_app/templates/index.html",
+    "dx_stream": "dx_stream/templates/index.html",
+    "dx_benchmark": "dx_benchmark/templates/index.html",
+    "dx_monitor": "dx_monitor/templates/index.html",
+    "dx_modelzoo": "dx_modelzoo/templates/index.html",
+    "dx_planner": "dx_planner/templates/index.html",
+    "dx_compiler": "dx_compiler/templates/base.html",
+    "dx_agent_dev": "dx_agent_dev/templates/index.html",
+    "launcher": "launcher/static/index.html",
+}
+
+
+def test_semantic_layer_defines_every_role_token():
+    css = read_text(SHARED_STATIC / "dx-semantic.css")
+    missing = [t for t in SEMANTIC_TOKENS if f"{t}:" not in css]
+    assert not missing, f"dx-semantic.css에 없는 semantic 토큰: {missing}"
+
+
+def test_legacy_names_are_aliases_of_semantic_tokens():
+    """--bg-*/--text-* 를 지우지 않고 alias로 남겨야 14k줄을 안 고치고 테마가 돈다."""
+    css = read_text(SHARED_STATIC / "dx-semantic.css")
+    for legacy in LEGACY_ALIASES:
+        m = re.search(re.escape(legacy) + r"\s*:\s*([^;]+);", css)
+        assert m, f"{legacy} alias가 dx-semantic.css에 없다"
+        assert "var(--" in m.group(1), (
+            f"{legacy} 가 리터럴로 재정의됐다 ({m.group(1).strip()}). "
+            "semantic 토큰을 참조해야 light에서 따라온다"
+        )
+
+
+def test_semantic_layer_holds_no_literal_outside_the_role_tokens():
+    """역할 토큰 외의 리터럴은 primitive 계층의 일이다."""
+    css = read_text(SHARED_STATIC / "dx-semantic.css")
+    for legacy in LEGACY_ALIASES:
+        body = re.search(re.escape(legacy) + r"\s*:\s*([^;]+);", css).group(1)
+        assert "#" not in body, f"{legacy} alias에 리터럴 hex가 있다"
+
+
+@pytest.mark.parametrize("name,rel", sorted(SEMANTIC_SURFACES.items()))
+def test_semantic_css_loads_between_tokens_and_base(name, rel):
+    html = head_html(read_text(ROOT / rel))
+    assert_ordered(
+        html,
+        [
+            "/static/shared/dx-tokens.css",
+            "/static/shared/dx-semantic.css",
+            "/static/shared/dx-base.css",
+        ],
+    )
+
+
+# ── light 테마 ──────────────────────────────────────────────────
+def test_light_theme_redefines_every_semantic_token():
+    """빠진 토큰 하나가 light에서 dark 글자 위 dark 배경을 만든다."""
+    css = read_text(SHARED_STATIC / "dx-theme-light.css")
+    missing = [t for t in SEMANTIC_TOKENS if f"{t}:" not in css]
+    assert not missing, f"light 테마에 빠진 semantic 토큰: {missing}"
+
+
+def test_light_theme_covers_all_three_viewer_states():
+    """명시 light / 명시 dark / 미스탬프(system) 세 상태를 모두 다뤄야 한다."""
+    css = read_text(SHARED_STATIC / "dx-theme-light.css")
+    assert ':root[data-theme="light"]' in css, "명시적 light 선택 규칙이 없다"
+    assert "@media (prefers-color-scheme: light)" in css, "system light 규칙이 없다"
+    assert ':root:not([data-theme="dark"])' in css, (
+        "system light 규칙이 명시적 dark 선택을 이기지 못하게 가드해야 한다"
+    )
+
+
+def test_light_theme_defines_the_same_tokens_in_both_blocks():
+    """한쪽에만 있는 토큰은 system-light 뷰어에서만 깨지는, 찾기 어려운 버그가 된다."""
+    css = read_text(SHARED_STATIC / "dx-theme-light.css")
+    explicit, _, system = css.partition("@media (prefers-color-scheme: light)")
+    names = lambda blob: set(re.findall(r"(--[\w-]+)\s*:", blob))
+    only_explicit = names(explicit) - names(system)
+    only_system = names(system) - names(explicit)
+    assert not only_explicit, f"명시 블록에만 있는 토큰: {sorted(only_explicit)}"
+    assert not only_system, f"system 블록에만 있는 토큰: {sorted(only_system)}"
+
+
+def test_light_theme_does_not_redefine_legacy_aliases():
+    """alias는 semantic을 따라와야 한다. 여기서 다시 정의하면 alias 사슬이 끊긴다."""
+    css = read_text(SHARED_STATIC / "dx-theme-light.css")
+    for legacy in LEGACY_ALIASES:
+        assert re.search(re.escape(legacy) + r"\s*:", css) is None, (
+            f"{legacy} 를 light 테마가 재정의했다 — dx-semantic.css의 alias만 유지하라"
+        )
+
+
+@pytest.mark.parametrize("name,rel", sorted(SEMANTIC_SURFACES.items()))
+def test_light_theme_loads_right_after_the_semantic_layer(name, rel):
+    html = head_html(read_text(ROOT / rel))
+    assert_ordered(
+        html,
+        [
+            "/static/shared/dx-semantic.css",
+            "/static/shared/dx-theme-light.css",
+            "/static/shared/dx-base.css",
+        ],
+    )

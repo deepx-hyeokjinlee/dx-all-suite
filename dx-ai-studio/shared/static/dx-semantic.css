@@ -1,0 +1,58 @@
+/* Semantic 토큰 — 역할 이름. 모듈 CSS는 이 계층만 참조한다.
+   dx-tokens.css(primitive)와 각 모듈 CSS 사이에 로드된다.
+   여기 값은 dark(기본). light는 dx-theme-light.css가 이 이름들만 덮어쓴다. */
+:root{
+  /* 면 */
+  --surface-page:#080c16;
+  --surface-panel:#0e1525;
+  --surface-raised:linear-gradient(145deg,#0e1525,#151d30);
+  --surface-sunken:#0a1020;
+  --surface-overlay:rgba(14,21,37,.7);
+
+  /* 글자 */
+  --text-primary:#E2E8F0;
+  --text-secondary:#B0BDD0;
+  --text-muted:#8892A8;
+  --text-faint:#727F94;
+  --text-on-accent:#080c16;
+
+  /* 선 */
+  --border-subtle:rgba(99,140,255,.1);
+  --border-strong:rgba(99,140,255,.22);
+
+  /* 컨트롤 */
+  --control-bg:#151d30;
+  --control-border:rgba(99,140,255,.1);
+  --control-border-focus:#638CFF;
+  --control-ring:rgba(99,140,255,.12);
+
+  /* 상태 — accent와 별개다 */
+  --status-ok:#3FB950;
+  --status-warn:#D29922;
+  --status-error:#F85149;
+  --status-info:#58A6FF;
+
+  /* ── 레거시 alias ──────────────────────────────────────────
+     모듈 CSS 14,300줄이 아직 이 이름들을 쓴다. 이관이 끝나는
+     Phase 8에서 삭제한다. 그 전까지 리터럴을 넣지 말 것 —
+     넣는 순간 light 테마가 그 자리에서 깨진다.
+
+     주의: dx-tokens.css가 먼저 로드되어 같은 이름을 리터럴로 정의한다.
+     이 파일이 뒤에 오므로 여기 정의가 이긴다 (CSS 순서 계약이 그래서 중요). */
+  --bg-0:var(--surface-page);
+  --bg-1:var(--surface-panel);
+  --bg-2:var(--control-bg);
+  --bg-input:var(--surface-panel);
+  --text-1:var(--text-primary);
+  --text-2:var(--text-secondary);
+  --text-3:var(--text-muted);
+  --text-4:var(--text-faint);
+  --border:var(--border-subtle);
+  --border-hover:var(--border-strong);
+  --success:var(--status-ok);
+  --warning:var(--status-warn);
+  --error:var(--status-error);
+  --info:var(--status-info);
+  --surface-raised-bg:var(--surface-raised);
+  --glass-bg:var(--surface-overlay);
+}

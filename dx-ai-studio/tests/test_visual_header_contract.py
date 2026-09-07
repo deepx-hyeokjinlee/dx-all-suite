@@ -11,7 +11,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 SURFACES = {
     "launcher": ("launcher/static/index.html", "launcher/static/style.css"),
-    "dx_app": ("dx_app/templates/index.html", "dx_app/static/css/style.css"),
+    # dx_app 은 통합 App Shell(Option A)로 이관되어 헤더를 dx-shell.css가 소유한다.
+    "dx_app": ("dx_app/templates/index.html", "shared/static/dx-shell.css"),
     "dx_stream": ("dx_stream/templates/index.html", "dx_stream/static/css/stream.css"),
     "dx_compiler": ("dx_compiler/templates/base.html", "dx_compiler/static/css/style.css"),
     "dx_monitor": ("dx_monitor/templates/index.html", "dx_monitor/static/css/style.css"),
@@ -23,7 +24,7 @@ SURFACES = {
 # 모듈별 topbar 셀렉터
 HEADER_SELECTORS = {
     "launcher": ".top-bar",
-    "dx_app": ".topbar",
+    "dx_app": ".dx-shell-header",
     "dx_stream": ".topbar",
     "dx_compiler": "#header",
     "dx_monitor": ".top-bar",
@@ -47,6 +48,22 @@ SHARED_CSS_ORDER = [
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def surface_html(name: str) -> str:
+    """서버가 실제로 내보내는 HTML.
+
+    통합 App Shell로 옮긴 모듈은 헤더/브랜드 슬롯이 shared/shell.py 에서
+    서버 렌더 시점에 주입되므로 템플릿 파일만 읽으면 보이지 않는다.
+    """
+    template_rel, _ = SURFACES[name]
+    html = read_text(ROOT / template_rel)
+    if name == "dx_app":
+        from dx_app.server import DX_APP_SHELL
+        from shared.shell import apply as apply_shell
+
+        return apply_shell(html, DX_APP_SHELL)
+    return html
 
 
 def _css_rule(css: str, selector: str) -> str:
@@ -105,8 +122,7 @@ class TestDXBrandSlot:
 
     @pytest.mark.parametrize("name", BRAND_MODULES)
     def test_brand_slot_has_id(self, name):
-        template_rel, _ = SURFACES[name]
-        html = read_text(ROOT / template_rel)
+        html = surface_html(name)
 
         assert 'id="dxBrand"' in html, (
             f"{name}: id='dxBrand' 슬롯이 반드시 존재해야 한다"
@@ -239,25 +255,29 @@ class TestLanguageDropdownStacking:
     def test_topbar_stacks_language_menu_between_content_and_popups(self, name):
         _, css_rel = SURFACES[name]
         css = read_text(ROOT / css_rel)
-        topbar = _css_rule(css, ".topbar")
-        toolbar_host = _css_rule(css, ".topbar-right")
+        header_sel = HEADER_SELECTORS[name]
+        host_sel = (
+            ".dx-shell-header-right" if header_sel == ".dx-shell-header" else ".topbar-right"
+        )
+        topbar = _css_rule(css, header_sel)
+        toolbar_host = _css_rule(css, host_sel)
 
         normalized_topbar = topbar.replace(" ", "")
         topbar_z = re.search(r"z-index\s*:\s*(\d+)\s*;", topbar)
         assert "position:relative" in normalized_topbar, (
-            f"{name}: .topbar must be positioned so z-index lifts "
+            f"{name}: {header_sel} must be positioned so z-index lifts "
             "the language dropdown above page cards"
         )
-        assert topbar_z, f"{name}: .topbar must declare explicit z-index"
+        assert topbar_z, f"{name}: {header_sel} must declare explicit z-index"
         topbar_z_value = int(topbar_z.group(1))
         assert topbar_z_value > self.CONTENT_LAYER_MAX, (
-            f"{name}: .topbar must stack above page content layers"
+            f"{name}: {header_sel} must stack above page content layers"
         )
         assert topbar_z_value < self.POPUP_LAYER_MIN, (
-            f"{name}: .topbar must stay below popup/modal layers"
+            f"{name}: {header_sel} must stay below popup/modal layers"
         )
         assert "overflow:visible" in normalized_topbar, (
-            f"{name}: .topbar must not clip the language dropdown menu"
+            f"{name}: {header_sel} must not clip the language dropdown menu"
         )
 
         normalized_host = toolbar_host.replace(" ", "")

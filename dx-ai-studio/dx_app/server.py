@@ -142,6 +142,7 @@ from dx_app.core.developer import (lab_session, lab_check, require_lab, _check_o
                        dev_delete, dev_git, dev_extract, extract_model_package,
                        dev_new_task, bug_report, save_capture)
 from dx_app.core.lab_portal import lab_capabilities, plan_add_model, plan_add_model_response, apply_add_model, smoke_add_model, plan_task_scaffold_response, apply_task_scaffold, generated_files_for_manifest, validate_lab_manifest_id, start_experiment_run, get_experiment_run, cancel_experiment_run, active_experiment_run_for_source, list_pending_manifests, change_summary_by_root, rollback_manifest, scoped_git_plan, plan_composer_quick_start, plan_composer_template, customize_composer_workflow, plan_composer_plugin_scaffold_response, apply_composer_plugin_scaffold, run_composer_workflow, export_composer_package, export_composer_recipe, import_composer_recipe
+from shared.shell import ShellSpec
 
 _modelzoo_gw = ModelZooGateway()
 
@@ -191,10 +192,42 @@ _chat_engine = ChatEngine(
     ]
 )
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 좌측 240px 사이드바를 없애고 페이지 10개를 상단 탭 행으로 올렸다.
+# 라벨은 영어 원문 = i18n 사전 키. 아이콘 id는 shared/static/dx-icons.svg.
+DX_APP_PAGES = (
+    ("setup", "Setup", "setup"),
+    ("models", "Models", "models"),
+    ("run", "Run Inference", "run"),
+    ("rundemo", "Run Demo", "demo"),
+    ("bench", "Benchmark", "bench"),
+    ("compare", "A/B Compare", "compare"),
+    ("modelzoo", "ModelZoo", "download"),
+    ("lab", "Lab", "lab"),
+    ("outputs", "Outputs", "folder"),
+    ("reference", "Reference", "book"),
+)
+
+# 알림 벨은 dx_app 고유 컨트롤이라 공유 헤더의 .toolbar 슬롯 안으로 넣는다.
+_NOTIF_BELL = (
+    '<button class="notif-bell" onclick="toggleNotifDrawer()" title="Notifications"'
+    ' data-i18n-title="Notifications">\U0001F514'
+    '<span class="notif-badge" id="notif-badge" style="display:none"></span></button>'
+)
+
+DX_APP_SHELL = ShellSpec(
+    module_key="app",
+    pages=DX_APP_PAGES,
+    active_page="models",
+    toolbar_extra=_NOTIF_BELL,
+)
+
 class Handler(DXBaseHandler):
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_APP_SHELL
     log_filter = ["/file/", "/static/"]
 
     def _mjpeg_stream(self):

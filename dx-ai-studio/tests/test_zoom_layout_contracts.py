@@ -42,13 +42,22 @@ def test_body_allows_horizontal_scroll_on_zoom(module: str, css_path: Path):
     assert "overflow:hidden" not in css.replace(" ", "").split("overflow-x")[0] or "overflow-y:hidden" in css.replace(" ", "")
 
 
-@pytest.mark.parametrize("module,css_path", [("dx_app", ZOOM_SAFE_MODULES["dx_app"]), ("dx_stream", ZOOM_SAFE_MODULES["dx_stream"])])
-def test_app_shell_uses_percent_width_not_viewport(module: str, css_path: Path):
+# dx_app 은 통합 App Shell(Option A)로 이관되어 shell 루트가 .app 이 아니라
+# shared/static/dx-shell.css 의 .dx-shell 이다. 이관되는 모듈마다 여기서 옮긴다.
+SHELL_ROOTS = {
+    "dx_app": (ROOT / "shared/static/dx-shell.css", ".dx-shell"),
+    "dx_stream": (ZOOM_SAFE_MODULES["dx_stream"], ".app"),
+}
+
+
+@pytest.mark.parametrize("module", sorted(SHELL_ROOTS))
+def test_app_shell_uses_percent_width_not_viewport(module: str):
+    css_path, selector = SHELL_ROOTS[module]
     css = _read(css_path)
-    app_rule = re.search(r"\.app\s*\{(?P<body>[^}]*)\}", css, re.DOTALL)
-    assert app_rule is not None, f"{module} .app rule missing"
+    app_rule = re.search(re.escape(selector) + r"\s*\{(?P<body>[^}]*)\}", css, re.DOTALL)
+    assert app_rule is not None, f"{module} {selector} rule missing"
     body = app_rule.group("body").replace(" ", "")
-    assert "width:100vw" not in body, f"{module} .app must not pin shell to 100vw"
+    assert "width:100vw" not in body, f"{module} {selector} must not pin shell to 100vw"
     assert "width:100%" in body
 
 
