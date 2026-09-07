@@ -1532,6 +1532,8 @@ OWNED_COMPONENT_OVERRIDES = {
     # .card 는 dx-components.css 로 올라갔고 네 모듈의 사본은 전부 제거됐다.
     # 빈 집합이 곧 "이 컴포넌트는 끝났다"는 뜻이고, 새 재정의가 생기면 실패한다.
     ".card": set(),
+    ".btn-primary": set(),
+    ".btn-acc": set(),
 }
 
 # shared 소유자가 아직 없어 모듈마다 재발명 중인 셀렉터.
@@ -1549,8 +1551,13 @@ def _module_css_paths() -> list[Path]:
 
 
 def _defines_selector(css: str, selector: str) -> bool:
-    """줄머리에서 정확히 그 셀렉터로 시작하는 rule이 있는가 (.card-header 제외)."""
-    return re.search(r"^\s*" + re.escape(selector) + r"\s*\{", css, re.M) is not None
+    """줄머리에서 그 셀렉터로 시작하는 rule이 있는가.
+
+    `.card-header` 가 `.card` 로 잡히지 않도록 셀렉터 뒤에는 `{` 또는 `,`
+    (그룹 셀렉터)만 허용한다 — 공유 파일은 `.btn-primary,\n.btn-acc{` 처럼
+    한 rule 에 두 이름을 묶어 두기 때문이다.
+    """
+    return re.search(r"^\s*" + re.escape(selector) + r"\s*[,{]", css, re.M) is not None
 
 
 def _redefining_files(selector: str) -> set[str]:

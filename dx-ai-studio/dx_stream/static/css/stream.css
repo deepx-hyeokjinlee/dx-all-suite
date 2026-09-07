@@ -64,12 +64,6 @@ h2{font-size:var(--fs-md);margin:16px 0 10px;font-weight:600;color:var(--text-3)
 /* ═══════════════════════════════════════════════════════════════════
    Buttons — base/hover/active/disabled/ghost/sm in shared/dx-components.css
    ═══════════════════════════════════════════════════════════════════ */
-.btn-primary{background:var(--gradient-accent);color:var(--bg-0);box-shadow:0 4px 16px rgba(var(--accent-rgb),.15)}
-.btn-primary:hover{box-shadow:var(--glow-accent);filter:brightness(1.08)}
-
-.btn-acc{background:var(--gradient-accent);color:var(--bg-0);box-shadow:0 4px 16px rgba(var(--accent-rgb),.15)}
-.btn-acc:hover{box-shadow:var(--glow-accent);filter:brightness(1.08)}
-
 /* ═══════════════════════════════════════════════════════════════════
    Forms — .fg base in shared/dx-components.css
    ═══════════════════════════════════════════════════════════════════ */

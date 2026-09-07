@@ -148,9 +148,6 @@ tbody tr:nth-child(even) td{background:rgba(14,21,37,.3)}
 tbody tr:hover td{background:var(--bg-3)}
 
 /*═══ Buttons (base/hover/active/disabled/ghost/sm in shared/dx-components.css) ═══*/
-.btn-acc{background:var(--gradient-accent);color:var(--bg-0)}
-.btn-acc:hover{box-shadow:var(--glow-accent);filter:brightness(1.08)}
-
 .btn-group{display:flex;flex-wrap:wrap;gap:var(--sp-1);margin-bottom:6px}
 .btn-group button{
   padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);

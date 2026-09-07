@@ -69,3 +69,27 @@
 .card-header{
   display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;
 }
+
+/* ═══ Primary / accent button ═══
+   합치기 전 실측: 네 모듈이 다섯 개의 rule 로 같은 버튼을 그렸다.
+     dx_app .btn-acc / dx_stream .btn-acc / dx_stream .btn-primary  — 셋이 동일
+     dx_monitor .btn-acc                                            — box-shadow 만 누락
+     dx_benchmark .btn-primary                                      — color:#fff, 다른 shadow
+
+   글자색은 --text-on-accent 로 간다. dx_benchmark 의 흰 글자는 accent
+   그라디언트(#638CFF) 위에서 대비 3.15:1 로 WCAG AA(4.5) 미달이었고,
+   나머지가 쓰던 어두운 글자는 6.2:1 로 통과한다. 통합은 낮은 쪽이 아니라
+   읽히는 쪽으로 맞춘다.
+
+   .btn-acc 는 기존 사용처(26곳)를 위한 별칭으로만 남긴다. 새 마크업은
+   .btn-primary 를 쓴다 — 같은 버튼에 이름이 둘인 것이 애초에 dx_stream 이
+   양쪽을 다 정의하게 만든 원인이다. */
+.btn-primary,
+.btn-acc{
+  background:var(--gradient-accent);
+  color:var(--text-on-accent);
+  border-color:transparent;
+  box-shadow:0 4px 16px rgba(var(--accent-rgb),.15);
+}
+.btn-primary:hover,
+.btn-acc:hover{ box-shadow:var(--glow-accent);filter:brightness(1.08); }

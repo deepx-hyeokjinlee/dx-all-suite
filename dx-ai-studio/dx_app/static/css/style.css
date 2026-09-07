@@ -44,8 +44,6 @@ h2{font-size:var(--fs-md);margin:16px 0 10px;font-weight:600;color:var(--text-3)
 .stat .label{font-size:var(--fs-xs);color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
 
 /*═══ Buttons (base/hover/active/disabled/ghost/sm in shared/dx-components.css) ═══*/
-.btn-acc{background:var(--gradient-accent);color:var(--bg-0);box-shadow:0 4px 16px rgba(var(--accent-rgb),.15)}
-.btn-acc:hover{box-shadow:var(--glow-accent);filter:brightness(1.08)}
 .btn-blue{background:var(--info);color:var(--bg-0)}.btn-blue:hover{box-shadow:0 0 12px rgba(88,166,255,.25);filter:brightness(1.08)}
 .btn-red{background:var(--error);color:var(--text-1)}.btn-red:hover{box-shadow:0 0 12px rgba(248,81,73,.25);filter:brightness(1.08)}
 

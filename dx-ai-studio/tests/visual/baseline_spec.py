@@ -15,7 +15,15 @@ SPECS: dict[str, dict] = {
     "dx_app": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_stream": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_compiler": {"settle_ms": _DEFAULT_SETTLE_MS},
-    "dx_modelzoo": {"settle_ms": _DEFAULT_SETTLE_MS},
+    "dx_modelzoo": {
+        "settle_ms": _DEFAULT_SETTLE_MS,
+        # 두 요소가 실행마다 미세하게 다르게 그려져 0.0205-0.0274% 를 오갔다 —
+        # 임계 0.02% 바로 위라 게이트가 무작위로 붉어졌다. 임계를 올리면 진짜
+        # 회귀까지 통과시키게 되므로, 불안정한 요소만 가린다.
+        #   #sortSelect       네이티브 <select> 의 값 렌더가 호스트마다/실행마다 흔들린다
+        #   .mz-dx-app-status dx_app 연결 상태 점 — 폴링 결과에 따라 색이 바뀐다
+        "mask": ("#sortSelect", ".mz-dx-app-status"),
+    },
     "dx_benchmark": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_planner": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_agent_dev": {

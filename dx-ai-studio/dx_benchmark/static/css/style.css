@@ -624,13 +624,6 @@ tbody tr:hover {
   cursor: not-allowed;
 }
 
-.btn-primary {
-  background: var(--gradient-accent);
-  color: #fff;
-  border-color: transparent;
-  box-shadow: 0 2px 12px var(--accent-glow);
-}
-
 .btn-primary:hover:not(:disabled) {
   filter: brightness(1.12);
   box-shadow: 0 4px 20px var(--accent-glow);
