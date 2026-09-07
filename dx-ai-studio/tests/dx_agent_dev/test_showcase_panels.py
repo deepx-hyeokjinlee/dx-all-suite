@@ -36,7 +36,8 @@ def _func_body(js, name):
 
 def test_index_has_side_panels():
     html = _read(INDEX)
-    assert 'class="agent-layout"' in html
+    # 통합 shell 이관 후 main 은 shell 클래스와 모듈 클래스를 함께 갖는다.
+    assert re.search(r'<main[^>]*class="[^"]*\bagent-layout\b', html), html[:200]
     assert 'id="examples-left"' in html
     assert 'id="examples-right"' in html
 

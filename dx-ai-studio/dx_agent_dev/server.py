@@ -20,6 +20,7 @@ from dx_agent_dev.core.adapters import make_adapter
 from dx_agent_dev.core.showcases import load_showcases
 from shared.dx_server import DXBaseHandler
 from shared.chat import ChatEngine
+from shared.shell import ShellSpec
 
 PORT = DEFAULT_PORT
 
@@ -197,10 +198,19 @@ _runner = _make_runner()
 _conversations = ConversationStore()
 
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 단일 콘솔 화면이라 탭 행이 없다 — 템플릿 루트에 .dx-shell--no-tabs 를 붙였다.
+DX_AGENT_DEV_SHELL = ShellSpec(
+    module_key="agent",
+    toolbar_extra="",
+)
+
 class AgentDevHandler(DXBaseHandler):
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_AGENT_DEV_SHELL
     log_filter = ["/static/", "/api/agent/status"]
 
     def route(self):

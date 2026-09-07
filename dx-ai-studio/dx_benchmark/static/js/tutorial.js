@@ -199,7 +199,7 @@
         });
       },
       steps:[
-        { target:'.main-tab[data-tab="dashboard"]', position:'bottom',
+        { target:'.dx-tab[data-page="dashboard"]', position:'bottom',
           title:{ko:'Dashboard 탭', en:'Dashboard Tab', ja:'Dashboardタブ', 'zh-CN':'Dashboard 选项卡', 'zh-TW':'Dashboard 分頁', es:'Pestaña Dashboard'},
           content:{ko:'모든 벤치마크 데이터를 시각화하는 <strong>메인 화면</strong>입니다. 4개 서브탭(E2E FPS Overview, Full Metrics, Detailed Data, Version Trend)으로 구성되어 있습니다.', en:'The <strong>main screen</strong> that visualizes all benchmark data. It consists of 4 sub-tabs: E2E FPS Overview, Full Metrics, Detailed Data, and Version Trend.', ja:'すべてのベンチマークデータを可視化する<strong>メイン画面</strong>です。4つのサブタブ（E2E FPS Overview、Full Metrics、Detailed Data、Version Trend）で構成されています。', 'zh-CN':'这是将所有基准测试数据可视化的<strong>主界面</strong>。由4个子选项卡（E2E FPS Overview、Full Metrics、Detailed Data、Version Trend）组成。', 'zh-TW':'這是將所有基準測試資料視覺化的<strong>主畫面</strong>。由4個子分頁（E2E FPS Overview、Full Metrics、Detailed Data、Version Trend）組成。', es:'La <strong>pantalla principal</strong> que visualiza todos los datos del benchmark. Consta de 4 subpestañas: E2E FPS Overview, Full Metrics, Detailed Data y Version Trend.'} },
         { target:'.dashboard-tab[data-tab="fps-compare"]', position:'bottom',
@@ -400,14 +400,14 @@
       description:{ko:'벤치마크 결과 탐색 및 리포트 확인', en:'Browse benchmark results and check reports', ja:'ベンチマーク結果の閲覧とレポート確認', 'zh-CN':'浏览基准测试结果并查看报告', 'zh-TW':'瀏覽基準測試結果並查看報告', es:'Explore los resultados del benchmark y consulte los informes'},
       beforeStart:function(){ switchTab('results'); },
       steps:[
-        { target:'.main-tab[data-tab="results"]', position:'bottom',
+        { target:'.dx-tab[data-page="results"]', position:'bottom',
           title:{ko:'Results 탭', en:'Results Tab', ja:'Resultsタブ', 'zh-CN':'Results选项卡', 'zh-TW':'Results分頁', es:'Pestaña Results'},
           content:{ko:'벤치마크 실행 결과를 탐색하는 탭입니다. <strong>HW 카드 → Run 목록 → 결과 섹션</strong> 순서로 drill-down합니다.', en:'Tab for browsing benchmark results. Drill down: <strong>HW card → Run list → Result sections</strong>.', ja:'ベンチマーク実行結果を閲覧するタブです。<strong>HWカード → Run一覧 → 結果セクション</strong>の順でドリルダウンします。', 'zh-CN':'浏览基准测试执行结果的选项卡。按<strong>HW卡片 → Run列表 → 结果区域</strong>的顺序逐级展开。', 'zh-TW':'瀏覽基準測試執行結果的分頁。按<strong>HW卡片 → Run列表 → 結果區域</strong>的順序逐級展開。', es:'Pestaña para explorar resultados del benchmark. Profundice: <strong>tarjeta HW → lista de Run → secciones de resultados</strong>.'} },
         { target:'.hw-card-grid', position:'bottom',
           title:{ko:'Hardware 카드 목록', en:'Hardware Card Grid', ja:'Hardwareカード一覧', 'zh-CN':'硬件卡片列表', 'zh-TW':'硬體卡片列表', es:'Cuadrícula de tarjetas de hardware'},
           content:{ko:'테스트된 <strong>하드웨어 환경 목록</strong>입니다. 각 카드에는 플랫폼 이름과 run 수가 표시됩니다. 카드를 클릭하여 해당 환경의 run 목록을 확인하세요.', en:'List of <strong>tested hardware environments</strong>. Each card shows platform name and run count. Click a card to see its run list.', ja:'テストされた<strong>ハードウェア環境一覧</strong>です。各カードにはプラットフォーム名とrun数が表示されます。カードをクリックしてその環境のrun一覧を確認してください。', 'zh-CN':'<strong>已测试的硬件环境列表</strong>。每张卡片显示平台名称和运行次数。点击卡片查看该环境的运行列表。', 'zh-TW':'<strong>已測試的硬體環境列表</strong>。每張卡片顯示平台名稱和執行次數。點擊卡片查看該環境的執行列表。', es:'Lista de <strong>entornos de hardware probados</strong>. Cada tarjeta muestra el nombre de la plataforma y el número de runs. Haga clic en una tarjeta para ver su lista de runs.'},
           beforeStep: function () {
-            var tab = document.querySelector('.main-tab[data-tab="results"]');
+            var tab = document.querySelector('.dx-tab[data-page="results"]');
             if (tab) tab.click();
             return new Promise(function (resolve) {
               var attempts = 0;
@@ -449,10 +449,10 @@
       description:{ko:'웹 UI는 결과 조회 전용 — 터미널에서 벤치마크 실행', en:'Web UI is view-only — run benchmarks from the terminal', ja:'Web UIは結果閲覧専用 — ターミナルでベンチマーク実行', 'zh-CN':'Web UI 仅用于查看结果 — 请在终端运行基准测试', 'zh-TW':'Web UI 僅用於查看結果 — 請在終端機執行基準測試', es:'La UI web es solo de consulta — ejecute benchmarks en la terminal'},
       beforeStart:function(){ switchTab('dashboard'); },
       steps:[
-        { target:'.main-tabs', position:'bottom',
+        { target:'.dx-shell-tabs', position:'bottom',
           title:{ko:'CLI 전용 실행', en:'CLI-Only Execution', ja:'CLI専用実行', 'zh-CN':'仅 CLI 执行', 'zh-TW':'僅 CLI 執行', es:'Ejecución solo por CLI'},
           content:{ko:'이 모듈의 웹 화면은 <strong>결과 조회·비교</strong>용입니다. 새 벤치마크를 실행하려면 서버 호스트의 터미널에서 DX Benchmark CLI를 사용하세요.', en:'The web UI is for <strong>browsing and comparing results</strong> only. To run a new benchmark, use the DX Benchmark CLI on the server host terminal.', ja:'このモジュールのWeb画面は<strong>結果閲覧・比較</strong>用です。新しいベンチマークを実行するには、サーバーホストのターミナルでDX Benchmark CLIを使用してください。', 'zh-CN':'本模块 Web 界面仅用于<strong>浏览和比较结果</strong>。要运行新基准测试，请在服务器终端使用 DX Benchmark CLI。', 'zh-TW':'本模組 Web 介面僅用於<strong>瀏覽和比較結果</strong>。要執行新基準測試，請在伺服器終端機使用 DX Benchmark CLI。', es:'La UI web sirve solo para <strong>consultar y comparar resultados</strong>. Para ejecutar un nuevo benchmark, use DX Benchmark CLI en la terminal del servidor.'} },
-        { target:'.main-tab[data-tab="results"]', position:'bottom',
+        { target:'.dx-tab[data-page="results"]', position:'bottom',
           title:{ko:'실행 명령', en:'Run Commands', ja:'実行コマンド', 'zh-CN':'运行命令', 'zh-TW':'執行命令', es:'Comandos de ejecución'},
           content:{ko:'<p>서버 호스트 터미널에서 새 벤치마크를 실행합니다:</p>' + _RUN_CODE + '<p>완료 후 <strong>Results</strong> 탭에서 <code>results/</code> 데이터를 확인하세요. 자세한 내용은 Reference의 <strong>CLI Execution</strong> 문서를 참고하세요.</p>', en:'<p>Run a new benchmark from the server host terminal:</p>' + _RUN_CODE + '<p>When finished, open the <strong>Results</strong> tab to view <code>results/</code> data. See the <strong>CLI Execution</strong> reference doc for details.</p>', ja:'<p>サーバーホストのターミナルで新しいベンチマークを実行します：</p>' + _RUN_CODE + '<p>完了後、<strong>Results</strong> タブで <code>results/</code> データを確認してください。詳細は Reference の <strong>CLI Execution</strong> ドキュメントを参照してください。</p>', 'zh-CN':'<p>在服务器主机终端运行新的基准测试：</p>' + _RUN_CODE + '<p>完成后，在 <strong>Results</strong> 选项卡查看 <code>results/</code> 数据。详见 Reference 中的 <strong>CLI Execution</strong> 文档。</p>', 'zh-TW':'<p>在伺服器主機終端機執行新的基準測試：</p>' + _RUN_CODE + '<p>完成後，在 <strong>Results</strong> 分頁查看 <code>results/</code> 資料。詳見 Reference 中的 <strong>CLI Execution</strong> 文件。</p>', es:'<p>Ejecute un nuevo benchmark desde la terminal del host del servidor:</p>' + _RUN_CODE + '<p>Al terminar, abra la pestaña <strong>Results</strong> para ver los datos de <code>results/</code>. Consulte la referencia <strong>CLI Execution</strong> para más detalles.</p>'} },
       ]
@@ -463,7 +463,7 @@
       description:{ko:'벤치마크 실행 환경 설정', en:'Configure benchmark execution settings', ja:'ベンチマーク実行環境の設定', 'zh-CN':'配置基准测试执行环境', 'zh-TW':'設定基準測試執行環境', es:'Configure los ajustes de ejecución del benchmark'},
       beforeStart:function(){ switchTab('settings'); },
       steps:[
-        { target:'.main-tab[data-tab="settings"]', position:'bottom',
+        { target:'.dx-tab[data-page="settings"]', position:'bottom',
           title:{ko:'Settings 탭', en:'Settings Tab', ja:'Settingsタブ', 'zh-CN':'Settings选项卡', 'zh-TW':'Settings分頁', es:'Pestaña Settings'},
           content:{ko:'벤치마크 실행에 필요한 <strong>환경 설정</strong>을 관리합니다. 경로, 온도, 반복 횟수 등 다양한 파라미터를 조절할 수 있습니다.', en:'Manage <strong>configuration settings</strong> for benchmark execution. Adjust parameters like paths, temperature, iteration count, and more.', ja:'ベンチマーク実行に必要な<strong>環境設定</strong>を管理します。パス、温度、繰り返し回数など様々なパラメータを調整できます。', 'zh-CN':'管理基准测试执行所需的<strong>环境配置</strong>。可以调整路径、温度、重复次数等各种参数。', 'zh-TW':'管理基準測試執行所需的<strong>環境設定</strong>。可以調整路徑、溫度、重複次數等各種參數。', es:'Gestione los <strong>ajustes de configuración</strong> para la ejecución del benchmark. Modifique parámetros como rutas, temperatura, número de iteraciones y más.'} },
         { target:'#settCooldownTemp', position:'right',

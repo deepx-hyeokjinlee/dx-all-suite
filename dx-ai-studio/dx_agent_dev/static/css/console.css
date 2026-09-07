@@ -2,29 +2,6 @@
 
 /* 상단 바 — 다른 모듈(monitor/benchmark)과 동일한 표준 chrome.
    .top-bar는 shared로 추출되어 있지 않아 모듈마다 정의가 필요하다. */
-.top-bar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--dx-module-header-h);
-  z-index: 8999;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  padding: 0 var(--sp-5);
-  background: var(--dx-module-header-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--dx-module-header-border);
-  box-shadow: var(--dx-module-header-elevation);
-  overflow: visible;
-}
-.app-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
 .toolbar {
   display: flex;
   align-items: center;
@@ -38,9 +15,9 @@
   z-index: 1;
 }
 
+/* 통합 shell(Option A)에서는 .dx-shell-main 이 이미 남은 공간을 채운다.
+   구 position:fixed + inset 은 56px 모듈 레일 위를 덮었다. */
 .agent-layout {
-  position: fixed;
-  inset: var(--dx-module-header-h) 0 0 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(min(100%, 560px), 880px) minmax(0, 1fr);
   gap: var(--sp-3);

@@ -29,7 +29,7 @@
       title: { ko: '🖥️ 콘솔 개요', en: '🖥️ Console Overview', ja: '🖥️ コンソール概要', 'zh-CN': '🖥️ 控制台概述', 'zh-TW': '🖥️ 主控台概述', es: '🖥️ Resumen de la consola' },
       description: { ko: 'DX Agent Dev의 전체 구성과 핵심 기능 소개', en: 'Introduction to the layout and key features of DX Agent Dev', ja: 'DX Agent Devの全体構成と主要機能の紹介', 'zh-CN': 'DX Agent Dev的整体布局和主要功能介绍', 'zh-TW': 'DX Agent Dev的整體佈局和主要功能介紹', es: 'Introducción al diseño y funciones clave de DX Agent Dev' },
       steps: [
-        { target: '.app-title', position: 'bottom',
+        { target: '.dx-shell-header-left', position: 'bottom',
           title: { ko: 'DX Agent Dev', en: 'DX Agent Dev', ja: 'DX Agent Dev', 'zh-CN': 'DX Agent Dev', 'zh-TW': 'DX Agent Dev', es: 'DX Agent Dev' },
           content: { ko: '<strong>DX Agent Dev</strong>는 <strong>자연어 명령</strong>만으로 NPU 애플리케이션을 만드는 AI 코딩 콘솔입니다. 만들고 싶은 것을 설명하면 AI 에이전트가 코드를 작성·실행합니다.', en: '<strong>DX Agent Dev</strong> is an AI coding console that builds NPU applications from <strong>natural-language commands</strong>. Describe what you want and the AI agent writes and runs the code.', ja: '<strong>DX Agent Dev</strong>は<strong>自然言語の指示</strong>だけでNPUアプリケーションを作成するAIコーディングコンソールです。作りたいものを説明すると、AIエージェントがコードを記述・実行します。', 'zh-CN': '<strong>DX Agent Dev</strong>是仅凭<strong>自然语言指令</strong>构建NPU应用的AI编码控制台。描述您的需求，AI智能体即可编写并运行代码。', 'zh-TW': '<strong>DX Agent Dev</strong>是僅憑<strong>自然語言指令</strong>建構NPU應用的AI編碼主控台。描述您的需求，AI代理程式即可編寫並執行程式碼。', es: '<strong>DX Agent Dev</strong> es una consola de codificación con IA que crea aplicaciones NPU con <strong>comandos en lenguaje natural</strong>. Describa lo que quiere y el agente de IA escribe y ejecuta el código.' } },
         { target: '.toolbar', position: 'left',

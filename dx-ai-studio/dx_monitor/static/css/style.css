@@ -193,29 +193,6 @@ html[lang="zh-CN"] .zh-TW{display:none!important}
 html[lang="zh-TW"] .zh-CN{display:none!important}
 
 /* DX Monitor layout */
-.top-bar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--dx-module-header-h);
-  z-index: 8999;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  padding: 0 var(--sp-5);
-  background: var(--dx-module-header-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--dx-module-header-border);
-  box-shadow: var(--dx-module-header-elevation);
-  overflow: visible;
-}
-.app-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
 .toolbar {
   display: flex;
   align-items: center;
@@ -225,12 +202,9 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
   position: relative;
   z-index: 1;
 }
+/* 통합 shell(Option A)에서는 .dx-shell-main 이 이미 남은 공간을 채우고 스크롤한다.
+   구 position:fixed + top 오프셋은 56px 모듈 레일을 무시하고 그 위를 덮었다. */
 .monitor-main {
-  position: fixed;
-  top: var(--dx-module-header-h);
-  left: 0; right: 0; bottom: 0;
-  overflow-x: auto;
-  overflow-y: auto;
   min-width: 0;
   padding: var(--sp-5);
   animation: dx-fade-in 0.4s ease-out;

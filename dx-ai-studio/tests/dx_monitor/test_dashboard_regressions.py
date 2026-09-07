@@ -224,18 +224,20 @@ def test_shared_line_chart_skips_missing_metric_samples():
 
 
 def test_monitor_language_menu_parent_stacks_above_monitor_content():
+    # 헤더/툴바 사다리는 통합 shell(dx-shell.css)이 소유한다.
+    shell_css = read_text(MONITOR.parent / "shared" / "static" / "dx-shell.css")
     css = read_text(MONITOR / "static" / "css" / "style.css")
-    top_bar = css_rule(css, ".top-bar")
-    toolbar = css_rule(css, ".toolbar")
+    top_bar = css_rule(shell_css, ".dx-shell-header")
+    toolbar = css_rule(shell_css, ".dx-shell-header-right")
     monitor_main = css_rule(css, ".monitor-main")
 
     z_match = re.search(r"z-index\s*:\s*(\d+)\s*;", top_bar)
-    assert z_match, ".top-bar must declare an explicit z-index"
-    assert int(z_match.group(1)) >= 1000
-    assert "overflow: visible" in top_bar
-    assert "position: relative" in toolbar
+    assert z_match, ".dx-shell-header must declare an explicit z-index"
+    assert int(z_match.group(1)) > 100, "헤더는 페이지 콘텐츠 위에 있어야 한다"
+    assert "overflow:visible" in top_bar.replace(" ", "")
+    assert "position:relative" in toolbar.replace(" ", "")
     toolbar_z = re.search(r"z-index\s*:\s*(\d+)\s*;", toolbar)
-    assert toolbar_z, ".toolbar must stack language dropdown above toolbar siblings"
+    assert toolbar_z, "toolbar must stack language dropdown above toolbar siblings"
     assert int(toolbar_z.group(1)) >= 1
     # Must not tie with shared popup layer (10000)
     assert int(toolbar_z.group(1)) != 10000

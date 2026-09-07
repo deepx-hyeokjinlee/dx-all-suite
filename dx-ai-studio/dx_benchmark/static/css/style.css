@@ -1,68 +1,12 @@
 /* DX Benchmark app layout overrides. Shared tokens/base live in /static/shared/*.css. */
 body { overflow-x: auto; overflow-y: hidden; }
-:root { --benchmark-topbar-h: var(--dx-module-header-h); }
+/* 콘텐츠 위쪽 chrome 총높이. 통합 shell(Option A)에서는 헤더 아래 42px
+   탭 행이 하나 더 있으므로 둘을 합산한다 — 안 그러면 100vh 계산이
+   탭 행 높이만큼 넘쳐 세로 스크롤이 두 겹으로 생긴다. */
+:root { --benchmark-topbar-h: calc(var(--dx-module-header-h) + var(--dx-tabs-h)); }
 
 /* ═══ Layout: Top Bar ═══ */
-.top-bar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: var(--benchmark-topbar-h);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  padding: 0 var(--sp-5);
-  background: var(--dx-module-header-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--dx-module-header-border);
-  box-shadow: var(--dx-module-header-elevation);
-}
-
-.app-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
 /* ═══ Main Tab Navigation ═══ */
-.main-tabs {
-  display: flex;
-  gap: var(--sp-1);
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-  flex-wrap: nowrap;
-}
-
-.main-tab {
-  padding: 6px 18px;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--text-3);
-  font-size: var(--fs-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-
-.main-tab:hover {
-  background: var(--bg-2);
-  color: var(--text-1);
-  border-color: var(--border);
-}
-
-.main-tab.active {
-  background: var(--accent-dim);
-  color: var(--accent-light);
-  border-color: var(--border-hover);
-  box-shadow: var(--surface-active-shadow);
-}
-
 /* ═══ Toolbar container ═══ */
 .toolbar {
   display: flex;
@@ -73,14 +17,6 @@ body { overflow-x: auto; overflow-y: hidden; }
 }
 
 /* ═══ Main Content Area ═══ */
-main {
-  position: fixed;
-  top: var(--benchmark-topbar-h);
-  left: 0; right: 0; bottom: 0;
-  overflow: auto;
-  min-width: 0;
-}
-
 .main-tab-content {
   display: none;
   height: 100%;
@@ -896,11 +832,7 @@ tbody tr:hover {
 /* ═══ Responsive ═══ */
 @media (max-width: 980px) {
   :root { --benchmark-topbar-h: 88px; }
-  .top-bar { flex-wrap: wrap; height: auto; padding: var(--sp-2) var(--sp-4); }
-
-  .main-tabs { order: 2; width: 100%; overflow-x: auto; padding-bottom: 2px; }
-  .app-title { order: 1; }
-  .toolbar   { order: 3; margin-left: auto; }
+.toolbar   { order: 3; margin-left: auto; }
 
   .page { padding: var(--sp-4); }
   .hero { flex-direction: column; }
@@ -970,13 +902,11 @@ tbody tr:hover {
 @media print {
   :root { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: #fff; overflow: visible; }
-  .top-bar { display: none; }
-  .page { max-width: none !important; padding: 0 !important; }
+.page { max-width: none !important; padding: 0 !important; }
   .tabs, .chart-hint, .controls { display: none !important; }
   .hero, .panel, .task-section { break-inside: avoid; page-break-inside: avoid; }
   .hero { margin-bottom: 14px; }
-  main { position: static; }
-  .main-tab-content { display: none !important; }
+.main-tab-content { display: none !important; }
   .main-tab-content.active { display: block !important; }
   .tab-content { display: none !important; }
   .tab-content.active { display: block !important; }

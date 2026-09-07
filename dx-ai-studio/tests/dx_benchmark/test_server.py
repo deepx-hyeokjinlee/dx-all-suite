@@ -188,7 +188,8 @@ def test_unknown_path_404(server):
 def test_local_css_served(server):
     body, status = _get_raw("/static/css/style.css")
     assert status == 200
-    assert ".top-bar" in body
+    # .top-bar 는 통합 shell(dx-shell.css)로 옮겼다 — 모듈 CSS는 콘텐츠만 소유한다.
+    assert ".main-tab-content" in body
 
 
 def test_shared_foundation_css_served(server):
@@ -207,15 +208,19 @@ def test_shared_font_served(server):
 
 
 def test_benchmark_top_level_tabs_are_preserved(server):
+    """탭은 shared/shell.py 가 그리고 data-page 로 식별한다 (구 data-tab 아님)."""
     body, status = _get_raw("/")
     assert status == 200
     for token in [
-        'data-tab="dashboard"',
-        'data-tab="results"',
-        'data-tab="settings"',
+        'data-page="dashboard"',
+        'data-page="results"',
+        'data-page="settings"',
     ]:
         assert token in body
-    assert 'data-tab="run"' not in body
+    assert 'data-page="run"' not in body
+    # 탭 본문 컨테이너는 모듈이 계속 소유한다.
+    for tab in ("dashboard", "results", "settings"):
+        assert f'id="tab-{tab}"' in body
 
 
 

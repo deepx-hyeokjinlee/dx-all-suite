@@ -59,7 +59,7 @@
       title: { ko: '🖥️ 모니터 개요', en: '🖥️ Monitor Overview', ja: '🖥️ モニター概要', 'zh-CN': '🖥️ 监控概述', 'zh-TW': '🖥️ 監控概述', es: '🖥️ Resumen del monitor' },
       description: { ko: 'DX Monitor의 전체 레이아웃과 주요 기능 소개', en: 'Introduction to the overall layout and key features of DX Monitor', ja: 'DX Monitorの全体レイアウトと主要機能の紹介', 'zh-CN': 'DX Monitor的整体布局和主要功能介绍', 'zh-TW': 'DX Monitor的整體佈局和主要功能介紹', es: 'Introducción al diseño general y funciones principales de DX Monitor' },
       steps: [
-        { target: '.app-title', position: 'bottom',
+        { target: '.dx-shell-header-left', position: 'bottom',
           title: { ko: 'DX Monitor', en: 'DX Monitor', ja: 'DX Monitor', 'zh-CN': 'DX Monitor', 'zh-TW': 'DX Monitor', es: 'DX Monitor' },
           content: { ko: '<strong>DX Monitor</strong>는 NPU의 온도·전압·클럭·DRAM, CPU, 메모리, 런타임 이벤트를 <strong>실시간으로 추적</strong>하는 모니터링 도구입니다.', en: '<strong>DX Monitor</strong> tracks NPU temperature, voltage, clock, DRAM, CPU, memory, and runtime events in <strong>real time</strong>.', ja: '<strong>DX Monitor</strong>はNPUの温度・電圧・クロック・DRAM、CPU、メモリ、ランタイムイベントを<strong>リアルタイムで追跡</strong>する監視ツールです。', 'zh-CN': '<strong>DX Monitor</strong>实时追踪NPU温度、电压、时钟、DRAM、CPU、内存和运行时事件。', 'zh-TW': '<strong>DX Monitor</strong>即時追蹤NPU溫度、電壓、時脈、DRAM、CPU、記憶體和執行時事件。', es: '<strong>DX Monitor</strong> rastrea en <strong>tiempo real</strong> la temperatura, voltaje, reloj y DRAM del NPU, CPU, memoria y eventos de tiempo de ejecución.' } },
         { target: '#dxToolbar', position: 'left',

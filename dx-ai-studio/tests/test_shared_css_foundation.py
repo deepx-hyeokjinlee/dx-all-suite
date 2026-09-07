@@ -39,6 +39,9 @@ def read_text(path: Path) -> str:
 MIGRATED_SHELL_MODULES = {
     "dx_app": ("dx_app/templates/index.html", "dx_app.server", "DX_APP_SHELL"),
     "dx_stream": ("dx_stream/templates/index.html", "dx_stream.server", "DX_STREAM_SHELL"),
+    "dx_benchmark": ("dx_benchmark/templates/index.html", "dx_benchmark.server", "DX_BENCHMARK_SHELL"),
+    "dx_monitor": ("dx_monitor/templates/index.html", "dx_monitor.server", "DX_MONITOR_SHELL"),
+    "dx_agent_dev": ("dx_agent_dev/templates/index.html", "dx_agent_dev.server", "DX_AGENT_DEV_SHELL"),
 }
 
 
@@ -143,8 +146,6 @@ TOOLBAR_TARGETS = [
     ("dx_modelzoo", ROOT / "dx_modelzoo" / "templates" / "index.html", ("mz-topbar-right", "toolbar")),
     ("dx_compiler", ROOT / "dx_compiler" / "templates" / "base.html", ("header-right", "toolbar")),
     ("dx_planner", ROOT / "dx_planner" / "templates" / "index.html", ("planner-controls", "toolbar")),
-    ("dx_monitor", ROOT / "dx_monitor" / "templates" / "index.html", ("toolbar",)),
-    ("dx_benchmark", ROOT / "dx_benchmark" / "templates" / "index.html", ("toolbar",)),
     ("launcher", ROOT / "launcher" / "static" / "index.html", ("toolbar",)),
 ]
 
@@ -206,7 +207,7 @@ def test_stream_toolbar_preserves_pipeline_status_badge():
 
 
 def test_benchmark_toolbar_preserves_edgeguide_button():
-    nodes = parse_html_nodes(read_text(ROOT / "dx_benchmark" / "templates" / "index.html"))
+    nodes = parse_html_nodes(rendered_index("dx_benchmark"))
     toolbar = find_one(nodes, lambda node: has_classes(node, "toolbar"), "benchmark toolbar")
     button = find_one(nodes, lambda node: has_id(node, "edgeguideBtn"), "edgeguide button")
     assert_descendant(nodes, toolbar, button, "edgeguide button remains inside benchmark toolbar")
@@ -365,11 +366,18 @@ def test_modelzoo_css_no_longer_defines_shared_foundation():
 
 
 def assert_local_topbar_token(css: str) -> None:
-    # 로컬 topbar 변수는 반드시 --dx-module-header-h를 참조해야 한다
-    has_shared_ref = "--topbar-h: var(--dx-module-header-h)" in css
-    has_benchmark_ref = "--benchmark-topbar-h: var(--dx-module-header-h)" in css
-    assert has_shared_ref or has_benchmark_ref, (
-        "local topbar token must reference --dx-module-header-h"
+    """로컬 topbar 변수는 반드시 공유 헤더 높이에서 파생돼야 한다.
+
+    통합 shell로 이관된 모듈은 여기에 탭 행 높이가 더해진다 — 그 변수는
+    헤더가 아니라 "콘텐츠 위 chrome 총높이"를 뜻하기 때문이다.
+    """
+    accepted = (
+        "--topbar-h: var(--dx-module-header-h)",
+        "--benchmark-topbar-h: var(--dx-module-header-h)",
+        "--benchmark-topbar-h: calc(var(--dx-module-header-h) + var(--dx-tabs-h))",
+    )
+    assert any(frag in css for frag in accepted), (
+        "local topbar token must derive from --dx-module-header-h"
     )
 
 
@@ -464,8 +472,12 @@ def test_benchmark_css_no_longer_defines_shared_foundation():
     assert_shared_foundation_removed(css)
     assert_local_topbar_token(css)
     assert "body { overflow-x: auto; overflow-y: hidden; }" in css
-    assert ".top-bar" in css
-    assert ".main-tab" in css
+    # .top-bar / .main-tab 은 shared/static/dx-shell.css 로 옮겼다 (Option A 이관).
+    for selector in (".top-bar", ".main-tabs", ".main-tab", ".app-title"):
+        assert not re.search(r"^\s*" + re.escape(selector) + r"\s*\{", css, re.M), (
+            f"{selector} 는 shared/static/dx-shell.css 로 옮겼다"
+        )
+    assert ".main-tab-content" in css, "탭 본문 컨테이너는 모듈이 계속 소유한다"
     assert ".panel" in css
     assert "@keyframes slideIn" in css
     assert "@keyframes pulse" in css
@@ -1130,14 +1142,22 @@ def test_brand_topbars_use_unified_metrics_and_shadow():
     sdk_css = read_text(ROOT / "launcher" / "static" / "sdk-library.css")
     compiler_css = read_text(ROOT / "dx_compiler" / "static" / "css" / "style.css")
 
-    for css in (planner_css, benchmark_css):
+    # dx_benchmark 는 통합 shell로 이관됐다. 헤더 자체는 dx-shell.css 가 소유하고,
+    # 모듈에 남은 --benchmark-topbar-h 는 "콘텐츠 위 chrome 총높이"라서
+    # 헤더 + 탭 행을 합산해야 한다 (탭 행을 빼먹으면 100vh 계산이 넘친다).
+    assert (
+        "--benchmark-topbar-h: calc(var(--dx-module-header-h) + var(--dx-tabs-h))"
+        in benchmark_css
+    ), "benchmark chrome height must include the shell tab row"
+
+    for css in (planner_css,):
         has_shared = "--topbar-h: var(--dx-module-header-h)" in css
         has_benchmark = "--benchmark-topbar-h: var(--dx-module-header-h)" in css
         assert has_shared or has_benchmark
-    assert "height: var(--dx-module-header-h)" in monitor_css
-    assert "top: var(--dx-module-header-h)" in monitor_css
+    # dx_monitor 는 이관됐다 — 헤더 높이/오프셋은 dx-shell.css 가 소유한다.
     assert "height: var(--dx-module-header-h)" in compiler_css
-    for css in (planner_css, benchmark_css, monitor_css, sdk_css, compiler_css, modelzoo_css):
+    # dx_benchmark 는 이관됐다 — 헤더 elevation 은 dx-shell.css 가 소유한다.
+    for css in (planner_css, sdk_css, compiler_css, modelzoo_css):
         assert "box-shadow: var(--dx-module-header-elevation)" in css
 
 
@@ -1384,8 +1404,6 @@ def test_all_module_topbars_use_shared_depth_elevation():
         ("dx_modelzoo/static/css/style.css", ".mz-topbar"),
         ("dx_compiler/static/css/style.css", "#header"),
         ("dx_planner/static/css/style.css", ".planner-topbar"),
-        ("dx_benchmark/static/css/style.css", ".top-bar"),
-        ("dx_monitor/static/css/style.css", ".top-bar"),
     ]
     for css_rel, selector in TOPBAR_SPECS:
         css = read_text(ROOT / css_rel)
@@ -1423,7 +1441,6 @@ def test_flat_modules_use_shared_surface_depth_tokens():
 
     # active state 검증
     ACTIVE_SPECS = [
-        ("dx_benchmark/static/css/style.css", ".main-tab.active"),
         ("dx_planner/static/css/style.css", ".task-btn.selected"),
         ("dx_planner/static/css/style.css", ".size-btn.selected"),
     ]

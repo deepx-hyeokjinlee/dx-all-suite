@@ -14,21 +14,31 @@ var BenchApp = {
 
   initTabs: function() {
     var self = this;
-    document.querySelectorAll('.main-tab').forEach(function(btn) {
+    // 통합 shell(Option A): 탭은 shared/shell.py 가 그리고 data-page 로 식별한다.
+    document.querySelectorAll('.dx-tab').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        self.switchTab(btn.dataset.tab);
+        self.switchTab(btn.dataset.page);
       });
     });
+    if (window.DXTabs) DXTabs.init({ row: '.dx-shell-tabs' });
   },
 
   switchTab: function(tabId) {
     this.currentTab = tabId;
-    document.querySelectorAll('.main-tab').forEach(function(b) {
-      b.classList.toggle('active', b.dataset.tab === tabId);
+    // 활성 표시는 aria-current — dx-shell.css 가 그걸로 스타일을 건다.
+    document.querySelectorAll('.dx-tab').forEach(function(b) {
+      if (b.dataset.page === tabId) b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
     });
     document.querySelectorAll('.main-tab-content').forEach(function(c) {
       c.classList.toggle('active', c.id === 'tab-' + tabId);
     });
+    // 헤더 페이지명은 활성 탭 라벨을 그대로 쓴다 (번역 경로를 하나로 유지).
+    var label = document.querySelector('.dx-tab[data-page="' + tabId + '"] span');
+    var slot = document.getElementById('dxShellPage');
+    if (label && slot) slot.textContent = label.textContent.trim();
+    // 활성 탭이 오버플로 메뉴에 있었다면 행으로 되돌린다.
+    if (window.DXTabs) DXTabs.reflowAll();
     if (tabId === 'dashboard' && this.dataset) {
       Dashboard.refresh();
     }

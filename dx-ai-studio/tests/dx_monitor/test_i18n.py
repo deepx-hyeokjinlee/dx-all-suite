@@ -167,7 +167,14 @@ def test_monitor_charts_receive_translated_empty_state_text():
 
 
 def _template_selectors() -> set[str]:
-    html = read_text(MONITOR / "templates" / "index.html")
+    # 레일·헤더는 shared/shell.py 가 서버 렌더 시점에 주입하므로
+    # 템플릿 파일만 읽으면 튜토리얼이 가리키는 shell 셀렉터가 안 보인다.
+    from dx_monitor.server import DX_MONITOR_SHELL
+    from shared.shell import apply as apply_shell
+
+    html = apply_shell(
+        read_text(MONITOR / "templates" / "index.html"), DX_MONITOR_SHELL
+    )
     ids = {"#" + value for value in re.findall(r'id="([^"]+)"', html)}
     classes = {"." + value for cls in re.findall(r'class="([^"]+)"', html) for value in cls.split()}
     return ids | classes | VALID_DYNAMIC_TUTORIAL_TARGETS
