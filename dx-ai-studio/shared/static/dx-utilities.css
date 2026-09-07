@@ -58,3 +58,18 @@
 .gap8{gap:var(--sp-2)}
 .mt16{margin-top:16px}
 .txt-acc{color:var(--accent)}
+
+/* dx_app · dx_stream · dx_monitor · dx_benchmark 가 각자 갖고 있던 나머지 유틸리티. */
+.gap12{gap:var(--sp-3)}
+.mb8{margin-bottom:8px}
+.txt-sm{font-size:var(--fs-sm)}
+.font-mono{font-family:var(--mono)}
+.items-center{align-items:center}
+.text-center{text-align:center}
+.w-full{width:100%}
+.rel{position:relative}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--text-4);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite}
+
+.gap16{gap:var(--sp-4)}
+.mb16{margin-bottom:16px}
+.text-right{text-align:right}

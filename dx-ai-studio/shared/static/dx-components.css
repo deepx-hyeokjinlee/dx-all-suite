@@ -172,3 +172,77 @@
   background:linear-gradient(90deg,var(--accent),var(--accent-light),transparent);}
 .stat .val{font-size:26px;font-weight:700;color:var(--accent);text-shadow:0 0 12px rgba(99,140,255,.2)}
 .stat .label{font-size:var(--fs-xs);color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+
+/* ═══ 여러 모듈이 공유하던 작은 컴포넌트 ═══ */
+.card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(99,140,255,.06)}
+.chip{padding:5px 14px;border:1px solid var(--border);border-radius:20px;font-size:var(--fs-sm);
+  cursor:pointer;transition:var(--transition);color:var(--text-3);background:transparent;font-family:var(--font);}
+.chip-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.comp-status-badge{display:inline-flex;align-items:center;gap:var(--sp-1);padding:3px 10px;border-radius:var(--radius-lg);font-size:var(--fs-xs);font-weight:700}
+.npu-metric{display:flex;justify-content:space-between;font-size:var(--fs-sm);padding:3px 0;border-bottom:1px solid rgba(42,52,65,.4)}
+.setup-card-desc{font-size:var(--fs-sm);color:var(--text-3);line-height:1.5}
+.setup-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.setup-card-title{font-weight:600;font-size:var(--fs-md);margin-bottom:4px}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+
+/* ═══ Reference 페이지 ═══
+   dx_app 과 dx_stream 이 Reference 화면 전체(.ref-*)를 서로 복제하고 있었다.
+   31개 rule 이 두 벌, 값은 한 글자도 다르지 않았다. 화면이 같으니 정의도 하나다. */
+.ref-box{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:var(--radius);margin:12px 0;font-size:var(--fs-base);line-height:1.6}
+.ref-box-icon{font-size:var(--fs-lg);flex-shrink:0;margin-top:1px}
+.ref-card-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--sp-3)}
+.ref-cat{margin:6px 0 0;padding:2px 2px 0}
+.ref-cat-desc{font-size:var(--fs-xs);color:var(--text-3);margin-top:1px}
+.ref-cat-title{font-size:var(--fs-base);font-weight:700;color:var(--text-1)}
+.ref-detail-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--sp-4);margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.ref-detail-kicker{font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:4px}
+.ref-expand{position:relative;width:100%;background:var(--bg-1);
+  border:1px solid var(--accent);border-radius:var(--radius-lg);
+  overflow:hidden;animation:refExpandOpen .3s ease-out;}
+.ref-expand-arrow{position:absolute;top:-8px;left:50px;width:16px;height:16px;
+  background:var(--bg-1);border:1px solid var(--accent);
+  border-right:none;border-bottom:none;transform:rotate(45deg);z-index:1;}
+.ref-expand-close{position:absolute;top:12px;right:12px;width:28px;height:28px;
+  border-radius:50%;border:1px solid var(--border);background:var(--bg-2);
+  color:var(--text-3);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:var(--fs-md);z-index:2;}
+.ref-expand-inner{padding:22px;max-height:60vh;overflow-y:auto}
+.ref-flow{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;margin:12px 0;padding:var(--sp-3);background:var(--bg-2);border-radius:var(--radius);border:1px solid var(--border)}
+.ref-flow-arrow{color:var(--text-4);font-size:var(--fs-md)}
+.ref-flow-step{padding:6px 12px;background:var(--accent-dim);border:1px solid rgba(99,140,255,.2);
+  border-radius:var(--radius);font-size:var(--fs-sm);font-weight:600;color:var(--accent-light);}
+.ref-grid{display:flex;flex-direction:column;gap:var(--sp-4)}
+.ref-layout{display:flex;flex-direction:column;gap:var(--sp-4);width:100%;flex:1}
+.ref-search{width:100%;padding:10px 12px 10px 36px;background:var(--bg-2);border:1px solid var(--border);
+  border-radius:var(--radius);color:var(--text-1);font-size:var(--fs-base);transition:var(--transition);}
+.ref-search-bar{margin-bottom:12px}
+.ref-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:var(--fs-md);opacity:.5}
+.ref-search-wrap{position:relative;max-width:600px;margin:0 auto}
+.ref-section-desc{font-size:var(--fs-sm);color:var(--text-3);margin-top:4px;line-height:1.4}
+.ref-section-icon{font-size:var(--fs-3xl);flex-shrink:0}
+.ref-section-info{display:flex;flex-direction:column;flex:1;min-width:0}
+.ref-section-name{font-size:var(--fs-md);font-weight:700;color:var(--text-1)}
+.ref-tab{padding:6px 14px;font-size:var(--fs-sm);font-weight:500;color:var(--text-3);
+  border-radius:var(--radius) var(--radius) 0 0;cursor:pointer;transition:var(--transition);}
+.ref-tab-content{display:none}
+.ref-tabs{display:flex;gap:var(--sp-1);margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:8px;flex-wrap:wrap}
+.ref-tbl{width:100%;border-collapse:collapse;font-size:var(--fs-sm);margin:12px 0}
+.ref-toolbar{margin-bottom:0;padding:16px 18px}
+.ref-topic-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
+  width:100%;padding:14px 14px 12px;
+  background: var(--surface-raised-bg);border:1px solid var(--border);
+  border-radius:var(--radius-lg);cursor:pointer;transition:var(--transition);font-family:var(--font);
+  box-shadow: var(--surface-raised-shadow);}
+
+/* ═══ 남은 공유 컴포넌트 ═══
+   .setup-card / .chart-box / .npu-card 는 두 모듈이 거의 같은 정의를 갖고 있었고,
+   차이는 한쪽에만 있던 선언 한둘이었다. 더 갖고 있던 쪽을 기준으로 합친다.
+   dx_monitor 는 여기서도 .npu-card 배경과 .chart-box 그림자를 토큰 대신 손으로
+   적고 있었다 — .card / .stat / .stat:hover 에 이은 네 번째, 다섯 번째다. */
+.setup-card{background: var(--surface-raised-bg);border:1px solid var(--border);border-radius:10px;
+  padding:var(--sp-4);display:flex;flex-direction:column;gap:10px;transition:var(--transition);
+  box-shadow: var(--surface-raised-shadow);}
+.chart-box{position:relative;width:100%;height:200px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--inset-highlight)}
+.npu-card{background: var(--surface-raised-bg);border:1px solid var(--border);border-radius:var(--radius);padding:var(--sp-4);
+  position:relative;overflow:hidden;transition:var(--transition);
+  box-shadow: var(--surface-raised-shadow);}

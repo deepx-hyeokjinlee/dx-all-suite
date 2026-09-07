@@ -6,19 +6,12 @@ body{overflow-x:auto;overflow-y:auto}
 .sse-status.degraded{background:rgba(245,158,11,.15);color:var(--warning)}
 
 /*═══ Cards ═══*/
-.card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(99,140,255,.06)}
-
 /*═══ Grid ═══*/
 @media(max-width:1100px){.grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
 
 /*═══ Stat cards ═══*/
 /*═══ NPU Topology ═══*/
-.npu-card{
-  background:linear-gradient(145deg,var(--bg-2),rgba(14,21,37,.6));border:1px solid var(--border);border-radius:var(--radius);
-  padding:14px;position:relative;overflow:hidden;transition:var(--transition);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
-}
 .npu-card:hover{transform:translateY(-1px);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.03);border-color:var(--border-hover)}
 .npu-card::before{
   content:'';position:absolute;inset:-1px;border-radius:inherit;
@@ -26,7 +19,6 @@ body{overflow-x:auto;overflow-y:auto}
 }
 .npu-card .npu-id{font-size:var(--fs-base);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .npu-card .npu-id .dot{width:8px;height:8px;border-radius:50%}
-.npu-metric{display:flex;justify-content:space-between;font-size:var(--fs-sm);padding:3px 0;border-bottom:1px solid rgba(42,52,65,.4)}
 .npu-metric:last-child{border-bottom:none}
 .npu-metric .mk{color:var(--text-3)}.npu-metric .mv{font-weight:600}
 .icon-clock{display:inline-block;width:.85em;height:.85em;box-sizing:border-box;border:2px solid currentColor;border-radius:50%;position:relative;vertical-align:-.08em}
@@ -35,7 +27,6 @@ body{overflow-x:auto;overflow-y:auto}
 .icon-clock::after{height:23%;transform:translate(-50%,0) rotate(120deg)}
 
 /*═══ Charts ═══*/
-.chart-box{position:relative;width:100%;height:200px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;border-color:var(--border);box-shadow:inset 0 1px 0 rgba(255,255,255,.02)}
 .chart-box canvas{display:block;width:100%;height:100%}
 
 /*═══ Status Bar (상단 요약 카드) ═══*/
@@ -141,9 +132,6 @@ tbody tr:hover td{background:var(--bg-3)}
 
 /*═══ Badges ═══*/
 /*═══ Utilities ═══*/
-.gap12{gap:var(--sp-3)}.gap16{gap:var(--sp-4)}
-.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}
-.txt-sm{font-size:var(--fs-sm)}
 /*═══ i18n (6-lang) ═══*/
 html[lang="en"] .ko, html[lang="en"] .ja, html[lang="en"] .es, html[lang="en"] [class*="zh-"]{display:none!important}
 html[lang="ko"] .en, html[lang="ko"] .ja, html[lang="ko"] .es, html[lang="ko"] [class*="zh-"]{display:none!important}

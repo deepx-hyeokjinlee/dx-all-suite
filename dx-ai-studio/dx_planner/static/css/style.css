@@ -531,7 +531,7 @@ body { overflow-x: auto; overflow-y: hidden; }
 }
 .task-icon { font-size: var(--fs-2xl); line-height: 1; }
 .task-name { font-size: var(--fs-xs); font-weight: 600; }
-.task-desc { display: block; font-size: var(--fs-2xs); color: var(--text-3); }
+.task-desc { display: block; color: var(--text-3); }
 
 /* Model size buttons */
 .size-scale-label {
@@ -603,7 +603,7 @@ body { overflow-x: auto; overflow-y: hidden; }
   color: var(--accent);
   font-family: var(--mono);
 }
-.size-desc { font-size: var(--fs-2xs); color: var(--text-3); }
+.size-desc { color: var(--text-3); }
 
 /* Ops card */
 .ops-row {
@@ -1163,13 +1163,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   flex: 1 1 auto;
   justify-content: flex-end;
 }
-.badge {
-  display: inline-block;
-  padding: 2px var(--sp-2);
-  border-radius: 10px;
-  font-size: var(--fs-xs);
-  font-weight: 600;
-}
 .badge-meets {
   background: rgba(var(--success-rgb), .2);
   color: var(--success);
@@ -1652,8 +1645,6 @@ body.lang-zh-TW .zh-CN { display: none; }
 }
 
 /* ═══ 13. Utility / Toast ═══ */
-.txt-sm { font-size: var(--fs-sm); }
-
 .tooltip {
   position: relative;
   display: inline-block;

@@ -6,6 +6,7 @@ import re
 
 import pytest
 from tests.css_rules import css_rule as _css_rule
+from tests.css_rules import defines
 from tests.css_rules import css_rule_last as _css_rule_last
 
 
@@ -722,11 +723,9 @@ def test_dx_app_css_no_longer_defines_shared_foundation():
         )
     # 모듈이 계속 소유하는 셀렉터
     # .toolbar / .card / .btn 은 공유 계층으로 올라갔다.
-    for selector in (
-        ".ref-layout",
-        ".ref-topic-card",
-    ):
-        assert selector in css, selector
+    # .ref-* 는 dx_stream 과 함께 shared/static/dx-components.css 로 올라갔다 —
+    # 두 모듈이 Reference 화면 전체를 복제하고 있었기 때문이다.
+    # (모듈이 계속 소유하는 셀렉터가 생기면 여기에 채운다)
 
 
 def test_compiler_server_route_order():
@@ -1463,7 +1462,6 @@ def test_app_stream_final_card_rules_use_shared_raised_depth():
         "dx_app/static/css/style.css": [
             ".detail-info-card",
             ".pp-card",
-            ".setup-card",
             ".pcard",
             ".npu-card",
             ".plan-sc",
@@ -1472,20 +1470,27 @@ def test_app_stream_final_card_rules_use_shared_raised_depth():
             ".ref-topic-card",
         ],
         "dx_stream/static/css/stream.css": [
-            ".setup-card",
             ".demo-card",
             ".ref-topic-card",
         ],
     }
+    shared_rel = "shared/static/dx-components.css"
+    shared_css = read_text(ROOT / shared_rel)
     for css_rel, selectors in SURFACE_SPECS.items():
         css = read_text(ROOT / css_rel)
         for selector in selectors:
-            body = _css_rule_last(css, selector)
+            # 공유 계층으로 승격된 카드는 그쪽이 최종 rule 이다. 승격됐다고
+            # 계약에서 빼버리면 depth 회귀를 잡을 곳이 사라진다.
+            owner_rel, body = (
+                (css_rel, _css_rule_last(css, selector))
+                if _defines_selector(css, selector)
+                else (shared_rel, _css_rule_last(shared_css, selector))
+            )
             assert "background: var(--surface-raised-bg)" in body, (
-                f"{css_rel} {selector} final rule missing surface-raised-bg"
+                f"{owner_rel} {selector} final rule missing surface-raised-bg"
             )
             assert "box-shadow: var(--surface-raised-shadow)" in body, (
-                f"{css_rel} {selector} final rule missing surface-raised-shadow"
+                f"{owner_rel} {selector} final rule missing surface-raised-shadow"
             )
 
 
@@ -1562,13 +1567,8 @@ def _module_css_paths() -> list[Path]:
 
 
 def _defines_selector(css: str, selector: str) -> bool:
-    """줄머리에서 그 셀렉터로 시작하는 rule이 있는가.
-
-    `.card-header` 가 `.card` 로 잡히지 않도록 셀렉터 뒤에는 `{` 또는 `,`
-    (그룹 셀렉터)만 허용한다 — 공유 파일은 `.btn-primary,\n.btn-acc{` 처럼
-    한 rule 에 두 이름을 묶어 두기 때문이다.
-    """
-    return re.search(r"^\s*" + re.escape(selector) + r"\s*[,{]", css, re.M) is not None
+    """그 셀렉터를 정의하는 rule 이 있는가 — 그룹 셀렉터·주석·미디어쿼리를 견딘다."""
+    return defines(css, selector)
 
 
 def _redefining_files(selector: str) -> set[str]:
@@ -1824,3 +1824,54 @@ def test_component_css_loads_after_the_foundation_and_before_module_css(name, re
     """모듈이 여전히 덮을 수 있어야 하고, 파운데이션 토큰은 이미 있어야 한다."""
     html = head_html(read_text(ROOT / rel))
     assert html.index("/static/shared/dx-utilities.css") < html.index(COMPONENT_CSS_HREF), name
+
+
+# ── 이름 충돌 경계 ──────────────────────────────────────────────
+# 서로 무관한 모듈이 같은 클래스 이름을 다른 뜻으로 쓰고 있는 것들이다.
+# 병합 대상이 아니다 — 병합하면 한쪽이 깨진다. 위험한 건 이 이름 중 하나가
+# 공유 계층으로 올라가는 순간이다. 실제로 `.page` 가 그랬다: dx_app 은
+# 페이지 전환자(display:none), dx_benchmark 는 콘텐츠 컨테이너였고, 전환자를
+# 셸로 올리자 benchmark 대시보드가 사라질 뻔했다.
+#
+# 이 테스트는 그 순간에 실패한다. 정말 공유해야 한다면 먼저 한쪽 이름을 바꿔라.
+KNOWN_NAME_COLLISIONS = {
+    ".bench-table": ("dx_benchmark", "dx_planner"),
+    ".card-grid": ("dx_stream", "launcher"),
+    ".empty-state": ("dx_benchmark", "dx_planner", "dx_stream"),
+    ".form-group": ("dx_benchmark", "dx_compiler"),
+    ".form-row": ("dx_benchmark", "dx_compiler"),
+    ".hero": ("dx_benchmark", "launcher"),
+    ".info-row": ("dx_benchmark", "dx_compiler"),
+    ".loading-overlay": ("dx_app", "launcher"),
+    ".mb-4": ("dx_app", "dx_benchmark"),
+    ".mz-spinner": ("dx_app", "dx_modelzoo"),
+    ".progress-bar": ("dx_compiler", "dx_stream"),
+    ".spinner": ("dx_benchmark", "launcher"),
+    ".status-badge": ("dx_agent_dev", "dx_benchmark"),
+}
+
+SHARED_CSS_FILES = ("dx-components.css", "dx-utilities.css", "dx-shell.css", "dx-base.css")
+
+
+@pytest.mark.parametrize("selector", sorted(KNOWN_NAME_COLLISIONS))
+def test_colliding_name_is_not_promoted_to_the_shared_layer(selector):
+    for name in SHARED_CSS_FILES:
+        css = read_text(SHARED_STATIC / name)
+        assert not _defines_selector(css, selector), (
+            f"{name} 이 {selector} 를 정의한다. 이 이름은 "
+            f"{KNOWN_NAME_COLLISIONS[selector]} 에서 서로 다른 뜻으로 쓰인다 — "
+            "공유로 올리기 전에 한쪽 이름을 바꿔야 한다"
+        )
+
+
+@pytest.mark.parametrize("selector", sorted(KNOWN_NAME_COLLISIONS))
+def test_collision_registry_has_no_stale_entries(selector):
+    """충돌이 해소됐는데 목록에 남아 있으면 다음 충돌을 못 잡는다."""
+    users = {
+        path.relative_to(ROOT).as_posix().split("/")[0]
+        for path in _module_css_paths()
+        if _defines_selector(read_text(path), selector)
+    }
+    assert len(users) > 1, (
+        f"{selector} 는 더 이상 충돌하지 않는다 ({sorted(users)}) — 목록에서 지워라"
+    )
