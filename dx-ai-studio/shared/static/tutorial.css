@@ -6,9 +6,9 @@
 :root {
   --dxt-accent: var(--accent, #638CFF);
   --dxt-accent-dim: var(--accent-dim, rgba(99,140,255,.14));
-  --dxt-bg: var(--bg-1, #0e1525);
-  --dxt-bg2: var(--bg-2, #151d30);
-  --dxt-bg3: var(--bg-3, #1c2640);
+  --dxt-bg: var(--surface-panel, #0e1525);
+  --dxt-bg2: var(--control-bg, #151d30);
+  --dxt-bg3: var(--surface-hover, #1c2640);
   --dxt-text: var(--text-1, #E2E8F0);
   --dxt-text-dim: var(--text-3, #8892A8);
   --dxt-border: var(--border, rgba(99,140,255,.1));
@@ -478,7 +478,7 @@ body.dxt-help-active .dxt-help-badge { pointer-events: auto; }
 
 /* ── Main content area ── */
 .ref-main{padding:0 24px 60px;min-width:0}
-.ref-search-bar{position:sticky;top:0;z-index:10;padding:12px 0;background:var(--bg-0,#0d1117)}
+.ref-search-bar{position:sticky;top:0;z-index:10;padding:12px 0;background:var(--surface-page,#0d1117)}
 .ref-search{width:100%;padding:10px 14px 10px 36px;border-radius:10px;border:1px solid var(--dxt-border);background:var(--dxt-bg2);color:var(--dxt-text);font-size:var(--fs-md);transition:border-color .2s}
 .ref-search:focus{outline:none;border-color:var(--dxt-accent);box-shadow:0 0 0 3px rgba(88,166,255,.12)}
 .ref-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:var(--fs-md);pointer-events:none;color:var(--dxt-text-dim)}
@@ -668,7 +668,7 @@ body:has(.sidebar.collapsed) .mz-cart-bar.dxt-tutorial-pin {
   top: 100%;
   right: 0;
   min-width: 180px;
-  background: var(--bg-0, #080c16);
+  background: var(--surface-page, #080c16);
   border: 1px solid var(--border, #333);
   border-radius: var(--radius-sm);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -686,7 +686,7 @@ body:has(.sidebar.collapsed) .mz-cart-bar.dxt-tutorial-pin {
 }
 
 .tutorial-menu-item:hover {
-  background: var(--bg-1, #0e1525);
+  background: var(--surface-panel, #0e1525);
 }
 
 /* ─── (Help Panel removed — strict badge mode) ─── */

@@ -12,6 +12,7 @@ so a stray import order cannot silently pin the wrong tree.
 from __future__ import annotations
 
 import atexit
+import os
 import re
 import shutil
 import sys
@@ -64,7 +65,16 @@ def npu_model() -> str:
     is imported), so this only reports the outcome.
     """
     if NPU_TARGET is None:
-        pytest.skip(npu_app_root.unavailable_reason())
+        reason = npu_app_root.unavailable_reason()
+        # A scheduled NPU job that SKIPS reports green while proving nothing — the
+        # exact failure mode this tier exists to close. When the caller explicitly
+        # asked for real hardware (run_ci.sh --npu sets this), an unavailable NPU
+        # is a failure, not a skip.
+        if os.environ.get("DX_E2E_NPU_STRICT") == "1":
+            pytest.fail(
+                f"DX_E2E_NPU_STRICT=1 but the real-NPU tier cannot run: {reason}"
+            )
+        pytest.skip(reason)
     return NPU_MODEL_NAME
 
 

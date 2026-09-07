@@ -72,3 +72,29 @@ def axes() -> list[tuple[str, str, str]]:
 
 def baseline_name(module: str, theme: str, locale: str) -> str:
     return f"{module}__{theme}__{locale}.png"
+
+
+# ── 반응형 축 ──────────────────────────────────────────────────
+# 위 baseline 은 전부 1280 한 폭이라, breakpoint 를 옮기면 무엇이 달라지는지
+# 볼 수 없다. 지금 제품은 19개 폭에서 갈리고 (600·640·700·720·768·769·900·
+# 960·980·1024·1100·1200·1280·1360·1440·1600·1979) 그 값들을 스케일로 몰려면
+# 각 구간이 어떻게 그려지는지 먼저 고정돼 있어야 한다.
+#
+# 폭은 breakpoint 사이 구간의 한가운데를 고른다 — 경계값을 찍으면 1px 차이로
+# 결과가 뒤집혀 게이트가 불안정해진다.
+#   860  = 768 과 900 사이   (모바일→태블릿 구간)
+#   1150 = 1100 과 1200 사이 (태블릿→데스크톱 구간)
+RESPONSIVE_WIDTHS = (860, 1150)
+RESPONSIVE_HEIGHT = 900
+
+# 색이 아니라 배치를 보는 축이라 테마/언어는 하나면 된다.
+RESPONSIVE_THEME = "dark"
+RESPONSIVE_LOCALE = "en"
+
+
+def responsive_axes() -> list[tuple[str, int]]:
+    return [(module, width) for module in sorted(SPECS) for width in RESPONSIVE_WIDTHS]
+
+
+def responsive_baseline_name(module: str, width: int) -> str:
+    return f"{module}__w{width}.png"

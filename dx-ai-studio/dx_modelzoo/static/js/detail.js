@@ -1019,7 +1019,7 @@ async function downloadModel(event, modelId, quantType) {
     btn.style.display = 'none';
     setModelZooStatusHtml(statusEl, `
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <div style="flex:1;min-width:120px;height:6px;background:var(--bg-3);border-radius:3px;overflow:hidden">
+        <div style="flex:1;min-width:120px;height:6px;background:var(--surface-hover);border-radius:3px;overflow:hidden">
           <div id="dl-bar-${quantType}" style="width:0%;height:100%;background:var(--accent);transition:width .3s"></div>
         </div>
         <span id="dl-pct-${quantType}">0%</span>

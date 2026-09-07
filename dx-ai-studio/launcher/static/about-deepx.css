@@ -2,8 +2,8 @@
 
 /* ── 1. CSS Variables (Dark theme default) ── */
 #about-view {
-  --about-bg: var(--bg-0);
-  --about-bg-alt: var(--bg-1);
+  --about-bg: var(--surface-page);
+  --about-bg-alt: var(--surface-panel);
   --about-text: var(--text-1);
   --about-text-muted: var(--text-3);
   --about-heading: var(--text-1);

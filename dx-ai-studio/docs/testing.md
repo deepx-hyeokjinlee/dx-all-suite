@@ -68,6 +68,8 @@ bash scripts/run_ci.sh
 
 ```
 --   CSS token ratchet — scripts/css_token_gate.py (runs before stage 0/7)
+--   i18n lang-span ratchet — scripts/i18n_span_gate.py
+--   breakpoint ratchet — scripts/breakpoint_gate.py
 0/7  Infra + release contracts — tests/test_pytest_infra_contract.py,
      tests/shared/test_ci_contracts.py, tests/shared/test_studio_version_contracts.py,
      tests/release/
@@ -298,6 +300,55 @@ Baseline at the time the gate landed: **244 raw hex across 12 files**
 `shared/static/` is deliberately out of scope — `dx-tokens.css` is where the
 palette is *supposed* to live.
 
+### i18n lang-span ratchet (`scripts/i18n_span_gate.py`)
+
+A translatable label used to be written six times, once per language:
+
+```html
+<span class="ko">저장</span><span class="ja">保存</span>…<span class="es">Guardar</span>
+```
+
+Most of those strings also lived in the module's `_DX_I18N_DICT`, so a phrase had
+two homes free to drift — and 125 keys had. The markup now carries
+`data-i18n="English key"` and the dictionary owns every translation.
+
+```bash
+python -m scripts.i18n_span_gate          # check (exits 1 on any increase)
+python -m scripts.i18n_span_gate --write  # re-record after a reduction
+```
+
+29 groups remain, pinned in `config/i18n_span_baseline.json`. They stay because one
+key carries two different phrases and only a person can choose: `dx_stream` 'OK' is
+'정상' (a status) in the dictionary and '확인' (a button) in the markup.
+
+`config/i18n_key_gaps.json` pins the keys a dictionary cannot fill — the launcher's
+`about*` labels come from `about-deepx.js` `ABOUT_NAV_LABELS`, not from
+`_DX_I18N_DICT`. A key that falls back to English silently shows English, so the
+gate refuses new ones.
+
+`scripts/migrate_i18n_spans.py` performed the move and is kept for the remainder.
+It reports before it writes and never invents a translation: where markup and
+dictionary disagreed and the key was used nowhere else, the dictionary was corrected
+to the markup so rendering stayed byte-identical.
+
+### Breakpoint ratchet (`scripts/breakpoint_gate.py`)
+
+Responsive layout splits at **19 different widths** (600, 640, 700, 720, 768, 769,
+900, 960, 980, 1024, 1100, 1200, 1280, 1360, 1440, 1600, 1979 …). One screen folding
+at 900 next to another folding at 960 is not a decision; it is a value copied from
+whichever file was open at the time.
+
+Moving those onto a scale changes how the product renders in each band, so the gate
+does **not** move them. It refuses *new* values:
+
+```bash
+python -m scripts.breakpoint_gate          # check (exits 1 on a new width)
+python -m scripts.breakpoint_gate --write  # re-record after a consolidation
+```
+
+Target scale is `600 / 900 / 1200 / 1440` (`SCALE` in the gate). Consolidate onto it
+one file at a time, with the responsive baselines below as the check.
+
 ### Shared component ownership
 
 `tests/test_shared_css_foundation.py` also tracks which stylesheets redefine a
@@ -396,6 +447,19 @@ the harness:
 The threshold is 0.02% (`DX_VISUAL_MAX_RATIO`), chosen by measurement: at 0.1% a
 global `--accent` change moved only one of nine modules past the limit. At 0.02% a
 0.2px `letter-spacing` change is caught on **all nine**.
+
+#### Axes
+
+36 landing-page shots = 9 modules x {dark, light} x {en, es}. A single-axis baseline
+could not see this refactor: semantic tokens and the light theme change *colour*,
+and translation length changes *layout* (Benchmark -> "Evaluación de rendimiento"
+pushes the tab row into overflow). `es` is the axis because it is the longest.
+
+18 more shots = 9 modules x {860, 1150} at dark/en, from `responsive_axes()`. These
+exist for the breakpoint work: every other baseline is captured at 1280, so moving a
+fold from 900 to 960 turns nothing red. The two widths sit in the middle of the
+crowded bands (768-900 and 1100-1200) rather than on a boundary, where a 1px
+difference would flip the result and make the gate flaky.
 
 Refresh baselines after an intentional design change:
 

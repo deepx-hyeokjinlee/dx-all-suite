@@ -113,6 +113,9 @@ echo "== CSS token ratchet =="
 echo "== i18n lang-span ratchet =="
 "$PY" -m scripts.i18n_span_gate || exit 1
 
+echo "== breakpoint ratchet =="
+"$PY" -m scripts.breakpoint_gate || exit 1
+
 echo ""
 echo "== 0/7 Infra + release contracts =="
 "$PY" -m pytest \

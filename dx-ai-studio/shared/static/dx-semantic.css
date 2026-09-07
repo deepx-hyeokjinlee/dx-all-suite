@@ -8,6 +8,11 @@
   --surface-raised:linear-gradient(145deg,#0e1525,#151d30);
   --surface-sunken:#0a1020;
   --surface-overlay:rgba(14,21,37,.7);
+  /* 행 hover, 테이블 헤더, 코드 칩처럼 면보다 한 단계 도드라지는 자리.
+     dark 에서만 살던 --bg-3/--bg-4 가 여기로 온다 — 그 둘은 light 대응
+     정의가 없어서 흰 배경 위에 검은 블록으로 떨어지고 있었다. */
+  --surface-hover:#1c2640;
+  --surface-hover-strong:#243050;
 
   /* 글자 */
   --text-primary:#E2E8F0;
@@ -39,10 +44,6 @@
 
      주의: dx-tokens.css가 먼저 로드되어 같은 이름을 리터럴로 정의한다.
      이 파일이 뒤에 오므로 여기 정의가 이긴다 (CSS 순서 계약이 그래서 중요). */
-  --bg-0:var(--surface-page);
-  --bg-1:var(--surface-panel);
-  --bg-2:var(--control-bg);
-  --bg-input:var(--surface-panel);
   --text-1:var(--text-primary);
   --text-2:var(--text-secondary);
   --text-3:var(--text-muted);

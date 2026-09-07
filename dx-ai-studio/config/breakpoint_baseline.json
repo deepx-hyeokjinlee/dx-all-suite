@@ -1,0 +1,74 @@
+{
+  "dx_agent_dev/static/css/console.css": [
+    720,
+    1100
+  ],
+  "dx_app/static/css/style.css": [
+    600,
+    700,
+    900,
+    960,
+    1100,
+    1200
+  ],
+  "dx_benchmark/static/css/style.css": [
+    640,
+    980
+  ],
+  "dx_compiler/static/css/style.css": [
+    768,
+    1200
+  ],
+  "dx_modelzoo/static/css/style.css": [
+    640,
+    768,
+    900,
+    1360
+  ],
+  "dx_monitor/static/css/style.css": [
+    600,
+    700,
+    900,
+    1100
+  ],
+  "dx_planner/static/css/style.css": [
+    768,
+    960,
+    1200,
+    1280,
+    1360,
+    1440,
+    1600
+  ],
+  "dx_stream/static/css/pipeline-iso.css": [
+    900,
+    1200
+  ],
+  "dx_stream/static/css/stream.css": [
+    600,
+    700,
+    900,
+    1100
+  ],
+  "launcher/static/about-deepx.css": [
+    1979
+  ],
+  "launcher/static/style.css": [
+    399,
+    600,
+    768,
+    769,
+    1024,
+    1100,
+    1200
+  ],
+  "shared/chat/static/chat-widget.css": [
+    480
+  ],
+  "shared/static/dx-shell.css": [
+    1100
+  ],
+  "shared/static/tutorial.css": [
+    600
+  ]
+}

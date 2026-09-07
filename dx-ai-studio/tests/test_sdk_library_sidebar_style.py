@@ -26,7 +26,10 @@ def test_sdk_list_sidebar_matches_module_sidebar_width_and_tone():
     rule = normalize(css_rule(css, ".sdk-list-sidebar"))
     assert "width:240px" in rule
     assert "min-width:min(180px,36vw)" in rule or "min-width:60px" in rule
-    assert "background:linear-gradient(180deg,var(--bg-0)0%,var(--bg-1)100%)" in rule
+    assert (
+        "background:linear-gradient(180deg,var(--surface-page)0%,var(--surface-panel)100%)"
+        in rule
+    )
     assert "border-right:1pxsolidvar(--border)" in rule
     assert "display:flex" in rule
     assert "flex-direction:column" in rule

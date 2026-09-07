@@ -264,7 +264,7 @@ select {
   padding: 6px 10px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  background: var(--bg-input);
+  background: var(--surface-panel);
   font-size: var(--fs-sm);
   color: var(--text-1);
   appearance: none;
@@ -535,7 +535,7 @@ tbody tr:hover {
   font-size: var(--fs-base);
   padding: 6px var(--sp-3);
   border-radius: var(--radius);
-  background: var(--bg-2);
+  background: var(--control-bg);
 }
 
 .preflight-item.ok    { color: var(--success); background: rgba(var(--success-rgb),.08); }
@@ -568,7 +568,7 @@ tbody tr:hover {
 .form-group input[type="number"] {
   width: 100%;
   padding: 8px 10px;
-  background: var(--bg-input);
+  background: var(--surface-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text-1);
@@ -608,7 +608,7 @@ tbody tr:hover {
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--bg-2);
+  background: var(--control-bg);
   color: var(--text-1);
   border-color: var(--border-hover);
 }
@@ -631,7 +631,7 @@ tbody tr:hover {
 }
 
 .result-card {
-  background: var(--bg-1);
+  background: var(--surface-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--sp-4);
@@ -676,7 +676,7 @@ tbody tr:hover {
 
 /* Report viewer */
 .report-viewer {
-  background: var(--bg-1);
+  background: var(--surface-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--sp-5);
@@ -704,7 +704,7 @@ tbody tr:hover {
 }
 
 .settings-section {
-  background: var(--bg-1);
+  background: var(--surface-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--sp-5);
@@ -905,7 +905,7 @@ body.lang-zh-TW .zh-CN { display: none; }
 .config-grid label { font-size: var(--fs-base); color: var(--text-2); display: flex; flex-direction: column; gap: 6px; }
 .config-grid select, .config-grid input {
   padding: 8px 12px; border-radius: var(--radius); border: 1px solid var(--border);
-  background: var(--bg-input); color: var(--text-1); font-size: var(--fs-base);
+  background: var(--surface-panel); color: var(--text-1); font-size: var(--fs-base);
 }
 .bench-actions { display: flex; gap: var(--sp-2); margin: var(--sp-4) 0; }
 
@@ -913,7 +913,7 @@ body.lang-zh-TW .zh-CN { display: none; }
 .preflight-section { margin-bottom: var(--sp-4); }
 .preflight-status {
   padding: var(--sp-3); border-radius: var(--radius);
-  background: var(--bg-2); border: 1px solid var(--border);
+  background: var(--control-bg); border: 1px solid var(--border);
 }
 
 /* Log */
@@ -966,7 +966,7 @@ body.lang-zh-TW .zh-CN { display: none; }
   gap: var(--sp-3);
 }
 .hw-card {
-  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--control-bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: var(--sp-4); cursor: pointer; transition: var(--transition);
 }
 .hw-card:hover,
@@ -981,12 +981,12 @@ body.lang-zh-TW .zh-CN { display: none; }
   padding: 10px var(--sp-3); border-bottom: 1px solid var(--border);
   cursor: pointer; transition: var(--transition);
 }
-.run-item:hover { background: var(--bg-2); }
+.run-item:hover { background: var(--control-bg); }
 .run-id { font-family: var(--mono); font-size: var(--fs-base); color: var(--text-1); }
 
 .run-detail { padding: var(--sp-4); }
 .report-content {
-  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--control-bg); border: 1px solid var(--border); border-radius: var(--radius);
   padding: var(--sp-4); font-size: var(--fs-md); line-height: 1.7; color: var(--text-1);
 }
 .report-content h1,.report-content h2,.report-content h3 {
@@ -994,12 +994,12 @@ body.lang-zh-TW .zh-CN { display: none; }
 }
 .report-content table { width: 100%; border-collapse: collapse; margin: var(--sp-2) 0; }
 .report-content th,.report-content td { padding: 8px 12px; border: 1px solid var(--border); text-align: left; }
-.report-content th { background: var(--bg-3); font-weight: 600; }
-.report-content code { font-family: var(--mono); background: var(--bg-3); padding: 2px 6px; border-radius: var(--radius-xs); }
-.report-content pre { background: var(--bg-1); padding: var(--sp-3); border-radius: var(--radius); overflow-x: auto; }
+.report-content th { background: var(--surface-hover); font-weight: 600; }
+.report-content code { font-family: var(--mono); background: var(--surface-hover); padding: 2px 6px; border-radius: var(--radius-xs); }
+.report-content pre { background: var(--surface-panel); padding: var(--sp-3); border-radius: var(--radius); overflow-x: auto; }
 
 .json-view {
-  background: var(--bg-1); color: var(--text-2); font-family: var(--mono); font-size: var(--fs-sm);
+  background: var(--surface-panel); color: var(--text-2); font-family: var(--mono); font-size: var(--fs-sm);
   padding: var(--sp-3); border-radius: var(--radius); max-height: 420px;
   overflow: auto; white-space: pre-wrap; border: 1px solid var(--border);
 }
@@ -1009,7 +1009,7 @@ body.lang-zh-TW .zh-CN { display: none; }
    ═══════════════════════════════════════════════════════════════════ */
 .settings-panel { padding: var(--sp-4); max-width: 640px; }
 .settings-group {
-  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--control-bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: var(--sp-4); margin-bottom: var(--sp-3);
 }
 .settings-group h3 { font-size: var(--fs-md); font-weight: 600; color: var(--text-1); margin-bottom: var(--sp-3); }
@@ -1021,7 +1021,7 @@ body.lang-zh-TW .zh-CN { display: none; }
 .setting-row label { font-size: var(--fs-base); color: var(--text-2); }
 .setting-input {
   padding: 6px 12px; border-radius: var(--radius); border: 1px solid var(--border);
-  background: var(--bg-input); color: var(--text-1); font-size: var(--fs-base); width: 220px;
+  background: var(--surface-panel); color: var(--text-1); font-size: var(--fs-base); width: 220px;
 }
 .settings-actions { margin-top: var(--sp-4); display: flex; gap: var(--sp-2); }
 

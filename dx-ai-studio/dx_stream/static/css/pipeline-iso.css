@@ -25,7 +25,7 @@
   min-width: 48px;
   flex: 0 1 240px;
   max-width: 240px;
-  background: var(--bg-1);
+  background: var(--surface-panel);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -64,7 +64,7 @@
 }
 
 .palette-header .collapse-btn:hover {
-  background: var(--bg-2);
+  background: var(--control-bg);
   color: var(--text-1);
 }
 
@@ -78,7 +78,7 @@
 .palette-search input {
   width: 100%;
   padding: 8px 12px;
-  background: var(--bg-2);
+  background: var(--control-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text-1);
@@ -114,7 +114,7 @@
 }
 
 .palette-body::-webkit-scrollbar-thumb {
-  background: var(--bg-3);
+  background: var(--surface-hover);
   border-radius: 2px;
 }
 
@@ -141,7 +141,7 @@
 
 .palette-category-header:hover {
   color: var(--text-2);
-  background: var(--bg-2);
+  background: var(--control-bg);
 }
 
 .palette-category-header .chevron {
@@ -172,7 +172,7 @@
 }
 
 .palette-item:hover {
-  background: var(--bg-2);
+  background: var(--control-bg);
 }
 
 .palette-item:active {
@@ -228,7 +228,7 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 4px 10px;
-  background: var(--bg-3);
+  background: var(--surface-hover);
   color: var(--text-1);
   font-size: 0.75rem;
   border-radius: var(--radius-xs);
@@ -249,7 +249,7 @@
 .canvas-container {
   flex: 1;
   position: relative;
-  background: var(--bg-0);
+  background: var(--surface-page);
   overflow: hidden;
   min-width: 0;
 }
@@ -273,7 +273,7 @@
   align-items: center;
   gap: 2px;
   padding: var(--sp-1);
-  background: var(--bg-2);
+  background: var(--control-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -295,12 +295,12 @@
 }
 
 .canvas-toolbar .toolbar-btn:hover {
-  background: var(--bg-3);
+  background: var(--surface-hover);
   color: var(--text-1);
 }
 
 .canvas-toolbar .toolbar-btn.active {
-  background: var(--bg-3);
+  background: var(--surface-hover);
   color: var(--stream-color, var(--cat-4));
 }
 
@@ -327,7 +327,7 @@
   right: 12px;
   width: 160px;
   height: 120px;
-  background: var(--bg-1);
+  background: var(--surface-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -369,7 +369,7 @@
   min-width: min(200px, 32vw);
   flex: 0 1 280px;
   max-width: 280px;
-  background: var(--bg-1);
+  background: var(--surface-panel);
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -395,7 +395,7 @@
   width: 32px;
   height: 32px;
   border-radius: calc(var(--radius) - 2px);
-  background: var(--bg-2);
+  background: var(--control-bg);
   flex-shrink: 0;
 }
 
@@ -437,7 +437,7 @@
 }
 
 .prop-body::-webkit-scrollbar-thumb {
-  background: var(--bg-3);
+  background: var(--surface-hover);
   border-radius: 2px;
 }
 
@@ -510,7 +510,7 @@
   flex: 1;
   min-width: 0;
   padding: 6px 10px;
-  background: var(--bg-2);
+  background: var(--control-bg);
   border: 1px solid var(--border);
   border-radius: calc(var(--radius) - 2px);
   color: var(--text-1);
@@ -530,7 +530,7 @@
   flex: 1;
   min-width: 0;
   padding: 6px 10px;
-  background: var(--bg-2);
+  background: var(--control-bg);
   border: 1px solid var(--border);
   border-radius: calc(var(--radius) - 2px);
   color: var(--text-1);
@@ -615,7 +615,7 @@
     top: 50%;
     transform: translateY(-50%);
     padding: 4px 10px;
-    background: var(--bg-3);
+    background: var(--surface-hover);
     color: var(--text-1);
     font-size: 0.75rem;
     border-radius: var(--radius-xs);
@@ -744,7 +744,7 @@
 /* ── Context Menu ── */
 .ctx-menu {
     position: fixed; z-index: 9999;
-    background: var(--bg-1); border: 1px solid var(--border);
+    background: var(--surface-panel); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 4px 0; min-width: 160px;
     box-shadow: 0 8px 24px rgba(0,0,0,.35); font-size: var(--fs-base);
 }
@@ -753,14 +753,14 @@
     padding: 6px 14px; cursor: pointer; color: var(--text-1);
     transition: background .12s;
 }
-.ctx-menu-item:hover { background: var(--bg-hover, rgba(255,255,255,.06)); }
+.ctx-menu-item:hover { background: var(--surface-hover); }
 .ctx-menu-item .shortcut { margin-left: auto; font-size: var(--fs-xs); color: var(--text-3); }
 .ctx-menu-sep { height: 1px; margin: 4px 8px; background: var(--border); }
 
 /* ── Connection Validation Tooltip ── */
 .pipeline-tooltip {
   position: absolute;
-  background: var(--bg-3);
+  background: var(--surface-hover);
   color: var(--text-1);
   font-size: var(--fs-sm);
   font-weight: 400;

@@ -40,7 +40,7 @@ body{overflow-x:auto;overflow-y:auto}
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: linear-gradient(145deg, var(--bg-2), rgba(14,21,37,.6));
+  background: linear-gradient(145deg, var(--control-bg), rgba(14,21,37,.6));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: var(--fs-base);
@@ -49,8 +49,8 @@ body{overflow-x:auto;overflow-y:auto}
   white-space: nowrap;
 }
 .status-card.st-ok { border-color: rgba(63,185,80,.3); }
-.status-card.st-warn { border-color: rgba(210,153,34,.4); background: linear-gradient(145deg, rgba(210,153,34,.08), var(--bg-2)); }
-.status-card.st-crit { border-color: rgba(248,81,73,.4); background: linear-gradient(145deg, rgba(248,81,73,.08), var(--bg-2)); }
+.status-card.st-warn { border-color: rgba(210,153,34,.4); background: linear-gradient(145deg, rgba(210,153,34,.08), var(--control-bg)); }
+.status-card.st-crit { border-color: rgba(248,81,73,.4); background: linear-gradient(145deg, rgba(248,81,73,.08), var(--control-bg)); }
 .status-card .sc-label { color: var(--text-3); font-size: var(--fs-xs); font-weight: 400; }
 .status-card .sc-value { color: var(--text-1); }
 .status-card .sc-badge { font-size: var(--fs-sm); }
@@ -86,7 +86,7 @@ body{overflow-x:auto;overflow-y:auto}
   justify-content: center;
   align-items: center;
   padding: var(--sp-2);
-  background: linear-gradient(145deg, var(--bg-2), rgba(14,21,37,.6));
+  background: linear-gradient(145deg, var(--control-bg), rgba(14,21,37,.6));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   text-align: center;
@@ -114,21 +114,21 @@ body{overflow-x:auto;overflow-y:auto}
 
 /*═══ Tables ═══*/
 table{width:100%;border-collapse:collapse;font-size:var(--fs-base)}
-th{text-align:left;color:var(--text-3);font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;border-bottom:2px solid var(--accent);background:var(--bg-1);position:sticky;top:0;z-index:2}
+th{text-align:left;color:var(--text-3);font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;border-bottom:2px solid var(--accent);background:var(--surface-panel);position:sticky;top:0;z-index:2}
 td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
 tbody tr{transition:background .12s}
 tbody tr:nth-child(even) td{background:rgba(14,21,37,.3)}
-tbody tr:hover td{background:var(--bg-3)}
+tbody tr:hover td{background:var(--surface-hover)}
 
 /*═══ Buttons (base/hover/active/disabled/ghost/sm in shared/dx-components.css) ═══*/
 .btn-group{display:flex;flex-wrap:wrap;gap:var(--sp-1);margin-bottom:6px}
 .btn-group button{
   padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);
-  background:var(--bg-2);color:var(--text-3);font-size:var(--fs-xs);cursor:pointer;
+  background:var(--control-bg);color:var(--text-3);font-size:var(--fs-xs);cursor:pointer;
   transition:var(--transition);font-family:var(--font);
 }
 .btn-group button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
-.btn-group button.active{background:var(--accent);color:var(--bg-0);border-color:var(--accent)}
+.btn-group button.active{background:var(--accent);color:var(--surface-page);border-color:var(--accent)}
 
 /*═══ Badges ═══*/
 /*═══ Utilities ═══*/
@@ -166,7 +166,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
   max-height: 250px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--bg-3) var(--bg-1);
+  scrollbar-color: var(--surface-hover) var(--surface-panel);
 }
 .event-row {
   display: flex;
@@ -178,7 +178,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
   transition: background .12s;
 }
 .event-row:last-child { border-bottom: none; }
-.event-row:hover { background: var(--bg-3); }
+.event-row:hover { background: var(--surface-hover); }
 .event-ts {
   flex-shrink: 0;
   font-family: var(--mono);

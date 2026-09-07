@@ -11,7 +11,7 @@
   right: 0;
   bottom: 0;
   z-index: 50;
-  background: var(--bg-0, linear-gradient(180deg, var(--surface-page) 0%, var(--surface-page) 50%, var(--surface-page) 100%));
+  background: var(--surface-page, linear-gradient(180deg, var(--surface-page) 0%, var(--surface-page) 50%, var(--surface-page) 100%));
   overflow-x: auto;
   overflow-y: hidden;
   min-width: 0;
@@ -65,7 +65,7 @@
 .sdk-topbar-search { position: relative; width: min(280px, 100%); max-width: 100%; }
 .sdk-topbar-search input {
   width: 100%; padding: 6px 12px 6px 30px;
-  background: var(--bg-input, var(--bg-0)); border: 1px solid var(--border);
+  background: var(--surface-panel, var(--surface-page)); border: 1px solid var(--border);
   border-radius: var(--radius-sm); color: var(--text-1, var(--text-primary));
   font-family: var(--font); font-size: var(--fs-sm);
   outline: none; transition: border-color 0.2s;
@@ -108,7 +108,7 @@
 .sdk-topbar-toolbar {
   display: flex; align-items: center; gap: 6px;
   --dxt-border: var(--border);
-  --dxt-bg2: var(--bg-2);
+  --dxt-bg2: var(--control-bg);
 }
 .sdk-topbar-toolbar .dx-toolbar-btn {
   font-size: var(--fs-md);
@@ -156,7 +156,7 @@
 .drawer-face {
   position: relative;
   height: 72px;
-  background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+  background: linear-gradient(180deg, var(--control-bg), var(--surface-panel));
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -172,7 +172,7 @@
     0 2px 4px rgba(0,0,0,0.3);
 }
 .drawer-face:hover {
-  background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
+  background: linear-gradient(180deg, var(--surface-hover), var(--control-bg));
   border-color: var(--border-hover, var(--border));
 }
 .drawer-face:active {
@@ -188,7 +188,7 @@
   width: 60px;
   height: 10px;
   border-radius: 5px;
-  background: linear-gradient(180deg, var(--bg-3), var(--border));
+  background: linear-gradient(180deg, var(--surface-hover), var(--border));
   border: 1px solid var(--border-hover, var(--border));
   position: absolute;
   left: 50%;
@@ -249,7 +249,7 @@
   transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
               opacity 0.3s ease;
   opacity: 0;
-  background: linear-gradient(180deg, var(--bg-1), var(--bg-0));
+  background: linear-gradient(180deg, var(--surface-panel), var(--surface-page));
   border: 1px solid var(--border);
   border-top: none;
   border-radius: 0 0 6px 6px;
@@ -314,13 +314,13 @@
   transition: all 0.2s;
   position: relative;
   text-align: center;
-  background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+  background: linear-gradient(180deg, var(--control-bg), var(--surface-panel));
   border: 1px solid var(--border);
   border-bottom: 3px solid transparent;
   min-height: 100px;
 }
 .file-card:hover {
-  background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
+  background: linear-gradient(180deg, var(--surface-hover), var(--control-bg));
   border-color: var(--border-hover, var(--border));
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(0,0,0,0.4);
@@ -479,7 +479,7 @@
   border-right: 1px solid var(--border);
   overflow-y: auto;
   padding: 8px 0;
-  background: linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 100%);
+  background: linear-gradient(180deg,var(--surface-page) 0%,var(--surface-panel) 100%);
   display: flex;
   flex-direction: column;
   transition: width .25s;
@@ -508,7 +508,7 @@
   margin-right: 8px;
   box-sizing: border-box;
 }
-.sdk-sidebar-group-head:hover { background: var(--bg-2); color: var(--text-1); border-left-color: rgba(99,140,255,.3); }
+.sdk-sidebar-group-head:hover { background: var(--control-bg); color: var(--text-1); border-left-color: rgba(99,140,255,.3); }
 .sdk-sidebar-group-head.selected {
   background: var(--accent-dim);
   color: var(--accent);
@@ -561,7 +561,7 @@
 }
 .sdk-sidebar-section.search-hidden { display: none !important; }
 .sdk-sidebar-section:hover {
-  background: var(--bg-2);
+  background: var(--control-bg);
   color: var(--text-1);
   border-left-color: rgba(99,140,255,.3);
 }
@@ -656,7 +656,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: var(--bg-0);
+  background: var(--surface-page);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--viewer-accent-border, transparent);
@@ -881,11 +881,11 @@ mark.sdk-search-hit.current {
   cursor: pointer;
   border: 1px solid var(--border, var(--border-subtle));
   border-radius: var(--radius-sm);
-  background: var(--bg-1, var(--surface-panel));
+  background: var(--surface-panel, var(--surface-panel));
   color: var(--text-1, var(--text-secondary));
 }
 .sdk-error .sdk-retry-btn:hover {
-  background: var(--bg-2, var(--control-bg));
+  background: var(--control-bg, var(--control-bg));
 }
 .sdk-not-found {
   text-align: center;

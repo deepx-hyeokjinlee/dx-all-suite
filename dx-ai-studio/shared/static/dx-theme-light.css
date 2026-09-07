@@ -19,6 +19,8 @@
   --surface-panel:#FFFFFF;
   --surface-raised:linear-gradient(145deg,#FFFFFF,#F2F5FB);
   --surface-sunken:#EDF1F8;
+  --surface-hover:#E8EEF8;
+  --surface-hover-strong:#DCE5F2;
   --surface-overlay:rgba(255,255,255,.78);
 
   --text-primary:#111827;
@@ -46,6 +48,7 @@
   --accent-glow:rgba(74,111,224,.26);
   --accent-strong:#6B4FE0;
   --accent-rgb:74,111,224;
+  --surface-panel-rgb:255,255,255;
   --gradient-accent:linear-gradient(135deg,#4A6FE0,#6B4FE0);
 
   --shadow:0 4px 20px rgba(23,37,72,.10);
@@ -70,6 +73,8 @@
     --surface-panel:#FFFFFF;
     --surface-raised:linear-gradient(145deg,#FFFFFF,#F2F5FB);
     --surface-sunken:#EDF1F8;
+  --surface-hover:#E8EEF8;
+  --surface-hover-strong:#DCE5F2;
     --surface-overlay:rgba(255,255,255,.78);
 
     --text-primary:#111827;
@@ -97,6 +102,7 @@
     --accent-glow:rgba(74,111,224,.26);
     --accent-strong:#6B4FE0;
     --accent-rgb:74,111,224;
+  --surface-panel-rgb:255,255,255;
     --gradient-accent:linear-gradient(135deg,#4A6FE0,#6B4FE0);
 
     --shadow:0 4px 20px rgba(23,37,72,.10);

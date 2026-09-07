@@ -28,10 +28,15 @@ pytest.importorskip("PIL")
 
 from tests.server_helpers import start_module_server  # noqa: E402
 from tests.visual.baseline_spec import (  # noqa: E402
+    RESPONSIVE_HEIGHT,
+    RESPONSIVE_LOCALE,
+    RESPONSIVE_THEME,
     SPECS,
     VIEWPORT,
     axes,
     baseline_name,
+    responsive_axes,
+    responsive_baseline_name,
 )
 from tests.visual.compare import compare  # noqa: E402
 from tests.visual.conftest import STABILISE_INIT  # noqa: E402
@@ -48,11 +53,21 @@ MAX_CHANGED_RATIO = float(os.environ.get("DX_VISUAL_MAX_RATIO", "0.0002"))
 UPDATE = os.environ.get("DX_VISUAL_UPDATE") == "1"
 
 
-def _capture(browser, module: str, spec: dict, theme: str, locale: str, out: Path) -> None:
+def _capture(
+    browser,
+    module: str,
+    spec: dict,
+    theme: str,
+    locale: str,
+    out: Path,
+    viewport: dict | None = None,
+) -> None:
     server, port = start_module_server(module)
     try:
         ctx = browser.new_context(
-            viewport=VIEWPORT, reduced_motion="reduce", locale=f"{locale}-US"
+            viewport=viewport or VIEWPORT,
+            reduced_motion="reduce",
+            locale=f"{locale}-US",
         )
         ctx.add_init_script(STABILISE_INIT)
         # 테마와 언어는 페이지 스크립트보다 먼저 확정돼야 첫 페인트가 맞다.
@@ -125,6 +140,59 @@ def test_module_landing_page_matches_baseline(
 
     candidate = tmp_path / name
     _capture(browser, module, spec, theme, locale, candidate)
+
+    diff_out = ARTIFACT_DIR / engine / f"{name[:-4]}-diff.png"
+    result = compare(baseline, candidate, diff_out)
+
+    assert result["same_size"], (
+        f"{engine}/{name}: viewport changed — baseline {result['baseline_size']} "
+        f"vs current {result['candidate_size']}"
+    )
+    assert result["changed_ratio"] <= MAX_CHANGED_RATIO, (
+        f"{engine}/{name}: {result['changed_pixels']} px "
+        f"({result['changed_ratio'] * 100:.4f}%) differ, limit "
+        f"{MAX_CHANGED_RATIO * 100:.4f}%. Diff: {diff_out}"
+    )
+
+
+@pytest.mark.visual
+@pytest.mark.parametrize(
+    ("module", "width"),
+    responsive_axes(),
+    ids=[f"{m}-w{w}" for m, w in responsive_axes()],
+)
+def test_module_landing_page_matches_baseline_at_width(
+    visual_browser, module, width, tmp_path
+):
+    """breakpoint 를 옮겼을 때 무엇이 달라지는지 볼 수 있게 하는 축.
+
+    나머지 baseline 은 전부 1280 한 폭이라, 900 에서 접히던 화면을 960 으로
+    옮겨도 아무 테스트도 붉어지지 않는다. 여기 두 폭이 그 구간을 잡는다.
+    """
+    engine, browser = visual_browser
+    spec = SPECS[module]
+    name = responsive_baseline_name(module, width)
+    viewport = {"width": width, "height": RESPONSIVE_HEIGHT}
+
+    baseline = BASELINE_DIR / engine / name
+    if UPDATE:
+        _capture(
+            browser, module, spec, RESPONSIVE_THEME, RESPONSIVE_LOCALE,
+            baseline, viewport=viewport,
+        )
+        pytest.skip(f"baseline written: {baseline.relative_to(BASELINE_DIR.parent)}")
+
+    if not baseline.is_file():
+        pytest.skip(
+            f"no baseline for {engine}/{name} — create it with "
+            f"DX_VISUAL_UPDATE=1 pytest tests/visual/"
+        )
+
+    candidate = tmp_path / name
+    _capture(
+        browser, module, spec, RESPONSIVE_THEME, RESPONSIVE_LOCALE,
+        candidate, viewport=viewport,
+    )
 
     diff_out = ARTIFACT_DIR / engine / f"{name[:-4]}-diff.png"
     result = compare(baseline, candidate, diff_out)

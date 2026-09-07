@@ -110,7 +110,7 @@
     if (old) old.remove();
     var box = document.createElement('div');
     box.id = 'dxt-mock-example';
-    box.style.cssText = 'margin:12px 0;padding:12px;border:1px dashed var(--border,#3a3a3a);border-radius:8px;background:var(--bg-2,#161b22)';
+    box.style.cssText = 'margin:12px 0;padding:12px;border:1px dashed var(--border,#3a3a3a);border-radius:8px;background:var(--control-bg,#161b22)';
     if (kind === 'before_after') {
       box.innerHTML = '<div class="mz-ba-container" style="position:relative;max-width:280px">' +
         '<img src="' + _mockImg('After') + '" class="mz-example-image" style="width:100%;display:block">' +
@@ -126,7 +126,7 @@
       var bars = [['golden retriever', 0.92], ['labrador', 0.05], ['dingo', 0.02]].map(function (r) {
         return '<div style="display:flex;align-items:center;gap:8px;margin:4px 0;font-size:13px">' +
           '<span style="width:110px">' + r[0] + '</span>' +
-          '<span style="flex:1;height:10px;background:var(--bg-3,#0d1117);border-radius:5px;overflow:hidden">' +
+          '<span style="flex:1;height:10px;background:var(--surface-hover,#0d1117);border-radius:5px;overflow:hidden">' +
           '<span style="display:block;height:100%;width:' + (r[1] * 100) + '%;background:var(--accent,#4c8dff)"></span></span>' +
           '<span>' + (r[1] * 100).toFixed(0) + '%</span></div>';
       }).join('');
@@ -151,7 +151,7 @@
         _lc({ ko: '다운로드 완료', en: 'Download complete', ja: 'ダウンロード完了', 'zh-CN': '下载完成', 'zh-TW': '下載完成', es: 'Descarga completada' }) + '</span>';
     } else {
       box.innerHTML = '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
-        '<div style="flex:1;min-width:120px;height:6px;background:var(--bg-3,#0d1117);border-radius:3px;overflow:hidden">' +
+        '<div style="flex:1;min-width:120px;height:6px;background:var(--surface-hover,#0d1117);border-radius:3px;overflow:hidden">' +
         '<div style="width:65%;height:100%;background:var(--accent,#4c8dff)"></div></div>' +
         '<span>65%</span><span style="color:var(--text-3)">' +
         _lc({ ko: '다운로드 중', en: 'Downloading', ja: 'ダウンロード中', 'zh-CN': '下载中', 'zh-TW': '下載中', es: 'Descargando' }) + '</span>' +

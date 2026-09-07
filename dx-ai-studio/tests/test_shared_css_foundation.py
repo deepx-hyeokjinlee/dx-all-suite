@@ -246,8 +246,7 @@ def test_shared_font_css_uses_shared_font_paths():
 def test_shared_tokens_include_required_aliases():
     css = read_text(SHARED_STATIC / "dx-tokens.css")
     required_tokens = [
-        "--bg-0",
-        "--bg-1",
+        "--surface-panel-rgb",
         "--text-1",
         "--text-2",
         "--accent",
@@ -400,8 +399,6 @@ def assert_shared_foundation_removed(css: str) -> None:
         "@font-face",
         "/static/fonts/",
         "color-scheme: dark",
-        "--bg-0:",
-        "--bg-1:",
         "--font:",
         "--mono:",
         "scrollbar-color:",
@@ -778,9 +775,6 @@ def test_launcher_css_no_longer_defines_shared_foundation():
         assert fragment not in css, fragment
     assert "* { margin: 0; padding: 0; box-sizing: border-box; }" not in css
     for alias in (
-        "--bg-surface:",
-        "--bg-card:",
-        "--bg-card-hover:",
         "--text:",
         "--text-muted:",
         "--text-dim:",
@@ -1305,7 +1299,7 @@ def test_sdk_library_shell_uses_deepx_tokens_not_github_palette():
     )
     for forbidden in ("#0d1117", "#21262d", "#30363d", "#58a6ff", "rgba(13,17,23"):
         assert forbidden not in shell_blocks
-    for token in ("var(--bg-", "var(--border", "var(--accent", "var(--text-"):
+    for token in ("var(--surface-", "var(--border", "var(--accent", "var(--text-"):
         assert token in shell_blocks
 
 
@@ -1644,13 +1638,15 @@ SEMANTIC_TOKENS = (
     "--status-warn",
     "--status-error",
     "--status-info",
+    "--surface-hover",
+    "--surface-hover-strong",
 )
 
 # 모듈 CSS 14,300줄이 아직 쓰는 물리적 이름. semantic 위 alias여야 한다.
 # --bg-3 / --bg-4 는 대응하는 역할이 없어 dx-tokens.css의 리터럴을 그대로 둔다
 # (semantic이 재정의하지 않으므로 primitive 값이 살아남는다).
+# --bg-* 는 전부 걷어냈다. 남은 alias 는 다음 단계에서 같은 방식으로 없앤다.
 LEGACY_ALIASES = (
-    "--bg-0", "--bg-1", "--bg-2", "--bg-input",
     "--text-1", "--text-2", "--text-3", "--text-4",
     "--border", "--border-hover",
     "--success", "--warning", "--error", "--info",

@@ -46,8 +46,19 @@ def test_body_allows_horizontal_scroll_on_zoom(module: str, css_path: Path):
 # shared/static/dx-shell.css 의 .dx-shell 이다. 이관되는 모듈마다 여기서 옮긴다.
 SHELL_ROOTS = {
     "dx_app": (ROOT / "shared/static/dx-shell.css", ".dx-shell"),
-    "dx_stream": (ZOOM_SAFE_MODULES["dx_stream"], ".app"),
+    "dx_stream": (ROOT / "shared/static/dx-shell.css", ".dx-shell"),
 }
+
+# .modal-overlay 는 여덟 모듈이 같은 규칙을 각자 복제하고 있어서 공유 계층으로
+# 합쳤다. 계약은 그대로 살아 있어야 하므로, 모듈 CSS 에 없으면 공유 쪽을 본다.
+SHARED_COMPONENTS = ROOT / "shared/static/dx-components.css"
+
+
+def _owner_css(css_path: Path, selector: str) -> str:
+    css = _read(css_path)
+    if re.search(r"(?m)^\s*" + re.escape(selector) + r"\s*[,{]", css):
+        return css
+    return _read(SHARED_COMPONENTS)
 
 
 @pytest.mark.parametrize("module", sorted(SHELL_ROOTS))
@@ -63,7 +74,7 @@ def test_app_shell_uses_percent_width_not_viewport(module: str):
 
 @pytest.mark.parametrize("module,css_path", [("dx_app", ZOOM_SAFE_MODULES["dx_app"]), ("dx_stream", ZOOM_SAFE_MODULES["dx_stream"])])
 def test_modal_overlay_uses_percent_not_viewport(module: str, css_path: Path):
-    css = _read(css_path)
+    css = _owner_css(css_path, ".modal-overlay")
     overlay = re.search(r"\.modal-overlay\s*\{(?P<body>[^}]*)\}", css, re.DOTALL)
     assert overlay is not None, f"{module} .modal-overlay rule missing"
     body = overlay.group("body").replace(" ", "")

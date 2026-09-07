@@ -2,9 +2,6 @@
 
 :root {
   --launcher-topbar-h: var(--dx-module-header-h);
-  --bg-surface: var(--bg-1);
-  --bg-card: var(--bg-2);
-  --bg-card-hover: var(--bg-3);
   --border-glow: var(--accent);
   --stream-color: #10B981;
   --sandbox-color: var(--info);
@@ -143,7 +140,7 @@ body:not(.hw-native-visible) #hw-float {
   white-space: nowrap;
 }
 .nav-tab:hover {
-  background: var(--bg-card);
+  background: var(--control-bg);
   color: var(--text);
 }
 .nav-tab.active {
@@ -297,7 +294,7 @@ body:not(.hw-native-visible) #hw-float {
 /* Launch Cards */
 .launch-card {
   position: relative;
-  background: linear-gradient(145deg, var(--bg-1), var(--bg-2));
+  background: linear-gradient(145deg, var(--surface-panel), var(--control-bg));
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 32px 28px 24px;
@@ -435,7 +432,7 @@ body:not(.hw-native-visible) #hw-float {
   width: 160px;
   padding: 20px 16px;
   margin: 40px auto 0;
-  background: var(--bg-card);
+  background: var(--control-bg);
   border: 1.5px solid rgba(255, 180, 50, 0.45);
   border-radius: 3px;
   text-align: center;
@@ -731,7 +728,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 .loading-overlay {
   position: fixed;
   top: var(--launcher-topbar-h); left: 0; right: 0; bottom: 0;
-  background: var(--bg-0);
+  background: var(--surface-page);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -763,7 +760,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   justify-content: center;
   gap: var(--sp-3);
   z-index: 10;
-  background: var(--bg-0);
+  background: var(--surface-page);
   animation: fadeIn 0.3s;
 }
 .module-entry-loading .spinner {
@@ -794,7 +791,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 .module-retry-btn:hover {
   background: var(--accent);
-  color: var(--bg-0);
+  color: var(--surface-page);
 }
 .active-module-card {
   box-shadow: 0 0 12px rgba(99,140,255,0.4);
@@ -1616,7 +1613,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 
 /* ── Mobile: < 600px ── */
-@media (max-width: 599px) {
+@media (max-width: 600px) {
   .splash-grid { display: none; }
   .splash-logo { font-size: 36px; letter-spacing: 4px; }
   .splash-subtitle { font-size: var(--fs-lg); letter-spacing: 3px; }
@@ -1775,7 +1772,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   width: min(130px, 28vw);
   max-width: 130px;
   padding: 16px 12px;
-  background: var(--bg-card);
+  background: var(--control-bg);
   border: 1.5px solid rgba(99,140,255,0.3);
   border-radius: 3px;
   text-align: center;
@@ -1864,7 +1861,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   white-space: normal;
   font-size: var(--fs-sm);
   color: var(--text-2);
-  background: var(--bg-2);
+  background: var(--control-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 10px 14px;
@@ -2246,7 +2243,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   min-width: 0;
   overflow-x: auto;
   overflow-y: auto;
-  background: var(--bg-surface);
+  background: var(--surface-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--sp-6);
@@ -2316,7 +2313,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   display: flex; align-items: center; gap: var(--sp-2);
   padding: 4px 8px;
   border-radius: var(--radius-sm);
-  background: var(--bg-2);
+  background: var(--control-bg);
   border: 1px solid var(--border);
   font-size: var(--fs-sm);
   cursor: pointer;

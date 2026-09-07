@@ -61,7 +61,7 @@ function drawLineChart(canvas,datasets,opts){
   var H=prepared.H;
   var pad={t:20,r:16,b:38,l:52};
   var cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
-  ctx.fillStyle=_dxChartCssColor('--bg-2','#0f172a');ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=_dxChartCssColor('--control-bg','#0f172a');ctx.fillRect(0,0,W,H);
   var finiteValues=_chartFiniteValues(datasets);
   var hasData=datasets.length>0&&datasets.some(function(d){return _chartFiniteValues([d]).length>=2});
   var mn=0,mx=1,rng=1;
@@ -138,7 +138,7 @@ function drawBarChart(canvas,items,opts){
   var H=prepared.H;
   var pad={t:16,r:16,b:60,l:48};
   var cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
-  ctx.fillStyle=_dxChartCssColor('--bg-2','#0f172a');ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=_dxChartCssColor('--control-bg','#0f172a');ctx.fillRect(0,0,W,H);
   if(!items.length){
     ctx.fillStyle='rgba(139,148,158,0.35)';ctx.font='11px sans-serif';ctx.textAlign='center';
     var emptyText=opts.emptyText||(typeof T==='function'?T('No run data yet'):'');
@@ -146,7 +146,7 @@ function drawBarChart(canvas,items,opts){
     return;
   }
   var mx=Math.max.apply(null,items.map(function(i){return i.val}))*1.1||1;
-  ctx.fillStyle=_dxChartCssColor('--bg-2','#0f172a');ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=_dxChartCssColor('--control-bg','#0f172a');ctx.fillRect(0,0,W,H);
   var bw=Math.min(30,cw/items.length-4);
   items.forEach(function(it,i){
     var x=pad.l+(i+0.5)*(cw/items.length)-bw/2;
@@ -171,7 +171,7 @@ function drawGauge(canvas,pct,color){
   ctx.clearRect(0,0,w,h);
   var cx=w/2,cy=h/2+10,r=45;
   var start=0.75*Math.PI,end=2.25*Math.PI;
-  ctx.beginPath();ctx.arc(cx,cy,r,start,end);ctx.strokeStyle=_dxChartCssColor('--bg-3','#1e293b');ctx.lineWidth=10;ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,r,start,end);ctx.strokeStyle=_dxChartCssColor('--surface-hover','#1e293b');ctx.lineWidth=10;ctx.lineCap='round';ctx.stroke();
   var angle=start+(end-start)*Math.min(pct/100,1);
   ctx.beginPath();ctx.arc(cx,cy,r,start,angle);ctx.strokeStyle=color||_dxChartCssColor('--app-accent','#22d3ee');ctx.lineWidth=10;ctx.lineCap='round';ctx.stroke();
   ctx.beginPath();ctx.arc(cx,cy,r,start,angle);ctx.strokeStyle=color||_dxChartCssColor('--app-accent','#22d3ee');ctx.globalAlpha=0.2;ctx.lineWidth=16;ctx.stroke();ctx.globalAlpha=1;
