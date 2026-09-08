@@ -31,8 +31,6 @@
   window.LauncherRouter = ns.LauncherRouter;
   window.updateNavTabs = ns.updateNavTabs;
   window.checkHealth = ns.checkHealth;
-  window.initOrbital = ns.initOrbital;
-  window.scheduleOrbitalLayout = ns.scheduleOrbitalLayout;
   window.appFromPath = ns.appFromPath;
   window.setVisibleView = ns.setVisibleView;
   window._updateToggleActive = ns._updateToggleActive;

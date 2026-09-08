@@ -149,13 +149,8 @@
       <div class="landing-particle" style="left:40%;top:35%;animation-delay:1.8s"></div>
     </div>
 
-    <!-- Orbital layout container -->
-    <div class="orbital-container" id="orbitalContainer">
-      <!-- Connection lines SVG (rendered by JS) -->
-      <svg class="orbital-connections" id="orbitalSvg"></svg>
-
-      <!-- Center hub -->
-      <div class="orbital-hub">
+    <!-- Studio — the eight modules, in a grid that can rewrap -->
+    <div class="studio-hub">
         <div class="hub-logo">DEEPX</div>
         <div class="hub-subtitle">AI Studio</div>
         <div class="hub-tagline" data-i18n="8 Modules · All-in-One Edge AI Platform">8 Modules · All-in-One Edge AI Platform
@@ -163,10 +158,10 @@
         <div class="hub-version">DXNN SDK {{SDK_VERSION}}</div>
         <div class="hub-studio-version" id="studioVersionHub"></div>
         <div class="hub-launcher-port" id="hubLauncherPort" data-i18n-title="Launcher gateway">:—</div>
-      </div>
+    </div>
 
-      <!-- Module cards (DOM order = clockwise from 12 o'clock for Tab order) -->
-      <div class="orbital-card" data-app="app" data-angle="0" tabindex="0">
+    <div class="studio-grid" id="studioGrid">
+      <div class="orbital-card" data-app="app" tabindex="0">
         <span class="orbital-status" id="orbStatusApp"></span>
         <div class="orbital-icon">🖥️</div>
         <div class="orbital-name">DX App</div>
@@ -182,7 +177,7 @@
         </div>
       </div>
 
-      <div class="orbital-card" data-app="stream" data-angle="45" tabindex="0">
+      <div class="orbital-card" data-app="stream" tabindex="0">
         <span class="orbital-status" id="orbStatusStream"></span>
         <div class="orbital-icon">🎬</div>
         <div class="orbital-name">DX Stream</div>
@@ -198,7 +193,7 @@
         </div>
       </div>
 
-      <div class="orbital-card" data-app="zoo" data-angle="90" tabindex="0">
+      <div class="orbital-card" data-app="zoo" tabindex="0">
         <span class="orbital-status" id="orbStatusZoo"></span>
         <div class="orbital-icon">🧬</div>
         <div class="orbital-name">DX Model Zoo</div>
@@ -214,7 +209,7 @@
         </div>
       </div>
 
-      <div class="orbital-card" data-app="compiler" data-angle="135" tabindex="0">
+      <div class="orbital-card" data-app="compiler" tabindex="0">
         <span class="orbital-status" id="orbStatusCompiler"></span>
         <div class="orbital-icon">⚙️</div>
         <div class="orbital-name">DX Compiler</div>
@@ -230,7 +225,7 @@
         </div>
       </div>
 
-      <div class="orbital-card" data-app="planner" data-angle="180" tabindex="0">
+      <div class="orbital-card" data-app="planner" tabindex="0">
         <span class="orbital-status" id="orbStatusPlanner"></span>
         <div class="orbital-icon">💰</div>
         <div class="orbital-name">DX EdgeGuide</div>
@@ -246,7 +241,7 @@
         </div>
       </div>
 
-      <div class="orbital-card" data-app="benchmark" data-angle="225" tabindex="0">
+      <div class="orbital-card" data-app="benchmark" tabindex="0">
         <span class="orbital-status" id="orbStatusBenchmark"></span>
         <div class="orbital-icon">📊</div>
         <div class="orbital-name">DX Benchmark</div>
@@ -262,7 +257,7 @@
         </div>
       </div>
 
-      <div class="orbital-card" data-app="dx_monitor" data-angle="270" tabindex="0">
+      <div class="orbital-card" data-app="dx_monitor" tabindex="0">
         <span class="orbital-status" id="orbStatusMonitor"></span>
         <div class="orbital-icon">📡</div>
         <div class="orbital-name">DX Monitor</div>
@@ -278,7 +273,7 @@
         </div>
       </div>
 
-      <div class="orbital-card" data-app="agent" data-angle="315" tabindex="0">
+      <div class="orbital-card" data-app="agent" tabindex="0">
         <span class="orbital-status" id="orbStatusAgent"></span>
         <div class="orbital-icon">🤖</div>
         <div class="orbital-name">DX Agent Dev</div>

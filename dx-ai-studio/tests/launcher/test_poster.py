@@ -81,13 +81,21 @@ def test_landing_poster_does_not_stack_above_module_cards():
     assert "z-index: 7" in orbital.group("body")
 
 
-def test_orbital_cards_hidden_until_layout_ready():
-    """Avoid stacked cards flash before initOrbital sets --orbit-x/y."""
+def test_module_cards_need_no_javascript_to_be_placed():
+    """The cards must not flash stacked before a script positions them.
+
+    The ring solved this by hiding every card until initOrbital() had written
+    --orbit-x/--orbit-y onto each one — a JS layout pass the page had to wait
+    for. A grid has no such window: CSS places the cards on first paint, so the
+    guard, the ready class and the debounced resize handler are all gone with it.
+    """
     css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
-    assert ".orbital-container:not(.orbital-ready) .orbital-card" in css
-    assert "visibility: hidden" in css
+    grid = re.search(r"\.studio-grid\s*\{(?P<body>[^}]*)\}", css)
+    assert grid, ".studio-grid rule missing"
+    assert "grid-template-columns" in grid.group("body")
+    assert "--orbit-x" not in css, "cards must not be positioned by script"
     js = (ROOT / "launcher/static/launcher-app-frame.js").read_text(encoding="utf-8")
-    assert "container.classList.add('orbital-ready')" in js
+    assert "orbital-ready" not in js, "the JS layout pass should be gone"
     assert "ensureStudioReady" in js
     assert "_initLauncherCore" in js
 

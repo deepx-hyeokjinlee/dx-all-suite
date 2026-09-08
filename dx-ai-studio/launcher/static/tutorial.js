@@ -43,7 +43,7 @@
         { target: '.status-dots', position: 'bottom',
           title: { en: 'Module Health Dots', ko: '모듈 상태 점', ja: 'モジュール状態ドット', 'zh-CN': '模块状态点', 'zh-TW': '模組狀態點', es: 'Indicadores de módulos' },
           content: { en: '<strong>Green</strong> means the module server is reachable; <strong>red</strong> means it is offline or not installed yet.', ko: '<strong>초록</strong>은 모듈 서버 연결 가능, <strong>빨강</strong>은 오프라인 또는 미설치 상태입니다.', ja: '<strong>緑</strong>はモジュールサーバー到達可能、<strong>赤</strong>はオフラインまたは未インストールです。', 'zh-CN': '<strong>绿色</strong>表示模块服务器可访问；<strong>红色</strong>表示离线或未安装。', 'zh-TW': '<strong>綠色</strong>表示模組伺服器可連線；<strong>紅色</strong>表示離線或未安裝。', es: '<strong>Verde</strong> = servidor del módulo accesible; <strong>rojo</strong> = sin conexión o no instalado.' } },
-        { target: '#orbitalContainer', position: 'bottom',
+        { target: '#studioGrid', position: 'bottom',
           title: { en: 'Launch DX Modules', ko: 'DX 모듈 실행', ja: 'DXモジュール起動', 'zh-CN': '启动DX模块', 'zh-TW': '啟動DX模組', es: 'Iniciar módulos DX' },
           content: { en: 'Pick an orbital card to open App, Stream, Compiler, Monitor, and other DX AI Studio modules inside the shared frame.', ko: '오비탈 카드에서 App, Stream, Compiler, Monitor 등 DX AI Studio 모듈을 공유 프레임에서 실행합니다.', ja: 'オービタルカードからApp、Stream、Compiler、MonitorなどのDX AI Studioモジュールを共有フレームで開きます。', 'zh-CN': '从轨道卡片打开 App、Stream、Compiler、Monitor 等 DX AI Studio 模块。', 'zh-TW': '從軌道卡片開啟 App、Stream、Compiler、Monitor 等 DX AI Studio 模組。', es: 'Elija una tarjeta orbital para abrir App, Stream, Compiler, Monitor y otros módulos de DX AI Studio.' } },
         { target: '#ecosystemPoster', position: 'right', skipScroll: true,

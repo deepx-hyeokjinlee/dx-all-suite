@@ -87,8 +87,6 @@
     if (_shellRevealInFlight) return;
     _shellRevealInFlight = true;
 
-    if (typeof ns.scheduleOrbitalLayout === 'function') ns.scheduleOrbitalLayout();
-
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         document.documentElement.classList.remove('launcher-boot-pending');
@@ -447,7 +445,6 @@
   function setVisibleView(viewName) {
     suspendAllTutorialChrome();
     resetLauncherUiBlockers();
-    _hideOrbitalTooltip();
     var landing   = document.getElementById('landing');
     var appFrame  = document.getElementById('appFrame');
     var aboutView = document.getElementById('about-view');
@@ -1327,12 +1324,6 @@
     if (el && el.className !== targetClass) el.className = targetClass;
   }
 
-
-  function scheduleOrbitalLayout() {
-    if (ns._orbitalResizeTimer) clearTimeout(ns._orbitalResizeTimer);
-    ns._orbitalResizeTimer = setTimeout(initOrbital, 120);
-  }
-
   function activateOnEnterOrSpace(el, action) {
     if (el.dataset.keyboardBound === '1') return;
     el.addEventListener('keydown', function(e) {
@@ -1367,180 +1358,6 @@
     }
   }
 
-  function initOrbital() {
-    var container = document.getElementById('orbitalContainer');
-    if (!container) return;
-    var cards = container.querySelectorAll('.orbital-card');
-    var svg = document.getElementById('orbitalSvg');
-    if (!svg) return;
-
-    var rect = container.getBoundingClientRect();
-    if (rect.width < 80 || rect.height < 80) {
-      container.classList.remove('orbital-ready');
-      scheduleOrbitalLayout();
-      return;
-    }
-
-    var cx = rect.width / 2;
-    var cy = rect.height / 2;
-    var radius = Math.min(cx, cy) * 0.72;
-
-    svg.innerHTML = '';
-    svg.setAttribute('viewBox', '0 0 ' + rect.width + ' ' + rect.height);
-
-    cards.forEach(function(card, i) {
-      var angle = parseFloat(card.dataset.angle);
-      var rad = (angle - 90) * Math.PI / 180;
-      var x = cx + radius * Math.cos(rad);
-      var y = cy + radius * Math.sin(rad);
-
-      card.style.setProperty('--orbit-x', x + 'px');
-      card.style.setProperty('--orbit-y', y + 'px');
-
-      var pos = _getDetailPosition(angle);
-      card.dataset.position = pos;
-
-      var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', cx);
-      line.setAttribute('y1', cy);
-      line.setAttribute('x2', x);
-      line.setAttribute('y2', y);
-      line.dataset.index = i;
-      line.id = 'orbital-line-' + i;
-      svg.appendChild(line);
-      card.dataset.lineId = line.id;
-
-      _bindOrbitalCardHover(card);
-    });
-    container.classList.add('orbital-ready');
-  }
-
-  function _ensureOrbitalResizeObserver() {
-    if (ns._orbitalResizeObs) return;
-    var container = document.getElementById('orbitalContainer');
-    if (!container || typeof ResizeObserver === 'undefined') return;
-    ns._orbitalResizeObs = new ResizeObserver(function() {
-      scheduleOrbitalLayout();
-    });
-    ns._orbitalResizeObs.observe(container);
-  }
-
-  function _clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-  }
-
-  var _orbitalTooltipEl = null;
-
-  function _ensureOrbitalTooltipLayer() {
-    if (_orbitalTooltipEl) return _orbitalTooltipEl;
-    var layer = document.getElementById('orbitalTooltipLayer');
-    if (!layer) {
-      layer = document.createElement('div');
-      layer.id = 'orbitalTooltipLayer';
-      layer.className = 'orbital-tooltip-layer';
-      layer.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(layer);
-    }
-    _orbitalTooltipEl = document.createElement('div');
-    _orbitalTooltipEl.className = 'orbital-detail orbital-detail-flyout';
-    _orbitalTooltipEl.setAttribute('role', 'tooltip');
-    layer.appendChild(_orbitalTooltipEl);
-    return _orbitalTooltipEl;
-  }
-
-  function _hideOrbitalTooltip() {
-    if (!_orbitalTooltipEl) return;
-    _orbitalTooltipEl.classList.remove('visible');
-    _orbitalTooltipEl.innerHTML = '';
-    _orbitalTooltipEl.style.left = '';
-    _orbitalTooltipEl.style.top = '';
-    var layer = document.getElementById('orbitalTooltipLayer');
-    if (layer) layer.setAttribute('aria-hidden', 'true');
-  }
-
-  function _orbitalTopbarOffset() {
-    var raw = getComputedStyle(document.documentElement).getPropertyValue('--launcher-topbar-h');
-    var parsed = parseInt(raw, 10);
-    return isNaN(parsed) ? 48 : parsed;
-  }
-
-  function _positionOrbitalTooltip(card, tip) {
-    var rect = card.getBoundingClientRect();
-    var pos = card.dataset.position || 'bottom';
-    var gap = 10;
-    var pad = 8;
-    var topbar = _orbitalTopbarOffset();
-    var vw = window.innerWidth;
-    var vh = window.innerHeight;
-
-    tip.classList.remove('visible');
-    var tw = tip.offsetWidth;
-    var th = tip.offsetHeight;
-
-    var left = 0;
-    var top = 0;
-
-    if (pos === 'top') {
-      left = rect.left + rect.width / 2 - tw / 2;
-      top = rect.top - gap - th;
-    } else if (pos === 'bottom') {
-      left = rect.left + rect.width / 2 - tw / 2;
-      top = rect.bottom + gap;
-    } else if (pos === 'right') {
-      left = rect.right + gap;
-      top = rect.top + rect.height / 2 - th / 2;
-    } else {
-      left = rect.left - gap - tw;
-      top = rect.top + rect.height / 2 - th / 2;
-    }
-
-    left = _clamp(left, pad, Math.max(pad, vw - tw - pad));
-    top = _clamp(top, topbar + pad, Math.max(topbar + pad, vh - th - pad));
-
-    tip.style.left = left + 'px';
-    tip.style.top = top + 'px';
-    tip.classList.add('visible');
-  }
-
-  function _showOrbitalTooltip(card) {
-    if (window.matchMedia('(max-width: 768px)').matches) return;
-    var source = card.querySelector('.orbital-detail');
-    if (!source) return;
-    var tip = _ensureOrbitalTooltipLayer();
-    tip.innerHTML = source.innerHTML;
-    var layer = document.getElementById('orbitalTooltipLayer');
-    if (layer) layer.setAttribute('aria-hidden', 'false');
-    _positionOrbitalTooltip(card, tip);
-  }
-
-  function _bindOrbitalCardHover(card) {
-    if (card.dataset.hoverBound === '1') return;
-    card.addEventListener('mouseenter', _handleOrbitalCardMouseEnter);
-    card.addEventListener('mouseleave', _handleOrbitalCardMouseLeave);
-    card.dataset.hoverBound = '1';
-  }
-
-  function _handleOrbitalCardMouseEnter(e) {
-    var card = e.currentTarget;
-    var line = document.getElementById(card.dataset.lineId);
-    if (line) line.classList.add('highlight');
-    _showOrbitalTooltip(card);
-  }
-
-  function _handleOrbitalCardMouseLeave(e) {
-    var card = e.currentTarget;
-    var line = document.getElementById(card.dataset.lineId);
-    if (line) line.classList.remove('highlight');
-    _hideOrbitalTooltip();
-  }
-
-  function _getDetailPosition(angle) {
-    var a = ((angle % 360) + 360) % 360;
-    if (a >= 337 || a < 23) return 'bottom';
-    if (a >= 23 && a < 157) return 'right';
-    if (a >= 157 && a < 203) return 'bottom';
-    return 'left';
-  }
 
   function _updateToggleActive(groupId, activeVal) {
     var grp = document.getElementById(groupId);
@@ -1583,24 +1400,15 @@
     landing.dataset.clickRoutingBound = '1';
   }
 
-  // Core launcher init — must not wait for splash (orbital + routing + health).
+  // Core launcher init — must not wait for splash (routing + health).
   function _initLauncherCore() {
     if (ns._launcherCoreStarted) return;
     ns._launcherCoreStarted = true;
     ns._deferredLauncherWorkStarted = true;
     checkHealth();
     setInterval(checkHealth, 5000);
-    initOrbital();
     initOrbitalAccessibility();
     initHomeClickRouting();
-    _ensureOrbitalResizeObserver();
-    window.addEventListener('resize', scheduleOrbitalLayout);
-    window.addEventListener('scroll', _hideOrbitalTooltip, true);
-    if (document.readyState === 'complete') {
-      scheduleOrbitalLayout();
-    } else {
-      window.addEventListener('load', scheduleOrbitalLayout, { once: true });
-    }
     refreshLauncherChrome();
   }
 
@@ -1624,8 +1432,6 @@
   ns.launch = launch;
   ns.updateNavTabs = updateNavTabs;
   ns.checkHealth = checkHealth;
-  ns.initOrbital = initOrbital;
-  ns.scheduleOrbitalLayout = scheduleOrbitalLayout;
   ns.appFromPath = appFromPath;
   ns.setVisibleView = setVisibleView;
   ns._updateToggleActive = _updateToggleActive;

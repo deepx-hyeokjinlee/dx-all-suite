@@ -36,7 +36,5 @@ window.DXLauncher._DECODE_FRAME_INTERVAL = 50;
 window.DXLauncher._TRACE_LENGTH_CACHE = new Map();
 window.DXLauncher._decodeRAF = null;
 
-window.DXLauncher._orbitalResizeTimer = null;
-
 window.DXLauncher.SUPPORTED_LANGS = ['en', 'ja', 'ko', 'es', 'zh-CN', 'zh-TW'];
 window.DXLauncher.LANG_SHORT = { en: 'EN', ja: 'JA', ko: 'KO', es: 'ES', 'zh-CN': '简', 'zh-TW': '繁' };
