@@ -145,3 +145,55 @@ def test_the_ring_left_the_resting_home():
         assert ring_at_top > intro, (
             "orbital markup must live inside the intro overlay, not the resting home"
         )
+
+
+# ── the hero ────────────────────────────────────────────────────
+# The centre of the ring said "DEEPX / AI Studio / 8 Modules" in dimmed text
+# behind a marketing collage. Two focal points at the same depth, so neither
+# read. The hero says one thing and offers one input.
+
+
+def test_hero_leads_with_a_prompt():
+    html = index()
+    assert 'class="home-hero"' in html, "the home has no hero"
+    assert 'id="homeAsk"' in html, (
+        "the hero must offer the input — a launcher whose front door is a menu "
+        "makes you find the door first"
+    )
+
+
+def test_hero_never_shows_an_empty_box():
+    """A blank prompt on a landing page is a blank stare.
+
+    The example chips are the feature, not decoration: they teach the syntax
+    and they are one click to run. They are also the contract the router in the
+    next task has to satisfy.
+    """
+    html = index()
+    chips = html.count('class="ask-chip"')
+    assert chips >= 4, f"expected at least four example chips, found {chips}"
+
+
+def test_hero_says_whether_the_hardware_is_there():
+    """A website cannot say "DX-M1 connected". That line is why this is not one."""
+    html = index()
+    assert 'id="heroDeviceChip"' in html
+
+
+def test_workflow_strip_is_drawable_in_both_themes():
+    """The path from ONNX to silicon is the product, so it should be legible.
+
+    It exists today as two raster diagrams authored on a dark ground. A PNG
+    cannot follow the theme, and shipping a second one per theme is the
+    duplication this redesign is removing — so the strip is inline SVG that
+    inherits currentColor.
+    """
+    html = index()
+    assert 'class="flow-strip"' in html, "no workflow strip on the home"
+    strip = html[html.index('class="flow-strip"'):]
+    strip = strip[: strip.index("</section>")] if "</section>" in strip else strip
+    assert "<svg" in strip, "the strip must be drawn, not photographed"
+    assert ".png" not in strip and ".jpg" not in strip, (
+        "a raster diagram cannot follow the theme"
+    )
+    assert "currentColor" in strip, "the strip must inherit the text colour"
