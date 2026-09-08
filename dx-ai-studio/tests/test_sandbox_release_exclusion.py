@@ -104,16 +104,21 @@ def test_launcher_home_copy_and_cards_are_eight_module_release():
     assert "8 módulos" in html
     assert "8 个模块" in html
     assert "8 個模組" in html
-    cards = re.findall(r'class="orbital-card"[^>]+data-app="([^"]+)"[^>]+data-angle="([^"]+)"', html)
+    # The cards used to carry data-angle because the home laid them out on a
+    # ring at eight fixed bearings. The portal home lays them out in a grid, so
+    # the angle is gone — the ring survives only in the splash, which computes
+    # its own bearings from the module count. What this test is for is unchanged:
+    # eight modules, in order, with no ninth and no sandbox.
+    cards = re.findall(r'class="orbital-card"[^>]*\sdata-app="([^"]+)"', html)
     assert cards == [
-        ("app", "0"),
-        ("stream", "45"),
-        ("zoo", "90"),
-        ("compiler", "135"),
-        ("planner", "180"),
-        ("benchmark", "225"),
-        ("dx_monitor", "270"),
-        ("agent", "315"),
+        "app",
+        "stream",
+        "zoo",
+        "compiler",
+        "planner",
+        "benchmark",
+        "dx_monitor",
+        "agent",
     ]
 
 

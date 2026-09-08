@@ -25,10 +25,6 @@
     return (window.DXI18n && window.DXI18n.T) ? window.DXI18n.T(key) : key;
   }
 
-  function _lang() {
-    return (window.DXI18n && window.DXI18n.lang) || 'en';
-  }
-
   function _pick(models) {
     var out = [];
     FEATURED_TASKS.forEach(function (task) {
@@ -69,30 +65,46 @@
     return el;
   }
 
+  /* Held so a language change can redraw without going back to the zoo. */
+  var _models = null;
+
+  function _paint(models) {
+    var row = $('homeModelRow');
+    if (!row) return;
+    row.innerHTML = '';
+    _pick(models).forEach(function (m) { row.appendChild(_card(m)); });
+    var note = $('modelCount');
+    if (note) {
+      var tasks = {};
+      models.forEach(function (m) {
+        var t = (m.display || {}).task;
+        if (t) tasks[t] = 1;
+      });
+      note.textContent = models.length + ' ' + _t('models') + ' · ' +
+        Object.keys(tasks).length + ' ' + _t('tasks');
+    }
+  }
+
+  function _empty() {
+    var row = $('homeModelRow');
+    if (!row) return;
+    /* The zoo has not started. Say so rather than showing an empty shelf. */
+    row.innerHTML = '<p class="section-empty">' +
+      _t('Start DX Model Zoo to browse the catalogue') + '</p>';
+  }
+
   function renderModels() {
     var row = $('homeModelRow');
     if (!row) return;
+    if (_models) { _paint(_models); return; }
     fetch('/zoo/api/catalog').then(function (r) { return r.json(); })
       .then(function (data) {
         var models = (data && data.models) || (Array.isArray(data) ? data : []);
         if (!models.length) throw new Error('empty catalogue');
-        _pick(models).forEach(function (m) { row.appendChild(_card(m)); });
-        var note = $('modelCount');
-        if (note) {
-          var tasks = {};
-          models.forEach(function (m) {
-            var t = (m.display || {}).task;
-            if (t) tasks[t] = 1;
-          });
-          note.textContent = models.length + ' ' + _t('models') + ' · ' +
-            Object.keys(tasks).length + ' ' + _t('tasks');
-        }
+        _models = models;
+        _paint(models);
       })
-      .catch(function () {
-        /* The zoo has not started. Say so rather than showing an empty shelf. */
-        row.innerHTML = '<p class="section-empty">' +
-          _t('Start DX Model Zoo to browse the catalogue') + '</p>';
-      });
+      .catch(_empty);
   }
 
   /* Reads what the existing poll already fetched — no second request. */
@@ -121,9 +133,15 @@
     refreshModuleState();
     /* Piggyback on the health poll's cadence instead of adding one. */
     setInterval(refreshModuleState, 5000);
-    window.addEventListener('dx-lang-applied', function () {
-      refreshModuleState();
-    });
+    /* Both rows are built in JS, so data-i18n never reaches them: a language
+       change has to redraw. The model row repaints from the held catalogue
+       rather than asking the zoo again. */
+    if (window.DXI18n && DXI18n.onLangChange) {
+      DXI18n.onLangChange(function () {
+        renderModels();
+        refreshModuleState();
+      });
+    }
   }
 
   ns.renderHomeModels = renderModels;

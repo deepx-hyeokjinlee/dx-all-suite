@@ -28,6 +28,8 @@
   var _started = 0;
   var _tick = null;
   var _turn = null;          // { block, summary, commands, files, other }
+  var _turns = [];           // every turn, so a language change can relabel them
+  var _ended = '';           // 'done' | 'stopped' — the badge's resting text
   var _sessionDir = '';
 
   function $(id) { return document.getElementById(id); }
@@ -54,7 +56,11 @@
     block.appendChild(body);
     block.appendChild(summary);
     host.appendChild(block);
-    return { block: block, body: body, summary: summary, commands: 0, files: 0, other: 0 };
+    var turn = {
+      block: block, body: body, summary: summary, commands: 0, files: 0, other: 0
+    };
+    _turns.push(turn);
+    return turn;
   }
 
   function _say(text) {
@@ -68,6 +74,15 @@
   /* The adapter formats shell lines as `$ cmd` and file tools as `✓ action: path`.
      We own both ends, so counting by prefix is a contract, not a heuristic — and
      anything unrecognised falls back to a plain total rather than a wrong label. */
+  function _relabel(turn) {
+    var parts = [];
+    if (turn.files) parts.push(turn.files + ' ' + _t('files'));
+    if (turn.commands) parts.push(turn.commands + ' ' + _t('commands'));
+    if (!parts.length) parts.push(turn.other + ' ' + _t('activity'));
+    turn.summary.hidden = false;
+    turn.summary.textContent = '⤷ ' + parts.join(' · ');
+  }
+
   function _countActivity(text) {
     if (!_turn) _turn = _newTurn();
     if (!_turn) return;
@@ -75,16 +90,7 @@
     if (line.indexOf('$ ') === 0) _turn.commands += 1;
     else if (line.indexOf('✓') === 0) _turn.files += 1;
     else _turn.other += 1;
-
-    var parts = [];
-    if (_turn.files) parts.push(_turn.files + ' ' + _t('files'));
-    if (_turn.commands) parts.push(_turn.commands + ' ' + _t('commands'));
-    if (!parts.length) {
-      var n = _turn.other;
-      parts.push(n + ' ' + _t('activity'));
-    }
-    _turn.summary.hidden = false;
-    _turn.summary.textContent = '⤷ ' + parts.join(' · ');
+    _relabel(_turn);
   }
 
   function _status(text) {
@@ -178,8 +184,9 @@
      result; a session folder with a Run control is. */
   function _finish(ok) {
     _setBusy(false);
+    _ended = ok ? 'Completed' : 'Stopped';
     var badge = $('workBadge');
-    if (badge) badge.textContent = ok ? _t('Completed') : _t('Stopped');
+    if (badge) badge.textContent = _t(_ended);
     var foot = $('workArtefact');
     if (foot && _sessionDir) {
       $('workSessionPath').textContent = _sessionDir;
@@ -198,6 +205,8 @@
     $('workTerminalOut').innerHTML = '';
     _show($('workArtefact'), false);
     _turn = null;
+    _turns = [];
+    _ended = '';
     _sessionDir = '';
     _follow = true;
     _setBusy(true);
@@ -309,6 +318,20 @@
       });
     }
     _loadOptions();
+
+    /* What we wrote, we relabel: the badge and each turn's activity count. The
+       agent's own prose is not ours to translate — it answered in the language
+       the run was started in, and rewriting it would be a claim we cannot make.
+       The terminal is verbatim output and stays verbatim. */
+    if (window.DXI18n && DXI18n.onLangChange) {
+      DXI18n.onLangChange(function () {
+        var badge = $('workBadge');
+        if (badge && !_running && _ended) badge.textContent = _t(_ended);
+        _turns.forEach(function (turn) {
+          if (turn.commands || turn.files || turn.other) _relabel(turn);
+        });
+      });
+    }
   }
 
   ns.homeAgentStart = start;

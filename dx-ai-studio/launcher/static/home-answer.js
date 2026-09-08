@@ -191,6 +191,18 @@
     if (go) go.addEventListener('click', _handOffToAgent);
     var no = $('answerAgentCancel');
     if (no) no.addEventListener('click', function () { _show($('homeAnswer'), false); });
+
+    /* Every label in the panel is built in JS, so data-i18n never reaches it.
+       The sentence is kept on the panel, so a language change just answers it
+       again — the router is pure and the data is cached, so this is free. */
+    if (window.DXI18n && DXI18n.onLangChange) {
+      DXI18n.onLangChange(function () {
+        var panel = $('homeAnswer');
+        if (panel && !panel.hasAttribute('hidden') && panel.dataset.ask) {
+          ask(panel.dataset.ask);
+        }
+      });
+    }
   }
 
   ns.homeAsk = ask;
