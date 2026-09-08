@@ -287,12 +287,32 @@
       </ol>
     </section>
 
+    <!-- ── Models — the catalogue, on the front door ── -->
+    <section class="home-section" id="models">
+      <div class="section-head">
+        <h2 data-i18n="Models">Models</h2>
+        <span class="section-note" id="modelCount"></span>
+        <span class="section-grow"></span>
+        <a class="section-more" href="/zoo/" data-i18n="Browse all">Browse all</a>
+      </div>
+      <div class="model-row" id="homeModelRow"></div>
+    </section>
+
+    <!-- ── Studio — the eight modules ── -->
+    <section class="home-section" id="studio">
+      <div class="section-head">
+        <h2 data-i18n="Studio">Studio</h2>
+        <span class="section-note" data-i18n="8 modules · runs locally">8 modules · runs locally</span>
+      </div>
+    </section>
+
     <div class="studio-grid" id="studioGrid">
       <div class="orbital-card" data-app="app" tabindex="0">
         <span class="orbital-status" id="orbStatusApp"></span>
         <div class="orbital-icon">🖥️</div>
         <div class="orbital-name">DX App</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler
           </div>
@@ -308,7 +328,8 @@
         <span class="orbital-status" id="orbStatusStream"></span>
         <div class="orbital-icon">🎬</div>
         <div class="orbital-name">DX Stream</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline
           </div>
@@ -324,7 +345,8 @@
         <span class="orbital-status" id="orbStatusZoo"></span>
         <div class="orbital-icon">🧬</div>
         <div class="orbital-name">DX Model Zoo</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="340 AI model catalog">340 AI model catalog</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="340 AI model catalog">340 AI model catalog
           </div>
@@ -340,7 +362,8 @@
         <span class="orbital-status" id="orbStatusCompiler"></span>
         <div class="orbital-icon">⚙️</div>
         <div class="orbital-name">DX Compiler</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI
           </div>
@@ -356,7 +379,8 @@
         <span class="orbital-status" id="orbStatusPlanner"></span>
         <div class="orbital-icon">💰</div>
         <div class="orbital-name">DX EdgeGuide</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis
           </div>
@@ -372,7 +396,8 @@
         <span class="orbital-status" id="orbStatusBenchmark"></span>
         <div class="orbital-icon">📊</div>
         <div class="orbital-name">DX Benchmark</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="Hardware performance benchmark">Hardware performance benchmark</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="Hardware performance benchmark">Hardware performance benchmark
           </div>
@@ -388,7 +413,8 @@
         <span class="orbital-status" id="orbStatusMonitor"></span>
         <div class="orbital-icon">📡</div>
         <div class="orbital-name">DX Monitor</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring
           </div>
@@ -404,7 +430,8 @@
         <span class="orbital-status" id="orbStatusAgent"></span>
         <div class="orbital-icon">🤖</div>
         <div class="orbital-name">DX Agent Dev</div>
-        <div class="orbital-port">:—</div>
+        <div class="card-desc" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands</div>
+        <div class="card-state" data-role="state">—</div>
         <div class="orbital-detail">
           <div class="detail-title" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands
           </div>
@@ -434,6 +461,51 @@
         </div>
       </div>
     </div>
+
+    <!-- ── Ecosystem — the frameworks that run on DEEPX ── -->
+    <section class="home-section" id="ecosystem">
+      <div class="section-head">
+        <h2 data-i18n="Ecosystem">Ecosystem</h2>
+        <span class="section-note" data-i18n="frameworks that run on DEEPX">frameworks that run on DEEPX</span>
+        <span class="section-grow"></span>
+        <button type="button" class="section-more" onclick="openEcosystemInfo()" data-i18n="See partners">See partners</button>
+      </div>
+      <div class="eco-row">
+        <span class="eco-logo">Ultralytics</span>
+        <span class="eco-logo">Baidu</span>
+        <span class="eco-logo">ONNX</span>
+        <span class="eco-logo">GStreamer</span>
+        <span class="eco-logo">PyTorch</span>
+        <span class="eco-logo">OpenCV</span>
+      </div>
+    </section>
+
+    <!-- ── Solutions — where DX-M1 is deployed ── -->
+    <section class="home-section" id="solutions">
+      <div class="section-head">
+        <h2 data-i18n="Solutions">Solutions</h2>
+        <span class="section-note" data-i18n="where DX-M1 is deployed">where DX-M1 is deployed</span>
+        <span class="section-grow"></span>
+        <button type="button" class="section-more" onclick="openPlatformInfo()" data-i18n="Explore DX AI Studio">Explore DX AI Studio</button>
+      </div>
+      <div class="vertical-row">
+        <article class="vertical-card"><h3 data-i18n="Smart City">Smart City</h3>
+          <p data-i18n="multi-channel CCTV analytics">multi-channel CCTV analytics</p></article>
+        <article class="vertical-card"><h3 data-i18n="Smart Mobility">Smart Mobility</h3>
+          <p data-i18n="in-vehicle perception">in-vehicle perception</p></article>
+        <article class="vertical-card"><h3 data-i18n="Retail">Retail</h3>
+          <p data-i18n="shelf and footfall vision">shelf and footfall vision</p></article>
+        <article class="vertical-card"><h3 data-i18n="Industrial">Industrial</h3>
+          <p data-i18n="defect and safety inspection">defect and safety inspection</p></article>
+      </div>
+    </section>
+
+    <section class="home-section" id="resources">
+      <div class="section-head">
+        <h2 data-i18n="Resources">Resources</h2>
+        <span class="section-note" data-i18n="docs, downloads and the SDK library">docs, downloads and the SDK library</span>
+      </div>
+    </section>
 
     <!-- ── Physical AI Ecosystem Poster (left side; mirrors the right platform poster) ── -->
     <div class="landing-poster landing-poster--left" id="ecosystemPoster" role="button" tabindex="0" data-i18n-title="DEEPX Physical AI ecosystem">
@@ -672,6 +744,25 @@
   <script>
   window._DX_I18N_DICT = {
     // ── 포털 홈 (2026-09 재개편) ──
+    'Browse all': { ko:'전체 보기', ja:'すべて見る', es:'Ver todo', 'zh-CN':'查看全部', 'zh-TW':'檢視全部' },
+    'tasks': { ko:'개 태스크', ja:'件のタスク', es:'tareas', 'zh-CN':'类任务', 'zh-TW':'類任務' },
+    '8 modules · runs locally': { ko:'모듈 8개 · 로컬 실행', ja:'8モジュール · ローカル実行', es:'8 módulos · se ejecuta localmente', 'zh-CN':'8 个模块 · 本地运行', 'zh-TW':'8 個模組 · 本機執行' },
+    'Start DX Model Zoo to browse the catalogue': { ko:'카탈로그를 보려면 DX Model Zoo를 시작하세요', ja:'カタログを見るには DX Model Zoo を起動してください', es:'Inicie DX Model Zoo para ver el catálogo', 'zh-CN':'启动 DX Model Zoo 以浏览目录', 'zh-TW':'啟動 DX Model Zoo 以瀏覽目錄' },
+    'ready': { ko:'준비됨', ja:'準備完了', es:'listo', 'zh-CN':'就绪', 'zh-TW':'就緒' },
+    'not running': { ko:'실행 중 아님', ja:'未起動', es:'no iniciado', 'zh-CN':'未运行', 'zh-TW':'未執行' },
+    'Ecosystem': { ko:'에코시스템', ja:'エコシステム', es:'Ecosistema', 'zh-CN':'生态', 'zh-TW':'生態' },
+    'frameworks that run on DEEPX': { ko:'DEEPX 위에서 도는 프레임워크', ja:'DEEPX 上で動くフレームワーク', es:'frameworks que corren sobre DEEPX', 'zh-CN':'运行在 DEEPX 上的框架', 'zh-TW':'執行在 DEEPX 上的框架' },
+    'See partners': { ko:'파트너 보기', ja:'パートナーを見る', es:'Ver socios', 'zh-CN':'查看合作伙伴', 'zh-TW':'檢視合作夥伴' },
+    'where DX-M1 is deployed': { ko:'DX-M1이 쓰이는 곳', ja:'DX-M1 が使われる現場', es:'dónde se despliega DX-M1', 'zh-CN':'DX-M1 的落地场景', 'zh-TW':'DX-M1 的落地場景' },
+    'Smart City': { ko:'스마트시티', ja:'スマートシティ', es:'Ciudad inteligente', 'zh-CN':'智慧城市', 'zh-TW':'智慧城市' },
+    'multi-channel CCTV analytics': { ko:'다채널 CCTV 분석', ja:'マルチチャンネルCCTV解析', es:'analítica CCTV multicanal', 'zh-CN':'多路 CCTV 分析', 'zh-TW':'多路 CCTV 分析' },
+    'Smart Mobility': { ko:'스마트 모빌리티', ja:'スマートモビリティ', es:'Movilidad inteligente', 'zh-CN':'智慧出行', 'zh-TW':'智慧移動' },
+    'in-vehicle perception': { ko:'차량 내 인지', ja:'車載パーセプション', es:'percepción a bordo', 'zh-CN':'车载感知', 'zh-TW':'車載感知' },
+    'Retail': { ko:'리테일', ja:'リテール', es:'Retail', 'zh-CN':'零售', 'zh-TW':'零售' },
+    'shelf and footfall vision': { ko:'매대·유동인구 비전', ja:'棚と来店客のビジョン', es:'visión de estantería y afluencia', 'zh-CN':'货架与客流视觉', 'zh-TW':'貨架與客流視覺' },
+    'Industrial': { ko:'산업', ja:'産業', es:'Industrial', 'zh-CN':'工业', 'zh-TW':'工業' },
+    'defect and safety inspection': { ko:'결함·안전 검사', ja:'欠陥と安全の検査', es:'inspección de defectos y seguridad', 'zh-CN':'缺陷与安全检测', 'zh-TW':'缺陷與安全檢測' },
+    'docs, downloads and the SDK library': { ko:'문서 · 다운로드 · SDK 라이브러리', ja:'ドキュメント・ダウンロード・SDKライブラリ', es:'documentación, descargas y biblioteca SDK', 'zh-CN':'文档、下载与 SDK 库', 'zh-TW':'文件、下載與 SDK 程式庫' },
     'Agent Console': { ko:'에이전트 콘솔', ja:'エージェントコンソール', es:'Consola del agente', 'zh-CN':'智能体控制台', 'zh-TW':'代理程式主控臺' },
     'Terminal': { ko:'터미널', ja:'ターミナル', es:'Terminal', 'zh-CN':'终端', 'zh-TW':'終端機' },
     'Follow': { ko:'따라가기', ja:'追従', es:'Seguir', 'zh-CN':'自动跟随', 'zh-TW':'自動跟隨' },
@@ -1409,6 +1500,7 @@
   <script src="/home-router.js"></script>
   <script src="/home-answer.js"></script>
   <script src="/home-console.js"></script>
+  <script src="/home-sections.js"></script>
   <script src="/launcher.js"></script>
   <script src="/tutorial.js"></script>
 </body>

@@ -1995,6 +1995,98 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 @media (max-width: 768px) { .answer-routes { grid-template-columns: 1fr; } }
 
+/* ─── Home sections ───────────────────────────────────
+   섹션 하나가 곧 nav 하나다. 모델 348개는 이 제품에서 그림이 있는
+   유일한 자산인데 한 단계 안쪽에 있었다. */
+.home-section {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto var(--sp-5);
+  padding-inline: var(--sp-5);
+  box-sizing: border-box;
+  z-index: 6;
+}
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+.section-head h2 { margin: 0; font-size: var(--fs-xl); font-weight: 800; letter-spacing: -.018em; }
+.section-note { font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-faint); }
+.section-grow { flex: 1; }
+.section-more {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.section-empty { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); }
+
+.model-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--sp-3); }
+.model-card {
+  display: block;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-panel);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+.model-card:hover { border-color: var(--accent); }
+.model-thumb { display: block; height: 54px; background: var(--surface-raised); }
+.model-body { display: block; padding: 9px 10px; }
+.model-name { display: block; font-weight: 700; font-size: var(--fs-sm); color: var(--text-primary); }
+.model-badges { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
+.mb { font-size: var(--fs-2xs); font-weight: 600; border-radius: var(--radius-xs); padding: 1px 6px; }
+.mb-task { background: var(--accent-dim); color: var(--accent); }
+.mb-q { background: var(--control-ring); color: var(--text-secondary); }
+.model-spec { display: block; margin-top: 5px; font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-faint); }
+
+/* 모듈 카드 — 이름만 있는 타일은 아이콘 목록이지 대시보드가 아니다 */
+.card-desc { font-size: var(--fs-xs); color: var(--text-secondary); line-height: 1.5; margin-top: 4px; }
+.card-state { margin-top: 6px; font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-faint); }
+.card-state.is-alive { color: var(--status-ok); }
+
+.eco-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-2); }
+.eco-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-panel);
+  font-weight: 700;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+.vertical-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-3); }
+.vertical-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-panel);
+  padding: 14px 15px;
+}
+.vertical-card h3 { margin: 0; font-size: var(--fs-base); font-weight: 700; }
+.vertical-card p { margin: 4px 0 0; font-size: var(--fs-xs); color: var(--text-muted); }
+
+@media (max-width: 768px) {
+  .model-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .eco-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .vertical-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .model-row, .vertical-row { grid-template-columns: 1fr; }
+  .eco-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* ─── Working view ────────────────────────────────────
    왼쪽은 에이전트가 말한 것, 오른쪽은 실제로 한 것. 코드·로그·출력이
    떨어지는 자리가 가장 넓어야 하므로 62 를 준다. */

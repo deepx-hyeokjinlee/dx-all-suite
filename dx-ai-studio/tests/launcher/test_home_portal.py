@@ -262,6 +262,7 @@ def test_module_cards_say_what_they_are():
         "every module card needs a sentence saying what it is for"
     )
     assert ":—" not in grid, "a placeholder port is not module state"
+    assert grid.count('data-role="state"') >= 8, "each card must have a state line"
 
 
 def test_ecosystem_and_solutions_surface_on_the_home():
