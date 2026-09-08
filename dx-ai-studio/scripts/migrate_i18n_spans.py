@@ -41,7 +41,13 @@ MODULES = {
     "launcher": ("launcher", "launcher/static/index.html"),
 }
 
-_ONE = r'<span class="(ko|ja|zh-CN|zh-TW|en|es)">((?:(?!</?span).)*?)</span>'
+# 언어 클래스는 class 안 어디에 있어도 언어 span 이다.
+# class="ko" 만 보던 시절엔 launcher 의 `class="deepx-link-label ko"` 9뭉치가
+# 통째로 안 보였다 — 게이트가 0 을 보고하는 동안 54개 span 이 살아 있었다.
+_ONE = (
+    r'<span class="(?:[^"]*\s)?(ko|ja|zh-CN|zh-TW|en|es)(?:\s[^"]*)?">'
+    r'((?:(?!</?span).)*?)</span>'
+)
 # 첫 span 앞의 공백은 먹지 않는다 — "🎬 <group>" 의 그 한 칸은 화면에 보인다.
 # span 사이의 공백은 먹는다 — 보이는 span 은 하나뿐이라 앞뒤 공백으로 접힌다.
 _GROUP = re.compile(_ONE + r"(?:\s*" + _ONE + r")+", re.S)
