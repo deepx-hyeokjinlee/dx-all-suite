@@ -104,18 +104,24 @@ def test_chrome_selectors_carry_no_literal_colour():
 # the top bar and a ring of tiles below it. Every other surface in the studio
 # navigates from one place; the home was the exception.
 
-NAV_SECTIONS = ("Home", "Models", "Studio", "Solutions", "Resources")
-
-
 def index() -> str:
     return INDEX.read_text(encoding="utf-8")
 
 
-def test_portal_nav_exists_with_the_agreed_sections():
+def test_every_nav_item_points_at_something_that_exists():
+    """The nav named five sections; the workspace has three surfaces.
+
+    Asserting a fixed list is how a nav ends up pointing at anchors that were
+    deleted — which is exactly what happened when Models, Solutions and
+    Ecosystem left the home. Assert the link instead: whatever the nav offers
+    must resolve to an id in this document.
+    """
     html = index()
     assert 'class="portal-nav"' in html, "the home has no horizontal nav"
-    for section in NAV_SECTIONS:
-        assert f'data-nav="{section.lower()}"' in html, f"nav is missing {section}"
+    targets = re.findall(r'class="portal-nav-item[^"]*"[^>]*href="#([\w-]+)"', html)
+    assert targets, "the nav has no items"
+    for target in targets:
+        assert f'id="{target}"' in html, f"nav points at #{target}, which is not on the page"
 
 
 def test_the_duplicate_dot_strip_is_gone():
@@ -153,13 +159,47 @@ def test_the_ring_left_the_resting_home():
 # read. The hero says one thing and offers one input.
 
 
-def test_hero_leads_with_a_prompt():
+def test_the_prompt_is_the_first_thing_in_the_work_column():
+    """The hero is gone; the command line took its job.
+
+    A 38px headline and a two-line subtitle were spending the top of a local
+    app's work surface on a pitch. The placeholder says the same thing in the
+    place you would type it.
+    """
     html = index()
-    assert 'class="home-hero"' in html, "the home has no hero"
-    assert 'id="homeAsk"' in html, (
-        "the hero must offer the input — a launcher whose front door is a menu "
-        "makes you find the door first"
+    assert 'class="home-hero"' not in html, "the marketing hero is back"
+    main = html[html.index('class="ws-main"'):]
+    assert main.index('id="homeAsk"') < main.index('id="studioGrid"'), (
+        "the prompt must come before the module grid"
     )
+    ask = main[main.index('id="homeAsk"'):][:400]
+    assert "placeholder" in ask, "an empty box with no example is a blank stare"
+
+
+def test_the_modules_are_above_the_fold():
+    """The only reason to open a launcher is to launch something.
+
+    The previous home stacked seven full-width sections and put the eight
+    module cards fourth, two scrolls down. In the workspace they sit directly
+    under the command line, and everything that is not a tool is below both
+    columns.
+    """
+    html = index()
+    ws = html.index('class="workspace"')
+    grid = html.index('id="studioGrid"')
+    foot = html.index('class="ws-foot"')
+    assert ws < grid < foot
+    for gone in ('id="models"', 'id="ecosystem"', 'id="solutions"'):
+        assert gone not in html, f"{gone} is a page section, not a work surface"
+
+
+def test_the_state_column_yields_while_the_agent_runs():
+    """The working view was asked for at full width, and it gets it."""
+    css = style()
+    assert "grid-template-columns" in rule_body(css, ".workspace.is-working")
+    assert "display: none" in rule_body(css, ".workspace.is-working .ws-side")
+    js = (ROOT / "launcher" / "static" / "home-console.js").read_text(encoding="utf-8")
+    assert "is-working" in js, "nothing tells the workspace a run has started"
 
 
 def test_hero_never_shows_an_empty_box():
@@ -189,9 +229,9 @@ def test_workflow_strip_is_drawable_in_both_themes():
     inherits currentColor.
     """
     html = index()
-    assert 'class="flow-strip"' in html, "no workflow strip on the home"
-    strip = html[html.index('class="flow-strip"'):]
-    strip = strip[: strip.index("</section>")] if "</section>" in strip else strip
+    assert 'class="ws-flow"' in html, "no workflow strip on the home"
+    strip = html[html.index('class="ws-flow"'):]
+    strip = strip[: strip.index("</nav>")]
     assert "<svg" in strip, "the strip must be drawn, not photographed"
     assert ".png" not in strip and ".jpg" not in strip, (
         "a raster diagram cannot follow the theme"
@@ -242,15 +282,18 @@ def test_the_plan_is_shown_before_the_agent_runs():
 # ── the sections ────────────────────────────────────────────────
 
 
-def test_models_are_on_the_front_door():
-    """133 models is the thing with pictures, and it sat one click in.
+def test_the_catalogue_size_lands_on_the_card_that_opens_it():
+    """A five-across model row on the front door was a second Model Zoo.
 
-    The reference hub puts its catalogue directly under the hero. Ours had it
-    behind a tile that said nothing about what was inside.
+    348 models belong in the module built to browse them; what the front door
+    owes you is the number, on the card that goes there — and only when the zoo
+    is actually up to be counted.
     """
+    js = (ROOT / "launcher" / "static" / "home-sections.js").read_text(encoding="utf-8")
+    assert "/zoo/api/catalog" in js, "the count must come from the zoo, not a constant"
+    assert 'data-app="zoo"' in js, "the count has to land on the Model Zoo card"
     html = index()
-    assert 'id="models"' in html, "no models section on the home"
-    assert 'id="homeModelRow"' in html, "the model row has nowhere to render"
+    assert 'id="homeModelRow"' not in html, "the duplicate model row is back"
 
 
 def test_module_cards_say_what_they_are():
@@ -265,12 +308,22 @@ def test_module_cards_say_what_they_are():
     assert grid.count('data-role="state"') >= 8, "each card must have a state line"
 
 
-def test_ecosystem_and_solutions_surface_on_the_home():
-    """Both exist today — one behind the ring, one buried in About DEEPX."""
+def test_what_leaves_the_app_sits_below_the_work_surface():
+    """Ecosystem and Solutions were a partner list and four invented one-liners.
+
+    Neither is state and neither is a tool, so on a workspace they were filler
+    with the same visual weight as the modules. The links that do lead
+    somewhere real survive in one quiet band under both columns.
+    """
     html = index()
-    assert 'id="solutions"' in html
-    assert 'id="resources"' in html
-    assert 'class="eco-row"' in html
+    foot = html[html.index('class="ws-foot"'):]
+    assert 'class="deepx-links"' in foot, "the DEEPX links lost their home"
+    assert 'id="ecosystemPoster"' in foot and 'id="landingPoster"' in foot
+    assert 'id="replayBtn"' in foot, "the replay control was viewport-fixed; it is not now"
+    side = html[html.index('class="ws-side"'):html.index('class="ws-foot"')]
+    assert 'class="deepx-links"' not in side, (
+        "a state column that also carries a link directory is not a state column"
+    )
 
 
 def test_module_state_comes_from_the_existing_poll():

@@ -154,7 +154,6 @@ body:not(.hw-native-visible) #hw-float {
   display: none;
 }
 
-
 .logo {
   display: flex; align-items: center; gap: 10px;
   cursor: pointer;
@@ -549,10 +548,6 @@ body:not(.hw-native-visible) #hw-float {
 
 /* ── Replay Button ── */
 .replay-btn {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  z-index: 50;
   display: flex;
   align-items: center;
   gap: var(--sp-2);
@@ -1636,104 +1631,147 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   .landing-particle { animation: none; opacity: 0.3; }
 }
 
-/* ─── Home Hero ───────────────────────────────────────
-   링 가운데의 "DEEPX / AI Studio / 8 Modules" 는 마케팅 콜라주 뒤에서
-   같은 깊이로 경쟁하다 둘 다 안 읽혔다. 히어로는 한 가지만 말하고
-   입력 하나를 내민다. */
-.home-hero {
+/* ─── Workspace ────────────────────────────────────────
+   이 화면을 여는 사람은 읽으러 온 게 아니라 실행하러 온다. 이전 홈은
+   전폭 섹션 일곱 개를 세로로 쌓았고, 그래서 유일한 실행 대상인 모듈
+   여덟 개가 스크롤 두 번 아래에 있었다. 왼쪽은 할 수 있는 것, 오른쪽은
+   지금 사실인 것. 한 화면에 끝난다. */
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: var(--sp-6);
   width: 100%;
-  max-width: 760px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: var(--sp-6) var(--sp-5) var(--sp-5);
+  padding: var(--sp-6) var(--sp-5) var(--sp-4);
   box-sizing: border-box;
-  text-align: center;
-  z-index: 6;
+  align-items: start;
 }
-.hero-claim {
-  margin: 0;
-  font-size: clamp(24px, 3.4vw, 38px);
-  font-weight: 800;
-  letter-spacing: -.022em;
-  line-height: 1.12;
-  color: var(--text-primary);
-  text-wrap: balance;
-}
-.hero-sub {
-  margin: var(--sp-3) auto 0;
-  max-width: 56ch;
-  font-size: var(--fs-md);
-  color: var(--text-secondary);
-}
+/* 에이전트가 도는 동안엔 작업 뷰가 화면 전체를 갖는다 — 상태 패널은
+   그때 볼 것이 아니다. */
+.workspace.is-working { grid-template-columns: minmax(0, 1fr); }
+.workspace.is-working .ws-side { display: none; }
+.ws-main { min-width: 0; display: flex; flex-direction: column; gap: var(--sp-5); }
+
+/* ── the command line ── */
 .home-ask {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  margin: var(--sp-5) auto 0;
-  padding: 10px 12px;
+  padding: 11px 13px;
   background: var(--surface-panel);
-  border: 1.5px solid var(--accent);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 0 0 4px var(--control-ring);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
 }
-.ask-icon { color: var(--accent); flex-shrink: 0; }
+.home-ask:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--control-ring); }
+.ask-icon { color: var(--text-faint); flex-shrink: 0; }
 .ask-input {
-  flex: 1 1 auto;
-  min-width: 0;
-  border: 0;
-  background: transparent;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: var(--fs-md);
+  flex: 1 1 auto; min-width: 0; border: 0; background: transparent;
+  color: var(--text-primary); font-family: inherit; font-size: var(--fs-md);
 }
 .ask-input:focus { outline: none; }
 .ask-go {
-  flex-shrink: 0;
-  border: 0;
-  border-radius: var(--radius-sm);
-  padding: 7px 14px;
-  background: var(--accent);
-  color: var(--text-on-accent);
-  font-family: inherit;
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  cursor: pointer;
+  flex-shrink: 0; border: 0; border-radius: var(--radius-sm); padding: 7px 15px;
+  background: var(--accent); color: var(--text-on-accent);
+  font-family: inherit; font-weight: 700; font-size: var(--fs-sm); cursor: pointer;
 }
-/* 빈 입력창은 멍한 시선이다 — 예시가 문법을 가르치고 한 번에 실행한다 */
-.ask-chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--sp-2);
-  margin-top: var(--sp-3);
-}
+.ask-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: calc(var(--sp-3) - var(--sp-5)); }
 .ask-chip {
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-pill);
-  padding: 5px 13px;
-  background: var(--surface-panel);
-  color: var(--text-secondary);
-  font-family: inherit;
-  font-size: var(--fs-xs);
-  cursor: pointer;
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-pill);
+  padding: 4px 11px; background: transparent; color: var(--text-muted);
+  font-family: inherit; font-size: var(--fs-xs); cursor: pointer;
 }
-.ask-chip:hover { border-style: solid; background: var(--accent-dim); }
-.hero-facts {
+.ask-chip:hover { background: var(--surface-hover); color: var(--text-primary); }
+
+/* ── blocks ── */
+.ws-block-head { display: flex; align-items: baseline; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.ws-block-head h2,
+.ws-panel h3 {
+  margin: 0; font-size: var(--fs-xs); font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--text-faint);
+}
+.ws-count { font-size: var(--fs-xs); color: var(--text-muted); }
+
+/* ── the path, as one line ── */
+.ws-flow { padding-top: var(--sp-2); }
+.ws-flow .flow-row {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: var(--sp-2) var(--sp-4); list-style: none; margin: 0; padding: 0;
+}
+.ws-flow .flow-node {
+  position: relative; display: flex; align-items: center; gap: 7px;
+  border: 0; background: none; padding: 0; color: var(--text-faint);
+}
+.ws-flow .flow-node svg { width: 14px; height: 14px; }
+.ws-flow .flow-node b { color: var(--text-muted); font-size: var(--fs-xs); font-weight: 600; }
+.ws-flow .flow-node span { display: none; }
+.ws-flow .flow-node:not(:last-child)::after {
+  content: ''; position: absolute; right: calc(var(--sp-4) / -2 - 2px); top: 50%;
+  width: 5px; height: 5px;
+  border-right: 1.5px solid var(--border-strong);
+  border-top: 1.5px solid var(--border-strong);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+/* ── the state column ── */
+.ws-side { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
+.ws-panel {
+  padding: var(--sp-4); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius); background: var(--surface-panel);
+}
+.ws-panel h3 { margin-bottom: var(--sp-3); }
+.ws-device { margin: 0 0 var(--sp-3); font-size: var(--fs-base); font-weight: 700; color: var(--text-muted); }
+.ws-device.is-live { color: var(--status-ok); }
+.ws-facts { margin: 0; display: flex; flex-direction: column; gap: 5px; }
+.ws-facts > div { display: flex; justify-content: space-between; gap: var(--sp-3); }
+.ws-facts dt { font-size: var(--fs-2xs); color: var(--text-faint); }
+.ws-facts dd { margin: 0; font-size: var(--fs-2xs); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.ws-running { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ws-running li { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); color: var(--text-secondary); }
+.ws-running li::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--status-ok); flex-shrink: 0;
+}
+.ws-running li.is-none { color: var(--text-faint); }
+.ws-running li.is-none::before { background: var(--text-faint); }
+
+/* Learn holds the two launcher views and nothing else. Everything that leaves
+   the app — docs, downloads, GitHub — went to .ws-foot: a state column that
+   also carries a link directory is not a state column. */
+.ws-side .about-book-row { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
+.ws-side .about-book-card { padding: var(--sp-3); }
+
+/* ── below the work surface ── */
+.ws-foot {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--sp-5) var(--sp-5) 0;
+  box-sizing: border-box;
+  border-top: 1px solid var(--border-subtle);
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--sp-2);
-  margin-top: var(--sp-4);
+  flex-direction: column;
+  gap: var(--sp-4);
 }
-.hero-chip {
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-pill);
-  padding: 3px 10px;
-  font-variant-numeric: tabular-nums;
-  font-size: var(--fs-2xs);
-  color: var(--text-muted);
+.ws-foot .deepx-links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px var(--sp-4); }
+.ws-foot .deepx-link { padding: 7px 0; background: none; border: 0; font-size: var(--fs-xs); }
+.ws-foot .deepx-link:hover { background: none; color: var(--accent); }
+.ws-foot .poster-row { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 620px; margin: 0; }
+.ws-foot .landing-poster img { height: 108px; }
+.ws-foot .replay-btn { align-self: flex-start; }
+@media (max-width: 768px) {
+  .ws-foot .deepx-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-.hero-chip.is-live { color: var(--status-ok); border-color: var(--status-ok); }
-.hero-chip.is-absent { color: var(--text-faint); }
+
+@media (max-width: 1100px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ─── Home Hero ───────────────────────────────────────
+   링 가운데의 "DEEPX / AI Studio / 8 Modules" 는 마케팅 콜라주 뒤에서
+   같은 깊이로 경쟁하다 둘 다 안 읽혔다. 히어로는 한 가지만 말하고
+   입력 하나를 내민다. */
+/* 빈 입력창은 멍한 시선이다 — 예시가 문법을 가르치고 한 번에 실행한다 */
 
 /* ─── Answered state ──────────────────────────────────
    프롬프트가 이해한 것과 갈 수 있는 곳. 에이전트는 여기 카드로 끼지
@@ -1859,109 +1897,26 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 /* ─── Home sections ───────────────────────────────────
    섹션 하나가 곧 nav 하나다. 모델 348개는 이 제품에서 그림이 있는
    유일한 자산인데 한 단계 안쪽에 있었다. */
-.home-section {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto var(--sp-5);
-  padding-inline: var(--sp-5);
-  box-sizing: border-box;
-  z-index: 6;
-}
-.section-head {
-  display: flex;
-  align-items: baseline;
-  gap: var(--sp-3);
-  margin-bottom: var(--sp-3);
-  flex-wrap: wrap;
-}
 /* A heading has to outrank the paragraph under it. At --fs-xl beside a
    monospace note these read as debug output, not as sections. */
-.section-head h2 {
-  margin: 0;
-  font-size: var(--fs-2xl);
-  font-weight: 700;
-  letter-spacing: -.02em;
-  color: var(--text-primary);
-}
-.section-note { font-size: var(--fs-sm); color: var(--text-muted); }
-.section-grow { flex: 1; }
-.section-more {
-  border: 0;
-  background: none;
-  padding: 0;
-  font-family: inherit;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: var(--accent);
-  text-decoration: none;
-  cursor: pointer;
-}
-.section-empty { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); }
-
-.model-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--sp-3); }
-.model-row.is-empty { display: block; }
-.model-card {
-  display: block;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
-  background: var(--surface-panel);
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-}
-.model-card:hover { border-color: var(--accent); }
-.model-thumb { display: block; height: 54px; background: var(--surface-raised); }
-.model-body { display: block; padding: 9px 10px; }
-.model-name { display: block; font-weight: 700; font-size: var(--fs-sm); color: var(--text-primary); }
-.model-badges { display: flex; gap: 4px; margin-top: 5px; flex-wrap: wrap; }
-.mb { font-size: var(--fs-2xs); font-weight: 600; border-radius: var(--radius-xs); padding: 1px 6px; }
-.mb-task { background: var(--accent-dim); color: var(--accent); }
-.mb-q { background: var(--control-ring); color: var(--text-secondary); }
-.model-spec {
-  display: block; margin-top: 5px;
-  font-size: var(--fs-2xs); font-variant-numeric: tabular-nums;
-  color: var(--text-faint);
-}
 
 /* 모듈 카드 — 이름만 있는 타일은 아이콘 목록이지 대시보드가 아니다 */
 .card-desc { font-size: var(--fs-xs); color: var(--text-secondary); line-height: 1.5; margin-top: 4px; }
-/* State is the one thing on this card worth a colour. */
+/* The bottom line of a module card is the only thing on it that changes, and
+   it is either an invitation or a fact. Not running reads "start →" in accent;
+   running reads "ready" in the ok colour. */
 .card-state {
   margin-top: auto; padding-top: var(--sp-3);
-  font-size: var(--fs-2xs); font-weight: 600;
-  color: var(--text-faint);
+  font-size: var(--fs-xs); font-weight: 600;
+  color: var(--accent);
 }
+.card-state::after { content: ' \2192'; }
 .card-state.is-alive { color: var(--status-ok); }
-
-.eco-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); }
-.eco-logo {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 11px 13px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  background: var(--surface-panel);
-}
-.eco-logo b { font-size: var(--fs-sm); font-weight: 700; color: var(--text-primary); }
-.eco-logo span { font-size: var(--fs-2xs); color: var(--text-muted); }
-.vertical-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-3); }
-.vertical-card {
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
-  background: var(--surface-panel);
-  padding: 14px 15px;
-}
-.vertical-card h3 { margin: 0; font-size: var(--fs-base); font-weight: 700; }
-.vertical-card p { margin: 4px 0 0; font-size: var(--fs-xs); color: var(--text-muted); }
+.card-state.is-alive::after { content: ''; }
 
 @media (max-width: 768px) {
   .model-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .vertical-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 600px) {
-  .model-row, .vertical-row { grid-template-columns: 1fr; }
-  .eco-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* ─── Working view ────────────────────────────────────
@@ -2092,51 +2047,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 /* ─── Workflow strip ──────────────────────────────────
    ONNX 에서 실리콘까지가 이 제품이다. 래스터 다이어그램은 테마를
    못 따라가므로 currentColor 를 물려받는 인라인 SVG 로 그린다. */
-.flow-strip {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto var(--sp-5);
-  padding-inline: var(--sp-5);
-  box-sizing: border-box;
-  z-index: 6;
-}
 /* Five boxes in a row are five boxes; the chevrons are what make them a path. */
-.flow-row {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--sp-5);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.flow-node {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 12px 8px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
-  background: var(--surface-panel);
-  color: var(--text-muted);
-  text-align: center;
-}
-.flow-node b { color: var(--text-primary); font-size: var(--fs-sm); }
-.flow-node span { font-size: var(--fs-2xs); }
-.flow-node:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: calc(var(--sp-5) / -2 - 3px);
-  top: 50%;
-  width: 6px; height: 6px;
-  border-right: 1.5px solid var(--border-strong);
-  border-top: 1.5px solid var(--border-strong);
-  transform: translateY(-50%) rotate(45deg);
-}
-@media (max-width: 768px) {
-  .flow-node:not(:last-child)::after { display: none; }
-}
 @media (max-width: 768px) { .flow-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .flow-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
@@ -2625,7 +2536,6 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 
 /* Use-case images in platform info */
-
 
 /* Product/art image styles */
 .pi-product-img {

@@ -63,8 +63,9 @@ def test_landing_poster_cannot_stack_above_anything():
     It sat at right:10%, top:50%, z-index 4, 400px wide, with pointer-events
     juggled so clicks could reach the module cards behind it — and it was
     display:none below 1200px, so on a laptop it simply was not there. The
-    stack was the bug; the fix is that there is no stack. It is a card in
-    Resources, in flow, and the assertion is that it stays that way.
+    stack was the bug; the fix is that there is no stack. It is a card in the
+    band below the work surface, in flow, and the assertion is that it stays
+    that way.
     """
     css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
     poster = re.search(r"(?m)^\.landing-poster\s*\{(?P<body>[^}]*)\}", css)
@@ -76,14 +77,9 @@ def test_landing_poster_cannot_stack_above_anything():
     assert "pointer-events" not in body, "nothing to pass through any more"
 
     html = (ROOT / "launcher/static/index.html").read_text(encoding="utf-8")
-    resources = re.search(
-        r'<section class="home-section" id="resources">(?P<body>.*?)</section>',
-        html,
-        re.DOTALL,
-    )
-    assert resources is not None
-    assert 'id="landingPoster"' in resources.group("body")
-    assert 'id="ecosystemPoster"' in resources.group("body")
+    foot = html[html.index('class="ws-foot"'):]
+    assert 'id="landingPoster"' in foot
+    assert 'id="ecosystemPoster"' in foot
 
 
 def test_module_cards_need_no_javascript_to_be_placed():

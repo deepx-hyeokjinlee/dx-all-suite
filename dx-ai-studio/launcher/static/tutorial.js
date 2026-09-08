@@ -175,8 +175,8 @@
            dark panel with dark text. */
         .dxt-launcher-card {
           display: flex; align-items: center; gap: 12px;
-          width: 100%; max-width: 1100px;
-          margin: 0 auto var(--sp-5); box-sizing: border-box;
+          width: 100%; max-width: 1240px;
+          margin: var(--sp-5) auto 0; box-sizing: border-box;
           background: var(--surface-panel);
           border: 1px solid var(--border-subtle); border-radius: var(--radius);
           padding: 12px 16px; cursor: pointer;

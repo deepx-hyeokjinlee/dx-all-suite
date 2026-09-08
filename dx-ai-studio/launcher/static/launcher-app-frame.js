@@ -1086,18 +1086,18 @@
     fetch('/dx_monitor/api/hw_status').then(function(r) { return r.json(); }).then(function(hw) {
       var n = hw && hw.count ? hw.count : 0;
       if (hw && hw.available && n > 0) {
-        chip.className = 'hero-chip is-live';
+        chip.className = 'ws-device is-live';
         chip.textContent = 'DX-M1 · ' + n + (n === 1 ? ' device' : ' devices');
       } else if (hw && hw.mock) {
-        chip.className = 'hero-chip';
+        chip.className = 'ws-device';
         chip.textContent = 'DX-M1 · mock data';
       } else {
-        chip.className = 'hero-chip is-absent';
+        chip.className = 'ws-device';
         chip.textContent = 'DX-M1 · not detected';
       }
       chip.removeAttribute('data-i18n');
     }).catch(function() {
-      chip.className = 'hero-chip is-absent';
+      chip.className = 'ws-device';
       chip.textContent = 'DX-M1 · not detected';
       chip.removeAttribute('data-i18n');
     });

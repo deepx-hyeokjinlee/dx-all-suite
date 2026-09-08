@@ -167,6 +167,10 @@
     _running = on;
     var view = $('homeWork');
     if (view) view.classList.toggle('is-running', on);
+    /* The state column is not what you watch while the agent works — hand the
+       whole width to the transcript, which is what the split view is for. */
+    var ws = $('workspace');
+    if (ws) ws.classList.toggle('is-working', on);
     var badge = $('workBadge');
     if (badge) badge.classList.toggle('is-running', on);
     if (on) {

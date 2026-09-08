@@ -115,10 +115,8 @@
     </div>
     <nav class="portal-nav" id="portalNav" aria-label="Studio sections" data-i18n-aria-label="Studio sections">
       <a class="portal-nav-item is-current" data-nav="home" href="#home" aria-current="page" data-i18n="Home">Home</a>
-      <a class="portal-nav-item" data-nav="models" href="#models" data-i18n="Models">Models</a>
-      <a class="portal-nav-item" data-nav="studio" href="#studio" data-i18n="Studio">Studio</a>
-      <a class="portal-nav-item" data-nav="solutions" href="#solutions" data-i18n="Solutions">Solutions</a>
-      <a class="portal-nav-item" data-nav="resources" href="#resources" data-i18n="Resources">Resources</a>
+      <a class="portal-nav-item" data-nav="studio" href="#studio" data-i18n="Modules">Modules</a>
+      <a class="portal-nav-item" data-nav="resources" href="#resources" data-i18n="Learn">Learn</a>
     </nav>
     <div class="top-bar-center" id="navTabs">
       <!-- Tabs injected by JS when inside an app -->
@@ -135,272 +133,254 @@
   <main class="landing" id="landing">
 
     <!-- ── Hero — one claim, one input ── -->
-    <section class="home-hero" id="home">
-      <h1 class="hero-claim" data-i18n="Describe it. Run it on the NPU.">Describe it. Run it on the NPU.</h1>
-      <p class="hero-sub" data-i18n="Say what you want to build. The studio works out which module, model and pipeline it needs.">Say what you want to build. The studio works out which module, model and pipeline it needs.</p>
+    <!-- ── Workspace ─────────────────────────────────────────────────────
+         The home is a local app's work surface, not a page you read down.
+         Left is what you can do, right is what is true right now. It fits one
+         screen: the previous home stacked seven full-width sections and buried
+         the eight modules — the only reason to open this — below the fold. ── -->
+    <div class="workspace" id="workspace">
 
-      <form class="home-ask" id="homeAskForm" autocomplete="off">
-        <span class="ask-icon" aria-hidden="true">✦</span>
-        <input class="ask-input" id="homeAsk" type="text"
-               placeholder="4-channel CCTV, detect people, 30 FPS"
-               data-i18n-placeholder="4-channel CCTV, detect people, 30 FPS"
-               aria-label="Describe what you want to build" data-i18n-aria-label="Describe what you want to build">
-        <button class="ask-go" type="submit" data-i18n="Build it">Build it</button>
-      </form>
-
-      <div class="ask-chips" id="homeAskChips">
-        <button type="button" class="ask-chip" data-i18n="compile yolo26n to DXNN">compile yolo26n to DXNN</button>
-        <button type="button" class="ask-chip" data-i18n="pose estimation on webcam">pose estimation on webcam</button>
-        <button type="button" class="ask-chip" data-i18n="4-channel CCTV object detection">4-channel CCTV object detection</button>
-        <button type="button" class="ask-chip" data-i18n="segment a video file">segment a video file</button>
-      </div>
-
-      <div class="hero-facts">
-        <span class="hero-chip" id="heroDeviceChip" data-i18n="Checking DX-M1…">Checking DX-M1…</span>
-        <span class="hero-chip">DXNN SDK {{SDK_VERSION}}</span>
-        <span class="hero-chip" id="studioVersionHub"></span>
-        <span class="hero-chip" id="hubLauncherPort" data-i18n-title="Launcher gateway">:—</span>
-      </div>
-    </section>
-
-    <!-- ── Answer — what the prompt understood, and where it can go ── -->
-    <section class="home-answer" id="homeAnswer" hidden aria-live="polite">
-      <div class="answer-read" id="answerRead"></div>
-
-      <div class="answer-routes" id="answerRoutes"></div>
-
-      <!-- Matched: the agent steps back to one line -->
-      <p class="answer-escalate" id="answerEscalate" hidden>
-        <span class="esc-icon" aria-hidden="true">✦</span>
-        <span data-i18n="Not what you meant?">Not what you meant?</span>
-        <button type="button" class="esc-go" id="answerEscalateGo" data-i18n="Build it with the agent">Build it with the agent</button>
-      </p>
-
-      <!-- Unmatched: the agent is the answer, and says what it will do first -->
-      <div class="answer-plan" id="answerAgentPlan" hidden>
-        <div class="plan-head">
-          <span class="plan-kind" data-i18n="Build it">Build it</span>
-          <span class="plan-title" data-i18n="DX Agent Dev will write this">DX Agent Dev will write this</span>
-          <span class="plan-grow"></span>
-          <span class="plan-eta" id="answerAgentEta"></span>
+      <div class="ws-main" id="home">
+        <!-- One command line. The placeholder carries the claim the old
+             38px hero headline was carrying. -->
+        <form class="home-ask" id="homeAskForm" autocomplete="off">
+          <span class="ask-icon" aria-hidden="true">✦</span>
+          <input class="ask-input" id="homeAsk" type="text"
+                 placeholder="4-channel CCTV, detect people, 30 FPS"
+                 data-i18n-placeholder="4-channel CCTV, detect people, 30 FPS"
+                 aria-label="Describe what you want to build" data-i18n-aria-label="Describe what you want to build">
+          <button class="ask-go" type="submit" data-i18n="Build it">Build it</button>
+        </form>
+        <div class="ask-chips" id="homeAskChips">
+          <button type="button" class="ask-chip" data-i18n="compile yolo26n to DXNN">compile yolo26n to DXNN</button>
+          <button type="button" class="ask-chip" data-i18n="pose estimation on webcam">pose estimation on webcam</button>
+          <button type="button" class="ask-chip" data-i18n="4-channel CCTV object detection">4-channel CCTV object detection</button>
+          <button type="button" class="ask-chip" data-i18n="segment a video file">segment a video file</button>
         </div>
-        <ol class="plan-steps" id="answerAgentSteps"></ol>
-        <div class="plan-foot">
-          <button type="button" class="ask-go" id="answerAgentGo" data-i18n="Start the agent">Start the agent</button>
-          <button type="button" class="plan-alt" id="answerAgentCancel" data-i18n="Not now">Not now</button>
-        </div>
-      </div>
-    </section>
 
-    <!-- ── Working view — narration left, terminal right ── -->
-    <section class="home-work" id="homeWork" hidden>
-      <header class="work-top">
-        <span class="work-title" data-i18n="Agent Console">Agent Console</span>
-        <span class="work-badge" id="workBadge"></span>
-        <span class="work-grow"></span>
-        <span class="work-setup">
-          <select class="work-select" id="workAgent" aria-label="Agent" data-i18n-aria-label="Agent"></select>
-          <select class="work-select" id="workModel" aria-label="Model" data-i18n-aria-label="Model"></select>
-          <select class="work-select" id="workEffort" aria-label="Effort" data-i18n-aria-label="Effort">
-            <option value="medium">medium</option><option value="high">high</option>
-            <option value="low">low</option><option value="max">max</option>
-          </select>
-        </span>
-        <button type="button" class="work-edit" id="workSetupEdit" data-i18n="edit">edit</button>
-        <button type="button" class="work-stop" id="workStop" data-i18n="Stop">Stop</button>
-      </header>
 
-      <div class="work-split" id="workSplit">
-        <div class="work-narr" id="workNarration-wrap">
-          <p class="work-ask" id="workAsk"></p>
-          <div id="workNarration"></div>
-          <p class="work-status" id="workStatus"></p>
-          <div class="work-artefact" id="workArtefact" hidden>
-            <span class="art-kind" data-i18n="session">session</span>
-            <code id="workSessionPath"></code>
-            <button type="button" class="ask-go" id="workRunIt" data-i18n="Run it">Run it</button>
-            <button type="button" class="plan-alt" id="workOpenModule" data-i18n="Open in DX Agent Dev">Open in DX Agent Dev</button>
+        <section class="home-answer" id="homeAnswer" hidden aria-live="polite">
+          <div class="answer-read" id="answerRead"></div>
+
+          <div class="answer-routes" id="answerRoutes"></div>
+
+          <!-- Matched: the agent steps back to one line -->
+          <p class="answer-escalate" id="answerEscalate" hidden>
+            <span class="esc-icon" aria-hidden="true">✦</span>
+            <span data-i18n="Not what you meant?">Not what you meant?</span>
+            <button type="button" class="esc-go" id="answerEscalateGo" data-i18n="Build it with the agent">Build it with the agent</button>
+          </p>
+
+          <!-- Unmatched: the agent is the answer, and says what it will do first -->
+          <div class="answer-plan" id="answerAgentPlan" hidden>
+            <div class="plan-head">
+              <span class="plan-kind" data-i18n="Build it">Build it</span>
+              <span class="plan-title" data-i18n="DX Agent Dev will write this">DX Agent Dev will write this</span>
+              <span class="plan-grow"></span>
+              <span class="plan-eta" id="answerAgentEta"></span>
+            </div>
+            <ol class="plan-steps" id="answerAgentSteps"></ol>
+            <div class="plan-foot">
+              <button type="button" class="ask-go" id="answerAgentGo" data-i18n="Start the agent">Start the agent</button>
+              <button type="button" class="plan-alt" id="answerAgentCancel" data-i18n="Not now">Not now</button>
+            </div>
           </div>
-        </div>
-        <div class="work-term" id="workTerminal" hidden>
-          <div class="work-term-bar">
-            <span data-i18n="Terminal">Terminal</span>
+        </section>
+        <section class="home-work" id="homeWork" hidden>
+          <header class="work-top">
+            <span class="work-title" data-i18n="Agent Console">Agent Console</span>
+            <span class="work-badge" id="workBadge"></span>
             <span class="work-grow"></span>
-            <button type="button" class="term-btn is-on" id="workFollow" data-i18n="Follow">Follow</button>
-            <button type="button" class="term-btn" id="workCollapse" data-i18n="Collapse">Collapse</button>
+            <span class="work-setup">
+              <select class="work-select" id="workAgent" aria-label="Agent" data-i18n-aria-label="Agent"></select>
+              <select class="work-select" id="workModel" aria-label="Model" data-i18n-aria-label="Model"></select>
+              <select class="work-select" id="workEffort" aria-label="Effort" data-i18n-aria-label="Effort">
+                <option value="medium">medium</option><option value="high">high</option>
+                <option value="low">low</option><option value="max">max</option>
+              </select>
+            </span>
+            <button type="button" class="work-edit" id="workSetupEdit" data-i18n="edit">edit</button>
+            <button type="button" class="work-stop" id="workStop" data-i18n="Stop">Stop</button>
+          </header>
+
+          <div class="work-split" id="workSplit">
+            <div class="work-narr" id="workNarration-wrap">
+              <p class="work-ask" id="workAsk"></p>
+              <div id="workNarration"></div>
+              <p class="work-status" id="workStatus"></p>
+              <div class="work-artefact" id="workArtefact" hidden>
+                <span class="art-kind" data-i18n="session">session</span>
+                <code id="workSessionPath"></code>
+                <button type="button" class="ask-go" id="workRunIt" data-i18n="Run it">Run it</button>
+                <button type="button" class="plan-alt" id="workOpenModule" data-i18n="Open in DX Agent Dev">Open in DX Agent Dev</button>
+              </div>
+            </div>
+            <div class="work-term" id="workTerminal" hidden>
+              <div class="work-term-bar">
+                <span data-i18n="Terminal">Terminal</span>
+                <span class="work-grow"></span>
+                <button type="button" class="term-btn is-on" id="workFollow" data-i18n="Follow">Follow</button>
+                <button type="button" class="term-btn" id="workCollapse" data-i18n="Collapse">Collapse</button>
+              </div>
+              <div class="work-term-out" id="workTerminalOut"></div>
+            </div>
           </div>
-          <div class="work-term-out" id="workTerminalOut"></div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- ── Workflow — the path from a model file to silicon ── -->
-    <section class="flow-strip" aria-label="From ONNX to the NPU" data-i18n-aria-label="From ONNX to the NPU">
-      <ol class="flow-row">
-        <li class="flow-node">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>
-          </svg>
-          <b data-i18n="ONNX">ONNX</b><span data-i18n="PyTorch · TF">PyTorch · TF</span>
-        </li>
-        <li class="flow-node">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/>
-          </svg>
-          <b>dxcom</b><span data-i18n="quantize">quantize</span>
-        </li>
-        <li class="flow-node">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10h8M8 14h5"/>
-          </svg>
-          <b>.dxnn</b><span data-i18n="Q-Lite / Q-Pro">Q-Lite / Q-Pro</span>
-        </li>
-        <li class="flow-node">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/>
-            <path d="M8.2 11l7.6-4M8.2 13l7.6 4"/>
-          </svg>
-          <b data-i18n="Pipeline">Pipeline</b><span>GStreamer</span>
-        </li>
-        <li class="flow-node">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <rect x="7" y="7" width="10" height="10" rx="1.5"/>
-            <path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"/>
-          </svg>
-          <b>DX-M1</b><span data-i18n="on device">on device</span>
-        </li>
-      </ol>
-    </section>
+        <section class="ws-block" id="studio">
+          <div class="ws-block-head">
+            <h2 data-i18n="Modules">Modules</h2>
+            <span class="ws-count" id="moduleUpCount">—</span>
+          </div>
+          <div class="studio-grid" id="studioGrid">
+            <div class="orbital-card" data-app="app" tabindex="0">
+              <span class="orbital-status" id="orbStatusApp"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="14" cy="10" r="1.5"/></svg></div>
+              <div class="orbital-name">DX App</div>
+              <div class="card-desc" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
 
-    <!-- ── Models — the catalogue, on the front door ── -->
-    <section class="home-section" id="models">
-      <div class="section-head">
-        <h2 data-i18n="Models">Models</h2>
-        <span class="section-note" id="modelCount"></span>
-        <span class="section-grow"></span>
-        <a class="section-more" href="/zoo/" data-i18n="Browse all">Browse all</a>
-      </div>
-      <div class="model-row" id="homeModelRow"></div>
-    </section>
+            <div class="orbital-card" data-app="stream" tabindex="0">
+              <span class="orbital-status" id="orbStatusStream"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"/><circle cx="12" cy="10" r="2"/><path d="M4 18 Q8 14 12 16 Q16 18 20 14"/></svg></div>
+              <div class="orbital-name">DX Stream</div>
+              <div class="card-desc" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
 
-    <!-- ── Studio — the eight modules ── -->
-    <section class="home-section" id="studio">
-      <div class="section-head">
-        <h2 data-i18n="Studio">Studio</h2>
-        <span class="section-note" data-i18n="8 modules · runs locally">8 modules · runs locally</span>
-      </div>
+            <div class="orbital-card" data-app="zoo" tabindex="0">
+              <span class="orbital-status" id="orbStatusZoo"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+              <div class="orbital-name">DX Model Zoo</div>
+              <div class="card-desc" data-i18n="340 AI model catalog">340 AI model catalog</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
 
-    <div class="studio-grid" id="studioGrid">
-      <div class="orbital-card" data-app="app" tabindex="0">
-        <span class="orbital-status" id="orbStatusApp"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="14" cy="10" r="1.5"/></svg></div>
-        <div class="orbital-name">DX App</div>
-        <div class="card-desc" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler</div>
-        <div class="card-state" data-role="state">—</div>
-      </div>
+            <div class="orbital-card" data-app="compiler" tabindex="0">
+              <span class="orbital-status" id="orbStatusCompiler"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4 V8 M12 16 V20 M4 12 H8 M16 12 H20"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="orbital-name">DX Compiler</div>
+              <div class="card-desc" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
 
-      <div class="orbital-card" data-app="stream" tabindex="0">
-        <span class="orbital-status" id="orbStatusStream"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"/><circle cx="12" cy="10" r="2"/><path d="M4 18 Q8 14 12 16 Q16 18 20 14"/></svg></div>
-        <div class="orbital-name">DX Stream</div>
-        <div class="card-desc" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline</div>
-        <div class="card-state" data-role="state">—</div>
-      </div>
+            <div class="orbital-card" data-app="planner" tabindex="0">
+              <span class="orbital-status" id="orbStatusPlanner"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="6"/><line x1="18" y1="2" x2="18" y2="6"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/><path d="M20 12 L23 12"/></svg></div>
+              <div class="orbital-name">DX EdgeGuide</div>
+              <div class="card-desc" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
 
-      <div class="orbital-card" data-app="zoo" tabindex="0">
-        <span class="orbital-status" id="orbStatusZoo"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
-        <div class="orbital-name">DX Model Zoo</div>
-        <div class="card-desc" data-i18n="340 AI model catalog">340 AI model catalog</div>
-        <div class="card-state" data-role="state">—</div>
-      </div>
+            <div class="orbital-card" data-app="benchmark" tabindex="0">
+              <span class="orbital-status" id="orbStatusBenchmark"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M12 2 A10 10 0 0 1 22 12"/><path d="M12 2 A10 10 0 0 0 2 12"/><line x1="12" y1="12" x2="17" y2="7"/><circle cx="12" cy="12" r="2"/></svg></div>
+              <div class="orbital-name">DX Benchmark</div>
+              <div class="card-desc" data-i18n="Hardware performance benchmark">Hardware performance benchmark</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
 
-      <div class="orbital-card" data-app="compiler" tabindex="0">
-        <span class="orbital-status" id="orbStatusCompiler"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4 V8 M12 16 V20 M4 12 H8 M16 12 H20"/><circle cx="12" cy="12" r="3"/></svg></div>
-        <div class="orbital-name">DX Compiler</div>
-        <div class="card-desc" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI</div>
-        <div class="card-state" data-role="state">—</div>
-      </div>
+            <div class="orbital-card" data-app="dx_monitor" tabindex="0">
+              <span class="orbital-status" id="orbStatusMonitor"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M8 19h8M12 15v4"/><path d="M7 9l3 3 4-4 3 3"/></svg></div>
+              <div class="orbital-name">DX Monitor</div>
+              <div class="card-desc" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
 
-      <div class="orbital-card" data-app="planner" tabindex="0">
-        <span class="orbital-status" id="orbStatusPlanner"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="6"/><line x1="18" y1="2" x2="18" y2="6"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/><path d="M20 12 L23 12"/></svg></div>
-        <div class="orbital-name">DX EdgeGuide</div>
-        <div class="card-desc" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis</div>
-        <div class="card-state" data-role="state">—</div>
-      </div>
+            <div class="orbital-card" data-app="agent" tabindex="0">
+              <span class="orbital-status" id="orbStatusAgent"></span>
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></div>
+              <div class="orbital-name">DX Agent Dev</div>
+              <div class="card-desc" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands</div>
+              <div class="card-state" data-role="state">—</div>
+            </div>
+          </div>
+        </section>
 
-      <div class="orbital-card" data-app="benchmark" tabindex="0">
-        <span class="orbital-status" id="orbStatusBenchmark"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M12 2 A10 10 0 0 1 22 12"/><path d="M12 2 A10 10 0 0 0 2 12"/><line x1="12" y1="12" x2="17" y2="7"/><circle cx="12" cy="12" r="2"/></svg></div>
-        <div class="orbital-name">DX Benchmark</div>
-        <div class="card-desc" data-i18n="Hardware performance benchmark">Hardware performance benchmark</div>
-        <div class="card-state" data-role="state">—</div>
-      </div>
-
-      <div class="orbital-card" data-app="dx_monitor" tabindex="0">
-        <span class="orbital-status" id="orbStatusMonitor"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M8 19h8M12 15v4"/><path d="M7 9l3 3 4-4 3 3"/></svg></div>
-        <div class="orbital-name">DX Monitor</div>
-        <div class="card-desc" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring</div>
-        <div class="card-state" data-role="state">—</div>
+        <!-- The path, as one line. It was five bordered boxes taking the width
+             of the screen to say something you cannot click. -->
+        <nav class="ws-flow" aria-label="From ONNX to the NPU" data-i18n-aria-label="From ONNX to the NPU">
+          <ol class="flow-row">
+            <li class="flow-node">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>
+              </svg>
+              <b data-i18n="ONNX">ONNX</b><span data-i18n="PyTorch · TF">PyTorch · TF</span>
+            </li>
+            <li class="flow-node">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/>
+              </svg>
+              <b>dxcom</b><span data-i18n="quantize">quantize</span>
+            </li>
+            <li class="flow-node">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10h8M8 14h5"/>
+              </svg>
+              <b>.dxnn</b><span data-i18n="Q-Lite / Q-Pro">Q-Lite / Q-Pro</span>
+            </li>
+            <li class="flow-node">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/>
+                <path d="M8.2 11l7.6-4M8.2 13l7.6 4"/>
+              </svg>
+              <b data-i18n="Pipeline">Pipeline</b><span>GStreamer</span>
+            </li>
+            <li class="flow-node">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <rect x="7" y="7" width="10" height="10" rx="1.5"/>
+                <path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"/>
+              </svg>
+              <b>DX-M1</b><span data-i18n="on device">on device</span>
+            </li>
+          </ol>
+        </nav>
       </div>
 
-      <div class="orbital-card" data-app="agent" tabindex="0">
-        <span class="orbital-status" id="orbStatusAgent"></span>
-        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></div>
-        <div class="orbital-name">DX Agent Dev</div>
-        <div class="card-desc" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands</div>
-        <div class="card-state" data-role="state">—</div>
-      </div>
+      <aside class="ws-side" id="wsSide" aria-label="Studio state" data-i18n-aria-label="Studio state">
+        <section class="ws-panel">
+          <h3 data-i18n="Device">Device</h3>
+          <p class="ws-device" id="heroDeviceChip" data-i18n="Checking DX-M1…">Checking DX-M1…</p>
+          <dl class="ws-facts">
+            <div><dt data-i18n="DXNN SDK">DXNN SDK</dt><dd>{{SDK_VERSION}}</dd></div>
+            <div><dt data-i18n="Studio">Studio</dt><dd id="studioVersionHub"></dd></div>
+            <div><dt data-i18n="Gateway">Gateway</dt><dd id="hubLauncherPort" data-i18n-title="Launcher gateway">:—</dd></div>
+          </dl>
+        </section>
+
+        <section class="ws-panel">
+          <h3 data-i18n="Running">Running</h3>
+          <ul class="ws-running" id="wsRunning"></ul>
+        </section>
+
+        <section class="ws-panel" id="resources">
+          <h3 data-i18n="Learn">Learn</h3>
+          <div class="about-book-row">
+            <div class="about-book-card" tabindex="0" role="button">
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M4 17h15"/></svg></div>
+              <div class="orbital-name" data-i18n-module="about" data-i18n-variant="poster"></div>
+              <div class="orbital-port" data-i18n="Encyclopedia">Encyclopedia
+              </div>
+            </div>
+            <div class="about-book-card sdk-card" tabindex="0" role="button">
+              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="9" y="4" width="4" height="16" rx="1"/><path d="M16.2 5.4l3.6 1-3.4 13-3.6-1z"/></svg></div>
+              <div class="orbital-name" data-i18n-module="sdk-library" data-i18n-variant="poster"></div>
+              <div class="orbital-port" data-i18n="Tech Library">Tech Library
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
     </div>
-    </section>
 
 
-    <!-- ── Ecosystem — the frameworks that run on DEEPX ── -->
-    <section class="home-section" id="ecosystem">
-      <div class="section-head">
-        <h2 data-i18n="Ecosystem">Ecosystem</h2>
-        <span class="section-note" data-i18n="frameworks that run on DEEPX">frameworks that run on DEEPX</span>
-        <span class="section-grow"></span>
-        <button type="button" class="section-more" onclick="openEcosystemInfo()" data-i18n="See partners">See partners</button>
-      </div>
-      <div class="eco-row">
-        <div class="eco-logo"><b>Ultralytics</b><span data-i18n="YOLO export to DEEPX">YOLO export to DEEPX</span></div>
-        <div class="eco-logo"><b>PaddlePaddle</b><span data-i18n="OCR and detection">OCR and detection</span></div>
-        <div class="eco-logo"><b>ONNX</b><span data-i18n="the interchange format">the interchange format</span></div>
-        <div class="eco-logo"><b>GStreamer</b><span data-i18n="the pipeline runtime">the pipeline runtime</span></div>
-        <div class="eco-logo"><b>PyTorch</b><span data-i18n="where models are trained">where models are trained</span></div>
-        <div class="eco-logo"><b>OpenCV</b><span data-i18n="pre- and post-processing">pre- and post-processing</span></div>
-      </div>
-    </section>
 
-    <!-- ── Solutions — where DX-M1 is deployed ── -->
-    <section class="home-section" id="solutions">
-      <div class="section-head">
-        <h2 data-i18n="Solutions">Solutions</h2>
-        <span class="section-note" data-i18n="where DX-M1 is deployed">where DX-M1 is deployed</span>
-        <span class="section-grow"></span>
-        <button type="button" class="section-more" onclick="openPlatformInfo()" data-i18n="Explore DX AI Studio">Explore DX AI Studio</button>
-      </div>
-      <div class="vertical-row">
-        <article class="vertical-card"><h3 data-i18n="Smart City">Smart City</h3>
-          <p data-i18n="multi-channel CCTV analytics">multi-channel CCTV analytics</p></article>
-        <article class="vertical-card"><h3 data-i18n="Smart Mobility">Smart Mobility</h3>
-          <p data-i18n="in-vehicle perception">in-vehicle perception</p></article>
-        <article class="vertical-card"><h3 data-i18n="Retail">Retail</h3>
-          <p data-i18n="shelf and footfall vision">shelf and footfall vision</p></article>
-        <article class="vertical-card"><h3 data-i18n="Industrial">Industrial</h3>
-          <p data-i18n="defect and safety inspection">defect and safety inspection</p></article>
-      </div>
-    </section>
-
-    <section class="home-section" id="resources">
-      <div class="section-head">
-        <h2 data-i18n="Resources">Resources</h2>
-        <span class="section-note" data-i18n="docs, downloads and the SDK library">docs, downloads and the SDK library</span>
-      </div>
+    <!-- ── Below the work surface: where DEEPX lives outside this app. Not
+         state, not a tool — so it sits under both columns rather than
+         competing with them for the state panel's width. ── -->
+    <div class="ws-foot">
       <nav class="deepx-links" id="deepxLinks" aria-label="DEEPX resources" data-i18n-aria-label="DEEPX resources">
       <a class="deepx-link" href="https://developer.deepx.ai/article/get-started/" target="_blank" rel="noopener noreferrer">
       <span data-i18n="Get Started">Get Started</span></a>
@@ -419,20 +399,6 @@
       <a class="deepx-link" href="https://deepx.ai" target="_blank" rel="noopener noreferrer">
       <span data-i18n="deepx.ai">deepx.ai</span></a>
       </nav>
-      <div class="about-book-row">
-        <div class="about-book-card" tabindex="0" role="button">
-          <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M4 17h15"/></svg></div>
-          <div class="orbital-name" data-i18n-module="about" data-i18n-variant="poster"></div>
-          <div class="orbital-port" data-i18n="Encyclopedia">Encyclopedia
-          </div>
-        </div>
-        <div class="about-book-card sdk-card" tabindex="0" role="button">
-          <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="9" y="4" width="4" height="16" rx="1"/><path d="M16.2 5.4l3.6 1-3.4 13-3.6-1z"/></svg></div>
-          <div class="orbital-name" data-i18n-module="sdk-library" data-i18n-variant="poster"></div>
-          <div class="orbital-port" data-i18n="Tech Library">Tech Library
-          </div>
-        </div>
-      </div>
       <div class="poster-row">
         <div class="landing-poster landing-poster--left" id="ecosystemPoster" role="button" tabindex="0" data-i18n-title="DEEPX Physical AI ecosystem">
         <img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="DEEPX Connects the Physical AI Ecosystem" loading="lazy" onclick="openEcosystemInfo()" tabindex="0" role="button">
@@ -443,19 +409,17 @@
         <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></span>
         </div>
       </div>
-    </section>
-
+      <button class="replay-btn" id="replayBtn" onclick="replaySplash()" data-i18n-title="Replay intro animation" style="display:none;">
+        <span class="replay-btn-icon">▶</span>
+        <span data-i18n="Replay Intro">Replay Intro</span>
+      </button>
+    </div>
     <footer class="landing-footer">
       <p>© 2026 DeepX — NPU Solutions for Edge AI</p>
       <p class="landing-footer-version" id="studioVersionFooter"></p>
     </footer>
   </main>
 
-  <!-- ── Replay Animation button (viewport-fixed bottom-left; outside #landing for tutorial spotlight) ── -->
-  <button class="replay-btn" id="replayBtn" onclick="replaySplash()" data-i18n-title="Replay intro animation" style="display:none;">
-    <span class="replay-btn-icon">▶</span>
-    <span data-i18n="Replay Intro">Replay Intro</span>
-  </button>
 
   <!-- ── App Frame (module iframes kept alive until launcher tab closes) ── -->
   <div class="app-frame" id="appFrame" style="display:none;">
@@ -648,6 +612,17 @@
     'the pipeline runtime': { ko:'파이프라인 런타임', ja:'パイプラインランタイム', es:'el runtime de pipelines', 'zh-CN':'流水线运行时', 'zh-TW':'管線執行環境' },
     'where models are trained': { ko:'모델을 학습하는 곳', ja:'モデルを学習する場所', es:'donde se entrenan los modelos', 'zh-CN':'训练模型的地方', 'zh-TW':'訓練模型的地方' },
     'pre- and post-processing': { ko:'전처리와 후처리', ja:'前処理と後処理', es:'pre y posprocesamiento', 'zh-CN':'前处理与后处理', 'zh-TW':'前處理與後處理' },
+    'Modules': { ko:'모듈', ja:'モジュール', es:'Módulos', 'zh-CN':'模块', 'zh-TW':'模組' },
+    'Device': { ko:'장치', ja:'デバイス', es:'Dispositivo', 'zh-CN':'设备', 'zh-TW':'裝置' },
+    'Running': { ko:'실행 중', ja:'実行中', es:'En ejecución', 'zh-CN':'运行中', 'zh-TW':'執行中' },
+    'Learn': { ko:'자료', ja:'資料', es:'Recursos', 'zh-CN':'资料', 'zh-TW':'資料' },
+    'Gateway': { ko:'게이트웨이', ja:'ゲートウェイ', es:'Puerta de enlace', 'zh-CN':'网关', 'zh-TW':'閘道' },
+    'DXNN SDK': { ko:'DXNN SDK', ja:'DXNN SDK', es:'DXNN SDK', 'zh-CN':'DXNN SDK', 'zh-TW':'DXNN SDK' },
+    'Studio state': { ko:'스튜디오 상태', ja:'スタジオの状態', es:'Estado del estudio', 'zh-CN':'工作室状态', 'zh-TW':'工作室狀態' },
+    'of': { ko:'/', ja:'/', es:'de', 'zh-CN':'/', 'zh-TW':'/' },
+    'running': { ko:'개 실행 중', ja:'個 実行中', es:'en ejecución', 'zh-CN':'个运行中', 'zh-TW':'個執行中' },
+    'start': { ko:'실행하기', ja:'起動', es:'iniciar', 'zh-CN':'启动', 'zh-TW':'啟動' },
+    'nothing yet — pick a module': { ko:'아직 없음 — 모듈을 하나 고르세요', ja:'まだありません — モジュールを選んでください', es:'nada aún: elija un módulo', 'zh-CN':'暂无 — 选择一个模块', 'zh-TW':'尚無 — 選擇一個模組' },
     'frameworks that run on DEEPX': { ko:'DEEPX 위에서 도는 프레임워크', ja:'DEEPX 上で動くフレームワーク', es:'frameworks que corren sobre DEEPX', 'zh-CN':'运行在 DEEPX 上的框架', 'zh-TW':'執行在 DEEPX 上的框架' },
     'See partners': { ko:'파트너 보기', ja:'パートナーを見る', es:'Ver socios', 'zh-CN':'查看合作伙伴', 'zh-TW':'檢視合作夥伴' },
     'where DX-M1 is deployed': { ko:'DX-M1이 쓰이는 곳', ja:'DX-M1 が使われる現場', es:'dónde se despliega DX-M1', 'zh-CN':'DX-M1 的落地场景', 'zh-TW':'DX-M1 的落地場景' },
