@@ -237,3 +237,44 @@ def test_the_plan_is_shown_before_the_agent_runs():
     plan = plan[: plan.index("</section>")] if "</section>" in plan else plan[:1200]
     assert 'class="plan-steps"' in plan, "the agent must say what it will do first"
     assert 'id="answerAgentGo"' in plan, "and wait to be told to start"
+
+
+# ── the sections ────────────────────────────────────────────────
+
+
+def test_models_are_on_the_front_door():
+    """133 models is the thing with pictures, and it sat one click in.
+
+    The reference hub puts its catalogue directly under the hero. Ours had it
+    behind a tile that said nothing about what was inside.
+    """
+    html = index()
+    assert 'id="models"' in html, "no models section on the home"
+    assert 'id="homeModelRow"' in html, "the model row has nowhere to render"
+
+
+def test_module_cards_say_what_they_are():
+    """A tile with a name and `--:—` is a launcher icon with extra steps."""
+    html = index()
+    grid = html[html.index('id="studioGrid"'):]
+    grid = grid[: grid.index("</section>")] if "</section>" in grid else grid[:9000]
+    assert grid.count('class="card-desc"') >= 8, (
+        "every module card needs a sentence saying what it is for"
+    )
+    assert ":—" not in grid, "a placeholder port is not module state"
+
+
+def test_ecosystem_and_solutions_surface_on_the_home():
+    """Both exist today — one behind the ring, one buried in About DEEPX."""
+    html = index()
+    assert 'id="solutions"' in html
+    assert 'id="resources"' in html
+    assert 'class="eco-row"' in html
+
+
+def test_module_state_comes_from_the_existing_poll():
+    """One health poll, not two. The cards read what checkHealth already knows."""
+    js = (ROOT / "launcher" / "static" / "launcher-app-frame.js").read_text(encoding="utf-8")
+    assert js.count("setInterval(checkHealth") == 1, (
+        "module state must not get a second poller"
+    )
