@@ -1874,6 +1874,127 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 .hero-chip.is-live { color: var(--status-ok); border-color: var(--status-ok); }
 .hero-chip.is-absent { color: var(--text-faint); }
 
+/* ─── Answered state ──────────────────────────────────
+   프롬프트가 이해한 것과 갈 수 있는 곳. 에이전트는 여기 카드로 끼지
+   않는다 — 방금 프리셋을 찾아줬는데 옆에서 "처음부터 만들래?" 를 같이
+   권하면 자기 답을 못 믿는 것처럼 읽힌다. */
+.home-answer {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
+  box-sizing: border-box;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  z-index: 6;
+}
+.answer-read {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+.read-chip {
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-secondary);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+}
+.read-chip b { color: var(--text-faint); font-weight: 500; margin-right: 5px; }
+.answer-routes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+.route-card {
+  text-align: left;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-page);
+  padding: 12px 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.route-card.is-primary { border-color: var(--accent); box-shadow: 0 0 0 3px var(--control-ring); }
+.route-kind {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.route-name { display: block; font-weight: 700; font-size: var(--fs-base); margin: 5px 0 3px; color: var(--text-primary); }
+.route-why { display: block; font-size: var(--fs-xs); color: var(--text-secondary); }
+.route-go { display: block; margin-top: 8px; font-size: var(--fs-xs); font-weight: 700; color: var(--accent); }
+
+/* 매칭됐을 때 — 에이전트는 라우트 아래 한 줄로 물러난다 */
+.answer-escalate {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: var(--sp-4) 0 0;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+.esc-icon { color: var(--text-faint); }
+.esc-go {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+/* 미매칭일 때 — 에이전트가 답이 되고, 몇 분을 쓰기 전에 할 일을 말한다 */
+.answer-plan {
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 3px var(--control-ring);
+  padding: 14px 16px;
+}
+.plan-head { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; }
+.plan-kind {
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.plan-title { font-weight: 700; color: var(--text-primary); }
+.plan-grow { flex: 1; }
+.plan-eta { font-family: var(--mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.plan-steps {
+  margin: var(--sp-3) 0 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+.plan-steps b { color: var(--text-primary); }
+.plan-foot { display: flex; gap: var(--sp-2); margin-top: var(--sp-4); }
+.plan-alt {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+@media (max-width: 768px) { .answer-routes { grid-template-columns: 1fr; } }
+
 /* ─── Workflow strip ──────────────────────────────────
    ONNX 에서 실리콘까지가 이 제품이다. 래스터 다이어그램은 테마를
    못 따라가므로 currentColor 를 물려받는 인라인 SVG 로 그린다. */

@@ -1086,7 +1086,7 @@
   function refreshHeroDevice() {
     var chip = document.getElementById('heroDeviceChip');
     if (!chip) return;
-    fetch('/monitor/api/hw_status').then(function(r) { return r.json(); }).then(function(hw) {
+    fetch('/dx_monitor/api/hw_status').then(function(r) { return r.json(); }).then(function(hw) {
       var n = hw && hw.count ? hw.count : 0;
       if (hw && hw.available && n > 0) {
         chip.className = 'hero-chip is-live';

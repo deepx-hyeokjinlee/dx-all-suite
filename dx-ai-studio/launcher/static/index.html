@@ -178,6 +178,35 @@
       </div>
     </section>
 
+    <!-- ── Answer — what the prompt understood, and where it can go ── -->
+    <section class="home-answer" id="homeAnswer" hidden aria-live="polite">
+      <div class="answer-read" id="answerRead"></div>
+
+      <div class="answer-routes" id="answerRoutes"></div>
+
+      <!-- Matched: the agent steps back to one line -->
+      <p class="answer-escalate" id="answerEscalate" hidden>
+        <span class="esc-icon" aria-hidden="true">✦</span>
+        <span data-i18n="Not what you meant?">Not what you meant?</span>
+        <button type="button" class="esc-go" id="answerEscalateGo" data-i18n="Build it with the agent">Build it with the agent</button>
+      </p>
+
+      <!-- Unmatched: the agent is the answer, and says what it will do first -->
+      <div class="answer-plan" id="answerAgentPlan" hidden>
+        <div class="plan-head">
+          <span class="plan-kind" data-i18n="Build it">Build it</span>
+          <span class="plan-title" data-i18n="DX Agent Dev will write this">DX Agent Dev will write this</span>
+          <span class="plan-grow"></span>
+          <span class="plan-eta" id="answerAgentEta"></span>
+        </div>
+        <ol class="plan-steps" id="answerAgentSteps"></ol>
+        <div class="plan-foot">
+          <button type="button" class="ask-go" id="answerAgentGo" data-i18n="Start the agent">Start the agent</button>
+          <button type="button" class="plan-alt" id="answerAgentCancel" data-i18n="Not now">Not now</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Workflow — the path from a model file to silicon ── -->
     <section class="flow-strip" aria-label="From ONNX to the NPU" data-i18n-aria-label="From ONNX to the NPU">
       <ol class="flow-row">
@@ -601,6 +630,33 @@
   <script>
   window._DX_I18N_DICT = {
     // ── 포털 홈 (2026-09 재개편) ──
+    'Not what you meant?': { ko:'이게 아닌가요?', ja:'これではありませんか?', es:'¿No es lo que quería?', 'zh-CN':'不是你要的?', 'zh-TW':'不是你要的?' },
+    'Build it with the agent': { ko:'에이전트로 만들기', ja:'エージェントで作る', es:'Construirlo con el agente', 'zh-CN':'用智能体构建', 'zh-TW':'用代理程式建構' },
+    'DX Agent Dev will write this': { ko:'DX Agent Dev가 만들어 줍니다', ja:'DX Agent Dev が作ります', es:'DX Agent Dev lo escribirá', 'zh-CN':'DX Agent Dev 会写它', 'zh-TW':'DX Agent Dev 會寫它' },
+    'Start the agent': { ko:'에이전트 시작', ja:'エージェントを開始', es:'Iniciar el agente', 'zh-CN':'启动智能体', 'zh-TW':'啟動代理程式' },
+    'Not now': { ko:'나중에', ja:'あとで', es:'Ahora no', 'zh-CN':'稍后', 'zh-TW':'稍後' },
+    'Run it now': { ko:'지금 실행', ja:'今すぐ実行', es:'Ejecutar ahora', 'zh-CN':'立即运行', 'zh-TW':'立即執行' },
+    'Check it fits': { ko:'되는지 확인', ja:'収まるか確認', es:'Comprobar si cabe', 'zh-CN':'检查是否够用', 'zh-TW':'檢查是否夠用' },
+    'Pick a model': { ko:'모델 고르기', ja:'モデルを選ぶ', es:'Elegir un modelo', 'zh-CN':'挑选模型', 'zh-TW':'挑選模型' },
+    'Open the tool': { ko:'도구 열기', ja:'ツールを開く', es:'Abrir la herramienta', 'zh-CN':'打开工具', 'zh-TW':'開啟工具' },
+    'Open': { ko:'열기', ja:'開く', es:'Abrir', 'zh-CN':'打开', 'zh-TW':'開啟' },
+    'models': { ko:'개 모델', ja:'件のモデル', es:'modelos', 'zh-CN':'个模型', 'zh-TW':'個模型' },
+    'task': { ko:'작업', ja:'タスク', es:'tarea', 'zh-CN':'任务', 'zh-TW':'任務' },
+    'model': { ko:'모델', ja:'モデル', es:'modelo', 'zh-CN':'模型', 'zh-TW':'模型' },
+    'channels': { ko:'채널', ja:'チャンネル', es:'canales', 'zh-CN':'路数', 'zh-TW':'路數' },
+    'target': { ko:'목표', ja:'目標', es:'objetivo', 'zh-CN':'目标', 'zh-TW':'目標' },
+    'input': { ko:'입력', ja:'入力', es:'entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
+    'Pick': { ko:'선택', ja:'選択', es:'Elegir', 'zh-CN':'选择', 'zh-TW':'選擇' },
+    'Find': { ko:'탐색', ja:'検索', es:'Buscar', 'zh-CN':'查找', 'zh-TW':'尋找' },
+    'Generate': { ko:'생성', ja:'生成', es:'Generar', 'zh-CN':'生成', 'zh-TW':'產生' },
+    'Wire': { ko:'연결', ja:'接続', es:'Conectar', 'zh-CN':'接入', 'zh-TW':'接入' },
+    'Run': { ko:'실행', ja:'実行', es:'Ejecutar', 'zh-CN':'运行', 'zh-TW':'執行' },
+    'a model for': { ko:'에 맞는 모델을', ja:'に合うモデルを', es:'un modelo para', 'zh-CN':'适合的模型：', 'zh-TW':'適合的模型：' },
+    'the closest model in the zoo': { ko:'모델 저장소에서 가장 가까운 모델을', ja:'モデルズーで最も近いモデルを', es:'el modelo más parecido del zoo', 'zh-CN':'模型库中最接近的模型', 'zh-TW':'模型庫中最接近的模型' },
+    'an app in a new session folder': { ko:'새 세션 폴더에 앱을', ja:'新しいセッションフォルダにアプリを', es:'una app en una carpeta de sesión nueva', 'zh-CN':'在新会话目录里生成应用', 'zh-TW':'在新工作階段目錄產生應用' },
+    'the input': { ko:'입력을', ja:'入力を', es:'la entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
+    'and the logic you described': { ko:'설명하신 로직에 연결', ja:'と説明されたロジックを', es:'y la lógica que describió', 'zh-CN':'与你描述的逻辑', 'zh-TW':'與你描述的邏輯' },
+    'it and show you the output': { ko:'하고 결과를 보여줌', ja:'して結果を表示', es:'y mostrarle el resultado', 'zh-CN':'并展示结果', 'zh-TW':'並展示結果' },
     'Home': { ko:'홈', ja:'ホーム', es:'Inicio', 'zh-CN':'首页', 'zh-TW':'首頁' },
     'Models': { ko:'모델', ja:'モデル', es:'Modelos', 'zh-CN':'模型', 'zh-TW':'模型' },
     'Studio': { ko:'스튜디오', ja:'スタジオ', es:'Estudio', 'zh-CN':'工作台', 'zh-TW':'工作臺' },
@@ -1289,6 +1345,8 @@
   <script src="/launcher-splash.js"></script>
   <script src="/platform-info.js"></script>
   <script src="/launcher-app-frame.js"></script>
+  <script src="/home-router.js"></script>
+  <script src="/home-answer.js"></script>
   <script src="/launcher.js"></script>
   <script src="/tutorial.js"></script>
 </body>
