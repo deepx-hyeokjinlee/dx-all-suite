@@ -72,7 +72,7 @@ body {
   position: relative;
   padding: 6px 2px;
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--text-secondary);
   text-decoration: none;
   white-space: nowrap;
@@ -81,7 +81,7 @@ body {
 .portal-nav-item:hover { color: var(--text-primary); }
 .portal-nav-item.is-current {
   color: var(--text-primary);
-  font-weight: 700;
+  font-weight: 600;
 }
 /* 활성 표시는 밑줄 하나 — 배경 알약을 쓰면 앱 안의 탭 행과 헷갈린다 */
 .portal-nav-item.is-current::after {
@@ -182,7 +182,7 @@ body:not(.hw-native-visible) #hw-float {
   margin-left: 2px;
   border-radius: 999px;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--status-warn);
@@ -429,7 +429,7 @@ body:not(.hw-native-visible) #hw-float {
 
 .launch-card h2 {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 .card-features {
@@ -509,7 +509,7 @@ body:not(.hw-native-visible) #hw-float {
    had a stroked set for the same eight modules. Same set, both places. */
 .about-book-card .orbital-name {
   font-size: var(--fs-base);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
   line-height: 1.3;
 }
@@ -540,7 +540,7 @@ body:not(.hw-native-visible) #hw-float {
   background: none;
   color: var(--ap-blue);
   font-family: var(--font);
-  font-size: var(--ap-cap);
+  font-size: var(--ap-t-body);
   cursor: pointer;
 }
 .replay-btn:hover { text-decoration: underline; }
@@ -1387,7 +1387,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   justify-content: center;
   font-family: var(--font);
   font-size: var(--fs-md);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--brand-cyan);
   letter-spacing: 1px;
 }
@@ -1483,7 +1483,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   letter-spacing: 3px;
 }
 .splash-skip-key {
-  font-weight: 700;
+  font-weight: 600;
   color: var(--accent);
 }
 .splash-skip-sep {
@@ -1613,22 +1613,39 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 
 /* ─── Apple 계열 레이어 ─────────────────────────────────
-   레퍼런스: apple.com 의 타이포·여백 + macOS System Settings 의 grouped
-   panel 구조. 이 파일은 런처 문서에서만 로드되므로 여기의 :root 재정의는
-   런처 셸(top bar · home · About · SDK)에만 닿는다. 모듈 iframe 은 각자
-   문서라 영향을 받지 않는다 — 그래서 모듈을 열면 톤이 한 번 바뀐다.
-   그 이음매를 없애려면 shared 토큰을 바꿔야 하고, 그건 9개 모듈과
-   visual baseline 73장을 함께 움직이는 별도 결정이다.
+   추정이 아니라 측정값이다. developer.apple.com 의 HIG(DocC JSON)와
+   apple.com · developer.apple.com 첫 화면의 computed style 을 직접 읽어서
+   맞췄다. 처음 기억으로 잡았던 값은 여러 군데가 틀렸다:
 
-   서체는 SF Pro 가 아니라 Inter 다. SF Pro 라이선스는 Apple 플랫폼용 앱
-   개발로 용도가 제한돼 있어 이 앱에 번들할 수 없다. Inter 는 원래 SF
-   대체로 설계됐고, 큰 크기에서 자간을 조여 주면 차이가 거의 없다. */
+     본문색   거의 검정으로 깔았지만 apple.com 의 본문은 그보다 한 단계
+              밝다 — 아래 --ap-body. 제일 어두운 값(--ap-ink)은 첫 화면
+              220 노드 중 5개, 제목에만 쓴다.
+     굵기     400/500/600/700 을 섞었는데 apple.com 첫 화면은 400 과 600
+              두 가지뿐이다(52 : 224).
+     radius   8·12·14 를 썼는데 실제로 제일 흔한 값은 5px 다. 큰 컨테이너만
+              18~28px, 버튼은 980px.
+     glass    0.72 로 잡았는데 실제 상단 바는 rgba(255,255,255,.8) 이다.
+     tracking 크기마다 다르다 — 12px 은 -0.01em, 17px 은 -0.022em, 21~24px 은
+              오히려 +0.01em. body 에 한 값을 걸면 전부 틀린다.
+     스케일   12 → 21 → 28 로 벌어진다. apple.com 첫 화면에는 13·15·16 이
+              아예 없다(12px 193개, 24px 72개, 56px 2개).
+
+   서체는 SF Pro 가 아니라 Inter 다 — SF Pro 라이선스는 Apple 플랫폼용 앱
+   개발로 용도가 제한돼 있어 이 앱에 번들할 수 없다.
+
+   HIG 두 가지도 그대로 따랐다:
+     · Materials — Liquid Glass 는 컨트롤·내비게이션 레이어에만, 콘텐츠
+       레이어에는 standard material. 그래서 상단 바만 반투명이고 패널은
+       불투명하다.
+     · Color — "같은 색으로 서로 다른 뜻을 말하지 말 것". 파랑은 누를 수
+       있는 것에만 쓴다. 상태 패널의 포트 번호도 확인했는데 그건 진짜 <a>
+       라서(_setPortLabel) 파랑이 맞다 — 고칠 게 아니었다. */
 :root {
-  /* 회색조가 팔레트의 전부다. 색은 콘텐츠에서 나오지 chrome 에서 나오지 않는다. */
   --ap-bg:          #f5f5f7;
   --ap-panel:       #ffffff;
-  --ap-panel-2:     #fbfbfd;
-  --ap-ink:         #1d1d1f;
+  --ap-panel-2:     #fafafc;
+  --ap-ink:         #1d1d1f;   /* 제목 전용 */
+  --ap-body:        #333336;   /* 본문 — apple.com 의 지배적 텍스트 색 */
   --ap-ink-2:       #6e6e73;
   --ap-ink-3:       #86868b;
   --ap-line:        rgba(0,0,0,.10);
@@ -1636,18 +1653,21 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   --ap-blue:        #0071e3;
   --ap-blue-hi:     #0077ed;
   --ap-green:       #34c759;
-  --ap-glass:       rgba(255,255,255,.72);
+  --ap-glass:       rgba(255,255,255,.8);
   --ap-shadow:      0 4px 24px rgba(0,0,0,.06);
-  --ap-fill:        rgba(0,0,0,.04);
-  --ap-on-blue:     #ffffff;   /* 파란 버튼 위 글자 — 두 테마 모두 흰색이다 */
+  --ap-fill:        rgba(0,0,0,.08);
+  --ap-on-blue:     #ffffff;
 
-  /* 애플의 본문은 17px 다. 이 페이지는 11px 이 텍스트 노드의 3분의 2였다. */
-  --ap-title:       40px;
-  --ap-head:        21px;
-  --ap-body:        17px;
-  --ap-call:        15px;
-  --ap-foot:        13px;
-  --ap-cap:         12px;
+  /* 측정된 스케일. 사이가 비어 있는 게 특징이다. */
+  --ap-t-hero:      28px;
+  --ap-t-title:     21px;
+  --ap-t-lead:      17px;
+  --ap-t-body:      12px;
+
+  /* radius: 작은 것은 5, 컨테이너는 18, 버튼은 알약 */
+  --ap-r-sm:        5px;
+  --ap-r-lg:        18px;
+  --ap-r-pill:      980px;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -1655,15 +1675,16 @@ body.lang-zh-TW .zh-CN { display: none !important; }
     --ap-panel:     #1d1d1f;
     --ap-panel-2:   #2c2c2e;
     --ap-ink:       #f5f5f7;
+    --ap-body:      #d6d6d8;
     --ap-ink-2:     #a1a1a6;
     --ap-ink-3:     #86868b;
     --ap-line:      rgba(255,255,255,.12);
     --ap-line-soft: rgba(255,255,255,.07);
     --ap-blue:      #2997ff;
     --ap-blue-hi:   #4aa8ff;
-    --ap-glass:     rgba(0,0,0,.72);
+    --ap-glass:     rgba(0,0,0,.8);
     --ap-shadow:    none;
-    --ap-fill:      rgba(255,255,255,.06);
+    --ap-fill:      rgba(255,255,255,.10);
   }
 }
 :root[data-theme="dark"] {
@@ -1671,23 +1692,30 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   --ap-panel:     #1d1d1f;
   --ap-panel-2:   #2c2c2e;
   --ap-ink:       #f5f5f7;
+  --ap-body:      #d6d6d8;
   --ap-ink-2:     #a1a1a6;
   --ap-ink-3:     #86868b;
   --ap-line:      rgba(255,255,255,.12);
   --ap-line-soft: rgba(255,255,255,.07);
   --ap-blue:      #2997ff;
   --ap-blue-hi:   #4aa8ff;
-  --ap-glass:     rgba(0,0,0,.72);
+  --ap-glass:     rgba(0,0,0,.8);
   --ap-shadow:    none;
-  --ap-fill:      rgba(255,255,255,.06);
+  --ap-fill:      rgba(255,255,255,.10);
 }
+
+/* 트래킹은 크기마다 다르다. body 에 한 값을 걸면 작은 글자가 전부 틀어진다. */
+.ap-t-hero  { font-size: var(--ap-t-hero);  letter-spacing: .004em; line-height: 1.14; }
+.ap-t-title { font-size: var(--ap-t-title); letter-spacing: .011em; line-height: 1.2; }
+.ap-t-lead  { font-size: var(--ap-t-lead);  letter-spacing: -.022em; line-height: 1.3; }
 
 body {
   background: var(--ap-bg);
-  color: var(--ap-ink);
+  color: var(--ap-body);
+  font-size: var(--ap-t-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -.008em;
+  letter-spacing: -.01em;      /* 12px 의 측정값 (-0.12px) */
 }
 
 /* 상단 바 — 얇고, 반투명하고, 헤어라인 하나. */
@@ -1700,26 +1728,26 @@ body {
   box-shadow: none;
   padding: 0 22px;
 }
-.logo-text { font-size: var(--ap-foot); font-weight: 600; color: var(--ap-ink); letter-spacing: -.01em; }
+.logo-text { font-size: var(--ap-t-body); font-weight: 600; color: var(--ap-ink); letter-spacing: -.01em; }
 .portal-nav { gap: 2px; }
 .portal-nav-item {
   padding: 5px 11px;
   border-radius: 980px;
-  font-size: var(--ap-cap);
+  font-size: var(--ap-t-body);
   font-weight: 400;
   color: var(--ap-ink-2);
 }
 .portal-nav-item:hover { color: var(--ap-ink); background: var(--ap-fill); }
-.portal-nav-item.is-current { color: var(--ap-ink); font-weight: 500; background: var(--ap-fill); }
+.portal-nav-item.is-current { color: var(--ap-ink); font-weight: 400; background: var(--ap-fill); }
 .portal-nav-item.is-current::after { display: none; }
 .studio-beta-badge {
   background: var(--ap-fill); color: var(--ap-ink-3);
-  border: 0; font-size: 10px; font-weight: 500; letter-spacing: .02em;
+  border: 0; font-size: 10px; font-weight: 400; letter-spacing: .02em;
 }
 .buy-topbar-btn {
   background: var(--ap-blue); color: var(--ap-on-blue); border: 0;
   border-radius: 980px; padding: 5px 15px;
-  font-size: var(--ap-cap); font-weight: 400; letter-spacing: -.005em;
+  font-size: var(--ap-t-body); font-weight: 400; letter-spacing: -.005em;
 }
 .buy-topbar-btn:hover { background: var(--ap-blue-hi); }
 
@@ -1757,7 +1785,7 @@ body {
   padding: 13px 13px 13px 18px;
   background: var(--ap-panel);
   border: 1px solid var(--ap-line);
-  border-radius: 14px;
+  border-radius: var(--ap-r-lg);
   box-shadow: var(--ap-shadow);
 }
 .home-ask:focus-within { border-color: var(--ap-blue); }
@@ -1765,14 +1793,14 @@ body {
 .ask-input {
   flex: 1 1 auto; min-width: 0; border: 0; background: transparent;
   color: var(--ap-ink); font-family: inherit;
-  font-size: var(--ap-head); letter-spacing: -.016em;
+  font-size: var(--ap-t-lead); letter-spacing: -.022em;
 }
 .ask-input::placeholder { color: var(--ap-ink-3); }
 .ask-input:focus { outline: none; }
 .ask-go {
   flex-shrink: 0; border: 0; border-radius: 980px; padding: 9px 20px;
   background: var(--ap-blue); color: var(--ap-on-blue);
-  font-family: inherit; font-weight: 400; font-size: var(--ap-call);
+  font-family: inherit; font-weight: 400; font-size: var(--ap-t-lead);
   letter-spacing: -.008em; cursor: pointer;
 }
 .ask-go:hover { background: var(--ap-blue-hi); }
@@ -1780,7 +1808,7 @@ body {
 .ask-chip {
   border: 0; border-radius: 980px;
   padding: 5px 12px; background: var(--ap-fill); color: var(--ap-ink-2);
-  font-family: inherit; font-size: var(--ap-cap); cursor: pointer;
+  font-family: inherit; font-size: var(--ap-t-body); cursor: pointer;
 }
 .ask-chip:hover { color: var(--ap-ink); }
 
@@ -1790,10 +1818,10 @@ body {
 .ws-block-head { display: flex; align-items: baseline; gap: var(--sp-3); margin-bottom: 8px; padding-inline: 4px; }
 .ws-block-head h2,
 .ws-panel h3 {
-  margin: 0; font-size: var(--ap-foot); font-weight: 600;
-  letter-spacing: -.004em; text-transform: none; color: var(--ap-ink);
+  margin: 0; font-size: var(--ap-t-lead); font-weight: 600;
+  letter-spacing: -.022em; text-transform: none; color: var(--ap-ink);
 }
-.ws-count { font-size: var(--ap-cap); color: var(--ap-ink-3); margin-left: auto; }
+.ws-count { font-size: var(--ap-t-body); color: var(--ap-ink-3); margin-left: auto; }
 
 /* ── the path, as one line ── */
 .ws-flow { padding-top: var(--sp-2); }
@@ -1806,7 +1834,7 @@ body {
   border: 0; background: none; padding: 0; color: var(--ap-ink-3);
 }
 .ws-flow .flow-node svg { width: 14px; height: 14px; }
-.ws-flow .flow-node b { color: var(--ap-ink-3); font-size: var(--ap-cap); font-weight: 400; }
+.ws-flow .flow-node b { color: var(--ap-ink-3); font-size: var(--ap-t-body); font-weight: 400; }
 .ws-flow .flow-node span { display: none; }
 .ws-flow .flow-node:not(:last-child)::after {
   content: ''; position: absolute; right: calc(var(--sp-4) / -2 - 2px); top: 50%;
@@ -1824,7 +1852,7 @@ body {
    대신, 애플이 앱 아이콘에 색을 쓰는 방식 그대로다. */
 .studio-grid {
   background: var(--ap-panel);
-  border-radius: 18px;
+  border-radius: var(--ap-r-lg);
   box-shadow: var(--ap-shadow);
   overflow: hidden;
 }
@@ -1845,7 +1873,7 @@ body {
 .mod-tile {
   flex-shrink: 0;
   width: 30px; height: 30px;
-  border-radius: 8px;
+  border-radius: var(--ap-r-sm);
   display: flex; align-items: center; justify-content: center;
   background: var(--mod-tint);
   color: var(--ap-on-blue);
@@ -1862,21 +1890,21 @@ body {
 .mod-tile[data-mod="agent"]      { --mod-tint: #8e8e93; }
 
 .mod-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.orbital-name { font-size: var(--ap-call); font-weight: 500; color: var(--ap-ink); letter-spacing: -.01em; }
-.card-desc { font-size: var(--ap-cap); color: var(--ap-ink-3); line-height: 1.35; }
+.orbital-name { font-size: var(--ap-t-lead); font-weight: 400; color: var(--ap-ink); letter-spacing: -.022em; }
+.card-desc { font-size: var(--ap-t-body); color: var(--ap-ink-3); line-height: 1.4; }
 .card-state {
   flex-shrink: 0;
-  font-size: var(--ap-cap);
+  font-size: var(--ap-t-body);
   color: var(--ap-blue);
 }
 .card-state.is-alive { color: var(--ap-green); }
-.mod-chev { flex-shrink: 0; color: var(--ap-ink-3); font-size: var(--ap-body); line-height: 1; }
+.mod-chev { flex-shrink: 0; color: var(--ap-ink-3); font-size: var(--ap-t-body); line-height: 1; }
 
 /* ── the state column ── */
 .ws-side { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
 .ws-panel {
   padding: 15px 16px; border: 0;
-  border-radius: 18px; background: var(--ap-panel);
+  border-radius: var(--ap-r-lg); background: var(--ap-panel);
   box-shadow: var(--ap-shadow);
 }
 .ws-panel h3 { margin-bottom: 10px; }
@@ -1887,10 +1915,10 @@ body {
    not print. It was 14px grey in a side panel. */
 .ws-device {
   margin: 0 0 var(--sp-4);
-  font-size: 28px;
+  font-size: var(--ap-t-hero);
   font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -.021em;
+  line-height: 1.14;
+  letter-spacing: .004em;      /* 28px 의 측정값 (+0.128px) */
   color: var(--ap-ink);
 }
 .ws-device.is-live { color: var(--ap-green); }
@@ -1900,10 +1928,10 @@ body {
   padding: 5px 0; box-shadow: inset 0 1px 0 var(--ap-line-soft);
 }
 .ws-facts > div:first-child { box-shadow: none; }
-.ws-facts dt { font-size: var(--ap-cap); color: var(--ap-ink-3); }
-.ws-facts dd { margin: 0; font-size: var(--ap-cap); color: var(--ap-ink); font-variant-numeric: tabular-nums; }
+.ws-facts dt { font-size: var(--ap-t-body); color: var(--ap-ink-3); }
+.ws-facts dd { margin: 0; font-size: var(--ap-t-body); color: var(--ap-ink); font-variant-numeric: tabular-nums; }
 .ws-running { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.ws-running li { display: flex; align-items: center; gap: 8px; font-size: var(--ap-cap); color: var(--ap-ink); }
+.ws-running li { display: flex; align-items: center; gap: 8px; font-size: var(--ap-t-body); color: var(--ap-ink); }
 .ws-running li::before {
   content: ''; width: 7px; height: 7px; border-radius: 50%;
   background: var(--ap-green); flex-shrink: 0;
@@ -1923,7 +1951,7 @@ body {
 .ws-side .about-book-card:hover { background: none; }
 .ws-side .about-book-card:hover .orbital-name { color: var(--ap-blue); }
 .ws-side .about-book-card .orbital-icon { margin: 0; color: var(--ap-ink-3); }
-.ws-side .about-book-card .orbital-name { font-size: var(--ap-call); font-weight: 400; }
+.ws-side .about-book-card .orbital-name { font-size: var(--ap-t-lead); font-weight: 400; }
 .ws-side .about-book-card .orbital-port { display: none; }
 
 /* The two marketing renders are cyberpunk product art. In a restrained UI
@@ -1932,10 +1960,10 @@ body {
 .learn-row {
   display: flex; align-items: center; justify-content: space-between;
   padding: 9px 0; cursor: pointer; text-decoration: none;
-  font-size: var(--ap-call); color: var(--ap-ink);
+  font-size: var(--ap-t-lead); color: var(--ap-ink);
   box-shadow: inset 0 1px 0 var(--ap-line-soft);
 }
-.learn-row::after { content: '\203A'; color: var(--ap-ink-3); font-size: var(--ap-body); }
+.learn-row::after { content: '\203A'; color: var(--ap-ink-3); font-size: var(--ap-t-body); }
 .learn-row:hover { color: var(--ap-blue); }
 .learn-row:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 2px; }
 
@@ -1954,10 +1982,10 @@ body {
 .ws-foot .deepx-links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px var(--sp-5); }
 .ws-foot .deepx-link {
   padding: 6px 0; background: none; border: 0;
-  font-size: var(--ap-cap); font-weight: 400; color: var(--ap-blue);
+  font-size: var(--ap-t-body); font-weight: 400; color: var(--ap-blue);
 }
 .ws-foot .deepx-link:hover { background: none; text-decoration: underline; }
-.ws-foot .deepx-link::after { content: ' \203A'; color: inherit; font-size: var(--ap-foot); }
+.ws-foot .deepx-link::after { content: ' \203A'; color: inherit; font-size: var(--ap-t-body); }
 .ws-foot .replay-btn { align-self: flex-start; }
 @media (max-width: 768px) {
   .ws-foot .deepx-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -2003,7 +2031,7 @@ body {
   border-radius: var(--radius-pill);
   padding: 3px 10px;
 }
-.read-chip b { color: var(--text-faint); font-weight: 500; margin-right: 5px; }
+.read-chip b { color: var(--text-faint); font-weight: 400; margin-right: 5px; }
 .answer-routes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2027,9 +2055,9 @@ body {
   text-transform: uppercase;
   color: var(--text-faint);
 }
-.route-name { display: block; font-weight: 700; font-size: var(--fs-base); margin: 5px 0 3px; color: var(--text-primary); }
+.route-name { display: block; font-weight: 600; font-size: var(--fs-base); margin: 5px 0 3px; color: var(--text-primary); }
 .route-why { display: block; font-size: var(--fs-xs); color: var(--text-secondary); }
-.route-go { display: block; margin-top: 8px; font-size: var(--fs-xs); font-weight: 700; color: var(--accent); }
+.route-go { display: block; margin-top: 8px; font-size: var(--fs-xs); font-weight: 600; color: var(--accent); }
 
 /* 매칭됐을 때 — 에이전트는 라우트 아래 한 줄로 물러난다 */
 .answer-escalate {
@@ -2049,7 +2077,7 @@ body {
   padding: 0;
   font-family: inherit;
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--accent);
   cursor: pointer;
 }
@@ -2069,7 +2097,7 @@ body {
   text-transform: uppercase;
   color: var(--text-faint);
 }
-.plan-title { font-weight: 700; color: var(--text-primary); }
+.plan-title { font-weight: 600; color: var(--text-primary); }
 .plan-grow { flex: 1; }
 .plan-eta { font-variant-numeric: tabular-nums; font-size: var(--fs-xs); color: var(--text-muted); }
 .plan-steps {
@@ -2132,7 +2160,7 @@ body {
   border-bottom: 1px solid var(--border-subtle);
   flex-wrap: wrap;
 }
-.work-title { font-weight: 700; font-size: var(--fs-base); }
+.work-title { font-weight: 600; font-size: var(--fs-base); }
 .work-badge { font-variant-numeric: tabular-nums; font-size: var(--fs-xs); color: var(--text-muted); }
 .work-badge.is-running { color: var(--accent); }
 .work-grow { flex: 1; }
@@ -2292,8 +2320,9 @@ body {
   letter-spacing: 0.5px;
 }
 .hub-launcher-port .port-link,
-.orbital-card[data-app] .orbital-port .port-link {
-  color: inherit;
+.orbital-card[data-app] .orbital-port .port-link,
+.ws-facts .port-link {
+  color: var(--ap-blue);
   text-decoration: none;
 }
 .hub-launcher-port .port-link:hover,
@@ -2425,21 +2454,21 @@ body {
 .eco-pillar--npu { border-left-color: var(--accent); }
 .eco-pillar-title {
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
   margin: 0 0 5px;
 }
-.eco-pillar-title em { font-style: normal; font-weight: 500; color: var(--text-faint); }
+.eco-pillar-title em { font-style: normal; font-weight: 400; color: var(--text-faint); }
 .eco-partner { margin-bottom: 7px; }
 .eco-partner:last-child { margin-bottom: 0; }
 .eco-partner-name {
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--accent-light);
   margin-bottom: 2px;
 }
 /* inline key-term highlight (metrics, product names) — shared by both overlays */
-.hl { color: var(--accent-light); font-weight: 700; }
+.hl { color: var(--accent-light); font-weight: 600; }
 .eco-partner-desc .hl, .eco-intro .hl { font-style: normal; }
 
 /* Identical subtle accent glow on the emphasis text of BOTH overlays. */
@@ -2478,7 +2507,7 @@ body {
 .eco-apps { border-top: 1px solid var(--border-subtle); padding-top: var(--sp-3); }
 .eco-apps-title {
   font-size: var(--fs-sm);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
   margin: 0 0 6px;
 }
@@ -2608,7 +2637,7 @@ body {
   outline-offset: 2px;
 }
 .pm-icon { font-size: var(--fs-lg); flex-shrink: 0; }
-.pm-name { font-size: var(--fs-sm); font-weight: 700; color: var(--text-primary); white-space: nowrap; min-width: 78px; flex-shrink: 0; }
+.pm-name { font-size: var(--fs-sm); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 78px; flex-shrink: 0; }
 .pm-desc { color: var(--text-muted); font-size: var(--fs-xs); line-height: 1.2; }
 .platform-values {
   display: grid;
@@ -2662,7 +2691,7 @@ body {
 .pu-title {
   margin: 0;
   font-size: var(--fs-lg);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-primary);
 }
 .pu-tags {
@@ -2677,7 +2706,7 @@ body {
   padding: 2px 8px;
   border-radius: var(--radius-lg);
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 400;
 }
 .pu-images {
   display: grid;
