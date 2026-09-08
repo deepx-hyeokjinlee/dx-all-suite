@@ -1775,6 +1775,143 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   .landing-particle { animation: none; opacity: 0.3; }
 }
 
+/* ─── Home Hero ───────────────────────────────────────
+   링 가운데의 "DEEPX / AI Studio / 8 Modules" 는 마케팅 콜라주 뒤에서
+   같은 깊이로 경쟁하다 둘 다 안 읽혔다. 히어로는 한 가지만 말하고
+   입력 하나를 내민다. */
+.home-hero {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-5) var(--sp-5);
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 6;
+}
+.hero-claim {
+  margin: 0;
+  font-size: clamp(24px, 3.4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -.022em;
+  line-height: 1.12;
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+.hero-sub {
+  margin: var(--sp-3) auto 0;
+  max-width: 56ch;
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+}
+.home-ask {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin: var(--sp-5) auto 0;
+  padding: 10px 12px;
+  background: var(--surface-panel);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 4px var(--control-ring);
+}
+.ask-icon { color: var(--accent); flex-shrink: 0; }
+.ask-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--fs-md);
+}
+.ask-input:focus { outline: none; }
+.ask-go {
+  flex-shrink: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+/* 빈 입력창은 멍한 시선이다 — 예시가 문법을 가르치고 한 번에 실행한다 */
+.ask-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+.ask-chip {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-pill);
+  padding: 4px 12px;
+  background: transparent;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+.ask-chip:hover { border-style: solid; background: var(--accent-dim); }
+.hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+.hero-chip {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+}
+.hero-chip.is-live { color: var(--status-ok); border-color: var(--status-ok); }
+.hero-chip.is-absent { color: var(--text-faint); }
+
+/* ─── Workflow strip ──────────────────────────────────
+   ONNX 에서 실리콘까지가 이 제품이다. 래스터 다이어그램은 테마를
+   못 따라가므로 currentColor 를 물려받는 인라인 SVG 로 그린다. */
+.flow-strip {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto var(--sp-5);
+  padding-inline: var(--sp-5);
+  box-sizing: border-box;
+  z-index: 6;
+}
+.flow-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--sp-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.flow-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 12px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-panel);
+  color: var(--text-muted);
+  text-align: center;
+}
+.flow-node b { color: var(--text-primary); font-size: var(--fs-sm); }
+.flow-node span { font-family: var(--mono); font-size: var(--fs-2xs); }
+.flow-node.is-key { border-color: var(--accent); color: var(--accent); }
+.flow-node.is-key b { color: var(--accent); }
+@media (max-width: 768px) { .flow-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .flow-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
 /* ── Orbital Container ── */
 /* 여덟 타일을 원 둘레에 절대 배치하면 줄이는 것만 되고 다시 감기지는
    않는다 — 650px 에서 카드가 잘리고 링크 열이 본문 위로 떠올랐다.

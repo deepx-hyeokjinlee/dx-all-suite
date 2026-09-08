@@ -1080,6 +1080,32 @@
     });
   }
 
+  /* 웹사이트는 "DX-M1 연결됨" 이라고 못 쓴다. 그 한 줄이 이게 브로슈어가
+     아니라는 증거다. 런처는 이미 monitor 모듈을 /monitor/ 로 프록시하므로
+     새 서버 코드 없이 그 모듈이 쓰는 엔드포인트를 그대로 부른다. */
+  function refreshHeroDevice() {
+    var chip = document.getElementById('heroDeviceChip');
+    if (!chip) return;
+    fetch('/monitor/api/hw_status').then(function(r) { return r.json(); }).then(function(hw) {
+      var n = hw && hw.count ? hw.count : 0;
+      if (hw && hw.available && n > 0) {
+        chip.className = 'hero-chip is-live';
+        chip.textContent = 'DX-M1 · ' + n + (n === 1 ? ' device' : ' devices');
+      } else if (hw && hw.mock) {
+        chip.className = 'hero-chip';
+        chip.textContent = 'DX-M1 · mock data';
+      } else {
+        chip.className = 'hero-chip is-absent';
+        chip.textContent = 'DX-M1 · not detected';
+      }
+      chip.removeAttribute('data-i18n');
+    }).catch(function() {
+      chip.className = 'hero-chip is-absent';
+      chip.textContent = 'DX-M1 · not detected';
+      chip.removeAttribute('data-i18n');
+    });
+  }
+
   function checkHealth() {
     return fetch('/api/health').then(function(res) { return res.json(); }).then(function(data) {
       if (_maybeReloadForLauncherBoot(data)) return data;
@@ -1409,6 +1435,8 @@
     setInterval(checkHealth, 5000);
     initOrbitalAccessibility();
     initHomeClickRouting();
+    refreshHeroDevice();
+    setInterval(refreshHeroDevice, 15000);
     refreshLauncherChrome();
   }
 
@@ -1432,6 +1460,7 @@
   ns.launch = launch;
   ns.updateNavTabs = updateNavTabs;
   ns.checkHealth = checkHealth;
+  ns.refreshHeroDevice = refreshHeroDevice;
   ns.appFromPath = appFromPath;
   ns.setVisibleView = setVisibleView;
   ns._updateToggleActive = _updateToggleActive;

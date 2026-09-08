@@ -149,16 +149,72 @@
       <div class="landing-particle" style="left:40%;top:35%;animation-delay:1.8s"></div>
     </div>
 
-    <!-- Studio — the eight modules, in a grid that can rewrap -->
-    <div class="studio-hub">
-        <div class="hub-logo">DEEPX</div>
-        <div class="hub-subtitle">AI Studio</div>
-        <div class="hub-tagline" data-i18n="8 Modules · All-in-One Edge AI Platform">8 Modules · All-in-One Edge AI Platform
-        </div>
-        <div class="hub-version">DXNN SDK {{SDK_VERSION}}</div>
-        <div class="hub-studio-version" id="studioVersionHub"></div>
-        <div class="hub-launcher-port" id="hubLauncherPort" data-i18n-title="Launcher gateway">:—</div>
-    </div>
+    <!-- ── Hero — one claim, one input ── -->
+    <section class="home-hero" id="home">
+      <h1 class="hero-claim" data-i18n="Describe it. Run it on the NPU.">Describe it. Run it on the NPU.</h1>
+      <p class="hero-sub" data-i18n="Say what you want to build. The studio works out which module, model and pipeline it needs.">Say what you want to build. The studio works out which module, model and pipeline it needs.</p>
+
+      <form class="home-ask" id="homeAskForm" autocomplete="off">
+        <span class="ask-icon" aria-hidden="true">✦</span>
+        <input class="ask-input" id="homeAsk" type="text"
+               placeholder="4-channel CCTV, detect people, 30 FPS"
+               data-i18n-placeholder="4-channel CCTV, detect people, 30 FPS"
+               aria-label="Describe what you want to build" data-i18n-aria-label="Describe what you want to build">
+        <button class="ask-go" type="submit" data-i18n="Build it">Build it</button>
+      </form>
+
+      <div class="ask-chips" id="homeAskChips">
+        <button type="button" class="ask-chip" data-i18n="compile yolo26n to DXNN">compile yolo26n to DXNN</button>
+        <button type="button" class="ask-chip" data-i18n="pose estimation on webcam">pose estimation on webcam</button>
+        <button type="button" class="ask-chip" data-i18n="4-channel CCTV object detection">4-channel CCTV object detection</button>
+        <button type="button" class="ask-chip" data-i18n="segment a video file">segment a video file</button>
+      </div>
+
+      <div class="hero-facts">
+        <span class="hero-chip" id="heroDeviceChip" data-i18n="Checking DX-M1…">Checking DX-M1…</span>
+        <span class="hero-chip">DXNN SDK {{SDK_VERSION}}</span>
+        <span class="hero-chip" id="studioVersionHub"></span>
+        <span class="hero-chip" id="hubLauncherPort" data-i18n-title="Launcher gateway">:—</span>
+      </div>
+    </section>
+
+    <!-- ── Workflow — the path from a model file to silicon ── -->
+    <section class="flow-strip" aria-label="From ONNX to the NPU" data-i18n-aria-label="From ONNX to the NPU">
+      <ol class="flow-row">
+        <li class="flow-node">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>
+          </svg>
+          <b data-i18n="ONNX">ONNX</b><span data-i18n="PyTorch · TF">PyTorch · TF</span>
+        </li>
+        <li class="flow-node is-key">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/>
+          </svg>
+          <b>dxcom</b><span data-i18n="quantize">quantize</span>
+        </li>
+        <li class="flow-node">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10h8M8 14h5"/>
+          </svg>
+          <b>.dxnn</b><span data-i18n="Q-Lite / Q-Pro">Q-Lite / Q-Pro</span>
+        </li>
+        <li class="flow-node">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="18" cy="18" r="2.4"/>
+            <path d="M8.2 11l7.6-4M8.2 13l7.6 4"/>
+          </svg>
+          <b data-i18n="Pipeline">Pipeline</b><span>GStreamer</span>
+        </li>
+        <li class="flow-node">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <rect x="7" y="7" width="10" height="10" rx="1.5"/>
+            <path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"/>
+          </svg>
+          <b>DX-M1</b><span data-i18n="on device">on device</span>
+        </li>
+      </ol>
+    </section>
 
     <div class="studio-grid" id="studioGrid">
       <div class="orbital-card" data-app="app" tabindex="0">
@@ -544,6 +600,30 @@
   <script src="/about-deepx.js"></script>
   <script>
   window._DX_I18N_DICT = {
+    // ── 포털 홈 (2026-09 재개편) ──
+    'Home': { ko:'홈', ja:'ホーム', es:'Inicio', 'zh-CN':'首页', 'zh-TW':'首頁' },
+    'Models': { ko:'모델', ja:'モデル', es:'Modelos', 'zh-CN':'模型', 'zh-TW':'模型' },
+    'Studio': { ko:'스튜디오', ja:'スタジオ', es:'Estudio', 'zh-CN':'工作台', 'zh-TW':'工作臺' },
+    'Solutions': { ko:'솔루션', ja:'ソリューション', es:'Soluciones', 'zh-CN':'解决方案', 'zh-TW':'解決方案' },
+    'Resources': { ko:'자료', ja:'リソース', es:'Recursos', 'zh-CN':'资源', 'zh-TW':'資源' },
+    'Studio sections': { ko:'스튜디오 섹션', ja:'スタジオセクション', es:'Secciones del estudio', 'zh-CN':'工作台分区', 'zh-TW':'工作臺分區' },
+    'Describe it. Run it on the NPU.': { ko:'말하면 만들고, NPU에서 돌립니다.', ja:'言葉で伝えて、NPUで動かす。', es:'Descríbalo. Ejecútelo en la NPU.', 'zh-CN':'说出需求，在 NPU 上运行。', 'zh-TW':'說出需求，在 NPU 上執行。' },
+    'Say what you want to build. The studio works out which module, model and pipeline it needs.': { ko:'만들고 싶은 걸 적으세요. 어떤 모듈·모델·파이프라인이 필요한지는 스튜디오가 찾습니다.', ja:'作りたいものを書いてください。必要なモジュール・モデル・パイプラインはスタジオが判断します。', es:'Escriba lo que quiere construir. El estudio decide qué módulo, modelo y pipeline hacen falta.', 'zh-CN':'写下你想做的东西。需要哪个模块、模型和管线由工作台判断。', 'zh-TW':'寫下你想做的東西。需要哪個模組、模型與管線由工作臺判斷。' },
+    'Build it': { ko:'만들기', ja:'作る', es:'Construir', 'zh-CN':'开始构建', 'zh-TW':'開始建構' },
+    'Describe what you want to build': { ko:'만들고 싶은 것을 설명하세요', ja:'作りたいものを説明してください', es:'Describa lo que quiere construir', 'zh-CN':'描述您想构建的内容', 'zh-TW':'描述您想建構的內容' },
+    '4-channel CCTV, detect people, 30 FPS': { ko:'4채널 CCTV, 사람 감지, 30 FPS', ja:'4チャンネルCCTV、人物検出、30 FPS', es:'CCTV de 4 canales, detectar personas, 30 FPS', 'zh-CN':'4 路 CCTV，检测行人，30 FPS', 'zh-TW':'4 路 CCTV，偵測行人，30 FPS' },
+    'compile yolo26n to DXNN': { ko:'yolo26n을 DXNN으로 컴파일', ja:'yolo26n を DXNN にコンパイル', es:'compilar yolo26n a DXNN', 'zh-CN':'把 yolo26n 编译为 DXNN', 'zh-TW':'把 yolo26n 編譯為 DXNN' },
+    'pose estimation on webcam': { ko:'웹캠으로 포즈 추정', ja:'ウェブカメラで姿勢推定', es:'estimación de pose con webcam', 'zh-CN':'用摄像头做姿态估计', 'zh-TW':'用攝影機做姿態估計' },
+    '4-channel CCTV object detection': { ko:'4채널 CCTV 객체 감지', ja:'4チャンネルCCTV 物体検出', es:'detección de objetos en CCTV de 4 canales', 'zh-CN':'4 路 CCTV 目标检测', 'zh-TW':'4 路 CCTV 物件偵測' },
+    'segment a video file': { ko:'비디오 파일 분할', ja:'動画ファイルをセグメンテーション', es:'segmentar un archivo de vídeo', 'zh-CN':'对视频文件做分割', 'zh-TW':'對影片檔做分割' },
+    'Checking DX-M1…': { ko:'DX-M1 확인 중…', ja:'DX-M1 を確認中…', es:'Comprobando DX-M1…', 'zh-CN':'正在检查 DX-M1…', 'zh-TW':'正在檢查 DX-M1…' },
+    'From ONNX to the NPU': { ko:'ONNX에서 NPU까지', ja:'ONNX から NPU まで', es:'De ONNX a la NPU', 'zh-CN':'从 ONNX 到 NPU', 'zh-TW':'從 ONNX 到 NPU' },
+    'ONNX': { ko:'ONNX', ja:'ONNX', es:'ONNX', 'zh-CN':'ONNX', 'zh-TW':'ONNX' },
+    'PyTorch · TF': { ko:'PyTorch · TF', ja:'PyTorch · TF', es:'PyTorch · TF', 'zh-CN':'PyTorch · TF', 'zh-TW':'PyTorch · TF' },
+    'quantize': { ko:'양자화', ja:'量子化', es:'cuantizar', 'zh-CN':'量化', 'zh-TW':'量化' },
+    'Q-Lite / Q-Pro': { ko:'Q-Lite / Q-Pro', ja:'Q-Lite / Q-Pro', es:'Q-Lite / Q-Pro', 'zh-CN':'Q-Lite / Q-Pro', 'zh-TW':'Q-Lite / Q-Pro' },
+    'Pipeline': { ko:'파이프라인', ja:'パイプライン', es:'Pipeline', 'zh-CN':'管线', 'zh-TW':'管線' },
+    'on device': { ko:'온디바이스', ja:'オンデバイス', es:'en el dispositivo', 'zh-CN':'端侧运行', 'zh-TW':'端側執行' },
     'DX AI Studio SDK architecture': { ko:'DX AI Studio SDK 아키텍처', ja:'DX AI Studio SDK アーキテクチャ', es:'Arquitectura del SDK DX AI Studio', 'zh-CN':'DX AI Studio SDK 架构', 'zh-TW':'DX AI Studio SDK 架構' },
     'Replay intro animation': { ko:'인트로 애니메이션 재생', ja:'イントロアニメーション再生', es:'Repetir animación de intro', 'zh-CN':'重播片头动画', 'zh-TW':'重播片頭動畫' },
     'Ctrl+F': { ko:'Ctrl+F', ja:'Ctrl+F', es:'Ctrl+F', 'zh-CN':'Ctrl+F', 'zh-TW':'Ctrl+F' },
