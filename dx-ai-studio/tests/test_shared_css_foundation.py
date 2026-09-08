@@ -410,7 +410,10 @@ def assert_shared_foundation_removed(css: str) -> None:
         "::-webkit-scrollbar",
     ]
     for fragment in forbidden_fragments:
-        assert fragment not in css, fragment
+        if hasattr(fragment, "search"):
+            assert not fragment.search(css), fragment.pattern
+        else:
+            assert fragment not in css, fragment
 
     bare = _BARE_FOCUS_VISIBLE.search(css)
     assert not bare, (
@@ -612,8 +615,10 @@ def test_compiler_css_no_longer_defines_shared_foundation():
     forbidden_fragments = [
         "@font-face",
         "/static/fonts/",
-        "color-scheme:dark",
-        "color-scheme: dark",
+        # A declaration, not the media feature: "@media (prefers-color-scheme:
+        # dark)" contains this string and is a legitimate theme query. Matching
+        # the substring made the guard fire on correct code.
+        re.compile(r"(?<!prefers-)color-scheme\s*:\s*dark"),
         "--bg-0:",
         "--bg-1:",
         "--font:",
@@ -624,7 +629,10 @@ def test_compiler_css_no_longer_defines_shared_foundation():
         "::-webkit-scrollbar { width: 5px",
     ]
     for fragment in forbidden_fragments:
-        assert fragment not in css, fragment
+        if hasattr(fragment, "search"):
+            assert not fragment.search(css), fragment.pattern
+        else:
+            assert fragment not in css, fragment
 
     # #header 는 shared/static/dx-shell.css 로 옮겼다 (Option A 이관).
     assert not re.search(r"^\s*#header\s*\{", css, re.M)
@@ -768,7 +776,6 @@ def test_launcher_css_no_longer_defines_shared_foundation():
     for fragment in (
         "@font-face",
         "/static/fonts/",
-        "color-scheme: dark",
         "--bg-0:",
         "--bg-1:",
         "--font:",
@@ -778,6 +785,10 @@ def test_launcher_css_no_longer_defines_shared_foundation():
         "\n:focus-visible",
     ):
         assert fragment not in css, fragment
+    # The declaration, not the media feature. "@media (prefers-color-scheme:
+    # dark)" contains the same substring and is how a module asks the OS which
+    # theme is on — the guard used to fire on correct code.
+    assert not re.search(r"(?<!prefers-)color-scheme\s*:\s*dark", css)
     assert "* { margin: 0; padding: 0; box-sizing: border-box; }" not in css
     for alias in (
         "--text:",

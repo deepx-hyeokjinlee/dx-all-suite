@@ -432,12 +432,6 @@ body:not(.hw-native-visible) #hw-float {
   font-weight: 700;
   margin-bottom: 8px;
 }
-.card-desc {
-  color: var(--text-muted);
-  font-size: var(--fs-md);
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
 .card-features {
   list-style: none;
   display: flex;
@@ -513,17 +507,6 @@ body:not(.hw-native-visible) #hw-float {
 .about-book-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .about-book-card /* Emoji were doing icon duty on the cards while the splash next door already
    had a stroked set for the same eight modules. Same set, both places. */
-.orbital-icon { margin-bottom: var(--sp-3); line-height: 0; color: var(--text-muted); }
-.mod-glyph {
-  width: 22px; height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.orbital-card:hover .orbital-icon,
-.about-book-card:hover .orbital-icon { color: var(--accent); }
 .about-book-card .orbital-name {
   font-size: var(--fs-base);
   font-weight: 700;
@@ -548,22 +531,20 @@ body:not(.hw-native-visible) #hw-float {
 
 /* ── Replay Button ── */
 .replay-btn {
+  align-self: flex-start;
   display: flex;
   align-items: center;
-  gap: var(--sp-2);
-  padding: 8px 14px;
-  background: var(--surface-panel);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ap-blue);
   font-family: var(--font);
-  font-size: var(--fs-sm);
-  font-weight: 600;
+  font-size: var(--ap-cap);
   cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: all 0.2s ease;
-  opacity: 1;
 }
+.replay-btn:hover { text-decoration: underline; }
+.replay-btn-icon { font-size: 9px; }
 .replay-btn::before,
 .replay-btn::after {
   content: '';
@@ -1631,6 +1612,117 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   .landing-particle { animation: none; opacity: 0.3; }
 }
 
+/* ─── Apple 계열 레이어 ─────────────────────────────────
+   레퍼런스: apple.com 의 타이포·여백 + macOS System Settings 의 grouped
+   panel 구조. 이 파일은 런처 문서에서만 로드되므로 여기의 :root 재정의는
+   런처 셸(top bar · home · About · SDK)에만 닿는다. 모듈 iframe 은 각자
+   문서라 영향을 받지 않는다 — 그래서 모듈을 열면 톤이 한 번 바뀐다.
+   그 이음매를 없애려면 shared 토큰을 바꿔야 하고, 그건 9개 모듈과
+   visual baseline 73장을 함께 움직이는 별도 결정이다.
+
+   서체는 SF Pro 가 아니라 Inter 다. SF Pro 라이선스는 Apple 플랫폼용 앱
+   개발로 용도가 제한돼 있어 이 앱에 번들할 수 없다. Inter 는 원래 SF
+   대체로 설계됐고, 큰 크기에서 자간을 조여 주면 차이가 거의 없다. */
+:root {
+  /* 회색조가 팔레트의 전부다. 색은 콘텐츠에서 나오지 chrome 에서 나오지 않는다. */
+  --ap-bg:          #f5f5f7;
+  --ap-panel:       #ffffff;
+  --ap-panel-2:     #fbfbfd;
+  --ap-ink:         #1d1d1f;
+  --ap-ink-2:       #6e6e73;
+  --ap-ink-3:       #86868b;
+  --ap-line:        rgba(0,0,0,.10);
+  --ap-line-soft:   rgba(0,0,0,.06);
+  --ap-blue:        #0071e3;
+  --ap-blue-hi:     #0077ed;
+  --ap-green:       #34c759;
+  --ap-glass:       rgba(255,255,255,.72);
+  --ap-shadow:      0 4px 24px rgba(0,0,0,.06);
+  --ap-fill:        rgba(0,0,0,.04);
+  --ap-on-blue:     #ffffff;   /* 파란 버튼 위 글자 — 두 테마 모두 흰색이다 */
+
+  /* 애플의 본문은 17px 다. 이 페이지는 11px 이 텍스트 노드의 3분의 2였다. */
+  --ap-title:       40px;
+  --ap-head:        21px;
+  --ap-body:        17px;
+  --ap-call:        15px;
+  --ap-foot:        13px;
+  --ap-cap:         12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ap-bg:        #000000;
+    --ap-panel:     #1d1d1f;
+    --ap-panel-2:   #2c2c2e;
+    --ap-ink:       #f5f5f7;
+    --ap-ink-2:     #a1a1a6;
+    --ap-ink-3:     #86868b;
+    --ap-line:      rgba(255,255,255,.12);
+    --ap-line-soft: rgba(255,255,255,.07);
+    --ap-blue:      #2997ff;
+    --ap-blue-hi:   #4aa8ff;
+    --ap-glass:     rgba(0,0,0,.72);
+    --ap-shadow:    none;
+    --ap-fill:      rgba(255,255,255,.06);
+  }
+}
+:root[data-theme="dark"] {
+  --ap-bg:        #000000;
+  --ap-panel:     #1d1d1f;
+  --ap-panel-2:   #2c2c2e;
+  --ap-ink:       #f5f5f7;
+  --ap-ink-2:     #a1a1a6;
+  --ap-ink-3:     #86868b;
+  --ap-line:      rgba(255,255,255,.12);
+  --ap-line-soft: rgba(255,255,255,.07);
+  --ap-blue:      #2997ff;
+  --ap-blue-hi:   #4aa8ff;
+  --ap-glass:     rgba(0,0,0,.72);
+  --ap-shadow:    none;
+  --ap-fill:      rgba(255,255,255,.06);
+}
+
+body {
+  background: var(--ap-bg);
+  color: var(--ap-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -.008em;
+}
+
+/* 상단 바 — 얇고, 반투명하고, 헤어라인 하나. */
+.top-bar {
+  height: 48px;
+  background: var(--ap-glass);
+  border-bottom: 1px solid var(--ap-line);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: none;
+  padding: 0 22px;
+}
+.logo-text { font-size: var(--ap-foot); font-weight: 600; color: var(--ap-ink); letter-spacing: -.01em; }
+.portal-nav { gap: 2px; }
+.portal-nav-item {
+  padding: 5px 11px;
+  border-radius: 980px;
+  font-size: var(--ap-cap);
+  font-weight: 400;
+  color: var(--ap-ink-2);
+}
+.portal-nav-item:hover { color: var(--ap-ink); background: var(--ap-fill); }
+.portal-nav-item.is-current { color: var(--ap-ink); font-weight: 500; background: var(--ap-fill); }
+.portal-nav-item.is-current::after { display: none; }
+.studio-beta-badge {
+  background: var(--ap-fill); color: var(--ap-ink-3);
+  border: 0; font-size: 10px; font-weight: 500; letter-spacing: .02em;
+}
+.buy-topbar-btn {
+  background: var(--ap-blue); color: var(--ap-on-blue); border: 0;
+  border-radius: 980px; padding: 5px 15px;
+  font-size: var(--ap-cap); font-weight: 400; letter-spacing: -.005em;
+}
+.buy-topbar-btn:hover { background: var(--ap-blue-hi); }
+
 /* ─── Workspace ────────────────────────────────────────
    이 화면을 여는 사람은 읽으러 온 게 아니라 실행하러 온다. 이전 홈은
    전폭 섹션 일곱 개를 세로로 쌓았고, 그래서 유일한 실행 대상인 모듈
@@ -1662,40 +1754,46 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  padding: 15px 15px 15px 19px;
-  background: var(--surface-panel);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-lg);
+  padding: 13px 13px 13px 18px;
+  background: var(--ap-panel);
+  border: 1px solid var(--ap-line);
+  border-radius: 14px;
+  box-shadow: var(--ap-shadow);
 }
-.home-ask:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--control-ring); }
-.ask-icon { color: var(--accent); flex-shrink: 0; font-size: var(--fs-lg); line-height: 1; }
+.home-ask:focus-within { border-color: var(--ap-blue); }
+.ask-icon { color: var(--ap-ink-3); flex-shrink: 0; }
 .ask-input {
   flex: 1 1 auto; min-width: 0; border: 0; background: transparent;
-  color: var(--text-primary); font-family: inherit;
-  font-size: var(--fs-2xl); letter-spacing: -.012em;
+  color: var(--ap-ink); font-family: inherit;
+  font-size: var(--ap-head); letter-spacing: -.016em;
 }
+.ask-input::placeholder { color: var(--ap-ink-3); }
 .ask-input:focus { outline: none; }
 .ask-go {
-  flex-shrink: 0; border: 0; border-radius: var(--radius); padding: 11px 20px;
-  background: var(--accent); color: var(--text-on-accent);
-  font-family: inherit; font-weight: 700; font-size: var(--fs-base); cursor: pointer;
+  flex-shrink: 0; border: 0; border-radius: 980px; padding: 9px 20px;
+  background: var(--ap-blue); color: var(--ap-on-blue);
+  font-family: inherit; font-weight: 400; font-size: var(--ap-call);
+  letter-spacing: -.008em; cursor: pointer;
 }
+.ask-go:hover { background: var(--ap-blue-hi); }
 .ask-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: calc(var(--sp-3) - var(--sp-5)); }
 .ask-chip {
-  border: 1px solid var(--border-subtle); border-radius: var(--radius-pill);
-  padding: 4px 11px; background: transparent; color: var(--text-muted);
-  font-family: inherit; font-size: var(--fs-xs); cursor: pointer;
+  border: 0; border-radius: 980px;
+  padding: 5px 12px; background: var(--ap-fill); color: var(--ap-ink-2);
+  font-family: inherit; font-size: var(--ap-cap); cursor: pointer;
 }
-.ask-chip:hover { background: var(--surface-hover); color: var(--text-primary); }
+.ask-chip:hover { color: var(--ap-ink); }
 
 /* ── blocks ── */
-.ws-block-head { display: flex; align-items: baseline; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+/* 애플은 섹션 라벨을 대문자로 늘려 쓰지 않는다. 문장 표기, 본문보다 한
+   단계 작게, 이름 그대로. */
+.ws-block-head { display: flex; align-items: baseline; gap: var(--sp-3); margin-bottom: 8px; padding-inline: 4px; }
 .ws-block-head h2,
 .ws-panel h3 {
-  margin: 0; font-size: var(--fs-xs); font-weight: 700;
-  letter-spacing: .09em; text-transform: uppercase; color: var(--text-faint);
+  margin: 0; font-size: var(--ap-foot); font-weight: 600;
+  letter-spacing: -.004em; text-transform: none; color: var(--ap-ink);
 }
-.ws-count { font-size: var(--fs-xs); color: var(--text-muted); }
+.ws-count { font-size: var(--ap-cap); color: var(--ap-ink-3); margin-left: auto; }
 
 /* ── the path, as one line ── */
 .ws-flow { padding-top: var(--sp-2); }
@@ -1705,10 +1803,10 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 .ws-flow .flow-node {
   position: relative; display: flex; align-items: center; gap: 7px;
-  border: 0; background: none; padding: 0; color: var(--text-faint);
+  border: 0; background: none; padding: 0; color: var(--ap-ink-3);
 }
 .ws-flow .flow-node svg { width: 14px; height: 14px; }
-.ws-flow .flow-node b { color: var(--text-muted); font-size: var(--fs-xs); font-weight: 600; }
+.ws-flow .flow-node b { color: var(--ap-ink-3); font-size: var(--ap-cap); font-weight: 400; }
 .ws-flow .flow-node span { display: none; }
 .ws-flow .flow-node:not(:last-child)::after {
   content: ''; position: absolute; right: calc(var(--sp-4) / -2 - 2px); top: 50%;
@@ -1718,55 +1816,128 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   transform: translateY(-50%) rotate(45deg);
 }
 
+/* ── 모듈 목록 ──────────────────────────────────────────
+   여덟 장의 똑같은 카드가 그리드에 깔린 건 지루한데, 목록의 행이 똑같은
+   건 목록이라서 맞다. macOS System Settings 의 grouped inset list 를 쓴다:
+   둥근 사각 아이콘 타일, 이름, 설명, 오른쪽에 상태와 chevron. 모듈별 색은
+   그 작은 타일 안에서만 산다 — 예전처럼 카드 테두리를 여덟 색으로 물들이는
+   대신, 애플이 앱 아이콘에 색을 쓰는 방식 그대로다. */
+.studio-grid {
+  background: var(--ap-panel);
+  border-radius: 18px;
+  box-shadow: var(--ap-shadow);
+  overflow: hidden;
+}
+.orbital-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 16px;
+  cursor: pointer;
+  transition: background .12s ease;
+}
+.orbital-card + .orbital-card { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
+.orbital-card:hover { background: var(--ap-fill); }
+.orbital-card:focus-visible { outline: 3px solid var(--ap-blue); outline-offset: -3px; }
+.orbital-status { display: none; }
+
+.mod-tile {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--mod-tint);
+  color: var(--ap-on-blue);
+}
+.mod-glyph { width: 17px; height: 17px; fill: none; stroke: currentColor;
+             stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.mod-tile[data-mod="app"]        { --mod-tint: #0071e3; }
+.mod-tile[data-mod="stream"]     { --mod-tint: #ff9500; }
+.mod-tile[data-mod="zoo"]        { --mod-tint: #34c759; }
+.mod-tile[data-mod="compiler"]   { --mod-tint: #5e5ce6; }
+.mod-tile[data-mod="planner"]    { --mod-tint: #30b0c7; }
+.mod-tile[data-mod="benchmark"]  { --mod-tint: #af52de; }
+.mod-tile[data-mod="dx_monitor"] { --mod-tint: #ff375f; }
+.mod-tile[data-mod="agent"]      { --mod-tint: #8e8e93; }
+
+.mod-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.orbital-name { font-size: var(--ap-call); font-weight: 500; color: var(--ap-ink); letter-spacing: -.01em; }
+.card-desc { font-size: var(--ap-cap); color: var(--ap-ink-3); line-height: 1.35; }
+.card-state {
+  flex-shrink: 0;
+  font-size: var(--ap-cap);
+  color: var(--ap-blue);
+}
+.card-state.is-alive { color: var(--ap-green); }
+.mod-chev { flex-shrink: 0; color: var(--ap-ink-3); font-size: var(--ap-body); line-height: 1; }
+
 /* ── the state column ── */
 .ws-side { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
 .ws-panel {
-  padding: var(--sp-4); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius); background: var(--surface-panel);
+  padding: 15px 16px; border: 0;
+  border-radius: 18px; background: var(--ap-panel);
+  box-shadow: var(--ap-shadow);
 }
-.ws-panel h3 { margin-bottom: var(--sp-3); }
+.ws-panel h3 { margin-bottom: 10px; }
 /* The silicon this studio compiles for, at the top of the panel that reports
    whether it is present. The fold had no image at all while this render sat at
    the very bottom of the page. */
-.ws-panel--device { padding-top: 0; overflow: hidden; }
-.ws-panel--device .landing-poster {
-  width: calc(100% + var(--sp-4) * 2);
-  margin: 0 calc(var(--sp-4) * -1) var(--sp-4);
-  border: 0;
-  border-radius: 0;
-  border-bottom: 1px solid var(--border-subtle);
-}
-.ws-panel--device .landing-poster img { height: 124px; object-position: center 42%; }
-.ws-panel--device .poster-hint { border-top: 0; padding: 8px var(--sp-4); }
 /* "DX-M1 · 2 devices" is the single line on this page that a brochure could
    not print. It was 14px grey in a side panel. */
 .ws-device {
   margin: 0 0 var(--sp-4);
-  font-size: var(--fs-3xl);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -.02em;
-  color: var(--text-muted);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.021em;
+  color: var(--ap-ink);
 }
-.ws-device.is-live { color: var(--status-ok); }
-.ws-facts { margin: 0; display: flex; flex-direction: column; gap: 5px; }
-.ws-facts > div { display: flex; justify-content: space-between; gap: var(--sp-3); }
-.ws-facts dt { font-size: var(--fs-2xs); color: var(--text-faint); }
-.ws-facts dd { margin: 0; font-size: var(--fs-2xs); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.ws-device.is-live { color: var(--ap-green); }
+.ws-facts { margin: 0; display: flex; flex-direction: column; }
+.ws-facts > div {
+  display: flex; justify-content: space-between; gap: var(--sp-3);
+  padding: 5px 0; box-shadow: inset 0 1px 0 var(--ap-line-soft);
+}
+.ws-facts > div:first-child { box-shadow: none; }
+.ws-facts dt { font-size: var(--ap-cap); color: var(--ap-ink-3); }
+.ws-facts dd { margin: 0; font-size: var(--ap-cap); color: var(--ap-ink); font-variant-numeric: tabular-nums; }
 .ws-running { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.ws-running li { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-xs); color: var(--text-secondary); }
+.ws-running li { display: flex; align-items: center; gap: 8px; font-size: var(--ap-cap); color: var(--ap-ink); }
 .ws-running li::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--status-ok); flex-shrink: 0;
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ap-green); flex-shrink: 0;
 }
-.ws-running li.is-none { color: var(--text-faint); }
-.ws-running li.is-none::before { background: var(--text-faint); }
+.ws-running li.is-none { color: var(--ap-ink-3); }
+.ws-running li.is-none::before { background: var(--ap-ink-3); }
 
 /* Learn holds the two launcher views and nothing else. Everything that leaves
    the app — docs, downloads, GitHub — went to .ws-foot: a state column that
    also carries a link directory is not a state column. */
-.ws-side .about-book-row { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
-.ws-side .about-book-card { padding: var(--sp-3); }
+.ws-side .about-book-row { display: block; max-width: none; }
+.ws-side .about-book-card {
+  flex-direction: row; align-items: center; gap: 12px;
+  padding: 9px 0; border: 0; border-radius: 0; background: none;
+}
+.ws-side .about-book-card + .about-book-card { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
+.ws-side .about-book-card:hover { background: none; }
+.ws-side .about-book-card:hover .orbital-name { color: var(--ap-blue); }
+.ws-side .about-book-card .orbital-icon { margin: 0; color: var(--ap-ink-3); }
+.ws-side .about-book-card .orbital-name { font-size: var(--ap-call); font-weight: 400; }
+.ws-side .about-book-card .orbital-port { display: none; }
+
+/* The two marketing renders are cyberpunk product art. In a restrained UI
+   they were the loudest thing on the page and fought everything around them.
+   They are rows here; the artwork still opens in the overlay it always had. */
+.learn-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 0; cursor: pointer; text-decoration: none;
+  font-size: var(--ap-call); color: var(--ap-ink);
+  box-shadow: inset 0 1px 0 var(--ap-line-soft);
+}
+.learn-row::after { content: '\203A'; color: var(--ap-ink-3); font-size: var(--ap-body); }
+.learn-row:hover { color: var(--ap-blue); }
+.learn-row:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 2px; }
 
 /* ── below the work surface ── */
 .ws-foot {
@@ -1775,16 +1946,18 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   margin: 0 auto;
   padding: var(--sp-5) var(--sp-5) 0;
   box-sizing: border-box;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--ap-line);
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
 }
-.ws-foot .deepx-links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px var(--sp-4); }
-.ws-foot .deepx-link { padding: 7px 0; background: none; border: 0; font-size: var(--fs-xs); }
-.ws-foot .deepx-link:hover { background: none; color: var(--accent); }
-.ws-foot .poster-row { grid-template-columns: minmax(0, 1fr); max-width: 420px; margin: 0; }
-.ws-foot .landing-poster img { height: 108px; }
+.ws-foot .deepx-links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px var(--sp-5); }
+.ws-foot .deepx-link {
+  padding: 6px 0; background: none; border: 0;
+  font-size: var(--ap-cap); font-weight: 400; color: var(--ap-blue);
+}
+.ws-foot .deepx-link:hover { background: none; text-decoration: underline; }
+.ws-foot .deepx-link::after { content: ' \203A'; color: inherit; font-size: var(--ap-foot); }
 .ws-foot .replay-btn { align-self: flex-start; }
 @media (max-width: 768px) {
   .ws-foot .deepx-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1928,18 +2101,9 @@ body.lang-zh-TW .zh-CN { display: none !important; }
    monospace note these read as debug output, not as sections. */
 
 /* 모듈 카드 — 이름만 있는 타일은 아이콘 목록이지 대시보드가 아니다 */
-.card-desc { font-size: var(--fs-xs); color: var(--text-muted); line-height: 1.5; margin-top: 4px; }
 /* The bottom line of a module card is the only thing on it that changes, and
    it is either an invitation or a fact. Not running reads "start →" in accent;
    running reads "ready" in the ok colour. */
-.card-state {
-  margin-top: auto; padding-top: var(--sp-3);
-  font-size: var(--fs-xs); font-weight: 600;
-  color: var(--accent);
-}
-.card-state::after { content: ' \2192'; }
-.card-state.is-alive { color: var(--status-ok); }
-.card-state.is-alive::after { content: ''; }
 
 @media (max-width: 768px) {
   .model-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -2082,18 +2246,6 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 /* 여덟 타일을 원 둘레에 절대 배치하면 줄이는 것만 되고 다시 감기지는
    않는다 — 650px 에서 카드가 잘리고 링크 열이 본문 위로 떠올랐다.
    격자는 감긴다. 링은 인트로에 남는다. */
-.studio-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--sp-4);
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  /* .landing 은 가로 패딩이 0 이라 격자가 화면 가장자리에 붙는다 */
-  padding-inline: var(--sp-5);
-  box-sizing: border-box;
-  z-index: 6;
-}
 /* ── Center Hub ── */
 .orbital-hub {
   position: absolute;
@@ -2156,51 +2308,8 @@ body.lang-zh-TW .zh-CN { display: none !important; }
    ring's translate(-50%,-50%) — in a grid that made the card jump half its own
    size. All of that is gone. Identity comes from the name and the icon; colour
    is reserved for state, where it means something. */
-.orbital-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: var(--sp-4);
-  background: var(--surface-panel);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color .15s ease, background .15s ease, transform .15s ease;
-}
-@media (max-width: 768px) { .studio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .studio-grid { grid-template-columns: 1fr; } }
-.orbital-card:hover {
-  background: var(--surface-hover);
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
-}
-.orbital-card:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .orbital-card:hover { transform: none; }
-}
 
-.orbital-status {
-  position: absolute;
-  top: var(--sp-4); right: var(--sp-4);
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--text-faint);
-}
-.orbital-status.alive { background: var(--status-ok); }
-.orbital-status.dead  { background: var(--text-faint); }
 
-.orbital-icon { font-size: var(--fs-2xl); margin-bottom: var(--sp-2); }
-.orbital-name {
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  letter-spacing: -.014em;
-  color: var(--text-primary);
-  margin-bottom: 5px;
-}
 .orbital-port {
   font-size: var(--fs-2xs);
   font-variant-numeric: tabular-nums;
@@ -2257,47 +2366,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
    with a pulsing glow, floating over whatever the page laid out underneath —
    and hidden entirely below 1200px, so on a laptop they simply were not there.
    In flow they are two cards in Resources, at every width. */
-.poster-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sp-3);
-  margin-top: var(--sp-3);
-}
-.landing-poster {
-  display: flex;
-  flex-direction: column;
-  background: var(--surface-panel);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color .15s ease;
-}
-.landing-poster:hover { border-color: var(--border-strong); }
-.landing-poster:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.landing-poster img {
-  display: block;
-  width: 100%;
-  height: 168px;
-  object-fit: cover;
-  object-position: center;
-}
-.landing-poster--left img { object-fit: contain; background: var(--surface-sunken); }
-.poster-hint {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: 11px 14px;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-secondary);
-  border-top: 1px solid var(--border-subtle);
-}
-.landing-poster:hover .poster-hint { color: var(--text-primary); }
 
-@media (max-width: 600px) {
-  .poster-row { grid-template-columns: 1fr; }
-}
 
 /* ── Physical AI ecosystem overlay (reuses .platform-info-overlay/.panel chrome) ── */
 /* Two-column layout: infographic left, text right. Image width is tuned so the

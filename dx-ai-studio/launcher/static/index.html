@@ -123,7 +123,7 @@
     </div>
     <div class="top-bar-right">
       <a class="buy-topbar-btn" id="buyTopbarBtn" href="https://deepx.ai/buy-now/" target="_blank" rel="noopener noreferrer" aria-label="Purchase DEEPX NPU" data-i18n-aria-label="Purchase DEEPX NPU">
-        🛒 <span data-i18n="Buy">Buy</span>
+        <span data-i18n="Buy">Buy</span>
       </a>
       <div id="launcherToolbar" class="toolbar"></div>
     </div>
@@ -233,68 +233,85 @@
             <span class="ws-count" id="moduleUpCount">—</span>
           </div>
           <div class="studio-grid" id="studioGrid">
-            <div class="orbital-card" data-app="app" tabindex="0">
+            <div class="orbital-card" data-app="app" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusApp"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="14" cy="10" r="1.5"/></svg></div>
-              <div class="orbital-name">DX App</div>
-              <div class="card-desc" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="app" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="14" cy="10" r="1.5"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX App</span>
+                <span class="card-desc" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
-
-            <div class="orbital-card" data-app="stream" tabindex="0">
+            <div class="orbital-card" data-app="stream" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusStream"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"/><circle cx="12" cy="10" r="2"/><path d="M4 18 Q8 14 12 16 Q16 18 20 14"/></svg></div>
-              <div class="orbital-name">DX Stream</div>
-              <div class="card-desc" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="stream" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"/><circle cx="12" cy="10" r="2"/><path d="M4 18 Q8 14 12 16 Q16 18 20 14"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX Stream</span>
+                <span class="card-desc" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
-
-            <div class="orbital-card" data-app="zoo" tabindex="0">
+            <div class="orbital-card" data-app="zoo" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusZoo"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
-              <div class="orbital-name">DX Model Zoo</div>
-              <div class="card-desc" data-i18n="340 AI model catalog">340 AI model catalog</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="zoo" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX Model Zoo</span>
+                <span class="card-desc" data-i18n="340 AI model catalog">340 AI model catalog</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
-
-            <div class="orbital-card" data-app="compiler" tabindex="0">
+            <div class="orbital-card" data-app="compiler" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusCompiler"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4 V8 M12 16 V20 M4 12 H8 M16 12 H20"/><circle cx="12" cy="12" r="3"/></svg></div>
-              <div class="orbital-name">DX Compiler</div>
-              <div class="card-desc" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="compiler" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4 V8 M12 16 V20 M4 12 H8 M16 12 H20"/><circle cx="12" cy="12" r="3"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX Compiler</span>
+                <span class="card-desc" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
-
-            <div class="orbital-card" data-app="planner" tabindex="0">
+            <div class="orbital-card" data-app="planner" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusPlanner"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="6"/><line x1="18" y1="2" x2="18" y2="6"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/><path d="M20 12 L23 12"/></svg></div>
-              <div class="orbital-name">DX EdgeGuide</div>
-              <div class="card-desc" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="planner" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="6"/><line x1="18" y1="2" x2="18" y2="6"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/><path d="M20 12 L23 12"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX EdgeGuide</span>
+                <span class="card-desc" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
-
-            <div class="orbital-card" data-app="benchmark" tabindex="0">
+            <div class="orbital-card" data-app="benchmark" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusBenchmark"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M12 2 A10 10 0 0 1 22 12"/><path d="M12 2 A10 10 0 0 0 2 12"/><line x1="12" y1="12" x2="17" y2="7"/><circle cx="12" cy="12" r="2"/></svg></div>
-              <div class="orbital-name">DX Benchmark</div>
-              <div class="card-desc" data-i18n="Hardware performance benchmark">Hardware performance benchmark</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="benchmark" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M12 2 A10 10 0 0 1 22 12"/><path d="M12 2 A10 10 0 0 0 2 12"/><line x1="12" y1="12" x2="17" y2="7"/><circle cx="12" cy="12" r="2"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX Benchmark</span>
+                <span class="card-desc" data-i18n="Hardware performance benchmark">Hardware performance benchmark</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
-
-            <div class="orbital-card" data-app="dx_monitor" tabindex="0">
+            <div class="orbital-card" data-app="dx_monitor" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusMonitor"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M8 19h8M12 15v4"/><path d="M7 9l3 3 4-4 3 3"/></svg></div>
-              <div class="orbital-name">DX Monitor</div>
-              <div class="card-desc" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="dx_monitor" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M8 19h8M12 15v4"/><path d="M7 9l3 3 4-4 3 3"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX Monitor</span>
+                <span class="card-desc" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
-
-            <div class="orbital-card" data-app="agent" tabindex="0">
+            <div class="orbital-card" data-app="agent" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusAgent"></span>
-              <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></div>
-              <div class="orbital-name">DX Agent Dev</div>
-              <div class="card-desc" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands</div>
-              <div class="card-state" data-role="state">—</div>
+              <span class="mod-tile" data-mod="agent" aria-hidden="true"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></span>
+              <span class="mod-text">
+                <span class="orbital-name">DX Agent Dev</span>
+                <span class="card-desc" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands</span>
+              </span>
+              <span class="card-state" data-role="state">—</span>
+              <span class="mod-chev" aria-hidden="true">›</span>
             </div>
           </div>
         </section>
@@ -340,11 +357,7 @@
       </div>
 
       <aside class="ws-side" id="wsSide" aria-label="Studio state" data-i18n-aria-label="Studio state">
-        <section class="ws-panel ws-panel--device">
-          <div class="landing-poster" id="landingPoster" role="button" tabindex="0" data-i18n-title="DX-M1 and DX-M2 NPU lineup">
-          <img src="/static/img/about/marketing/m1_m2.webp" alt="DX-M1 and DX-M2 NPU lineup" loading="lazy" onclick="openPlatformInfo()" tabindex="0" role="button">
-          <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></span>
-          </div>
+        <section class="ws-panel">
           <h3 data-i18n="Device">Device</h3>
           <p class="ws-device" id="heroDeviceChip" data-i18n="Checking DX-M1…">Checking DX-M1…</p>
           <dl class="ws-facts">
@@ -375,6 +388,8 @@
               </div>
             </div>
           </div>
+          <a class="learn-row" id="landingPoster" role="button" tabindex="0" onclick="openPlatformInfo()" data-i18n-title="DX-M1 and DX-M2 NPU lineup"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></a>
+          <a class="learn-row" id="ecosystemPoster" role="button" tabindex="0" onclick="openEcosystemInfo()" data-i18n-title="DEEPX Physical AI ecosystem"><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></a>
         </section>
       </aside>
     </div>
@@ -403,12 +418,6 @@
       <a class="deepx-link" href="https://deepx.ai" target="_blank" rel="noopener noreferrer">
       <span data-i18n="deepx.ai">deepx.ai</span></a>
       </nav>
-      <div class="poster-row">
-        <div class="landing-poster landing-poster--left" id="ecosystemPoster" role="button" tabindex="0" data-i18n-title="DEEPX Physical AI ecosystem">
-        <img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="DEEPX Connects the Physical AI Ecosystem" loading="lazy" onclick="openEcosystemInfo()" tabindex="0" role="button">
-        <span class="poster-hint" onclick="openEcosystemInfo()" tabindex="0" role="button"><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></span>
-        </div>
-      </div>
       <button class="replay-btn" id="replayBtn" onclick="replaySplash()" data-i18n-title="Replay intro animation" style="display:none;">
         <span class="replay-btn-icon">▶</span>
         <span data-i18n="Replay Intro">Replay Intro</span>

@@ -177,32 +177,29 @@
           display: flex; align-items: center; gap: 12px;
           width: 100%; max-width: 1240px;
           margin: var(--sp-5) auto 0; box-sizing: border-box;
-          background: var(--surface-panel);
-          border: 1px solid var(--border-subtle); border-radius: var(--radius);
-          padding: 12px 16px; cursor: pointer;
-          transition: border-color 0.2s, background 0.2s;
+          background: var(--ap-panel);
+          border: 0; border-radius: 18px;
+          box-shadow: var(--ap-shadow);
+          padding: 13px 16px; cursor: pointer;
         }
-        .dxt-launcher-card:hover {
-          background: var(--surface-hover);
-          border-color: var(--border-strong);
-        }
+        .dxt-launcher-card:hover { background: var(--ap-panel); }
         .dxt-launcher-card .dxt-lc-text { flex: 1; min-width: 0; }
-        .dxt-launcher-card .dxt-lc-icon { font-size: 22px; }
-        .dxt-launcher-card .dxt-lc-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-        .dxt-launcher-card .dxt-lc-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-        .dxt-launcher-card .dxt-lc-mode { margin-left: 6px; font-size: 12px; color: var(--text-faint); }
-        .dxt-launcher-card .dxt-lc-mode.is-on { color: var(--accent); }
+        .dxt-launcher-card .dxt-lc-icon { display: none; }
+        .dxt-launcher-card .dxt-lc-title { font-size: var(--ap-call); font-weight: 500; color: var(--ap-ink); }
+        .dxt-launcher-card .dxt-lc-desc { font-size: var(--ap-cap); color: var(--ap-ink-3); margin-top: 1px; }
+        .dxt-launcher-card .dxt-lc-mode { margin-left: 6px; font-size: var(--ap-cap); color: var(--ap-ink-3); }
+        .dxt-launcher-card .dxt-lc-mode.is-on { color: var(--ap-blue); }
         .dxt-launcher-card .dxt-lc-switch {
           width: 40px; height: 22px; border-radius: 11px; border: none;
-          background: var(--control-bg); cursor: pointer; position: relative;
+          background: var(--ap-fill); cursor: pointer; position: relative;
           transition: background 0.2s; flex-shrink: 0;
         }
         .dxt-launcher-card .dxt-lc-switch::after {
           content: ''; position: absolute; top: 3px; left: 3px;
           width: 16px; height: 16px; border-radius: 50%;
-          background: var(--text-on-accent); transition: transform 0.2s;
+          background: var(--ap-on-blue); transition: transform 0.2s;
         }
-        .dxt-launcher-card .dxt-lc-switch.on { background: var(--accent); }
+        .dxt-launcher-card .dxt-lc-switch.on { background: var(--ap-green); }
         .dxt-launcher-card .dxt-lc-switch.on::after { transform: translateX(18px); }
 
       `;
@@ -217,7 +214,8 @@
     btn.className = 'dx-toolbar-btn dxt-toggle-btn';
     var _tutorialLabels = {en:'Tutorial Mode',ko:'튜토리얼 모드',ja:'チュートリアルモード','zh-CN':'教程模式','zh-TW':'教學模式',es:'Modo tutorial'};
     btn.title = _tutorialLabels[_lang()] || _tutorialLabels.en;
-    btn.innerHTML = '🎓';
+    /* SF Symbols 계열 라인 글리프 — 이모지는 chrome 에 안 어울린다 */
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4-9-4z"/><path d="M7 10.5V16c0 1.1 2.2 2 5 2s5-.9 5-2v-5.5"/></svg>';
     btn.addEventListener('click', toggleTutorialMode);
     topRight.insertBefore(btn, topRight.firstChild);
   }

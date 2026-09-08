@@ -1111,14 +1111,14 @@ class TestLandingPosterKeyboardAccess:
         return (STATIC / "index.html").read_text(encoding="utf-8")
 
     def test_landing_poster_has_role_button(self, html_source):
-        match = re.search(r'<div[^>]*id="landingPoster"[^>]*>', html_source)
+        match = re.search(r'<\w+[^>]*id="landingPoster"[^>]*>', html_source)
         assert match, "landingPoster element must exist"
         assert 'role="button"' in match.group(0), (
             "landingPoster must have role=\"button\""
         )
 
     def test_landing_poster_has_tabindex(self, html_source):
-        match = re.search(r'<div[^>]*id="landingPoster"[^>]*>', html_source)
+        match = re.search(r'<\w+[^>]*id="landingPoster"[^>]*>', html_source)
         assert match, "landingPoster element must exist"
         assert 'tabindex="0"' in match.group(0), (
             "landingPoster must have tabindex=\"0\""

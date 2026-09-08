@@ -37,52 +37,56 @@ def _platform_values(html: str) -> str:
     return match.group("body")
 
 
-def test_landing_poster_uses_m1_m2_product_card():
+def test_the_product_artwork_is_reachable_but_not_on_the_home():
+    """The renders stopped being cards on the home and became rows in Learn.
+
+    They are cyberpunk product art — 400px of neon blue and gold. Restraint is
+    the whole point of the current language, and in it they were the loudest
+    thing on the screen by a wide margin. The artwork itself did not go
+    anywhere: both rows open the overlay they always opened, so the images are
+    one click away instead of unavoidable.
+    """
     html = (ROOT / "launcher/static/index.html").read_text(encoding="utf-8")
     image_rel = "img/about/marketing/m1_m2.webp"
-    image_path = ROOT / "launcher/static" / image_rel
-    poster = re.search(
-        r'<div class="landing-poster"[^>]*>.*?</div>',
-        html,
-        re.DOTALL,
-    )
+    assert (ROOT / "launcher/static" / image_rel).exists(), "the render itself must stay"
 
-    assert poster is not None
-    assert f'src="/static/{image_rel}"' in poster.group(0)
-    assert "DX-M1 and DX-M2 NPU lineup" in poster.group(0)
-    assert "representative-1.jpg" not in poster.group(0)
-    assert "DEEPX representative" not in poster.group(0)
-    assert 'src="/static/img/about/marketing/intelligented.png"' not in poster.group(0)
-    assert "dxnn-sdk-fullstack-architecture-diagram" not in poster.group(0)
-    assert image_path.exists()
+    for element_id, opener in (
+        ("landingPoster", "openPlatformInfo()"),
+        ("ecosystemPoster", "openEcosystemInfo()"),
+    ):
+        row = re.search(r'<\w+[^>]*id="%s"[^>]*>' % element_id, html)
+        assert row, f"{element_id} must still exist — the tutorial points at it"
+        assert opener in row.group(0), f"{element_id} must still open its overlay"
+        assert 'role="button"' in row.group(0)
+        assert 'tabindex="0"' in row.group(0)
+
+    # It is the overlay that carries the picture now, not the home.
+    assert f'src="/static/{image_rel}"' in html, "the platform overlay lost its render"
+    assert "representative-1.jpg" not in html
+    assert "DEEPX representative" not in html
 
 
-def test_landing_poster_cannot_stack_above_anything():
-    """The poster used to be absolutely positioned and it covered the page.
+def test_the_home_has_no_absolutely_positioned_furniture():
+    """Everything on this page is placed by flow.
 
-    It sat at right:10%, top:50%, z-index 4, 400px wide, with pointer-events
-    juggled so clicks could reach the module cards behind it — and it was
-    display:none below 1200px, so on a laptop it simply was not there. The
-    stack was the bug; the fix is that there is no stack. It is a card in the
-    band below the work surface, in flow, and the assertion is that it stays
-    that way.
+    The poster was the last of it: right:10%, top:50%, z-index 4, 400px wide,
+    pointer-events juggled so clicks could reach the cards behind it — and
+    display:none below 1200px, so on a laptop it was simply absent. Nothing on
+    the home stacks now, so nothing on the home can cover anything.
     """
     css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
-    poster = re.search(r"(?m)^\.landing-poster\s*\{(?P<body>[^}]*)\}", css)
-    assert poster is not None
-    body = poster.group("body")
-    assert "position: absolute" not in body
-    assert "position: fixed" not in body
-    assert "z-index" not in body
-    assert "pointer-events" not in body, "nothing to pass through any more"
-
-    html = (ROOT / "launcher/static/index.html").read_text(encoding="utf-8")
-    # The product render leads the panel that reports whether the device is
-    # there; the ecosystem diagram is reference material and sits in the band.
-    device = html[html.index('class="ws-panel ws-panel--device"'):]
-    device = device[: device.index("</section>")]
-    assert 'id="landingPoster"' in device
-    assert 'id="ecosystemPoster"' in html[html.index('class="ws-foot"'):]
+    assert ".landing-poster" not in css, "the floating poster component is back"
+    home = css[css.index("/* ─── Workspace ───"): css.index("/* ─── Working view ───")]
+    # A ::before/::after anchored inside its own relatively-positioned parent
+    # is a mark, not a layer — the chevrons between the workflow steps are
+    # drawn that way. What must not come back is a positioned *element*.
+    floating = [
+        selector.strip()
+        for selector, body in re.findall(r"(?m)^([^{@}\n][^{}]*)\{([^}]*)\}", home)
+        if re.search(r"position:\s*(absolute|fixed)", body)
+        and "::" not in selector
+    ]
+    assert not floating, f"positioned elements on the home: {floating}"
 
 
 def test_module_cards_need_no_javascript_to_be_placed():
@@ -94,32 +98,14 @@ def test_module_cards_need_no_javascript_to_be_placed():
     guard, the ready class and the debounced resize handler are all gone with it.
     """
     css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
-    grid = re.search(r"\.studio-grid\s*\{(?P<body>[^}]*)\}", css)
-    assert grid, ".studio-grid rule missing"
-    assert "grid-template-columns" in grid.group("body")
-    assert "--orbit-x" not in css, "cards must not be positioned by script"
+    assert re.search(r"(?m)^\.studio-grid\s*\{", css), ".studio-grid rule missing"
+    assert "--orbit-x" not in css, "rows must not be positioned by script"
     js = (ROOT / "launcher/static/launcher-app-frame.js").read_text(encoding="utf-8")
     assert "orbital-ready" not in js, "the JS layout pass should be gone"
     assert "ensureStudioReady" in js
     assert "_initLauncherCore" in js
 
 
-def test_landing_poster_hint_sits_below_image():
-    """The caption reads under the image, not over it.
-
-    It was once absolutely positioned on top of the artwork, which is why the
-    old rule had to say position:static to pull it back out. The poster is a
-    flex column now, so the caption's place comes from the flow — assert the
-    column, and that nothing has lifted the caption out of it again.
-    """
-    css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
-    poster = re.search(r"(?m)^\.landing-poster\s*\{(?P<body>[^}]*)\}", css)
-    hint = re.search(r"(?m)^\.poster-hint\s*\{(?P<body>[^}]*)\}", css)
-
-    assert poster is not None
-    assert hint is not None
-    assert "flex-direction: column" in poster.group("body")
-    assert "position: absolute" not in hint.group("body")
 
 
 def test_top_nav_tabs_scroll_instead_of_clipping_under_status_dots():
