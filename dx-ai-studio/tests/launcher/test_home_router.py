@@ -139,10 +139,30 @@ def test_compile_routes_to_the_compiler(route):
     assert any(r.get("module") == "compiler" for r in got["routes"])
 
 
-def test_nothing_matched_returns_no_routes(route):
+def test_a_sentence_about_nothing_we_ship_returns_no_routes(route):
     """An unmatched sentence is the agent's cue, not a bad guess."""
-    got = json.loads(route("count push-ups and shout the number", CATALOG, DEMOS))
+    got = json.loads(route("write me a haiku about the weather", CATALOG, DEMOS))
     assert got["routes"] == []
+    assert got["parsed"]["task"] is None
+
+
+def test_understanding_the_task_is_not_the_same_as_having_a_preset(route):
+    """"Count push-ups" is pose estimation — we should say so.
+
+    What we do not have is something to run. Reading the task and offering a
+    route are separate answers, and conflating them is how a router starts
+    guessing: the agent is the escalation, and it earns that by there being no
+    preset, not by us failing to understand the sentence.
+    """
+    no_pose_demo = [d for d in DEMOS if d["category"] != "pose_estimation"]
+    got = json.loads(
+        route("count push-ups from a webcam and shout the number", CATALOG, no_pose_demo)
+    )
+    assert got["parsed"]["task"] == "pose_estimation", "we do understand it"
+    assert got["parsed"]["source"] == "webcam"
+    assert not [r for r in got["routes"] if r["kind"] == "run"], (
+        "nothing to run means no run route — that is the agent's opening"
+    )
 
 
 @pytest.mark.parametrize("chip", HERO_CHIPS)
