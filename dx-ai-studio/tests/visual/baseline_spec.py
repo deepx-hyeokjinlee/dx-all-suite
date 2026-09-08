@@ -25,7 +25,19 @@ SPECS: dict[str, dict] = {
         "mask": ("#sortSelect", ".mz-dx-app-status"),
     },
     "dx_benchmark": {"settle_ms": _DEFAULT_SETTLE_MS},
-    "dx_planner": {"settle_ms": _DEFAULT_SETTLE_MS},
+    "dx_planner": {
+        "settle_ms": _DEFAULT_SETTLE_MS,
+        # Same failure as dx_modelzoo's #sortSelect, found on the 1320-wide axis
+        # where TARGET FPS finally comes into frame: Chromium draws a native
+        # <select>'s value through the host font stack, and the resolution wobbles
+        # between runs of one commit. Measured — five captures of the same commit
+        # gave four at 0 px and one at 278 px in a 45×10 box holding the string
+        # "30 FPS", against a 237 px budget. Waiting on document.fonts.ready does
+        # not close it; the race is below the page. All three .ops-select controls
+        # are the same control, so the mask covers the class rather than waiting
+        # for each to scroll into a viewport and go red.
+        "mask": (".ops-select",),
+    },
     "dx_agent_dev": {
         "settle_ms": _DEFAULT_SETTLE_MS,
         # Showcase thumbnails are animated/lazily decoded, so a capture lands on
