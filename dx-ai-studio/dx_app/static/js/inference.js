@@ -431,11 +431,11 @@ async function doRun(){
   if(_runInFlight){toast(T('Run already in progress'),'warn');return}
   const model=$('r-model').value;if(!model){toast(T('Select a model'),'warn');return}
   const m=findModel(model);if(!m){toast(T('Model not found'),'err');return}
-  if(!m.model_file){toast(T('⚠ Model file not configured for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--error)">\u274c '+T('Model file not configured.')+'<br><span class="txt-dim">'+T('Please configure model file in Developer mode.')+'</span></p>';return}
-  if(m.model_exists===false){toast(T('⚠ Model file missing: ')+m.model_file,'err');$('r-result').innerHTML='<p style="color:var(--error)">\u274c '+T('Model file not found')+'<br><code style="font-size:11px;color:var(--text-3)">'+esc(m.model_file)+'</code><br><span class="txt-dim">'+T('Model file (.dxnn) does not exist. Please compile and try again.')+'</span></p>';return}
+  if(!m.model_file){toast(T('⚠ Model file not configured for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('Model file not configured.')+'<br><span class="txt-dim">'+T('Please configure model file in Developer mode.')+'</span></p>';return}
+  if(m.model_exists===false){toast(T('⚠ Model file missing: ')+m.model_file,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('Model file not found')+'<br><code style="font-size:11px;color:var(--text-muted)">'+esc(m.model_file)+'</code><br><span class="txt-dim">'+T('Model file (.dxnn) does not exist. Please compile and try again.')+'</span></p>';return}
   const lang=$('r-lang').value;
-  if(lang==='cpp'&&!m.cpp){toast(T('⚠ C++ binary not built for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--error)">\u274c '+T('C++ binary has not been built.')+'<br><span class="txt-dim">'+T('Run <code>make</code> build first or switch to Python.')+'</span></p>';return}
-  if(lang==='python'&&!m.python){toast(T('⚠ Python app not found for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--error)">\u274c '+T('Python app not found.')+'<br><span class="txt-dim">'+T('Switch to C++ or add a Python app.')+'</span></p>';return}
+  if(lang==='cpp'&&!m.cpp){toast(T('⚠ C++ binary not built for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('C++ binary has not been built.')+'<br><span class="txt-dim">'+T('Run <code>make</code> build first or switch to Python.')+'</span></p>';return}
+  if(lang==='python'&&!m.python){toast(T('⚠ Python app not found for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('Python app not found.')+'<br><span class="txt-dim">'+T('Switch to C++ or add a Python app.')+'</span></p>';return}
   const isImg=$('r-input-img').checked;
   const inputType=isImg?'image':'video';
   if(isImg&&!S.selectedImage&&!S.uploadedImage){toast(T('Please select or upload an image'),'warn');return}
@@ -537,7 +537,7 @@ function updateRunProgress(poll){
 }
 
 window.renderInferenceError=function(el,msg,hintHtml){
-  el.innerHTML='<p style="color:var(--error)">'+T('❌ Error: ')+esc(msg)+(hintHtml||'')+'</p>';
+  el.innerHTML='<p style="color:var(--status-error)">'+T('❌ Error: ')+esc(msg)+(hintHtml||'')+'</p>';
 };
 
 window.renderInferenceResult=function(el,res){
@@ -585,9 +585,9 @@ window.renderInferenceResult=function(el,res){
   h+='<div class="perf-grid">';
   if(r.fps)h+='<div class="pcard"><div class="pv txt-acc">'+r.fps+'</div><div class="pk">FPS</div></div>';
   if(r.latency)h+='<div class="pcard"><div class="pv">'+r.latency+'ms</div><div class="pk">Latency</div></div>';
-  if(r.fps_per_watt)h+='<div class="pcard"><div class="pv" style="color:var(--success)">'+r.fps_per_watt+'</div><div class="pk">FPS/W</div></div>';
+  if(r.fps_per_watt)h+='<div class="pcard"><div class="pv" style="color:var(--status-ok)">'+r.fps_per_watt+'</div><div class="pk">FPS/W</div></div>';
   if(r.elapsed_s)h+='<div class="pcard"><div class="pv">'+r.elapsed_s+'s</div><div class="pk">Elapsed</div></div>';
-  var exitColor=r.exit_code===0?'var(--success)':'var(--error)';
+  var exitColor=r.exit_code===0?'var(--status-ok)':'var(--status-error)';
   var exitIcon=r.exit_code===0?'\u2705':'\u274c';
   h+='<div class="pcard"><div class="pv" style="color:'+exitColor+'">'+exitIcon+'</div><div class="pk">Exit '+r.exit_code+'</div></div>';
   h+='</div>';
@@ -596,13 +596,13 @@ window.renderInferenceResult=function(el,res){
   }
   // Task-tag specific summary (single run)
   if(r.task_tag&&r.task_summary){
-    h+='<div class="mt8"><div style="font-size:11px;color:var(--text-3);margin-bottom:4px">'+T('📊 Task Summary (')+r.task_tag+')</div>';
+    h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">'+T('📊 Task Summary (')+r.task_tag+')</div>';
     h+=renderTaskSummary(r.task_tag,r.task_summary)+'</div>';
   }else if(r.det_summary&&Object.keys(r.det_summary).length){
     h+='<div class="mt8">'+renderDetSummary(r.det_summary)+'</div>';
   }
   if(r.exit_code!==0){
-    h+='<div style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:11px;color:var(--error)">'+T('⚠️ Inference exited abnormally (exit code: ')+r.exit_code+T('). Check Full Output for details.')+'</div>';
+    h+='<div style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:11px;color:var(--status-error)">'+T('⚠️ Inference exited abnormally (exit code: ')+r.exit_code+T('). Check Full Output for details.')+'</div>';
   }
   if(r.output){h+='<details class="mt8"><summary class="clickable txt-dim">'+T('📋 Full Output')+'</summary><div class="code mt8">'+esc(r.output)+'</div></details>'}
   el.innerHTML=h;
@@ -766,7 +766,7 @@ function contRenderSlots(){
       modOpts+=mods.map(function(m){return '<option'+(m.name===sl.model?' selected':'')+'>'+m.name+'</option>'}).join('');
     }
     h+='<div class="cont-slot-cfg" data-cidx="'+i+'">';
-    h+='<span style="color:var(--text-3);font-size:11px;font-weight:700;min-width:16px">'+(i+1)+'</span>';
+    h+='<span style="color:var(--text-muted);font-size:11px;font-weight:700;min-width:16px">'+(i+1)+'</span>';
     h+='<select onchange="contOnCat('+i+',this.value)">'+catOpts+'</select>';
     h+='<select onchange="contOnModel('+i+',this.value)">'+modOpts+'</select>';
     if(CONT.slots.length>1)h+='<button class="cont-x" onclick="contRemoveSlot('+i+')">\u00d7</button>';
@@ -889,7 +889,7 @@ function contShowResult(idx,res,modelName){
     slot.className='cont-slot error';
     setTextIfChanged(statusEl,T('❌ Error'));
     var phEl=$('c-ph-'+idx);
-    if(phEl)phEl.innerHTML='<p style="color:var(--error);font-size:12px;padding:12px">❌ '+esc(translatedError(res))+'</p>';
+    if(phEl)phEl.innerHTML='<p style="color:var(--status-error);font-size:12px;padding:12px">❌ '+esc(translatedError(res))+'</p>';
     return;
   }
   slot.className='cont-slot done';
@@ -929,7 +929,7 @@ function contFinish(results){
     var h='<div class="perf-grid">';
     results.forEach(function(r,i){
       if(!r)return;
-      var col=r.error?'var(--error)':'var(--accent)';
+      var col=r.error?'var(--status-error)':'var(--accent)';
       var icon=r.error?'❌':'✅';
       h+='<div class="pcard"><div class="pv" style="color:'+col+'">'+icon+'</div><div class="pk">'+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+'</div></div>';
       if(r.fps)h+='<div class="pcard"><div class="pv txt-acc">'+r.fps+'</div><div class="pk">FPS</div></div>';
@@ -941,10 +941,10 @@ function contFinish(results){
     results.forEach(function(r,i){
       if(!r||r.error)return;
       if(r.task_tag&&r.task_summary){
-        h+='<div class="mt8"><div style="font-size:11px;color:var(--text-3);margin-bottom:4px">📊 '+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+' ('+r.task_tag+')</div>';
+        h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">📊 '+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+' ('+r.task_tag+')</div>';
         h+=renderTaskSummary(r.task_tag,r.task_summary)+'</div>';
       }else if(r.det_summary&&Object.keys(r.det_summary).length){
-        h+='<div class="mt8"><div style="font-size:11px;color:var(--text-3);margin-bottom:4px">'+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+'</div>';
+        h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">'+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+'</div>';
         h+=renderDetSummary(r.det_summary)+'</div>';
       }
     });
@@ -988,7 +988,7 @@ function _makeLiveSlotEl(slotIdx,modelName){
   el.id='c-ls-'+slotIdx;
   el.innerHTML=
     '<div class="live-slot-header">'+
-    '<span style="color:var(--text-3)">'+T('Slot ')+(slotIdx+1)+'</span>'+
+    '<span style="color:var(--text-muted)">'+T('Slot ')+(slotIdx+1)+'</span>'+
     '<span class="cont-badge cb-model" style="margin-left:6px">'+esc(modelName)+'</span>'+
     '<span class="cont-badge cb-fps" id="c-ls-fps-badge-'+slotIdx+'" style="margin-left:4px"></span>'+
     '</div>'+
@@ -1234,9 +1234,9 @@ function contShowSummary(){
         h+='</div>';
       }
     }else if(result&&result.error){
-      h+='<p style="color:var(--error);font-size:12px">❌ '+esc(result.error)+'</p>';
+      h+='<p style="color:var(--status-error);font-size:12px">❌ '+esc(result.error)+'</p>';
     }else{
-      h+='<p style="color:var(--text-3);font-size:12px">'+T('No result data.')+'</p>';
+      h+='<p style="color:var(--text-muted);font-size:12px">'+T('No result data.')+'</p>';
     }
     h+='</div>';
   });

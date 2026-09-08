@@ -110,13 +110,13 @@
     if (old) old.remove();
     var box = document.createElement('div');
     box.id = 'dxt-mock-example';
-    box.style.cssText = 'margin:12px 0;padding:12px;border:1px dashed var(--border,#3a3a3a);border-radius:8px;background:var(--control-bg,#161b22)';
+    box.style.cssText = 'margin:12px 0;padding:12px;border:1px dashed var(--border-subtle,#3a3a3a);border-radius:8px;background:var(--control-bg,#161b22)';
     if (kind === 'before_after') {
       box.innerHTML = '<div class="mz-ba-container" style="position:relative;max-width:280px">' +
         '<img src="' + _mockImg('After') + '" class="mz-example-image" style="width:100%;display:block">' +
         '<div class="mz-ba-slider" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:var(--accent,#4c8dff);cursor:ew-resize"></div>' +
         '</div>' +
-        '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);margin-top:6px"><span>Before</span><span>After</span></div>';
+        '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-top:6px"><span>Before</span><span>After</span></div>';
     } else if (kind === 'overlay') {
       box.innerHTML = '<div class="mz-example-overlay" style="max-width:280px">' +
         '<img src="' + _mockImg('Overlay') + '" id="overlayImg" class="mz-example-overlay-result" style="width:100%;display:block;opacity:.6">' +
@@ -147,13 +147,13 @@
     box.id = 'dxt-mock-dl';
     box.style.cssText = 'margin-top:8px;font-size:13px;width:100%';
     if (state === 'complete') {
-      box.innerHTML = '<span class="mz-download-badge ready" style="color:var(--success,#3fb950)">✅ ' +
+      box.innerHTML = '<span class="mz-download-badge ready" style="color:var(--status-ok,#3fb950)">✅ ' +
         _lc({ ko: '다운로드 완료', en: 'Download complete', ja: 'ダウンロード完了', 'zh-CN': '下载完成', 'zh-TW': '下載完成', es: 'Descarga completada' }) + '</span>';
     } else {
       box.innerHTML = '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
         '<div style="flex:1;min-width:120px;height:6px;background:var(--surface-hover,#0d1117);border-radius:3px;overflow:hidden">' +
         '<div style="width:65%;height:100%;background:var(--accent,#4c8dff)"></div></div>' +
-        '<span>65%</span><span style="color:var(--text-3)">' +
+        '<span>65%</span><span style="color:var(--text-muted)">' +
         _lc({ ko: '다운로드 중', en: 'Downloading', ja: 'ダウンロード中', 'zh-CN': '下载中', 'zh-TW': '下載中', es: 'Descargando' }) + '</span>' +
         '<button class="mz-btn mz-btn-outline" style="font-size:12px;padding:2px 8px">✕</button></div>';
     }

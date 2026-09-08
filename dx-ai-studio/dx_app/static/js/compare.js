@@ -146,7 +146,7 @@ async function doABRun(){
     if(r.latency)h+='<div class="pcard"><div class="pv">'+r.latency+'ms</div><div class="pk">Latency</div></div>';
     h+='</div>';
     if(r.perf&&r.perf.pipeline&&r.perf.pipeline.length){h+='<div class="mt8">'+renderWaterfall(r.perf)+'</div>';}
-    if(r.exit_code!==0)h+='<p class="txt-sm" style="color:var(--error)">Exit code: '+r.exit_code+'</p>';
+    if(r.exit_code!==0)h+='<p class="txt-sm" style="color:var(--status-error)">Exit code: '+r.exit_code+'</p>';
     if(r.output)h+='<details class="mt8"><summary class="clickable txt-dim txt-sm">\ud83d\udccb Full Output</summary><div class="code mt4" style="max-height:200px;overflow:auto;font-size:10px">'+esc(r.output)+'</div></details>';
     $('ab-res-'+si).innerHTML=h;
   });

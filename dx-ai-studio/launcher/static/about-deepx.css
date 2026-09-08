@@ -4,15 +4,15 @@
 #about-view {
   --about-bg: var(--surface-page);
   --about-bg-alt: var(--surface-panel);
-  --about-text: var(--text-1);
-  --about-text-muted: var(--text-3);
-  --about-heading: var(--text-1);
-  --about-card-bg: var(--surface-raised-bg);
-  --about-card-border: var(--border);
+  --about-text: var(--text-primary);
+  --about-text-muted: var(--text-muted);
+  --about-heading: var(--text-primary);
+  --about-card-bg: var(--surface-raised);
+  --about-card-border: var(--border-subtle);
   --about-accent: var(--accent);
   --about-accent-glow: rgba(99,140,255,0.15);
   --about-accent-strong: var(--accent-strong);
-  --about-divider: var(--border);
+  --about-divider: var(--border-subtle);
   --about-hero-grad-1: #1a0533;
   --about-hero-grad-2: #0a1628;
   /* Bottom stop matches the Developer Hub's top colour (--about-bg-alt) so the hero melts
@@ -375,7 +375,7 @@
 
 /* ── 7. Company Section ── */
 .about-quote {
-  background: var(--surface-raised-bg);
+  background: var(--surface-raised);
   border-left: 3px solid var(--about-accent);
   padding: 24px 28px;
   border-radius: 0 8px 8px 0;
@@ -406,7 +406,7 @@
   margin-bottom: 48px;
 }
 .about-value-card {
-  background: var(--surface-raised-bg);
+  background: var(--surface-raised);
   border: 1px solid var(--about-card-border);
   border-radius: var(--radius-lg);
   padding: var(--sp-5);
@@ -854,7 +854,7 @@ ul.about-timeline-list li::before {
 }
 .about-round-status {
   font: 500 12px/1 var(--font);
-  color: var(--success);
+  color: var(--status-ok);
 }
 .about-round-note {
   margin-top: 8px;

@@ -116,7 +116,7 @@ const DXStream = (() => {
                         '<button class="btn btn-ghost btn-sm" id="confirm-modal-cancel">' +
                             '<span data-i18n="Cancel">Cancel</span></button>' +
                         '<button class="btn btn-primary btn-sm" id="confirm-modal-ok">' +
-                            '<span class="ko">확인</span><span class="en">OK</span></button>' +
+                            '<span data-i18n="OK">OK</span></button>' +
                     '</div></div>';
                 document.body.appendChild(overlay);
             }

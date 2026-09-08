@@ -293,18 +293,18 @@ function _thresholdsFor(key){
 }
 
 var CHART_CFG={
-  temp:{labelKey:'temp',color:_cv('--error'),npuKey:'temp'},
-  volt:{labelKey:'volt',color:_cv('--warning'),npuKey:'volt'},
-  clock:{labelKey:'clock',color:_cv('--info'),npuKey:'clock'},
+  temp:{labelKey:'temp',color:_cv('--status-error'),npuKey:'temp'},
+  volt:{labelKey:'volt',color:_cv('--status-warn'),npuKey:'volt'},
+  clock:{labelKey:'clock',color:_cv('--status-info'),npuKey:'clock'},
   dram:{labelKey:'dram',color:'#e879f9',npuKey:'dram'},
-  util:{labelKey:'util',color:_cv('--info'),npuKey:'util'},
-  ctemp:{labelKey:'ctemp',color:_cv('--warning'),npuKey:'temps',multi:true},
+  util:{labelKey:'util',color:_cv('--status-info'),npuKey:'util'},
+  ctemp:{labelKey:'ctemp',color:_cv('--status-warn'),npuKey:'temps',multi:true},
   cpu:{labelKey:'cpu',color:_cv('--npu'),sysKey:'cpu'},
   mem:{labelKey:'mem',color:_cv('--app-accent'),sysKey:'mem'},
   cpucores:{labelKey:'cpucores',color:_cv('--emerald'),sysKey:'cpu_cores',multi:true}
 };
 
-var CORE_COLORS=[_cv('--error'),_cv('--warning'),_cv('--info'),_cv('--success')];
+var CORE_COLORS=[_cv('--status-error'),_cv('--status-warn'),_cv('--status-info'),_cv('--status-ok')];
 
 function _extractSeries(data,cfg,npuIdx){
   if(cfg.sysKey){
@@ -523,9 +523,9 @@ function _renderDdrErrors(n){
   var sbe=n.ddr_sbe_cnt||[],dbe=n.ddr_dbe_cnt||[];
   var hasSbe=sbe.some(function(v){return v>0}),hasDbe=dbe.some(function(v){return v>0});
   if(!hasSbe&&!hasDbe)return'';
-  var h='<div class="npu-metric" style="align-items:flex-start"><span class="mk" style="color:var(--error)">⚠️ '+T('DDR Errors')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">';
-  if(hasSbe)h+=sbe.map(function(v,i){return v>0?'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(210,153,34,.12);color:var(--warning)">CH'+i+' SBE:'+v+'</span>':'';}).join('');
-  if(hasDbe)h+=dbe.map(function(v,i){return v>0?'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(248,81,73,.12);color:var(--error)">CH'+i+' DBE:'+v+'</span>':'';}).join('');
+  var h='<div class="npu-metric" style="align-items:flex-start"><span class="mk" style="color:var(--status-error)">⚠️ '+T('DDR Errors')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">';
+  if(hasSbe)h+=sbe.map(function(v,i){return v>0?'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(210,153,34,.12);color:var(--status-warn)">CH'+i+' SBE:'+v+'</span>':'';}).join('');
+  if(hasDbe)h+=dbe.map(function(v,i){return v>0?'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(248,81,73,.12);color:var(--status-error)">CH'+i+' DBE:'+v+'</span>':'';}).join('');
   return h+'</span></div>';
 }
 function renderNPUTopo(hw){
@@ -558,9 +558,9 @@ function renderNPUTopo(hw){
       +'<div class="npu-metric"><span class="mk">'+T('⚡ Voltage')+'</span><span class="mv">'+(n.voltage_avg||0).toFixed(0)+' mV</span></div>'
       +'<div class="npu-metric"><span class="mk"><span class="icon-clock" aria-hidden="true"></span> '+T('Clock')+'</span><span class="mv">'+(n.clock_avg||0).toFixed(0)+' MHz</span></div>'
       +(n.dram_total_mb>0?'<div class="npu-metric" style="flex-direction:column;align-items:flex-start;gap:4px"><span class="mk">'+T('💾 DRAM')+'</span><div style="width:100%;background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin:2px 0"><div style="width:'+dramWidth.toFixed(1)+'%;background:#e879f9;border-radius:4px;height:6px"></div></div><span class="mv" style="color:#e879f9">'+(n.dram_used_mb||0)+' / '+(n.dram_total_mb||0)+' MB ('+_formatDramPct(dramPct)+')</span></div>':'')
-      +((n.utilization||[]).length?'<div class="npu-metric" style="align-items:flex-start"><span class="mk">⚙️ '+T('Util')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+(n.utilization||[]).map(function(u,i){return'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:var(--info)">C'+i+' '+u+'%</span>';}).join('')+'</span></div>':'')
+      +((n.utilization||[]).length?'<div class="npu-metric" style="align-items:flex-start"><span class="mk">⚙️ '+T('Util')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+(n.utilization||[]).map(function(u,i){return'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:var(--status-info)">C'+i+' '+u+'%</span>';}).join('')+'</span></div>':'')
       +'<div class="npu-metric"><span class="mk">'+T('🧪 Cores')+'</span><span class="mv">'+(n.cores||1)+'</span></div>'
-      +(n.firmware_version?'<div class="npu-metric"><span class="mk">'+T('🔧 Firmware')+'</span><span class="mv" style="color:var(--info)">'+firmware+'</span></div>':'')
+      +(n.firmware_version?'<div class="npu-metric"><span class="mk">'+T('🔧 Firmware')+'</span><span class="mv" style="color:var(--status-info)">'+firmware+'</span></div>':'')
       +(n.device_variant||n.device_type?'<div class="npu-metric"><span class="mk">'+T('🧩 Chip')+'</span><span class="mv" style="color:var(--npu-light)">'+chip+'</span></div>':'')
       +(n.board_type?'<div class="npu-metric"><span class="mk">'+T('📋 Board')+'</span><span class="mv">'+board+'</span></div>':'')
       +(n.memory_type?'<div class="npu-metric"><span class="mk">'+T('💿 DDR Type')+'</span><span class="mv">'+memory+'</span></div>':'')
@@ -577,7 +577,7 @@ function renderSysInfo(si){
     [T('NPU PCI'),(si.npu_pci||[]).join(', ')],[T('DX Engine'),si.dx_engine_available?'✅ '+T('Available'):'❌ '+T('Unavailable')],
     [T('SDK Version'),si.sdk_version||T('N/A')],[T('Driver Version'),si.driver_version||T('N/A')],
     [T('PCIe Driver'),si.pcie_driver_version||T('N/A')],[T('Uptime'),si.uptime||T('N/A')]];
-  $('sysinfo-table').querySelector('tbody').innerHTML=rows.map(function(row, idx){return '<tr data-help-id="sysinfo-row-'+idx+'"><td style="color:var(--text-3);width:120px">'+esc(row[0])+'</td><td>'+esc(row[1]||T('N/A'))+'</td></tr>'}).join('');
+  $('sysinfo-table').querySelector('tbody').innerHTML=rows.map(function(row, idx){return '<tr data-help-id="sysinfo-row-'+idx+'"><td style="color:var(--text-muted);width:120px">'+esc(row[0])+'</td><td>'+esc(row[1]||T('N/A'))+'</td></tr>'}).join('');
   S.cpuCores=si.cpu_cores||4;
 }
 

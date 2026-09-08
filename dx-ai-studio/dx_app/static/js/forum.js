@@ -58,7 +58,7 @@ async function loadForum() {
       area.innerHTML = `
         <div class="forum-state" style="padding:60px 20px">
           <div style="font-size:40px;margin-bottom:12px">📭</div>
-          <div style="font-weight:700;color:var(--text-1);margin-bottom:6px">${T('No posts yet')}</div>
+          <div style="font-weight:700;color:var(--text-primary);margin-bottom:6px">${T('No posts yet')}</div>
           <div style="font-size:12px">${T('Write the first post!')}</div>
         </div>`;
       return;
@@ -80,7 +80,7 @@ async function loadForum() {
         </div>
       </div>`).join('');
   } catch (e) {
-    area.innerHTML = '<div class="forum-state" style="color:var(--error)">'+T('⚠️ Failed to load. Please check the server.')+'</div>';
+    area.innerHTML = '<div class="forum-state" style="color:var(--status-error)">'+T('⚠️ Failed to load. Please check the server.')+'</div>';
   }
 }
 
@@ -136,7 +136,7 @@ function _renderFModal(p) {
   $('fmodal-ttl').innerHTML = `${_catBadge(p.category)}<span>${esc(p.title)}</span>`;
 
   $('fmodal').querySelector('.fmodal-bd').innerHTML = `
-    <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border-subtle)">
       <div class="forum-item-footer" style="margin-bottom:10px">
         <span class="forum-meta-chip">👤 ${esc(p.author)}</span>
         <span class="forum-meta-chip">🕐 ${_fmtTs(p.created_at)}</span>
@@ -155,7 +155,7 @@ function _renderFModal(p) {
       <div id="fmodal-cmts">
         ${(p.comments || []).map(c => _renderCmt(c, p.id)).join('')}
       </div>
-      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+      <div style="margin-top:14px;border-top:1px solid var(--border-subtle);padding-top:12px">
         <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px">
           <input type="text" id="fcmt-nick" class="input"
             placeholder="${T('Nickname (optional)')}" style="width:130px;flex-shrink:0;height:34px">
@@ -254,21 +254,21 @@ function openNewPost() {
             </select>
           </div>
           <div class="fg">
-            <label>${T('Nickname')} <span style="color:var(--text-3);font-size:11px">${T('(Anonymous if empty)')}</span></label>
+            <label>${T('Nickname')} <span style="color:var(--text-muted);font-size:11px">${T('(Anonymous if empty)')}</span></label>
             <input type="text" id="fnp-nick" class="input" placeholder="${T('Nickname')}" maxlength="30" style="margin-top:5px">
           </div>
           <div class="fg">
-            <label>${T('Title')} <span style="color:var(--error)">*</span></label>
+            <label>${T('Title')} <span style="color:var(--status-error)">*</span></label>
             <input type="text" id="fnp-title" class="input" placeholder="${T('Enter a title')}" maxlength="100" style="margin-top:5px">
           </div>
           <div class="fg">
-            <label>${T('Content')} <span style="color:var(--error)">*</span></label>
+            <label>${T('Content')} <span style="color:var(--status-error)">*</span></label>
             <textarea id="fnp-body" class="input" rows="7"
               placeholder="${T('Enter content…')}"
               style="margin-top:5px;resize:vertical;font-family:inherit"></textarea>
           </div>
           <div class="fg">
-            <label>${T('Tags')} <span style="color:var(--text-3);font-size:11px">${T('(comma separated, max 5)')}</span></label>
+            <label>${T('Tags')} <span style="color:var(--text-muted);font-size:11px">${T('(comma separated, max 5)')}</span></label>
             <input type="text" id="fnp-tags" class="input"
               placeholder="${T('DX-M1, YOLOv8, optimization…')}" style="margin-top:5px">
           </div>

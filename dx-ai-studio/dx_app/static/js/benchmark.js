@@ -142,7 +142,7 @@ function showBenchDetail(name){
   }
   h+='<div class="flex gap8 mb12">';
   h+='<span class="badge b-cat">'+(r.cat||r.category||'')+'</span>';
-  h+='<span class="badge" style="background:var(--surface-hover);color:var(--text-1)">'+(r.lang||'cpp')+'</span>';
+  h+='<span class="badge" style="background:var(--surface-hover);color:var(--text-primary)">'+(r.lang||'cpp')+'</span>';
   if(r.elapsed_s)h+='<span class="txt-dim txt-sm">'+T('elapsed: ')+r.elapsed_s+'s</span>';
   h+='</div>';
   var hasOrig=(r._inputType==='image'&&r._imgPath)||(r._inputType==='video'&&r._vidPath);
@@ -150,13 +150,13 @@ function showBenchDetail(name){
   if(hasOrig||hasResult){
     h+='<div style="display:grid;grid-template-columns:'+(hasOrig&&hasResult?'1fr 1fr':'1fr')+';gap:12px;margin-bottom:12px">';
     if(hasOrig){
-      h+='<div><div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;margin-bottom:4px">'+T('Original')+'</div>';
+      h+='<div><div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">'+T('Original')+'</div>';
       if(r._inputType==='video'&&r._vidPath)h+='<video src="/file/'+esc(r._vidPath)+'" controls style="max-width:100%;border-radius:6px"></video>';
       else if(r._imgPath)h+='<img src="/file/'+esc(r._imgPath)+'" class="res-img" onclick="previewImg(this.src)" style="max-height:300px;max-width:100%"/>';
       h+='</div>';
     }
     if(hasResult){
-      h+='<div><div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;margin-bottom:4px">'+T('Result')+'</div>';
+      h+='<div><div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">'+T('Result')+'</div>';
       if(r.result_video_url)h+='<video src="'+r.result_video_url+'" controls style="max-width:100%;border-radius:6px"></video>';
       else if(r.result_image)h+='<img src="data:image/jpeg;base64,'+r.result_image+'" class="res-img" onclick="previewImg(this.src)" style="max-height:300px;max-width:100%"/>';
       h+='</div>';
@@ -171,7 +171,7 @@ function showBenchDetail(name){
 
   if(r.elapsed_s)h+='<div class="pcard"><div class="pv">'+r.elapsed_s+'s</div><div class="pk">Total</div></div>';
   var ec=r.exit_code===0;
-  h+='<div class="pcard"><div class="pv" style="color:'+(ec?'var(--success)':'var(--error)')+'">'+(ec?'\u2705':'\u274c')+'</div><div class="pk">Exit '+r.exit_code+'</div></div>';
+  h+='<div class="pcard"><div class="pv" style="color:'+(ec?'var(--status-ok)':'var(--status-error)')+'">'+(ec?'\u2705':'\u274c')+'</div><div class="pk">Exit '+r.exit_code+'</div></div>';
   h+='</div>';
   if(r.perf&&r.perf.pipeline&&r.perf.pipeline.length)h+='<div class="mt12">'+renderWaterfall(r.perf)+'</div>';
   var hw=r.hw_after;

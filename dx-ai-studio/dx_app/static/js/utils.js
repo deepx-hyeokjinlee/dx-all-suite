@@ -22,7 +22,7 @@ const CAT_IMG={object_detection:'sample/img/sample_street.jpg',face_detection:'s
 // CSS token-aware color constants (resolved at runtime)
 const _cs=getComputedStyle(document.documentElement);
 const _cv=k=>_cs.getPropertyValue(k).trim();
-const WF_COLORS=[_cv('--info'),_cv('--app-accent'),_cv('--warning'),_cv('--error'),_cv('--npu')];
+const WF_COLORS=[_cv('--status-info'),_cv('--app-accent'),_cv('--status-warn'),_cv('--status-error'),_cv('--npu')];
 const WF_STEPS=['Read','Preprocess','Inference','Postprocess','Display'];
 
 const $=id=>document.getElementById(id);
@@ -128,7 +128,7 @@ function getLocale(){return LOCALE_BY_LANG[getLang()]||'en-US'}
 function fmtDate(ts){const d=new Date(ts*1000);return d.toLocaleDateString(getLocale())}
 function fmtTime(ts){const d=new Date(ts*1000);return d.toLocaleString(getLocale(),{hour12:false})}
 function fmtClock(epochMs){const d=new Date(epochMs);return d.toLocaleTimeString(getLocale(),{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'})}
-function tempColor(t){return t<40?_cv('--success'):t<55?_cv('--warning'):_cv('--error')}
+function tempColor(t){return t<40?_cv('--status-ok'):t<55?_cv('--status-warn'):_cv('--status-error')}
 
 const PAGES=['setup','models','run','rundemo','bench','compare','modelzoo','lab','outputs','reference'];
 const PAGE_TITLES={setup:'⚙️ Setup & Install',models:'Models',run:'Run Inference',rundemo:'🎬 Run Demo',bench:'Benchmark',compare:'A/B Compare',modelzoo:'📥 ModelZoo',lab:'🧪 Lab',outputs:'Outputs',reference:'📖 Reference'};

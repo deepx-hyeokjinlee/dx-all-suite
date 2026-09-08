@@ -70,7 +70,7 @@ const MethodologyDialog = {
       '<ul class="methodology-live-list">' +
         '<li><code>yolo26' + this._esc(inputs.size) + '</code> · ' + this._esc(inputs.task) +
           ' · ' + inputs.cameras + ' ch · ' + inputs.targetFps + ' FPS</li>' +
-        '<li><span class="ko">1순위</span><span class="en">Top pick</span>: ' +
+        '<li><span data-i18n="Top pick">Top pick</span>: ' +
           this._esc(top.platform.npu.model + ' + ' + top.platform.host.name) +
           ' — max ' + top.maxChannels + ' ch · ' + flag + '</li>' +
       '</ul>';

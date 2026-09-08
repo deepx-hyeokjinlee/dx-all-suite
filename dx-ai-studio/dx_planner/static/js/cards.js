@@ -76,7 +76,7 @@ const CardRenderer = {
       ? '<span class="badge badge-meets">✅ <span data-i18n="Meets">Meets</span></span>'
       : '<span class="badge badge-insufficient">⚠️ <span data-i18n="Insufficient">Insufficient</span></span>';
     const featuredBadge = idx === 0
-      ? '<span class="badge badge-featured"><span class="ko">1순위</span><span class="en">Top pick</span><span class="ja">第1推奨</span><span class="zh-CN">首选</span><span class="zh-TW">首選</span><span class="es">#1</span></span>'
+      ? '<span class="badge badge-featured" data-i18n="Top pick">Top pick</span>'
       : '';
 
 

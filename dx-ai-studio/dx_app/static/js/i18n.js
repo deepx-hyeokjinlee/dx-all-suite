@@ -1179,7 +1179,7 @@ window._DX_I18N_DICT = {
   },
   'Extract Package': {
     ko: '패키지 추출', ja: 'パッケージ抽出',
-    'zh-CN': '提取包', 'zh-TW': '提取套件',
+    'zh-CN': '提取包', 'zh-TW': '擷取套件',
     es: 'Extraer paquete',
   },
   'Select Model': {
@@ -1665,7 +1665,7 @@ window._DX_I18N_DICT = {
   },
   'Start Benchmark': {
     ko: '벤치마크 시작', ja: 'ベンチマーク開始',
-    'zh-CN': '启动基准测试', 'zh-TW': '啟動基準測試',
+    'zh-CN': '开始基准测试', 'zh-TW': '開始基準測試',
     es: 'Iniciar benchmark',
   },
   'Benchmark complete': {
@@ -1694,8 +1694,8 @@ window._DX_I18N_DICT = {
     es: 'Conteo de cuadros',
   },
   'Loop Count': {
-    ko: '루프 카운트', ja: 'ループ回数',
-    'zh-CN': '循环次数', 'zh-TW': '循環次數',
+    ko: '반복 횟수', ja: 'ループ回数',
+    'zh-CN': '循环次数', 'zh-TW': '迴圈次數',
     es: 'Conteo de bucles',
   },
   'Results': {
@@ -2851,7 +2851,7 @@ window._DX_I18N_DICT = {
   'Download': { ko: '다운로드', ja: 'ダウンロード', 'zh-CN': '下载', 'zh-TW': '下載',es:'Descargar'},
   'Before': { ko: '이전', ja: '変更前', 'zh-CN': '变更前', 'zh-TW': '變更前',es:'Antes'},
   'After': { ko: '이후', ja: '変更後', 'zh-CN': '变更后', 'zh-TW': '變更後',es:'Después'},
-  'Detail': { ko: '상세', ja: '詳細', 'zh-CN': '详情', 'zh-TW': '詳情',es:'Detalle'},
+  'Detail': { ko: '상세', ja: '詳細', 'zh-CN': '详情', 'zh-TW': '詳細資訊',es:'Detalle'},
   'Run': { ko: '실행', ja: '実行', 'zh-CN': '运行', 'zh-TW': '執行', es: 'Ejecutar'},
   'Re-download': { ko: '다시 다운로드', ja: '再ダウンロード', 'zh-CN': '重新下载', 'zh-TW': '重新下載', es: 'Volver a descargar'},
   'Loading catalog…': { ko: '카탈로그 불러오는 중…', ja: 'カタログを読み込み中…', 'zh-CN': '正在加载目录…', 'zh-TW': '正在載入目錄…', es: 'Cargando catálogo…'},

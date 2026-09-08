@@ -9,13 +9,13 @@ function cachePlannerThemeColors() {
   const styles = getComputedStyle(document.documentElement);
   _plannerThemeColorCache = {
     '--accent': styles.getPropertyValue('--accent').trim(),
-    '--warning': styles.getPropertyValue('--warning').trim(),
-    '--success': styles.getPropertyValue('--success').trim(),
-    '--error': styles.getPropertyValue('--error').trim(),
-    '--border': styles.getPropertyValue('--border').trim(),
-    '--text-1': styles.getPropertyValue('--text-1').trim(),
-    '--text-2': styles.getPropertyValue('--text-2').trim(),
-    '--text-3': styles.getPropertyValue('--text-3').trim(),
+    '--status-warn': styles.getPropertyValue('--status-warn').trim(),
+    '--status-ok': styles.getPropertyValue('--status-ok').trim(),
+    '--status-error': styles.getPropertyValue('--status-error').trim(),
+    '--border-subtle': styles.getPropertyValue('--border-subtle').trim(),
+    '--text-primary': styles.getPropertyValue('--text-primary').trim(),
+    '--text-secondary': styles.getPropertyValue('--text-secondary').trim(),
+    '--text-muted': styles.getPropertyValue('--text-muted').trim(),
   };
   return _plannerThemeColorCache;
 }
@@ -55,9 +55,9 @@ const BarChart = {
     const ctx = setupCanvas(canvas, w, h);
 
     const accent = getThemeColor('--accent');
-    const warning = getThemeColor('--warning');
-    const text = getThemeColor('--text-1');
-    const dim = getThemeColor('--text-3');
+    const warning = getThemeColor('--status-warn');
+    const text = getThemeColor('--text-primary');
+    const dim = getThemeColor('--text-muted');
     const maxFps = Math.max(...results.map(r => r.throughputFps), 1);
     const barArea = w - pad.left - pad.right;
 
@@ -116,10 +116,10 @@ const GaugeChart = {
     const startAngle = Math.PI;
     const endAngle = 2 * Math.PI;
 
-    const success = getThemeColor('--success') || '#22c55e';
-    const warning = getThemeColor('--warning') || '#f59e0b';
-    const danger = getThemeColor('--error') || '#F85149';
-    const border = getThemeColor('--border') || '#444';
+    const success = getThemeColor('--status-ok') || '#22c55e';
+    const warning = getThemeColor('--status-warn') || '#f59e0b';
+    const danger = getThemeColor('--status-error') || '#F85149';
+    const border = getThemeColor('--border-subtle') || '#444';
 
     const ratio = required > 0 ? Math.min(current / required, 1.0) : 1;
     let color;
@@ -145,7 +145,7 @@ const GaugeChart = {
     ctx.stroke();
 
     // 텍스트
-    const text = getThemeColor('--text-1') || '#E2E8F0';
+    const text = getThemeColor('--text-primary') || '#E2E8F0';
     ctx.fillStyle = text;
     ctx.font = 'bold 10px system-ui, sans-serif';
     ctx.textAlign = 'center';
@@ -166,9 +166,9 @@ const GroupBarChart = {
     const ctx = setupCanvas(canvas, w, h);
 
     const accent = getThemeColor('--accent') || '#638CFF';
-    const text = getThemeColor('--text-1') || '#E2E8F0';
-    const dim = getThemeColor('--text-3') || '#8892A8';
-    const gridColor = getThemeColor('--border') || '#333';
+    const text = getThemeColor('--text-primary') || '#E2E8F0';
+    const dim = getThemeColor('--text-muted') || '#8892A8';
+    const gridColor = getThemeColor('--border-subtle') || '#333';
 
     // 데이터 수집
     const data = sizes.map(sz => {
@@ -282,10 +282,10 @@ const RadarChart = {
     const ctx = setupCanvas(canvas, size, size);
 
     const accent = getThemeColor('--accent') || '#638CFF';
-    const success = getThemeColor('--success') || '#3FB950';
-    const text = getThemeColor('--text-1') || '#E2E8F0';
-    const dim = getThemeColor('--text-3') || '#8892A8';
-    const border = getThemeColor('--border') || '#333';
+    const success = getThemeColor('--status-ok') || '#3FB950';
+    const text = getThemeColor('--text-primary') || '#E2E8F0';
+    const dim = getThemeColor('--text-muted') || '#8892A8';
+    const border = getThemeColor('--border-subtle') || '#333';
 
     const cx = size / 2;
     const cy = size / 2;

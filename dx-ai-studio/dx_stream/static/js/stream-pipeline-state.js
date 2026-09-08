@@ -16,8 +16,8 @@ function _cachePipelineThemeColors() {
     var cs = getComputedStyle(document.documentElement);
     _pipelineThemeColors = {
         bg0: cs.getPropertyValue('--surface-page').trim() || '#0f0f1a',
-        success: cs.getPropertyValue('--success').trim(),
-        warning: cs.getPropertyValue('--warning').trim(),
+        success: cs.getPropertyValue('--status-ok').trim(),
+        warning: cs.getPropertyValue('--status-warn').trim(),
         raw: {},
     };
     return _pipelineThemeColors;
@@ -30,8 +30,8 @@ function _themeColor(name) {
 function _cv(k) {
     var colors = _pipelineThemeColors || _cachePipelineThemeColors();
     if (k === '--surface-page') return colors.bg0;
-    if (k === '--success') return colors.success;
-    if (k === '--warning') return colors.warning;
+    if (k === '--status-ok') return colors.success;
+    if (k === '--status-warn') return colors.warning;
     if (!colors.raw[k]) {
         colors.raw[k] = getComputedStyle(document.documentElement).getPropertyValue(k).trim();
     }

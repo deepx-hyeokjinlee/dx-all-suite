@@ -49,7 +49,7 @@ function fbLoadDir(path){
       el.className='fb-item '+(e.type==='dir'?'fb-dir':'fb-file')+(dim?' fb-dim':'');
       var sz='';
       if(e.size!=null){sz=e.size>1048576?(e.size/1048576).toFixed(1)+'MB':e.size>1024?(e.size/1024).toFixed(0)+'KB':e.size+'B';}
-      el.innerHTML=(e.type==='dir'?'📁 ':'📄 ')+'<span style="flex:1">'+e.name+'</span>'+(sz?'<span style="font-size:10px;color:var(--text-3)">'+sz+'</span>':'');
+      el.innerHTML=(e.type==='dir'?'📁 ':'📄 ')+'<span style="flex:1">'+e.name+'</span>'+(sz?'<span style="font-size:10px;color:var(--text-muted)">'+sz+'</span>':'');
       el.style.display='flex';
       var ep=e.path,isDir=e.type==='dir';
       el.onclick=function(){

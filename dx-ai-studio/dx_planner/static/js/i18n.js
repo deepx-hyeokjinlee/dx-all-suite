@@ -434,6 +434,14 @@ window._DX_I18N_DICT = {
     'zh-TW': '· 產品資訊:',
     es: '· Info:',
   },
+  // ── 마크업 lang-span 에서 옮겨온 항목 ──
+  'Top pick': {
+    ko: '1순위',
+    ja: '第1推奨',
+    'zh-CN': '首选',
+    'zh-TW': '首選',
+    es: 'Mejor opción',
+  },
 };
 window._DX_I18N_SELECTORS = '';
 window._DX_I18N_PLACEHOLDERS = {};

@@ -940,30 +940,30 @@ return [
 {cat:'advanced',id:'pipeline',icon:'🔗',name:'Pipeline (Waterfall)',desc:refT5('Inference pipeline performance analysis · Bottleneck detection','추론 파이프라인 성능 분석 · 병목 감지','推論パイプライン性能分析 · ボトルネック検出','推理流水线性能分析 · 瓶颈检测','推論流水線效能分析 · 瓶頸偵測'),page:null,tabs:{
   overview:refT5(
     '<h4>Overview</h4><p>The <strong>Waterfall Chart</strong> on the Run / Benchmark / Compare pages visually displays the time spent on each stage of the inference pipeline.</p>'+
-    '<ul><li><strong>Read</strong> — Read input data <span style="background:var(--info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Blue</span></li>'+
+    '<ul><li><strong>Read</strong> — Read input data <span style="background:var(--status-info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Blue</span></li>'+
     '<li><strong>Preprocess</strong> — Preprocessing (Resize, Normalize, etc.) <span style="background:var(--app-accent);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Light blue</span></li>'+
-    '<li><strong>Inference</strong> — NPU inference execution <span style="background:var(--warning);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Yellow</span></li>'+
-    '<li><strong>Postprocess</strong> — Post-processing (NMS, visualization, etc.) <span style="background:var(--error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Red</span></li></ul>',
+    '<li><strong>Inference</strong> — NPU inference execution <span style="background:var(--status-warn);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Yellow</span></li>'+
+    '<li><strong>Postprocess</strong> — Post-processing (NMS, visualization, etc.) <span style="background:var(--status-error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Red</span></li></ul>',
     '<h4>개요</h4><p>Run / Benchmark / Compare 페이지의 <strong>Waterfall Chart</strong>는 추론 파이프라인의 각 단계별 소요 시간을 시각적으로 표시합니다.</p>'+
-    '<ul><li><strong>Read</strong> — 입력 data 읽기 <span style="background:var(--info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">파란색</span></li>'+
+    '<ul><li><strong>Read</strong> — 입력 data 읽기 <span style="background:var(--status-info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">파란색</span></li>'+
     '<li><strong>Preprocess</strong> — 전처리 (Resize, Normalize 등) <span style="background:var(--app-accent);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">밝은파랑</span></li>'+
-    '<li><strong>Inference</strong> — NPU 추론 실행 <span style="background:var(--warning);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">노란색</span></li>'+
-    '<li><strong>Postprocess</strong> — 후처리 (NMS, 시각화 등) <span style="background:var(--error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">빨간색</span></li></ul>',
+    '<li><strong>Inference</strong> — NPU 추론 실행 <span style="background:var(--status-warn);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">노란색</span></li>'+
+    '<li><strong>Postprocess</strong> — 후처리 (NMS, 시각화 등) <span style="background:var(--status-error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">빨간색</span></li></ul>',
     '<h4>概要</h4><p>Run / Benchmark / Compareページの<strong>Waterfall Chart</strong>は、推論パイプラインの各ステージの所要時間を視覚的に表示します。</p>'+
-    '<ul><li><strong>Read</strong> — 入力データの読み込み <span style="background:var(--info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">青</span></li>'+
+    '<ul><li><strong>Read</strong> — 入力データの読み込み <span style="background:var(--status-info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">青</span></li>'+
     '<li><strong>Preprocess</strong> — 前処理（Resize、Normalize等） <span style="background:var(--app-accent);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">水色</span></li>'+
-    '<li><strong>Inference</strong> — NPU推論実行 <span style="background:var(--warning);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">黄色</span></li>'+
-    '<li><strong>Postprocess</strong> — 後処理（NMS、可視化等） <span style="background:var(--error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">赤</span></li></ul>',
+    '<li><strong>Inference</strong> — NPU推論実行 <span style="background:var(--status-warn);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">黄色</span></li>'+
+    '<li><strong>Postprocess</strong> — 後処理（NMS、可視化等） <span style="background:var(--status-error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">赤</span></li></ul>',
     '<h4>概述</h4><p>Run / Benchmark / Compare 页面的 <strong>Waterfall Chart</strong> 以可视化方式显示推理流水线各阶段的耗时。</p>'+
-    '<ul><li><strong>Read</strong> — 读取输入数据 <span style="background:var(--info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">蓝色</span></li>'+
+    '<ul><li><strong>Read</strong> — 读取输入数据 <span style="background:var(--status-info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">蓝色</span></li>'+
     '<li><strong>Preprocess</strong> — 预处理（Resize、Normalize 等） <span style="background:var(--app-accent);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">浅蓝</span></li>'+
-    '<li><strong>Inference</strong> — NPU 推理执行 <span style="background:var(--warning);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">黄色</span></li>'+
-    '<li><strong>Postprocess</strong> — 后处理（NMS、可视化等） <span style="background:var(--error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">红色</span></li></ul>',
+    '<li><strong>Inference</strong> — NPU 推理执行 <span style="background:var(--status-warn);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">黄色</span></li>'+
+    '<li><strong>Postprocess</strong> — 后处理（NMS、可视化等） <span style="background:var(--status-error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">红色</span></li></ul>',
     '<h4>概述</h4><p>Run / Benchmark / Compare 頁面的 <strong>Waterfall Chart</strong> 以視覺化方式顯示推論流水線各階段的耗時。</p>'+
-    '<ul><li><strong>Read</strong> — 讀取輸入資料 <span style="background:var(--info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">藍色</span></li>'+
+    '<ul><li><strong>Read</strong> — 讀取輸入資料 <span style="background:var(--status-info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">藍色</span></li>'+
     '<li><strong>Preprocess</strong> — 前處理（Resize、Normalize 等） <span style="background:var(--app-accent);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">淺藍</span></li>'+
-    '<li><strong>Inference</strong> — NPU 推論執行 <span style="background:var(--warning);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">黃色</span></li>'+
-    '<li><strong>Postprocess</strong> — 後處理（NMS、視覺化等） <span style="background:var(--error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">紅色</span></li></ul>'),
+    '<li><strong>Inference</strong> — NPU 推論執行 <span style="background:var(--status-warn);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">黃色</span></li>'+
+    '<li><strong>Postprocess</strong> — 後處理（NMS、視覺化等） <span style="background:var(--status-error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">紅色</span></li></ul>'),
   params:refT5(
     '<h4>Bottleneck Indicator</h4>'+
     '<p>The stage with the longest duration is marked with a <strong>diagonal stripe pattern</strong>. A <code>▲ bottleneck</code> tag also appears in the Legend.</p>'+

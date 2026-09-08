@@ -84,7 +84,7 @@ function _renderModelCards(models) {
             '<span class="demo-card-cat">' + DXStream.escHtml((m.category || '').replace(/_/g, ' ')) + '</span>' +
             '</div>' +
             (m.installed
-                ? '<span class="card-badge" style="background:var(--success-dim);color:var(--success)">✅ ' + T('Installed') + '</span>'
+                ? '<span class="card-badge" style="background:var(--success-dim);color:var(--status-ok)">✅ ' + T('Installed') + '</span>'
                 : '<button class="btn btn-sm btn-accent download-model-btn" data-model="' + DXStream.escHtml(m.file) + '" onclick="event.stopPropagation()">⬇️ ' + T('Download') + '</button>') +
             '</div>';
     }).join('');

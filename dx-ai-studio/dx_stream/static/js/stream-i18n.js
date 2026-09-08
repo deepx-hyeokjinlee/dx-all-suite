@@ -19,7 +19,11 @@ window._DX_I18N_DICT = {
     'No plugin': { ko: '플러그인 없음', ja: 'プラグインなし', 'zh-CN': '无插件', 'zh-TW': '無外掛',es:'Sin plugin'},
     'Not installed': { ko: '미설치', ja: '未インストール', 'zh-CN': '未安装', 'zh-TW': '未安裝',es:'No instalado'},
     'files': { ko: '파일', ja: 'ファイル', 'zh-CN': '文件', 'zh-TW': '檔案',es:'archivos'},
-    'OK': { ko: '정상', ja: '正常', 'zh-CN': '正常', 'zh-TW': '正常',es:'Aceptar'},
+    // 'OK' 는 대화상자 버튼이다. 플러그인 빌드 상태(정상/미빌드)는
+    // 'Built' 로 분리했다 — 한 key 에 두 뜻이 얹혀 있어 어느 쪽으로
+    // 번역해도 다른 쪽이 틀렸다.
+    'OK': { ko: '확인', ja: 'OK', 'zh-CN': '确定', 'zh-TW': '確定', es: 'Aceptar' },
+    'Built': { ko: '정상', ja: '正常', 'zh-CN': '正常', 'zh-TW': '正常', es: 'Compilado' },
     'Not built': { ko: '미빌드', ja: '未ビルド', 'zh-CN': '未构建', 'zh-TW': '未建置',es:'No compilado'},
     'Status check failed': { ko: '상태 확인 실패', ja: 'ステータス確認失敗', 'zh-CN': '状态检查失败', 'zh-TW': '狀態檢查失敗',es:'Error en la verificación del estado'},
 
@@ -137,7 +141,7 @@ window._DX_I18N_DICT = {
   'Quick Launch': { ko: '빠른 실행', ja: 'クイック起動', 'zh-CN': '快速启动', 'zh-TW': '快速啟動',es:'Lanzamiento rápido'},
   'Object Detection': { ko: '객체 감지', ja: '物体検出', 'zh-CN': '目标检测', 'zh-TW': '物件偵測',es:'Detección de objetos'},
   'Pose Estimation': { ko: '포즈 추정', ja: '姿勢推定', 'zh-CN': '姿态估计', 'zh-TW': '姿態估計',es:'Estimación de pose'},
-  'Segmentation': { ko: '의미론적 분할', ja: 'セグメンテーション', 'zh-CN': '语义分割', 'zh-TW': '語意分割',es:'Segmentación'},
+  'Segmentation': { ko: '의미론적 분할', ja: 'セグメンテーション', 'zh-CN': '分割', 'zh-TW': '分割',es:'Segmentación'},
   'Performance Metrics': { ko: '성능 지표', ja: 'パフォーマンス指標', 'zh-CN': '性能指标', 'zh-TW': '效能指標',es:'Métricas de rendimiento'},
   'Metric': { ko: '항목', ja: '指標', 'zh-CN': '指标', 'zh-TW': '指標',es:'Métrica'},
   'Current': { ko: '현재', ja: '現在', 'zh-CN': '当前', 'zh-TW': '目前',es:'Actual'},

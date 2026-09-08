@@ -366,7 +366,7 @@ function refreshDetailActionBarsForHealth() {
 function renderDescription(model) {
   const desc = model.description || {};
   const text = _localText(desc) || _localText(model.content?.use_case);
-  if (!text) return `<p style="color:var(--text-3)">${T('Description coming soon')}</p>`;
+  if (!text) return `<p style="color:var(--text-muted)">${T('Description coming soon')}</p>`;
   return `<p>${escapeHtml(text)}</p>`;
 }
 
@@ -462,7 +462,7 @@ function renderExampleImages(model) {
   const originalPath = ex.original || '';
 
   if (!resultPath) {
-    return `<p style="color:var(--text-3)">${T('Run inference to generate example images.')}</p>`;
+    return `<p style="color:var(--text-muted)">${T('Run inference to generate example images.')}</p>`;
   }
 
   switch (type) {
@@ -495,7 +495,7 @@ function renderExampleImages(model) {
       return `<div class="mz-classified-example">
         ${_detailImageTag(resultPath, T('After'), 'class="mz-example-image"')}
         <div id="classificationResults" class="mz-classified-results">
-          <p style="color:var(--text-3)">${T('Run inference to see classification results.')}</p>
+          <p style="color:var(--text-muted)">${T('Run inference to see classification results.')}</p>
         </div>
       </div>`;
 
@@ -567,7 +567,7 @@ function renderCompileGuide(model) {
   ];
   const steps = [T('View Model Graph'), T('ONNX Model Link'), T('Run Demo')];
 
-  let html = text ? `<p>${escapeHtml(text)}</p>` : `<p style="color:var(--text-3)">${T('Use dxcom default settings.')}</p>`;
+  let html = text ? `<p>${escapeHtml(text)}</p>` : `<p style="color:var(--text-muted)">${T('Use dxcom default settings.')}</p>`;
   html += `
     <div class="mz-compile-grid">
       <section class="mz-compile-block">
@@ -705,7 +705,7 @@ async function loadDemoCode(model) {
     if (data.cli_command) tabs.push({ id: 'cli', label: T('CLI Command') });
 
     if (tabs.length === 0) {
-      container.innerHTML = `<p style="color:var(--text-3)">${T('No demo code available.')}</p>`;
+      container.innerHTML = `<p style="color:var(--text-muted)">${T('No demo code available.')}</p>`;
       return;
     }
 
@@ -736,7 +736,7 @@ async function loadDemoCode(model) {
 
     container.innerHTML = html;
   } catch (e) {
-    container.innerHTML = `<p style="color:var(--text-3)">${T('Failed to load demo')}: ${escapeHtml(e.message)}</p>`;
+    container.innerHTML = `<p style="color:var(--text-muted)">${T('Failed to load demo')}: ${escapeHtml(e.message)}</p>`;
   }
 }
 
@@ -964,7 +964,7 @@ function renderDownloadButtons(model, scope = 'inline') {
       ⬇ ${T('Download Q-Pro')}</button>`;
   }
   if (!_dxAppAlive) {
-    html += `<span style="font-size:12px;color:var(--warning)">${T('DX App is not running. Run Inference needs the DX App module (port 8080) — launch DX AI Studio (it auto-starts DX App) or start the DX App module, then retry.')}</span>`;
+    html += `<span style="font-size:12px;color:var(--status-warn)">${T('DX App is not running. Run Inference needs the DX App module (port 8080) — launch DX AI Studio (it auto-starts DX App) or start the DX App module, then retry.')}</span>`;
   }
   return html;
 }
@@ -999,7 +999,7 @@ async function downloadModel(event, modelId, quantType) {
   const dxnnUrl = (art[`${quantType}_dxnn`] || {}).remote_url || '';
   const jsonUrl = (art[`${quantType}_json`] || {}).remote_url || null;
   if (!dxnnUrl) {
-    setModelZooStatusHtml(statusEl, `<span style="color:var(--error)">${T('Download failed')}: ${T('No download URL for this variant')}</span>`);
+    setModelZooStatusHtml(statusEl, `<span style="color:var(--status-error)">${T('Download failed')}: ${T('No download URL for this variant')}</span>`);
     return;
   }
   const items = [{ name: modelId, chip: quantType, dxnn_url: dxnnUrl, json_url: jsonUrl }];
@@ -1012,7 +1012,7 @@ async function downloadModel(event, modelId, quantType) {
     });
     const data = await resp.json();
     if (!data.ok) {
-      setModelZooStatusHtml(statusEl, `<span style="color:var(--error)">${T('Download failed')}: ${escapeHtml(data.error || '')}</span>`);
+      setModelZooStatusHtml(statusEl, `<span style="color:var(--status-error)">${T('Download failed')}: ${escapeHtml(data.error || '')}</span>`);
       return;
     }
 
@@ -1023,7 +1023,7 @@ async function downloadModel(event, modelId, quantType) {
           <div id="dl-bar-${quantType}" style="width:0%;height:100%;background:var(--accent);transition:width .3s"></div>
         </div>
         <span id="dl-pct-${quantType}">0%</span>
-        <span style="color:var(--text-3)">${T('Downloading')}</span>
+        <span style="color:var(--text-muted)">${T('Downloading')}</span>
         <button class="mz-btn mz-btn-outline" style="font-size:12px;padding:2px 8px"
           data-cancel-download>✕ ${T('Cancel Download')}</button>
       </div>`);
@@ -1047,7 +1047,7 @@ async function downloadModel(event, modelId, quantType) {
         if (pctEl) pctEl.textContent = pct + '%';
         if (sd.error) {
           clearInterval(pollId);
-          setModelZooStatusHtml(statusEl, `<span style="color:var(--error)">${T('Download failed')}: ${escapeHtml(sd.error || '')}</span>`);
+          setModelZooStatusHtml(statusEl, `<span style="color:var(--status-error)">${T('Download failed')}: ${escapeHtml(sd.error || '')}</span>`);
           btn.style.display = '';
           return;
         }
@@ -1058,19 +1058,19 @@ async function downloadModel(event, modelId, quantType) {
         const errored = results.find(r => r.status === 'error');
         const cancelled = results.some(r => r.status === 'cancelled');
         if (errored) {
-          setModelZooStatusHtml(statusEl, `<span style="color:var(--error)">${T('Download failed')}: ${escapeHtml(errored.error || '')}</span>`);
+          setModelZooStatusHtml(statusEl, `<span style="color:var(--status-error)">${T('Download failed')}: ${escapeHtml(errored.error || '')}</span>`);
           btn.style.display = '';
         } else if (cancelled) {
-          setModelZooStatusHtml(statusEl, `<span style="color:var(--text-3)">${T('Download cancelled')}</span>`);
+          setModelZooStatusHtml(statusEl, `<span style="color:var(--text-muted)">${T('Download cancelled')}</span>`);
           btn.style.display = '';
         } else {
-          setModelZooStatusHtml(statusEl, `<span style="color:var(--success)">✅ ${T('Download complete')}</span>`);
+          setModelZooStatusHtml(statusEl, `<span style="color:var(--status-ok)">✅ ${T('Download complete')}</span>`);
           btn.style.display = '';
         }
       } catch (_) { /* polling error, continue */ }
     }, 2000);
   } catch (e) {
-    setModelZooStatusHtml(statusEl, `<span style="color:var(--error)">${T('Download failed')}: ${escapeHtml(e.message)}</span>`);
+    setModelZooStatusHtml(statusEl, `<span style="color:var(--status-error)">${T('Download failed')}: ${escapeHtml(e.message)}</span>`);
   }
 }
 

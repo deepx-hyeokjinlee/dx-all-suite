@@ -5,7 +5,7 @@ const esc = s => { const d = document.createElement('div'); d.textContent = s; r
 function api(url, opts) { return fetch(url, opts).then(r => r.json()).catch(e => ({error: e.message})) }
 
 /* 온도 색상 */
-function tempColor(t) { return t < 40 ? _cv('--success') : t < 55 ? _cv('--warning') : _cv('--error') }
+function tempColor(t) { return t < 40 ? _cv('--status-ok') : t < 55 ? _cv('--status-warn') : _cv('--status-error') }
 
 /* 글로벌 상태 */
 const S = {

@@ -243,11 +243,11 @@ function _rundemoNotRunnableHtml(d, av) {
 // Category → hue, drawn from the shared semantic tokens (dx-tokens.css) so the demo page
 // stays consistent with dx_stream's cat-* coloring. Keyed by demo group.
 var _RUNDEMO_HUE = {
-  'Detection': 'var(--info)', 'Segmentation': 'var(--npu)',
-  'Keypoint & Pose': 'var(--warning)', 'Pose & Landmark': 'var(--warning)',
-  'Depth Estimation': 'var(--accent-strong,#7C5CFC)', 'Recognition': 'var(--success)',
-  'Image Restoration': 'var(--emerald,#10b981)', 'Classification': 'var(--success)',
-  'Hand Detection': 'var(--warning)', 'Driving & 3D': 'var(--vpu,#e879f9)', 'PPU': 'var(--accent)'
+  'Detection': 'var(--status-info)', 'Segmentation': 'var(--npu)',
+  'Keypoint & Pose': 'var(--status-warn)', 'Pose & Landmark': 'var(--status-warn)',
+  'Depth Estimation': 'var(--accent-strong,#7C5CFC)', 'Recognition': 'var(--status-ok)',
+  'Image Restoration': 'var(--emerald,#10b981)', 'Classification': 'var(--status-ok)',
+  'Hand Detection': 'var(--status-warn)', 'Driving & 3D': 'var(--vpu,#e879f9)', 'PPU': 'var(--accent)'
 };
 function _rundemoHue(d) { return _RUNDEMO_HUE[d.group] || 'var(--accent)'; }
 

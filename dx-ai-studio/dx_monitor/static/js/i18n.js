@@ -283,7 +283,7 @@ window._DX_I18N_DICT = {
 
   'NPU Hardware Monitoring': { ko: 'NPU 하드웨어 모니터링', ja: 'NPU ハードウェアモニタリング', 'zh-CN': 'NPU 硬件监控', 'zh-TW': 'NPU 硬體監控',es:'Monitoreo de hardware NPU'},
   'Swap': { ko: '스왑', ja: 'スワップ', 'zh-CN': '交换区', 'zh-TW': '交換區',es:'Intercambio'},
-  'CPU Cores (per-core)': { ko: 'CPU 코어별', ja: 'CPU コア別', 'zh-CN': 'CPU 各核心', 'zh-TW': 'CPU 各核心',es:'Núcleos de CPU (por núcleo)'},
+  'CPU Cores (per-core)': { ko: 'CPU 코어별', ja: 'CPUコア別', 'zh-CN': 'CPU各核心', 'zh-TW': 'CPU各核心',es:'Núcleos de CPU'},
   'SDK Version': { ko: 'SDK 버전', ja: 'SDKバージョン', 'zh-CN': 'SDK 版本', 'zh-TW': 'SDK 版本',es:'Versión del SDK'},
   'Driver Version': { ko: '드라이버 버전', ja: 'ドライバーバージョン', 'zh-CN': '驱动版本', 'zh-TW': '驅動版本',es:'Versión del controlador'},
   'PCIe Driver': { ko: 'PCIe 드라이버', ja: 'PCIe ドライバー', 'zh-CN': 'PCIe 驱动', 'zh-TW': 'PCIe 驅動',es:'Controlador PCIe'},

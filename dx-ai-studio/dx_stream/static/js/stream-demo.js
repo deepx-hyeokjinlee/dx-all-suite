@@ -124,7 +124,7 @@ function _renderDemoCards(demos) {
                 <span class="demo-card-cat">${_escHtml(_demoCatLabel(d.category))}</span>
             </div>
             ${!d.available && reason ? '<p class="txt-xs txt-warn demo-unavailable-reason">' + _escHtml(reason) + '</p>' : ''}
-            ${d.pipeline_type === 'rtsp' ? '<input class="demo-rtsp-input" id="rtsp-url-' + d.id + '" type="text" placeholder="rtsp://host:port/path" title="RTSP" style="width:100%;box-sizing:border-box;margin:2px 0 6px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-page,var(--control-bg));color:var(--text-1);font-size:12px"><p class="txt-xs txt-dim" style="margin:0 0 6px" data-i18n="Enter an RTSP URL (blank = demo CCTV)">Enter an RTSP URL (blank = demo CCTV)</p>' : ''}
+            ${d.pipeline_type === 'rtsp' ? '<input class="demo-rtsp-input" id="rtsp-url-' + d.id + '" type="text" placeholder="rtsp://host:port/path" title="RTSP" style="width:100%;box-sizing:border-box;margin:2px 0 6px;padding:6px 8px;border:1px solid var(--border-subtle);border-radius:6px;background:var(--surface-page,var(--control-bg));color:var(--text-primary);font-size:12px"><p class="txt-xs txt-dim" style="margin:0 0 6px" data-i18n="Enter an RTSP URL (blank = demo CCTV)">Enter an RTSP URL (blank = demo CCTV)</p>' : ''}
             <div class="demo-card-actions">
                 <button class="btn btn-primary btn-sm" onclick="DXStream._startDemo(${d.id})"
                     ${!d.available || d.id === runId ? 'disabled' : ''} id="start-demo-${d.id}"

@@ -217,17 +217,17 @@ class SetupPanel {
         'align-items:center;justify-content:center;z-index:100001;padding:20px';
       const box = document.createElement('div');
       box.style.cssText = 'width:min(460px,92vw);background:var(--surface-panel,var(--control-bg));' +
-        'border:1px solid var(--border);border-radius:12px;padding:20px;' +
+        'border:1px solid var(--border-subtle);border-radius:12px;padding:20px;' +
         'box-shadow:0 20px 60px rgba(0,0,0,.35)';
       box.innerHTML =
         '<h3 style="margin:0 0 8px">🔒 ' + t('Administrator (sudo) Authentication') + '</h3>' +
-        (authFailed ? '<p style="margin:0 0 8px;color:var(--error,#e5484d);font-size:13px">' +
+        (authFailed ? '<p style="margin:0 0 8px;color:var(--status-error,#e5484d);font-size:13px">' +
           t('Incorrect password. Please try again.') + '</p>' : '') +
         '<p class="txt-dim" style="margin:0 0 12px;font-size:13px;line-height:1.45">' +
           t('Enter your sudo password to download and install the DX Compiler SDK.') + '</p>' +
         '<input id="_sudo-pw" type="password" autocomplete="current-password" ' +
           'style="width:100%;box-sizing:border-box;padding:9px 11px;border-radius:8px;' +
-          'border:1px solid var(--border);background:var(--surface-page);color:var(--text-1)" ' +
+          'border:1px solid var(--border-subtle);background:var(--surface-page);color:var(--text-primary)" ' +
           'placeholder="' + t('Enter password') + '">' +
         '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">' +
           '<button id="_sudo-cancel" class="fp-btn" type="button">' + t('Cancel') + '</button>' +

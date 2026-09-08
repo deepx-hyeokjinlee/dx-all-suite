@@ -26,7 +26,7 @@
   flex: 0 1 240px;
   max-width: 240px;
   background: var(--surface-panel);
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -42,10 +42,10 @@
   padding: var(--sp-4);
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-2);
+  color: var(--text-secondary);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
 }
 
@@ -57,7 +57,7 @@
   height: 24px;
   background: transparent;
   border: none;
-  color: var(--text-3);
+  color: var(--text-muted);
   cursor: pointer;
   border-radius: var(--radius-xs);
   transition: var(--transition);
@@ -65,7 +65,7 @@
 
 .palette-header .collapse-btn:hover {
   background: var(--control-bg);
-  color: var(--text-1);
+  color: var(--text-primary);
 }
 
 /* ── Palette Search ── */
@@ -79,16 +79,16 @@
   width: 100%;
   padding: 8px 12px;
   background: var(--control-bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
-  color: var(--text-1);
+  color: var(--text-primary);
   font-size: 0.8rem;
   outline: none;
   transition: var(--transition);
 }
 
 .palette-search input::placeholder {
-  color: var(--text-4);
+  color: var(--text-faint);
 }
 
 .palette-search input:focus {
@@ -121,7 +121,7 @@
 /* ── Palette Category ── */
 
 .palette-category {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .palette-category-header {
@@ -131,7 +131,7 @@
   padding: 10px 16px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-3);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -140,7 +140,7 @@
 }
 
 .palette-category-header:hover {
-  color: var(--text-2);
+  color: var(--text-secondary);
   background: var(--control-bg);
 }
 
@@ -165,7 +165,7 @@
   gap: var(--sp-2);
   padding: 8px 16px;
   font-size: 0.8rem;
-  color: var(--text-2);
+  color: var(--text-secondary);
   cursor: grab;
   user-select: none;
   transition: background 0.15s ease;
@@ -191,7 +191,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--text-4);
+  background: var(--text-faint);
 }
 
 /* Pipeline category colors map onto the shared categorical palette (dx-tokens.css). */
@@ -229,7 +229,7 @@
   transform: translateY(-50%);
   padding: 4px 10px;
   background: var(--surface-hover);
-  color: var(--text-1);
+  color: var(--text-primary);
   font-size: 0.75rem;
   border-radius: var(--radius-xs);
   white-space: nowrap;
@@ -274,7 +274,7 @@
   gap: 2px;
   padding: var(--sp-1);
   background: var(--control-bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   z-index: 10;
@@ -288,7 +288,7 @@
   height: 32px;
   background: transparent;
   border: none;
-  color: var(--text-3);
+  color: var(--text-muted);
   border-radius: calc(var(--radius) - 2px);
   cursor: pointer;
   transition: var(--transition);
@@ -296,7 +296,7 @@
 
 .canvas-toolbar .toolbar-btn:hover {
   background: var(--surface-hover);
-  color: var(--text-1);
+  color: var(--text-primary);
 }
 
 .canvas-toolbar .toolbar-btn.active {
@@ -308,14 +308,14 @@
   width: 1px;
   height: 20px;
   margin: 0 4px;
-  background: var(--border);
+  background: var(--border-subtle);
 }
 
 .canvas-toolbar .zoom-label {
   min-width: 40px;
   text-align: center;
   font-size: 0.7rem;
-  color: var(--text-4);
+  color: var(--text-faint);
   user-select: none;
 }
 
@@ -328,7 +328,7 @@
   width: 160px;
   height: 120px;
   background: var(--surface-panel);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
   overflow: hidden;
   z-index: 10;
@@ -370,7 +370,7 @@
   flex: 0 1 280px;
   max-width: 280px;
   background: var(--surface-panel);
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -384,7 +384,7 @@
   align-items: center;
   gap: 10px;
   padding: var(--sp-4);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
 }
 
@@ -407,7 +407,7 @@
 .prop-header .node-name {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-1);
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -415,7 +415,7 @@
 
 .prop-header .node-type {
   font-size: 0.7rem;
-  color: var(--text-4);
+  color: var(--text-faint);
   margin-top: 2px;
 }
 
@@ -444,7 +444,7 @@
 /* ── Property Group (collapsible) ── */
 
 .prop-group {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
   padding-bottom: 8px;
   margin-bottom: 4px;
 }
@@ -460,7 +460,7 @@
   padding: 8px 16px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--text-3);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -469,7 +469,7 @@
 }
 
 .prop-group-header:hover {
-  color: var(--text-2);
+  color: var(--text-secondary);
 }
 
 .prop-group-header .chevron {
@@ -499,7 +499,7 @@
 
 .prop-label {
   flex-shrink: 0;
-  color: var(--text-3);
+  color: var(--text-muted);
   font-size: 0.8rem;
   white-space: nowrap;
 }
@@ -511,9 +511,9 @@
   min-width: 0;
   padding: 6px 10px;
   background: var(--control-bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: calc(var(--radius) - 2px);
-  color: var(--text-1);
+  color: var(--text-primary);
   font-size: 0.8rem;
   outline: none;
   transition: var(--transition);
@@ -531,9 +531,9 @@
   min-width: 0;
   padding: 6px 10px;
   background: var(--control-bg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: calc(var(--radius) - 2px);
-  color: var(--text-1);
+  color: var(--text-primary);
   font-size: 0.8rem;
   outline: none;
   cursor: pointer;
@@ -566,7 +566,7 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  color: var(--text-4);
+  color: var(--text-faint);
   font-size: 0.85rem;
   text-align: center;
   padding: var(--sp-6);
@@ -616,7 +616,7 @@
     transform: translateY(-50%);
     padding: 4px 10px;
     background: var(--surface-hover);
-    color: var(--text-1);
+    color: var(--text-primary);
     font-size: 0.75rem;
     border-radius: var(--radius-xs);
     white-space: nowrap;
@@ -643,14 +643,14 @@
     min-width: 100%;
     flex-direction: row;
     border-right: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-subtle);
     height: 48px;
     min-height: 48px;
   }
 
   .palette-header {
     border-bottom: none;
-    border-right: 1px solid var(--border);
+    border-right: 1px solid var(--border-subtle);
     padding: 0 12px;
   }
 
@@ -695,7 +695,7 @@
     min-width: 100%;
     max-height: 50%;
     border-left: none;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border-subtle);
     border-radius: var(--radius) var(--radius) 0 0;
     box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
     z-index: 20;
@@ -744,24 +744,24 @@
 /* ── Context Menu ── */
 .ctx-menu {
     position: fixed; z-index: 9999;
-    background: var(--surface-panel); border: 1px solid var(--border);
+    background: var(--surface-panel); border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm); padding: 4px 0; min-width: 160px;
     box-shadow: 0 8px 24px rgba(0,0,0,.35); font-size: var(--fs-base);
 }
 .ctx-menu-item {
     display: flex; align-items: center; gap: var(--sp-2);
-    padding: 6px 14px; cursor: pointer; color: var(--text-1);
+    padding: 6px 14px; cursor: pointer; color: var(--text-primary);
     transition: background .12s;
 }
 .ctx-menu-item:hover { background: var(--surface-hover); }
-.ctx-menu-item .shortcut { margin-left: auto; font-size: var(--fs-xs); color: var(--text-3); }
-.ctx-menu-sep { height: 1px; margin: 4px 8px; background: var(--border); }
+.ctx-menu-item .shortcut { margin-left: auto; font-size: var(--fs-xs); color: var(--text-muted); }
+.ctx-menu-sep { height: 1px; margin: 4px 8px; background: var(--border-subtle); }
 
 /* ── Connection Validation Tooltip ── */
 .pipeline-tooltip {
   position: absolute;
   background: var(--surface-hover);
-  color: var(--text-1);
+  color: var(--text-primary);
   font-size: var(--fs-sm);
   font-weight: 400;
   padding: 6px 10px;
@@ -778,7 +778,7 @@
 /* ── Palette Connectable Highlight ── */
 .palette-item.connectable {
   background: rgba(var(--success-rgb), 0.12);
-  border-color: var(--success);
+  border-color: var(--status-ok);
   box-shadow: 0 0 8px rgba(var(--success-rgb), 0.2);
   position: relative;
 }

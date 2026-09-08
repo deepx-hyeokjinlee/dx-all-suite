@@ -30,7 +30,7 @@ def test_sdk_list_sidebar_matches_module_sidebar_width_and_tone():
         "background:linear-gradient(180deg,var(--surface-page)0%,var(--surface-panel)100%)"
         in rule
     )
-    assert "border-right:1pxsolidvar(--border)" in rule
+    assert "border-right:1pxsolidvar(--border-subtle)" in rule
     assert "display:flex" in rule
     assert "flex-direction:column" in rule
     assert "transition:width.25s" in rule
@@ -95,5 +95,5 @@ def test_sdk_sidebar_count_badges_use_design_tokens():
     css = read_css()
     group_count = normalize(css_rule(css, ".sdk-sidebar-count"))
     section_count = normalize(css_rule(css, ".sdk-sidebar-sec-count"))
-    assert "color:var(--text-4)" in group_count
-    assert "color:var(--text-4)" in section_count
+    assert "color:var(--text-faint)" in group_count
+    assert "color:var(--text-faint)" in section_count

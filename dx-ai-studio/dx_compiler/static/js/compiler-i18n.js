@@ -286,7 +286,7 @@ window._DX_I18N_DICT = {
     es: 'Configuración de compilación',
   },
   'Output Directory *': {
-    ko: '출력 디렉토리 *',
+    ko: '출력 디렉터리 *',
     ja: '出力ディレクトリ *',
     'zh-CN': '输出目录 *',
     'zh-TW': '輸出目錄 *',

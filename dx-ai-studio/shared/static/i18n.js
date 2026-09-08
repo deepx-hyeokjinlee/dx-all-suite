@@ -275,8 +275,32 @@
     _init();
   }
 
+  /** 나중에 주입되는 조각이 자기 번역을 들고 올 수 있게 한다.
+   *
+   *  hw_widget 은 launcher 프록시가 호스트 페이지에 꽂는다. 사전은 모듈마다
+   *  따로라, 이 위젯의 라벨을 data-i18n 으로 쓰려면 여덟 모듈 사전에 같은
+   *  항목을 아홉 개씩 복사해야 했다 — 그래서 언어 span 아홉 벌로 남아 있었다.
+   *  이미 있는 key 는 덮지 않는다: 모듈이 정한 문구가 우선이다. */
+  function register(extra) {
+    if (!extra) return;
+    for (var key in extra) {
+      if (!Object.prototype.hasOwnProperty.call(extra, key)) continue;
+      if (Object.prototype.hasOwnProperty.call(_dict, key)) continue;
+      _dict[key] = extra[key];
+      var entry = extra[key];
+      if (typeof entry === 'string') _rev[entry] = key;
+      else if (typeof entry === 'object') {
+        for (var l in entry) {
+          if (Object.prototype.hasOwnProperty.call(entry, l) && entry[l]) _rev[entry[l]] = key;
+        }
+      }
+    }
+    _applyDOM();
+  }
+
   window.DXI18n = {
     T: T,
+    register: register,
     get lang() { return _lang; },
     setLang: setLang,
     toggleLang: toggleLang,

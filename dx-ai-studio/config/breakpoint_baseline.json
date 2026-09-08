@@ -1,42 +1,36 @@
 {
   "dx_agent_dev/static/css/console.css": [
-    720,
+    768,
     1100
   ],
   "dx_app/static/css/style.css": [
     600,
-    700,
     900,
-    960,
     1100,
     1200
   ],
   "dx_benchmark/static/css/style.css": [
-    640,
-    980
+    600,
+    900
   ],
   "dx_compiler/static/css/style.css": [
     768,
     1200
   ],
   "dx_modelzoo/static/css/style.css": [
-    640,
+    600,
     768,
     900,
-    1360
+    1440
   ],
   "dx_monitor/static/css/style.css": [
     600,
-    700,
-    900,
-    1100
+    900
   ],
   "dx_planner/static/css/style.css": [
     768,
-    960,
+    900,
     1200,
-    1280,
-    1360,
     1440,
     1600
   ],
@@ -46,7 +40,6 @@
   ],
   "dx_stream/static/css/stream.css": [
     600,
-    700,
     900,
     1100
   ],
@@ -66,6 +59,10 @@
     480
   ],
   "shared/static/dx-shell.css": [
+    1100
+  ],
+  "shared/static/dx-utilities.css": [
+    600,
     1100
   ],
   "shared/static/tutorial.css": [

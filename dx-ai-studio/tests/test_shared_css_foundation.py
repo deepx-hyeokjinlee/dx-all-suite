@@ -247,8 +247,6 @@ def test_shared_tokens_include_required_aliases():
     css = read_text(SHARED_STATIC / "dx-tokens.css")
     required_tokens = [
         "--surface-panel-rgb",
-        "--text-1",
-        "--text-2",
         "--accent",
         "--accent-rgb",
         "--success",
@@ -1318,7 +1316,6 @@ def test_shared_depth_tokens_define_surface_contract():
         "--inset-highlight-strong:",
         "--shadow-sm:",
         "--shadow-xl:",
-        "--surface-raised-bg:",
         "--surface-raised-shadow:",
         "--surface-glass-shadow:",
         "--surface-active-shadow:",
@@ -1332,7 +1329,7 @@ def test_shared_depth_tokens_define_surface_contract():
         assert sel in utilities_css, f"selector {sel} missing from dx-utilities.css"
 
     # 유틸리티 정확한 프래그먼트 확인
-    assert "background: var(--surface-raised-bg)" in utilities_css
+    assert "background: var(--surface-raised)" in utilities_css
     assert "box-shadow: var(--surface-raised-shadow)" in utilities_css
 
 
@@ -1412,8 +1409,8 @@ def test_flat_modules_use_shared_surface_depth_tokens():
         css = read_text(ROOT / css_rel)
         for sel in selectors:
             body = _css_rule(css, sel)
-            assert "background: var(--surface-raised-bg)" in body, (
-                f"{css_rel} {sel} missing surface-raised-bg"
+            assert "background: var(--surface-raised)" in body, (
+                f"{css_rel} {sel} missing surface-raised"
             )
             assert "box-shadow: var(--surface-raised-shadow)" in body, (
                 f"{css_rel} {sel} missing surface-raised-shadow"
@@ -1480,8 +1477,8 @@ def test_app_stream_final_card_rules_use_shared_raised_depth():
                 if _defines_selector(css, selector)
                 else (shared_rel, _css_rule_last(shared_css, selector))
             )
-            assert "background: var(--surface-raised-bg)" in body, (
-                f"{owner_rel} {selector} final rule missing surface-raised-bg"
+            assert "background: var(--surface-raised)" in body, (
+                f"{owner_rel} {selector} final rule missing surface-raised"
             )
             assert "box-shadow: var(--surface-raised-shadow)" in body, (
                 f"{owner_rel} {selector} final rule missing surface-raised-shadow"
@@ -1645,8 +1642,9 @@ SEMANTIC_TOKENS = (
 # 모듈 CSS 14,300줄이 아직 쓰는 물리적 이름. semantic 위 alias여야 한다.
 # --bg-3 / --bg-4 는 대응하는 역할이 없어 dx-tokens.css의 리터럴을 그대로 둔다
 # (semantic이 재정의하지 않으므로 primitive 값이 살아남는다).
-# --bg-* 는 전부 걷어냈다. 남은 alias 는 다음 단계에서 같은 방식으로 없앤다.
-LEGACY_ALIASES = (
+# 은퇴한 이름들. 정의도 호출도 없어야 한다.
+RETIRED_NAMES = (
+    "--bg-0", "--bg-1", "--bg-2", "--bg-3", "--bg-4", "--bg-input",
     "--text-1", "--text-2", "--text-3", "--text-4",
     "--border", "--border-hover",
     "--success", "--warning", "--error", "--info",
@@ -1672,24 +1670,36 @@ def test_semantic_layer_defines_every_role_token():
     assert not missing, f"dx-semantic.css에 없는 semantic 토큰: {missing}"
 
 
-def test_legacy_names_are_aliases_of_semantic_tokens():
-    """--bg-*/--text-* 를 지우지 않고 alias로 남겨야 14k줄을 안 고치고 테마가 돈다."""
-    css = read_text(SHARED_STATIC / "dx-semantic.css")
-    for legacy in LEGACY_ALIASES:
-        m = re.search(re.escape(legacy) + r"\s*:\s*([^;]+);", css)
-        assert m, f"{legacy} alias가 dx-semantic.css에 없다"
-        assert "var(--" in m.group(1), (
-            f"{legacy} 가 리터럴로 재정의됐다 ({m.group(1).strip()}). "
-            "semantic 토큰을 참조해야 light에서 따라온다"
+def test_no_legacy_alias_layer_remains():
+    """역할 이름 하나만 남는다.
+
+    --bg-0 / --text-1 / --border 같은 옛 이름은 dx-tokens.css 와
+    dx-semantic.css 두 곳에서 정의되고, 그중 primitive 쪽에는 light 값이
+    없었다. 그래서 alias 가 하나라도 빠지면 그 자리가 light 테마에서 dark
+    리터럴로 떨어졌다 — 실제로 --bg-3/--bg-4/--bg-1-rgb 가 그렇게 새고
+    있었다. 이름을 한 벌로 줄여 그 함정을 없앤다.
+    """
+    tokens = read_text(SHARED_STATIC / "dx-tokens.css")
+    semantic = read_text(SHARED_STATIC / "dx-semantic.css")
+    for legacy in RETIRED_NAMES:
+        pattern = re.compile(r"(?m)^\s*" + re.escape(legacy) + r"\s*:")
+        assert not pattern.search(semantic), (
+            f"{legacy} 가 semantic 계층에 되살아났다 — 역할 이름을 쓰세요"
+        )
+        assert not pattern.search(tokens), (
+            f"{legacy} 가 primitive 계층에 되살아났다 — light 값이 없어 "
+            "그 자리가 light 테마에서 dark 로 떨어진다"
         )
 
 
-def test_semantic_layer_holds_no_literal_outside_the_role_tokens():
-    """역할 토큰 외의 리터럴은 primitive 계층의 일이다."""
-    css = read_text(SHARED_STATIC / "dx-semantic.css")
-    for legacy in LEGACY_ALIASES:
-        body = re.search(re.escape(legacy) + r"\s*:\s*([^;]+);", css).group(1)
-        assert "#" not in body, f"{legacy} alias에 리터럴 hex가 있다"
+def test_no_module_still_calls_a_retired_name():
+    used = {}
+    for path in _module_css_paths():
+        css = read_text(path)
+        hit = sorted({n for n in RETIRED_NAMES if f"var({n})" in css})
+        if hit:
+            used[path.relative_to(ROOT).as_posix()] = hit
+    assert not used, f"은퇴한 토큰 이름을 아직 부른다: {used}"
 
 
 @pytest.mark.parametrize("name,rel", sorted(SEMANTIC_SURFACES.items()))
@@ -1735,9 +1745,12 @@ def test_light_theme_defines_the_same_tokens_in_both_blocks():
 
 
 def test_light_theme_does_not_redefine_legacy_aliases():
-    """alias는 semantic을 따라와야 한다. 여기서 다시 정의하면 alias 사슬이 끊긴다."""
+    """은퇴한 이름을 light 테마가 되살리면 안 된다.
+
+    여기 정의를 두면 그 이름이 light 에서만 살아나, dark 에서 값 없는
+    이름을 부르는 모듈 CSS 가 생겨도 아무도 눈치채지 못한다."""
     css = read_text(SHARED_STATIC / "dx-theme-light.css")
-    for legacy in LEGACY_ALIASES:
+    for legacy in RETIRED_NAMES:
         assert re.search(re.escape(legacy) + r"\s*:", css) is None, (
             f"{legacy} 를 light 테마가 재정의했다 — dx-semantic.css의 alias만 유지하라"
         )

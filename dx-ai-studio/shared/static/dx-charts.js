@@ -11,10 +11,10 @@ function _dxChartCssColor(token,fallback){
 
 function _dxChartWaterfallColors(){
   return[
-    _dxChartCssColor('--info','#60a5fa'),
+    _dxChartCssColor('--status-info','#60a5fa'),
     _dxChartCssColor('--app-accent','#22d3ee'),
-    _dxChartCssColor('--warning','#f59e0b'),
-    _dxChartCssColor('--error','#ef4444'),
+    _dxChartCssColor('--status-warn','#f59e0b'),
+    _dxChartCssColor('--status-error','#ef4444'),
     _dxChartCssColor('--npu','#a78bfa')
   ];
 }
@@ -76,14 +76,14 @@ function drawLineChart(canvas,datasets,opts){
   for(var i=0;i<=4;i++){
     var y=pad.t+ch*(i/4);
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();
-    ctx.fillStyle=_dxChartCssColor('--text-3','#94a3b8');ctx.font='10px sans-serif';ctx.textAlign='right';
+    ctx.fillStyle=_dxChartCssColor('--text-muted','#94a3b8');ctx.font='10px sans-serif';ctx.textAlign='right';
     ctx.fillText(hasData?(mx-rng*(i/4)).toFixed(1):'--',pad.l-6,y+3);
   }
   if(!hasData){
     ctx.fillStyle='rgba(139,148,158,0.35)';ctx.font='11px sans-serif';ctx.textAlign='center';
     var emptyText=opts.emptyText||(typeof T==='function'?T('Waiting for data…'):'');
     ctx.fillText(emptyText,W/2,H/2);
-    if(opts.label){ctx.fillStyle=_dxChartCssColor('--text-3','#94a3b8');ctx.textAlign='left';ctx.fillText(opts.label,pad.l,H-4);}
+    if(opts.label){ctx.fillStyle=_dxChartCssColor('--text-muted','#94a3b8');ctx.textAlign='left';ctx.fillText(opts.label,pad.l,H-4);}
     return;
   }
   datasets.forEach(function(ds){
@@ -115,9 +115,9 @@ function drawLineChart(canvas,datasets,opts){
       ctx.restore();
     });
   }
-  if(opts.label){ctx.fillStyle=_dxChartCssColor('--text-2','#cbd5e1');ctx.font='bold 10px sans-serif';ctx.textAlign='left';ctx.fillText(opts.label,pad.l,pad.t-6)}
+  if(opts.label){ctx.fillStyle=_dxChartCssColor('--text-secondary','#cbd5e1');ctx.font='bold 10px sans-serif';ctx.textAlign='left';ctx.fillText(opts.label,pad.l,pad.t-6)}
   if(opts.timeLabels&&opts.timeLabels.length){
-    ctx.fillStyle=_dxChartCssColor('--text-3','#94a3b8');ctx.font='9px sans-serif';ctx.textAlign='center';
+    ctx.fillStyle=_dxChartCssColor('--text-muted','#94a3b8');ctx.font='9px sans-serif';ctx.textAlign='center';
     var len=datasets[0]?datasets[0].data.length:opts.timeLabels.length;
     var lastDrawnX=-999;
     opts.timeLabels.forEach(function(lbl,i){
@@ -156,9 +156,9 @@ function drawBarChart(canvas,items,opts){
     grad.addColorStop(0,it.color||_dxChartCssColor('--app-accent','#22d3ee'));grad.addColorStop(1,_dxChartCssColor('--accent-dim','#0e7490'));
     ctx.fillStyle=grad;ctx.beginPath();
     ctx.roundRect(x,y,bw,bh,3);ctx.fill();
-    ctx.fillStyle=_dxChartCssColor('--text-1','#f8fafc');ctx.font='bold 10px sans-serif';ctx.textAlign='center';
+    ctx.fillStyle=_dxChartCssColor('--text-primary','#f8fafc');ctx.font='bold 10px sans-serif';ctx.textAlign='center';
     ctx.fillText(it.val.toFixed(1),x+bw/2,y-4);
-    ctx.fillStyle=_dxChartCssColor('--text-3','#94a3b8');ctx.font='9px sans-serif';
+    ctx.fillStyle=_dxChartCssColor('--text-muted','#94a3b8');ctx.font='9px sans-serif';
     var lbl=it.label.length>16?it.label.slice(0,15)+'\u2026':it.label;
     ctx.save();ctx.translate(x+bw/2,pad.t+ch+4);ctx.rotate(-0.6);ctx.textAlign='left';
     ctx.fillText(lbl,0,0);ctx.restore();
@@ -204,7 +204,7 @@ function renderPerfCards(res){
   if(p.inference_latency)h+='<div class="perf-item"><div class="pv">'+p.inference_latency+'</div><div class="pl">Inference ms</div></div>';
   if(p.total_frames)h+='<div class="perf-item"><div class="pv">'+p.total_frames+'</div><div class="pl">Frames</div></div>';
   if(p.total_time)h+='<div class="perf-item"><div class="pv">'+p.total_time+'s</div><div class="pl">Total Time</div></div>';
-  var exitColor=res.exit_code===0?'var(--success)':'var(--error)';
+  var exitColor=res.exit_code===0?'var(--status-ok)':'var(--status-error)';
   var exitIcon=res.exit_code===0?'\u2705':'\u274c';
   h+='<div class="perf-item"><div class="pv" style="color:'+exitColor+'">'+exitIcon+'</div><div class="pl">Exit '+res.exit_code+'</div></div>';
   h+='</div>';
@@ -249,7 +249,7 @@ function renderDetSummary(ds){
   var entries=Object.entries(ds).sort(function(a,b){return b[1].count-a[1].count});
   if(!entries.length){
     var noDetText=typeof T==='function'?T('No detections recorded.'):'No detections recorded.';
-    return'<p style="color:var(--text-3);font-size:12px">'+noDetText+'</p>';
+    return'<p style="color:var(--text-muted);font-size:12px">'+noDetText+'</p>';
   }
   var clsLabel=typeof T==='function'?T('Class'):'Class';
   var detLabel=typeof T==='function'?T('Detections'):'Detections';
@@ -269,7 +269,7 @@ function renderTaskSummary(tag,summary){
   var h='';
   if(tag==='DET'||tag==='ISEG'||tag==='OBB'||tag==='CLS'||tag==='HAND'){
     var entries=Object.entries(summary).sort(function(a,b){return(b[1].count||0)-(a[1].count||0)});
-    if(!entries.length)return'<p style="color:var(--text-3);font-size:12px">'+_t('No results recorded.','기록된 결과가 없습니다.')+'</p>';
+    if(!entries.length)return'<p style="color:var(--text-muted);font-size:12px">'+_t('No results recorded.','기록된 결과가 없습니다.')+'</p>';
     var lbl=tag==='HAND'?_t('Handedness','손잡이'):_t('Class','클래스');
     h='<table class="perf-table"><thead><tr><th>'+lbl+'</th><th style="text-align:right">'+_t('Count','개수')+'</th><th style="text-align:right">'+_t('Avg Conf','평균 신뢰도')+'</th></tr></thead><tbody>';
     entries.forEach(function(e){
@@ -280,7 +280,7 @@ function renderTaskSummary(tag,summary){
   }
   else if(tag==='SEG'){
     var entries=Object.entries(summary).sort(function(a,b){return(b[1].avg_pct||0)-(a[1].avg_pct||0)});
-    if(!entries.length)return'<p style="color:var(--text-3);font-size:12px">'+_t('No segmentation data.','분할 데이터가 없습니다.')+'</p>';
+    if(!entries.length)return'<p style="color:var(--text-muted);font-size:12px">'+_t('No segmentation data.','분할 데이터가 없습니다.')+'</p>';
     h='<table class="perf-table"><thead><tr><th>'+_t('Class','클래스')+'</th><th style="text-align:right">'+_t('Avg Pixel %','평균 픽셀 %')+'</th></tr></thead><tbody>';
     entries.forEach(function(e){
       h+='<tr><td>'+_e(e[0])+'</td><td style="text-align:right">'+(e[1].avg_pct||0).toFixed(2)+'%</td></tr>';

@@ -43,27 +43,27 @@
 </style>
 <div class="hw-float" id="hw-float">
   <div class="hw-float-header" id="hw-float-drag">
-    <span class="hw-float-title">☰ <span class="ko">NPU 모니터</span><span class="en">NPU Monitor</span><span class="es">Monitor NPU</span><span class="ja">NPU モニター</span><span class="zh-CN">NPU 监控器</span><span class="zh-TW">NPU 監控器</span></span>
+    <span class="hw-float-title">☰ <span data-i18n="NPU Monitor">NPU Monitor</span></span>
     <button class="hw-float-toggle" onclick="document.getElementById('hw-float').classList.toggle('minimized')">&#9662;</button>
   </div>
   <div class="hw-float-body">
     <div id="hf-npu-selector" class="hw-npu-selector" hidden></div>
     <div id="hf-npu-section" class="hw-float-section">
       <div class="hw-section-title" id="hf-npu-title">NPU</div>
-      <div class="hw-float-row"><span class="hf-k">🌡️ <span class="ko">평균 온도</span><span class="en">Avg Temp</span><span class="es">Temp. promedio</span><span class="ja">平均温度</span><span class="zh-CN">平均温度</span><span class="zh-TW">平均溫度</span></span><span class="hf-v" id="hf-temp">--°C</span></div>
+      <div class="hw-float-row"><span class="hf-k">🌡️ <span data-i18n="Avg Temp">Avg Temp</span></span><span class="hf-v" id="hf-temp">--°C</span></div>
       <div id="hf-ctemps"></div>
-      <div class="hw-float-row"><span class="hf-k">⚙️ <span class="ko">NPU 사용률</span><span class="en">NPU Util</span><span class="es">Util. NPU</span><span class="ja">NPU 使用率</span><span class="zh-CN">NPU 利用率</span><span class="zh-TW">NPU 使用率</span></span><span class="hf-v" id="hf-util">--%</span></div>
+      <div class="hw-float-row"><span class="hf-k">⚙️ <span data-i18n="NPU Util">NPU Util</span></span><span class="hf-v" id="hf-util">--%</span></div>
       <div class="hw-float-row"><span class="hf-k">💾 NPU DRAM</span><span class="hf-v" id="hf-dram">--%</span></div>
-      <div class="hw-float-row"><span class="hf-k">🔄 <span class="ko">클럭</span><span class="en">Clock</span><span class="es">Reloj</span><span class="ja">クロック</span><span class="zh-CN">时钟</span><span class="zh-TW">時脈</span></span><span class="hf-v" id="hf-clock">-- MHz</span></div>
-      <div class="hw-float-row"><span class="hf-k">⚡ <span class="ko">전압</span><span class="en">Voltage</span><span class="es">Voltaje</span><span class="ja">電圧</span><span class="zh-CN">电压</span><span class="zh-TW">電壓</span></span><span class="hf-v" id="hf-volt">-- mV</span></div>
+      <div class="hw-float-row"><span class="hf-k">🔄 <span data-i18n="Clock">Clock</span></span><span class="hf-v" id="hf-clock">-- MHz</span></div>
+      <div class="hw-float-row"><span class="hf-k">⚡ <span data-i18n="Voltage">Voltage</span></span><span class="hf-v" id="hf-volt">-- mV</span></div>
     </div>
     <div id="hf-system-section" class="hw-float-section">
-      <div class="hw-section-title"><span class="ko">시스템</span><span class="en">System</span><span class="es">Sistema</span><span class="ja">システム</span><span class="zh-CN">系统</span><span class="zh-TW">系統</span></div>
+      <div class="hw-section-title"><span data-i18n="System">System</span></div>
       <div class="hw-float-row"><span class="hf-k">🖥️ CPU</span><span class="hf-v" id="hf-cpu">--</span></div>
-      <div class="hw-float-row"><span class="hf-k">💾 <span class="ko">메모리</span><span class="en">Memory</span><span class="es">Memoria</span><span class="ja">メモリ</span><span class="zh-CN">内存</span><span class="zh-TW">記憶體</span></span><span class="hf-v" id="hf-mem">--%</span></div>
-      <div class="hw-float-row"><span class="hf-k">📀 <span class="ko">디스크</span><span class="en">Disk</span><span class="es">Disco</span><span class="ja">ディスク</span><span class="zh-CN">磁盘</span><span class="zh-TW">磁碟</span></span><span class="hf-v" id="hf-disk">--%</span></div>
+      <div class="hw-float-row"><span class="hf-k">💾 <span data-i18n="Memory">Memory</span></span><span class="hf-v" id="hf-mem">--%</span></div>
+      <div class="hw-float-row"><span class="hf-k">📀 <span data-i18n="Disk">Disk</span></span><span class="hf-v" id="hf-disk">--%</span></div>
     </div>
-    <div class="hw-float-status" id="hf-status" style="display:none"><span class="ko">연결 중...</span><span class="en">Connecting...</span><span class="es">Conectando...</span><span class="ja">接続中...</span><span class="zh-CN">连接中...</span><span class="zh-TW">連線中...</span></div>
+    <div class="hw-float-status" id="hf-status" style="display:none"><span data-i18n="Connecting...">Connecting...</span></div>
     <div class="hw-spark" id="hf-spark" onclick="_hwSparkNext()">
       <canvas id="hf-spark-canvas" height="20"></canvas>
       <div class="hw-spark-label" id="hf-spark-label">NPU Temp</div>
@@ -354,5 +354,29 @@
   }
 
   _loadThresholds();
+})();
+</script>
+
+<script>
+// 이 위젯은 launcher 프록시가 호스트 페이지에 꽂는다 — 사전은 모듈마다
+// 따로라, 라벨을 여덟 모듈 사전에 아홉 개씩 복사하는 대신 자기 번역을
+// 들고 와서 등록한다. 모듈이 같은 key 를 이미 쓰면 그쪽이 이긴다.
+(function () {
+  var DICT = {
+    'Avg Temp': { ko: '평균 온도', ja: '平均温度', 'zh-CN': '平均温度', 'zh-TW': '平均溫度', es: 'Temp. promedio' },
+    'Clock': { ko: '클럭', ja: 'クロック', 'zh-CN': '时钟', 'zh-TW': '時脈', es: 'Reloj' },
+    'Connecting...': { ko: '연결 중...', ja: '接続中...', 'zh-CN': '连接中...', 'zh-TW': '連線中...', es: 'Conectando...' },
+    'Disk': { ko: '디스크', ja: 'ディスク', 'zh-CN': '磁盘', 'zh-TW': '磁碟', es: 'Disco' },
+    'Memory': { ko: '메모리', ja: 'メモリ', 'zh-CN': '内存', 'zh-TW': '記憶體', es: 'Memoria' },
+    'NPU Monitor': { ko: 'NPU 모니터', ja: 'NPU モニター', 'zh-CN': 'NPU 监控器', 'zh-TW': 'NPU 監控器', es: 'Monitor NPU' },
+    'NPU Util': { ko: 'NPU 사용률', ja: 'NPU 使用率', 'zh-CN': 'NPU 利用率', 'zh-TW': 'NPU 使用率', es: 'Util. NPU' },
+    'System': { ko: '시스템', ja: 'システム', 'zh-CN': '系统', 'zh-TW': '系統', es: 'Sistema' },
+    'Voltage': { ko: '전압', ja: '電圧', 'zh-CN': '电压', 'zh-TW': '電壓', es: 'Voltaje' },
+  };
+  function _register() {
+    if (window.DXI18n && window.DXI18n.register) window.DXI18n.register(DICT);
+    else setTimeout(_register, 120);
+  }
+  _register();
 })();
 </script>

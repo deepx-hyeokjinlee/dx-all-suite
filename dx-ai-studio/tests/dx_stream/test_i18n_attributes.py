@@ -5,6 +5,7 @@ import re
 import shutil
 import subprocess
 from pathlib import Path
+from tests.i18n_markup import assert_translatable
 
 ROOT = Path(__file__).resolve().parents[2]
 STREAM = ROOT / "dx_stream"
@@ -195,8 +196,9 @@ def test_dxnn_upload_and_mjpeg_fallback_strings_cover_all_languages():
     html = stream_template()
     for element_id in ("model-upload-file", "model-upload-status"):
         assert f'id="{element_id}"' in html
-    for language in ("ko", "en", "ja", "zh-CN", "zh-TW", "es"):
-        assert f'class="{language}"' in html
+    # 언어 span 은 걷어냈다. 화면 문구가 여섯 언어를 다 받는지는 key 가
+    # 사전에서 풀리는지로 본다.
+    assert_translatable(html, "dx_stream/static/js/stream-i18n.js", "dx_stream index")
 
 
 def test_stream_i18n_dictionary_removes_stale_demo_preset_keys():

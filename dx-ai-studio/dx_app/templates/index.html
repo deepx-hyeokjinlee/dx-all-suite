@@ -159,9 +159,9 @@
       <div class="comp-log" id="setup-log" data-i18n="Select an item to run — logs will appear here.">Select an item to run — logs will appear here.</div>
       <!-- stdin input row -->
       <div id="setup-stdin-row" style="display:none;margin-top:6px;padding:8px;background:var(--bg3);border-radius:6px;border:1px solid var(--bdr)">
-        <div style="font-size:11px;color:var(--warning);margin-bottom:5px" id="setup-stdin-prompt" data-i18n="Type input to send to the process (press Enter)">Type input to send to the process (press Enter)</div>
+        <div style="font-size:11px;color:var(--status-warn);margin-bottom:5px" id="setup-stdin-prompt" data-i18n="Type input to send to the process (press Enter)">Type input to send to the process (press Enter)</div>
         <div style="display:flex;gap:6px;align-items:center">
-          <input id="setup-stdin-input" type="text" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--surface-page);color:var(--text-1);font-family:var(--mono);font-size:12px" data-i18n-placeholder="Enter value and press Enter" onkeydown="if(event.key==='Enter')setupSendInput()">
+          <input id="setup-stdin-input" type="text" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--surface-page);color:var(--text-primary);font-family:var(--mono);font-size:12px" data-i18n-placeholder="Enter value and press Enter" onkeydown="if(event.key==='Enter')setupSendInput()">
           <button onclick="var i=$('setup-stdin-input');i.type=i.type==='password'?'text':'password'" class="btn btn-ghost btn-sm" title="Show/hide password" data-i18n-title="Show/hide password">👁</button>
           <button onclick="setupSendInput()" class="btn btn-primary btn-sm" data-i18n="Send">Send</button>
           <button onclick="setupHideStdin()" class="btn btn-ghost btn-sm" title="Close" data-i18n-title="Close">✕</button>
@@ -375,8 +375,8 @@
           <div class="fg" style="margin:0"><label data-i18n="RTSP Server">RTSP Server</label><input type="text" id="b-rtsp-ip" class="input" value="" data-i18n-placeholder="IP:Port"></div>
           <div class="fg" style="margin:0;margin-top:6px"><label data-i18n="Stream">Stream</label><select id="b-rtsp-stream" class="input"></select></div>
         </div>
-        <div class="fg" style="margin:0 0 12px"><label for="b-loop" id="b-loop-label"><span class="ko">반복 횟수</span><span class="en">Loop Count</span><span class="es">Conteo de bucles</span><span class="ja">ループ回数</span><span class="zh-CN">循环次数</span><span class="zh-TW">迴圈次數</span></label><input type="number" id="b-loop" class="input" value="100" min="1" max="10000" style="width:100%"></div>
-        <button class="btn btn-acc" id="b-run-btn" onclick="doBench()" style="width:100%">⏱️ <span class="ko">벤치마크 시작</span><span class="en">Start Benchmark</span><span class="es">Iniciar benchmark</span><span class="ja">ベンチマーク開始</span><span class="zh-CN">开始基准测试</span><span class="zh-TW">開始基準測試</span></button>
+        <div class="fg" style="margin:0 0 12px"><label for="b-loop" id="b-loop-label" data-i18n="Loop Count">Loop Count</label><input type="number" id="b-loop" class="input" value="100" min="1" max="10000" style="width:100%"></div>
+        <button class="btn btn-acc" id="b-run-btn" onclick="doBench()" style="width:100%">⏱️ <span data-i18n="Start Benchmark">Start Benchmark</span></button>
         <button class="btn btn-red hidden" id="b-stop-btn" onclick="doStop()" style="width:100%;margin-top:6px">⏹ <span data-i18n="Stop">Stop</span></button>
       </div>
     </div>
@@ -470,7 +470,7 @@
       <!-- Batch select buttons -->
       <button class="btn btn-ghost btn-sm" onclick="mzSelectAllVisible()">☑ <span data-i18n="Select All">Select All</span></button>
       <button class="btn btn-ghost btn-sm" onclick="mzSelectAllNew()">🆕 <span data-i18n="New Only">New Only</span></button>
-      <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qlite')" style="color:var(--info)" data-i18n="Q-Lite All">Q-Lite All</button>
+      <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qlite')" style="color:var(--status-info)" data-i18n="Q-Lite All">Q-Lite All</button>
       <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qpro')" style="color:var(--app-accent)" data-i18n="Q-Pro All">Q-Pro All</button>
       <button class="btn btn-ghost btn-sm" onclick="mzDeselectAll()">☐ <span data-i18n="Deselect">Deselect</span></button>
       <button class="btn btn-ghost btn-sm" onclick="mzRefresh()" title="Refresh" data-i18n-title="Refresh">🔄</button>
@@ -599,7 +599,7 @@
           <input type="text" id="dd-name" data-i18n-placeholder="or type model name manually">
         </div>
         <div class="fg"><label for="dd-lang" data-i18n="Code Language">Code Language</label><select id="dd-lang" class="input"><option value="both">Both (C++ &amp; Python)</option><option value="cpp">C++ only</option><option value="python">Python only</option></select></div>
-        <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px;margin:8px 0;font-size:12px;color:var(--error)">⚠️ <span data-i18n="This will permanently delete model source files from disk.">This will permanently delete model source files from disk.</span>
+        <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px;margin:8px 0;font-size:12px;color:var(--status-error)">⚠️ <span data-i18n="This will permanently delete model source files from disk.">This will permanently delete model source files from disk.</span>
         </div>
         <button class="btn btn-red mt8" onclick="devDelModel()">🗑️ <span data-i18n="Delete Model">Delete Model</span></button>
         <div class="code mt8 hidden" id="dd-out"></div>
@@ -633,7 +633,7 @@
         </div>
         <div class="fg"><label for="de-lang" data-i18n="Output Language">Output Language</label><select id="de-lang" class="input"><option value="both">Both (C++ &amp; Python)</option><option value="cpp">C++ only</option><option value="python">Python only</option></select></div>
         <p class="txt-dim txt-sm mt8" data-i18n-html="Packages are saved to &lt;code&gt;outputs/&lt;/code&gt; directory. Use the Outputs page to download.">Packages are saved to <code>outputs/</code> directory. Use the Outputs page to download.</p>
-        <button class="btn btn-acc mt8" onclick="devExtract()">📦 <span class="ko">패키지 추출</span><span class="en">Extract Package</span><span class="es">Extraer paquete</span><span class="ja">パッケージ抽出</span><span class="zh-CN">提取包</span><span class="zh-TW">擷取套件</span></button>
+        <button class="btn btn-acc mt8" onclick="devExtract()">📦 <span data-i18n="Extract Package">Extract Package</span></button>
         <div class="code mt8 hidden" id="de-out"></div>
       </div>
     </div>
@@ -721,7 +721,7 @@
 <dialog class="modal-overlay" id="modal-detail">
   <div class="modal modal-lg">
     <button class="modal-x" onclick="closeModal('modal-detail')">&times;</button>
-    <h2 id="md-title"><span class="ko">상세</span><span class="en">Detail</span><span class="es">Detalle</span><span class="ja">詳細</span><span class="zh-CN">详情</span><span class="zh-TW">詳細資訊</span></h2>
+    <h2 id="md-title" data-i18n="Detail">Detail</h2>
     <div id="md-body"></div>
   </div>
 </dialog>

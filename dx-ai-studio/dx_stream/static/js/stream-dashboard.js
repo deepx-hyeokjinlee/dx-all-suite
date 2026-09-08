@@ -41,7 +41,7 @@ async function _fetchStatus() {
 
     if (data.build) {
         _updateStat('build', data.build.ok,
-            data.build.ok ? T('OK') : T('Not built'));
+            data.build.ok ? T('Built') : T('Not built'));
     }
 
     // 성능 지표 업데이트 (서버가 perf 필드 제공 시)

@@ -103,7 +103,7 @@
         <div class="card quick-card" style="margin:0;padding:14px" onclick="DXStream.quickLaunchDemo(6)">
           <div class="card-icon" style="font-size:20px">🖼️</div>
           <div class="card-body">
-            <div class="card-title" style="font-size:13px"><span class="ko">의미론적 분할</span><span class="en">Segmentation</span><span class="es">Segmentación</span><span class="ja">セグメンテーション</span><span class="zh-CN">分割</span><span class="zh-TW">分割</span></div>
+            <div class="card-title" style="font-size:13px" data-i18n="Segmentation">Segmentation</div>
             <div class="card-desc txt-dim" style="font-size:10px">YOLOv26n_Seg</div>
           </div>
         </div>
@@ -169,7 +169,7 @@
     <button class="btn btn-ghost btn-sm active" data-cat="all" onclick="DXStream.filterDemos('all',this)" data-i18n="All">All</button>
     <button class="btn btn-ghost btn-sm" data-cat="object_detection" onclick="DXStream.filterDemos('object_detection',this)" data-i18n="Detection">Detection</button>
     <button class="btn btn-ghost btn-sm" data-cat="face_detection" onclick="DXStream.filterDemos('face_detection',this)" data-i18n="Face">Face</button>
-    <button class="btn btn-ghost btn-sm" data-cat="segmentation" onclick="DXStream.filterDemos('segmentation',this)"><span class="ko">분할</span><span class="en">Segmentation</span><span class="es">Segmentación</span><span class="ja">セグメンテーション</span><span class="zh-CN">分割</span><span class="zh-TW">分割</span></button>
+    <button class="btn btn-ghost btn-sm" data-cat="segmentation" onclick="DXStream.filterDemos('segmentation',this)" data-i18n="Segmentation">Segmentation</button>
     <button class="btn btn-ghost btn-sm" data-cat="pose_estimation" onclick="DXStream.filterDemos('pose_estimation',this)" data-i18n="Pose">Pose</button>
     <button class="btn btn-ghost btn-sm" data-cat="tracking" onclick="DXStream.filterDemos('tracking',this)" data-i18n="Tracking">Tracking</button>
     <button class="btn btn-ghost btn-sm" data-cat="multi_stream" onclick="DXStream.filterDemos('multi_stream',this)" data-i18n="Multi">Multi</button>
@@ -308,7 +308,7 @@
     <button class="btn btn-ghost btn-sm active" data-cat="all" onclick="DXStream.filterModels('all')" data-i18n="All">All</button>
     <button class="btn btn-ghost btn-sm" data-cat="object_detection" onclick="DXStream.filterModels('object_detection')" data-i18n="Object Detection">Object Detection</button>
     <button class="btn btn-ghost btn-sm" data-cat="classification" onclick="DXStream.filterModels('classification')" data-i18n="Classification">Classification</button>
-    <button class="btn btn-ghost btn-sm" data-cat="segmentation" onclick="DXStream.filterModels('segmentation')"><span class="ko">분할</span><span class="en">Segmentation</span><span class="es">Segmentación</span><span class="ja">セグメンテーション</span><span class="zh-CN">分割</span><span class="zh-TW">分割</span></button>
+    <button class="btn btn-ghost btn-sm" data-cat="segmentation" onclick="DXStream.filterModels('segmentation')" data-i18n="Segmentation">Segmentation</button>
     <button class="btn btn-ghost btn-sm" data-cat="pose_estimation" onclick="DXStream.filterModels('pose_estimation')" data-i18n="Pose Estimation">Pose Estimation</button>
     <button class="btn btn-ghost btn-sm" data-cat="face_detection" onclick="DXStream.filterModels('face_detection')" data-i18n="Face">Face</button>
   </div>
@@ -561,7 +561,7 @@
       </div>
       <div id="setup-download-progress" class="progress-bar" style="display:none">
         <div class="progress-fill" id="setup-download-fill" style="width:0%;height:4px;background:var(--accent);border-radius:2px;transition:width 0.3s"></div>
-        <span class="progress-text" id="setup-download-text" style="font-size:11px;color:var(--text-3)">0%</span>
+        <span class="progress-text" id="setup-download-text" style="font-size:11px;color:var(--text-muted)">0%</span>
       </div>
       <pre class="log-output" id="setup-log-download"></pre>
       <div class="setup-card-actions">
@@ -759,8 +759,7 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
     <div class="modal-footer">
       <button class="btn btn-ghost btn-sm" onclick="DXStream._inputModalCancel()" data-i18n="Cancel">Cancel
       </button>
-      <button class="btn btn-primary btn-sm" id="dx-input-modal-ok" onclick="DXStream._inputModalOk()">
-        <span class="ko">확인</span><span class="en">OK</span><span class="es">Aceptar</span><span class="ja">OK</span><span class="zh-CN">确定</span><span class="zh-TW">確定</span>
+      <button class="btn btn-primary btn-sm" id="dx-input-modal-ok" onclick="DXStream._inputModalOk()" data-i18n="OK">OK
       </button>
     </div>
   </div>

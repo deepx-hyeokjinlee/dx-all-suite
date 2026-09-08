@@ -73,7 +73,7 @@ async function doPipeRun(){
         h+='<div class="txt-sm" style="font-weight:600;margin-bottom:4px">'+esc(cr.crop_class||'#'+ci)+' <span class="txt-dim">('+((cr.crop_conf||0)*100).toFixed(1)+'%)</span></div>';
         if(cr.result_image)h+='<img src="data:image/jpeg;base64,'+cr.result_image+'" class="res-img" style="max-height:200px" onclick="previewImg(this.src)"/>';
         if(cr.fps)h+='<div class="txt-sm txt-acc mt4">'+cr.fps+' FPS</div>';
-        if(cr.exit_code!==0)h+='<div class="txt-sm" style="color:var(--error)">Error</div>';
+        if(cr.exit_code!==0)h+='<div class="txt-sm" style="color:var(--status-error)">Error</div>';
         h+='</div>';
       });
       h+='</div>';
@@ -85,7 +85,7 @@ async function doPipeRun(){
       if(r.fps)h+='<div class="pcard"><div class="pv txt-acc">'+r.fps+'</div><div class="pk">FPS</div></div>';
       if(r.latency)h+='<div class="pcard"><div class="pv">'+r.latency+'ms</div><div class="pk">Latency</div></div>';
       h+='</div>';
-      if(r.exit_code!==0)h+='<p style="color:var(--error)">Error (code '+r.exit_code+')</p>';
+      if(r.exit_code!==0)h+='<p style="color:var(--status-error)">Error (code '+r.exit_code+')</p>';
     }
     if(r.cascade_note)h+='<p class="txt-dim txt-sm">ℹ '+esc(r.cascade_note)+'</p>';
     h+='</div>';

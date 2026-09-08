@@ -99,7 +99,7 @@ function mzRenderTable() {
   if (MZ.loading) { mzRenderLoading(); return; }
 
   if (!list.length) {
-    tb.innerHTML = '<tr><td colspan="22" style="text-align:center;padding:30px;color:var(--text-4)">' + T('No models found') + '</td></tr>';
+    tb.innerHTML = '<tr><td colspan="22" style="text-align:center;padding:30px;color:var(--text-faint)">' + T('No models found') + '</td></tr>';
     $('mz-count').textContent = '0 / ' + MZ.models.length;
     return;
   }
@@ -480,7 +480,7 @@ function mzRenderProgress(st) {
   }
 
   if (st.finished) {
-    html += '<div class="mt8 txt-sm" style="color:var(--success)">' + T('✅ All done!') + '</div>';
+    html += '<div class="mt8 txt-sm" style="color:var(--status-ok)">' + T('✅ All done!') + '</div>';
   }
 
   el.innerHTML = html;

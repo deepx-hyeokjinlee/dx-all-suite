@@ -138,7 +138,7 @@ const PlannerWorkspace = {
     if (meets) {
       el.innerHTML =
         '<p class="verdict-line">' +
-          '<strong><span class="ko">1순위 추천</span><span class="en">Top pick</span><span class="ja">第1推奨</span><span class="zh-CN">首选</span><span class="zh-TW">首選</span><span class="es">Mejor opción</span></strong>: ' +
+          '<strong data-i18n="Top pick">Top pick</strong>: ' +
           this._escHtml(name) + ' — ' +
           '<span class="ko">' + inputs.cameras + '채널 · ' + inputs.targetFps + ' FPS 조건 충족</span>' +
           '<span class="en">' + inputs.cameras + ' channels · ' + inputs.targetFps + ' FPS requirement met</span>' +

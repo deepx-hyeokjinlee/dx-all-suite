@@ -217,7 +217,7 @@ async function showDetail(name){
   var h='';
   h+='<div class="detail-info-card"><h3>'+T('📋 Basic Info')+'</h3><table class="detail-tbl">';
   h+='<tr><td>'+T('Category')+'</td><td><span class="badge b-cat">'+(info.category||'').replace(/_/g,' ')+'</span></td></tr>';
-  h+='<tr><td>'+T('Model File')+'</td><td>'+(info.model_exists?'✅':'❌')+' <span class="txt-sm" style="color:var(--text-1)">'+(info.model_file||'N/A')+'</span>'
+  h+='<tr><td>'+T('Model File')+'</td><td>'+(info.model_exists?'✅':'❌')+' <span class="txt-sm" style="color:var(--text-primary)">'+(info.model_file||'N/A')+'</span>'
     +(_onnxGraphArg(info.model_file)&&info.model_exists?' <button class="btn btn-ghost btn-sm" style="margin-left:8px;height:22px;font-size:11px" onclick="closeModal(\'modal-detail\');openModelGraph(\''+esc(info.model_file)+'\')">📊 View Graph</button>':'')
     +'</td></tr>';
   if(cfg.npu_core||cfg.NPU_CORE)h+='<tr><td>'+T('NPU Core')+'</td><td><span class="badge b-blue">'+(cfg.npu_core||cfg.NPU_CORE)+'</span></td></tr>';
@@ -232,7 +232,7 @@ async function showDetail(name){
   var cat=info.category||'';
   if(VIS_DESC[cat]){
     h+='<div class="detail-info-card"><h3>'+T('👁️ Visualization')+'</h3>';
-    h+='<p style="font-size:12px;line-height:1.5;color:var(--text-1);margin:0">'+VIS_DESC[cat]+'</p></div>';
+    h+='<p style="font-size:12px;line-height:1.5;color:var(--text-primary);margin:0">'+VIS_DESC[cat]+'</p></div>';
   }
   var pps=info.postprocessors||{};
   if(Object.keys(pps).length){
@@ -244,7 +244,7 @@ async function showDetail(name){
       var desc=PP_DESC[ppName]||T('Post-processor: ')+ppName;
       h+='<div class="pp-card">';
       h+='<div class="pp-header"><span class="badge '+(lang==='cpp'?'b-blue':'b-ok')+'">'+(lang==='cpp'?'C++':'Python')+'</span>';
-      h+='<strong style="font-size:12px;color:var(--text-1)">'+ppName+'</strong></div>';
+      h+='<strong style="font-size:12px;color:var(--text-primary)">'+ppName+'</strong></div>';
       h+='<p class="pp-desc">'+desc+'</p>';
       if(pp.file){h+='<button class="btn btn-sm btn-ghost" onclick="viewCode(\''+pp.file+'\')" style="font-size:11px">📄 View Source</button>'}
       h+='</div>';

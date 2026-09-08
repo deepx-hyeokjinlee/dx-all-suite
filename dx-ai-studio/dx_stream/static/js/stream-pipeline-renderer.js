@@ -669,10 +669,10 @@ function _drawNode(ctx, node, selected, connStatus) {
 
     ctx.save();
     if (connStatus === 'allow') {
-        ctx.shadowColor = _cv('--success');
+        ctx.shadowColor = _cv('--status-ok');
         ctx.shadowBlur = 16;
     } else if (connStatus === 'warn') {
-        ctx.shadowColor = _cv('--warning');
+        ctx.shadowColor = _cv('--status-warn');
         ctx.shadowBlur = 12;
     } else if (connStatus === 'block') {
         ctx.shadowColor = 'transparent';
@@ -778,7 +778,7 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
     if (selected) {
         ctx.strokeStyle = '#F85149';
     } else if (warnEdge) {
-        ctx.strokeStyle = _cv('--warning');
+        ctx.strokeStyle = _cv('--status-warn');
     } else if (dashed) {
         ctx.strokeStyle = 'rgba(255,255,255,0.3)';
     } else if (fromColor && toColor) {
@@ -806,7 +806,7 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
         ctx.lineTo(-8, -4);
         ctx.lineTo(-8, 4);
         ctx.closePath();
-        ctx.fillStyle = warnEdge ? _cv('--warning') : (toColor || 'rgba(255,255,255,0.5)');
+        ctx.fillStyle = warnEdge ? _cv('--status-warn') : (toColor || 'rgba(255,255,255,0.5)');
         ctx.fill();
         ctx.restore();
     }
