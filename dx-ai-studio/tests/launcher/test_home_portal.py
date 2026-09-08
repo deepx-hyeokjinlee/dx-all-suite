@@ -318,7 +318,7 @@ def test_what_leaves_the_app_sits_below_the_work_surface():
     html = index()
     foot = html[html.index('class="ws-foot"'):]
     assert 'class="deepx-links"' in foot, "the DEEPX links lost their home"
-    assert 'id="ecosystemPoster"' in foot and 'id="landingPoster"' in foot
+    assert 'id="ecosystemPoster"' in foot
     assert 'id="replayBtn"' in foot, "the replay control was viewport-fixed; it is not now"
     side = html[html.index('class="ws-side"'):html.index('class="ws-foot"')]
     assert 'class="deepx-links"' not in side, (

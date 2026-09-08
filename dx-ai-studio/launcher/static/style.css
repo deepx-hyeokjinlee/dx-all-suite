@@ -1654,26 +1654,31 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 .ws-main { min-width: 0; display: flex; flex-direction: column; gap: var(--sp-5); }
 
 /* ── the command line ── */
+/* The biggest thing on the first screen used to be a 14px "✦". Nothing else
+   reached past 13px either, so the eye had nowhere to land and the page read
+   as a settings panel. The command line is what this app is for; it gets the
+   size to say so. */
 .home-ask {
   display: flex;
   align-items: center;
-  gap: var(--sp-3);
-  padding: 11px 13px;
+  gap: var(--sp-4);
+  padding: 15px 15px 15px 19px;
   background: var(--surface-panel);
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
 }
 .home-ask:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--control-ring); }
-.ask-icon { color: var(--text-faint); flex-shrink: 0; }
+.ask-icon { color: var(--accent); flex-shrink: 0; font-size: var(--fs-lg); line-height: 1; }
 .ask-input {
   flex: 1 1 auto; min-width: 0; border: 0; background: transparent;
-  color: var(--text-primary); font-family: inherit; font-size: var(--fs-md);
+  color: var(--text-primary); font-family: inherit;
+  font-size: var(--fs-2xl); letter-spacing: -.012em;
 }
 .ask-input:focus { outline: none; }
 .ask-go {
-  flex-shrink: 0; border: 0; border-radius: var(--radius-sm); padding: 7px 15px;
+  flex-shrink: 0; border: 0; border-radius: var(--radius); padding: 11px 20px;
   background: var(--accent); color: var(--text-on-accent);
-  font-family: inherit; font-weight: 700; font-size: var(--fs-sm); cursor: pointer;
+  font-family: inherit; font-weight: 700; font-size: var(--fs-base); cursor: pointer;
 }
 .ask-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: calc(var(--sp-3) - var(--sp-5)); }
 .ask-chip {
@@ -1720,7 +1725,29 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   border-radius: var(--radius); background: var(--surface-panel);
 }
 .ws-panel h3 { margin-bottom: var(--sp-3); }
-.ws-device { margin: 0 0 var(--sp-3); font-size: var(--fs-base); font-weight: 700; color: var(--text-muted); }
+/* The silicon this studio compiles for, at the top of the panel that reports
+   whether it is present. The fold had no image at all while this render sat at
+   the very bottom of the page. */
+.ws-panel--device { padding-top: 0; overflow: hidden; }
+.ws-panel--device .landing-poster {
+  width: calc(100% + var(--sp-4) * 2);
+  margin: 0 calc(var(--sp-4) * -1) var(--sp-4);
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.ws-panel--device .landing-poster img { height: 124px; object-position: center 42%; }
+.ws-panel--device .poster-hint { border-top: 0; padding: 8px var(--sp-4); }
+/* "DX-M1 · 2 devices" is the single line on this page that a brochure could
+   not print. It was 14px grey in a side panel. */
+.ws-device {
+  margin: 0 0 var(--sp-4);
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--text-muted);
+}
 .ws-device.is-live { color: var(--status-ok); }
 .ws-facts { margin: 0; display: flex; flex-direction: column; gap: 5px; }
 .ws-facts > div { display: flex; justify-content: space-between; gap: var(--sp-3); }
@@ -1756,7 +1783,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 .ws-foot .deepx-links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px var(--sp-4); }
 .ws-foot .deepx-link { padding: 7px 0; background: none; border: 0; font-size: var(--fs-xs); }
 .ws-foot .deepx-link:hover { background: none; color: var(--accent); }
-.ws-foot .poster-row { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 620px; margin: 0; }
+.ws-foot .poster-row { grid-template-columns: minmax(0, 1fr); max-width: 420px; margin: 0; }
 .ws-foot .landing-poster img { height: 108px; }
 .ws-foot .replay-btn { align-self: flex-start; }
 @media (max-width: 768px) {
@@ -1901,7 +1928,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
    monospace note these read as debug output, not as sections. */
 
 /* 모듈 카드 — 이름만 있는 타일은 아이콘 목록이지 대시보드가 아니다 */
-.card-desc { font-size: var(--fs-xs); color: var(--text-secondary); line-height: 1.5; margin-top: 4px; }
+.card-desc { font-size: var(--fs-xs); color: var(--text-muted); line-height: 1.5; margin-top: 4px; }
 /* The bottom line of a module card is the only thing on it that changes, and
    it is either an invitation or a fact. Not running reads "start →" in accent;
    running reads "ready" in the ok colour. */
@@ -2168,10 +2195,11 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 
 .orbital-icon { font-size: var(--fs-2xl); margin-bottom: var(--sp-2); }
 .orbital-name {
-  font-size: var(--fs-base);
+  font-size: var(--fs-lg);
   font-weight: 700;
+  letter-spacing: -.014em;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 .orbital-port {
   font-size: var(--fs-2xs);

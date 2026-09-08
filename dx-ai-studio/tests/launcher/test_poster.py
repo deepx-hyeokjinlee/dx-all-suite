@@ -77,9 +77,12 @@ def test_landing_poster_cannot_stack_above_anything():
     assert "pointer-events" not in body, "nothing to pass through any more"
 
     html = (ROOT / "launcher/static/index.html").read_text(encoding="utf-8")
-    foot = html[html.index('class="ws-foot"'):]
-    assert 'id="landingPoster"' in foot
-    assert 'id="ecosystemPoster"' in foot
+    # The product render leads the panel that reports whether the device is
+    # there; the ecosystem diagram is reference material and sits in the band.
+    device = html[html.index('class="ws-panel ws-panel--device"'):]
+    device = device[: device.index("</section>")]
+    assert 'id="landingPoster"' in device
+    assert 'id="ecosystemPoster"' in html[html.index('class="ws-foot"'):]
 
 
 def test_module_cards_need_no_javascript_to_be_placed():

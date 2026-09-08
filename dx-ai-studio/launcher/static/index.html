@@ -144,7 +144,7 @@
         <!-- One command line. The placeholder carries the claim the old
              38px hero headline was carrying. -->
         <form class="home-ask" id="homeAskForm" autocomplete="off">
-          <span class="ask-icon" aria-hidden="true">✦</span>
+          <svg class="ask-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
           <input class="ask-input" id="homeAsk" type="text"
                  placeholder="4-channel CCTV, detect people, 30 FPS"
                  data-i18n-placeholder="4-channel CCTV, detect people, 30 FPS"
@@ -340,7 +340,11 @@
       </div>
 
       <aside class="ws-side" id="wsSide" aria-label="Studio state" data-i18n-aria-label="Studio state">
-        <section class="ws-panel">
+        <section class="ws-panel ws-panel--device">
+          <div class="landing-poster" id="landingPoster" role="button" tabindex="0" data-i18n-title="DX-M1 and DX-M2 NPU lineup">
+          <img src="/static/img/about/marketing/m1_m2.webp" alt="DX-M1 and DX-M2 NPU lineup" loading="lazy" onclick="openPlatformInfo()" tabindex="0" role="button">
+          <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></span>
+          </div>
           <h3 data-i18n="Device">Device</h3>
           <p class="ws-device" id="heroDeviceChip" data-i18n="Checking DX-M1…">Checking DX-M1…</p>
           <dl class="ws-facts">
@@ -403,10 +407,6 @@
         <div class="landing-poster landing-poster--left" id="ecosystemPoster" role="button" tabindex="0" data-i18n-title="DEEPX Physical AI ecosystem">
         <img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="DEEPX Connects the Physical AI Ecosystem" loading="lazy" onclick="openEcosystemInfo()" tabindex="0" role="button">
         <span class="poster-hint" onclick="openEcosystemInfo()" tabindex="0" role="button"><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></span>
-        </div>
-        <div class="landing-poster" id="landingPoster" role="button" tabindex="0" data-i18n-title="DX-M1 and DX-M2 NPU lineup">
-        <img src="/static/img/about/marketing/m1_m2.webp" alt="DX-M1 and DX-M2 NPU lineup" loading="lazy" onclick="openPlatformInfo()" tabindex="0" role="button">
-        <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></span>
         </div>
       </div>
       <button class="replay-btn" id="replayBtn" onclick="replaySplash()" data-i18n-title="Replay intro animation" style="display:none;">
