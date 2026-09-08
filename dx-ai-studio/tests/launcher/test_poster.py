@@ -50,7 +50,6 @@ def test_landing_poster_uses_m1_m2_product_card():
     assert poster is not None
     assert f'src="/static/{image_rel}"' in poster.group(0)
     assert "DX-M1 and DX-M2 NPU lineup" in poster.group(0)
-    assert "poster-hint-icon" in poster.group(0)
     assert "representative-1.jpg" not in poster.group(0)
     assert "DEEPX representative" not in poster.group(0)
     assert 'src="/static/img/about/marketing/intelligented.png"' not in poster.group(0)
@@ -58,27 +57,33 @@ def test_landing_poster_uses_m1_m2_product_card():
     assert image_path.exists()
 
 
-def test_landing_poster_does_not_stack_above_module_cards():
-    """Poster must not intercept clicks on About/SDK cards or lower orbital modules."""
+def test_landing_poster_cannot_stack_above_anything():
+    """The poster used to be absolutely positioned and it covered the page.
+
+    It sat at right:10%, top:50%, z-index 4, 400px wide, with pointer-events
+    juggled so clicks could reach the module cards behind it — and it was
+    display:none below 1200px, so on a laptop it simply was not there. The
+    stack was the bug; the fix is that there is no stack. It is a card in
+    Resources, in flow, and the assertion is that it stays that way.
+    """
     css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
-    poster = re.search(r"\.landing-poster\s*\{(?P<body>[^}]*)\}", css)
-    cards = re.search(r"\.about-cards-row\s*\{(?P<body>[^}]*)\}", css)
-    book = re.search(r"/\* ── All About DEEPX.*?\.about-book-card\s*\{(?P<body>[^}]*)\}", css, re.DOTALL)
-    orbital = re.search(
-        r"/\* ── Orbital Cards ── \*/\s*\.orbital-card\s*\{(?P<body>[^}]*)\}",
-        css,
+    poster = re.search(r"(?m)^\.landing-poster\s*\{(?P<body>[^}]*)\}", css)
+    assert poster is not None
+    body = poster.group("body")
+    assert "position: absolute" not in body
+    assert "position: fixed" not in body
+    assert "z-index" not in body
+    assert "pointer-events" not in body, "nothing to pass through any more"
+
+    html = (ROOT / "launcher/static/index.html").read_text(encoding="utf-8")
+    resources = re.search(
+        r'<section class="home-section" id="resources">(?P<body>.*?)</section>',
+        html,
         re.DOTALL,
     )
-
-    assert poster is not None
-    assert cards is not None
-    assert book is not None
-    assert orbital is not None
-    assert "z-index: 4" in poster.group("body")
-    assert "pointer-events: none" in poster.group("body")
-    assert "z-index: 10" in cards.group("body")
-    assert "z-index: 10" in book.group("body")
-    assert "z-index: 7" in orbital.group("body")
+    assert resources is not None
+    assert 'id="landingPoster"' in resources.group("body")
+    assert 'id="ecosystemPoster"' in resources.group("body")
 
 
 def test_module_cards_need_no_javascript_to_be_placed():
@@ -101,14 +106,21 @@ def test_module_cards_need_no_javascript_to_be_placed():
 
 
 def test_landing_poster_hint_sits_below_image():
+    """The caption reads under the image, not over it.
+
+    It was once absolutely positioned on top of the artwork, which is why the
+    old rule had to say position:static to pull it back out. The poster is a
+    flex column now, so the caption's place comes from the flow — assert the
+    column, and that nothing has lifted the caption out of it again.
+    """
     css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
-    poster = re.search(r"\.landing-poster\s*\{(?P<body>[^}]*)\}", css)
-    hint = re.search(r"^\.poster-hint\s*\{(?P<body>[^}]*)\}", css, re.MULTILINE)
+    poster = re.search(r"(?m)^\.landing-poster\s*\{(?P<body>[^}]*)\}", css)
+    hint = re.search(r"(?m)^\.poster-hint\s*\{(?P<body>[^}]*)\}", css)
 
     assert poster is not None
     assert hint is not None
     assert "flex-direction: column" in poster.group("body")
-    assert "position: static" in hint.group("body")
+    assert "position: absolute" not in hint.group("body")
 
 
 def test_top_nav_tabs_scroll_instead_of_clipping_under_status_dots():

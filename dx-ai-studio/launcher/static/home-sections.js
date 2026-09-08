@@ -71,6 +71,7 @@
   function _paint(models) {
     var row = $('homeModelRow');
     if (!row) return;
+    row.className = 'model-row';
     row.innerHTML = '';
     _pick(models).forEach(function (m) { row.appendChild(_card(m)); });
     var note = $('modelCount');
@@ -88,7 +89,10 @@
   function _empty() {
     var row = $('homeModelRow');
     if (!row) return;
-    /* The zoo has not started. Say so rather than showing an empty shelf. */
+    /* The zoo has not started. Say so rather than showing an empty shelf —
+       and drop the five-column grid, or the sentence wraps two words wide in
+       the first of five tracks. */
+    row.className = 'model-row is-empty';
     row.innerHTML = '<p class="section-empty">' +
       _t('Start DX Model Zoo to browse the catalogue') + '</p>';
   }

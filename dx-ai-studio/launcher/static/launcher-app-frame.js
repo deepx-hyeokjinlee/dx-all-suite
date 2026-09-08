@@ -451,7 +451,6 @@
     var sdkView   = document.getElementById('sdk-library-view');
     var tutCard   = document.getElementById('dxt-tutorial-card');
     var rb        = document.getElementById('replayBtn');
-    var footer    = document.getElementById('deepxFooter');
 
     document.body.classList.toggle('app-frame-visible', viewName === 'app');
     // The shared NPU Monitor float is injected into the launcher shell but should only show
@@ -460,7 +459,6 @@
     document.body.classList.toggle('hw-native-visible', viewName === 'about' || viewName === 'sdk-library');
 
     if (landing)   landing.style.display = 'none';
-    if (footer)    footer.style.display = 'none';   // resource bar is home-shell chrome
     if (appFrame)  appFrame.style.display = 'none';
     if (aboutView) aboutView.classList.remove('visible');
     // Hide SDK shell without tearing down viewer/search — state survives module switches.
@@ -476,7 +474,6 @@
 
     if (viewName === 'home') {
       if (landing) { landing.style.display = ''; animateIn(landing); }
-      if (footer)  footer.style.display = '';
       if (tutCard) tutCard.style.display = '';
       if (rb)      rb.style.display = '';
     } else if (viewName === 'about') {

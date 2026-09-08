@@ -109,7 +109,7 @@
     const label = document.getElementById('dxt-mode-label');
     if (label) {
       label.textContent = _tutorialMode ? 'ON' : 'OFF';
-      label.style.color = _tutorialMode ? '#58a6ff' : '#888';
+      label.className = 'dxt-lc-mode' + (_tutorialMode ? ' is-on' : '');
     }
     // 네비 버튼 피드백
     const navBtn = document.querySelector('.dxt-toggle-btn');
@@ -145,7 +145,7 @@
       <div class="dxt-lc-text">
         <div class="dxt-lc-title">
           <span data-i18n="Tutorial Mode">Tutorial Mode</span>
-          <span id="dxt-mode-label" style="margin-left:6px;font-size:12px;color:${_tutorialMode ? '#58a6ff' : '#888'}">${_tutorialMode ? 'ON' : 'OFF'}</span>
+          <span id="dxt-mode-label" class="dxt-lc-mode${_tutorialMode ? ' is-on' : ''}">${_tutorialMode ? 'ON' : 'OFF'}</span>
         </div>
         <div class="dxt-lc-desc" data-i18n="Automatically start interactive tutorials when launching apps">Automatically start interactive tutorials when launching apps
         </div>
@@ -168,35 +168,42 @@
       const style = document.createElement('style');
       style.id = 'dxt-card-style';
       style.textContent = `
+        /* The card is already inserted above .landing-footer, inside #landing —
+           position:fixed was the only thing lifting it out of the page, onto
+           the hero. In flow it sits where the DOM already put it. Colours come
+           from the theme; the hard-coded dark ones survived light mode as a
+           dark panel with dark text. */
         .dxt-launcher-card {
-          position: fixed; top: 64px; left: 14px;
-          display: flex; align-items: center; gap: 10px;
-          background: rgba(30, 35, 50, 0.92); backdrop-filter: blur(12px);
-          border: 1px solid rgba(88, 166, 255, 0.25); border-radius: 10px;
-          padding: 10px 18px; cursor: pointer; z-index: 100;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-          transition: border-color 0.2s, box-shadow 0.2s;
-          max-width: 360px;
+          display: flex; align-items: center; gap: 12px;
+          width: 100%; max-width: 1100px;
+          margin: 0 auto var(--sp-5); box-sizing: border-box;
+          background: var(--surface-panel);
+          border: 1px solid var(--border-subtle); border-radius: var(--radius);
+          padding: 12px 16px; cursor: pointer;
+          transition: border-color 0.2s, background 0.2s;
         }
         .dxt-launcher-card:hover {
-          border-color: rgba(88, 166, 255, 0.5);
-          box-shadow: 0 4px 32px rgba(88, 166, 255, 0.15);
+          background: var(--surface-hover);
+          border-color: var(--border-strong);
         }
-        .dxt-lc-icon { font-size: 28px; }
-        .dxt-lc-title { font-size: 15px; font-weight: 600; color: #e6edf3; }
-        .dxt-lc-desc { font-size: 12px; color: #8b949e; margin-top: 2px; }
-        .dxt-lc-switch {
-          width: 44px; height: 24px; border-radius: 12px; border: none;
-          background: #484f58; cursor: pointer; position: relative;
+        .dxt-launcher-card .dxt-lc-text { flex: 1; min-width: 0; }
+        .dxt-launcher-card .dxt-lc-icon { font-size: 22px; }
+        .dxt-launcher-card .dxt-lc-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .dxt-launcher-card .dxt-lc-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .dxt-launcher-card .dxt-lc-mode { margin-left: 6px; font-size: 12px; color: var(--text-faint); }
+        .dxt-launcher-card .dxt-lc-mode.is-on { color: var(--accent); }
+        .dxt-launcher-card .dxt-lc-switch {
+          width: 40px; height: 22px; border-radius: 11px; border: none;
+          background: var(--control-bg); cursor: pointer; position: relative;
           transition: background 0.2s; flex-shrink: 0;
         }
-        .dxt-lc-switch::after {
+        .dxt-launcher-card .dxt-lc-switch::after {
           content: ''; position: absolute; top: 3px; left: 3px;
-          width: 18px; height: 18px; border-radius: 50%;
-          background: #fff; transition: transform 0.2s;
+          width: 16px; height: 16px; border-radius: 50%;
+          background: var(--text-on-accent); transition: transform 0.2s;
         }
-        .dxt-lc-switch.on { background: #58a6ff; }
-        .dxt-lc-switch.on::after { transform: translateX(20px); }
+        .dxt-launcher-card .dxt-lc-switch.on { background: var(--accent); }
+        .dxt-launcher-card .dxt-lc-switch.on::after { transform: translateX(18px); }
 
       `;
       document.head.appendChild(style);

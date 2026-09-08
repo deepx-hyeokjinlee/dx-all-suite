@@ -13,7 +13,6 @@
        white page. The studio is dark-mode only, so pin the dark background inline. */
     html, body { background: #080c16; }
     html.launcher-boot-pending #landing,
-    html.launcher-boot-pending #deepxFooter,
     html.launcher-boot-pending #replayBtn,
     html.launcher-boot-pending #about-view,
     html.launcher-boot-pending #sdk-library-view,
@@ -134,20 +133,6 @@
 
   <!-- ── Landing Page (orbital layout) ── -->
   <main class="landing" id="landing">
-    <!-- Background effects -->
-    <div class="circuit-bg"></div>
-    <div class="landing-particles">
-      <div class="landing-particle" style="left:10%;top:20%;animation-delay:0s"></div>
-      <div class="landing-particle" style="left:85%;top:15%;animation-delay:1s"></div>
-      <div class="landing-particle" style="left:20%;top:75%;animation-delay:2s"></div>
-      <div class="landing-particle" style="left:75%;top:65%;animation-delay:0.5s"></div>
-      <div class="landing-particle" style="left:50%;top:10%;animation-delay:1.5s"></div>
-      <div class="landing-particle" style="left:30%;top:50%;animation-delay:0.8s"></div>
-      <div class="landing-particle" style="left:90%;top:80%;animation-delay:1.2s"></div>
-      <div class="landing-particle" style="left:5%;top:60%;animation-delay:2.5s"></div>
-      <div class="landing-particle" style="left:60%;top:90%;animation-delay:0.3s"></div>
-      <div class="landing-particle" style="left:40%;top:35%;animation-delay:1.8s"></div>
-    </div>
 
     <!-- ── Hero — one claim, one input ── -->
     <section class="home-hero" id="home">
@@ -258,7 +243,7 @@
           </svg>
           <b data-i18n="ONNX">ONNX</b><span data-i18n="PyTorch · TF">PyTorch · TF</span>
         </li>
-        <li class="flow-node is-key">
+        <li class="flow-node">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
             <circle cx="12" cy="12" r="3.2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/>
           </svg>
@@ -304,163 +289,74 @@
         <h2 data-i18n="Studio">Studio</h2>
         <span class="section-note" data-i18n="8 modules · runs locally">8 modules · runs locally</span>
       </div>
-    </section>
 
     <div class="studio-grid" id="studioGrid">
       <div class="orbital-card" data-app="app" tabindex="0">
         <span class="orbital-status" id="orbStatusApp"></span>
-        <div class="orbital-icon">🖥️</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="14" cy="10" r="1.5"/></svg></div>
         <div class="orbital-name">DX App</div>
         <div class="card-desc" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="Run 340+ pre-compiled AI models">Run 340+ pre-compiled AI models</li>
-            <li data-i18n="Auto-generate C++/Python code templates">Auto-generate C++/Python code templates</li>
-            <li data-i18n="Real-time inference performance dashboard">Real-time inference performance dashboard</li>
-          </ul>
-        </div>
       </div>
 
       <div class="orbital-card" data-app="stream" tabindex="0">
         <span class="orbital-status" id="orbStatusStream"></span>
-        <div class="orbital-icon">🎬</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"/><circle cx="12" cy="10" r="2"/><path d="M4 18 Q8 14 12 16 Q16 18 20 14"/></svg></div>
         <div class="orbital-name">DX Stream</div>
         <div class="card-desc" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="Vision AI streaming pipeline">Vision AI streaming pipeline
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="13 custom GStreamer plugins">13 custom GStreamer plugins</li>
-            <li data-i18n="RTSP / USB camera live connection">RTSP / USB camera live connection</li>
-            <li data-i18n="Multi-stream concurrent processing">Multi-stream concurrent processing</li>
-          </ul>
-        </div>
       </div>
 
       <div class="orbital-card" data-app="zoo" tabindex="0">
         <span class="orbital-status" id="orbStatusZoo"></span>
-        <div class="orbital-icon">🧬</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
         <div class="orbital-name">DX Model Zoo</div>
         <div class="card-desc" data-i18n="340 AI model catalog">340 AI model catalog</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="340 AI model catalog">340 AI model catalog
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="270+ pre-compiled .dxnn models">270+ pre-compiled .dxnn models</li>
-            <li data-i18n="YOLO · ResNet · EfficientNet etc.">YOLO · ResNet · EfficientNet etc.</li>
-            <li data-i18n="One-click download &amp; deploy">One-click download &amp; deploy</li>
-          </ul>
-        </div>
       </div>
 
       <div class="orbital-card" data-app="compiler" tabindex="0">
         <span class="orbital-status" id="orbStatusCompiler"></span>
-        <div class="orbital-icon">⚙️</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4 V8 M12 16 V20 M4 12 H8 M16 12 H20"/><circle cx="12" cy="12" r="3"/></svg></div>
         <div class="orbital-name">DX Compiler</div>
         <div class="card-desc" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="ONNX model compiler GUI">ONNX model compiler GUI
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="ONNX → .dxnn auto conversion">ONNX → .dxnn auto conversion</li>
-            <li data-i18n="INT8 Intelligent Quantization">INT8 Intelligent Quantization</li>
-            <li data-i18n="DX-TRON graph visualization">DX-TRON graph visualization</li>
-          </ul>
-        </div>
       </div>
 
       <div class="orbital-card" data-app="planner" tabindex="0">
         <span class="orbital-status" id="orbStatusPlanner"></span>
-        <div class="orbital-icon">💰</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="6"/><line x1="18" y1="2" x2="18" y2="6"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/><path d="M20 12 L23 12"/></svg></div>
         <div class="orbital-name">DX EdgeGuide</div>
         <div class="card-desc" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="Workload-based optimal NPU recommendation">Workload-based optimal NPU recommendation</li>
-            <li data-i18n="Total cost of ownership analysis">Total cost of ownership analysis</li>
-            <li data-i18n="DX-M1 / DX-H1 Quattro comparison">DX-M1 / DX-H1 Quattro comparison</li>
-          </ul>
-        </div>
       </div>
 
       <div class="orbital-card" data-app="benchmark" tabindex="0">
         <span class="orbital-status" id="orbStatusBenchmark"></span>
-        <div class="orbital-icon">📊</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M12 2 A10 10 0 0 1 22 12"/><path d="M12 2 A10 10 0 0 0 2 12"/><line x1="12" y1="12" x2="17" y2="7"/><circle cx="12" cy="12" r="2"/></svg></div>
         <div class="orbital-name">DX Benchmark</div>
         <div class="card-desc" data-i18n="Hardware performance benchmark">Hardware performance benchmark</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="Hardware performance benchmark">Hardware performance benchmark
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="6 boards × YOLO series cross-testing">6 boards × YOLO series cross-testing</li>
-            <li data-i18n="FPS · latency · power measurement">FPS · latency · power measurement</li>
-            <li data-i18n="Auto report generation (Markdown)">Auto report generation (Markdown)</li>
-          </ul>
-        </div>
       </div>
 
       <div class="orbital-card" data-app="dx_monitor" tabindex="0">
         <span class="orbital-status" id="orbStatusMonitor"></span>
-        <div class="orbital-icon">📡</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M8 19h8M12 15v4"/><path d="M7 9l3 3 4-4 3 3"/></svg></div>
         <div class="orbital-name">DX Monitor</div>
         <div class="card-desc" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="Real-time NPU hardware monitoring">Real-time NPU hardware monitoring
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="NPU temp · voltage · clock real-time charts">NPU temp · voltage · clock real-time charts</li>
-            <li data-i18n="CPU / memory / disk gauges">CPU / memory / disk gauges</li>
-            <li data-i18n="5min~1hr history analysis">5min~1hr history analysis</li>
-          </ul>
-        </div>
       </div>
 
       <div class="orbital-card" data-app="agent" tabindex="0">
         <span class="orbital-status" id="orbStatusAgent"></span>
-        <div class="orbital-icon">🤖</div>
+        <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg></div>
         <div class="orbital-name">DX Agent Dev</div>
         <div class="card-desc" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands</div>
         <div class="card-state" data-role="state">—</div>
-        <div class="orbital-detail">
-          <div class="detail-title" data-i18n="Build NPU apps with natural-language commands">Build NPU apps with natural-language commands
-          </div>
-          <ul class="detail-features">
-            <li data-i18n="One-line command auto-generates pipelines">One-line command auto-generates pipelines</li>
-            <li data-i18n="Interactive console · real-time build logs">Interactive console · real-time build logs</li>
-            <li data-i18n="Showcase gallery (offline)">Showcase gallery (offline)</li>
-          </ul>
-        </div>
       </div>
     </div>
+    </section>
 
-    <!-- ── About DEEPX & SDK Library Cards ── -->
-    <div class="about-cards-row">
-      <div class="about-book-card" tabindex="0" role="button">
-        <span class="orbital-status"></span>
-        <div class="orbital-icon">📖</div>
-        <div class="orbital-name" data-i18n-module="about" data-i18n-variant="poster"></div>
-        <div class="orbital-port" style="color: #ffb832;" data-i18n="Encyclopedia">Encyclopedia
-        </div>
-      </div>
-      <div class="about-book-card sdk-card" tabindex="0" role="button">
-        <span class="orbital-status"></span>
-        <div class="orbital-icon">📚</div>
-        <div class="orbital-name" data-i18n-module="sdk-library" data-i18n-variant="poster"></div>
-        <div class="orbital-port" data-i18n="Tech Library">Tech Library
-        </div>
-      </div>
-    </div>
 
     <!-- ── Ecosystem — the frameworks that run on DEEPX ── -->
     <section class="home-section" id="ecosystem">
@@ -471,12 +367,12 @@
         <button type="button" class="section-more" onclick="openEcosystemInfo()" data-i18n="See partners">See partners</button>
       </div>
       <div class="eco-row">
-        <span class="eco-logo">Ultralytics</span>
-        <span class="eco-logo">Baidu</span>
-        <span class="eco-logo">ONNX</span>
-        <span class="eco-logo">GStreamer</span>
-        <span class="eco-logo">PyTorch</span>
-        <span class="eco-logo">OpenCV</span>
+        <div class="eco-logo"><b>Ultralytics</b><span data-i18n="YOLO export to DEEPX">YOLO export to DEEPX</span></div>
+        <div class="eco-logo"><b>PaddlePaddle</b><span data-i18n="OCR and detection">OCR and detection</span></div>
+        <div class="eco-logo"><b>ONNX</b><span data-i18n="the interchange format">the interchange format</span></div>
+        <div class="eco-logo"><b>GStreamer</b><span data-i18n="the pipeline runtime">the pipeline runtime</span></div>
+        <div class="eco-logo"><b>PyTorch</b><span data-i18n="where models are trained">where models are trained</span></div>
+        <div class="eco-logo"><b>OpenCV</b><span data-i18n="pre- and post-processing">pre- and post-processing</span></div>
       </div>
     </section>
 
@@ -505,19 +401,49 @@
         <h2 data-i18n="Resources">Resources</h2>
         <span class="section-note" data-i18n="docs, downloads and the SDK library">docs, downloads and the SDK library</span>
       </div>
+      <nav class="deepx-links" id="deepxLinks" aria-label="DEEPX resources" data-i18n-aria-label="DEEPX resources">
+      <a class="deepx-link" href="https://developer.deepx.ai/article/get-started/" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="Get Started">Get Started</span></a>
+      <a class="deepx-link" href="https://developer.deepx.ai/tech-docs/" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="Tech Docs">Tech Docs</span></a>
+      <a class="deepx-link" href="https://deepx.rapidflare.ai/" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="DEEPX Agent">DEEPX Agent</span></a>
+      <a class="deepx-link" href="https://developer.deepx.ai/modelzoo/" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="Model Zoo">Model Zoo</span></a>
+      <a class="deepx-link" href="https://developer.deepx.ai/sw-download/" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="S/W Download">S/W Download</span></a>
+      <a class="deepx-link" href="https://developer.deepx.ai/document-download/" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="Document Download">Document Download</span></a>
+      <a class="deepx-link" href="https://github.com/DEEPX-AI" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="GitHub">GitHub</span></a>
+      <a class="deepx-link" href="https://deepx.ai" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="deepx.ai">deepx.ai</span></a>
+      </nav>
+      <div class="about-book-row">
+        <div class="about-book-card" tabindex="0" role="button">
+          <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v18H6a2 2 0 0 1-2-2z"/><path d="M4 17h15"/></svg></div>
+          <div class="orbital-name" data-i18n-module="about" data-i18n-variant="poster"></div>
+          <div class="orbital-port" data-i18n="Encyclopedia">Encyclopedia
+          </div>
+        </div>
+        <div class="about-book-card sdk-card" tabindex="0" role="button">
+          <div class="orbital-icon"><svg class="mod-glyph" viewBox="0 0 24 24"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="9" y="4" width="4" height="16" rx="1"/><path d="M16.2 5.4l3.6 1-3.4 13-3.6-1z"/></svg></div>
+          <div class="orbital-name" data-i18n-module="sdk-library" data-i18n-variant="poster"></div>
+          <div class="orbital-port" data-i18n="Tech Library">Tech Library
+          </div>
+        </div>
+      </div>
+      <div class="poster-row">
+        <div class="landing-poster landing-poster--left" id="ecosystemPoster" role="button" tabindex="0" data-i18n-title="DEEPX Physical AI ecosystem">
+        <img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="DEEPX Connects the Physical AI Ecosystem" loading="lazy" onclick="openEcosystemInfo()" tabindex="0" role="button">
+        <span class="poster-hint" onclick="openEcosystemInfo()" tabindex="0" role="button"><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></span>
+        </div>
+        <div class="landing-poster" id="landingPoster" role="button" tabindex="0" data-i18n-title="DX-M1 and DX-M2 NPU lineup">
+        <img src="/static/img/about/marketing/m1_m2.webp" alt="DX-M1 and DX-M2 NPU lineup" loading="lazy" onclick="openPlatformInfo()" tabindex="0" role="button">
+        <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></span>
+        </div>
+      </div>
     </section>
-
-    <!-- ── Physical AI Ecosystem Poster (left side; mirrors the right platform poster) ── -->
-    <div class="landing-poster landing-poster--left" id="ecosystemPoster" role="button" tabindex="0" data-i18n-title="DEEPX Physical AI ecosystem">
-      <img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="DEEPX Connects the Physical AI Ecosystem" loading="lazy" onclick="openEcosystemInfo()" tabindex="0" role="button">
-      <span class="poster-hint" onclick="openEcosystemInfo()" tabindex="0" role="button"><span class="poster-hint-icon">🌐</span><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></span>
-    </div>
-
-    <!-- ── Platform Info Poster (right side) ── -->
-    <div class="landing-poster" id="landingPoster" role="button" tabindex="0" data-i18n-title="DX-M1 and DX-M2 NPU lineup">
-      <img src="/static/img/about/marketing/m1_m2.webp" alt="DX-M1 and DX-M2 NPU lineup" loading="lazy" onclick="openPlatformInfo()" tabindex="0" role="button">
-      <span class="poster-hint" onclick="openPlatformInfo()" tabindex="0" role="button"><span class="poster-hint-icon">🧭</span><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></span>
-    </div>
 
     <footer class="landing-footer">
       <p>© 2026 DeepX — NPU Solutions for Edge AI</p>
@@ -525,45 +451,10 @@
     </footer>
   </main>
 
-  <!-- ── DEEPX resource footer bar (viewport-fixed full-width bottom bar; kept outside #landing so
-          the tutorial can spotlight it). Holds the resource link chips (journey order: learn → build →
-          company) plus the replay-intro control pushed to the right end. ── -->
-  <footer class="deepx-footer" id="deepxFooter">
-  <div class="deepx-footer-lead" aria-hidden="true">
-    <span class="deepx-lead-icon">🔗</span>
-    <span class="deepx-lead-text" data-i18n="More on DEEPX">More on DEEPX</span>
-    <span class="deepx-lead-badge" data-i18n="Homepage">Homepage</span>
-    <span class="deepx-lead-arrow">→</span>
-  </div>
-  <nav class="deepx-links" id="deepxLinks" aria-label="DEEPX resources" data-i18n-aria-label="DEEPX resources">
-    <a class="deepx-link" href="https://developer.deepx.ai/article/get-started/" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">🚀</span><span class="deepx-link-label ko">시작하기</span><span class="deepx-link-label en">Get Started</span><span class="deepx-link-label ja">はじめに</span><span class="deepx-link-label zh-CN">快速开始</span><span class="deepx-link-label zh-TW">快速開始</span><span class="deepx-link-label es">Primeros pasos</span></a>
-    <a class="deepx-link" href="https://developer.deepx.ai/tech-docs/" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">📚</span><span class="deepx-link-label ko">기술 문서</span><span class="deepx-link-label en">Tech Docs</span><span class="deepx-link-label ja">技術ドキュメント</span><span class="deepx-link-label zh-CN">技术文档</span><span class="deepx-link-label zh-TW">技術文件</span><span class="deepx-link-label es">Documentación técnica</span></a>
-    <a class="deepx-link" href="https://deepx.rapidflare.ai/" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">🤖</span><span class="deepx-link-label ko">DEEPX Agent</span><span class="deepx-link-label en">DEEPX Agent</span><span class="deepx-link-label ja">DEEPX Agent</span><span class="deepx-link-label zh-CN">DEEPX Agent</span><span class="deepx-link-label zh-TW">DEEPX Agent</span><span class="deepx-link-label es">DEEPX Agent</span></a>
-    <a class="deepx-link" href="https://developer.deepx.ai/modelzoo/" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">🧩</span><span class="deepx-link-label ko">Model Zoo</span><span class="deepx-link-label en">Model Zoo</span><span class="deepx-link-label ja">Model Zoo</span><span class="deepx-link-label zh-CN">Model Zoo</span><span class="deepx-link-label zh-TW">Model Zoo</span><span class="deepx-link-label es">Model Zoo</span></a>
-    <a class="deepx-link" href="https://developer.deepx.ai/sw-download/" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">⬇️</span><span class="deepx-link-label ko">소프트웨어 다운로드</span><span class="deepx-link-label en">S/W Download</span><span class="deepx-link-label ja">ソフトウェアダウンロード</span><span class="deepx-link-label zh-CN">软件下载</span><span class="deepx-link-label zh-TW">軟體下載</span><span class="deepx-link-label es">Descarga de software</span></a>
-    <a class="deepx-link" href="https://developer.deepx.ai/document-download/" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">📄</span><span class="deepx-link-label ko">문서 다운로드</span><span class="deepx-link-label en">Document Download</span><span class="deepx-link-label ja">ドキュメントダウンロード</span><span class="deepx-link-label zh-CN">文档下载</span><span class="deepx-link-label zh-TW">文件下載</span><span class="deepx-link-label es">Descarga de documentos</span></a>
-    <a class="deepx-link" href="https://github.com/DEEPX-AI" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">💻</span><span class="deepx-link-label ko">GitHub</span><span class="deepx-link-label en">GitHub</span><span class="deepx-link-label ja">GitHub</span><span class="deepx-link-label zh-CN">GitHub</span><span class="deepx-link-label zh-TW">GitHub</span><span class="deepx-link-label es">GitHub</span></a>
-    <a class="deepx-link" href="https://deepx.ai" target="_blank" rel="noopener noreferrer">
-      <span class="deepx-link-icon">🏢</span><span class="deepx-link-label ko">deepx.ai</span><span class="deepx-link-label en">deepx.ai</span><span class="deepx-link-label ja">deepx.ai</span><span class="deepx-link-label zh-CN">deepx.ai</span><span class="deepx-link-label zh-TW">deepx.ai</span><span class="deepx-link-label es">deepx.ai</span></a>
-  </nav>
-  </footer>
-
   <!-- ── Replay Animation button (viewport-fixed bottom-left; outside #landing for tutorial spotlight) ── -->
   <button class="replay-btn" id="replayBtn" onclick="replaySplash()" data-i18n-title="Replay intro animation" style="display:none;">
     <span class="replay-btn-icon">▶</span>
-    <span class="replay-btn-label ko">인트로 재생</span>
-    <span class="replay-btn-label en">Replay Intro</span>
-    <span class="replay-btn-label ja">イントロ再生</span>
-    <span class="replay-btn-label zh-CN">重播片头</span>
-    <span class="replay-btn-label zh-TW">重播片頭</span>
-    <span class="replay-btn-label es">Repetir intro</span>
+    <span data-i18n="Replay Intro">Replay Intro</span>
   </button>
 
   <!-- ── App Frame (module iframes kept alive until launcher tab closes) ── -->
@@ -751,6 +642,12 @@
     'ready': { ko:'준비됨', ja:'準備完了', es:'listo', 'zh-CN':'就绪', 'zh-TW':'就緒' },
     'not running': { ko:'실행 중 아님', ja:'未起動', es:'no iniciado', 'zh-CN':'未运行', 'zh-TW':'未執行' },
     'Ecosystem': { ko:'에코시스템', ja:'エコシステム', es:'Ecosistema', 'zh-CN':'生态', 'zh-TW':'生態' },
+    'YOLO export to DEEPX': { ko:'YOLO 를 DEEPX 로 export', ja:'YOLO を DEEPX へエクスポート', es:'exportar YOLO a DEEPX', 'zh-CN':'将 YOLO 导出到 DEEPX', 'zh-TW':'將 YOLO 匯出到 DEEPX' },
+    'OCR and detection': { ko:'OCR 과 검출', ja:'OCR と検出', es:'OCR y detección', 'zh-CN':'OCR 与检测', 'zh-TW':'OCR 與偵測' },
+    'the interchange format': { ko:'모델 교환 포맷', ja:'モデル交換フォーマット', es:'el formato de intercambio', 'zh-CN':'模型交换格式', 'zh-TW':'模型交換格式' },
+    'the pipeline runtime': { ko:'파이프라인 런타임', ja:'パイプラインランタイム', es:'el runtime de pipelines', 'zh-CN':'流水线运行时', 'zh-TW':'管線執行環境' },
+    'where models are trained': { ko:'모델을 학습하는 곳', ja:'モデルを学習する場所', es:'donde se entrenan los modelos', 'zh-CN':'训练模型的地方', 'zh-TW':'訓練模型的地方' },
+    'pre- and post-processing': { ko:'전처리와 후처리', ja:'前処理と後処理', es:'pre y posprocesamiento', 'zh-CN':'前处理与后处理', 'zh-TW':'前處理與後處理' },
     'frameworks that run on DEEPX': { ko:'DEEPX 위에서 도는 프레임워크', ja:'DEEPX 上で動くフレームワーク', es:'frameworks que corren sobre DEEPX', 'zh-CN':'运行在 DEEPX 上的框架', 'zh-TW':'執行在 DEEPX 上的框架' },
     'See partners': { ko:'파트너 보기', ja:'パートナーを見る', es:'Ver socios', 'zh-CN':'查看合作伙伴', 'zh-TW':'檢視合作夥伴' },
     'where DX-M1 is deployed': { ko:'DX-M1이 쓰이는 곳', ja:'DX-M1 が使われる現場', es:'dónde se despliega DX-M1', 'zh-CN':'DX-M1 的落地场景', 'zh-TW':'DX-M1 的落地場景' },
@@ -1461,6 +1358,70 @@
     'zh-CN': '🧠 端侧AI',
     'zh-TW': '🧠 端側AI',
     es: '🧠 IA en el dispositivo',
+  },
+  // ── 마크업 lang-span 에서 옮겨온 항목 ──
+  'DEEPX Agent': {
+    ko: 'DEEPX Agent',
+    ja: 'DEEPX Agent',
+    'zh-CN': 'DEEPX Agent',
+    'zh-TW': 'DEEPX Agent',
+    es: 'DEEPX Agent',
+  },
+  'Document Download': {
+    ko: '문서 다운로드',
+    ja: 'ドキュメントダウンロード',
+    'zh-CN': '文档下载',
+    'zh-TW': '文件下載',
+    es: 'Descarga de documentos',
+  },
+  'Get Started': {
+    ko: '시작하기',
+    ja: 'はじめに',
+    'zh-CN': '快速开始',
+    'zh-TW': '快速開始',
+    es: 'Primeros pasos',
+  },
+  'GitHub': {
+    ko: 'GitHub',
+    ja: 'GitHub',
+    'zh-CN': 'GitHub',
+    'zh-TW': 'GitHub',
+    es: 'GitHub',
+  },
+  'Model Zoo': {
+    ko: 'Model Zoo',
+    ja: 'Model Zoo',
+    'zh-CN': 'Model Zoo',
+    'zh-TW': 'Model Zoo',
+    es: 'Model Zoo',
+  },
+  'Replay Intro': {
+    ko: '인트로 재생',
+    ja: 'イントロ再生',
+    'zh-CN': '重播片头',
+    'zh-TW': '重播片頭',
+    es: 'Repetir intro',
+  },
+  'S/W Download': {
+    ko: '소프트웨어 다운로드',
+    ja: 'ソフトウェアダウンロード',
+    'zh-CN': '软件下载',
+    'zh-TW': '軟體下載',
+    es: 'Descarga de software',
+  },
+  'Tech Docs': {
+    ko: '기술 문서',
+    ja: '技術ドキュメント',
+    'zh-CN': '技术文档',
+    'zh-TW': '技術文件',
+    es: 'Documentación técnica',
+  },
+  'deepx.ai': {
+    ko: 'deepx.ai',
+    ja: 'deepx.ai',
+    'zh-CN': 'deepx.ai',
+    'zh-TW': 'deepx.ai',
+    es: 'deepx.ai',
   },
 };
   </script>
