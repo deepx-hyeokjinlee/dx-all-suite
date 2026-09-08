@@ -18,6 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 STYLE = ROOT / "launcher" / "static" / "style.css"
+INDEX = ROOT / "launcher" / "static" / "index.html"
 
 # `--x: #hex` is a definition, not a use. The css_token_gate ignores those for the
 # same reason: naming a colour is the fix, spraying it is the problem.
@@ -96,3 +97,51 @@ def test_chrome_selectors_carry_no_literal_colour():
         "chrome must take colour from the shared semantic tokens "
         f"(--surface-*, --text-*, --status-*): {offenders}"
     )
+
+
+# ── the portal nav ──────────────────────────────────────────────
+# The home used to navigate twice to the same eight places: a dot strip across
+# the top bar and a ring of tiles below it. Every other surface in the studio
+# navigates from one place; the home was the exception.
+
+NAV_SECTIONS = ("Home", "Models", "Studio", "Solutions", "Resources")
+
+
+def index() -> str:
+    return INDEX.read_text(encoding="utf-8")
+
+
+def test_portal_nav_exists_with_the_agreed_sections():
+    html = index()
+    assert 'class="portal-nav"' in html, "the home has no horizontal nav"
+    for section in NAV_SECTIONS:
+        assert f'data-nav="{section.lower()}"' in html, f"nav is missing {section}"
+
+
+def test_the_duplicate_dot_strip_is_gone():
+    """Eight dots and eight tiles pointed at the same eight modules."""
+    html = index()
+    assert 'class="status-dots"' not in html, (
+        "the dot strip duplicates the module cards — module state belongs on "
+        "the card it describes"
+    )
+
+
+def test_the_ring_left_the_resting_home():
+    """The orbital survives as the intro, not as the layout.
+
+    Eight tiles pinned to a circle can only scale, never rewrap: at 650px the
+    cards clipped and the link column floated over the copy. Most of the
+    launcher's breakpoints existed to prop that up.
+    """
+    css = style()
+    assert "min-width: 769px" not in css and "min-width:769px" not in css, (
+        "the orbital range query outlived the orbital layout"
+    )
+    html = index()
+    ring_at_top = html.index('class="orbital-card"') if 'class="orbital-card"' in html else -1
+    if ring_at_top >= 0:
+        intro = html.index('id="splashOverlay"')
+        assert ring_at_top > intro, (
+            "orbital markup must live inside the intro overlay, not the resting home"
+        )
