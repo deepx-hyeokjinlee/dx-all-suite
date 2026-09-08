@@ -1995,6 +1995,131 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 @media (max-width: 768px) { .answer-routes { grid-template-columns: 1fr; } }
 
+/* ─── Working view ────────────────────────────────────
+   왼쪽은 에이전트가 말한 것, 오른쪽은 실제로 한 것. 코드·로그·출력이
+   떨어지는 자리가 가장 넓어야 하므로 62 를 준다. */
+.home-work {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto var(--sp-5);
+  box-sizing: border-box;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  z-index: 6;
+}
+.work-top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+.work-title { font-weight: 700; font-size: var(--fs-base); }
+.work-badge { font-family: var(--mono); font-size: var(--fs-xs); color: var(--text-muted); }
+.work-badge.is-running { color: var(--accent); }
+.work-grow { flex: 1; }
+/* 설정은 설정이지 작업이 아니다 — 돌기 시작하면 접히고 edit 으로 돌아온다 */
+.work-setup { display: flex; gap: var(--sp-2); }
+.home-work.is-running:not(.setup-open) .work-setup { display: none; }
+.work-select {
+  background: var(--control-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  padding: 3px 6px;
+}
+.work-edit, .work-stop, .term-btn {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  padding: 3px 9px;
+  cursor: pointer;
+}
+.work-edit { color: var(--accent); border-style: dashed; }
+.home-work:not(.is-running) .work-edit { display: none; }
+.home-work:not(.is-running) .work-stop { display: none; }
+
+.work-split {
+  display: grid;
+  grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+  min-height: 320px;
+}
+.work-split.is-collapsed { grid-template-columns: 1fr; }
+.work-split.is-collapsed .work-term { display: none; }
+.work-narr { padding: 14px 16px; border-right: 1px solid var(--border-subtle); min-width: 0; }
+.work-ask {
+  margin: 0 0 var(--sp-3);
+  padding: 9px 12px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+}
+.work-turn { margin-bottom: var(--sp-3); }
+.turn-text { margin: 0; font-size: var(--fs-sm); color: var(--text-primary); line-height: 1.6; }
+.turn-activity { margin: 4px 0 0; font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-faint); }
+.turn-error { margin: var(--sp-2) 0 0; font-size: var(--fs-sm); color: var(--status-error); }
+.work-status { margin: var(--sp-2) 0 0; font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-muted); }
+/* 몇 분을 쓴 이유는 실행할 수 있는 물건이다 — "완료" 가 아니라 그걸로 끝난다 */
+.work-artefact {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border-subtle);
+}
+.art-kind {
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.work-artefact code { font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-secondary); }
+
+.work-term { display: flex; flex-direction: column; min-width: 0; background: var(--surface-sunken); overflow-x: auto; }
+.work-term-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.term-btn { text-transform: none; letter-spacing: 0; }
+.term-btn.is-on { color: var(--accent); border-color: var(--accent); }
+.work-term-out {
+  flex: 1;
+  padding: 11px 13px;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  white-space: pre;
+}
+.term-line.is-cmd { color: var(--accent); font-weight: 600; }
+.term-line.is-err { color: var(--status-error); }
+@media (max-width: 768px) {
+  .work-split { grid-template-columns: 1fr; }
+  .work-narr { border-right: 0; border-bottom: 1px solid var(--border-subtle); }
+}
+
 /* ─── Workflow strip ──────────────────────────────────
    ONNX 에서 실리콘까지가 이 제품이다. 래스터 다이어그램은 테마를
    못 따라가므로 currentColor 를 물려받는 인라인 SVG 로 그린다. */

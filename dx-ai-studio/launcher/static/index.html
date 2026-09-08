@@ -207,6 +207,48 @@
       </div>
     </section>
 
+    <!-- ── Working view — narration left, terminal right ── -->
+    <section class="home-work" id="homeWork" hidden>
+      <header class="work-top">
+        <span class="work-title" data-i18n="Agent Console">Agent Console</span>
+        <span class="work-badge" id="workBadge"></span>
+        <span class="work-grow"></span>
+        <span class="work-setup">
+          <select class="work-select" id="workAgent" aria-label="Agent" data-i18n-aria-label="Agent"></select>
+          <select class="work-select" id="workModel" aria-label="Model" data-i18n-aria-label="Model"></select>
+          <select class="work-select" id="workEffort" aria-label="Effort" data-i18n-aria-label="Effort">
+            <option value="medium">medium</option><option value="high">high</option>
+            <option value="low">low</option><option value="max">max</option>
+          </select>
+        </span>
+        <button type="button" class="work-edit" id="workSetupEdit" data-i18n="edit">edit</button>
+        <button type="button" class="work-stop" id="workStop" data-i18n="Stop">Stop</button>
+      </header>
+
+      <div class="work-split" id="workSplit">
+        <div class="work-narr" id="workNarration-wrap">
+          <p class="work-ask" id="workAsk"></p>
+          <div id="workNarration"></div>
+          <p class="work-status" id="workStatus"></p>
+          <div class="work-artefact" id="workArtefact" hidden>
+            <span class="art-kind" data-i18n="session">session</span>
+            <code id="workSessionPath"></code>
+            <button type="button" class="ask-go" id="workRunIt" data-i18n="Run it">Run it</button>
+            <button type="button" class="plan-alt" id="workOpenModule" data-i18n="Open in DX Agent Dev">Open in DX Agent Dev</button>
+          </div>
+        </div>
+        <div class="work-term" id="workTerminal" hidden>
+          <div class="work-term-bar">
+            <span data-i18n="Terminal">Terminal</span>
+            <span class="work-grow"></span>
+            <button type="button" class="term-btn is-on" id="workFollow" data-i18n="Follow">Follow</button>
+            <button type="button" class="term-btn" id="workCollapse" data-i18n="Collapse">Collapse</button>
+          </div>
+          <div class="work-term-out" id="workTerminalOut"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Workflow — the path from a model file to silicon ── -->
     <section class="flow-strip" aria-label="From ONNX to the NPU" data-i18n-aria-label="From ONNX to the NPU">
       <ol class="flow-row">
@@ -630,6 +672,25 @@
   <script>
   window._DX_I18N_DICT = {
     // ── 포털 홈 (2026-09 재개편) ──
+    'Agent Console': { ko:'에이전트 콘솔', ja:'エージェントコンソール', es:'Consola del agente', 'zh-CN':'智能体控制台', 'zh-TW':'代理程式主控臺' },
+    'Terminal': { ko:'터미널', ja:'ターミナル', es:'Terminal', 'zh-CN':'终端', 'zh-TW':'終端機' },
+    'Follow': { ko:'따라가기', ja:'追従', es:'Seguir', 'zh-CN':'自动跟随', 'zh-TW':'自動跟隨' },
+    'Collapse': { ko:'접기', ja:'折りたたむ', es:'Contraer', 'zh-CN':'折叠', 'zh-TW':'收合' },
+    'Stop': { ko:'중지', ja:'停止', es:'Detener', 'zh-CN':'停止', 'zh-TW':'停止' },
+    'edit': { ko:'수정', ja:'編集', es:'editar', 'zh-CN':'修改', 'zh-TW':'修改' },
+    'Working': { ko:'작업 중', ja:'作業中', es:'Trabajando', 'zh-CN':'工作中', 'zh-TW':'工作中' },
+    'Completed': { ko:'완료', ja:'完了', es:'Completado', 'zh-CN':'已完成', 'zh-TW':'已完成' },
+    'Stopped': { ko:'중지됨', ja:'停止済み', es:'Detenido', 'zh-CN':'已停止', 'zh-TW':'已停止' },
+    'session': { ko:'세션', ja:'セッション', es:'sesión', 'zh-CN':'会话', 'zh-TW':'工作階段' },
+    'Run it': { ko:'실행하기', ja:'実行する', es:'Ejecutarlo', 'zh-CN':'运行它', 'zh-TW':'執行它' },
+    'Open in DX Agent Dev': { ko:'DX Agent Dev에서 열기', ja:'DX Agent Dev で開く', es:'Abrir en DX Agent Dev', 'zh-CN':'在 DX Agent Dev 中打开', 'zh-TW':'在 DX Agent Dev 中開啟' },
+    'Could not reach DX Agent Dev': { ko:'DX Agent Dev에 연결하지 못했습니다', ja:'DX Agent Dev に接続できませんでした', es:'No se pudo contactar con DX Agent Dev', 'zh-CN':'无法连接 DX Agent Dev', 'zh-TW':'無法連線 DX Agent Dev' },
+    'files': { ko:'개 파일', ja:'件のファイル', es:'archivos', 'zh-CN':'个文件', 'zh-TW':'個檔案' },
+    'commands': { ko:'회 명령', ja:'回のコマンド', es:'comandos', 'zh-CN':'次命令', 'zh-TW':'次命令' },
+    'activity': { ko:'회 활동', ja:'件の動作', es:'acciones', 'zh-CN':'次操作', 'zh-TW':'次操作' },
+    'Agent': { ko:'에이전트', ja:'エージェント', es:'Agente', 'zh-CN':'智能体', 'zh-TW':'代理程式' },
+    'Model': { ko:'모델', ja:'モデル', es:'Modelo', 'zh-CN':'模型', 'zh-TW':'模型' },
+    'Effort': { ko:'작업 강도', ja:'作業強度', es:'Esfuerzo', 'zh-CN':'投入强度', 'zh-TW':'投入強度' },
     'Not what you meant?': { ko:'이게 아닌가요?', ja:'これではありませんか?', es:'¿No es lo que quería?', 'zh-CN':'不是你要的?', 'zh-TW':'不是你要的?' },
     'Build it with the agent': { ko:'에이전트로 만들기', ja:'エージェントで作る', es:'Construirlo con el agente', 'zh-CN':'用智能体构建', 'zh-TW':'用代理程式建構' },
     'DX Agent Dev will write this': { ko:'DX Agent Dev가 만들어 줍니다', ja:'DX Agent Dev が作ります', es:'DX Agent Dev lo escribirá', 'zh-CN':'DX Agent Dev 会写它', 'zh-TW':'DX Agent Dev 會寫它' },
@@ -1347,6 +1408,7 @@
   <script src="/launcher-app-frame.js"></script>
   <script src="/home-router.js"></script>
   <script src="/home-answer.js"></script>
+  <script src="/home-console.js"></script>
   <script src="/launcher.js"></script>
   <script src="/tutorial.js"></script>
 </body>

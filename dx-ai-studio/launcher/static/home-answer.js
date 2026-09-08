@@ -154,6 +154,11 @@
   function _handOffToAgent() {
     var panel = $('homeAnswer');
     var text = (panel && panel.dataset.ask) || '';
+    if (ns.homeAgentStart) {
+      ns.homeAgentStart(text);
+      return;
+    }
+    /* 작업 뷰를 못 쓰는 상황이면 모듈로 넘긴다 — 문장은 그대로 실어서. */
     window.location.href = '/agent/#ask=' + encodeURIComponent(text);
   }
 

@@ -1438,6 +1438,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/home-router.js", "application/javascript")
         elif path == "/home-answer.js":
             self._send_shell_asset(BASE_DIR / "static/home-answer.js", "application/javascript")
+        elif path == "/home-console.js":
+            self._send_shell_asset(BASE_DIR / "static/home-console.js", "application/javascript")
         elif path == "/tutorial.js":
             self._send_shell_asset(BASE_DIR / "static/tutorial.js", "application/javascript")
         elif path == "/about-deepx.css":

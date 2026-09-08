@@ -27,8 +27,14 @@ def console() -> str:
 
 
 def rule(selector: str) -> str:
+    """The rule whose selector is exactly this — not one that merely ends with it.
+
+    `.work-term` and `.work-split.is-collapsed .work-term` both end in the same
+    token, and matching the wrong one reads a display:none as the pane's own
+    overflow behaviour.
+    """
     css = STYLE.read_text(encoding="utf-8")
-    m = re.search(re.escape(selector) + r"\s*\{([^}]*)\}", css)
+    m = re.search(r"(?m)^" + re.escape(selector) + r"\s*\{([^}]*)\}", css)
     assert m, f"{selector} rule missing"
     return re.sub(r"\s+", "", m.group(1))
 
