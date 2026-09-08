@@ -197,3 +197,43 @@ def test_workflow_strip_is_drawable_in_both_themes():
         "a raster diagram cannot follow the theme"
     )
     assert "currentColor" in strip, "the strip must inherit the text colour"
+
+
+# ── the answered state ──────────────────────────────────────────
+
+
+def test_answer_surface_exists_and_starts_hidden():
+    html = index()
+    assert 'id="homeAnswer"' in html, "the prompt has nowhere to answer"
+    answer = html[html.index('id="homeAnswer"'):][:400]
+    assert "hidden" in answer, "the answer surface must not occupy the resting home"
+
+
+def test_the_agent_is_an_escalation_not_a_fourth_route():
+    """Offering "build it from scratch" beside a preset we just found reads as
+    if the studio does not trust its own answer.
+
+    When we matched, the agent is one quiet line under the routes. When we did
+    not, it is the whole answer — and it shows a plan before it spends minutes.
+    """
+    html = index()
+    assert 'id="answerEscalate"' in html, "no quiet agent line under the routes"
+    assert 'id="answerAgentPlan"' in html, "no agent plan for the unmatched case"
+    css = style()
+    escalate = rule_body(css, ".answer-escalate")
+    assert "border-top" in escalate, (
+        "the escalation sits below the routes as an aside, not among them"
+    )
+
+
+def test_the_plan_is_shown_before_the_agent_runs():
+    """Escalating straight into a running agent is the jarring part.
+
+    A few lines of "here is what I will do", with a time estimate, turns a leap
+    into a decision — and gives the minutes an honest place to be declared.
+    """
+    html = index()
+    plan = html[html.index('id="answerAgentPlan"'):]
+    plan = plan[: plan.index("</section>")] if "</section>" in plan else plan[:1200]
+    assert 'class="plan-steps"' in plan, "the agent must say what it will do first"
+    assert 'id="answerAgentGo"' in plan, "and wait to be told to start"
