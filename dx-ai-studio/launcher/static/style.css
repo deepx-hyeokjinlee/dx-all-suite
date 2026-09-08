@@ -57,6 +57,47 @@ body {
   overflow-y: auto;
 }
 
+/* ─── Portal Nav ──────────────────────────────────────
+   홈이 같은 여덟 곳을 두 번 안내하고 있었다 — 상단의 점 여덟 개와
+   그 아래 타일 여덟 개. 다른 모든 화면은 한 곳에서 안내한다.
+   섹션 하나가 곧 하나의 목적지다. */
+.portal-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.portal-nav::-webkit-scrollbar { height: 0; }
+.portal-nav-item {
+  position: relative;
+  padding: 6px 2px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.portal-nav-item:hover { color: var(--text-primary); }
+.portal-nav-item.is-current {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+/* 활성 표시는 밑줄 하나 — 배경 알약을 쓰면 앱 안의 탭 행과 헷갈린다 */
+.portal-nav-item.is-current::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -9px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+/* 앱 안으로 들어가면 상단은 그 앱의 탭 행이 된다 */
+body.in-app .portal-nav { display: none; }
+
 /* ─── Top Bar ─────────────────────────────────────────*/
 .top-bar {
   position: fixed;

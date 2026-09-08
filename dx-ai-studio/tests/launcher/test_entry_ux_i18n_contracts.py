@@ -159,19 +159,26 @@ class TestLauncherAppFrameContracts:
         assert "STATUS_DOT_LABELS" in source
         assert "statusLabelZoo" in source
 
-    def test_status_dot_labels_have_ids_in_index_html(self):
+    def test_every_module_card_carries_its_own_health_dot(self):
+        """State belongs on the card it describes.
+
+        The top bar used to repeat all eight modules as dots with labels, next
+        to eight cards that already carried a status dot each. Two navigations,
+        two health readouts, one set of modules. The strip went; the per-card
+        dot — which was always the one attached to the thing you click — stays.
+        """
         html = (STATIC / "index.html").read_text(encoding="utf-8")
-        for label_id in (
-            "statusLabelApp",
-            "statusLabelStream",
-            "statusLabelZoo",
-            "statusLabelCompiler",
-            "statusLabelPlanner",
-            "statusLabelBenchmark",
-            "statusLabelMonitor",
-            "statusLabelAgent",
+        for status_id in (
+            "orbStatusApp",
+            "orbStatusStream",
+            "orbStatusZoo",
+            "orbStatusCompiler",
+            "orbStatusPlanner",
+            "orbStatusBenchmark",
+            "orbStatusMonitor",
+            "orbStatusAgent",
         ):
-            assert f'id="{label_id}"' in html, f"missing {label_id} in index.html"
+            assert f'id="{status_id}"' in html, f"missing {status_id} in index.html"
 
 
 

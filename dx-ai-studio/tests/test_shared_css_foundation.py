@@ -217,13 +217,20 @@ def test_benchmark_toolbar_preserves_edgeguide_button():
 
 
 
-def test_launcher_toolbar_preserves_status_dots_as_sibling():
+def test_launcher_toolbar_sits_beside_the_portal_nav():
+    """The toolbar and the section nav are siblings in one bar.
+
+    This used to pin the toolbar next to the eight-module dot strip. The strip
+    repeated navigation the module cards already provided, so it went; what the
+    contract is really protecting is that the toolbar keeps its place in the top
+    bar while the nav takes the centre.
+    """
     nodes = parse_html_nodes(read_text(ROOT / "launcher" / "static" / "index.html"))
     topbar = find_one(nodes, lambda node: has_classes(node, "top-bar-right"), "launcher top-bar-right")
     toolbar = find_one(nodes, lambda node: has_id(node, "launcherToolbar") and has_classes(node, "toolbar"), "launcher toolbar")
-    status = find_one(nodes, lambda node: has_classes(node, "status-dots"), "launcher status dots")
+    nav = find_one(nodes, lambda node: has_id(node, "portalNav"), "launcher portal nav")
     assert nodes[toolbar]["parent"] == topbar
-    assert nodes[status]["parent"] == topbar
+    assert nodes[nav]["parent"] == nodes[topbar]["parent"]
 
 
 def test_shared_foundation_css_files_exist():

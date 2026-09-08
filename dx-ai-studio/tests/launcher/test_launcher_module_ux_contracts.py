@@ -397,16 +397,16 @@ class TestNavTabKeyboardAccessibility:
 class TestHealthDotsCompleteness:
     """Health dots in index.html must include Benchmark and Monitor."""
 
-    def test_dot_benchmark_exists_in_html(self):
+    def test_benchmark_card_has_a_health_dot(self):
         html = (STATIC / "index.html").read_text(encoding="utf-8")
-        assert 'id="dotBenchmark"' in html, (
-            "index.html missing dotBenchmark health dot"
+        assert 'id="orbStatusBenchmark"' in html, (
+            "the Benchmark card must show its own reachability"
         )
 
-    def test_dot_monitor_exists_in_html(self):
+    def test_monitor_card_has_a_health_dot(self):
         html = (STATIC / "index.html").read_text(encoding="utf-8")
-        assert 'id="dotMonitor"' in html, (
-            "index.html missing dotMonitor health dot"
+        assert 'id="orbStatusMonitor"' in html, (
+            "the Monitor card must show its own reachability"
         )
 
     def test_health_check_updates_dot_benchmark(self):
