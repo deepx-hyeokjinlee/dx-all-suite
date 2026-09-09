@@ -117,9 +117,12 @@
     ov.setAttribute('onclick', 'skipSplash(true)');
     ov.innerHTML =
       '<div class="mark" id="splashMark">' +
-        '<span class="mark-base" aria-hidden="true">DEEPX</span>' +
+        '<span class="mark-face" aria-hidden="true"></span>' +
         '<span class="mark-sweep" aria-hidden="true">' +
-          '<span class="mark-shine">DEEPX</span>' +
+          '<span class="mark-shine"></span>' +
+        '</span>' +
+        '<span class="mark-floor" aria-hidden="true">' +
+          '<span class="mark-face"></span>' +
         '</span>' +
         '<span class="mark-a11y">DEEPX</span>' +
       '</div>' +

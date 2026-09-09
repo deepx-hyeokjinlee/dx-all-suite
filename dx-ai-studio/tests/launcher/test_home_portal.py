@@ -393,6 +393,53 @@ def test_the_intro_obeys_apple_ad_grammar():
     assert min(delays) >= 0.6, f"the subtitle's delay is only {min(delays)}s"
 
 
+def test_the_intro_subject_is_a_surface_the_light_crosses():
+    """Three ways this sequence has already been built wrong, all pinned here.
+
+    The intro started as plain text and read as refined but empty. The reason
+    was not that it had too few elements — it was that a flat white wordmark
+    has no surface for light to cross. The subject is now the real logotype
+    used as a mask, with a material and a reflection. Three invariants make
+    that read, and each one is a bug this actually shipped into a frame:
+
+      1. The logo clips; the band moves. Putting the logo mask on the MOVING
+         layer moves the letters instead of the light — the X was drawn twice,
+         offset. Text hid it because the glyphs look alike; the logotype did
+         not.
+      2. The face is dark at rest. A near-white face with a white band passing
+         over it shows nothing (measured: face 239, band 255).
+      3. The reflection's mask has to survive scaleY(-1). Masks apply before
+         transforms, so a mask that is opaque at its own top ends up opaque at
+         the visual BOTTOM — the reflection detaches and reads as a second
+         wordmark lying below.
+    """
+    css = style()
+
+    sweep = rule_body(css, ".mark-sweep")
+    shine = rule_body(css, ".mark-shine")
+    assert "deepx-logo.svg" in sweep, "the logo must clip from the stationary layer"
+    assert "deepx-logo.svg" not in shine, (
+        "the logo mask is on the moving layer, so the letters travel, not the light"
+    )
+    assert "transform" not in sweep, "the clipping layer must not move"
+    assert "translateX" in shine, "nothing sweeps"
+
+    face = rule_body(css, ".mark-face")
+    rest = re.search(r"opacity:\s*([\d.]+)", face)
+    assert rest and float(rest.group(1)) <= 0.6, (
+        "the face is too bright at rest for a white specular to register on it"
+    )
+
+    floor = rule_body(css, ".mark-floor")
+    assert "scaleY(-1)" in floor
+    mask = re.search(r"mask-image:\s*linear-gradient\(([^;]+)\)", floor)
+    assert mask, "the reflection has no falloff"
+    assert mask.group(1).strip().startswith("rgba(0, 0, 0, 0)"), (
+        "the reflection's mask is opaque at its own top, which scaleY(-1) turns "
+        "into opaque at the bottom — it detaches from the object"
+    )
+
+
 def test_the_intro_cuts_rather_than_fades_into_the_app():
     """The mark scales past the lens, the app is switched on behind it, cut.
 
