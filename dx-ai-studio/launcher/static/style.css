@@ -180,7 +180,7 @@ body:not(.hw-native-visible) #hw-float {
   align-items: center;
   padding: 2px 8px;
   margin-left: 2px;
-  border-radius: 999px;
+  border-radius: var(--ap-r-pill);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.6px;
@@ -592,7 +592,7 @@ body:not(.hw-native-visible) #hw-float {
   padding: 11px 14px;
   background: var(--surface-panel);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
+  border-radius: var(--ap-r-sm);
   color: var(--text-secondary);
   font-size: var(--fs-sm);
   font-weight: 600;
@@ -1900,6 +1900,56 @@ body {
 .card-state.is-alive { color: var(--ap-green); }
 .mod-chev { flex-shrink: 0; color: var(--ap-ink-3); font-size: var(--ap-t-body); line-height: 1; }
 
+
+/* ── 크기별 굵기 ────────────────────────────────────────
+   측정: apple.com 첫 화면의 12px 노드는 600 이 148, 400 이 45 다.
+   developer.apple.com 도 56:23. 17px 은 반대로 전부 400, 19px 이상은 다시
+   600. 즉 애플의 작은 UI 텍스트는 semibold 이고 본문만 regular 다.
+   이걸 뒤집어 놨더니(내 페이지: 400이 69, 600이 7) 화면이 빠져 보였다.
+   여기서 갈리는 건 크기가 아니라 역할이다 — 라벨·링크·칩·상태는 UI 라
+   600, 카드 설명은 산문이라 400 이되 색을 본문색으로 올린다. */
+.portal-nav-item,
+.buy-topbar-btn,
+.ws-count,
+.ws-facts dt,
+.ws-facts dd,
+.ws-running li,
+.ask-chip,
+.card-state,
+.ws-foot .deepx-link,
+.learn-row,
+.replay-btn,
+.ws-flow .flow-node b { font-weight: 600; }
+
+/* 산문은 regular 로 두되, 제일 흐린 회색이 아니라 본문색으로 읽는다.
+   측정: apple.com 의 지배 텍스트색은 --ap-body 자리의 값(220 노드)이고,
+   내 페이지는 tertiary 가 27 노드로 제일 많았다. */
+.card-desc { font-weight: 400; color: var(--ap-body); }
+
+/* 상단 툴바는 shared 컴포넌트라 런처 문서 안에서만 톤을 맞춘다.
+   측정에서 shared light theme 의 text-primary 값 4개가 여기서 나왔다. */
+/* 이 툴바가 마지막으로 스케일 밖에 남아 있던 곳이다 — 측정에서 700 굵기
+   3개와 10·11·14·16px 이 전부 여기서 나왔다. shared 컴포넌트라 파일은
+   못 건드리고, 런처 문서 안에서만 12px/600 체계로 맞춘다. */
+#launcherToolbar .dx-toolbar-btn,
+#launcherToolbar .dx-lang-icon,
+#launcherToolbar .dx-lang-code,
+#launcherToolbar .dx-lang-arrow {
+  color: var(--ap-body);
+  font-size: var(--ap-t-body);
+  font-weight: 600;
+}
+#launcherToolbar .dx-toolbar-btn { border-radius: var(--ap-r-sm); }
+
+/* 12px 의 측정 트래킹은 -0.12px 다. 이 셋만 그 값을 안 쓰고 있었다. */
+#launcherToolbar .dx-toolbar-btn,
+#launcherToolbar .dx-lang-icon,
+#launcherToolbar .dx-lang-code,
+#launcherToolbar .dx-lang-arrow,
+.studio-beta-badge,
+.ask-chip { letter-spacing: -.01em; }
+.studio-beta-badge { font-size: var(--ap-t-body); padding: 1px 7px; }
+
 /* ── the state column ── */
 .ws-side { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
 .ws-panel {
@@ -2799,8 +2849,8 @@ body {
    the tutorial toggle. Replaces the old full-width banner that overlapped the orbital. */
 .buy-topbar-btn {
   display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
-  padding: 4px 12px; border-radius: 999px;
+  padding: 4px 12px; border-radius: var(--ap-r-pill);
   background: var(--accent); color: var(--text-on-accent); text-decoration: none;
-  font-weight: 600; font-size: 12.5px; line-height: 1.4; white-space: nowrap;
+  font-weight: 600; font-size: var(--ap-t-body); line-height: 1.4; white-space: nowrap;
 }
 .buy-topbar-btn:hover { background: var(--accent-light); }
