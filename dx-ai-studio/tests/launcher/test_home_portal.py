@@ -333,65 +333,98 @@ def test_module_state_comes_from_the_existing_poll():
     )
 
 # ── the intro ───────────────────────────────────────────────────
-# Three intros have shipped here. A 17.5-second neon cinematic, then a plain
-# 1.2s fade that had no idea at all, and now four beats. The beats are the
-# design, so they are the thing worth pinning — not the durations, which are
-# tuning, and not the copy.
+# Four intros have shipped here and all four were rejected: a 17.5-second neon
+# cinematic, a 1.2s fade with no idea in it, a hand-off whose points flew onto
+# the finished page and read as debris, and a drawn black hole. Each borrowed a
+# genre and illustrated it. This one borrows a grammar instead — Apple's own ad
+# grammar — and applies it to the only subject we actually have: the wordmark.
+# The grammar is the design, so the grammar is what is pinned. Durations,
+# angles and distances are tuning, and none of them are.
 
 
-def test_the_intro_is_the_gargantua_sequence():
-    """Five beats, and the picture is drawn rather than decorated.
+def test_the_intro_obeys_apple_ad_grammar():
+    """One subject, one camera move, and only the compositor's two properties.
 
-    Three intros preceded this one: a 17.5-second neon cinematic, a 1.2s fade
-    with no idea in it, and a hand-off whose points flew onto the finished page
-    and read as debris. This one has a subject — a black sphere, an accretion
-    disc, and the disc's far side lensed over the top, which is the whole
-    reason the image reads as a black hole instead of a ring.
+    The four rejected intros all failed the same way: given a reference, they
+    drew it. So the rule pinned here is not "what it looks like" but the four
+    constraints the grammar actually imposes —
 
-    The beats are the design. The durations are tuning and are not pinned.
+      · the subject is the wordmark, treated as a surface light crosses
+      · exactly two properties animate: transform and opacity
+      · type arrives last, after the camera has settled
+      · no canvas, no per-frame JS — the compositor runs it alone
+
+    The last one is why the previous intro is gone, and it is the cheapest to
+    regress: one requestAnimationFrame loop brings the whole thing back onto
+    the main thread.
     """
     src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
-    for beat in ("hold", "edge", "lens", "name", "through"):
-        assert "_T." + beat in src or "'" + beat + "'" in src or beat + ":" in src, (
-            f"beat {beat} is gone"
-        )
-    assert "getContext('2d')" in src, "the sky must be drawn, not composed of DOM"
-    assert "globalCompositeOperation" in src, (
-        "the disc is built by adding light; one flat pass reads as dust"
-    )
-    assert "lift" in src, "the lensed arc over the sphere is what makes it Gargantua"
-    assert "cancelAnimationFrame" in src, "the camera must stop when the intro leaves"
+    for banned in ("getContext", "requestAnimationFrame(function step",
+                   "cancelAnimationFrame(ns._introRAF", "_stars", "_paint"):
+        assert banned not in src, f"{banned} puts the intro back on the main thread"
 
     html = index()
-    assert 'id="splashSky"' in html, "no canvas for the intro to draw on"
+    assert 'class="mark-shine"' in html, "no surface for the light to cross"
+    assert 'id="splashSky"' not in html, "the canvas outlived the sequence that drew on it"
 
     css = style()
-    logo = rule_body(css, ".splash-logo")
-    assert "clip-path" in logo, (
-        "the wordmark is revealed by the disc's light crossing it, not faded in"
-    )
+    # Only transform and opacity may be transitioned, on every part of the mark.
+    for sel in (".mark", ".mark-shine", ".mark-sub"):
+        body = rule_body(css, sel)
+        assert "transition:" in body, f"{sel} does not animate"
+        props = body[body.index("transition:"):].split(";")[0]
+        for token in ("width", "height", "top", "left", "filter",
+                      "background-position", "box-shadow", " all "):
+            assert token not in props, f"{sel} animates {token.strip()}, which is not composited"
+
+    # The camera moves once — a shallow rotation the specular reflection reads off.
+    assert "rotateY" in rule_body(css, ".mark")
+    assert "perspective" in rule_body(css, ".splash-overlay")
+
+    # Type arrives last: the subtitle's transition carries a delay, and the
+    # delay is long enough that the camera has settled before the type shows up.
+    sub = rule_body(css, ".mark-sub")
+    delays = [
+        float(re.findall(r"([\d.]+)s", part)[-1])
+        for part in sub[sub.index("transition:"):].split(";")[0].split(",")
+        if len(re.findall(r"([\d.]+)s", part)) >= 2
+    ]
+    assert delays, "the subtitle arrives with the camera instead of after it"
+    assert min(delays) >= 0.6, f"the subtitle's delay is only {min(delays)}s"
 
 
 def test_the_intro_cuts_rather_than_fades_into_the_app():
-    """The bloom washes the screen, the app is switched on behind it, cut.
+    """The mark scales past the lens, the app is switched on behind it, cut.
 
     A fade would show the app arriving. A cut does not — which is why the shell
-    is revealed while the white still covers everything.
+    is revealed while the overlay still covers everything.
     """
     src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
-    assert "completeLauncherBoot" in src, "nothing turns the app on behind the bloom"
+    assert "completeLauncherBoot" in src, "nothing turns the app on behind the cut"
     assert "is-through" in src
     css = style()
     assert "background: transparent" in rule_body(css, ".splash-overlay.is-through")
 
 
 def test_the_intro_yields_to_reduced_motion():
+    """Reduced motion gets the same frame, arrived at without the move.
+
+    Not a skip: the wordmark and its subtitle still land, they just cross-fade
+    into place. `is-still` is the state that says so, and it has to be reachable
+    before anything is scheduled — a reduced-motion path that runs after the
+    camera starts has already broken the promise.
+    """
     src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
     assert "prefers-reduced-motion" in src
-    head = src[: src.index("var ctx = canvas.getContext('2d')")]
-    assert "prefers-reduced-motion" in head, (
-        "the reduced-motion exit must come before the camera starts"
+    head = src[: src.index("is-running")]
+    assert "is-still" in head, (
+        "the reduced-motion exit must come before the camera is started"
     )
+    css = style()
+    for sel in (".splash-overlay.is-still .mark",
+                ".splash-overlay.is-still .mark-shine",
+                ".splash-overlay.is-still .mark-sub"):
+        assert "transition: none" in rule_body(css, sel), f"{sel} still animates"
 
 
 def test_module_state_says_nothing_until_it_knows():
