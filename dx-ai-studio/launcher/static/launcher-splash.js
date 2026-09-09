@@ -40,25 +40,6 @@
   var _B1 = 380;    // 점 하나를 보여주는 시간 — 참는 구간
   var _B2 = 300;    // 여덟으로 갈라지는 시간
   var _B3 = 420;    // 빛이 이름을 지나는 시간
-  var _B4 = 620;    // 타일 자리로 날아가는 시간
-
-  /* 착지 지점. 뷰포트 밖이라고 버리지 않는다 — 짧은 창에서는 목록의 마지막
-     한둘이 접힘 아래에 있고, 그걸 버리면 개수가 어긋나 연출 전체가 조용한
-     페이드로 떨어진다. 실제로 800px 창에서 여덟 번째 타일이 y=868 이라
-     그렇게 되고 있었다. 아래로 향하는 점은 사라지면서 화면을 벗어난다. */
-  function _tiles() {
-    var out = [];
-    document.querySelectorAll('.orbital-card[data-app] .mod-tile').forEach(function (el) {
-      var r = el.getBoundingClientRect();
-      if (!r.width) return;
-      out.push({
-        x: r.left + r.width / 2,
-        y: r.top + r.height / 2,
-        tint: getComputedStyle(el).backgroundColor
-      });
-    });
-    return out;
-  }
 
   function initSplashV2() {
     if (sessionStorage.getItem('dx-splash-seen')) {
@@ -113,33 +94,13 @@
       if (logo) logo.classList.add('is-revealed');
     }, _B1 + _B2 - 120));
 
-    /* 4 — 컷 없이. 점들이 실제 타일 자리로 간다. */
-    var handoff = _B1 + _B2 + _B3;
-    ns._splashTimers.push(setTimeout(function () {
-      var targets = _tiles();
-      if (!targets.length) {        // 목록이 아예 없다 — 연출을 포기한다
-        skipSplash();
-        return;
-      }
-      /* 컷이 없으려면 막을 걷었을 때 그 아래 앱이 이미 있어야 한다.
-         인트로 동안 본편은 visibility:hidden 이었으므로, 막을 투명하게
-         만들기 전에 먼저 켠다 — 그래야 점이 진짜 타일 위에 내려앉는다. */
-      if (typeof ns.completeLauncherBoot === 'function') {
-        ns.completeLauncherBoot({ revealAnimation: 'skip' });
-      }
-      if (overlay) overlay.classList.add('is-handing-off');
-      dots.forEach(function (d, i) {
-        var to = targets[i];
-        if (!to) { d.classList.add('is-landing'); return; }   // 짝이 없으면 그냥 사라진다
-        var from = d.getBoundingClientRect();
-        d.style.background = to.tint;
-        d.style.transform =
-          'translate(' + (to.x - (from.left + from.width / 2)).toFixed(1) + 'px,' +
-          (to.y - (from.top + from.height / 2)).toFixed(1) + 'px) scale(2.6)';
-        d.classList.add('is-landing');
-      });
-      ns._splashTimers.push(setTimeout(function () { skipSplash(); }, _B4));
-    }, handoff));
+    /* 여기서 끝난다. 한때 4박자가 있었다 — 점들이 실제 타일 자리로 날아가
+       그 위에서 사라지는 "컷 없는" 핸드오프. 좌표는 정확히 수렴했지만 화면
+       위에서는 연출로 읽히지 않았다: 목적지가 이미 다 그려져 있는 상태에서
+       그 위로 점을 보내면 변하는 게 아니라 덧칠하는 것이고, 완성된 화면에
+       원색 공 여덟 개가 떠 있으면 그냥 버그로 보인다. match cut 은 목적지가
+       그 움직임과 함께 도착할 때만 성립한다. 여기서는 성립하지 않는다. */
+    ns._splashTimers.push(setTimeout(function () { skipSplash(); }, _B1 + _B2 + _B3));
 
     return true;
   }

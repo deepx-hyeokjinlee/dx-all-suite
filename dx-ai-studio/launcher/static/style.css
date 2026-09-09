@@ -876,13 +876,6 @@ body.lang-zh-TW .zh-CN { display: none !important; }
               background-color var(--ap-dur-lg) var(--ap-ease);
 }
 .splash-overlay.fade-out { opacity: 0; pointer-events: none; }
-/* 4박자에서 검은 막이 걷히면 그 아래 이미 앱이 있다. */
-.splash-overlay.is-handing-off { background: transparent; }
-.splash-overlay.is-handing-off .splash-logo-hud,
-.splash-overlay.is-handing-off .splash-skip {
-  opacity: 0;
-  transition: opacity var(--ap-dur) var(--ap-ease);
-}
 
 /* ── 워드마크: 페이드인이 아니라, 빛이 지나가며 드러난다 ── */
 .splash-logo-hud { text-align: center; order: 2; }
@@ -952,16 +945,6 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 /* 1박자: 여덟이 겹쳐 있어 하나로 보인다. */
 .splash-overlay.is-seeded .intro-dot { opacity: 1; }
 .intro-dot.is-spread { opacity: .9; }
-/* 4박자: 타일 자리에 닿으면서 사라진다 — 그 아래 진짜 타일이 있다. */
-/* 비행은 전환보다 길다 — 여덟이 각자 자기 자리까지 가야 하고, 사라짐은
-   도착에 맞춰 늦게 시작한다. 도착해서 사라지는 것이지, 가다가 사라지는
-   것이 아니다. */
-.intro-dot.is-landing {
-  opacity: 0;
-  transition: transform .52s var(--ap-ease),
-              opacity var(--ap-dur) var(--ap-ease) .34s,
-              background-color var(--ap-dur) var(--ap-ease);
-}
 
 .splash-skip {
   position: absolute;

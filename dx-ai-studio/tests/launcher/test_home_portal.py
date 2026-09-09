@@ -339,15 +339,25 @@ def test_module_state_comes_from_the_existing_poll():
 # tuning, and not the copy.
 
 
-def test_the_intro_has_its_four_beats():
-    """One point, then eight, then the light crosses the name, then no cut."""
+def test_the_intro_has_its_beats():
+    """One point, then eight, then the light crosses the name. Then it leaves.
+
+    There was briefly a fourth beat: the points flew to the real module tiles
+    and dissolved on them, so the intro would "become" the app with no cut.
+    The coordinates converged exactly and it still failed on screen — a match
+    cut needs the destination to arrive WITH the motion, and here the
+    destination was already fully drawn, so eight saturated circles simply sat
+    on top of a finished page reading as debris. It is gone; this test is the
+    note that says why, so it does not get rebuilt.
+    """
     src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
-    for beat in ("_B1", "_B2", "_B3", "_B4"):
+    for beat in ("_B1", "_B2", "_B3"):
         assert beat in src, f"beat {beat} is gone"
+    assert "_B4" not in src, "the hand-off beat came back"
+    assert "is-landing" not in src, "the points must not fly onto the app"
     assert "is-seeded" in src, "beat 1: nothing shows the single point"
     assert "is-spread" in src, "beat 2: nothing spreads it into the eight"
     assert "is-revealed" in src, "beat 3: the wordmark is not being revealed"
-    assert "is-landing" in src, "beat 4: the points never land"
 
     css = style()
     logo = rule_body(css, ".splash-logo")
@@ -356,27 +366,18 @@ def test_the_intro_has_its_four_beats():
     )
 
 
-def test_the_intro_ends_by_becoming_the_app():
-    """The last frame of the intro is the first frame of the app.
+def test_module_state_says_nothing_until_it_knows():
+    """A row's state is unknown until the health poll answers.
 
-    The points fly to where the real module tiles are and dissolve on them, so
-    there is no cut between the intro and the UI — and the eight module colours
-    are introduced by the thing that hands them over.
+    The markup shipped an em dash as a placeholder, so eight of them sat on the
+    page on every load — a character that means "we have not asked yet" to the
+    person who wrote it and nothing at all to anyone else.
     """
-    src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
-    assert ".orbital-card[data-app] .mod-tile" in src, (
-        "the intro must read the real landing spots, not invent positions"
-    )
-    assert "completeLauncherBoot" in src, (
-        "the app has to be visible before the curtain goes transparent, or there "
-        "is nothing underneath to cut to"
-    )
-    assert "backgroundColor" in src, "the points must take the tiles' own colours"
-    # A short window puts the last rows below the fold. Dropping those targets
-    # made the counts disagree and the whole sequence fell back to a fade.
-    assert "r.top > window.innerHeight" not in src, (
-        "landing spots below the fold are still landing spots"
-    )
+    html = index()
+    grid = html[html.index('id="studioGrid"'):]
+    grid = grid[: grid.index("</section>")]
+    assert 'data-role="state">—<' not in grid, "the placeholder dash is back"
+    assert grid.count('data-role="state"') >= 8, "each row still needs its state line"
 
 
 def test_the_intro_yields_to_reduced_motion():
