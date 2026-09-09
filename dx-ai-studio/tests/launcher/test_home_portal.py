@@ -331,3 +331,58 @@ def test_module_state_comes_from_the_existing_poll():
     assert js.count("setInterval(checkHealth") == 1, (
         "module state must not get a second poller"
     )
+
+# ── the intro ───────────────────────────────────────────────────
+# Three intros have shipped here. A 17.5-second neon cinematic, then a plain
+# 1.2s fade that had no idea at all, and now four beats. The beats are the
+# design, so they are the thing worth pinning — not the durations, which are
+# tuning, and not the copy.
+
+
+def test_the_intro_has_its_four_beats():
+    """One point, then eight, then the light crosses the name, then no cut."""
+    src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
+    for beat in ("_B1", "_B2", "_B3", "_B4"):
+        assert beat in src, f"beat {beat} is gone"
+    assert "is-seeded" in src, "beat 1: nothing shows the single point"
+    assert "is-spread" in src, "beat 2: nothing spreads it into the eight"
+    assert "is-revealed" in src, "beat 3: the wordmark is not being revealed"
+    assert "is-landing" in src, "beat 4: the points never land"
+
+    css = style()
+    logo = rule_body(css, ".splash-logo")
+    assert "clip-path" in logo, (
+        "the wordmark must be revealed by the light crossing it, not faded in"
+    )
+
+
+def test_the_intro_ends_by_becoming_the_app():
+    """The last frame of the intro is the first frame of the app.
+
+    The points fly to where the real module tiles are and dissolve on them, so
+    there is no cut between the intro and the UI — and the eight module colours
+    are introduced by the thing that hands them over.
+    """
+    src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
+    assert ".orbital-card[data-app] .mod-tile" in src, (
+        "the intro must read the real landing spots, not invent positions"
+    )
+    assert "completeLauncherBoot" in src, (
+        "the app has to be visible before the curtain goes transparent, or there "
+        "is nothing underneath to cut to"
+    )
+    assert "backgroundColor" in src, "the points must take the tiles' own colours"
+    # A short window puts the last rows below the fold. Dropping those targets
+    # made the counts disagree and the whole sequence fell back to a fade.
+    assert "r.top > window.innerHeight" not in src, (
+        "landing spots below the fold are still landing spots"
+    )
+
+
+def test_the_intro_yields_to_reduced_motion():
+    src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
+    assert "prefers-reduced-motion" in src
+    head = src[: src.index("var n = ns._SPLASH_MODULES.length")]
+    assert "prefers-reduced-motion" in head, (
+        "the reduced-motion exit must come before the sequence starts, not after"
+    )

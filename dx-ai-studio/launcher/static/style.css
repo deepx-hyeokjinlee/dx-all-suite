@@ -859,12 +859,9 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 
 /* ── Overlay ── */
 .splash-overlay {
-  /* 인트로. 워드마크가 자리를 잡고, 부제가 따라오고, 여덟 모듈이 계단으로
-     들어온 뒤 끝난다 — 1.2초. 이전 시퀀스는 17.5초짜리 시네마틱이었고,
-     회로·파티클·링·빔·버스트·워프가 그 소품이었다. 곡선과 지속시간은
-     나머지 UI 와 같은 측정값을 쓴다.
-
-     이 화면만은 테마를 따르지 않는다. 검은 바탕에 고정된 브랜드 순간이다. */
+  /* 인트로 — 네 박자. 점 하나 → 여덟 → 빛이 이름을 지남 → 컷 없이 UI 로.
+     자세한 의도는 launcher-splash.js 의 시퀀스 주석에 있다.
+     이 화면만은 테마를 따르지 않는다: 검은 바탕에 고정된 브랜드 순간이다. */
   position: fixed;
   inset: 0;
   z-index: 10000;
@@ -875,23 +872,51 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   gap: var(--sp-6);
   background: var(--brand-shade);
   cursor: pointer;
-  transition: opacity var(--ap-dur-lg) var(--ap-ease);
+  transition: opacity var(--ap-dur-lg) var(--ap-ease),
+              background-color var(--ap-dur-lg) var(--ap-ease);
 }
 .splash-overlay.fade-out { opacity: 0; pointer-events: none; }
+/* 4박자에서 검은 막이 걷히면 그 아래 이미 앱이 있다. */
+.splash-overlay.is-handing-off { background: transparent; }
+.splash-overlay.is-handing-off .splash-logo-hud,
+.splash-overlay.is-handing-off .splash-skip {
+  opacity: 0;
+  transition: opacity var(--ap-dur) var(--ap-ease);
+}
 
-.splash-logo-hud { text-align: center; }
+/* ── 워드마크: 페이드인이 아니라, 빛이 지나가며 드러난다 ── */
+.splash-logo-hud { text-align: center; order: 2; }
 .splash-logo {
+  position: relative;
+  display: inline-block;
   font-size: clamp(34px, 6vw, 56px);
   font-weight: 600;
   letter-spacing: -.005em;      /* 56px 의 측정값 (-0.28px) */
   line-height: 1;
   color: var(--brand-on-shade);
-  opacity: 0;
-  transform: scale(1.04);
-  transition: opacity var(--ap-dur-lg) var(--ap-ease),
-              transform var(--ap-dur-lg) var(--ap-ease);
+  /* 오른쪽 100% 를 잘라 두고 0 까지 연다 — 빛이 지나간 만큼만 보인다. */
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path var(--ap-dur-lg) var(--ap-ease);
 }
-.splash-logo.is-settled { opacity: 1; transform: none; }
+.splash-logo.is-revealed { clip-path: inset(0 0 0 0); }
+/* 빛 자체. 공개의 앞머리를 따라간다. */
+.splash-logo::after {
+  content: '';
+  position: absolute;
+  top: -6%; bottom: -6%; left: -14%;
+  width: 14%;
+  background: linear-gradient(90deg,
+    transparent, rgba(255,255,255,.85), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.splash-logo.is-revealed::after { animation: introSweep var(--ap-dur-lg) var(--ap-ease) forwards; }
+@keyframes introSweep {
+  0%   { left: -14%; opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
 
 .splash-subtitle {
   margin-top: var(--sp-3);
@@ -900,39 +925,42 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   letter-spacing: -.022em;
   color: var(--brand-subtle);
   opacity: 0;
-  transition: opacity var(--ap-dur) var(--ap-ease);
+  transition: opacity var(--ap-dur) var(--ap-ease) .12s;
 }
-.splash-subtitle.is-in { opacity: 1; }
+.splash-logo.is-revealed + .splash-subtitle { opacity: 1; }
 
-/* 모듈은 켜지는 게 아니라 들어온다. */
+/* ── 점: 하나였다가 여덟이 되고, 타일 자리로 간다 ── */
 .splash-modules-area {
+  order: 1;
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--sp-3);
-  max-width: 560px;
-}
-.splash-mod {
-  display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 11px;
-  border-radius: var(--ap-r-pill);
-  background: rgba(255,255,255,.06);
-  color: var(--brand-subtle);
-  font-size: var(--ap-t-body);
-  font-weight: 600;
-  letter-spacing: -.01em;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity var(--ap-dur) var(--ap-ease),
-              transform var(--ap-dur) var(--ap-ease);
+  justify-content: center;
+  height: 10px;
 }
-.splash-mod.is-in { opacity: 1; transform: none; }
-.splash-mod-icon { display: inline-flex; line-height: 0; }
-.splash-mod-icon svg {
-  width: 13px; height: 13px; fill: none; stroke: currentColor;
-  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+.intro-dot {
+  position: absolute;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--brand-on-shade);
+  opacity: 0;
+  transform: translateX(0);
+  transition: transform var(--ap-dur-lg) var(--ap-ease),
+              opacity var(--ap-dur) var(--ap-ease),
+              background-color var(--ap-dur) var(--ap-ease);
+}
+/* 1박자: 여덟이 겹쳐 있어 하나로 보인다. */
+.splash-overlay.is-seeded .intro-dot { opacity: 1; }
+.intro-dot.is-spread { opacity: .9; }
+/* 4박자: 타일 자리에 닿으면서 사라진다 — 그 아래 진짜 타일이 있다. */
+/* 비행은 전환보다 길다 — 여덟이 각자 자기 자리까지 가야 하고, 사라짐은
+   도착에 맞춰 늦게 시작한다. 도착해서 사라지는 것이지, 가다가 사라지는
+   것이 아니다. */
+.intro-dot.is-landing {
+  opacity: 0;
+  transition: transform .52s var(--ap-ease),
+              opacity var(--ap-dur) var(--ap-ease) .34s,
+              background-color var(--ap-dur) var(--ap-ease);
 }
 
 .splash-skip {
@@ -944,7 +972,9 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .splash-logo, .splash-subtitle, .splash-mod { transition: none; }
+  .splash-logo { transition: none; clip-path: none; }
+  .splash-logo::after { display: none; }
+  .splash-subtitle, .intro-dot { transition: none; }
 }
 /* ═══════════════════════════════════════════════════════
    ORBITAL LANDING LAYOUT
