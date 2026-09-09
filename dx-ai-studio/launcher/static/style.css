@@ -991,8 +991,21 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 .splash-overlay.is-running .mark-shine { transform: translateX(30%); }
 .splash-overlay.is-still .mark-shine { transform: none; transition: none; opacity: 0; }
 
+/* 이름과 콘솔이 실제로 같은 자리를 쓰게 하는 슬롯. 둘을 흐름에 나란히 두면
+   각자 다른 높이에 앉아 동시에 보이고, 박자마다 레이아웃이 튄다. */
+.mark-slot {
+  position: relative;
+  margin-top: var(--sp-7);
+  width: 100%;
+  min-height: 3.4rem;
+}
 .mark-sub {
-  margin: var(--sp-7) 0 0;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
   font-size: var(--ap-t-lead);
   font-weight: 400;
   letter-spacing: -.022em;
@@ -1004,6 +1017,89 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 .splash-overlay.is-running .mark-sub { opacity: .78; transform: none; }
 .splash-overlay.is-still .mark-sub { opacity: .78; transform: none; transition: none; }
+
+/* ── 2. work ────────────────────────────────────────────
+   제품이 일하는 장면. 애플의 context shot 과 구글 〈Parisian Love〉의 검색어
+   시퀀스는 이 제품에서 같은 장면이다 — 원하는 걸 말하면 만들어준다는 전제를
+   주장하는 대신 그냥 보여준다.
+
+   부제와 콘솔은 같은 자리를 쓴다. 자리를 나눠 쓰면 박자마다 레이아웃이
+   튀고, 그러면 카메라가 두 번 이상 움직인 것처럼 읽힌다. */
+.mark-cue {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .45s var(--ap-ease), transform .45s var(--ap-ease);
+  pointer-events: none;
+}
+.splash-overlay.is-working .mark-cue { opacity: 1; transform: none; }
+/* 진입 지연(1.85s)은 등장에만 쓰라고 둔 것인데, transition 은 방향을 가리지
+   않으므로 퇴장에도 그대로 걸린다 — 그래서 부제가 프롬프트 뒤에 2초 넘게
+   남아 있었다. 상태가 바뀌는 두 경로는 각자 지연 없는 transition 을 갖는다. */
+.splash-overlay.is-working .mark-sub {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity .38s var(--ap-ease), transform .38s var(--ap-ease);
+}
+.splash-overlay.is-closed .mark-sub {
+  opacity: .78;
+  transform: none;
+  transition: opacity .55s var(--ap-ease),
+              transform .55s cubic-bezier(.16, .84, .24, 1);
+}
+
+/* 요청. 사람이 치는 문장이라 왼쪽 정렬된 한 줄이고, 캐럿이 그걸 말해 준다. */
+.cue-line {
+  display: inline-flex;
+  align-items: center;
+  gap: .34em;
+  /* 한 줄로 두되(줄바꿈하면 슬롯 높이가 박자마다 튄다) 좁은 화면에서는 줄어들게
+     한다. 가장 긴 문구가 390px 에서 314px 를 쓰므로 여유가 크지 않다. */
+  max-width: 92vw;
+  font-size: clamp(13px, 3.6vw, var(--ap-t-lead));
+  font-weight: 400;
+  letter-spacing: -.022em;
+  color: var(--brand-on-shade);
+  white-space: nowrap;
+}
+.cue-caret {
+  width: 1.5px;
+  height: 1.05em;
+  background: var(--brand-on-shade);
+  animation: cueBlink 1.06s steps(1, end) infinite;
+}
+@keyframes cueBlink { 0%, 55% { opacity: .9; } 56%, 100% { opacity: 0; } }
+
+/* 스튜디오의 대답: 그 요청을 실제로 맡는 모듈. 요청보다 작고 조용하게,
+   그리고 요청이 끝난 뒤에 온다 — 타입은 마지막에 온다는 규칙 그대로다. */
+.cue-answer {
+  font-size: var(--ap-t-body);
+  font-weight: 600;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  color: var(--brand-subtle);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .34s var(--ap-ease), transform .34s var(--ap-ease);
+}
+.splash-overlay.is-working .mark-cue.is-answered .cue-answer {
+  opacity: .82;
+  transform: none;
+}
+.splash-overlay.is-working .mark-cue.is-out {
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity .24s var(--ap-ease), transform .24s var(--ap-ease);
+}
+/* 움직임을 줄여 달라고 한 사람에게는 일하는 장면도 캐럿도 없다. */
+.splash-overlay.is-still .mark-cue { display: none; }
+@media (prefers-reduced-motion: reduce) { .cue-caret { animation: none; } }
 
 /* 마지막: 앱을 켜고 마크째로 렌즈를 지나 나간다 — 페이드가 아니라 컷이다.
    이 블록은 .mark 규칙들보다 뒤에 와야 한다. .is-through 와 .is-running 은

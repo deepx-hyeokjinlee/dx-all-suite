@@ -352,11 +352,12 @@ def test_the_intro_obeys_apple_ad_grammar():
       · the subject is the wordmark, treated as a surface light crosses
       · exactly two properties animate: transform and opacity
       · type arrives last, after the camera has settled
-      · no canvas, no per-frame JS — the compositor runs it alone
+      · no canvas and no per-frame loop — the compositor runs the motion
 
     The last one is why the previous intro is gone, and it is the cheapest to
     regress: one requestAnimationFrame loop brings the whole thing back onto
-    the main thread.
+    the main thread. Typing the prompts is a handful of setTimeouts changing
+    text, which is a different thing and is allowed.
     """
     src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
     for banned in ("getContext", "requestAnimationFrame(function step",
@@ -438,6 +439,70 @@ def test_the_intro_subject_is_a_surface_the_light_crosses():
         "the reflection's mask is opaque at its own top, which scaleY(-1) turns "
         "into opaque at the bottom — it detaches from the object"
     )
+
+
+def test_the_working_beat_shows_the_product_rather_than_claiming_it():
+    """Apple's context shot and Google's search-query sequence, which here are
+    the same shot.
+
+    The intro was refined and still felt thin, and more decoration would not
+    have fixed that. Apple's answer is the context shot — the product in use —
+    and Google's "Parisian Love" tells a whole story with nothing but queries
+    typed into the product's own input. This product's premise is "say what
+    you want and it builds it", so those two references land on one scene: the
+    studio working.
+
+    That only holds if the scene is true, which is what this pins. The prompts
+    are the ones already offered on the home's Build box, already translated
+    into every locale — not copy invented for an animation. The answers are the
+    modules that actually take that work, named as the home names them. An
+    intro that shows the product doing something it cannot do is worse than an
+    empty one.
+    """
+    js = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
+    html = index()
+
+    work = re.search(r"_WORK = \[(.*?)\];", js, re.DOTALL)
+    assert work, "the working beat has no script"
+    beats = re.findall(r"ask:\s*'([^']+)'\s*,\s*by:\s*'([^']+)'", work.group(1))
+    assert len(beats) >= 3, "one prompt is an example; three is the product working"
+
+    for ask, by in beats:
+        assert "data-i18n=\"" + ask + "\"" in html or \
+               "data-i18n-placeholder=\"" + ask + "\"" in html, (
+            f"{ask!r} is copy written for the intro, not something the home offers"
+        )
+        assert "'" + ask + "':" in html, f"{ask!r} is not in the dictionary"
+        assert ">" + by + "<" in html, f"{by!r} is not a module the home lists"
+
+
+def test_the_name_and_the_console_share_one_slot():
+    """Two things in one place, and neither may inherit the other's delay.
+
+    The subtitle and the prompt line occupy the same spot, so the sequence has
+    one composition rather than a layout that jumps every beat. Both are
+    absolutely placed inside the slot; laying them out in flow puts them at
+    different heights and shows both at once, which is what it did.
+
+    The delay is the subtler half. The subtitle's entrance is deliberately late
+    — type arrives last — but a transition-delay applies to every direction, so
+    the same 1.85s also delayed its exit and its return: it sat behind the
+    first prompt for two seconds, and after the work it could not come back
+    before the cut. Each state change carries its own transition.
+    """
+    css = style()
+    slot = rule_body(css, ".mark-slot")
+    assert "position: relative" in slot
+    for sel in (".mark-sub", ".mark-cue"):
+        assert "position: absolute" in rule_body(css, sel), f"{sel} is not in the slot"
+
+    for sel in (".splash-overlay.is-working .mark-sub",
+                ".splash-overlay.is-closed .mark-sub"):
+        body = rule_body(css, sel)
+        assert "transition:" in body, (
+            f"{sel} inherits the entrance delay, so the subtitle moves seconds late"
+        )
+        assert not re.search(r"\)\s+[\d.]+s\s*[,;]", body), f"{sel} carries a delay"
 
 
 def test_the_intro_cuts_rather_than_fades_into_the_app():
