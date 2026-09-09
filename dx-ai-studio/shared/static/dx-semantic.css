@@ -1,39 +1,46 @@
 /* Semantic 토큰 — 역할 이름. 모듈 CSS는 이 계층만 참조한다.
    dx-tokens.css(primitive)와 각 모듈 CSS 사이에 로드된다.
-   여기 값은 dark(기본). light는 dx-theme-light.css가 이 이름들만 덮어쓴다. */
+   여기 값은 dark(기본). light는 dx-theme-light.css가 이 이름들만 덮어쓴다.
+
+   팔레트는 애플 계열로 옮겼다 — apple.com / developer.apple.com 의 실제
+   computed style 을 재서 뽑은 값이다. 런처 홈만 그 톤으로 만들어 놓으니
+   모듈을 열 때마다 회색에서 남색으로 튀었다. 토큰 이름은 그대로라 모듈
+   CSS 14,000줄은 한 줄도 건드리지 않고 함께 따라온다.
+
+   상태색은 애플 값을 그대로 쓰지 않고 대비를 확인해 골랐다. dark 는
+   애플의 시스템 색이 검정 위에서 6:1 이상이라 그대로 쓰고, light 는
+   #34c759 같은 값이 흰 배경에서 2.2:1 이라 접근성 변형을 쓴다. */
 :root{
   /* 면 */
-  --surface-page:#080c16;
-  --surface-panel:#0e1525;
-  --surface-raised:linear-gradient(145deg,#0e1525,#151d30);
-  --surface-sunken:#0a1020;
-  --surface-overlay:rgba(14,21,37,.7);
-  /* 행 hover, 테이블 헤더, 코드 칩처럼 면보다 한 단계 도드라지는 자리.
-     dark 에서만 살던 --bg-3/--bg-4 가 여기로 온다 — 그 둘은 light 대응
-     정의가 없어서 흰 배경 위에 검은 블록으로 떨어지고 있었다. */
-  --surface-hover:#1c2640;
-  --surface-hover-strong:#243050;
+  --surface-page:#000000;
+  --surface-panel:#1d1d1f;
+  --surface-raised:#2c2c2e;
+  --surface-sunken:#000000;
+  --surface-overlay:rgba(0,0,0,.8);
+  /* 행 hover, 테이블 헤더, 코드 칩처럼 면보다 한 단계 도드라지는 자리. */
+  --surface-hover:#2c2c2e;
+  --surface-hover-strong:#3a3a3c;
 
   /* 글자 */
-  --text-primary:#E2E8F0;
-  --text-secondary:#B0BDD0;
-  --text-muted:#8892A8;
-  --text-faint:#727F94;
-  --text-on-accent:#080c16;
+  --text-primary:#f5f5f7;
+  --text-secondary:#d6d6d8;
+  --text-muted:#a1a1a6;
+  --text-faint:#86868b;
+  --text-on-accent:#ffffff;
 
   /* 선 */
-  --border-subtle:rgba(99,140,255,.1);
-  --border-strong:rgba(99,140,255,.22);
+  --border-subtle:rgba(255,255,255,.12);
+  --border-strong:rgba(255,255,255,.2);
 
   /* 컨트롤 */
-  --control-bg:#151d30;
-  --control-border:rgba(99,140,255,.1);
-  --control-border-focus:#638CFF;
-  --control-ring:rgba(99,140,255,.12);
+  --control-bg:#2c2c2e;
+  --control-border:rgba(255,255,255,.12);
+  --control-border-focus:#2997ff;
+  --control-ring:rgba(41,151,255,.25);
 
-  /* 상태 — accent와 별개다 */
-  --status-ok:#3FB950;
-  --status-warn:#D29922;
-  --status-error:#F85149;
-  --status-info:#58A6FF;
+  /* 상태 — accent와 별개다. 검정 위 대비: 10.4 / 10.2 / 6.2 / 7.0 */
+  --status-ok:#30d158;
+  --status-warn:#ff9f0a;
+  --status-error:#ff453a;
+  --status-info:#2997ff;
 }

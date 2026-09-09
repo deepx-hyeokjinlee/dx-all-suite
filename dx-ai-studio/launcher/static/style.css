@@ -1616,50 +1616,37 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 }
 
 /* ─── Apple 계열 레이어 ─────────────────────────────────
-   추정이 아니라 측정값이다. developer.apple.com 의 HIG(DocC JSON)와
-   apple.com · developer.apple.com 첫 화면의 computed style 을 직접 읽어서
-   맞췄다. 처음 기억으로 잡았던 값은 여러 군데가 틀렸다:
+   팔레트는 이제 shared/static/dx-semantic.css 한 곳에 있다. 여기 --ap-*
+   는 그 위의 별명일 뿐이고, 자체 값을 갖지 않는다 — 런처만 애플 톤이고
+   모듈은 남색이면 모듈을 열 때마다 톤이 튀기 때문이다. 토큰 이름이
+   그대로라 모듈 CSS 는 한 줄도 안 바뀌고 따라온다.
 
-     본문색   거의 검정으로 깔았지만 apple.com 의 본문은 그보다 한 단계
-              밝다 — 아래 --ap-body. 제일 어두운 값(--ap-ink)은 첫 화면
-              220 노드 중 5개, 제목에만 쓴다.
-     굵기     400/500/600/700 을 섞었는데 apple.com 첫 화면은 400 과 600
-              두 가지뿐이다(52 : 224).
-     radius   8·12·14 를 썼는데 실제로 제일 흔한 값은 5px 다. 큰 컨테이너만
-              18~28px, 버튼은 980px.
-     glass    0.72 로 잡았는데 실제 상단 바는 rgba(255,255,255,.8) 이다.
-     tracking 크기마다 다르다 — 12px 은 -0.01em, 17px 은 -0.022em, 21~24px 은
-              오히려 +0.01em. body 에 한 값을 걸면 전부 틀린다.
-     스케일   12 → 21 → 28 로 벌어진다. apple.com 첫 화면에는 13·15·16 이
-              아예 없다(12px 193개, 24px 72개, 56px 2개).
+   값의 출처는 apple.com / developer.apple.com 의 실제 computed style 이다:
+   본문색·크기별 굵기·크기별 트래킹·radius·easing·duration·그림자 없음·
+   hover/press/focus 변화량을 각각 재서 맞췄다.
 
    서체는 SF Pro 가 아니라 Inter 다 — SF Pro 라이선스는 Apple 플랫폼용 앱
    개발로 용도가 제한돼 있어 이 앱에 번들할 수 없다.
 
-   HIG 두 가지도 그대로 따랐다:
-     · Materials — Liquid Glass 는 컨트롤·내비게이션 레이어에만, 콘텐츠
-       레이어에는 standard material. 그래서 상단 바만 반투명이고 패널은
-       불투명하다.
-     · Color — "같은 색으로 서로 다른 뜻을 말하지 말 것". 파랑은 누를 수
-       있는 것에만 쓴다. 상태 패널의 포트 번호도 확인했는데 그건 진짜 <a>
-       라서(_setPortLabel) 파랑이 맞다 — 고칠 게 아니었다. */
+   HIG Materials 도 그대로 따른다: Liquid Glass 는 컨트롤·내비게이션
+   레이어에만, 콘텐츠 레이어에는 standard material. 그래서 상단 바만
+   반투명이고 그 아래 패널은 전부 불투명하다. */
 :root {
-  --ap-bg:          #f5f5f7;
-  --ap-panel:       #ffffff;
-  --ap-panel-2:     #fafafc;
-  --ap-ink:         #1d1d1f;   /* 제목 전용 */
-  --ap-body:        #333336;   /* 본문 — apple.com 의 지배적 텍스트 색 */
-  --ap-ink-2:       #6e6e73;
-  --ap-ink-3:       #86868b;
-  --ap-line:        rgba(0,0,0,.10);
-  --ap-line-soft:   rgba(0,0,0,.06);
-  --ap-blue:        #0071e3;
-  --ap-blue-hi:     #0077ed;
-  --ap-green:       #34c759;
-  --ap-glass:       rgba(255,255,255,.8);
+  --ap-bg:          var(--surface-page);
+  --ap-panel:       var(--surface-panel);
+  --ap-panel-2:     var(--surface-raised);
+  --ap-ink:         var(--text-primary);
+  --ap-body:        var(--text-secondary);
+  --ap-ink-2:       var(--text-muted);
+  --ap-ink-3:       var(--text-faint);
+  --ap-line:        var(--border-subtle);
+  --ap-line-soft:   var(--control-border);
+  --ap-blue:        var(--accent);
+  --ap-blue-hi:     var(--accent-light);
+  --ap-green:       var(--status-ok);
   --ap-shadow:      none;   /* 측정: 애플 첫 화면의 box-shadow 는 0건이다 */
-  --ap-fill:        rgba(0,0,0,.08);
-  --ap-on-blue:     #ffffff;
+  --ap-fill:        var(--accent-dim);
+  --ap-on-blue:     var(--text-on-accent);
 
   /* 측정된 스케일. 사이가 비어 있는 게 특징이다. */
   --ap-t-hero:      28px;
@@ -1673,46 +1660,18 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   --ap-r-pill:      980px;
 
   /* 측정: apple.com 의 지배 easing 은 cubic-bezier(.4,0,.6,1) (243건),
-     지속시간은 0.32s(263) · 0.24s(118) · 0.22s · 0.18s 순이다. 내가 쓰던
-     .12s / .15s ease 는 애플의 절반 속도였다. */
+     지속시간은 0.32s(263) · 0.24s(118) · 0.22s · 0.18s 순이다. */
   --ap-ease:        cubic-bezier(.4, 0, .6, 1);
   --ap-dur:         .24s;
   --ap-dur-lg:      .32s;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --ap-bg:        #000000;
-    --ap-panel:     #1d1d1f;
-    --ap-panel-2:   #2c2c2e;
-    --ap-ink:       #f5f5f7;
-    --ap-body:      #d6d6d8;
-    --ap-ink-2:     #a1a1a6;
-    --ap-ink-3:     #86868b;
-    --ap-line:      rgba(255,255,255,.12);
-    --ap-line-soft: rgba(255,255,255,.07);
-    --ap-blue:      #2997ff;
-    --ap-blue-hi:   #4aa8ff;
-    --ap-glass:     rgba(0,0,0,.8);
-    --ap-shadow:    none;
-    --ap-fill:      rgba(255,255,255,.10);
-  }
+
+/* 반투명 상단 바만 테마별 값이 필요하다 — 나머지는 semantic 이 이미 뒤집는다. */
+:root { --ap-glass: rgba(0,0,0,.8); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --ap-glass: rgba(255,255,255,.8); }
 }
-:root[data-theme="dark"] {
-  --ap-bg:        #000000;
-  --ap-panel:     #1d1d1f;
-  --ap-panel-2:   #2c2c2e;
-  --ap-ink:       #f5f5f7;
-  --ap-body:      #d6d6d8;
-  --ap-ink-2:     #a1a1a6;
-  --ap-ink-3:     #86868b;
-  --ap-line:      rgba(255,255,255,.12);
-  --ap-line-soft: rgba(255,255,255,.07);
-  --ap-blue:      #2997ff;
-  --ap-blue-hi:   #4aa8ff;
-  --ap-glass:     rgba(0,0,0,.8);
-  --ap-shadow:    none;
-  --ap-fill:      rgba(255,255,255,.10);
-}
+:root[data-theme="light"] { --ap-glass: rgba(255,255,255,.8); }
 
 /* 트래킹은 크기마다 다르다. body 에 한 값을 걸면 작은 글자가 전부 틀어진다. */
 .ap-t-hero  { font-size: var(--ap-t-hero);  letter-spacing: .004em; line-height: 1.14; }
@@ -1778,10 +1737,12 @@ body {
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: var(--sp-6);
   width: 100%;
-  /* 측정: apple.com 의 main 은 1440(full-bleed)이고 안쪽 컨테이너는
-     1024 / 980 이다. 배경은 가장자리까지 가되 읽는 것은 1024 로 묶는다 —
-     1240 은 애플보다 216px 넓었다. */
-  max-width: 1024px;
+  /* apple.com 의 1024 를 그대로 가져왔던 건 레퍼런스 오적용이었다. 그건
+     마케팅 페이지의 본문 단 폭이고, 여기는 앱 작업대다. HIG Layout 은
+     "콘텐츠를 화면/윈도우 가득 채우라"고 하고 macOS 앱은 실제로 윈도우를
+     채운다. 폭은 창이 정하고, 아주 넓은 화면에서만 행이 지나치게 길어지지
+     않도록 상한을 둔다. */
+  max-width: 1680px;
   margin: 0 auto;
   padding: var(--sp-6) var(--sp-5) var(--sp-4);
   box-sizing: border-box;
@@ -2141,7 +2102,7 @@ body {
 /* ── below the work surface ── */
 .ws-foot {
   width: 100%;
-  max-width: 1024px;
+  max-width: 1680px;
   margin: 0 auto;
   padding: var(--sp-5) var(--sp-5) 0;
   box-sizing: border-box;
