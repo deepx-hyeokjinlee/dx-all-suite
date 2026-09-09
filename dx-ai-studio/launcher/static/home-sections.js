@@ -74,7 +74,11 @@
       card.classList.toggle('is-up', alive);
       var line = card.querySelector('[data-role="state"]');
       if (line) {
-        line.textContent = _t(alive ? 'ready' : 'start');
+        /* "start →" 여덟 개는 행동 유도가 여덟 개라는 뜻이고, 그러면 아무것도
+           행동 유도가 아니다. 행에는 이미 chevron 이 있어 누를 수 있다는 걸
+           말한다. 그러니 기본값(꺼져 있음)은 아무 말도 하지 않고, 기본이
+           아닌 것 — 돌고 있는 것 — 만 말한다. */
+        line.textContent = alive ? _t('Running') : '';
         line.className = 'card-state' + (alive ? ' is-alive' : '');
       }
       if (alive) {
@@ -83,23 +87,22 @@
       }
     });
 
+    /* 0 은 셀 것이 없다는 뜻이라 세지 않는다. */
     var count = $('moduleUpCount');
     if (count) {
-      count.textContent = up.length + ' ' + _t('of') + ' 8 ' + _t('running');
+      count.textContent = up.length
+        ? up.length + ' ' + _t('of') + ' 8 ' + _t('running')
+        : '';
     }
 
     var list = $('wsRunning');
     if (!list) return;
+    /* 없음을 알리기 위해 패널 하나를 통째로 쓰지 않는다. 돌고 있는 것이
+       생기면 그때 나타난다. */
+    var panel = list.closest ? list.closest('.ws-panel') : null;
+    if (panel) panel.hidden = !up.length;
     list.innerHTML = '';
-    if (!up.length) {
-      var none = document.createElement('li');
-      none.className = 'is-none';
-      /* "Nothing running" is the state this app opens in, so say what to do
-         about it rather than reporting a failure. */
-      none.textContent = _t('nothing yet — pick a module');
-      list.appendChild(none);
-      return;
-    }
+    if (!up.length) return;
     up.forEach(function (name) {
       var li = document.createElement('li');
       li.textContent = name;
