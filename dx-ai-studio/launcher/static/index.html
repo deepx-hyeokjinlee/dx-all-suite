@@ -141,8 +141,15 @@
     <div class="workspace" id="workspace">
 
       <div class="ws-main" id="home">
-        <!-- One command line. The placeholder carries the claim the old
-             38px hero headline was carrying. -->
+        <!-- 두 가지 들어가는 길이 한 화면에 있다: 문장으로 시작하는 길과
+             도구를 직접 여는 길. 둘 중 하나를 지우는 건 제품 결정이고,
+             지금 필요한 건 둘이 서로 무엇인지 말하게 하는 것이다. 그래서
+             각각 이름과 한 줄을 갖는다 — 두 번째 줄의 "Or" 가 관계다. -->
+        <section class="ws-block">
+          <div class="ws-block-head">
+            <h2 data-i18n="Build">Build</h2>
+          </div>
+          <p class="ws-note" data-i18n="Describe what you want. The studio picks the module, model and pipeline — or the agent builds it.">Describe what you want. The studio picks the module, model and pipeline — or the agent builds it.</p>
         <form class="home-ask" id="homeAskForm" autocomplete="off">
           <svg class="ask-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
           <input class="ask-input" id="homeAsk" type="text"
@@ -157,6 +164,7 @@
           <button type="button" class="ask-chip" data-i18n="4-channel CCTV object detection">4-channel CCTV object detection</button>
           <button type="button" class="ask-chip" data-i18n="segment a video file">segment a video file</button>
         </div>
+        </section>
 
 
         <section class="home-answer" id="homeAnswer" hidden aria-live="polite">
@@ -230,8 +238,9 @@
         <section class="ws-block" id="studio">
           <div class="ws-block-head">
             <h2 data-i18n="Modules">Modules</h2>
-            <span class="ws-count" id="moduleUpCount">—</span>
+            <span class="ws-count" id="moduleUpCount"></span>
           </div>
+          <p class="ws-note" data-i18n="Or open a tool directly.">Or open a tool directly.</p>
           <div class="studio-grid" id="studioGrid">
             <div class="orbital-card" data-app="app" tabindex="0" role="button">
               <span class="orbital-status" id="orbStatusApp"></span>
@@ -621,6 +630,9 @@
     'the pipeline runtime': { ko:'파이프라인 런타임', ja:'パイプラインランタイム', es:'el runtime de pipelines', 'zh-CN':'流水线运行时', 'zh-TW':'管線執行環境' },
     'where models are trained': { ko:'모델을 학습하는 곳', ja:'モデルを学習する場所', es:'donde se entrenan los modelos', 'zh-CN':'训练模型的地方', 'zh-TW':'訓練模型的地方' },
     'pre- and post-processing': { ko:'전처리와 후처리', ja:'前処理と後処理', es:'pre y posprocesamiento', 'zh-CN':'前处理与后处理', 'zh-TW':'前處理與後處理' },
+    'Build': { ko:'만들기', ja:'つくる', es:'Crear', 'zh-CN':'构建', 'zh-TW':'建立' },
+    'Describe what you want. The studio picks the module, model and pipeline — or the agent builds it.': { ko:'원하는 걸 문장으로 쓰세요. 어떤 module 과 모델, pipeline 이 필요한지는 스튜디오가 고르고, 없으면 agent 가 만듭니다.', ja:'つくりたいものを文で書いてください。どの module・モデル・pipeline が要るかはスタジオが選び、無ければ agent がつくります。', es:'Describa lo que quiere. El estudio elige el módulo, el modelo y el pipeline, o el agente lo construye.', 'zh-CN':'用一句话描述你想要的。工作室会挑选 module、模型和 pipeline，没有的话由 agent 构建。', 'zh-TW':'用一句話描述你想要的。工作室會挑選 module、模型和 pipeline，沒有的話由 agent 建立。' },
+    'Or open a tool directly.': { ko:'또는 도구를 바로 엽니다.', ja:'または、ツールを直接開きます。', es:'O abra una herramienta directamente.', 'zh-CN':'或者直接打开工具。', 'zh-TW':'或者直接開啟工具。' },
     'Modules': { ko:'모듈', ja:'モジュール', es:'Módulos', 'zh-CN':'模块', 'zh-TW':'模組' },
     'Device': { ko:'장치', ja:'デバイス', es:'Dispositivo', 'zh-CN':'设备', 'zh-TW':'裝置' },
     'Running': { ko:'실행 중', ja:'実行中', es:'En ejecución', 'zh-CN':'运行中', 'zh-TW':'執行中' },

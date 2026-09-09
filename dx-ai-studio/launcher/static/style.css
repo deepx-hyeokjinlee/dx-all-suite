@@ -1785,7 +1785,9 @@ body {
   letter-spacing: -.008em; cursor: pointer;
 }
 .ask-go:hover { background: var(--ap-blue-hi); }
-.ask-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: calc(var(--sp-3) - var(--sp-5)); }
+/* form 과 chips 가 같은 section 안으로 들어가면서 .ws-main 의 gap 이
+   더는 사이에 끼지 않는다 — 그걸 상쇄하던 음수 margin 을 없앤다. */
+.ask-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-3); }
 .ask-chip {
   border: 0; border-radius: 980px;
   padding: 5px 12px; background: var(--ap-fill); color: var(--ap-ink-2);
@@ -1803,6 +1805,20 @@ body {
   letter-spacing: -.022em; text-transform: none; color: var(--ap-ink);
 }
 .ws-count { font-size: var(--ap-t-body); color: var(--ap-ink-3); margin-left: auto; }
+
+/* 섹션이 무엇을 위한 것인지 한 줄. 축소 다음에 이 줄을 다시 넣는 건
+   모순이 아니다 — 설명 없는 화면은 단순한 게 아니라 불투명한 것이고,
+   여기서 덜어낼 수 없는 건 두 입구의 관계다. */
+.ws-note {
+  margin: 0 0 var(--sp-3);
+  padding-inline: 4px;
+  max-width: 62ch;
+  font-size: var(--ap-t-body);
+  color: var(--ap-ink-2);
+  line-height: 1.45;
+}
+.ws-block-head { margin-bottom: 4px; }
+.ws-block-head + .ws-note { margin-bottom: var(--sp-3); }
 
 /* ── the path, as one line ── */
 .ws-flow { padding-top: var(--sp-2); }
