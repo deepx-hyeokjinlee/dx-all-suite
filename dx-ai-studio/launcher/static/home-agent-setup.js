@@ -51,7 +51,13 @@
 
   /* Model and effort belong to the agent, so both are rebuilt whenever the
      agent changes. Keeping the old model selected across a change would post
-     a model the new CLI has never heard of. */
+     a model the new CLI has never heard of.
+
+     The two lists come from different places on purpose. Effort levels are
+     configuration and /status carries them. The model list is NOT — /status
+     reports the static table in agents_config, while /models?agent=X asks the
+     CLI itself. For cursor that is the difference between 4 models and 223.
+     So the static list paints immediately and the real one replaces it. */
   function _selectAgent(name) {
     var a = _byName(name);
     if (!a) return;
@@ -59,6 +65,30 @@
     _fill($('setupModel'), a.models || [], a.default_model);
     _fill($('setupEffort'), a.reasoning_efforts || [], a.default_effort);
     _paintAuth(a);
+    _loadModels(name, a.default_model);
+  }
+
+  var _modelCache = {};
+
+  function _loadModels(name, fallbackDefault) {
+    if (_modelCache[name]) { _paintModels(name, _modelCache[name], fallbackDefault); return; }
+    fetch(API + '/models?agent=' + encodeURIComponent(name))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.models || !d.models.length) return;
+        _modelCache[name] = d;
+        /* The agent may have changed while the CLI was being asked. */
+        if (_current && _current.name === name) {
+          _paintModels(name, d, fallbackDefault);
+        }
+      })
+      .catch(function () { /* the static list is already on screen */ });
+  }
+
+  function _paintModels(name, d, fallbackDefault) {
+    _fill($('setupModel'), d.models, d.default_model || fallbackDefault);
+    var note = $('setupModelCount');
+    if (note) note.textContent = d.models.length + ' ' + _t('models');
   }
 
   function _paintAuth(a) {

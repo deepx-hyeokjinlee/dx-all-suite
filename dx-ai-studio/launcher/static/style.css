@@ -1839,6 +1839,8 @@ body {
 .setup-auth.is-ok { color: var(--ap-green); }
 .setup-auth.is-ok::before { background: var(--ap-green); }
 .setup-auth.is-off { color: var(--ap-ink-2); }
+.setup-count { font-size: var(--ap-t-body); color: var(--ap-ink-3); }
+.setup-count:empty { display: none; }
 .setup-hint { font-size: var(--ap-t-body); color: var(--ap-ink-2); }
 .setup-hint code {
   font-family: var(--mono); font-size: var(--ap-t-body);

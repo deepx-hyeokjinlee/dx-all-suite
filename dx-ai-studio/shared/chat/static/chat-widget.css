@@ -2,25 +2,28 @@
    DX Chat Widget — Shared Chat UI Component
    ═══════════════════════════════════════════════════════ */
 
+/* 이 위젯은 자기만의 보라 팔레트를 들고 있어서, 스튜디오가 어떤
+   테마든 상관없이 화면 오른쪽 아래에 보라색 원으로 떠 있었다. 이름은 그대로
+   두고 값만 semantic 토큰 위로 올린다 — 그러면 light/dark 도 함께 따라온다. */
 :root {
-  --chat-bg: #1e1e2e;
-  --chat-surface: #282840;
-  --chat-border: #3a3a5c;
-  --chat-text: #e0e0e8;
-  --chat-text-muted: #9090a8;
-  --chat-primary: #7c3aed;
-  --chat-primary-hover: #6d28d9;
-  --chat-user-bg: #7c3aed;
-  --chat-user-text: #fff;
-  --chat-ai-bg: #2a2a44;
-  --chat-ai-text: #e0e0e8;
-  --chat-input-bg: #2a2a44;
-  --chat-input-border: #3a3a5c;
-  --chat-banner-bg: #3b2e1e;
-  --chat-banner-border: #d97706;
-  --chat-banner-text: #fbbf24;
-  --chat-code-bg: #1a1a2e;
-  --chat-shadow: 0 8px 32px rgba(0,0,0,.4);
+  --chat-bg: var(--surface-panel);
+  --chat-surface: var(--surface-raised);
+  --chat-border: var(--border-subtle);
+  --chat-text: var(--text-primary);
+  --chat-text-muted: var(--text-muted);
+  --chat-primary: var(--accent);
+  --chat-primary-hover: var(--accent-light);
+  --chat-user-bg: var(--accent);
+  --chat-user-text: var(--text-on-accent);
+  --chat-ai-bg: var(--surface-raised);
+  --chat-ai-text: var(--text-primary);
+  --chat-input-bg: var(--control-bg);
+  --chat-input-border: var(--control-border);
+  --chat-banner-bg: var(--surface-raised);
+  --chat-banner-border: var(--status-warn);
+  --chat-banner-text: var(--status-warn);
+  --chat-code-bg: var(--surface-sunken);
+  --chat-shadow: var(--shadow);
 }
 
 /* ── FAB Button ─────────────────────────────────────── */

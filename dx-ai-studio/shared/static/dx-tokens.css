@@ -1,11 +1,16 @@
-/* Shared DeepX dark design tokens. (Legacy aliases removed — use canonical names.) */
+/* Shared DeepX dark design tokens. (Legacy aliases removed — use canonical names.)
+
+   --gradient-accent was still the old blue→purple ramp here. The light theme
+   had been moved to the Apple palette and this one had not, so in dark every
+   primary button in dx_modelzoo, dx_compiler and dx_planner stayed purple.
+   --app-accent and --npu were the same leftover. */
 :root{
   color-scheme:dark;
   --border-accent:var(--accent);
   --accent:#2997ff;--accent-light:#4aa8ff;--accent-dim:rgba(41,151,255,.16);--accent-glow:rgba(41,151,255,.28);--accent-strong:#5e5ce6;
-  --app-accent:#7C5CFC;
-  --gradient-accent:linear-gradient(135deg,#638CFF,#7C5CFC);
-    --npu:#8b5cf6;
+  --app-accent:#2997ff;
+  --gradient-accent:linear-gradient(135deg,#2997ff,#5e5ce6);
+    --npu:#5e5ce6;
     --radius-xs:4px;--radius-sm:6px;--radius:8px;--radius-lg:12px;--radius-xl:16px;--radius-pill:999px;
   --shadow:0 4px 24px rgba(0,0,0,.4);--shadow-lg:0 8px 40px rgba(0,0,0,.5);--shadow-sm:0 2px 12px rgba(0,0,0,.25);--shadow-xl:0 24px 80px rgba(0,0,0,.6);
   --glow-accent:0 0 20px var(--accent-glow);
