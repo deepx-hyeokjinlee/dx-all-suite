@@ -859,6 +859,9 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 
 /* ── Overlay ── */
 .splash-overlay {
+  --panel-w: clamp(258px, 42vw, 516px);
+  --panel-h: calc(var(--panel-w) * 318 / 600);
+  --shift: calc((var(--panel-h) + var(--sp-6)) / 2);
   /* 인트로. 문법은 launcher-splash.js 의 주석에 적어 뒀다 — 요약하면
      피사체 하나, 검은 여백, 카메라 한 번, 마지막에 타입, 그리고 움직이는
      것은 transform 과 opacity 뿐.
@@ -1053,6 +1056,51 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   transition: opacity .55s var(--ap-ease),
               transform .55s cubic-bezier(.16, .84, .24, 1);
 }
+
+/* 장면. 애플의 context shot 은 제품이 실제로 쓰이는 세상을 보여주는 컷이고,
+   이 회사가 파는 것은 physical AI 다 — 그러면 인트로에 세상이 없을 이유가 없다.
+   레포에 이미 회사가 쓰는 실제 이미지가 있다: 엣지에서 도는 보안 카메라,
+   비전으로 움직이는 창고 로봇, 그리고 그 모델들이 올라가는 DX-M1 다이.
+   실리콘으로 닫는 건 의도적이다 — 앞의 두 세상이 이것 위에서 돈다.
+
+   세 장은 처음부터 DOM 에 있고 opacity 로만 바뀐다. src 를 갈아끼우면 박자
+   중간에 디코드가 걸린다. */
+.cue-scene {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + var(--sp-5));
+  width: var(--panel-w);
+  aspect-ratio: 600 / 318;
+  border-radius: var(--ap-r-lg);
+  overflow: hidden;
+  transform: translateX(-50%);
+}
+.cue-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .5s var(--ap-ease);
+}
+.mark-cue[data-beat="0"] .cue-shot[data-beat="0"],
+.mark-cue[data-beat="1"] .cue-shot[data-beat="1"],
+.mark-cue[data-beat="2"] .cue-shot[data-beat="2"] { opacity: 1; }
+
+/* 세상이 들어올 자리를 마크가 내준다. 자리를 미리 비워 두면 hero 프레임에 빈
+   구멍이 생기므로, 레이아웃이 아니라 transform 으로 물러난다.
+
+   비켜 주는 양은 상수로 박을 수 없다 — 패널이 뷰포트 너비를 따라 커지므로
+   1440 에서 맞춘 픽셀은 390 에서 틀린다. 패널 높이에서 끌어내면 두 곳 다 맞는다:
+   마크가 절반만큼 올라가고 슬롯이 그만큼 내려오면 무리가 가운데 남는다. */
+.splash-overlay.is-working .mark {
+  transform: translateY(calc(-1 * var(--shift))) scale(.46);
+}
+.splash-overlay.is-working .mark-slot {
+  transform: translateY(calc(var(--shift) * .56));
+}
+.splash-overlay.is-working .mark-floor { opacity: 0; }
 
 /* 요청. 사람이 치는 문장이라 왼쪽 정렬된 한 줄이고, 캐럿이 그걸 말해 준다. */
 .cue-line {

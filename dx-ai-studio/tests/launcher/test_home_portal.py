@@ -476,6 +476,51 @@ def test_the_working_beat_shows_the_product_rather_than_claiming_it():
         assert ">" + by + "<" in html, f"{by!r} is not a module the home lists"
 
 
+def test_the_working_beat_is_drawn_rather_than_photographed():
+    """The scenes are ours, and they are regenerable.
+
+    The stock photography in the repo is a mixed bag — different colour casts,
+    AI overlays already baked in, and one file whose name says smart mobility
+    while the picture is a cafe. Dropped onto a black stage they read as a
+    brochure rather than an intro, so the three scenes are drawn instead: four
+    detection channels, a segmented street, and the die everything compiles
+    down to. Vector, so they stay sharp at any size and weigh almost nothing,
+    and drawn from the same palette as the stage.
+
+    Drawn assets rot differently from photographs: the day someone wants the
+    accent changed, an SVG nobody can regenerate is worse than a JPEG. So the
+    generator ships with them, and this pins that it does.
+
+    It also pins the boundary that was crossed once already: replacing the
+    photo paths matched the About section's use-case images too, and quietly
+    swapped them for intro scenes.
+    """
+    scenes = ROOT / "launcher" / "static" / "img" / "intro"
+    names = ["scene-detect.svg", "scene-segment.svg", "scene-silicon.svg"]
+    for n in names:
+        f = scenes / n
+        assert f.exists(), f"{n} is missing"
+        assert f.read_text(encoding="utf-8").lstrip().startswith("<svg"), f"{n} is not an SVG"
+
+    gen = ROOT / "scripts" / "intro" / "make_scenes.py"
+    assert gen.exists(), "the scenes cannot be regenerated"
+    src = gen.read_text(encoding="utf-8")
+    for n in names:
+        assert n.replace(".svg", "") in src, f"{n} is not produced by the generator"
+
+    html = index()
+    splash = html[html.index('id="splashOverlay"'):html.index("</header>")]
+    for n in names:
+        assert n in splash, f"{n} is not used by the intro"
+    # The About section keeps its own photographs.
+    about = html[html.index("</header>"):]
+    assert "img/intro/scene-" not in about, (
+        "an intro scene leaked into the page; the photo swap matched outside the splash"
+    )
+    for photo in ("usecase-smart-factory-agv-robot.jpg", "usecase-security-cctv-ip-camera.jpg"):
+        assert photo in about, f"About lost {photo}"
+
+
 def test_the_name_and_the_console_share_one_slot():
     """Two things in one place, and neither may inherit the other's delay.
 

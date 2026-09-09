@@ -43,9 +43,9 @@
   var _TYPE_MS = 900;
   var _BEAT = 1950;
   var _WORK = [
-    { ask: '4-channel CCTV, detect people, 30 FPS', by: 'Stream' },
-    { ask: 'compile yolo26n to DXNN',              by: 'Compiler' },
-    { ask: 'pose estimation on webcam',            by: 'App' }
+    { ask: '4-channel CCTV object detection', by: 'Stream' },
+    { ask: 'segment a video file',            by: 'App' },
+    { ask: 'compile yolo26n to DXNN',         by: 'Compiler' }
   ];
   /* hero 의 부제("AI Studio")는 CSS 가 1.9s 에 띄운다. work 는 그게 자리를
      잡고 한 박자 쉰 다음에 시작해야 한다 — 처음엔 2.8s 로 잡았더니 부제가
@@ -73,13 +73,14 @@
   }
 
   /* 한 박자: 요청이 타이핑되고, 스튜디오가 답하고, 둘 다 물러난다. */
-  function _beat(item, at) {
+  function _beat(item, index, at) {
     var cue = document.getElementById('splashCue');
     var text = document.getElementById('splashCueText');
     var answer = document.getElementById('splashCueAnswer');
     if (!cue || !text || !answer) return;
     _later(function () {
       cue.classList.remove('is-answered', 'is-out');
+      cue.setAttribute('data-beat', String(index));
       answer.textContent = item.by;
       _type(text, _t(item.ask));
     }, at);
@@ -120,7 +121,7 @@
         /* 2. work — 이름이 물러나고 그 자리에서 제품이 일한다. */
         _later(function () { if (overlay) overlay.classList.add('is-working'); }, _WORK_IN - 400);
         for (var i = 0; i < _WORK.length; i++) {
-          _beat(_WORK[i], _WORK_IN + _BEAT * i);
+          _beat(_WORK[i], i, _WORK_IN + _BEAT * i);
         }
 
         /* 3. close — 프롬프트가 걷히고 마크가 이름과 함께 남는다. */
@@ -204,6 +205,11 @@
       '<div class="mark-slot">' +
         '<p class="mark-sub" id="splashSubtitle">AI Studio</p>' +
       '<div class="mark-cue" id="splashCue" aria-hidden="true">' +
+        '<div class="cue-scene" aria-hidden="true">' +
+          '<img class="cue-shot" data-beat="0" src="/static/img/intro/scene-detect.svg" alt="Four camera channels with people and vehicles boxed as they are detected">' +
+          '<img class="cue-shot" data-beat="1" src="/static/img/intro/scene-segment.svg" alt="A street segmented into road, vehicle, person and vegetation classes">' +
+          '<img class="cue-shot" data-beat="2" src="/static/img/intro/scene-silicon.svg" alt="The DX-M1 die the models are compiled down to">' +
+        '</div>' +
         '<span class="cue-line"><span class="cue-text" id="splashCueText"></span>' +
         '<i class="cue-caret"></i></span>' +
         '<span class="cue-answer" id="splashCueAnswer"></span>' +
