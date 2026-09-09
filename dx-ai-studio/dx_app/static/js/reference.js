@@ -132,7 +132,7 @@ return [
     '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>Runtime library dependencies</td><td>✅</td><td></td></tr>'+
     '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS kernel module installation</td><td>✅</td><td>Reboot recommended</td></tr></table>'+
     '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN compilation is in the Launcher <strong>Compiler</strong> module (not on this Setup page).</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Use the <strong>Run All</strong> button to run all steps at once. Already completed steps are shown with <span style="color:#3fb950">✅</span>.</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Use the <strong>Run All</strong> button to run all steps at once. Already completed steps are shown with <span style="color:#30d158">✅</span>.</span></div>',
     '<h4>단계별 상세</h4>'+
     '<table class="ref-tbl"><tr><th>단계</th><th>설명</th><th>sudo</th><th>비고</th></tr>'+
     '<tr><td><strong>① DX-APP Dependencies</strong></td><td>cmake, gcc, ninja, OpenCV 등 빌드 도구 설치</td><td>✅</td><td>apt 기반</td></tr>'+
@@ -141,7 +141,7 @@ return [
     '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>런타임 라이브러리 의존성</td><td>✅</td><td></td></tr>'+
     '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS 커널 모듈 설치</td><td>✅</td><td>재부팅 권장</td></tr></table>'+
     '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN 컴파일은 Launcher <strong>Compiler</strong> 모듈에서 수행합니다 (Setup 페이지 아님).</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span><strong>Run All</strong> 버튼으로 전체 단계를 한 번에 실행할 수 있습니다. 이미 완료된 단계는 <span style="color:#3fb950">✅</span> 상태로 표시됩니다.</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span><strong>Run All</strong> 버튼으로 전체 단계를 한 번에 실행할 수 있습니다. 이미 완료된 단계는 <span style="color:#30d158">✅</span> 상태로 표시됩니다.</span></div>',
     '<h4>ステップ詳細</h4>'+
     '<table class="ref-tbl"><tr><th>ステップ</th><th>説明</th><th>sudo</th><th>備考</th></tr>'+
     '<tr><td><strong>① DX-APP Dependencies</strong></td><td>cmake, gcc, ninja, OpenCV などビルドツールのインストール</td><td>✅</td><td>apt ベース</td></tr>'+
@@ -150,7 +150,7 @@ return [
     '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>ランタイムライブラリの依存関係</td><td>✅</td><td></td></tr>'+
     '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS カーネルモジュールのインストール</td><td>✅</td><td>再起動推奨</td></tr></table>'+
     '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN コンパイルは Launcher の <strong>Compiler</strong> モジュールで行います (Setup ページではありません)。</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span><strong>Run All</strong> ボタンで全ステップを一括実行できます。完了済みのステップは <span style="color:#3fb950">✅</span> で表示されます。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span><strong>Run All</strong> ボタンで全ステップを一括実行できます。完了済みのステップは <span style="color:#30d158">✅</span> で表示されます。</span></div>',
     '<h4>步骤详情</h4>'+
     '<table class="ref-tbl"><tr><th>步骤</th><th>说明</th><th>sudo</th><th>备注</th></tr>'+
     '<tr><td><strong>① DX-APP Dependencies</strong></td><td>安装构建工具：cmake、gcc、ninja、OpenCV 等</td><td>✅</td><td>基于 apt</td></tr>'+
@@ -159,7 +159,7 @@ return [
     '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>运行时库依赖</td><td>✅</td><td></td></tr>'+
     '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS 内核模块安装</td><td>✅</td><td>建议重启</td></tr></table>'+
     '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN 编译在 Launcher <strong>Compiler</strong> 模块中进行（不在 Setup 页面）。</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>使用 <strong>Run All</strong> 按钮可一次性运行所有步骤。已完成的步骤显示为 <span style="color:#3fb950">✅</span>。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>使用 <strong>Run All</strong> 按钮可一次性运行所有步骤。已完成的步骤显示为 <span style="color:#30d158">✅</span>。</span></div>',
     '<h4>步驟詳情</h4>'+
     '<table class="ref-tbl"><tr><th>步驟</th><th>說明</th><th>sudo</th><th>備註</th></tr>'+
     '<tr><td><strong>① DX-APP Dependencies</strong></td><td>安裝建構工具：cmake、gcc、ninja、OpenCV 等</td><td>✅</td><td>基於 apt</td></tr>'+
@@ -168,7 +168,7 @@ return [
     '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>執行時期程式庫依賴</td><td>✅</td><td></td></tr>'+
     '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS 核心模組安裝</td><td>✅</td><td>建議重新啟動</td></tr></table>'+
     '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN 編譯在 Launcher <strong>Compiler</strong> 模組中進行（不在 Setup 頁面）。</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>使用 <strong>Run All</strong> 按鈕可一次執行所有步驟。已完成的步驟顯示為 <span style="color:#3fb950">✅</span>。</span></div>'),
+    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>使用 <strong>Run All</strong> 按鈕可一次執行所有步驟。已完成的步驟顯示為 <span style="color:#30d158">✅</span>。</span></div>'),
   tips:refT5('<h4>Troubleshooting</h4>'+
     '<ul><li><strong>Build failure</strong> — Try a clean build with <code>build.sh --clean</code></li>'+
     '<li><strong>NPU driver load failure</strong> — Check driver load with <code>lsmod | grep dxnpu</code>, then check errors with <code>dmesg</code></li>'+

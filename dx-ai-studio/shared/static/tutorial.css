@@ -4,14 +4,14 @@
 
 /* ─── Variables ─── */
 :root {
-  --dxt-accent: var(--accent, #638CFF);
-  --dxt-accent-dim: var(--accent-dim, rgba(99,140,255,.14));
-  --dxt-bg: var(--surface-panel, #0e1525);
-  --dxt-bg2: var(--control-bg, #151d30);
+  --dxt-accent: var(--accent, var(--accent));
+  --dxt-accent-dim: var(--accent-dim, rgba(var(--accent-rgb),.14));
+  --dxt-bg: var(--surface-panel, var(--surface-panel));
+  --dxt-bg2: var(--control-bg, var(--control-bg));
   --dxt-bg3: var(--surface-hover, #1c2640);
-  --dxt-text: var(--text-primary, #E2E8F0);
+  --dxt-text: var(--text-primary, var(--text-primary));
   --dxt-text-dim: var(--text-muted, #8892A8);
-  --dxt-border: var(--border-subtle, rgba(99,140,255,.1));
+  --dxt-border: var(--border-subtle, rgba(var(--accent-rgb),.1));
   --dxt-success: var(--status-ok, #3FB950);
   --dxt-warn: var(--status-warn, #D29922);
   --dxt-radius: var(--radius, 8px);
@@ -630,7 +630,7 @@ dialog.dxt-tutorial-dialog {
   margin: auto;
   max-width: min(720px, 92vw);
   max-height: 85vh;
-  border: 1.5px solid var(--dxt-accent, #638CFF);
+  border: 1.5px solid var(--dxt-accent, var(--accent));
 }
 dialog.dxt-tutorial-dialog::backdrop {
   background: rgba(0, 0, 0, .55);
@@ -668,7 +668,7 @@ body:has(.sidebar.collapsed) .mz-cart-bar.dxt-tutorial-pin {
   top: 100%;
   right: 0;
   min-width: 180px;
-  background: var(--surface-page, #080c16);
+  background: var(--surface-page, var(--surface-page));
   border: 1px solid var(--border-subtle, #333);
   border-radius: var(--radius-sm);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -681,12 +681,12 @@ body:has(.sidebar.collapsed) .mz-cart-bar.dxt-tutorial-pin {
   padding: 8px 14px;
   cursor: pointer;
   font-size: var(--fs-base);
-  color: var(--text-primary, #E2E8F0);
+  color: var(--text-primary, var(--text-primary));
   white-space: nowrap;
 }
 
 .tutorial-menu-item:hover {
-  background: var(--surface-panel, #0e1525);
+  background: var(--surface-panel, var(--surface-panel));
 }
 
 /* ─── (Help Panel removed — strict badge mode) ─── */

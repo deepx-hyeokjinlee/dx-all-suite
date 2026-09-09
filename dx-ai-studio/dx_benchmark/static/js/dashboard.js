@@ -7,14 +7,14 @@ function _cc() {
   return {
     text:    '#B0BDD0',
     dim:     '#8892A8',
-    strong:  '#E2E8F0',
-    emph:    '#E2E8F0',
+    strong:  '#f5f5f7',
+    emph:    '#f5f5f7',
     noData:  '#8892A8',
     grid:    'rgba(255,255,255,0.06)',
     axes:    'rgba(255,255,255,0.15)',
     outline: 'rgba(0,0,0,0.7)',
-    sel:     'rgba(99,140,255,0.12)',
-    selBdr:  'rgba(99,140,255,0.7)'
+    sel:     'rgba(41,151,255,0.12)',
+    selBdr:  'rgba(41,151,255,0.7)'
   };
 }
 

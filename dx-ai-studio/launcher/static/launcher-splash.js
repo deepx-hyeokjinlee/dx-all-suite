@@ -351,7 +351,9 @@
 
         ctx.beginPath();
         ctx.arc(p.x + offsetX, p.y + offsetY, p.size / 2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(99, 140, 255, ' + opacity + ')';
+        /* 인트로 전용 글로우. CSS 쪽 --brand-glow-rgb 와 같은 값이어야 한다 —
+           이 화면은 검은 바탕에 고정이라 테마를 따르는 accent 를 쓰지 않는다. */
+        ctx.fillStyle = 'rgba(99,140,255, ' + opacity + ')';
         ctx.fill();
       });
 

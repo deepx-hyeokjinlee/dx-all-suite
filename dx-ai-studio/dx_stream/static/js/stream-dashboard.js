@@ -129,7 +129,7 @@ function _updatePerfTable(data) {
     _updatePerfAggregates('fps', DXStream._perfHistory.fps, '');
     _updatePerfAggregates('npu', DXStream._perfHistory.npu, '%');
 
-    _drawSparkline('chart-fps', DXStream._perfHistory.fps, 0, 60, '#3FB950');
+    _drawSparkline('chart-fps', DXStream._perfHistory.fps, 0, 60, '#30d158');
     _drawSparkline('chart-npu', DXStream._perfHistory.npu, 0, 100, '#8b5cf6');
 }
 

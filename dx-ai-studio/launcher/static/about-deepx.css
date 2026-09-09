@@ -10,7 +10,7 @@
   --about-card-bg: var(--surface-raised);
   --about-card-border: var(--border-subtle);
   --about-accent: var(--accent);
-  --about-accent-glow: rgba(99,140,255,0.15);
+  --about-accent-glow: rgba(var(--accent-rgb),0.15);
   --about-accent-strong: var(--accent-strong);
   --about-divider: var(--border-subtle);
   --about-hero-grad-1: #1a0533;

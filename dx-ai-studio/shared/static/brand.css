@@ -1,5 +1,5 @@
 .dx-brand {
-  --dx-brand-accent: var(--accent, #638cff);
+  --dx-brand-accent: var(--accent, var(--accent));
   display: inline-flex;
   align-items: center;
   gap: 9px;

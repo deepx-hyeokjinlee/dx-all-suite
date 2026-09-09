@@ -574,7 +574,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 
 .setup-panel.highlight {
   border-color: var(--accent);
-  box-shadow: 0 0 8px rgba(99, 140, 255, 0.3);
+  box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.3);
 }
 
 .setup-header {
@@ -799,7 +799,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 .agentic-compile #agentic-effort-select {
   width: 100%; box-sizing: border-box; margin-top: 0.3rem;
   padding: 0.6rem 0.8rem; border: 1px solid var(--border-subtle);
-  border-radius: var(--radius); background: var(--surface-panel, #0e1525);
+  border-radius: var(--radius); background: var(--surface-panel, var(--surface-panel));
   color: var(--text-primary); font-size: var(--fs-base);
 }
 .agentic-compile #agentic-model-input:focus,

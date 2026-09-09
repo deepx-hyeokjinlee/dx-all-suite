@@ -40,7 +40,7 @@ h2{font-size:var(--fs-md);margin:16px 0 10px;font-weight:600;color:var(--text-mu
 .stat-icon{font-size:28px;flex-shrink:0}
 .stat-info{flex:1;min-width:0}
 .stat-label{font-size:var(--fs-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px}
-.stat-value{font-size:22px;font-weight:700;color:var(--accent);text-shadow:0 0 12px rgba(99,140,255,.2);margin-top:2px}
+.stat-value{font-size:22px;font-weight:700;color:var(--accent);text-shadow:0 0 12px rgba(var(--accent-rgb),.2);margin-top:2px}
 /* ═══════════════════════════════════════════════════════════════════
    Buttons — base/hover/active/disabled/ghost/sm in shared/dx-components.css
    ═══════════════════════════════════════════════════════════════════ */
@@ -222,7 +222,7 @@ tbody tr:hover td{background:var(--surface-hover)}
 .card-grid .card-icon{font-size:22px;margin-bottom:6px}
 .card-grid .card-title{font-size:var(--fs-base);font-weight:600;margin-bottom:2px}
 .card-grid .card-desc{font-size:var(--fs-xs)}
-.card-grid .card-badge{display:inline-block;padding:2px 6px;border-radius:var(--radius-xs);font-size:var(--fs-2xs);font-weight:600;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(99,140,255,.15);margin-top:6px}
+.card-grid .card-badge{display:inline-block;padding:2px 6px;border-radius:var(--radius-xs);font-size:var(--fs-2xs);font-weight:600;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(var(--accent-rgb),.15);margin-top:6px}
 .card-grid .card-body{flex:1;min-width:0}
 .card-grid .card .btn{font-size:var(--fs-xs);padding:4px 10px}
 
@@ -287,7 +287,7 @@ html[lang="zh-TW"] .zh-CN, .lang-zh-TW .zh-CN{display:none!important}
 .confirm-modal .modal-body{padding:10px 20px 16px}
 .confirm-modal .modal-body p{margin:0;font-size:var(--fs-base);color:var(--text-secondary);line-height:1.5}
 .confirm-modal .modal-body input{margin-top:4px;font-size:var(--fs-base);padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border-subtle);background:var(--surface-panel);color:var(--text-primary);outline:none;transition:border .15s}
-.confirm-modal .modal-body input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(99,140,255,.15)}
+.confirm-modal .modal-body input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(var(--accent-rgb),.15)}
 .confirm-modal .modal-footer{display:flex;justify-content:flex-end;gap:var(--sp-2);padding:0 20px 16px}
 
 /* ═══ Empty State ═══ */
@@ -303,7 +303,7 @@ html[lang="zh-TW"] .zh-CN, .lang-zh-TW .zh-CN{display:none!important}
 .perf-chart-wrap canvas{width:100%;height:100%;border-radius:var(--radius-xs);background:rgba(255,255,255,.02)}
 
 /* ═══ Property Panel Type Hint ═══ */
-.prop-type-hint{display:inline-block;margin-left:4px;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:600;background:rgba(99,140,255,.12);color:var(--accent);vertical-align:middle}
+.prop-type-hint{display:inline-block;margin-left:4px;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:600;background:rgba(var(--accent-rgb),.12);color:var(--accent);vertical-align:middle}
 
 /* Advisory diagnostics do not block runtime readiness, but remain visible. */
 .diag-card-warn{border-color:rgba(var(--warning-rgb),.45);background:rgba(var(--warning-rgb),.08)}
@@ -382,15 +382,15 @@ html[lang="zh-TW"] .zh-CN, .lang-zh-TW .zh-CN{display:none!important}
 #custom-build-log{max-height:300px;overflow-y:auto}
 
 /* ═══ Reference Page v2 ═══ */
-.chip:hover{border-color:var(--accent);color:var(--accent);background:rgba(99,140,255,.04)}
-.chip.active{background:var(--accent);color:var(--surface-page);border-color:var(--accent);font-weight:600;box-shadow:0 0 12px rgba(99,140,255,.2)}
+.chip:hover{border-color:var(--accent);color:var(--accent);background:rgba(var(--accent-rgb),.04)}
+.chip.active{background:var(--accent);color:var(--surface-page);border-color:var(--accent);font-weight:600;box-shadow:0 0 12px rgba(var(--accent-rgb),.2)}
 #page-reference.active{display:flex;flex-direction:column;min-height:calc(100vh - 120px)}
 /* ── Card grid ── */
 .ref-search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
 
 .ref-cat:first-child{margin-top:0}
 .ref-topic-card:hover{border-color:var(--border-strong);transform:translateY(-2px);box-shadow:var(--surface-hover-shadow)}
-.ref-topic-card.active{border-color:var(--accent);background:linear-gradient(145deg,rgba(99,140,255,.12),var(--control-bg));box-shadow:0 0 0 1px rgba(99,140,255,.16)}
+.ref-topic-card.active{border-color:var(--accent);background:linear-gradient(145deg,rgba(var(--accent-rgb),.12),var(--control-bg));box-shadow:0 0 0 1px rgba(var(--accent-rgb),.16)}
 /* ── Inline expand panel ── */
 .ref-expand-close:hover{border-color:var(--accent);color:var(--accent)}
 
@@ -403,7 +403,7 @@ html[lang="zh-TW"] .zh-CN, .lang-zh-TW .zh-CN{display:none!important}
 .ref-detail-hd p{margin:0;color:var(--text-muted);font-size:var(--fs-base);line-height:1.5}
 
 /* Tabs inside sections */
-.ref-tab:hover{color:var(--text-primary);background:rgba(99,140,255,.05)}
+.ref-tab:hover{color:var(--text-primary);background:rgba(var(--accent-rgb),.05)}
 .ref-tab.active{color:var(--accent-light);background:var(--accent-dim);font-weight:600}
 .ref-tab-content.active{display:block}
 .ref-tab-content h4{font-size:var(--fs-md);color:var(--text-primary);margin-bottom:10px}
@@ -423,7 +423,7 @@ html[lang="zh-TW"] .zh-CN, .lang-zh-TW .zh-CN{display:none!important}
   font-weight:600;border-bottom:1px solid var(--border-subtle);
 }
 .ref-tbl td{padding:8px 12px;border-bottom:1px solid var(--border-subtle);color:var(--text-secondary)}
-.ref-tbl tr:hover td{background:rgba(99,140,255,.03)}
+.ref-tbl tr:hover td{background:rgba(var(--accent-rgb),.03)}
 /* Setup progress bar */
 .progress-bar{position:relative;height:20px;background:var(--control-bg);border-radius:var(--radius);overflow:hidden;margin:8px 0}
 .progress-fill{height:100%;background:var(--accent);border-radius:var(--radius);transition:width .3s}

@@ -878,7 +878,7 @@ function _buildModelCardHtml(m, imgDataUrl) {
       : '';
 
   const preview = imgDataUrl
-    ? '<h2>' + e(T('Preview')) + '</h2><img src="' + imgDataUrl + '" alt="' + e(title) + '" style="display:block;max-width:100%;margin:0 auto 8px;border-radius:10px;border:1px solid rgba(99,140,255,.18)">'
+    ? '<h2>' + e(T('Preview')) + '</h2><img src="' + imgDataUrl + '" alt="' + e(title) + '" style="display:block;max-width:100%;margin:0 auto 8px;border-radius:10px;border:1px solid rgba(41,151,255,.18)">'
     : '';
   let exportedAt = '';
   try { exportedAt = new Date().toLocaleString(lang); } catch (_) { exportedAt = ''; }
@@ -886,14 +886,14 @@ function _buildModelCardHtml(m, imgDataUrl) {
   return '<!doctype html><html lang="' + e(lang) + '"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width,initial-scale=1">'
     + '<title>' + e(title) + ' — DEEPX Model Card</title><style>'
-    + 'body{margin:0;background:#080c16;color:#E2E8F0;font:14px/1.6 Inter,system-ui,-apple-system,sans-serif;padding:32px}'
+    + 'body{margin:0;background:#000000;color:#f5f5f7;font:14px/1.6 Inter,system-ui,-apple-system,sans-serif;padding:32px}'
     + '.wrap{max-width:860px;margin:0 auto}h1{font-size:28px;margin:0 0 4px}'
-    + '.cat{color:#8AACFF;font-size:13px}.sum{color:#B0BDD0;margin:12px 0 24px}'
-    + 'h2{font-size:16px;color:#8AACFF;border-bottom:1px solid rgba(99,140,255,.18);padding-bottom:6px;margin:28px 0 12px}'
+    + '.cat{color:#4aa8ff;font-size:13px}.sum{color:#B0BDD0;margin:12px 0 24px}'
+    + 'h2{font-size:16px;color:#4aa8ff;border-bottom:1px solid rgba(41,151,255,.18);padding-bottom:6px;margin:28px 0 12px}'
     + 'table{width:100%;border-collapse:collapse;margin:0 0 8px}'
-    + 'th,td{text-align:left;padding:7px 10px;border-bottom:1px solid rgba(99,140,255,.1);vertical-align:top}'
-    + 'th{color:#8892A8;font-weight:600;width:38%}td{word-break:break-word}a{color:#8AACFF}'
-    + 'pre{background:#0e1525;border:1px solid rgba(99,140,255,.1);border-radius:8px;padding:12px;overflow-x:auto;font:12px/1.5 ui-monospace,monospace}'
+    + 'th,td{text-align:left;padding:7px 10px;border-bottom:1px solid rgba(41,151,255,.1);vertical-align:top}'
+    + 'th{color:#8892A8;font-weight:600;width:38%}td{word-break:break-word}a{color:#4aa8ff}'
+    + 'pre{background:#1d1d1f;border:1px solid rgba(41,151,255,.1);border-radius:8px;padding:12px;overflow-x:auto;font:12px/1.5 ui-monospace,monospace}'
     + 'footer{margin-top:28px;color:#5E6B80;font-size:12px}</style></head><body><div class="wrap">'
     + '<h1>' + e(title) + '</h1><div class="cat">' + e(task) + '</div>'
     + (summary ? '<p class="sum">' + e(summary) + '</p>' : '')

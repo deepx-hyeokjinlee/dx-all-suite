@@ -245,7 +245,7 @@ function _rundemoNotRunnableHtml(d, av) {
 var _RUNDEMO_HUE = {
   'Detection': 'var(--status-info)', 'Segmentation': 'var(--npu)',
   'Keypoint & Pose': 'var(--status-warn)', 'Pose & Landmark': 'var(--status-warn)',
-  'Depth Estimation': 'var(--accent-strong,#7C5CFC)', 'Recognition': 'var(--status-ok)',
+  'Depth Estimation': 'var(--accent-strong,#5e5ce6)', 'Recognition': 'var(--status-ok)',
   'Image Restoration': 'var(--emerald,#10b981)', 'Classification': 'var(--status-ok)',
   'Hand Detection': 'var(--status-warn)', 'Driving & 3D': 'var(--vpu,#e879f9)', 'PPU': 'var(--accent)'
 };

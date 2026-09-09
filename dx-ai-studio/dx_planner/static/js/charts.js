@@ -118,7 +118,7 @@ const GaugeChart = {
 
     const success = getThemeColor('--status-ok') || '#22c55e';
     const warning = getThemeColor('--status-warn') || '#f59e0b';
-    const danger = getThemeColor('--status-error') || '#F85149';
+    const danger = getThemeColor('--status-error') || '#ff453a';
     const border = getThemeColor('--border-subtle') || '#444';
 
     const ratio = required > 0 ? Math.min(current / required, 1.0) : 1;
@@ -145,7 +145,7 @@ const GaugeChart = {
     ctx.stroke();
 
     // 텍스트
-    const text = getThemeColor('--text-primary') || '#E2E8F0';
+    const text = getThemeColor('--text-primary') || '#f5f5f7';
     ctx.fillStyle = text;
     ctx.font = 'bold 10px system-ui, sans-serif';
     ctx.textAlign = 'center';
@@ -165,8 +165,8 @@ const GroupBarChart = {
     const h = 300;
     const ctx = setupCanvas(canvas, w, h);
 
-    const accent = getThemeColor('--accent') || '#638CFF';
-    const text = getThemeColor('--text-primary') || '#E2E8F0';
+    const accent = getThemeColor('--accent') || '#2997ff';
+    const text = getThemeColor('--text-primary') || '#f5f5f7';
     const dim = getThemeColor('--text-muted') || '#8892A8';
     const gridColor = getThemeColor('--border-subtle') || '#333';
 
@@ -281,9 +281,9 @@ const RadarChart = {
     const size = Math.max(getCanvasParentContentWidth(canvas, 280), 250);
     const ctx = setupCanvas(canvas, size, size);
 
-    const accent = getThemeColor('--accent') || '#638CFF';
-    const success = getThemeColor('--status-ok') || '#3FB950';
-    const text = getThemeColor('--text-primary') || '#E2E8F0';
+    const accent = getThemeColor('--accent') || '#2997ff';
+    const success = getThemeColor('--status-ok') || '#30d158';
+    const text = getThemeColor('--text-primary') || '#f5f5f7';
     const dim = getThemeColor('--text-muted') || '#8892A8';
     const border = getThemeColor('--border-subtle') || '#333';
 

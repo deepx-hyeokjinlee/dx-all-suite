@@ -424,7 +424,7 @@ window.LabComposerGraph = (function () {
         ctx.lineWidth = selected ? 3 : 1.5;
         roundRect(ctx, point.x, point.y, width, height, 10);
         ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#e2e8f0';
+        ctx.fillStyle = '#f5f5f7';
         ctx.font = '600 ' + Math.max(12, 16 * state.viewport.zoom) + 'px sans-serif';
         ctx.fillText(nodeName(id), point.x + 16 * state.viewport.zoom, point.y + 30 * state.viewport.zoom);
         ctx.fillStyle = '#94a3b8';

@@ -561,7 +561,7 @@ window.renderInferenceResult=function(el,res){
     face_alignment:T('😊 Face Alignment: draws 3D facial landmark points.')
   };
   if(VIS_HINTS[cat]){
-    h+='<div style="background:var(--accent-dim);border:1px solid rgba(99,140,255,.2);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--accent)">'+VIS_HINTS[cat]+'</div>';
+    h+='<div style="background:var(--accent-dim);border:1px solid rgba(41,151,255,.2);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--accent)">'+VIS_HINTS[cat]+'</div>';
   }
   if(r.result_video_url){h+='<div class="mb8"><video src="'+r.result_video_url+'" controls class="res-img" style="max-width:100%"></video></div>'}
   else if(r.video_note){h+='<div style="background:rgba(240,180,40,.12);border:1px solid rgba(240,180,40,.35);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#c88a10">⚠️ '+T(r.video_note)+'</div>'}

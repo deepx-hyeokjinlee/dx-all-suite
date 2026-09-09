@@ -719,7 +719,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.textBaseline = 'middle';
     ctx.fillText(icon, x + 10, y + _NODE_H / 2);
 
-    ctx.fillStyle = '#E2E8F0';
+    ctx.fillStyle = '#f5f5f7';
     ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -737,7 +737,7 @@ function _drawNode(ctx, node, selected, connStatus) {
         ctx.fill();
         ctx.beginPath();
         ctx.arc(x, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-        ctx.fillStyle = '#0e1525';
+        ctx.fillStyle = '#1d1d1f';
         ctx.fill();
         ctx.strokeStyle = color;
         ctx.lineWidth = 1.5;
@@ -750,7 +750,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.beginPath();
     ctx.arc(x + _NODE_W, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-    ctx.fillStyle = '#0e1525';
+    ctx.fillStyle = '#1d1d1f';
     ctx.fill();
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.5;
@@ -776,7 +776,7 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
     ctx.bezierCurveTo(x1 + cpOff, y1, x2 - cpOff, y2, x2, y2);
 
     if (selected) {
-        ctx.strokeStyle = '#F85149';
+        ctx.strokeStyle = '#ff453a';
     } else if (warnEdge) {
         ctx.strokeStyle = _cv('--status-warn');
     } else if (dashed) {

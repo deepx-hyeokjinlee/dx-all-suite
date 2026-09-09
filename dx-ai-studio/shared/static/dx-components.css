@@ -58,7 +58,7 @@
   width:100%;background:var(--control-bg);border:1px solid var(--border-subtle);color:var(--text-primary);
   border-radius:var(--radius);padding:8px 12px;font-size:var(--fs-base);outline:none;font-family:var(--font);
 }
-.fg select:focus,.fg input:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,140,255,.12),0 0 12px rgba(99,140,255,.06)}
+.fg select:focus,.fg input:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.12),0 0 12px rgba(var(--accent-rgb),.06)}
 .fg textarea{resize:vertical;min-height:60px}
 
 /* ═══ Badge ═══ */
@@ -105,7 +105,7 @@
      dx_benchmark .btn-primary                                      — color:#fff, 다른 shadow
 
    글자색은 --text-on-accent 로 간다. dx_benchmark 의 흰 글자는 accent
-   그라디언트(#638CFF) 위에서 대비 3.15:1 로 WCAG AA(4.5) 미달이었고,
+   그라디언트(var(--accent)) 위에서 대비 3.15:1 로 WCAG AA(4.5) 미달이었고,
    나머지가 쓰던 어두운 글자는 6.2:1 로 통과한다. 통합은 낮은 쪽이 아니라
    읽히는 쪽으로 맞춘다.
 
@@ -151,11 +151,11 @@
 .modal-overlay::backdrop{background:rgba(6,9,15,.8);backdrop-filter:blur(6px)}
 .modal{background:var(--surface-overlay);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border);border-radius:var(--radius-lg);
   padding:var(--sp-5);width:680px;max-width:92vw;max-height:85vh;overflow-y:auto;
-  box-shadow:var(--shadow-lg),0 0 60px rgba(99,140,255,.04);
+  box-shadow:var(--shadow-lg),0 0 60px rgba(var(--accent-rgb),.04);
   color:var(--text-primary);animation:modalIn .2s ease;}
 .modal h2{margin-top:0;font-size:var(--fs-lg)}
 .modal-x{float:right;cursor:pointer;font-size:22px;color:var(--text-muted);background:none;border:none;line-height:1}
-.modal-x:hover{color:var(--text-primary);background:rgba(99,140,255,.08);border-radius:var(--radius-sm)}
+.modal-x:hover{color:var(--text-primary);background:rgba(var(--accent-rgb),.08);border-radius:var(--radius-sm)}
 
 /* ═══ Stat tile ═══
    dx_monitor 만 --surface-raised-bg 대신 같은 값을 손으로 적고 그림자를 inset 만
@@ -167,14 +167,14 @@
 
 /* stat 내부. :hover 만 dx_monitor 가 토큰 대신 값을 손으로 적고 있었다. */
 .stat:hover{transform:translateY(-1px);box-shadow:var(--surface-hover-shadow);border-color:var(--border-strong)}
-.stat::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(135deg,rgba(99,140,255,.06),transparent 60%);pointer-events:none;z-index:0}
+.stat::before{content:'';position:absolute;inset:-1px;border-radius:inherit;background:linear-gradient(135deg,rgba(var(--accent-rgb),.06),transparent 60%);pointer-events:none;z-index:0}
 .stat::after{content:'';position:absolute;top:0;left:0;width:100%;height:2px;
   background:linear-gradient(90deg,var(--accent),var(--accent-light),transparent);}
-.stat .val{font-size:26px;font-weight:700;color:var(--accent);text-shadow:0 0 12px rgba(99,140,255,.2)}
+.stat .val{font-size:26px;font-weight:700;color:var(--accent);text-shadow:0 0 12px rgba(var(--accent-rgb),.2)}
 .stat .label{font-size:var(--fs-xs);color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
 
 /* ═══ 여러 모듈이 공유하던 작은 컴포넌트 ═══ */
-.card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(99,140,255,.06)}
+.card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(var(--accent-rgb),.06)}
 .chip{padding:5px 14px;border:1px solid var(--border-subtle);border-radius:20px;font-size:var(--fs-sm);
   cursor:pointer;transition:var(--transition);color:var(--text-muted);background:transparent;font-family:var(--font);}
 .chip-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
@@ -209,7 +209,7 @@
 .ref-expand-inner{padding:22px;max-height:60vh;overflow-y:auto}
 .ref-flow{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;margin:12px 0;padding:var(--sp-3);background:var(--control-bg);border-radius:var(--radius);border:1px solid var(--border-subtle)}
 .ref-flow-arrow{color:var(--text-faint);font-size:var(--fs-md)}
-.ref-flow-step{padding:6px 12px;background:var(--accent-dim);border:1px solid rgba(99,140,255,.2);
+.ref-flow-step{padding:6px 12px;background:var(--accent-dim);border:1px solid rgba(var(--accent-rgb),.2);
   border-radius:var(--radius);font-size:var(--fs-sm);font-weight:600;color:var(--accent-light);}
 .ref-grid{display:flex;flex-direction:column;gap:var(--sp-4)}
 .ref-layout{display:flex;flex-direction:column;gap:var(--sp-4);width:100%;flex:1}

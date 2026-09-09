@@ -922,7 +922,7 @@ body.lang-zh-TW .zh-CN { display: none; }
   background: #0a0e1a; color: #a3e635; font-family: var(--mono); font-size: var(--fs-sm);
   padding: var(--sp-3); border-radius: var(--radius);
   max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
-  border: 1px solid rgba(99,140,255,.08);
+  border: 1px solid rgba(var(--accent-rgb),.08);
 }
 
 /* Badges */
@@ -1015,7 +1015,7 @@ body.lang-zh-TW .zh-CN { display: none; }
 .settings-group h3 { font-size: var(--fs-md); font-weight: 600; color: var(--text-primary); margin-bottom: var(--sp-3); }
 .setting-row {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 0; border-bottom: 1px solid rgba(99,140,255,.05);
+  padding: 8px 0; border-bottom: 1px solid rgba(var(--accent-rgb),.05);
 }
 .setting-row:last-child { border-bottom: none; }
 .setting-row label { font-size: var(--fs-base); color: var(--text-secondary); }
@@ -1043,7 +1043,7 @@ body.lang-zh-TW .zh-CN { display: none; }
   margin-top: 12px;
   padding: 8px 16px;
   border-radius: var(--radius);
-  background: linear-gradient(135deg, #638CFF, #7C5CFC);
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   color: #fff;
   text-decoration: none;
   font-size: var(--fs-base);
@@ -1051,7 +1051,7 @@ body.lang-zh-TW .zh-CN { display: none; }
   transition: box-shadow .18s ease, transform .18s ease;
 }
 .edgeguide-link:hover {
-  box-shadow: 0 0 12px rgba(99, 140, 255, .4);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), .4);
   transform: translateY(-1px);
 }
 

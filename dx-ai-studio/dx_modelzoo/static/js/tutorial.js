@@ -147,7 +147,7 @@
     box.id = 'dxt-mock-dl';
     box.style.cssText = 'margin-top:8px;font-size:13px;width:100%';
     if (state === 'complete') {
-      box.innerHTML = '<span class="mz-download-badge ready" style="color:var(--status-ok,#3fb950)">✅ ' +
+      box.innerHTML = '<span class="mz-download-badge ready" style="color:var(--status-ok,#30d158)">✅ ' +
         _lc({ ko: '다운로드 완료', en: 'Download complete', ja: 'ダウンロード完了', 'zh-CN': '下载完成', 'zh-TW': '下載完成', es: 'Descarga completada' }) + '</span>';
     } else {
       box.innerHTML = '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +

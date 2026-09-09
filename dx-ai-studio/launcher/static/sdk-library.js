@@ -922,8 +922,8 @@
   const DRAWER_COLORS = {
     gold:  { accent: '#d4a853', bg: 'rgba(212,168,83,0.06)', border: 'rgba(212,168,83,0.25)' },
     red:   { accent: '#f47067', bg: 'rgba(244,112,103,0.06)', border: 'rgba(244,112,103,0.25)' },
-    green: { accent: '#3fb950', bg: 'rgba(63,185,80,0.06)', border: 'rgba(63,185,80,0.25)' },
-    blue:  { accent: '#58a6ff', bg: 'rgba(88,166,255,0.06)', border: 'rgba(88,166,255,0.25)' },
+    green: { accent: '#30d158', bg: 'rgba(63,185,80,0.06)', border: 'rgba(63,185,80,0.25)' },
+    blue:  { accent: '#2997ff', bg: 'rgba(88,166,255,0.06)', border: 'rgba(88,166,255,0.25)' },
     amber: { accent: '#d29922', bg: 'rgba(210,153,34,0.06)', border: 'rgba(210,153,34,0.25)' },
   };
 
