@@ -19,7 +19,14 @@
   --surface-active-shadow:0 0 12px var(--accent-dim),inset 0 -2px 0 var(--accent);--surface-hover-shadow:var(--shadow),var(--inset-highlight);
   --text-glow-accent:0 0 8px rgba(var(--accent-rgb),.18);
   --glass-border:rgba(255,255,255,.08);--glass-blur:saturate(1.8) blur(20px);
-  --transition:all .18s cubic-bezier(.4,0,.2,1);
+  /* 모션. 값은 apple.com 의 computed style 에서 잰 것이다 — 지배 easing 은
+     cubic-bezier(.4,0,.6,1)(243건), 지속시간은 0.32s(263) · 0.24s(118) 순.
+     여기 있던 커브는 Material 것이었고, 이 토큰을 쓰는
+     84곳이 전부 그 커브로 움직이고 있었다. */
+  --ease:cubic-bezier(.4,0,.6,1);
+  --dur:.24s;
+  --dur-lg:.32s;
+  --transition:all var(--dur) var(--ease);
   --font:'Inter','Noto Sans','Noto Sans CJK',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
   --mono:'JetBrains Mono','Noto Sans Mono','Noto Sans CJK','Fira Code','Cascadia Code',monospace;
   /* Type scale — derived from actual usage across all modules (dense NPU-tooling UI). */

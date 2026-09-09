@@ -217,7 +217,7 @@ body:not(.hw-native-visible) #hw-float {
   font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease);
   color: var(--text-muted);
   border: 1px solid transparent;
   flex-shrink: 0;
@@ -261,7 +261,7 @@ body:not(.hw-native-visible) #hw-float {
   width: 8px; height: 8px;
   border-radius: 50%;
   background: var(--status-error);
-  transition: background-color 0.5s, box-shadow 0.5s;
+  transition: background-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
 }
 .dot.alive { background: var(--status-ok); box-shadow: 0 0 6px var(--status-ok); }
 
@@ -280,7 +280,7 @@ body:not(.hw-native-visible) #hw-float {
 .studio-boot-gate.fade-out {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease-out;
+  transition: opacity 0.35s var(--ease);
 }
 .studio-boot-gate-panel {
   text-align: center;
@@ -383,7 +383,7 @@ body:not(.hw-native-visible) #hw-float {
   border-radius: var(--radius);
   padding: 32px 28px 24px;
   cursor: pointer;
-  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.3s var(--ease);
   overflow: hidden;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
 }
@@ -394,7 +394,7 @@ body:not(.hw-native-visible) #hw-float {
   height: 3px;
   background: linear-gradient(90deg, var(--app-color), var(--sandbox-color));
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s var(--ease);
 }
 #cardApp::before { background: var(--app-color); }
 #cardSandbox::before { background: var(--sandbox-color); }
@@ -427,7 +427,7 @@ body:not(.hw-native-visible) #hw-float {
   width: 10px; height: 10px;
   border-radius: 50%;
   background: var(--text-dim);
-  transition: all 0.5s;
+  transition: all 0.5s var(--ease);
 }
 .status-indicator.alive {
   background: var(--status-ok);
@@ -475,7 +475,7 @@ body:not(.hw-native-visible) #hw-float {
   font-size: var(--fs-base);
   font-weight: 600;
   color: var(--accent-light);
-  transition: color 0.2s;
+  transition: color 0.2s var(--ease);
 }
 #cardSandbox .launch-btn { color: var(--sandbox-color); }
 #cardZoo .launch-btn { color: var(--zoo-color); }
@@ -659,7 +659,7 @@ body:not(.hw-native-visible) #hw-float {
   to   { opacity: 1; transform: translateY(0); }
 }
 .view-slide-in {
-  animation: viewSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: viewSlideIn 0.4s var(--ease) both;
 }
 @keyframes viewSlideIn {
   from { opacity: 0; transform: translateY(20px); }
@@ -738,7 +738,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   border-radius: var(--radius-sm);
   font-size: var(--fs-base);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
 }
 .module-retry-btn:hover {
   background: var(--accent);
@@ -859,758 +859,93 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 
 /* ── Overlay ── */
 .splash-overlay {
+  /* 인트로. 워드마크가 자리를 잡고, 부제가 따라오고, 여덟 모듈이 계단으로
+     들어온 뒤 끝난다 — 1.2초. 이전 시퀀스는 17.5초짜리 시네마틱이었고,
+     회로·파티클·링·빔·버스트·워프가 그 소품이었다. 곡선과 지속시간은
+     나머지 UI 와 같은 측정값을 쓴다.
+
+     이 화면만은 테마를 따르지 않는다. 검은 바탕에 고정된 브랜드 순간이다. */
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  background: var(--brand-ink);
+  z-index: 10000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--sp-6);
+  background: var(--brand-shade);
   cursor: pointer;
-  /* HUD beams/modules animate outside the center — do not clip at viewport edge */
-  overflow: visible;
-  transition: opacity 0.8s ease-out;
+  transition: opacity var(--ap-dur-lg) var(--ap-ease);
 }
-.splash-overlay.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
+.splash-overlay.fade-out { opacity: 0; pointer-events: none; }
 
-/* ── 3D Perspective Grid (Tron style) ── */
-.splash-grid {
-  display: none;
-}
-
-/* ── Scanline Overlay ── */
-.splash-scanline {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    transparent, transparent 2px,
-    rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
-  );
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-.splash-scanline.visible {
-  opacity: 1;
-}
-
-/* ── Vignette ── */
-.splash-vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
-}
-
-/* ── Particles (JS generated) ── */
-.splash-particles {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-}
-.splash-particle-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-/* ── Circuit Traces (SVG) ── */
-.splash-circuits {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  pointer-events: none;
-  will-change: transform;
-  transform: translateZ(0);
-}
-.splash-circuits path {
-  fill: none;
-  stroke: rgba(46,80,144,0.6);
-  stroke-width: 1.5;
-  stroke-dasharray: var(--trace-len, 300);
-  stroke-dashoffset: var(--trace-len, 300);
-  animation: traceDraw 2.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
-  animation-delay: var(--trace-delay, 0s);
-  transition: stroke 0.8s ease-out, opacity 0.8s ease-out;
-  will-change: stroke-dashoffset;
-}
-.splash-circuits path.active {
-  stroke: var(--brand-cyan);
-  opacity: 1;
-}
-@keyframes traceDraw {
-  to { stroke-dashoffset: 0; }
-}
-
-/* ── Concentric Rings ── */
-.splash-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(var(--brand-glow-rgb),0.12);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.3);
-  z-index: 2;
-  pointer-events: none;
-  will-change: transform, opacity;
-  animation: ringPulse 2.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.splash-ring-sm  { width: 240px;  height: 240px;  animation-delay: 0.2s; }
-.splash-ring-md  { width: 400px;  height: 400px;  animation-delay: 0.5s; }
-.splash-ring-lg  { width: 600px;  height: 600px;  animation-delay: 0.8s; }
-@keyframes ringPulse {
-  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-  30%  { opacity: 0.7; }
-  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-/* ── Circuit Node Dots ── */
-.splash-circuit-node {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(var(--brand-glow-rgb),0.7);
-  box-shadow: 0 0 6px rgba(var(--brand-glow-rgb),0.5);
-  transform: translate(-50%, -50%) scale(0);
-  z-index: 3;
-  pointer-events: none;
-  will-change: transform, opacity;
-  animation: nodePop 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both;
-}
-@keyframes nodePop {
-  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-  60%  { transform: translate(-50%, -50%) scale(1.4); }
-  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-/* ── Logo HUD Frame ── */
-.splash-logo-hud {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 28px 44px;
-  background: rgba(5, 8, 18, 0.88);
-  border: 2px solid transparent;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: hudReveal 0.4s ease-out 0.4s both;
-}
-@keyframes hudReveal {
-  to { opacity: 1; transform: translateY(0); }
-}
-.splash-logo-hud::before,
-.splash-logo-hud::after {
-  content: '';
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-color: rgba(var(--brand-glow-rgb),0.4);
-  border-style: solid;
-  transition: border-color 0.4s ease;
-}
-.splash-logo-hud::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-.splash-logo-hud::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-.splash-logo-hud.locked {
-  border-color: rgba(var(--brand-glow-rgb),0.6);
-  box-shadow: 0 0 20px rgba(var(--brand-glow-rgb),0.25), inset 0 0 20px rgba(var(--brand-glow-rgb),0.05);
-}
-.splash-logo-hud.locked::before,
-.splash-logo-hud.locked::after {
-  border-color: var(--brand-cyan);
-}
-
-/* ── Logo — Hologram Decode ── */
+.splash-logo-hud { text-align: center; }
 .splash-logo {
-  font-family: var(--font);
-  font-size: 72px;
-  font-weight: 900;
-  letter-spacing: 8px;
-  color: var(--brand-cyan);
-  z-index: 10;
-  position: relative;
+  font-size: clamp(34px, 6vw, 56px);
+  font-weight: 600;
+  letter-spacing: -.005em;      /* 56px 의 측정값 (-0.28px) */
+  line-height: 1;
+  color: var(--brand-on-shade);
   opacity: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transform: scale(1.04);
+  transition: opacity var(--ap-dur-lg) var(--ap-ease),
+              transform var(--ap-dur-lg) var(--ap-ease);
 }
-.logo-char {
-  display: inline-block;
-  width: 1ch;
-  text-align: center;
-  transition: color 0.15s ease, text-shadow 0.15s ease;
-}
-.logo-char.decoding {
-  color: rgba(var(--accent-rgb),0.5);
-  text-shadow: 0 0 8px rgba(0,212,255,0.5);
-  will-change: contents;
-}
-.logo-char.decoded {
-  color: var(--accent);
-  text-shadow: 0 0 12px rgba(var(--accent-rgb),0.6);
-  animation: charLock 0.3s ease-out forwards;
-  will-change: transform, filter;
-}
-@keyframes charLock {
-  0%   { transform: scale(1.15); filter: brightness(2); }
-  100% { transform: scale(1);    filter: brightness(1); }
-}
-.logo-scanline {
-  position: absolute;
-  top: -10%;
-  left: -5%;
-  width: 3px;
-  height: 120%;
-  background: linear-gradient(180deg, transparent, var(--brand-cyan), rgba(0,212,255,0.8), transparent);
-  box-shadow: 0 0 15px rgba(0,212,255,0.6), 0 0 30px rgba(0,212,255,0.3);
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-.logo-scanline.active {
-  opacity: 1;
-  animation: scanSweep 1.6s cubic-bezier(0.22,1,0.36,1) forwards;
-}
-@keyframes scanSweep {
-  0%   { transform: translateX(0); opacity: 1; }
-  85%  { opacity: 1; }
-  100% { transform: translateX(calc(110% + 10px)); opacity: 0; }
-}
-.splash-logo.stabilize {
-  opacity: 1;
-  clip-path: none;
-  animation: logoStabilize 0.8s ease-out forwards;
-}
-@keyframes logoStabilize {
-  0%   { transform: scale(1.05); text-shadow: 3px 0 var(--brand-alarm), -3px 0 var(--brand-cyan); }
-  30%  { text-shadow: 1px 0 var(--brand-alarm), -1px 0 var(--brand-cyan); }
-  60%  { transform: scale(1.02); text-shadow: 0 0 20px rgba(var(--accent-rgb),0.8); }
-  100% { transform: scale(1); text-shadow: 0 0 10px rgba(var(--accent-rgb),0.4); }
-}
-.splash-logo.locked {
-  opacity: 1;
-  clip-path: none;
-  text-shadow:
-    0 0 20px rgba(var(--brand-glow-rgb),0.6),
-    0 0 40px rgba(var(--brand-glow-rgb),0.4),
-    0 0 80px rgba(var(--brand-glow-rgb),0.2);
-}
-.splash-logo.locked::after {
-  content: '';
-  position: absolute;
-  left: -10%;
-  width: 120%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--brand-cyan), transparent);
-  animation: holoScan 0.4s ease-out forwards;
-  top: 0;
-}
-@keyframes holoScan {
-  0%   { top: -10px; opacity: 1; }
-  100% { top: calc(100% + 10px); opacity: 0; }
-}
+.splash-logo.is-settled { opacity: 1; transform: none; }
 
-/* ── Typing Subtitle ── */
 .splash-subtitle {
-  font-family: var(--font);
-  font-size: var(--fs-3xl);
-  font-weight: 300;
-  color: var(--text-secondary, var(--brand-subtle));
-  letter-spacing: 6px;
-  margin-right: -6px;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 2px solid var(--brand-cyan);
-  width: 0;
+  margin-top: var(--sp-3);
+  font-size: var(--ap-t-lead);
+  font-weight: 400;
+  letter-spacing: -.022em;
+  color: var(--brand-subtle);
   opacity: 0;
-  z-index: 10;
-  position: relative;
-  margin-top: 8px;
+  transition: opacity var(--ap-dur) var(--ap-ease);
 }
-.splash-subtitle.typing {
-  opacity: 1;
-  animation: typing 1.0s steps(9) forwards, blinkCursor 0.6s step-end infinite;
-}
-@keyframes typing {
-  to { width: calc(9ch + 48px); }
-}
-@keyframes blinkCursor {
-  50% { border-color: transparent; }
-}
+.splash-subtitle.is-in { opacity: 1; }
 
-/* ── Energy Beam (SVG animated) ── */
-.splash-beams {
-  will-change: contents;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 8;
-  pointer-events: none;
-}
-.splash-beams line {
-  stroke: var(--brand-cyan);
-  stroke-width: 2;
-  stroke-dasharray: var(--beam-len, 200);
-  stroke-dashoffset: var(--beam-len, 200);
-}
-.splash-beams line.fire {
-  animation: beamFire 0.15s ease-out forwards;
-}
-@keyframes beamFire {
-  to { stroke-dashoffset: 0; }
-}
-
-/* ── Shockwave Ripple ── */
-.splash-shockwave {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 2px solid rgba(0,212,255,0.5);
-  transform: scale(0);
-  opacity: 1;
-  z-index: 8;
-  pointer-events: none;
-  animation: shockExpand 0.3s ease-out forwards;
-}
-@keyframes shockExpand {
-  to { transform: scale(1); opacity: 0; }
-}
-
-/* ── HUD Frame (Module Node) ── */
+/* 모듈은 켜지는 게 아니라 들어온다. */
 .splash-modules-area {
-  position: absolute;
-  inset: 0;
-  z-index: 9;
-  pointer-events: none;
-}
-.splash-hud-frame {
-  position: absolute;
-  width: 110px;
-  height: 85px;
-  border: 2px solid rgba(var(--brand-glow-rgb),0.6);
-  background: rgba(5, 8, 18, 0.92);
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: var(--sp-1);
-  opacity: 0;
-  transform: scale(0.5);
-  will-change: transform, opacity;
+  gap: var(--sp-3);
+  max-width: 560px;
 }
-.splash-hud-frame.appear {
-  animation: hudAppear 0.2s ease-out forwards;
-}
-@keyframes hudAppear {
-  to { opacity: 1; transform: scale(1); }
-}
-.splash-hud-frame::before,
-.splash-hud-frame::after {
-  content: '';
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-color: var(--brand-cyan);
-  border-style: solid;
-}
-.splash-hud-frame::before {
-  top: -1px;
-  left: -1px;
-  border-width: 2px 0 0 2px;
-}
-.splash-hud-frame::after {
-  bottom: -1px;
-  right: -1px;
-  border-width: 0 2px 2px 0;
-}
-
-.splash-module-icon {
-  width: 24px;
-  height: 24px;
-  opacity: 0;
-}
-.splash-module-icon.draw {
-  opacity: 1;
-}
-.splash-module-icon path,
-.splash-module-icon line,
-.splash-module-icon circle,
-.splash-module-icon rect {
-  fill: none;
-  stroke: var(--brand-cyan);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.splash-module-name {
-  font-family: var(--font);
-  font-size: var(--fs-2xs);
-  font-weight: 600;
-  color: var(--brand-cyan);
-  letter-spacing: 1px;
-  white-space: nowrap;
-  overflow: hidden;
-  width: 0;
-}
-.splash-module-name.typing {
-  animation: moduleNameType 0.15s steps(var(--name-len, 6)) forwards;
-}
-@keyframes moduleNameType {
-  to { width: var(--name-width, 60px); }
-}
-
-.splash-module-status {
-  font-size: 8px;
-  color: var(--brand-lime);
-  letter-spacing: 1px;
-  opacity: 0;
-}
-.splash-module-status.online {
-  animation: statusBlink 0.3s ease-out forwards;
-}
-@keyframes statusBlink {
-  0% { opacity: 0; }
-  50% { opacity: 1; color: var(--brand-on-shade); }
-  100% { opacity: 1; color: var(--brand-lime); }
-}
-
-/* ── Central NPU Chip ── */
-
-/* ── Core Activation Text ── */
-.splash-core-text {
-  position: absolute;
-  right: 120px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: var(--font);
-  font-size: var(--fs-md);
-  font-weight: 600;
-  letter-spacing: 3px;
-  color: var(--brand-gold);
-  opacity: 0;
-  text-shadow: 0 0 10px rgba(255,208,0,0.5), 0 0 25px rgba(255,208,0,0.2);
-  z-index: 10;
-  white-space: nowrap;
-  overflow: hidden;
-  border-right: 2px solid transparent;
-}
-.splash-core-text.visible {
-  opacity: 1;
-}
-.splash-core-text.typing {
-  border-right-color: var(--brand-gold);
-  animation: coreTypeCursor 0.5s step-end infinite;
-}
-.splash-core-text.typed {
-  border-right-color: transparent;
-}
-@keyframes coreTypeCursor {
-  50% { border-right-color: transparent; }
-}
-
-/* Laser beams to core text — projectile style */
-.splash-beams line.core-laser {
-  stroke: var(--brand-gold);
-  stroke-width: 1.5;
-}
-.splash-beams line.core-laser.fire {
-  animation: laserProjectile 0.3s ease-in forwards;
-}
-@keyframes laserProjectile {
-  0%   { stroke-dashoffset: var(--beam-len, 200); opacity: 1; }
-  80%  { opacity: 1; }
-  100% { stroke-dashoffset: calc(var(--beam-len, 200) * -0.15); opacity: 0; }
-}
-
-/* ── Energy Burst ── */
-.splash-burst {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  z-index: 10;
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.splash-burst.fire {
-  animation: burstExpand 0.8s ease-out forwards;
-}
-@keyframes burstExpand {
-  0%   { transform: scale(0); opacity: 0.6; }
-  50%  { opacity: 0.3; }
-  100% { transform: scale(80); opacity: 0; }
-}
-
-/* ── Energy Gauge ── */
-.energy-gauge {
-  position: absolute;
-  z-index: 15;
-  width: 80px;
-  height: 80px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  animation: gaugeAppear 0.3s ease-out both;
-  will-change: transform, opacity;
-}
-.energy-gauge svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-.gauge-track {
-  fill: none;
-  stroke: rgba(var(--accent-rgb),0.15);
-  stroke-width: 3;
-}
-.gauge-fill {
-  fill: none;
-  stroke: var(--brand-cyan);
-  stroke-width: 3;
-  stroke-dasharray: 213.6;
-  stroke-dashoffset: 213.6;
-  stroke-linecap: round;
-  animation: gaugeFill 2.5s cubic-bezier(0.22,1,0.36,1) forwards;
-}
-.gauge-pct {
-  position: absolute;
-  inset: 0;
-  display: flex;
+.splash-mod {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font);
-  font-size: var(--fs-md);
+  gap: 7px;
+  padding: 6px 11px;
+  border-radius: var(--ap-r-pill);
+  background: rgba(255,255,255,.06);
+  color: var(--brand-subtle);
+  font-size: var(--ap-t-body);
   font-weight: 600;
-  color: var(--brand-cyan);
-  letter-spacing: 1px;
-}
-@keyframes gaugeAppear {
-  from { opacity: 0; transform: translate(-50%,-50%) scale(0.5); }
-  to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
-}
-@keyframes gaugeFill {
-  to { stroke-dashoffset: 0; }
-}
-.energy-gauge.fired {
-  animation: gaugePop 0.3s ease-out forwards;
-}
-@keyframes gaugePop {
-  0%   { transform: translate(-50%,-50%) scale(1); opacity: 1; }
-  50%  { transform: translate(-50%,-50%) scale(1.5); opacity: 0.5; }
-  100% { transform: translate(-50%,-50%) scale(2); opacity: 0; }
-}
-
-/* ── Charge Dots (fixed on module, charge → beam fire) ── */
-.charge-dot {
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--brand-amber);
-  box-shadow: 0 0 10px var(--brand-amber), 0 0 20px rgba(255,215,0,0.4);
-  pointer-events: none;
-  z-index: 5;
-  transform: translateX(-50%) scale(0);
+  letter-spacing: -.01em;
   opacity: 0;
-  will-change: transform, opacity;
+  transform: translateY(4px);
+  transition: opacity var(--ap-dur) var(--ap-ease),
+              transform var(--ap-dur) var(--ap-ease);
 }
-.charge-dot.charging {
-  animation: dotCharge 2.5s ease-out forwards;
-}
-@keyframes dotCharge {
-  0%   { transform: translateX(-50%) scale(0); opacity: 0; }
-  30%  { transform: translateX(-50%) scale(0.5); opacity: 0.6; }
-  100% { transform: translateX(-50%) scale(1); opacity: 1; }
-}
-.charge-dot.firing {
-  animation: dotFire 0.3s ease-out forwards;
-}
-@keyframes dotFire {
-  to { transform: translateX(-50%) scale(2); opacity: 0; }
+.splash-mod.is-in { opacity: 1; transform: none; }
+.splash-mod-icon { display: inline-flex; line-height: 0; }
+.splash-mod-icon svg {
+  width: 13px; height: 13px; fill: none; stroke: currentColor;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
 }
 
-/* ── Blackhole Transition ── */
-
-/* All elements pull toward center and vanish */
-.splash-overlay.warp-compress .splash-logo-hud,
-.splash-overlay.warp-compress .splash-hud-frame,
-.splash-overlay.warp-compress .splash-core-text,
-.splash-overlay.warp-compress .splash-ring,
-.splash-overlay.warp-compress .splash-circuits,
-.splash-overlay.warp-compress .splash-beams,
-.splash-overlay.warp-compress .splash-skip,
-.splash-overlay.warp-compress .splash-scanline,
-.splash-overlay.warp-compress .splash-particles,
-.splash-overlay.warp-compress .splash-circuit-node {
-  transition: transform 0.8s cubic-bezier(0.6,0,1,0.4), opacity 0.6s ease 0.2s;
-  transform: scale(0);
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* Overlay itself fades after elements collapse */
-.splash-overlay.dissolve-out {
-  transition: opacity 0.5s ease;
-  opacity: 0;
-}
-
-/* ── Skip Hint ── */
 .splash-skip {
   position: absolute;
-  bottom: 40px;
-  font-size: var(--fs-sm);
-  color: rgba(255,255,255,0.3);
-  letter-spacing: 2px;
-  z-index: 11;
-  animation: fadeIn 1s ease-out 2s both;
-  transition: color 0.4s ease, text-shadow 0.4s ease;
-  text-align: center;
-}
-.splash-skip.ready {
-  color: rgba(var(--brand-glow-rgb),0.9);
-  text-shadow: 0 0 12px rgba(var(--brand-glow-rgb),0.6);
-  animation: splashPulsePrompt 1.4s ease-in-out infinite;
-  font-size: var(--fs-base);
-  letter-spacing: 3px;
-}
-.splash-skip-key {
-  font-weight: 600;
-  color: var(--brand-cyan);
-}
-.splash-skip-sep {
-  color: rgba(255,255,255,0.25);
-}
-@keyframes splashPulsePrompt {
-  0%, 100% { opacity: 0.7; }
-  50%       { opacity: 1;   }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  bottom: 28px;
+  font-size: var(--ap-t-body);
+  color: var(--brand-subtle);
+  opacity: .55;
 }
 
-/* ── Transition to Main Page ── */
-.main-content-reveal      { animation: mainReveal 0.7s ease-out 0.3s both; }
-.main-content-reveal-skip { animation: mainReveal 0.7s ease-out 0s both; }
-@keyframes mainReveal {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
-  .splash-overlay { transition: opacity 0.3s !important; }
-  .splash-grid { animation: none !important; }
-  .splash-circuits path { animation: none !important; stroke-dashoffset: 0 !important; }
-  .splash-particle { display: none !important; }
-  .splash-logo {
-    animation: none !important;
-    opacity: 1 !important;
-    text-shadow: 0 0 20px rgba(var(--accent-rgb),0.6), 0 0 40px rgba(var(--accent-rgb),0.4) !important;
-  }
-  .logo-char { animation: none !important; opacity: 1 !important; color: var(--accent) !important; }
-  .logo-scanline { display: none !important; }
-  .splash-subtitle {
-    animation: none !important;
-    width: auto !important;
-    border-color: transparent !important;
-  }
-  .splash-energy-beam { display: none !important; }
-  .splash-shockwave { display: none !important; }
-  .splash-hud-frame { animation: none !important; opacity: 1 !important; }
-  .splash-module-icon { animation: none !important; opacity: 1 !important; }
-  .splash-module-name {
-    animation: none !important;
-    width: auto !important;
-    border-color: transparent !important;
-  }
-  .splash-burst { display: none !important; }
-  .splash-ring { animation: none !important; opacity: 1 !important; }
-  .splash-circuit-node { animation: none !important; opacity: 1 !important; }
-  .splash-logo-hud { transition: none !important; animation: none !important; opacity: 1 !important; transform: none !important; }
-  .splash-skip.ready { animation: none !important; opacity: 1 !important; }
-  .splash-overlay.dissolve-out { animation: none !important; opacity: 0 !important; }
-  .energy-gauge { display: none !important; }
-  .splash-overlay.warp-compress * { transition: none !important; }
+  .splash-logo, .splash-subtitle, .splash-mod { transition: none; }
 }
-
-/* ── Mobile: < 600px ── */
-@media (max-width: 600px) {
-  .splash-grid { display: none; }
-  .splash-logo { font-size: 36px; letter-spacing: 4px; }
-  .splash-subtitle { font-size: var(--fs-lg); letter-spacing: 3px; }
-  .splash-subtitle.typing {
-    animation: typingMobile 1.0s steps(9) forwards, blinkCursor 0.6s step-end infinite;
-  }
-  @keyframes typingMobile {
-    to { width: calc(9ch + 27px); }
-  }
-  .splash-hud-frame { width: 60px; height: 48px; }
-  .splash-module-name { font-size: 8px; }
-  .splash-module-status { font-size: 6px; }
-  .splash-core-text { font-size: var(--fs-xs); letter-spacing: 2px; right: 20px; }
-}
-
-/* ── Ultra-small: < 400px ── */
-@media (max-width: 399px) {
-  .splash-beams { display: none; }
-  .splash-logo { font-size: 28px; }
-  .splash-core-text { font-size: var(--fs-2xs); right: 10px; }
-  .splash-modules-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--sp-1);
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .splash-hud-frame {
-    position: static;
-    width: auto;
-    height: auto;
-    border: none;
-    background: none;
-    box-shadow: none;
-    flex-direction: row;
-    gap: 6px;
-    opacity: 1;
-    transform: none;
-  }
-  .splash-hud-frame::before,
-  .splash-hud-frame::after { display: none; }
-  .splash-module-icon { display: none; }
-  .splash-module-name {
-    font-size: 9px;
-    width: auto;
-    overflow: visible;
-  }
-}
-
 /* ═══════════════════════════════════════════════════════
    ORBITAL LANDING LAYOUT
    ═══════════════════════════════════════════════════════ */
@@ -1986,7 +1321,6 @@ body {
 .card-state.is-alive { color: var(--ap-green); }
 .mod-chev { flex-shrink: 0; color: var(--ap-ink-3); font-size: var(--ap-t-body); line-height: 1; }
 
-
 /* ── 크기별 굵기 ────────────────────────────────────────
    측정: apple.com 첫 화면의 12px 노드는 600 이 148, 400 이 45 다.
    developer.apple.com 도 56:23. 17px 은 반대로 전부 400, 19px 이상은 다시
@@ -2027,7 +1361,7 @@ body {
 }
 #launcherToolbar .dx-toolbar-btn { border-radius: var(--ap-r-sm); }
 
-/* 남은 컴포넌트들은 shared 의 --transition(all .18s cubic-bezier(.4,0,.2,1))
+/* 남은 컴포넌트들은 shared 의 --transition(all .18s var(--ease))
    을 물고 있었다. 0.18s 자체는 애플에도 있는 값이지만 그 easing 은 Material
    커브지 애플 커브가 아니다. 토큰은 9개 모듈 공용이라 못 바꾸고, 홈이
    소유한 컴포넌트에서만 측정 커브로 덮는다. */
@@ -2052,7 +1386,6 @@ body {
 .studio-beta-badge,
 .ask-chip { letter-spacing: -.01em; }
 .studio-beta-badge { font-size: var(--ap-t-body); padding: 1px 7px; }
-
 
 /* ── 상태 ────────────────────────────────────────────────
    apple.com 에서 hover / press / focus 를 각각 잡아 차이만 뽑았다.
@@ -2588,7 +1921,6 @@ body {
    size. All of that is gone. Identity comes from the name and the icon; colour
    is reserved for state, where it means something. */
 
-
 .orbital-port {
   font-size: var(--fs-2xs);
   font-variant-numeric: tabular-nums;
@@ -2645,7 +1977,6 @@ body {
    with a pulsing glow, floating over whatever the page laid out underneath —
    and hidden entirely below 1200px, so on a laptop they simply were not there.
    In flow they are two cards in Resources, at every width. */
-
 
 /* ── Physical AI ecosystem overlay (reuses .platform-info-overlay/.panel chrome) ── */
 /* Two-column layout: infographic left, text right. Image width is tuned so the
@@ -2815,7 +2146,7 @@ body {
   background: none; border: 1px solid rgba(255,80,80,0.3);
   color: var(--status-error); font-size: var(--fs-xl);
   border-radius: var(--radius-xs); padding: 4px 10px;
-  cursor: pointer; transition: background 0.2s;
+  cursor: pointer; transition: background 0.2s var(--ease);
 }
 .platform-info-close:hover { background: rgba(255,80,80,0.12); }
 .platform-info-left {
@@ -2876,7 +2207,7 @@ body {
   border: 1px solid var(--border-subtle);
   font-size: var(--fs-sm);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
 }
 .pm-item:hover {
   border-color: rgba(var(--accent-rgb), 0.45);
@@ -2971,7 +2302,7 @@ body {
   border-radius: var(--radius);
   border: 1px solid var(--border-subtle);
   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  transition: transform 0.2s;
+  transition: transform 0.2s var(--ease);
 }
 .pu-images img:hover {
   transform: scale(1.03);

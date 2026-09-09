@@ -354,7 +354,7 @@ html[lang="zh-TW"] .zh-CN, .lang-zh-TW .zh-CN{display:none!important}
   width:3px;min-height:20px;border-radius:2px;
   background:var(--cat-color,var(--accent));
   margin-right:8px;flex-shrink:0;
-  opacity:.7;transition:opacity .12s;
+  opacity:.7;transition:opacity .12s var(--ease);
 }
 .palette-item:hover .palette-item-bar{opacity:1}
 .palette-item-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

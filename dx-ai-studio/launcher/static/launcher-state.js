@@ -21,14 +21,14 @@ window.DXLauncher.APP_PATHS = {
 };
 
 window.DXLauncher._SPLASH_MODULES = [
-  { name: 'DX App',       angle: 0,    icon: 'app' },
-  { name: 'DX Stream',    angle: 45,   icon: 'stream' },
-  { name: 'DX Model Zoo', angle: 90,   icon: 'zoo' },
-  { name: 'DX Compiler',  angle: 135,  icon: 'compiler' },
-  { name: 'DX EdgeGuide', angle: 180,  icon: 'edgeguide' },
-  { name: 'DX Benchmark', angle: 225,  icon: 'benchmark' },
-  { name: 'DX Monitor',   angle: 270,  icon: 'monitor' },
-  { name: 'DX Agent Dev', angle: 315,  icon: 'agent' },
+  { name: 'DX App',    icon: 'app' },
+  { name: 'DX Stream',   icon: 'stream' },
+  { name: 'DX Model Zoo',   icon: 'zoo' },
+  { name: 'DX Compiler',  icon: 'compiler' },
+  { name: 'DX EdgeGuide',  icon: 'edgeguide' },
+  { name: 'DX Benchmark',  icon: 'benchmark' },
+  { name: 'DX Monitor',  icon: 'monitor' },
+  { name: 'DX Agent Dev',  icon: 'agent' },
 ];
 
 window.DXLauncher._DECODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

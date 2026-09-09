@@ -172,7 +172,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
   padding: 6px 8px;
   border-bottom: 1px solid var(--border-subtle);
   font-size: var(--fs-sm);
-  transition: background .12s;
+  transition: background .12s var(--ease);
 }
 .event-row:last-child { border-bottom: none; }
 .event-row:hover { background: var(--surface-hover); }

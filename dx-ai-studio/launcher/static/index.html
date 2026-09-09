@@ -60,48 +60,15 @@
   </div>
   <!-- ── Splash Intro Overlay (v2: Neural Circuit Awakening) ── -->
   <div class="splash-overlay" id="splashOverlay" onclick="skipSplash(true)">
-    <!-- 배경: 3D 그리드 -->
-    <div class="splash-grid"></div>
-    <!-- 배경: 스캔라인 -->
-    <div class="splash-scanline"></div>
-    <!-- 배경: 비네팅 -->
-    <div class="splash-vignette"></div>
-    <!-- 동심원 링 -->
-    <div class="splash-ring splash-ring-sm"></div>
-    <div class="splash-ring splash-ring-md"></div>
-    <div class="splash-ring splash-ring-lg"></div>
-    <!-- 회로 트레이스 (JS 동적 생성) -->
-    <svg class="splash-circuits" id="splashCircuits" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <filter id="glowFilter">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-    </svg>
-    <!-- 시냅스 펄스 컨테이너 -->
-    <div class="splash-pulses" id="splashPulses"></div>
-    <!-- 파티클 컨테이너 -->
-    <div class="splash-particles" id="splashParticles"></div>
-    <!-- 로고 HUD 프레임 -->
+    <!-- 조용한 인트로. 회로 트레이스·파티클·동심원 링·에너지 빔·버스트는
+         17.5초짜리 시네마틱의 소품이었고 그 시퀀스와 함께 사라졌다. 남은 건
+         워드마크와 모듈 여덟 개뿐이고, 그게 이 문이 말할 전부다. -->
     <div class="splash-logo-hud" id="splashLogoHud">
-      <div class="splash-logo" id="splashLogo">
-        <span class="logo-char" data-char="D">D</span><span class="logo-char" data-char="E">E</span><span class="logo-char" data-char="E">E</span><span class="logo-char" data-char="P">P</span><span class="logo-char" data-char="X">X</span>
-        <div class="logo-scanline" id="logoScanline"></div>
-      </div>
+      <div class="splash-logo" id="splashLogo">DEEPX</div>
       <div class="splash-subtitle" id="splashSubtitle">AI Studio</div>
     </div>
-    <!-- 코어 활성화 텍스트 -->
-    <div class="splash-core-text" id="splashCoreText" data-i18n="ALL SYSTEMS ONLINE">ALL SYSTEMS ONLINE
-    </div>
-    <!-- 에너지 빔 + 모듈 부팅 영역 -->
-    <svg class="splash-beams" id="splashBeams"></svg>
     <div class="splash-modules-area" id="splashModulesArea"></div>
-    <!-- 에너지 버스트 플래시 -->
-    <div class="splash-burst" id="splashBurst"></div>
-    <!-- 스킵 안내 -->
-    <div class="splash-skip" data-i18n="Click to skip">Click to skip
-    </div>
+    <div class="splash-skip" data-i18n="Click to skip">Click to skip</div>
   </div>
 
   <!-- ── Top Navigation Bar ── -->

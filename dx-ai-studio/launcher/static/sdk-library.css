@@ -18,7 +18,7 @@
 }
 #sdk-library-view.visible {
   display: flex; flex-direction: column;
-  animation: sdkViewSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: sdkViewSlideIn 0.4s var(--ease) both;
 }
 @keyframes sdkViewSlideIn {
   from { opacity: 0; transform: translateY(20px); }
@@ -68,7 +68,7 @@
   background: var(--surface-panel, var(--surface-page)); border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm); color: var(--text-primary, var(--text-primary));
   font-family: var(--font); font-size: var(--fs-sm);
-  outline: none; transition: border-color 0.2s;
+  outline: none; transition: border-color 0.2s var(--ease);
 }
 .sdk-topbar-search input:focus { border-color: var(--accent); }
 .sdk-topbar-search input::placeholder { color: var(--text-faint, var(--text-faint)); }
@@ -88,7 +88,7 @@
   padding: 4px 8px; border: none; border-radius: var(--radius-xs);
   background: transparent; color: var(--text-muted);
   font-size: var(--fs-base); cursor: pointer;
-  transition: all 0.2s; font-family: var(--font);
+  transition: all 0.2s var(--ease); font-family: var(--font);
 }
 .sdk-toggle-btn:hover { color: var(--text-primary); }
 .sdk-toggle-btn.active { background: var(--accent-dim); color: var(--accent); }
@@ -96,7 +96,7 @@
   padding: 4px 8px; background: none;
   border: 1px solid var(--border-subtle); border-radius: var(--radius-xs);
   color: var(--text-muted); font-size: var(--fs-base);
-  cursor: pointer; transition: all 0.2s;
+  cursor: pointer; transition: all 0.2s var(--ease);
 }
 .sdk-topbar-btn:hover { background: var(--accent-dim); color: var(--text-primary); border-color: var(--accent); }
 
@@ -164,7 +164,7 @@
   align-items: center;
   padding: 0 24px;
   gap: var(--sp-4);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s var(--ease);
   overflow: hidden;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.04),
@@ -197,7 +197,7 @@
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.1),
     0 1px 3px rgba(0,0,0,0.4);
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease);
 }
 .drawer-face:hover .drawer-handle {
   background: linear-gradient(180deg, var(--status-info), color-mix(in srgb, var(--status-info) 80%, black));
@@ -246,7 +246,7 @@
 .drawer-body {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+  transition: max-height 0.5s var(--ease),
               opacity 0.3s ease;
   opacity: 0;
   background: linear-gradient(180deg, var(--surface-panel), var(--surface-page));
@@ -311,7 +311,7 @@
   padding: 16px 10px 12px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s var(--ease);
   position: relative;
   text-align: center;
   background: linear-gradient(180deg, var(--control-bg), var(--surface-panel));
@@ -388,7 +388,7 @@
   top: 6px;
   right: 6px;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s var(--ease);
   color: var(--text-primary);
   font-size: 9px;
   background: rgba(88,166,255,0.8);
@@ -482,7 +482,7 @@
   background: linear-gradient(180deg,var(--surface-page) 0%,var(--surface-panel) 100%);
   display: flex;
   flex-direction: column;
-  transition: width .25s;
+  transition: width .25s var(--ease);
   z-index: 50;
 }
 .sdk-sidebar-group { }
@@ -701,7 +701,7 @@
   font-size: var(--fs-sm);
   font-family: var(--font);
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s var(--ease);
 }
 .sdk-viewer-search input:focus {
   border-color: var(--accent);
@@ -720,7 +720,7 @@
   border: 1px solid rgba(255, 80, 80, 0.3);
   border-radius: var(--radius-xs); color: var(--status-error);
   font-size: var(--fs-md); cursor: pointer;
-  transition: all 0.2s; flex-shrink: 0;
+  transition: all 0.2s var(--ease); flex-shrink: 0;
 }
 .sdk-viewer-close:hover { background: rgba(255, 80, 80, 0.12); }
 
@@ -974,7 +974,7 @@ mark.sdk-search-hit.current {
 }
 details.sdk-adm > summary.sdk-adm-title { cursor: pointer; list-style: none; }
 details.sdk-adm > summary.sdk-adm-title::-webkit-details-marker { display: none; }
-details.sdk-adm > summary.sdk-adm-title::after { content: '▸'; margin-left: auto; transition: transform .15s; }
+details.sdk-adm > summary.sdk-adm-title::after { content: '▸'; margin-left: auto; transition: transform .15s var(--ease); }
 details.sdk-adm[open] > summary.sdk-adm-title::after { transform: rotate(90deg); }
 .sdk-adm-icon { font-size: 14px; line-height: 1; }
 .sdk-adm-body { padding: 4px 14px 10px; }

@@ -45,7 +45,7 @@
   align-items: center;
   justify-content: center;
   font-size: var(--fs-3xl);
-  transition: transform .2s, background .2s;
+  transition: transform .2s var(--ease), background .2s var(--ease);
 }
 .dx-chat-fab:hover {
   background: var(--chat-primary-hover);
@@ -317,7 +317,7 @@
   padding: 5px 12px;
   font-size: var(--fs-sm);
   cursor: pointer;
-  transition: background .15s;
+  transition: background .15s var(--ease);
 }
 .dx-chat-suggestion:hover {
   background: var(--chat-primary);
@@ -366,7 +366,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background .15s;
+  transition: background .15s var(--ease);
 }
 .dx-chat-send-btn:hover {
   background: var(--chat-primary-hover);

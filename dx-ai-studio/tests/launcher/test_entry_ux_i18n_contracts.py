@@ -939,50 +939,35 @@ class TestWave2D_SdkLibrarySpanishSupport:
             )
 
 
-class TestWave2D_SplashSpanishSpans:
-    """launcher-splash.js must include Spanish spans in proceed prompt and replay."""
+class TestWave2D_SplashIsTranslatable:
+    """The intro's copy must be reachable by the dictionary, in every language.
 
-    def test_showProceedPrompt_has_es_span(self):
-        src = (STATIC / "launcher-splash.js").read_text(encoding="utf-8")
-        fn_match = re.search(
-            r"function\s+_showProceedPrompt\b(.*?)(\n\s*function\b)",
-            src, re.DOTALL
-        )
-        assert fn_match, "_showProceedPrompt function not found"
-        body = fn_match.group(1)
-        assert 'class="es"' in body, (
-            "_showProceedPrompt must include a <span class='es'> for Spanish"
-        )
+    These used to assert `<span class="es">` inside _showProceedPrompt and
+    replaySplash. Both the proceed prompt and the "ALL SYSTEMS ONLINE" core
+    text were props of the 17.5-second cinematic and went with it; the six
+    sibling language spans were also the markup pattern the studio spent a
+    migration removing. What survives is one line — "Click to skip" — and the
+    rule that matters is unchanged: the intro must not hard-code English.
+    """
 
-    def test_replaySplash_skip_has_es_span(self):
+    def test_intro_copy_goes_through_the_dictionary(self):
         src = (STATIC / "launcher-splash.js").read_text(encoding="utf-8")
-        fn_match = re.search(
-            r"function\s+replaySplash\b(.*?)(\n\s*\/\*|$)",
-            src, re.DOTALL
-        )
+        fn_match = re.search(r"function\s+replaySplash\b(.*?)(\n\s*/\*|$)", src, re.DOTALL)
         assert fn_match, "replaySplash function not found"
         body = fn_match.group(1)
-        assert 'class="es"' in body, (
-            "replaySplash must include <span class='es'> for Spanish"
+        assert 'data-i18n="Click to skip"' in body, (
+            "the intro's only line must carry a dictionary key"
+        )
+        assert 'class="es"' not in body, (
+            "sibling language spans are the pattern the studio migrated away from"
         )
 
-    def test_replaySplash_core_text_has_es_span(self):
+    def test_the_cinematic_props_are_gone(self):
+        """Their absence is the point — leaving them invites switching them back on."""
         src = (STATIC / "launcher-splash.js").read_text(encoding="utf-8")
-        fn_match = re.search(
-            r"function\s+replaySplash\b(.*?)(\n\s*\/\*|$)",
-            src, re.DOTALL
-        )
-        assert fn_match, "replaySplash function not found"
-        body = fn_match.group(1)
-        # splash-core-text section must have es span
-        core_text_pos = body.find("splash-core-text")
-        assert core_text_pos != -1, "replaySplash must contain splash-core-text"
-        core_text_section = body[core_text_pos:core_text_pos + 500]
-        assert 'class="es"' in core_text_section, (
-            "splash-core-text in replaySplash must include Spanish span"
-        )
-
-
+        for prop in ("_showProceedPrompt", "_triggerWarpJump", "_activateCore",
+                     "_createCircuitTraces", "_createParticles", "_animateLogoGlitch"):
+            assert prop not in src, f"{prop} outlived the sequence that called it"
 
 
 class TestAboutSubtitleLocalization:

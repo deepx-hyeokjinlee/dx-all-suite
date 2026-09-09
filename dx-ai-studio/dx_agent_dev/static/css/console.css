@@ -508,7 +508,7 @@
   cursor: pointer;
   position: relative;
   z-index: 31;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
 .agent-select--model {
   font-family: var(--mono, ui-monospace, monospace);

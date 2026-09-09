@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all .15s;
+  transition: all .15s var(--ease);
   padding: 0;
   line-height: 1;
 }
@@ -68,7 +68,7 @@
   height: 100%;
   font-size: var(--fs-md);
   color: var(--dxt-text-dim, #555);
-  transition: all .15s;
+  transition: all .15s var(--ease);
   user-select: none;
 }
 
@@ -140,7 +140,7 @@
   cursor: pointer;
   font-size: var(--fs-base);
   color: var(--dxt-text, #cdd6f4);
-  transition: background .15s;
+  transition: background .15s var(--ease);
   white-space: nowrap;
 }
 

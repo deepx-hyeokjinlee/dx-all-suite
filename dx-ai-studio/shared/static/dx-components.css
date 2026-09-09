@@ -130,7 +130,7 @@
    column-reverse 라 새 토스트가 항상 시선이 머무는 아래쪽에 쌓인다. */
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column-reverse;gap:var(--sp-2);pointer-events:none}
 .toast{padding:10px 16px;border-radius:10px;font-size:var(--fs-base);box-shadow:var(--shadow);
-  transform:translateX(120%);transition:.3s cubic-bezier(.4,0,.2,1);max-width:420px;
+  transform:translateX(120%);transition:.3s var(--ease);max-width:420px;
   display:flex;align-items:center;gap:var(--sp-2);backdrop-filter:blur(12px);pointer-events:auto;}
 .toast.show{transform:none}
 .toast-icon{flex-shrink:0;font-size:15px}

@@ -354,7 +354,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   color: var(--text-secondary);
   cursor: pointer;
   margin-bottom: -1px;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
 }
 .mz-tab-btn:hover { color: var(--text-primary); }
 .mz-tab-btn.active {
@@ -381,7 +381,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   border-radius: var(--radius-sm);
   overflow: hidden;
   cursor: pointer;
-  transition: border-color 0.15s, transform 0.1s;
+  transition: border-color 0.15s var(--ease), transform 0.1s var(--ease);
   background: var(--surface-2);
 }
 .mz-sample-thumb:hover { border-color: var(--accent); transform: scale(1.03); }
