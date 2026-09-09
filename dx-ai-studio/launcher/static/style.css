@@ -1729,12 +1729,19 @@ body {
 }
 
 /* 상단 바 — 얇고, 반투명하고, 헤어라인 하나. */
+/* 측정: apple.com 의 .globalnav 는 44px, rgba(255,255,255,.8),
+   saturate(1.8) blur(20px), 그리고 **border-bottom: 0px** 이다. 경계선이
+   없다 — 반투명 + blur 만으로 컨트롤 레이어와 콘텐츠를 가른다. HIG Layout
+   이 "배경 대신 scroll edge effect 를 쓰라"고 한 게 이것이고, 웹에서는
+   블러 아래로 콘텐츠가 지나가는 것이 그 등가물이다.
+   스크롤도 재봤다 — 0px 과 600px 에서 바의 계산된 스타일이 완전히 동일하다.
+   애플 웹 내비는 스크롤 상태를 갖지 않으므로, 없는 효과를 만들어 넣지 않는다. */
 .top-bar {
-  height: 48px;
+  height: 44px;
   background: var(--ap-glass);
-  border-bottom: 1px solid var(--ap-line);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0;
+  backdrop-filter: saturate(1.8) blur(20px);
+  -webkit-backdrop-filter: saturate(1.8) blur(20px);
   box-shadow: none;
   padding: 0 22px;
 }
@@ -1771,7 +1778,10 @@ body {
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: var(--sp-6);
   width: 100%;
-  max-width: 1240px;
+  /* 측정: apple.com 의 main 은 1440(full-bleed)이고 안쪽 컨테이너는
+     1024 / 980 이다. 배경은 가장자리까지 가되 읽는 것은 1024 로 묶는다 —
+     1240 은 애플보다 216px 넓었다. */
+  max-width: 1024px;
   margin: 0 auto;
   padding: var(--sp-6) var(--sp-5) var(--sp-4);
   box-sizing: border-box;
@@ -1958,7 +1968,15 @@ body {
 .buy-topbar-btn,
 .learn-row,
 .ws-facts .port-link,
-#launcherToolbar .dx-toolbar-btn { transition: all var(--ap-dur) var(--ap-ease); }
+#launcherToolbar .dx-toolbar-btn {
+  /* `all` 을 쓰면 outline 까지 애니메이션된다. Tab 으로 순회하며 재보니
+     focus ring 이 0.24s 에 걸쳐 색과 offset 이 보간되고 있었다 — 링은
+     즉시 떠야 하고, 애플의 측정값도 전환 없는 2px solid 였다. */
+  transition: color var(--ap-dur) var(--ap-ease),
+              background-color var(--ap-dur) var(--ap-ease),
+              opacity var(--ap-dur) var(--ap-ease),
+              filter var(--ap-dur) var(--ap-ease);
+}
 
 /* 12px 의 측정 트래킹은 -0.12px 다. 이 셋만 그 값을 안 쓰고 있었다. */
 #launcherToolbar .dx-toolbar-btn,
@@ -1968,6 +1986,90 @@ body {
 .studio-beta-badge,
 .ask-chip { letter-spacing: -.01em; }
 .studio-beta-badge { font-size: var(--ap-t-body); padding: 1px 7px; }
+
+
+/* ── 상태 ────────────────────────────────────────────────
+   apple.com 에서 hover / press / focus 를 각각 잡아 차이만 뽑았다.
+
+     nav link  hover  color rgba(0,0,0,.8) → rgb(0,0,0)   (배경 변화 없음)
+               press  변화 없음
+               focus  outline 2px solid rgb(0,113,227), offset -7px
+     card/cta  hover  bg 페이지 회색 → 흰색      (밝아짐)
+               press  bg 흰색 → 그보다 어두운 회색 (쉬는 값 아래로)
+               focus  outline 2px solid, offset +3px
+
+   즉 텍스트 링크는 색만 진해지고 배경을 얻지 않으며, 면을 가진 것은
+   hover 에 밝아졌다가 press 에 쉬는 값보다 어두워진다. press 상태는 이
+   페이지에 아예 없었다. */
+.portal-nav-item:hover { color: var(--ap-ink); background: none; }
+.portal-nav-item:active { color: var(--ap-ink); }
+
+.orbital-card:hover { background: var(--ap-panel-2); }
+.orbital-card:active { background: var(--ap-fill); }
+
+.ws-foot .deepx-link:hover { color: var(--ap-blue-hi); text-decoration: none; }
+.ws-foot .deepx-link:active { opacity: .6; }
+
+.learn-row:hover { color: var(--ap-blue); background: none; }
+.learn-row:active { opacity: .6; }
+
+.ask-chip:hover { background: var(--ap-panel-2); color: var(--ap-ink); }
+.ask-chip:active { background: var(--ap-fill); }
+
+.ask-go:active { background: var(--ap-blue); filter: brightness(.92); }
+.buy-topbar-btn:active { filter: brightness(.92); }
+
+.about-book-card:hover { background: none; }
+.about-book-card:active { opacity: .6; }
+
+.replay-btn:hover { text-decoration: none; color: var(--ap-blue-hi); }
+.replay-btn:active { opacity: .6; }
+
+/* shared/static/dx-base.css 에 a:hover{text-decoration:underline} 이 있어
+   홈의 링크가 전부 hover 에 밑줄을 얻고 있었다. 측정한 애플의 nav link
+   hover 는 색만 진해지고 밑줄이 없다. 파일은 9개 모듈 공용이라 홈이
+   소유한 링크에서만 되돌린다. */
+.portal-nav-item:hover,
+.learn-row:hover,
+.ws-foot .deepx-link:hover,
+.about-book-card:hover,
+.ws-facts .port-link:hover { text-decoration: none; }
+
+/* focus ring — 측정값 그대로 2px solid 애플 블루.
+   offset 은 애플이 인라인 링크에 -7px, 버튼/카드에 +3px 를 쓴다. 여기의
+   nav item 은 padding 이 훨씬 작으므로 안쪽으로 -2px 를 준다. */
+/* shared/static/dx-base.css 의 :focus-visible 은 outline 에 더해
+   box-shadow: 0 0 0 4px var(--accent-dim) 글로우를 얹는다. 애플의 측정
+   결과에서 focus 시 달라진 것은 outline 과 outline-offset 뿐이었다 —
+   글로우는 없다. 목록 행만 구분선 그림자를 되돌려 준다. */
+.portal-nav-item:focus-visible,
+.learn-row:focus-visible,
+.about-book-card:focus-visible,
+.ask-chip:focus-visible,
+.ask-go:focus-visible,
+.buy-topbar-btn:focus-visible,
+.replay-btn:focus-visible,
+.ws-facts .port-link:focus-visible,
+#launcherToolbar .dx-toolbar-btn:focus-visible,
+.orbital-card:focus-visible,
+.ws-foot .deepx-link:focus-visible { box-shadow: none; }
+.orbital-card + .orbital-card:focus-visible { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
+
+.portal-nav-item:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: -2px; }
+.ws-facts .port-link:focus-visible,
+#launcherToolbar .dx-toolbar-btn:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 3px; }
+/* 입력창은 링을 자기 자신이 아니라 감싸는 바에 그린다 — 바가 곧 컨트롤이다. */
+.home-ask:focus-within { outline: 2px solid var(--ap-blue); outline-offset: 3px; }
+.ask-input:focus-visible { outline: none; box-shadow: none; }
+.orbital-card:focus-visible,
+.learn-row:focus-visible,
+.about-book-card:focus-visible,
+.ask-chip:focus-visible,
+.ask-go:focus-visible,
+.buy-topbar-btn:focus-visible,
+.replay-btn:focus-visible,
+.ws-foot .deepx-link:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 3px; }
+.orbital-card:focus-visible { outline-offset: -2px; }
 
 /* ── the state column ── */
 .ws-side { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
@@ -2039,7 +2141,7 @@ body {
 /* ── below the work surface ── */
 .ws-foot {
   width: 100%;
-  max-width: 1240px;
+  max-width: 1024px;
   margin: 0 auto;
   padding: var(--sp-5) var(--sp-5) 0;
   box-sizing: border-box;
@@ -2053,7 +2155,7 @@ body {
   padding: 6px 0; background: none; border: 0;
   font-size: var(--ap-t-body); font-weight: 400; color: var(--ap-blue);
 }
-.ws-foot .deepx-link:hover { background: none; text-decoration: underline; }
+.ws-foot .deepx-link:hover { background: none; }
 .ws-foot .deepx-link::after { content: ' \203A'; color: inherit; font-size: var(--ap-t-body); }
 .ws-foot .replay-btn { align-self: flex-start; }
 @media (max-width: 768px) {
