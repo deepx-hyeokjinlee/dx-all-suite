@@ -859,105 +859,102 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 
 /* ── Overlay ── */
 .splash-overlay {
-  /* 인트로 — 네 박자. 점 하나 → 여덟 → 빛이 이름을 지남 → 컷 없이 UI 로.
-     자세한 의도는 launcher-splash.js 의 시퀀스 주석에 있다.
+  /* 인트로 — Gargantua. 다섯 박자와 그 이유는 launcher-splash.js 의 시퀀스
+     주석에 있다. 그림은 canvas 가 그리고, 여기 CSS 는 그 위에 얹히는 이름과
+     마지막 컷만 맡는다.
+
      이 화면만은 테마를 따르지 않는다: 검은 바탕에 고정된 브랜드 순간이다. */
   position: fixed;
   inset: 0;
   z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sp-6);
   background: var(--brand-shade);
   cursor: pointer;
-  transition: opacity var(--ap-dur-lg) var(--ap-ease),
-              background-color var(--ap-dur-lg) var(--ap-ease);
+  transition: opacity var(--ap-dur-lg) var(--ap-ease);
 }
 .splash-overlay.fade-out { opacity: 0; pointer-events: none; }
 
-/* ── 워드마크: 페이드인이 아니라, 빛이 지나가며 드러난다 ── */
-.splash-logo-hud { text-align: center; order: 2; }
+/* 5박자: 블룸이 화면을 덮은 순간 흰 막을 걷는다. 페이드가 아니라 컷이다 —
+   흰 화면 뒤에 이미 앱이 있다. */
+.splash-overlay.is-through { background: transparent; }
+.splash-overlay.is-through .splash-sky,
+.splash-overlay.is-through .splash-logo-hud,
+.splash-overlay.is-through .splash-skip {
+  opacity: 0;
+  transition: opacity .22s var(--ap-ease);
+}
+
+.splash-sky {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 이름은 원반 앞에 뜬다. 페이드인이 아니라, 원반의 뜨거운 쪽이 뒤를 지나며
+   드러낸다 — clip-path 가 열리고 그 앞머리를 밝은 띠가 타고 간다. */
+.splash-logo-hud {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 17%;
+  text-align: center;
+  pointer-events: none;
+}
 .splash-logo {
   position: relative;
   display: inline-block;
-  font-size: clamp(34px, 6vw, 56px);
+  font-size: clamp(30px, 5vw, 46px);
   font-weight: 600;
-  letter-spacing: -.005em;      /* 56px 의 측정값 (-0.28px) */
+  letter-spacing: .06em;
   line-height: 1;
   color: var(--brand-on-shade);
-  /* 오른쪽 100% 를 잘라 두고 0 까지 연다 — 빛이 지나간 만큼만 보인다. */
   clip-path: inset(0 100% 0 0);
-  transition: clip-path var(--ap-dur-lg) var(--ap-ease);
+  transition: clip-path 1s var(--ap-ease);
 }
 .splash-logo.is-revealed { clip-path: inset(0 0 0 0); }
-/* 빛 자체. 공개의 앞머리를 따라간다. */
 .splash-logo::after {
   content: '';
   position: absolute;
-  top: -6%; bottom: -6%; left: -14%;
-  width: 14%;
-  background: linear-gradient(90deg,
-    transparent, rgba(255,255,255,.85), transparent);
+  top: -8%; bottom: -8%; left: -16%;
+  width: 16%;
+  background: linear-gradient(90deg, transparent, rgba(255,240,214,.9), transparent);
   opacity: 0;
   pointer-events: none;
 }
-.splash-logo.is-revealed::after { animation: introSweep var(--ap-dur-lg) var(--ap-ease) forwards; }
+.splash-logo.is-revealed::after { animation: introSweep 1s var(--ap-ease) forwards; }
 @keyframes introSweep {
-  0%   { left: -14%; opacity: 0; }
-  15%  { opacity: 1; }
-  85%  { opacity: 1; }
+  0%   { left: -16%; opacity: 0; }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
   100% { left: 100%; opacity: 0; }
 }
 
 .splash-subtitle {
   margin-top: var(--sp-3);
-  font-size: var(--ap-t-lead);
-  font-weight: 400;
-  letter-spacing: -.022em;
+  font-size: var(--ap-t-body);
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
   color: var(--brand-subtle);
   opacity: 0;
-  transition: opacity var(--ap-dur) var(--ap-ease) .12s;
+  transition: opacity var(--ap-dur-lg) var(--ap-ease) .45s;
 }
-.splash-logo.is-revealed + .splash-subtitle { opacity: 1; }
-
-/* ── 점: 하나였다가 여덟이 되고, 타일 자리로 간다 ── */
-.splash-modules-area {
-  order: 1;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 10px;
-}
-.intro-dot {
-  position: absolute;
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--brand-on-shade);
-  opacity: 0;
-  transform: translateX(0);
-  transition: transform var(--ap-dur-lg) var(--ap-ease),
-              opacity var(--ap-dur) var(--ap-ease),
-              background-color var(--ap-dur) var(--ap-ease);
-}
-/* 1박자: 여덟이 겹쳐 있어 하나로 보인다. */
-.splash-overlay.is-seeded .intro-dot { opacity: 1; }
-.intro-dot.is-spread { opacity: .9; }
+.splash-logo.is-revealed + .splash-subtitle { opacity: .8; }
 
 .splash-skip {
   position: absolute;
+  left: 0; right: 0;
   bottom: 28px;
+  text-align: center;
   font-size: var(--ap-t-body);
   color: var(--brand-subtle);
-  opacity: .55;
+  opacity: .4;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .splash-logo { transition: none; clip-path: none; }
   .splash-logo::after { display: none; }
-  .splash-subtitle, .intro-dot { transition: none; }
+  .splash-subtitle { transition: none; opacity: .8; }
 }
 /* ═══════════════════════════════════════════════════════
    ORBITAL LANDING LAYOUT
@@ -1277,6 +1274,53 @@ body {
   border-top: 1.5px solid var(--border-strong);
   transform: translateY(-50%) rotate(45deg);
 }
+
+/* ── 실측 표 ─────────────────────────────────────────────
+   숫자가 주인공이라 tabular-nums 로 자리를 맞추고 오른쪽에 정렬한다.
+   행은 목록과 같은 헤어라인으로 갈린다 — 여기와 Modules 는 같은 종류의
+   물건이라 다르게 생길 이유가 없다. */
+.perf {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--ap-panel);
+  border-radius: var(--ap-r-lg);
+  overflow: hidden;
+}
+.perf tr { cursor: pointer; transition: background var(--ap-dur) var(--ap-ease); }
+.perf tr + tr td { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
+.perf tr:hover { background: var(--ap-panel-2); }
+.perf tr:active { background: var(--ap-fill); }
+.perf td { padding: 11px 16px; font-size: var(--ap-t-body); }
+.perf-name {
+  font-size: var(--ap-t-lead);
+  font-weight: 400;
+  letter-spacing: -.022em;
+  color: var(--ap-ink);
+  white-space: nowrap;
+}
+.perf-task { color: var(--ap-ink-3); width: 40%; }
+.perf-fps {
+  text-align: right;
+  white-space: nowrap;
+  color: var(--ap-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.perf-fps b {
+  font-size: var(--ap-t-lead);
+  font-weight: 600;
+  letter-spacing: -.022em;
+  color: var(--ap-ink);
+}
+.perf-all {
+  display: inline-block;
+  margin-top: var(--sp-3);
+  padding-inline: 4px;
+  font-size: var(--ap-t-body);
+  font-weight: 600;
+  color: var(--ap-blue);
+  text-decoration: none;
+}
+.perf-all:hover { text-decoration: none; }
 
 /* ── 모듈 목록 ──────────────────────────────────────────
    여덟 장의 똑같은 카드가 그리드에 깔린 건 지루한데, 목록의 행이 똑같은

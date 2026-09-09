@@ -32,30 +32,23 @@ def test_launcher_runtime_does_not_register_sandbox():
 
 
 def test_launcher_state_registers_exact_eight_release_modules():
+    """Eight modules, no sandbox — checked where the app actually routes.
+
+    This used to check APP_PATHS and then check the same eight names again in
+    _SPLASH_MODULES, a second list the intro kept for itself. The intro no
+    longer names modules and that list is gone, so there is one register now.
+    The names themselves are asserted where they are shown: the home's list.
+    """
     src = read("launcher/static/launcher-state.js")
     app_paths = _js_block(src, "window.DXLauncher.APP_PATHS")
     assert "sandbox" not in app_paths
     assert app_paths.count(":") == 8
 
-    splash = _js_block(src, "window.DXLauncher._SPLASH_MODULES")
-    assert "DX Sandbox" not in splash
-    assert "sandbox" not in splash
-    expected_names = [
-        "DX App",
-        "DX Stream",
-        "DX Model Zoo",
-        "DX Compiler",
-        "DX EdgeGuide",
-        "DX Benchmark",
-        "DX Monitor",
-        "DX Agent Dev",
-    ]
-    for name in expected_names:
-        assert name in splash
-    # The bearings went with the ring. Nothing reads them, so carrying them
-    # would be data that outlived its only consumer — the next person to add
-    # a module would dutifully invent a ninth angle for nothing.
-    assert "angle:" not in splash
+    html = read("launcher/static/index.html")
+    for name in ("App", "Stream", "Model Zoo", "Compiler",
+                 "EdgeGuide", "Benchmark", "Monitor", "Agent Dev"):
+        assert ">" + name + "<" in html, f"{name} is missing from the home's list"
+    assert "DX Sandbox" not in html
 
 
 def test_launcher_navigation_shortcuts_are_compact_eight_modules():
@@ -123,18 +116,20 @@ def test_launcher_home_copy_and_cards_are_eight_module_release():
     ]
 
 
-def test_splash_follows_the_module_count():
-    """The intro must read the module list, never a hard-coded eight.
+def test_the_intro_carries_no_module_list():
+    """The intro stopped naming the modules, so the data it needed is gone too.
 
-    It used to place the modules on a ring, so the check was for the bearing
-    maths (`360 / moduleCount`). The ring went with the 17.5-second cinematic
-    — the modules arrive as a stagger now — but the rule underneath is
-    unchanged: add or remove a module and the intro follows without an edit.
+    It listed all eight — first on a ring with per-module bearings, then as a
+    stagger of pills. The Gargantua sequence has one subject and it is not a
+    menu. _SPLASH_MODULES and the icon table it fed were left behind by that
+    change, and unread data is how a ninth module ends up with an invented
+    bearing for a ring that no longer exists.
     """
-    src = read("launcher/static/launcher-splash.js")
-    icons = _js_block(src, "var _MODULE_ICONS")
-    assert "sandbox" not in icons
-    assert "var mainAngles = [22.5" not in src
-    assert "ns._SPLASH_MODULES.length" in src, "the intro must read the list's length"
-    assert "ns._SPLASH_MODULES.forEach" in src, "and iterate the list itself"
-    assert "360 /" not in src, "the ring is gone; no bearing maths should remain"
+    state = read("launcher/static/launcher-state.js")
+    splash = read("launcher/static/launcher-splash.js")
+    assert "_SPLASH_MODULES" not in state, "the intro's module list outlived its only reader"
+    assert "_SPLASH_MODULES" not in splash
+    assert "_MODULE_ICONS" not in splash, "the intro's icon table has no consumer"
+    # The home's own list is where the eight modules are named, and it stays.
+    html = read("launcher/static/index.html")
+    assert html.count('class="orbital-card"') == 8

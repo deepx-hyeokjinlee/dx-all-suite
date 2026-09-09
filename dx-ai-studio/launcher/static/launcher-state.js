@@ -20,16 +20,6 @@ window.DXLauncher.APP_PATHS = {
   agent: '/agent/',
 };
 
-window.DXLauncher._SPLASH_MODULES = [
-  { name: 'DX App',    icon: 'app' },
-  { name: 'DX Stream',   icon: 'stream' },
-  { name: 'DX Model Zoo',   icon: 'zoo' },
-  { name: 'DX Compiler',  icon: 'compiler' },
-  { name: 'DX EdgeGuide',  icon: 'edgeguide' },
-  { name: 'DX Benchmark',  icon: 'benchmark' },
-  { name: 'DX Monitor',  icon: 'monitor' },
-  { name: 'DX Agent Dev',  icon: 'agent' },
-];
 
 window.DXLauncher._DECODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 window.DXLauncher._DECODE_FRAME_INTERVAL = 50;

@@ -63,11 +63,11 @@
     <!-- 조용한 인트로. 회로 트레이스·파티클·동심원 링·에너지 빔·버스트는
          17.5초짜리 시네마틱의 소품이었고 그 시퀀스와 함께 사라졌다. 남은 건
          워드마크와 모듈 여덟 개뿐이고, 그게 이 문이 말할 전부다. -->
+    <canvas class="splash-sky" id="splashSky"></canvas>
     <div class="splash-logo-hud" id="splashLogoHud">
       <div class="splash-logo" id="splashLogo">DEEPX</div>
       <div class="splash-subtitle" id="splashSubtitle">AI Studio</div>
     </div>
-    <div class="splash-modules-area" id="splashModulesArea"></div>
     <div class="splash-skip" data-i18n="Click to skip">Click to skip</div>
   </div>
 
@@ -225,6 +225,22 @@
               <div class="work-term-out" id="workTerminalOut"></div>
             </div>
           </div>
+        </section>
+
+        <!-- 이 스튜디오가 하는 일의 증거. 홈에 숫자가 일곱 개 있었는데
+             그중 다섯이 버전 문자열과 포트 번호였다 — 모델을 컴파일해
+             NPU 에서 돌리고 얼마나 빠른지 재는 제품의 현관치고는 아무것도
+             말하지 않고 있었다. 값은 Model Zoo 가 이미 서빙하는 카탈로그의
+             실측 performance.fps 이고, 여기서 새로 재지 않는다. -->
+        <section class="ws-block" id="measured" hidden>
+          <div class="ws-block-head">
+            <h2 data-i18n="Measured on DX-M1">Measured on DX-M1</h2>
+            <span class="ws-count" id="measuredCount"></span>
+          </div>
+          <table class="perf">
+            <tbody id="perfRows"></tbody>
+          </table>
+          <a class="perf-all" id="perfAll" href="/zoo/"><span data-i18n="Browse all">Browse all</span> <span aria-hidden="true">›</span></a>
         </section>
 
         <section class="ws-block" id="studio">
@@ -634,6 +650,9 @@
     'not installed': { ko:'미설치', ja:'未インストール', es:'no instalado', 'zh-CN':'未安装', 'zh-TW':'未安裝' },
     'Sign in with': { ko:'로그인 명령', ja:'ログインコマンド', es:'Inicie sesión con', 'zh-CN':'登录命令', 'zh-TW':'登入指令' },
     'No coding agent found': { ko:'coding agent 를 찾지 못했습니다', ja:'coding agent が見つかりません', es:'No se encontró ningún agente', 'zh-CN':'未找到 coding agent', 'zh-TW':'找不到 coding agent' },
+    'Measured on DX-M1': { ko:'DX-M1 실측', ja:'DX-M1 実測', es:'Medido en DX-M1', 'zh-CN':'DX-M1 实测', 'zh-TW':'DX-M1 實測' },
+    'Browse all': { ko:'전체 보기', ja:'すべて見る', es:'Ver todo', 'zh-CN':'查看全部', 'zh-TW':'檢視全部' },
+    'measured': { ko:'개 실측', ja:'件 実測', es:'medidos', 'zh-CN':'个已实测', 'zh-TW':'個已實測' },
     'Modules': { ko:'모듈', ja:'モジュール', es:'Módulos', 'zh-CN':'模块', 'zh-TW':'模組' },
     'Device': { ko:'장치', ja:'デバイス', es:'Dispositivo', 'zh-CN':'设备', 'zh-TW':'裝置' },
     'Running': { ko:'실행 중', ja:'実行中', es:'En ejecución', 'zh-CN':'运行中', 'zh-TW':'執行中' },

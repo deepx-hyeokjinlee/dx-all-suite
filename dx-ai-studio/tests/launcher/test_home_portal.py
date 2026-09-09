@@ -339,30 +339,58 @@ def test_module_state_comes_from_the_existing_poll():
 # tuning, and not the copy.
 
 
-def test_the_intro_has_its_beats():
-    """One point, then eight, then the light crosses the name. Then it leaves.
+def test_the_intro_is_the_gargantua_sequence():
+    """Five beats, and the picture is drawn rather than decorated.
 
-    There was briefly a fourth beat: the points flew to the real module tiles
-    and dissolved on them, so the intro would "become" the app with no cut.
-    The coordinates converged exactly and it still failed on screen — a match
-    cut needs the destination to arrive WITH the motion, and here the
-    destination was already fully drawn, so eight saturated circles simply sat
-    on top of a finished page reading as debris. It is gone; this test is the
-    note that says why, so it does not get rebuilt.
+    Three intros preceded this one: a 17.5-second neon cinematic, a 1.2s fade
+    with no idea in it, and a hand-off whose points flew onto the finished page
+    and read as debris. This one has a subject — a black sphere, an accretion
+    disc, and the disc's far side lensed over the top, which is the whole
+    reason the image reads as a black hole instead of a ring.
+
+    The beats are the design. The durations are tuning and are not pinned.
     """
     src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
-    for beat in ("_B1", "_B2", "_B3"):
-        assert beat in src, f"beat {beat} is gone"
-    assert "_B4" not in src, "the hand-off beat came back"
-    assert "is-landing" not in src, "the points must not fly onto the app"
-    assert "is-seeded" in src, "beat 1: nothing shows the single point"
-    assert "is-spread" in src, "beat 2: nothing spreads it into the eight"
-    assert "is-revealed" in src, "beat 3: the wordmark is not being revealed"
+    for beat in ("hold", "edge", "lens", "name", "through"):
+        assert "_T." + beat in src or "'" + beat + "'" in src or beat + ":" in src, (
+            f"beat {beat} is gone"
+        )
+    assert "getContext('2d')" in src, "the sky must be drawn, not composed of DOM"
+    assert "globalCompositeOperation" in src, (
+        "the disc is built by adding light; one flat pass reads as dust"
+    )
+    assert "lift" in src, "the lensed arc over the sphere is what makes it Gargantua"
+    assert "cancelAnimationFrame" in src, "the camera must stop when the intro leaves"
+
+    html = index()
+    assert 'id="splashSky"' in html, "no canvas for the intro to draw on"
 
     css = style()
     logo = rule_body(css, ".splash-logo")
     assert "clip-path" in logo, (
-        "the wordmark must be revealed by the light crossing it, not faded in"
+        "the wordmark is revealed by the disc's light crossing it, not faded in"
+    )
+
+
+def test_the_intro_cuts_rather_than_fades_into_the_app():
+    """The bloom washes the screen, the app is switched on behind it, cut.
+
+    A fade would show the app arriving. A cut does not — which is why the shell
+    is revealed while the white still covers everything.
+    """
+    src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
+    assert "completeLauncherBoot" in src, "nothing turns the app on behind the bloom"
+    assert "is-through" in src
+    css = style()
+    assert "background: transparent" in rule_body(css, ".splash-overlay.is-through")
+
+
+def test_the_intro_yields_to_reduced_motion():
+    src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
+    assert "prefers-reduced-motion" in src
+    head = src[: src.index("var ctx = canvas.getContext('2d')")]
+    assert "prefers-reduced-motion" in head, (
+        "the reduced-motion exit must come before the camera starts"
     )
 
 
@@ -378,12 +406,3 @@ def test_module_state_says_nothing_until_it_knows():
     grid = grid[: grid.index("</section>")]
     assert 'data-role="state">—<' not in grid, "the placeholder dash is back"
     assert grid.count('data-role="state"') >= 8, "each row still needs its state line"
-
-
-def test_the_intro_yields_to_reduced_motion():
-    src = (ROOT / "launcher" / "static" / "launcher-splash.js").read_text(encoding="utf-8")
-    assert "prefers-reduced-motion" in src
-    head = src[: src.index("var n = ns._SPLASH_MODULES.length")]
-    assert "prefers-reduced-motion" in head, (
-        "the reduced-motion exit must come before the sequence starts, not after"
-    )

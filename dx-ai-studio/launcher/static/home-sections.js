@@ -32,6 +32,7 @@
   /* ── the catalogue's size, on the card that opens it ─────── */
 
   var _counts = null;
+  var _models = null;
 
   function _paintCount() {
     var card = document.querySelector('.orbital-card[data-app="zoo"] .card-desc');
@@ -39,6 +40,63 @@
     card.removeAttribute('data-i18n');   // a live number is not a dictionary key
     card.textContent = _counts.models + ' ' + _t('models') + ' · ' +
       _counts.tasks + ' ' + _t('tasks');
+  }
+
+  /* 어떤 모델을 보여줄지. 제일 빠른 것만 뽑으면 super-resolution 이 19,000
+     FPS 로 표를 독차지하는데, 그건 이 칩으로 무엇을 할 수 있는지에 대한
+     대답이 아니다. task 당 하나씩, 그 task 에서 가장 빠른 것을 고른다 —
+     사람들이 실제로 돌리는 일 다섯 가지가 각각 얼마나 나오는지가 답이다. */
+  var HEADLINE_TASKS = [
+    'object_detection', 'pose_estimation', 'semantic_segmentation',
+    'face_detection', 'classification'
+  ];
+
+  function _fmt(n) {
+    return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function _paintPerf(models) {
+    var block = $('measured');
+    var body = $('perfRows');
+    if (!block || !body) return;
+
+    var best = {};
+    var measured = 0;
+    var tasks = {};
+    models.forEach(function (m) {
+      var d = m.display || {};
+      var fps = (m.performance || {}).fps;
+      if (d.task) tasks[d.task] = 1;
+      if (!fps) return;
+      measured += 1;
+      if (HEADLINE_TASKS.indexOf(d.task) === -1) return;
+      if (!best[d.task] || fps > best[d.task].fps) {
+        best[d.task] = { fps: fps, name: d.class_name || d.name || m.id, id: m.id, task: d.task };
+      }
+    });
+
+    var rows = HEADLINE_TASKS.map(function (t) { return best[t]; }).filter(Boolean);
+    if (!rows.length) return;
+
+    body.innerHTML = '';
+    rows.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="perf-name">' + r.name + '</td>' +
+        '<td class="perf-task">' + r.task.replace(/_/g, ' ') + '</td>' +
+        '<td class="perf-fps"><b>' + _fmt(r.fps) + '</b> FPS</td>';
+      tr.addEventListener('click', function () {
+        window.location.href = '/zoo/#model=' + encodeURIComponent(r.id);
+      });
+      body.appendChild(tr);
+    });
+
+    var note = $('measuredCount');
+    if (note) {
+      note.textContent = _fmt(measured) + ' ' + _t('measured') + ' · ' +
+        Object.keys(tasks).length + ' ' + _t('tasks');
+    }
+    block.hidden = false;
   }
 
   function loadCatalogueSize() {
@@ -54,6 +112,8 @@
         });
         _counts = { models: models.length, tasks: Object.keys(tasks).length };
         _paintCount();
+        _models = models;
+        _paintPerf(models);
       })
       .catch(function () {
         /* The zoo is not running. The card keeps the description it shipped
@@ -121,6 +181,7 @@
     if (window.DXI18n && DXI18n.onLangChange) {
       DXI18n.onLangChange(function () {
         _paintCount();
+        if (_models) _paintPerf(_models);
         refreshModuleState();
       });
     }
