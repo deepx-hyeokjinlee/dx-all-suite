@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import os
+import re
 import shutil
 from pathlib import Path
 from typing import Any
 
+from .counts import find_app_root, model_count, task_names
 from .frontmatter import strip_frontmatter, build_frontmatter, first_paragraph
 from .transformers import (
     rewrite_deepx_to_github,
@@ -179,7 +181,12 @@ class Generator:
 
         for plat in platforms:
             method = getattr(self, f"_generate_{plat}")
-            files = method()
+            try:
+                files = method()
+            except RuntimeError as e:
+                report.append(f"ERROR: {plat}: {e}")
+                clean = False
+                continue
             for path, expected in files.items():
                 if not path.exists():
                     report.append(f"MISSING: {path.relative_to(self.repo)}")
@@ -193,7 +200,15 @@ class Generator:
         if clean:
             report.append("All generated files are up-to-date.")
         else:
-            report.append(f"\nRun 'dx-agent-gen generate' to update.")
+            run_all = self._find_run_all_sh()
+            if run_all is not None:
+                hint = (
+                    f"Run 'bash {run_all}' to regenerate ALL levels (recommended).\n"
+                    f"Or: 'dx-agent-gen generate --repo {self.repo}' for this level only."
+                )
+            else:
+                hint = f"Run 'dx-agent-gen generate --repo {self.repo}' to update."
+            report.append("\n" + hint)
 
         return clean, report
 
@@ -639,6 +654,25 @@ class Generator:
                 for key, value in context.items():
                     content = content.replace("{{" + key + "}}", value)
 
+                leftover = re.findall(r"\{\{[A-Za-z_]+(?::[^}]*)?\}\}", content)
+                if leftover:
+                    registry_vars = {"{{MODEL_COUNT}}", "{{TASK_COUNT}}", "{{TASK_LIST}}"}
+                    if set(leftover) & registry_vars:
+                        hint = (
+                            "MODEL_COUNT/TASK_COUNT/TASK_LIST need dx_app's "
+                            "config/model_registry.json — run "
+                            "`git submodule update --init --recursive`."
+                        )
+                    else:
+                        hint = (
+                            "Define the variable in _build_template_context() or "
+                            "fix the template/fragment name."
+                        )
+                    raise RuntimeError(
+                        f"{tmpl_file.relative_to(self.repo)}: unresolved template variables "
+                        f"{sorted(set(leftover))}. {hint}"
+                    )
+
                 # Determine output path
                 out_name = tmpl_file.stem  # e.g., CLAUDE.md, AGENTS-KO.md
                 if "copilot-instructions" in out_name:
@@ -675,6 +709,26 @@ class Generator:
             result[lang_dir] = frags
 
         return result
+
+    def _find_run_all_sh(self) -> Path | None:
+        """Find the suite-level .deepx/tools/scripts/run_all.sh by walking up
+        from self.repo. Only the suite root ships run_all.sh — a nested repo
+        (e.g. dx-runtime/dx_app, 4 levels deep) must not be told to run a
+        script that only exists 4 levels above it without saying where.
+
+        self.repo is resolved first so a relative --repo (e.g. the CLI's
+        cwd-relative default Path('.')) still yields an absolute,
+        actually-runnable path in the hint."""
+        current = self.repo.resolve()
+        for _ in range(6):  # max 6 levels up
+            candidate = current / ".deepx" / "tools" / "scripts" / "run_all.sh"
+            if candidate.is_file():
+                return candidate
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return None
 
     def _find_fragments_dir(self) -> Path | None:
         """Find .deepx/templates/fragments/ in current repo or parent repos."""
@@ -728,5 +782,18 @@ class Generator:
             ctx["ROUTING_TABLE"] = rt_file.read_text(encoding="utf-8").strip()
         else:
             ctx["ROUTING_TABLE"] = "_No routing table defined._"
+
+        # Live model / task counts — computed, never hand-written. dx_app's own
+        # repo has config/ at the root; the suite and dx-runtime reach it through
+        # their submodule path. When no registry is reachable the placeholders are
+        # left in place on purpose so the leftover-placeholder check fails loudly.
+        app_root = find_app_root(self.repo)
+        if app_root is not None:
+            models = model_count(app_root)
+            names = task_names(app_root)
+            if models is not None and names is not None:   # atomic: all or none (#4)
+                ctx["MODEL_COUNT"] = str(models)
+                ctx["TASK_COUNT"] = str(len(names))
+                ctx["TASK_LIST"] = ", ".join(names)
 
         return ctx

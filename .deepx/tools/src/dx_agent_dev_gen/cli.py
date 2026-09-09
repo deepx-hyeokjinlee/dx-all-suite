@@ -104,7 +104,11 @@ def main(argv: list[str] | None = None) -> int:
     gen = Generator(repo)
 
     if args.command == "generate":
-        results = gen.generate(platform=args.platform, dry_run=args.dry_run)
+        try:
+            results = gen.generate(platform=args.platform, dry_run=args.dry_run)
+        except RuntimeError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 1
         if args.dry_run:
             for path, action in results.items():
                 print(f"  {action}: {path}")
@@ -128,7 +132,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     elif args.command == "check":
-        clean, report = gen.check(platform=args.platform)
+        try:
+            clean, report = gen.check(platform=args.platform)
+        except RuntimeError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 1
         for line in report:
             print(line)
         return 0 if clean else 1

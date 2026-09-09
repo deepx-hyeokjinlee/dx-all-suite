@@ -75,7 +75,7 @@ Skill은 명명 규칙에 따라 세 계층으로 구성됩니다:
 Sub-project skill도 동일한 명명 규칙을 따릅니다. 주요 차이점:
 
 - **`dx-agent-*`** sub-project 레벨은 project 전용 세부 사항을 포함합니다
-  (예: dx_app의 `dx-agent-tdd`는 133-model validation 세부 사항을 가짐)
+  (예: dx_app의 `dx-agent-tdd`는 model-registry validation 세부 사항을 가짐)
 - **`dx-swe-*`** sub-project 레벨은 일반적으로 suite 레벨과 동일합니다
 - **Domain 전용 skill**은 sub-project별로 고유합니다
 

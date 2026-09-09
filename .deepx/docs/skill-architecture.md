@@ -76,7 +76,7 @@ Skills are organized into three tiers by naming convention:
 Sub-project skills follow the same naming convention. Key differences:
 
 - **`dx-agent-*`** at sub-project level contains project-specific details
-  (e.g., dx_app's `dx-agent-tdd` has 133-model validation details)
+  (e.g., dx_app's `dx-agent-tdd` has model-registry validation details)
 - **`dx-swe-*`** at sub-project level are typically identical to suite level
 - **Domain-specific skills** are unique per sub-project
 

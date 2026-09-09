@@ -1,0 +1,144 @@
+# dx-all-suite/.github/workflows/dx-agent-dev-gate-cloud.yml
+#
+# dx-agent-dev harness gate — github.com variant (private mirror deepx-dhyang/* and the
+# public channel DEEPX-AI/*). Blocks generator drift (.deepx/ source vs generated
+# CLAUDE.md / .claude / .github / .cursor / .opencode), EN/KO fragment parity breaks and
+# conformance/tool regressions. Every check runs through .deepx/tools/scripts/harness_gate.sh,
+# so the identical command set reproduces locally: `bash .deepx/tools/scripts/harness_gate.sh all`.
+#
+# Runner: GitHub-hosted ubuntu-latest (pure Python, no NPU). Token: GC_DCI_TOKEN when the
+# repos are private (github.com/deepx-dhyang/* mirror — a fine-grained PAT with
+# contents:read on dx-all-suite, dx-runtime, dx-compiler, dx_app, dx_stream), plain
+# github.token on the public channel. Host guard: this job only runs when
+# github.server_url IS https://github.com; the GHES twin is dx-agent-dev-gate-ghes.yml.
+# .github/workflows/ is release-excluded, so this file does NOT reach github.com/DEEPX-AI
+# through the release export — it is committed there by hand (see .deepx/docs/ci-gates.md).
+#
+# Submodules: only dx-runtime, dx-compiler, dx-runtime/dx_app, dx-runtime/dx_stream are
+# initialised (never `recursive` — dx_fw/dx_rt/driver are not needed and may not exist on
+# every host). Mode (decided by .deepx/tools/scripts/gate_mode.sh, step `mode`):
+#   branch-tip (default) — sub-repos at the tip of the same-name branch (default branch if
+#                          absent): the post-merge state, so pointer lag never turns the gate red
+#   pointer              — the commits recorded by this suite commit; selected automatically when
+#                          the push/PR range changed a submodule gitlink (update-submodule.yml bump
+#                          commits, manual bump PRs) or via workflow_dispatch input mode=pointer
+# Required check name: harness-gate. Docs: .deepx/docs/ci-gates.md
+name: dx-agent-dev gate (cloud)
+
+on:
+  pull_request:
+  push:
+    branches: ["main", "staging*", "feature/**"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "branch-tip = sub-repos at the tip of the same-name branch (default branch if absent); pointer = the commits recorded by this suite commit"
+        type: choice
+        default: branch-tip
+        options: [branch-tip, pointer]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  harness-gate:
+    name: harness-gate
+    if: github.server_url == 'https://github.com' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout suite (no submodules yet)
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Select mode (branch-tip unless a submodule pointer changed)
+        id: mode
+        env:
+          TOKEN: ${{ secrets.GC_DCI_TOKEN || github.token }}
+          EVENT: ${{ github.event_name }}
+          INPUT_MODE: ${{ inputs.mode }}
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          FROM="$BASE"; [ "$EVENT" = "push" ] && FROM="$BEFORE"
+          # the base commit is outside the depth-1 checkout — fetch it (header auth, never a token in a URL)
+          if [ -n "$FROM" ] && [ "$FROM" != "0000000000000000000000000000000000000000" ]; then
+            git -c http.extraheader="$AUTH" fetch -q --depth=1 origin "$FROM" || echo "base $FROM not fetchable — gate_mode.sh will default to branch-tip"
+          fi
+          bash .deepx/tools/scripts/gate_mode.sh --event "$EVENT" --from "$FROM" --to "$GITHUB_SHA" --input-mode "$INPUT_MODE" | tee mode.out
+          grep '^mode=' mode.out >> "$GITHUB_OUTPUT"
+          echo "::notice title=harness-gate mode::$(sed -n 's/^mode=//p' mode.out) — $(sed -n 's/^reason=//p' mode.out)"
+          { echo "### harness-gate mode: \`$(sed -n 's/^mode=//p' mode.out)\`"; sed -n 's/^reason=//p' mode.out; } >> "$GITHUB_STEP_SUMMARY"
+          rm -f mode.out
+
+      - name: Init required submodules (dx-runtime, dx-compiler, dx_app, dx_stream)
+        env:
+          TOKEN: ${{ secrets.GC_DCI_TOKEN || github.token }}
+          MODE: ${{ steps.mode.outputs.mode }}
+          REF: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          # Auth via a per-invocation header — never in a URL (git would persist it in .git/config).
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          g() { git -c http.extraheader="$AUTH" "$@"; }
+          g submodule update --init --depth 1 -- dx-runtime dx-compiler
+          g -C dx-runtime submodule update --init --depth 1 -- dx_app dx_stream
+          if [ "$MODE" = "branch-tip" ]; then
+            for d in dx-runtime dx-compiler dx-runtime/dx_app dx-runtime/dx_stream; do
+              if [ -n "$(g -C "$d" ls-remote --heads origin "$REF")" ]; then use="$REF"; else
+                use="$(g -C "$d" ls-remote --symref origin HEAD | awk '/^ref:/{sub("refs/heads/","",$2);print $2}')"; fi
+              g -C "$d" fetch -q --depth 1 origin "$use"
+              git -C "$d" checkout -q --detach FETCH_HEAD
+              echo "$d: branch-tip '$use' @ $(git -C "$d" rev-parse --short HEAD)"
+            done
+          else
+            echo "submodules at recorded pointers (mode=pointer):"
+            git submodule status --recursive | grep -E 'dx-runtime|dx-compiler|dx_app|dx_stream'
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python deps (pip)
+        id: deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .deepx/tools "pytest>=8,<9" "rich>=13"
+          bash .deepx/tools/scripts/harness_gate.sh deps
+
+      - name: Drift check (all 5 levels)
+        run: bash .deepx/tools/scripts/harness_gate.sh check
+
+      - name: EN/KO fragment parity lint
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: bash .deepx/tools/scripts/harness_gate.sh lint
+
+      - name: Conformance + tool + e2e-unit tests
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: bash .deepx/tools/scripts/harness_gate.sh tests
+
+      - name: run_model_eval.sh dry-run tests
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: bash .deepx/tools/scripts/harness_gate.sh e2e-sh
+
+      - name: How to fix
+        if: failure()
+        run: |
+          echo "::error::dx-agent-dev harness gate failed."
+          echo "Reproduce locally (same commands):   bash .deepx/tools/scripts/harness_gate.sh all"
+          echo "Drift (MISSING:/CHANGED: lines above): regenerate ALL 5 levels, never per-level:"
+          echo "    bash .deepx/tools/scripts/run_all.sh generate && bash .deepx/tools/scripts/run_all.sh check"
+          echo "Never edit CLAUDE.md / AGENTS.md / .claude / .github / .cursor / .opencode directly — edit the .deepx/ source and regenerate."
+          echo "EN/KO parity: add or extend .deepx/templates/fragments/ko/<stem>.md."
+          echo "Docs: .deepx/docs/ci-gates.md"

@@ -91,3 +91,6 @@ dx-agent-dev-showcase/**/output/
 dx-agent-dev-showcase/**/.venv_path
 session-ses_*.md
 
+
+# harness_gate.sh job-local venv (CI self-hosted fallback)
+.gate-venv/

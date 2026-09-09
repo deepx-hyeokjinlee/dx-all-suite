@@ -1,0 +1,151 @@
+# dx-all-suite/.github/workflows/dx-agent-dev-gate-ghes.yml
+#
+# dx-agent-dev harness gate — closed-network GHES variant (gh.deepx.ai/deepx/*).
+# Blocks generator drift (.deepx/ source vs generated CLAUDE.md / .claude / .github /
+# .cursor / .opencode), EN/KO fragment parity breaks and conformance/tool regressions.
+# Every check runs through .deepx/tools/scripts/harness_gate.sh, so the identical
+# command set reproduces locally: `bash .deepx/tools/scripts/harness_gate.sh all`.
+#
+# Runner: self-hosted with the system python3 (jinja2 + pyyaml + pytest + rich must be
+# importable; a job-local .gate-venv is tried as a fallback — closed networks need a PyPI
+# mirror for that). Token: GH_DCI_TOKEN (private submodules). Host guard: this job only
+# runs when github.server_url is NOT https://github.com — the github.com mirror
+# deepx-dhyang/* receives this file via git but must use dx-agent-dev-gate-cloud.yml.
+# .github/workflows/ is release-excluded: this file never reaches github.com/DEEPX-AI.
+#
+# Submodules: only dx-runtime, dx-compiler, dx-runtime/dx_app, dx-runtime/dx_stream are
+# initialised (never `recursive` — dx_fw/dx_rt/driver are not needed and may not exist on
+# every host). Mode (decided by .deepx/tools/scripts/gate_mode.sh, step `mode`):
+#   branch-tip (default) — sub-repos at the tip of the same-name branch (default branch if
+#                          absent): the post-merge state, so pointer lag never turns the gate red
+#   pointer              — the commits recorded by this suite commit; selected automatically when
+#                          the push/PR range changed a submodule gitlink (update-submodule.yml bump
+#                          commits, manual bump PRs) or via workflow_dispatch input mode=pointer
+# Required check name: harness-gate. Docs: .deepx/docs/ci-gates.md
+name: dx-agent-dev gate (ghes)
+
+on:
+  pull_request:
+  push:
+    branches: ["main", "staging*", "feature/**"]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "branch-tip = sub-repos at the tip of the same-name branch (default branch if absent); pointer = the commits recorded by this suite commit"
+        type: choice
+        default: branch-tip
+        options: [branch-tip, pointer]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  harness-gate:
+    name: harness-gate
+    if: github.server_url != 'https://github.com' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: self-hosted
+    timeout-minutes: 20
+    steps:
+      - name: Checkout suite (no submodules yet)
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Select mode (branch-tip unless a submodule pointer changed)
+        id: mode
+        env:
+          TOKEN: ${{ secrets.GH_DCI_TOKEN || github.token }}
+          EVENT: ${{ github.event_name }}
+          INPUT_MODE: ${{ inputs.mode }}
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          FROM="$BASE"; [ "$EVENT" = "push" ] && FROM="$BEFORE"
+          # the base commit is outside the depth-1 checkout — fetch it (header auth, never a token in a URL)
+          if [ -n "$FROM" ] && [ "$FROM" != "0000000000000000000000000000000000000000" ]; then
+            git -c http.extraheader="$AUTH" fetch -q --depth=1 origin "$FROM" || echo "base $FROM not fetchable — gate_mode.sh will default to branch-tip"
+          fi
+          bash .deepx/tools/scripts/gate_mode.sh --event "$EVENT" --from "$FROM" --to "$GITHUB_SHA" --input-mode "$INPUT_MODE" | tee mode.out
+          grep '^mode=' mode.out >> "$GITHUB_OUTPUT"
+          echo "::notice title=harness-gate mode::$(sed -n 's/^mode=//p' mode.out) — $(sed -n 's/^reason=//p' mode.out)"
+          { echo "### harness-gate mode: \`$(sed -n 's/^mode=//p' mode.out)\`"; sed -n 's/^reason=//p' mode.out; } >> "$GITHUB_STEP_SUMMARY"
+          rm -f mode.out
+
+      - name: Init required submodules (dx-runtime, dx-compiler, dx_app, dx_stream)
+        env:
+          TOKEN: ${{ secrets.GH_DCI_TOKEN || github.token }}
+          MODE: ${{ steps.mode.outputs.mode }}
+          REF: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          # Auth via a per-invocation header — never in a URL (git would persist it in .git/config).
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          g() { git -c http.extraheader="$AUTH" "$@"; }
+          g submodule update --init --depth 1 -- dx-runtime dx-compiler
+          g -C dx-runtime submodule update --init --depth 1 -- dx_app dx_stream
+          if [ "$MODE" = "branch-tip" ]; then
+            for d in dx-runtime dx-compiler dx-runtime/dx_app dx-runtime/dx_stream; do
+              if [ -n "$(g -C "$d" ls-remote --heads origin "$REF")" ]; then use="$REF"; else
+                use="$(g -C "$d" ls-remote --symref origin HEAD | awk '/^ref:/{sub("refs/heads/","",$2);print $2}')"; fi
+              g -C "$d" fetch -q --depth 1 origin "$use"
+              git -C "$d" checkout -q --detach FETCH_HEAD
+              echo "$d: branch-tip '$use' @ $(git -C "$d" rev-parse --short HEAD)"
+            done
+          else
+            echo "submodules at recorded pointers (mode=pointer):"
+            git submodule status --recursive | grep -E 'dx-runtime|dx-compiler|dx_app|dx_stream'
+          fi
+
+      - name: Python deps (system python3, .gate-venv fallback)
+        id: deps
+        run: |
+          set -euo pipefail
+          if bash .deepx/tools/scripts/harness_gate.sh deps; then exit 0; fi
+          echo "system python3 lacks jinja2/pyyaml/pytest/rich — trying a job-local venv"
+          rm -rf .gate-venv
+          if python3 -m venv .gate-venv \
+             && .gate-venv/bin/python -m pip install -q "jinja2>=3.1" "pyyaml>=6.0" "pytest>=8,<9" "rich>=13" \
+             && bash .deepx/tools/scripts/harness_gate.sh deps --python .gate-venv/bin/python; then
+            echo "$PWD/.gate-venv/bin" >> "$GITHUB_PATH"
+          else
+            echo "::error::Neither system python3 nor a venv could provide jinja2/pyyaml/pytest/rich. Pre-install them on the self-hosted runner (apt: python3-jinja2 python3-yaml python3-pytest python3-rich, or a venv fed from the internal PyPI mirror)."
+            exit 1
+          fi
+
+      - name: Drift check (all 5 levels)
+        run: bash .deepx/tools/scripts/harness_gate.sh check
+
+      - name: EN/KO fragment parity lint
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: bash .deepx/tools/scripts/harness_gate.sh lint
+
+      - name: Conformance + tool + e2e-unit tests
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: bash .deepx/tools/scripts/harness_gate.sh tests
+
+      - name: run_model_eval.sh dry-run tests
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
+        run: bash .deepx/tools/scripts/harness_gate.sh e2e-sh
+
+      - name: How to fix
+        if: failure()
+        run: |
+          echo "::error::dx-agent-dev harness gate failed."
+          echo "Reproduce locally (same commands):   bash .deepx/tools/scripts/harness_gate.sh all"
+          echo "Drift (MISSING:/CHANGED: lines above): regenerate ALL 5 levels, never per-level:"
+          echo "    bash .deepx/tools/scripts/run_all.sh generate && bash .deepx/tools/scripts/run_all.sh check"
+          echo "Never edit CLAUDE.md / AGENTS.md / .claude / .github / .cursor / .opencode directly — edit the .deepx/ source and regenerate."
+          echo "EN/KO parity: add or extend .deepx/templates/fragments/ko/<stem>.md."
+          echo "Docs: .deepx/docs/ci-gates.md"
+
+      - name: Cleanup job-local venv
+        if: always()
+        run: rm -rf .gate-venv
