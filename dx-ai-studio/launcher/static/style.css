@@ -76,7 +76,7 @@ body {
   color: var(--text-secondary);
   text-decoration: none;
   white-space: nowrap;
-  transition: color .15s;
+  transition: color var(--ap-dur) var(--ap-ease);
 }
 .portal-nav-item:hover { color: var(--text-primary); }
 .portal-nav-item.is-current {
@@ -157,7 +157,7 @@ body:not(.hw-native-visible) #hw-float {
 .logo {
   display: flex; align-items: center; gap: 10px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity var(--ap-dur) var(--ap-ease);
 }
 .logo:hover { opacity: 0.8; }
 /* The wordmark ships white, which is invisible on the light theme's white bar.
@@ -167,7 +167,7 @@ body:not(.hw-native-visible) #hw-float {
   width: auto;
   opacity: 0.9;
   filter: var(--logo-filter);
-  transition: opacity 0.2s;
+  transition: opacity var(--ap-dur) var(--ap-ease);
 }
 .logo-text {
   font-size: 15px;
@@ -498,7 +498,8 @@ body:not(.hw-native-visible) #hw-float {
   border-radius: var(--radius);
   text-align: left;
   cursor: pointer;
-  transition: border-color .15s ease, background .15s ease;
+  transition: border-color var(--ap-dur) var(--ap-ease),
+              background var(--ap-dur) var(--ap-ease);
 }
 .about-book-card:hover {
   background: var(--surface-hover);
@@ -597,7 +598,9 @@ body:not(.hw-native-visible) #hw-float {
   font-size: var(--fs-sm);
   font-weight: 600;
   text-decoration: none;
-  transition: border-color .15s ease, background .15s ease, color .15s ease;
+  transition: border-color var(--ap-dur) var(--ap-ease),
+              background var(--ap-dur) var(--ap-ease),
+              color var(--ap-dur) var(--ap-ease);
 }
 .deepx-link:hover {
   background: var(--surface-hover);
@@ -1654,7 +1657,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   --ap-blue-hi:     #0077ed;
   --ap-green:       #34c759;
   --ap-glass:       rgba(255,255,255,.8);
-  --ap-shadow:      0 4px 24px rgba(0,0,0,.06);
+  --ap-shadow:      none;   /* 측정: 애플 첫 화면의 box-shadow 는 0건이다 */
   --ap-fill:        rgba(0,0,0,.08);
   --ap-on-blue:     #ffffff;
 
@@ -1668,6 +1671,13 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   --ap-r-sm:        5px;
   --ap-r-lg:        18px;
   --ap-r-pill:      980px;
+
+  /* 측정: apple.com 의 지배 easing 은 cubic-bezier(.4,0,.6,1) (243건),
+     지속시간은 0.32s(263) · 0.24s(118) · 0.22s · 0.18s 순이다. 내가 쓰던
+     .12s / .15s ease 는 애플의 절반 속도였다. */
+  --ap-ease:        cubic-bezier(.4, 0, .6, 1);
+  --ap-dur:         .24s;
+  --ap-dur-lg:      .32s;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -1863,7 +1873,7 @@ body {
   gap: 14px;
   padding: 11px 16px;
   cursor: pointer;
-  transition: background .12s ease;
+  transition: background var(--ap-dur) var(--ap-ease);
 }
 .orbital-card + .orbital-card { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
 .orbital-card:hover { background: var(--ap-fill); }
@@ -1940,6 +1950,15 @@ body {
   font-weight: 600;
 }
 #launcherToolbar .dx-toolbar-btn { border-radius: var(--ap-r-sm); }
+
+/* 남은 컴포넌트들은 shared 의 --transition(all .18s cubic-bezier(.4,0,.2,1))
+   을 물고 있었다. 0.18s 자체는 애플에도 있는 값이지만 그 easing 은 Material
+   커브지 애플 커브가 아니다. 토큰은 9개 모듈 공용이라 못 바꾸고, 홈이
+   소유한 컴포넌트에서만 측정 커브로 덮는다. */
+.buy-topbar-btn,
+.learn-row,
+.ws-facts .port-link,
+#launcherToolbar .dx-toolbar-btn { transition: all var(--ap-dur) var(--ap-ease); }
 
 /* 12px 의 측정 트래킹은 -0.12px 다. 이 셋만 그 값을 안 쓰고 있었다. */
 #launcherToolbar .dx-toolbar-btn,
