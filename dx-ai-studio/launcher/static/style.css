@@ -46,6 +46,13 @@
 /* clip (not auto) so extreme browser zoom / narrow viewports never produce a horizontal
    document scrollbar — the hub dashboard is designed to wrap, not scroll sideways.
    Must sit on the root element: the document scrollbar is driven by <html>. */
+/* 작성자 스타일은 specificity 와 무관하게 UA 스타일을 이긴다. 그래서
+   `.setup-row { display: flex }` 같은 규칙이 UA 의 `[hidden]{display:none}`
+   을 덮어버리고, 그 요소는 hidden 을 달아도 계속 보인다. 이 파일에서만
+   .answer-escalate / .work-artefact / .work-term / .setup-row 네 개가
+   그러고 있었다 — 셋은 이 커밋 전부터. */
+[hidden] { display: none !important; }
+
 html { overflow-x: clip; }
 body {
   color: var(--text-secondary);
@@ -1795,6 +1802,71 @@ body {
   font-family: inherit; font-size: var(--ap-t-body); cursor: pointer;
 }
 .ask-chip:hover { color: var(--ap-ink); }
+
+/* ── 누가, 무엇으로, 얼마나 세게 ─────────────────────────
+   실행을 시작해야만 보이는 설정은 시작할지 정하는 데 쓸 수 없다. */
+.setup-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+  padding-inline: 4px;
+}
+.setup-field { display: inline-flex; align-items: center; gap: 6px; }
+.setup-field > span { font-size: var(--ap-t-body); color: var(--ap-ink-3); }
+.setup-select {
+  font-family: inherit;
+  font-size: var(--ap-t-body);
+  font-weight: 600;
+  color: var(--ap-ink);
+  background: var(--ap-panel);
+  border: 1px solid var(--ap-line);
+  border-radius: var(--ap-r-sm);
+  padding: 4px 7px;
+  max-width: 26ch;
+}
+.setup-select:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 3px; box-shadow: none; }
+/* 로그인 상태는 색만으로 말하지 않는다 — 점과 글자가 같이 있다. */
+.setup-auth {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--ap-t-body); font-weight: 600; color: var(--ap-ink-3);
+}
+.setup-auth::before {
+  content: ''; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ap-ink-3);
+}
+.setup-auth.is-ok { color: var(--ap-green); }
+.setup-auth.is-ok::before { background: var(--ap-green); }
+.setup-auth.is-off { color: var(--ap-ink-2); }
+.setup-hint { font-size: var(--ap-t-body); color: var(--ap-ink-2); }
+.setup-hint code {
+  font-family: var(--mono); font-size: var(--ap-t-body);
+  background: var(--ap-fill); border-radius: var(--ap-r-sm); padding: 2px 6px;
+}
+
+/* CLI 가 하나도 없을 때. 빈 드롭다운 세 개는 아무것도 설명하지 못한다. */
+.setup-degraded {
+  margin-top: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--ap-panel);
+  border-radius: var(--ap-r-lg);
+}
+.sd-title { margin: 0; font-size: var(--ap-t-lead); font-weight: 600; color: var(--ap-ink); letter-spacing: -.022em; }
+.sd-detail { margin: 4px 0 0; font-size: var(--ap-t-body); color: var(--ap-ink-2); line-height: 1.45; }
+.sd-options { list-style: none; margin: var(--sp-3) 0 0; padding: 0; display: flex; flex-direction: column; }
+.sd-options li {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 7px 0; font-size: var(--ap-t-body);
+  box-shadow: inset 0 1px 0 var(--ap-line-soft);
+}
+.sd-options li:first-child { box-shadow: none; }
+.sd-options b { font-weight: 600; color: var(--ap-ink); min-width: 9ch; }
+.sd-options span { color: var(--ap-ink-3); min-width: 12ch; }
+.sd-options code {
+  font-family: var(--mono); font-size: var(--ap-t-body); color: var(--ap-ink-2);
+  background: var(--ap-fill); border-radius: var(--ap-r-sm); padding: 2px 6px;
+}
 
 /* ── blocks ── */
 /* 애플은 섹션 라벨을 대문자로 늘려 쓰지 않는다. 문장 표기, 본문보다 한

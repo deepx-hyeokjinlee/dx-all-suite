@@ -1440,6 +1440,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/home-answer.js", "application/javascript")
         elif path == "/home-console.js":
             self._send_shell_asset(BASE_DIR / "static/home-console.js", "application/javascript")
+        elif path == "/home-agent-setup.js":
+            self._send_shell_asset(BASE_DIR / "static/home-agent-setup.js", "application/javascript")
         elif path == "/home-sections.js":
             self._send_shell_asset(BASE_DIR / "static/home-sections.js", "application/javascript")
         elif path == "/tutorial.js":

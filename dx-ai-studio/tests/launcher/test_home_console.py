@@ -119,16 +119,57 @@ def test_the_terminal_pins_when_the_user_scrolls_up():
     assert "follow" in src.lower()
 
 
-def test_setup_controls_collapse_once_a_run_starts():
-    """Agent, model and effort are setup, not operation.
+def test_setup_is_decided_before_the_run_not_during_it():
+    """Agent, model and effort are a decision, and the console is not where it is made.
 
-    A form sitting on top while the agent works spends exactly the width this
-    view exists to win.
+    They used to be three selects in the console header, which is only on
+    screen once a run has started — a control you can reach only after
+    committing cannot help you decide whether to commit. Worse, they were
+    never populated: the loader asked /api/agent/models for an `agents` key
+    that endpoint does not return, so every run posted empty strings.
+
+    They live in the Build section now, visible at rest, and the console reads
+    the choice rather than owning a second copy of it.
     """
     src = console()
     assert "is-running" in src, "nothing marks the view as busy"
+    assert "agentChoice" in src, "the console must read the choice, not re-collect it"
+    # The comment explaining the old bug names the endpoint, so match the call.
+    assert "fetch('/agent/api/agent/models" not in src, (
+        "the console must not fetch options — that endpoint needs ?agent= and "
+        "returns no agent list"
+    )
+
     html = INDEX.read_text(encoding="utf-8")
-    assert 'id="workSetupEdit"' in html, "collapsed setup must be reopenable"
+    build = html[html.index('data-i18n="Build"'):html.index('id="studioGrid"')]
+    for element_id in ("setupAgent", "setupModel", "setupEffort"):
+        assert f'id="{element_id}"' in build, f"{element_id} must sit in Build, before any run"
+
+    setup = (ROOT / "launcher" / "static" / "home-agent-setup.js").read_text(encoding="utf-8")
+    assert "'/status'" in setup, "the options come from the module's status endpoint"
+    # Effort levels differ per agent — copilot has `none`, codex has `minimal`
+    # and no `max`, claude has neither. A list written here would be wrong for
+    # two of the five agents the module supports.
+    for level in ("minimal", "xhigh", "max"):
+        assert f"'{level}'" not in setup and f'"{level}"' not in setup, (
+            f"effort level {level!r} is hard-coded; it belongs to the agent"
+        )
+
+
+def test_sign_in_state_comes_from_the_adapter_that_owns_it():
+    """"Not signed in" is a claim, and a wrong one costs the user a login they already did.
+
+    The module reports authenticated as true / false / null, where null means
+    the adapter could not tell. All three are distinct here, and the exact
+    login command comes from the adapter rather than being written twice.
+    """
+    setup = (ROOT / "launcher" / "static" / "home-agent-setup.js").read_text(encoding="utf-8")
+    # The paths are built from one API base, so match the base and the route.
+    assert "'/agent/api/agent'" in setup, "the setup must go through the module's proxy"
+    assert "'/login/status?agent='" in setup, "the login hint must come from the module"
+    assert "=== true" in setup and "=== false" in setup, (
+        "unknown sign-in state must not be reported as signed out"
+    )
 
 
 def test_a_finished_run_ends_on_the_artefact():

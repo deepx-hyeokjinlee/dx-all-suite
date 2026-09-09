@@ -215,15 +215,21 @@
     _follow = true;
     _setBusy(true);
 
+    var setup = (ns.agentChoice && ns.agentChoice()) || {};
     fetch('/agent/api/agent/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         prompt: prompt,
         lang: (window.DXI18n && window.DXI18n.lang) || 'en',
-        agent: $('workAgent') ? $('workAgent').value : undefined,
-        model: $('workModel') ? $('workModel').value : undefined,
-        effort: $('workEffort') ? $('workEffort').value : undefined
+        /* One place owns who is building and how — the setup row in Build,
+           which reads it from the module. This used to read three selects in
+           the console header that were never populated: the loader asked
+           /api/agent/models for a key (`agents`) that endpoint does not
+           return, so all three posted empty. */
+        agent: setup.agent,
+        model: setup.model,
+        effort: setup.effort
       })
     }).then(function (resp) {
       if (!resp.ok || !resp.body) {
@@ -262,19 +268,6 @@
 
   /* ── setup chips ─────────────────────────────────────────── */
 
-  function _loadOptions() {
-    fetch('/agent/api/agent/models').then(function (r) { return r.json(); })
-      .then(function (data) {
-        var agents = (data && data.agents) || [];
-        var sel = $('workAgent');
-        if (sel && agents.length) {
-          sel.innerHTML = agents.map(function (a) {
-            var id = a.id || a.name || a;
-            return '<option value="' + id + '">' + id + '</option>';
-          }).join('');
-        }
-      }).catch(function () { /* no agent CLI here — the view still explains itself */ });
-  }
 
   function init() {
     var view = $('homeWork');
@@ -321,7 +314,6 @@
           encodeURIComponent($('workAsk').textContent || '');
       });
     }
-    _loadOptions();
 
     /* What we wrote, we relabel: the badge and each turn's activity count. The
        agent's own prose is not ours to translate — it answered in the language
