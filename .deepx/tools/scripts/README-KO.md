@@ -116,7 +116,7 @@ subrepo_check.sh --subrepo-path <dx-compiler|dx-runtime|dx-runtime/dx_app|dx-run
 |------|---------|
 | 0 | Clean — 생성된 파일이 `.deepx/` 소스와 일치 (`--strict-validator` 지정 시 `validate_framework.py`도 통과) |
 | 1 | drift 발견 (`dx-agent-gen check`가 `MISSING:`/`CHANGED:` 보고), 또는 `--strict-validator` 지정 상태에서 `validate_framework.py` 실패 |
-| 2 | 설정/사용 오류 — 잘못된 `--subrepo-path`, suite 접근 불가/없음, `python3` 없음 등 |
+| 2 | 설정/사용/도구 오류 — 잘못된 `--subrepo-path`, suite 접근 불가/없음, `python3` 없음 또는 3.8 미만, 또는 generator 자체 crash (`Traceback` / rc ≥ 2 는 **drift가 아님**으로 보고 — 재생성할 것이 없으며 tool/runner를 고쳐야 함) |
 
 ### 실패했을 때
 
@@ -158,7 +158,7 @@ suite 수준 CI gate(`harness-gate`, `.github/workflows/dx-agent-dev-gate-{ghes,
 ```
 harness_gate.sh <stage> [--python PY]
 
-  deps     python has jinja2 + pyyaml + pytest + rich (prints an install hint if not)
+  deps     python is >= 3.8 and has jinja2 + pyyaml + pytest + rich (prints a hint if not)
   check    bash .deepx/tools/scripts/run_all.sh check        (drift, all 5 levels)
   lint     bash .deepx/tools/scripts/run_all.sh lint         (EN/KO fragment parity)
   tests    python -m pytest --rootdir=<suite> .deepx/tests/conformance .deepx/tools/tests .deepx/e2e/tests

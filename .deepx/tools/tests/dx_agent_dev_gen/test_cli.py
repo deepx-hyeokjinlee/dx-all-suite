@@ -53,3 +53,26 @@ def test_generate_reports_runtime_error_cleanly(tmp_path, capsys):
     assert rc == 1
     assert "error:" in captured.err
     assert "FOO" in captured.err
+
+
+def test_unexpected_exception_exits_2_as_internal_failure(tmp_path, capsys, monkeypatch):
+    """A crash inside the generator (anything that is not the documented
+    RuntimeError contract) must NOT look like drift (rc 1): report it as an
+    internal failure with rc 2 and keep the traceback on stderr for debugging.
+    (GHES run 982: a TypeError at import time was reported as 'out of date'.)"""
+    from dx_agent_dev_gen import generator as gen_mod
+    from dx_agent_dev_gen.cli import main
+
+    repo = _mk_repo_with_bad_template(tmp_path)
+
+    def boom(self, platform="all"):
+        raise ValueError("boom")
+
+    monkeypatch.setattr(gen_mod.Generator, "check", boom)
+    rc = main(["check", "--repo", str(repo)])
+    captured = capsys.readouterr()
+
+    assert rc == 2
+    assert "error: internal failure" in captured.err
+    assert "ValueError" in captured.err and "boom" in captured.err
+    assert "Traceback" in captured.err

@@ -101,8 +101,8 @@ Trigger: same events as above (no inputs).
 | Step | Command (cwd = `$GITHUB_WORKSPACE`) |
 |---|---|
 | Checkout this repo | `actions/checkout@v4` into `self/`, `fetch-depth: 1`, `persist-credentials: false` |
-| Clone the suite | `URL=https://<host>/<owner>/dx-all-suite.git`; `git -c http.extraheader=… ls-remote --heads "$URL" "<branch>"` → same-name branch if it exists, else the default branch; `git -c http.extraheader=… clone -q --depth 1 --no-recurse-submodules --branch <use> "$URL" suite` |
-| Python deps | ghes: system `python3` must import `jinja2` and `yaml`, else `.gate-venv` fallback. cloud: `actions/setup-python@v5` (3.12) → `python -m pip install "jinja2>=3.1" "pyyaml>=6.0"` |
+| Clone the suite | `URL=https://<host>/<owner>/dx-all-suite.git`; `git -c http.extraheader=… ls-remote --heads "$URL" "<branch>"` → same-name branch if it exists (polled for up to `SUITE_BRANCH_WAIT` = 180 s, because the sync tool pushes dx-all-suite after the sub-repos), else the default branch; `git -c http.extraheader=… clone -q --depth 1 --no-recurse-submodules --branch <use> "$URL" suite`; a suite without `subrepo_check.sh` is refused with `::error::` (sync the suite first, re-run) |
+| Python deps | ghes: system `python3` must be **>= 3.8** (fail-fast) and import `jinja2` and `yaml`, else `.gate-venv` fallback. cloud: `actions/setup-python@v5` (3.12) → `python -m pip install "jinja2>=3.1" "pyyaml>=6.0"` |
 | Drift check | `bash suite/.deepx/tools/scripts/subrepo_check.sh --subrepo-path <dx-compiler \| dx-runtime \| dx-runtime/dx_app \| dx-runtime/dx_stream> --repo-dir "$GITHUB_WORKSPACE/self" --suite-dir "$GITHUB_WORKSPACE/suite"` |
 | Cleanup (`if: always()`) | `rm -rf "$GITHUB_WORKSPACE/suite"` (plus `.gate-venv` on ghes) |
 
@@ -185,7 +185,7 @@ gh run list -R deepx-dhyang/dx_app --workflow "dx-agent-dev sub-repo gate (cloud
 ### 5.2 Closed-network GHES — gh.deepx.ai/deepx/*
 
 - `GH_DCI_TOKEN` already exists; Actions and the `self-hosted` runners are already registered.
-- The self-hosted runner image must provide `python3` with `jinja2`, `pyyaml`, `pytest` and `rich`
+- The self-hosted runner image must provide `python3` **>= 3.8** (the ASIC pool's Ubuntu 20.04 runners ship exactly 3.8, which is the gate's floor) with `jinja2`, `pyyaml`, `pytest` and `rich`
   importable (`apt install python3-jinja2 python3-yaml python3-pytest python3-rich`, or a venv);
   `rich` is imported by `.deepx/e2e/e2e_monitor.py` / `e2e_runner.py`, whose unit tests are part of the gate. If they are
   missing the job tries `python3 -m venv .gate-venv` + `pip install` — that only works with an
@@ -241,6 +241,25 @@ one required-check entry covers whichever variant runs on that host. Always
 reference the job name, never the workflow name (the workflow names differ:
 `dx-agent-dev gate (ghes)` vs `dx-agent-dev gate (cloud)`).
 
+### Validating `main` against work that is still on `dev` — `submodule_refs`
+
+dx_app and dx_stream integrate on `dev`; dx-runtime and dx-all-suite integrate on `main`.
+A `push` run on suite `main` therefore checks the sub-repos' own `main` (branch-tip) and
+stays red until the dx_app/dx_stream changes reach their `main` — that is expected, not drift.
+To see the **main + dev integration view** run the gate manually:
+
+- UI: Actions → *dx-agent-dev gate (ghes|cloud)* → **Run workflow** → branch `main`,
+  `mode = branch-tip`, `submodule_refs = dx_app=dev dx_stream=dev`
+- CLI: `gh workflow run dx-agent-dev-gate-ghes.yml -R gh.deepx.ai/deepx/dx-all-suite --ref main -f mode=branch-tip -f submodule_refs='dx_app=dev dx_stream=dev'`
+
+`submodule_refs` pins the named sub-repos (`dx-runtime dx-compiler dx_app dx_stream`) to the
+given branch; the others follow the normal same-name rule. It requires `mode=branch-tip`, and a
+branch that does not exist fails the init step with `::error::`. When a `push` run on `main`
+fails, the *How to fix* step tries to dispatch exactly this follow-up run (needs a token with
+`actions:write`; `GH_DCI_TOKEN` / `GC_DCI_TOKEN`) and otherwise prints the two commands above.
+Locally the same view is `git -C dx-runtime/dx_app checkout dev && git -C dx-runtime/dx_stream checkout dev`
+in a `main` checkout, then `bash .deepx/tools/scripts/harness_gate.sh all`.
+
 ## 7. When a gate is red
 
 | Symptom | Fix |
@@ -253,5 +272,7 @@ reference the job name, never the workflow name (the workflow names differ:
 | Suite gate red in `pointer` mode only | The recorded pointers lag the sub-repo work (expected on every feature branch and on the mirror until pointers are bumped); the `branch-tip` run tells you whether the merged state is clean. The mode and reason are in the job summary. |
 | Job never starts (queued) | The wrong variant ran on this host — check the job `if:` host guard; ghes needs a `self-hosted` runner. |
 | `startup_failure`, 0 s, 0 jobs, both variants ("workflow file issue") | The repo's Actions policy is `local_only` and blocks `actions/checkout` / `actions/setup-python` — allow GitHub-owned actions (§5.1 step 1). |
+| `push` run on `main` red while dx_app/dx_stream work is on `dev` | Expected until those reach `main`. Run the main + dev view: *Run workflow* with `submodule_refs='dx_app=dev dx_stream=dev'` (the failed run's How-to-fix step dispatches or prints it). |
 | `deps MISSING` on a self-hosted runner | Install `python3-jinja2 python3-yaml python3-pytest python3-rich` on the runner image or provide an internal PyPI mirror. |
 | `NameError: name 'Table' is not defined` in e2e monitor tests | `rich` is missing from the gate's Python — it is part of `harness_gate.sh deps`; re-run deps / install `rich>=13`. |
+| `TypeError: 'type' object is not subscriptable` (or any `Traceback`) in the drift-check step | The generator crashed — **not drift**, do not regenerate. Cause seen in the wild (run 982): a Python 3.8 runner hit an un-guarded `dict[str, …]` annotation; the generator is 3.8-clean since 2026-09-10 (`test_py38_compat.py` guards it) and `subrepo_check.sh` now exits 2 for a crash. Check `python3 --version` on the runner (>= 3.8) and that the suite branch carries the fix. |

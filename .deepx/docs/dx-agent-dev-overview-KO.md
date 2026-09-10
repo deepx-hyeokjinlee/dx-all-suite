@@ -206,7 +206,7 @@ API hallucination 방지용 grounding 문서. 검증된 심볼만 나열:
 
 | 컴포넌트 | 역할 |
 |----------|------|
-| `pyproject.toml` | `dx-agent-gen` CLI (Python 3.10+); `packages.find where=["src"]`가 두 패키지 자동 발견 |
+| `pyproject.toml` | `dx-agent-gen` CLI (Python 3.8+); `packages.find where=["src"]`가 두 패키지 자동 발견 |
 | `scripts/run_all.sh generate\|check\|lint\|prune` | 5개 repo 일괄 작업 |
 | `scripts/install-hooks.sh` / `pre-commit-hook.sh` | pre-commit 훅: `.deepx/`↔비-`.deepx/` 혼재 경고 + drift check + EN/KO lint |
 | `scripts/subrepo_check.sh` | 독립 sub-repo checkout 내부에서 실행 가능한 drift check (§2.3); 각 sub-repo의 CI `subrepo-gate` job이 호출 |

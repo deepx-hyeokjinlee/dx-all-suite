@@ -95,8 +95,8 @@ Trigger: 위와 동일한 event (입력 없음).
 | Step | 명령 (cwd = `$GITHUB_WORKSPACE`) |
 |---|---|
 | 이 repo checkout | `actions/checkout@v4`를 `self/`로, `fetch-depth: 1`, `persist-credentials: false` |
-| suite clone | `URL=https://<host>/<owner>/dx-all-suite.git`; `git -c http.extraheader=… ls-remote --heads "$URL" "<branch>"` → 같은 이름 branch가 있으면 그것, 없으면 default branch; `git -c http.extraheader=… clone -q --depth 1 --no-recurse-submodules --branch <use> "$URL" suite` |
-| Python deps | ghes: 시스템 `python3`가 `jinja2`와 `yaml`을 import할 수 있어야 하며, 아니면 `.gate-venv` fallback. cloud: `actions/setup-python@v5` (3.12) → `python -m pip install "jinja2>=3.1" "pyyaml>=6.0"` |
+| suite clone | `URL=https://<host>/<owner>/dx-all-suite.git`; `git -c http.extraheader=… ls-remote --heads "$URL" "<branch>"` → 같은 이름 branch가 있으면 그것(sync 도구가 dx-all-suite를 sub-repo 뒤에 push하므로 최대 `SUITE_BRANCH_WAIT` = 180초 polling), 없으면 default branch; `git -c http.extraheader=… clone -q --depth 1 --no-recurse-submodules --branch <use> "$URL" suite`; `subrepo_check.sh`가 없는 suite는 `::error::`로 거부(suite 먼저 sync 후 re-run) |
+| Python deps | ghes: 시스템 `python3`가 **3.8 이상**이어야 하고(fail-fast) `jinja2`와 `yaml`을 import할 수 있어야 하며, 아니면 `.gate-venv` fallback. cloud: `actions/setup-python@v5` (3.12) → `python -m pip install "jinja2>=3.1" "pyyaml>=6.0"` |
 | Drift check | `bash suite/.deepx/tools/scripts/subrepo_check.sh --subrepo-path <dx-compiler \| dx-runtime \| dx-runtime/dx_app \| dx-runtime/dx_stream> --repo-dir "$GITHUB_WORKSPACE/self" --suite-dir "$GITHUB_WORKSPACE/suite"` |
 | Cleanup (`if: always()`) | `rm -rf "$GITHUB_WORKSPACE/suite"` (ghes는 `.gate-venv`도 함께) |
 
@@ -178,7 +178,7 @@ gh run list -R deepx-dhyang/dx_app --workflow "dx-agent-dev sub-repo gate (cloud
 ### 5.2 폐쇄망 GHES — gh.deepx.ai/deepx/*
 
 - `GH_DCI_TOKEN`은 이미 존재하고, Actions와 `self-hosted` runner도 이미 등록되어 있다.
-- self-hosted runner image는 `jinja2`, `pyyaml`, `pytest`, `rich`를 import할 수 있는 `python3`를 제공해야
+- self-hosted runner image는 **3.8 이상**(ASIC pool의 Ubuntu 20.04 runner가 정확히 3.8이며 이것이 gate의 하한)이고 `jinja2`, `pyyaml`, `pytest`, `rich`를 import할 수 있는 `python3`를 제공해야
   한다 (`apt install python3-jinja2 python3-yaml python3-pytest python3-rich` 또는 venv);
   `rich`는 `.deepx/e2e/e2e_monitor.py` / `e2e_runner.py`가 import하며 그 unit test가 gate에 포함된다. 없으면 job이
   `python3 -m venv .gate-venv` + `pip install`을 시도하는데 — 이는 내부 PyPI mirror가 있을
@@ -234,6 +234,24 @@ public이므로 `github.token`으로 충분하다.
 이름은 참조하지 않는다 (workflow 이름은 `dx-agent-dev gate (ghes)` vs
 `dx-agent-dev gate (cloud)`로 다름).
 
+### `dev`에만 있는 변경까지 포함해 `main` 검증하기 — `submodule_refs`
+
+dx_app·dx_stream은 `dev`에서, dx-runtime·dx-all-suite는 `main`에서 통합된다. 따라서 suite `main`의
+`push` run은 sub-repo들의 `main`(branch-tip)을 검사하므로 dx_app/dx_stream 변경이 `main`에 도달하기
+전까지 red가 유지된다 — drift가 아니라 예상된 상태다. **main + dev 통합 뷰**를 보려면 gate를 수동 실행한다:
+
+- UI: Actions → *dx-agent-dev gate (ghes|cloud)* → **Run workflow** → branch `main`,
+  `mode = branch-tip`, `submodule_refs = dx_app=dev dx_stream=dev`
+- CLI: `gh workflow run dx-agent-dev-gate-ghes.yml -R gh.deepx.ai/deepx/dx-all-suite --ref main -f mode=branch-tip -f submodule_refs='dx_app=dev dx_stream=dev'`
+
+`submodule_refs`는 지정한 sub-repo(`dx-runtime dx-compiler dx_app dx_stream`)만 해당 브랜치 tip에
+고정하고 나머지는 기존 같은-이름 규칙을 따른다. `mode=branch-tip`에서만 유효하며, 존재하지 않는
+브랜치는 init step이 `::error::`로 실패시킨다. `main` `push` run이 실패하면 *How to fix* step이 이
+후속 run을 자동 dispatch 시도하고(`actions:write` 권한 토큰 필요; `GH_DCI_TOKEN` / `GC_DCI_TOKEN`),
+불가하면 위 두 명령을 안내한다. 로컬에서는 `main` checkout에서
+`git -C dx-runtime/dx_app checkout dev && git -C dx-runtime/dx_stream checkout dev` 후
+`bash .deepx/tools/scripts/harness_gate.sh all`이 같은 뷰다.
+
 ## 7. Gate가 red일 때
 
 | 증상 | 조치 |
@@ -246,5 +264,7 @@ public이므로 `github.token`으로 충분하다.
 | `pointer` 모드에서만 suite gate red | 기록된 pointer가 sub-repo 작업보다 뒤처짐(모든 feature 브랜치, 그리고 pointer bump 전의 미러에서 예상되는 상태); merge 후 상태가 clean한지는 `branch-tip` run이 알려준다. 모드와 이유는 job summary에 있다. |
 | Job이 시작되지 않음 (queued) | 이 host에서 잘못된 변형이 실행됨 — job `if:` host guard 확인; ghes는 `self-hosted` runner가 필요. |
 | 두 변형 모두 `startup_failure`, 0초, job 0개 ("workflow file issue") | repo의 Actions 정책이 `local_only`여서 `actions/checkout` / `actions/setup-python`이 차단됨 — GitHub 소유 action 허용 (§5.1 1번). |
+| dx_app/dx_stream 작업이 `dev`에 있는 동안 `main` `push` run이 red | 해당 변경이 `main`에 도달할 때까지 예상된 상태. *Run workflow*에 `submodule_refs='dx_app=dev dx_stream=dev'`로 main + dev 뷰 실행(실패 run의 How-to-fix step이 dispatch 또는 안내). |
 | self-hosted runner에서 `deps MISSING` | runner image에 `python3-jinja2 python3-yaml python3-pytest python3-rich`를 설치하거나 내부 PyPI mirror 제공. |
 | e2e monitor test에서 `NameError: name 'Table' is not defined` | gate의 Python에 `rich`가 없음 — `harness_gate.sh deps`가 검사하는 항목이므로 deps 재실행 / `rich>=13` 설치. |
+| drift-check step의 `TypeError: 'type' object is not subscriptable` (또는 임의의 `Traceback`) | generator crash — **drift가 아니므로** 재생성하지 말 것. 실제 사례(run 982): Python 3.8 runner가 guard 없는 `dict[str, …]` annotation에서 실패. 2026-09-10부터 generator는 3.8-clean(`test_py38_compat.py`가 보장)이고 `subrepo_check.sh`는 crash를 exit 2로 보고. runner의 `python3 --version`(>= 3.8)과 suite branch에 수정이 포함됐는지 확인. |

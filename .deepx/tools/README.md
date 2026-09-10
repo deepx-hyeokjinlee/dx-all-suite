@@ -250,7 +250,7 @@ pipx install --force --editable .deepx/tools   # PEP 668-safe; --force also repo
 .venv/bin/dx-agent-gen --help  # or: source .venv/bin/activate
 ```
 
-Python 3.10+ required. Dependencies (installed automatically):
+Python 3.8+ required (the GHES self-hosted runners ship 3.8 — keep `from __future__ import annotations` in every module). Dependencies (installed automatically):
 - `jinja2 >= 3.1` — template rendering
 - `pyyaml >= 6.0` — YAML frontmatter
 

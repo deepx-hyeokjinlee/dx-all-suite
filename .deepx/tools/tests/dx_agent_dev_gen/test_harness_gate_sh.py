@@ -92,3 +92,24 @@ def test_lint_stage_passes():
 def test_runs_from_any_cwd(tmp_path):
     r = _run("lint", cwd=tmp_path)
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_deps_rejects_python_older_than_3_8(tmp_path):
+    """The GHES self-hosted pool has Ubuntu 20.04 runners (python 3.8); anything
+    older must be refused up front with a hint naming the floor, instead of
+    crashing later inside the generator."""
+    fake = tmp_path / "python3"
+    fake.write_text(
+        "#!/usr/bin/env bash\n"
+        'case "$*" in\n'
+        '  *--version*) echo "Python 3.6.9"; exit 0;;\n'
+        '  *version_info*) exit 1;;\n'
+        "esac\n"
+        "exit 0\n"
+    )
+    fake.chmod(0o755)
+    r = _run("deps", "--python", str(fake))
+    out = r.stdout + r.stderr
+    assert r.returncode == 1, out
+    assert "3.8" in out, out
+    assert "3.6.9" in out, out

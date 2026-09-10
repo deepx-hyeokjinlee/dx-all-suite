@@ -41,7 +41,9 @@ getting-started/results/
 getting-started/forked_dx_app_example/
 
 # Internal tools and workspace
-internal/
+internal/*
+# re-include the committed internal tooling (a parent dir that is excluded cannot be re-included, hence internal/* above)
+!internal/tools/
 workspace/
 
 # SSL certificate

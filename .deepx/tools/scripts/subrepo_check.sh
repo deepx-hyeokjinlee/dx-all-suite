@@ -72,8 +72,9 @@
 #                     [--help|-h]                # print this usage and exit 0
 #
 # Exit codes: 0 = clean; 1 = drift detected (or --strict-validator failure);
-#             2 = setup/usage error (bad --subrepo-path, missing suite, missing
-#             python3, unreachable suite URL, etc).
+#             2 = setup/usage/tool error (bad --subrepo-path, missing suite,
+#             missing python3 or python3 < 3.8, unreachable suite URL, or the
+#             generator itself crashed — a Traceback / rc >= 2 is NOT drift).
 
 set -euo pipefail
 
@@ -93,7 +94,7 @@ subrepo_check.sh --subrepo-path <dx-compiler|dx-runtime|dx-runtime/dx_app|dx-run
                   [--work DIR] [--keep] [--strict-validator] [--print-suite-url] [--help|-h]
 
 Exit codes: 0 = clean; 1 = drift detected (or --strict-validator failure);
-            2 = setup/usage error.
+            2 = setup/usage/tool error (incl. python3 < 3.8 or a generator crash — NOT drift).
 USAGE
 }
 
@@ -187,6 +188,13 @@ fi
 
 if ! command -v python3 >/dev/null 2>&1; then
   err "python3 not found in PATH"
+  exit 2
+fi
+# The GHES self-hosted pool includes Ubuntu 20.04 runners (Python 3.8): 3.8 is the
+# generator's floor. Refuse anything older up front instead of crashing inside it.
+PY_VERSION="$(python3 --version 2>&1 | head -n1)"
+if ! python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)' 2>/dev/null; then
+  err "Python >= 3.8 required for the generator (found: $PY_VERSION at $(command -v python3))"
   exit 2
 fi
 
@@ -402,13 +410,23 @@ set -e
 
 printf '%s\n' "$CHECK_OUT"
 
-if [ "$CHECK_RC" -ne 0 ]; then
+# rc 0 = clean; rc 1 without a traceback = drift (the cli's contract); anything
+# else (rc >= 2 — cli.py's "internal failure" — or an uncaught Traceback, e.g. an
+# import-time error the cli never got to handle) is a TOOL failure, NOT drift:
+# never tell the user to regenerate for it.
+if [ "$CHECK_RC" -eq 0 ]; then
+  :
+elif [ "$CHECK_RC" -eq 1 ] && ! printf '%s\n' "$CHECK_OUT" | grep -q '^Traceback (most recent call last)'; then
   RC=1
   cat <<EOF
 $PROG_TAG Generated files are out of date in $SUBREPO_PATH.
 $PROG_TAG Fix from a suite checkout on the SAME branch: \`bash .deepx/tools/scripts/run_all.sh generate\` (all levels), then commit the regenerated files in this repo.
 $PROG_TAG Never hand-edit CLAUDE.md/AGENTS.md/.claude/.github/.cursor/.opencode.
 EOF
+else
+  err "the generator failed to run (rc=$CHECK_RC) — this is NOT drift; see the output above. python3: $PY_VERSION at $(command -v python3)"
+  err "Nothing to regenerate: fix the tool/runner (python3 >= 3.8 with jinja2 + pyyaml importable) and re-run."
+  exit 2
 fi
 
 # ---------------------------------------------------------------------------

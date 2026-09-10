@@ -206,7 +206,7 @@ These 16 fragments are **selectively injected** into the `CLAUDE.md` / `AGENTS.m
 
 | Component | Role |
 |-----------|------|
-| `pyproject.toml` | `dx-agent-gen` CLI (Python 3.10+); `packages.find where=["src"]` discovers both packages |
+| `pyproject.toml` | `dx-agent-gen` CLI (Python 3.8+); `packages.find where=["src"]` discovers both packages |
 | `scripts/run_all.sh generate\|check\|lint\|prune` | Batch ops across 5 repos (`.`, dx-compiler, dx-runtime, dx-runtime/dx_app, dx-runtime/dx_stream) |
 | `scripts/install-hooks.sh` / `pre-commit-hook.sh` | Pre-commit hooks: `.deepx/`↔non-`.deepx/` mix warning + drift check + EN/KO lint |
 | `scripts/subrepo_check.sh` | Drift check runnable from inside a standalone sub-repo checkout (§2.3); called by each sub-repo's CI `subrepo-gate` job |

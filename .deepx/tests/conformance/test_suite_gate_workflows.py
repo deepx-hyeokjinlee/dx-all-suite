@@ -236,3 +236,48 @@ def test_mode_step_selects_pointer_on_gitlink_change(variant):
     )
     order = [s.get("id") or s.get("name") for s in steps]
     assert order.index("mode") < order.index(init[0].get("id") or init[0].get("name"))
+
+
+# ── main + dev integration view (workflow_dispatch submodule_refs) ──────────────
+
+def _steps(v):
+    return [s for s in _job(_load(v["file"]))["steps"] if isinstance(s, dict)]
+
+
+def test_dispatch_input_submodule_refs(variant):
+    """dx_app/dx_stream integrate on `dev` while dx-runtime/dx-all-suite integrate on
+    `main`, so a main run cannot see work that is still on dev. A manual run may pin
+    individual sub-repos to another branch: submodule_refs='dx_app=dev dx_stream=dev'."""
+    _, v = variant
+    doc = _load(v["file"])
+    inputs = doc.get("on", doc.get(True))["workflow_dispatch"]["inputs"]
+    assert "submodule_refs" in inputs, "workflow_dispatch must accept submodule_refs"
+    assert "dx_app=dev" in inputs["submodule_refs"]["description"]
+    assert inputs["submodule_refs"].get("required", False) is False
+
+
+def test_init_step_honours_submodule_refs_in_branch_tip_mode(variant):
+    _, v = variant
+    init = [s for s in _steps(v) if "submodule update --init" in s.get("run", "")][0]
+    assert "inputs.submodule_refs" in str(init.get("env", {}).get("SUBMODULE_REFS", "")), (
+        "init step must receive SUBMODULE_REFS from the dispatch input"
+    )
+    run = init["run"]
+    for needle in ("SUBMODULE_REFS", "submodule_refs override", "does not exist", "requires mode=branch-tip"):
+        assert needle in run, f"init step must contain {needle!r}"
+
+
+def test_how_to_fix_offers_the_dev_integration_rerun_on_a_failed_main_push(variant):
+    """A red `push` run on main is expected while dx_app/dx_stream changes sit on dev.
+    The failure handler must try to dispatch the same gate with
+    submodule_refs='dx_app=dev dx_stream=dev' and, if the token cannot, print exactly
+    how to run it (UI and gh CLI)."""
+    _, v = variant
+    fix = [s for s in _steps(v) if s.get("name") == "How to fix"][0]
+    env = fix.get("env", {})
+    assert env.get("INTEGRATION_REFS") == "dx_app=dev dx_stream=dev"
+    assert "github.api_url" in str(env.get("API", ""))
+    run = fix["run"]
+    for needle in ("/actions/workflows/", "/dispatches", "submodule_refs", "gh workflow run", "Run workflow", "actions:write"):
+        assert needle in run, f"How-to-fix must contain {needle!r}"
+    assert '"$EVENT" = push' in run and '"$REF_NAME" = main' in run, "only a failed push to main triggers the follow-up"

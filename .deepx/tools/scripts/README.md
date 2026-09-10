@@ -118,7 +118,7 @@ subrepo_check.sh --subrepo-path <dx-compiler|dx-runtime|dx-runtime/dx_app|dx-run
 |------|---------|
 | 0 | Clean — generated files match `.deepx/` sources (and, with `--strict-validator`, `validate_framework.py` also passed) |
 | 1 | Drift detected (`dx-agent-gen check` reported `MISSING:`/`CHANGED:`), or `--strict-validator` was set and `validate_framework.py` failed |
-| 2 | Setup/usage error — bad `--subrepo-path`, missing/unreachable suite, missing `python3`, etc. |
+| 2 | Setup/usage/tool error — bad `--subrepo-path`, missing/unreachable suite, `python3` missing or older than 3.8, or the generator itself crashed (a `Traceback` / rc ≥ 2 is reported as **NOT drift** — nothing to regenerate; fix the tool/runner). |
 
 ### When it fails
 
@@ -162,7 +162,7 @@ developer machine — a green `harness_gate.sh all` locally means a green gate i
 ```
 harness_gate.sh <stage> [--python PY]
 
-  deps     python has jinja2 + pyyaml + pytest + rich (prints an install hint if not)
+  deps     python is >= 3.8 and has jinja2 + pyyaml + pytest + rich (prints a hint if not)
   check    bash .deepx/tools/scripts/run_all.sh check        (drift, all 5 levels)
   lint     bash .deepx/tools/scripts/run_all.sh lint         (EN/KO fragment parity)
   tests    python -m pytest --rootdir=<suite> .deepx/tests/conformance .deepx/tools/tests .deepx/e2e/tests
@@ -182,7 +182,7 @@ from any directory.
 | Code | Meaning |
 |------|---------|
 | 0 | All requested stages passed |
-| 1 | A stage failed (or `deps` found a missing module) |
+| 1 | A stage failed (or `deps` found python < 3.8 / a missing module) |
 | 2 | Usage / setup error (unknown stage, bad `--python`) |
 
 See [`../../docs/ci-gates.md`](../../docs/ci-gates.md) for the CI side (runners,

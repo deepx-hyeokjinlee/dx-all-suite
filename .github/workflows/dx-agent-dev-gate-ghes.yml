@@ -35,6 +35,11 @@ on:
         type: choice
         default: branch-tip
         options: [branch-tip, pointer]
+      submodule_refs:
+        description: "branch-tip only — per sub-repo branch overrides, e.g. 'dx_app=dev dx_stream=dev' (names: dx-runtime dx-compiler dx_app dx_stream). Validates main against work that still sits on dev."
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -84,6 +89,7 @@ jobs:
           TOKEN: ${{ secrets.GH_DCI_TOKEN || github.token }}
           MODE: ${{ steps.mode.outputs.mode }}
           REF: ${{ github.head_ref || github.ref_name }}
+          SUBMODULE_REFS: ${{ github.event.inputs.submodule_refs }}
         run: |
           set -euo pipefail
           # Auth via a per-invocation header — never in a URL (git would persist it in .git/config).
@@ -91,9 +97,21 @@ jobs:
           g() { git -c http.extraheader="$AUTH" "$@"; }
           g submodule update --init --depth 1 -- dx-runtime dx-compiler
           g -C dx-runtime submodule update --init --depth 1 -- dx_app dx_stream
+          if [ -n "$SUBMODULE_REFS" ] && [ "$MODE" != "branch-tip" ]; then
+            echo "::error::submodule_refs requires mode=branch-tip (got mode=$MODE)"; exit 1
+          fi
           if [ "$MODE" = "branch-tip" ]; then
             for d in dx-runtime dx-compiler dx-runtime/dx_app dx-runtime/dx_stream; do
-              if [ -n "$(g -C "$d" ls-remote --heads origin "$REF")" ]; then use="$REF"; else
+              name="${d##*/}"; use=""
+              # workflow_dispatch input submodule_refs="dx_app=dev dx_stream=dev": pin a sub-repo to another branch
+              for pair in $SUBMODULE_REFS; do
+                case "$pair" in "$name="*) use="${pair#*=}" ;; esac
+              done
+              if [ -n "$use" ]; then
+                [ -n "$(g -C "$d" ls-remote --heads origin "$use")" ] \
+                  || { echo "::error::submodule_refs: branch '$use' does not exist in $d"; exit 1; }
+                echo "$d: submodule_refs override -> '$use'"
+              elif [ -n "$(g -C "$d" ls-remote --heads origin "$REF")" ]; then use="$REF"; else
                 use="$(g -C "$d" ls-remote --symref origin HEAD | awk '/^ref:/{sub("refs/heads/","",$2);print $2}')"; fi
               g -C "$d" fetch -q --depth 1 origin "$use"
               git -C "$d" checkout -q --detach FETCH_HEAD
@@ -135,8 +153,24 @@ jobs:
         if: ${{ !cancelled() && steps.deps.outcome == 'success' }}
         run: bash .deepx/tools/scripts/harness_gate.sh e2e-sh
 
+      # internal/ is release-excluded: this step (and the tool) exist on GHES / the private
+      # mirror only, so the public harness_gate.sh and .deepx/ docs never reference them.
+      - name: Internal tools tests (ghes-sync)
+        if: ${{ !cancelled() && steps.deps.outcome == 'success' && hashFiles('internal/tools/ghes-sync/tests/*.py') != '' }}
+        run: python3 -m pytest --rootdir=. internal/tools/ghes-sync/tests -q --no-header -p no:cacheprovider
+
       - name: How to fix
         if: failure()
+        env:
+          TOKEN: ${{ secrets.GH_DCI_TOKEN || github.token }}
+          API: ${{ github.api_url }}
+          REPO: ${{ github.repository }}
+          SERVER: ${{ github.server_url }}
+          WF_REF: ${{ github.workflow_ref }}
+          EVENT: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          # dx_app/dx_stream integrate on dev; dx-runtime/dx-all-suite on main.
+          INTEGRATION_REFS: "dx_app=dev dx_stream=dev"
         run: |
           echo "::error::dx-agent-dev harness gate failed."
           echo "Reproduce locally (same commands):   bash .deepx/tools/scripts/harness_gate.sh all"
@@ -145,6 +179,24 @@ jobs:
           echo "Never edit CLAUDE.md / AGENTS.md / .claude / .github / .cursor / .opencode directly — edit the .deepx/ source and regenerate."
           echo "EN/KO parity: add or extend .deepx/templates/fragments/ko/<stem>.md."
           echo "Docs: .deepx/docs/ci-gates.md"
+          # A red push run on main is EXPECTED while dx_app/dx_stream work still sits on dev (main is
+          # checked against the sub-repos' own main). Offer the main + dev integration view once.
+          if [ "$EVENT" = push ] && [ "$REF_NAME" = main ] && [ -n "$INTEGRATION_REFS" ]; then
+            wf="${WF_REF%@*}"; wf="${wf##*/}"
+            echo "main is validated against the sub-repos' own main; work still on dx_app/dx_stream 'dev' is NOT visible here."
+            echo "Follow-up: the same gate on main with submodule_refs='$INTEGRATION_REFS' (main + dev integration view)."
+            code="$(curl -sS -o /tmp/dispatch.out -w '%{http_code}' -X POST \
+              -H "Authorization: token $TOKEN" -H "Accept: application/vnd.github+json" \
+              "$API/repos/$REPO/actions/workflows/$wf/dispatches" \
+              -d "{\"ref\":\"main\",\"inputs\":{\"mode\":\"branch-tip\",\"submodule_refs\":\"$INTEGRATION_REFS\"}}" || true)"
+            if [ "$code" = 204 ]; then
+              echo "::notice::dispatched a follow-up run of $wf on main with submodule_refs='$INTEGRATION_REFS' — see the Actions tab."
+            else
+              echo "::warning::could not dispatch it automatically (HTTP ${code:-none}; the token needs actions:write). Run it yourself:"
+              echo "  UI:  Actions -> '$wf' -> Run workflow -> branch main, mode=branch-tip, submodule_refs='$INTEGRATION_REFS'"
+              echo "  CLI: gh workflow run $wf -R ${SERVER#https://}/$REPO --ref main -f mode=branch-tip -f submodule_refs='$INTEGRATION_REFS'"
+            fi
+          fi
 
       - name: Cleanup job-local venv
         if: always()

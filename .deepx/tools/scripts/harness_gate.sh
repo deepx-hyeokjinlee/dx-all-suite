@@ -9,7 +9,7 @@
 # Usage:
 #   harness_gate.sh <stage> [--python PY]
 #
-#   deps     python has jinja2 + pyyaml + pytest + rich (prints an install hint if not)
+#   deps     python is >= 3.8 and has jinja2 + pyyaml + pytest + rich (prints a hint if not)
 #   check    bash .deepx/tools/scripts/run_all.sh check        (drift, all 5 levels)
 #   lint     bash .deepx/tools/scripts/run_all.sh lint         (EN/KO fragment parity)
 #   tests    python -m pytest --rootdir=<suite> .deepx/tests/conformance .deepx/tools/tests .deepx/e2e/tests
@@ -55,6 +55,16 @@ cd "$SUITE_ROOT" || exit 2
 echo "[harness-gate] suite=$SUITE_ROOT python=$("$PY" -c 'import sys; print(sys.executable)' 2>/dev/null || echo "$PY")"
 
 stage_deps() {
+    # Floor: Python 3.8 (the GHES self-hosted pool includes Ubuntu 20.04 runners).
+    # Decided from `--version` so a python that cannot even start still reaches
+    # the module hint below instead of a misleading "too old".
+    local ver; ver="$("$PY" --version 2>&1 | head -n1)"
+    case "$ver" in
+        Python\ [12].*|Python\ 3.[0-7]|Python\ 3.[0-7].*)
+            echo "[harness-gate] python too old: $ver ($PY) — the gate needs Python >= 3.8" >&2
+            echo "  pass a newer interpreter: $0 $STAGE --python /path/to/python3.8+  (or set DX_GATE_PYTHON)" >&2
+            return 1 ;;
+    esac
     if "$PY" -c "import jinja2, yaml, pytest, rich" 2>/dev/null; then
         "$PY" -c "import jinja2, yaml, pytest, rich, sys; from importlib.metadata import version; print(f'[harness-gate] deps OK: python {sys.version.split()[0]}, jinja2 {jinja2.__version__}, pyyaml {yaml.__version__}, pytest {pytest.__version__}, rich {version(\"rich\")}')"
         return 0

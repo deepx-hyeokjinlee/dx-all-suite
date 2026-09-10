@@ -474,3 +474,80 @@ class TestClonePathReusedWorkDir:
                 "--keep",
             )
             assert result.returncode == 0, combined(result)
+
+
+# ---------------------------------------------------------------------------
+# Crash ≠ drift, and a Python-version preflight (GHES run 982, 2026-09-10: the
+# generator died at import on a Python 3.8 runner and the script reported
+# "Generated files are out of date").
+# ---------------------------------------------------------------------------
+import os as _os
+import shutil as _shutil
+
+_REAL_PYTHON3 = _shutil.which("python3")
+
+
+def _fake_python3(tmp_path: Path, body: str) -> dict:
+    """Install a `python3` shim at the front of PATH. *body* is the bash text
+    that runs before falling through to the real interpreter."""
+    d = tmp_path / "fakebin"
+    d.mkdir()
+    shim = d / "python3"
+    shim.write_text("#!/usr/bin/env bash\n" + body + f'\nexec "{_REAL_PYTHON3}" "$@"\n')
+    shim.chmod(0o755)
+    return {**_os.environ, "PATH": f"{d}:{_os.environ['PATH']}"}
+
+
+def _run_script_env(env: dict, *args: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["bash", str(SCRIPT), *args], capture_output=True, text=True, timeout=120, env=env)
+
+
+class TestGeneratorCrashIsNotDrift:
+    def test_traceback_exits_2_and_does_not_claim_drift(self, tmp_path):
+        repo = _make_isolated_repo(tmp_path, "dx-compiler-copy", SUITE_ROOT / "dx-compiler")
+        env = _fake_python3(
+            tmp_path,
+            'case "$*" in *dx_agent_dev_gen.cli*)\n'
+            '  echo "Traceback (most recent call last):"\n'
+            "  echo '  File \"<string>\", line 1, in <module>'\n"
+            "  echo \"TypeError: 'type' object is not subscriptable\"\n"
+            "  exit 1;;\n"
+            "esac",
+        )
+        result = _run_script_env(
+            env,
+            "--suite-dir", str(SUITE_ROOT),
+            "--repo-dir", str(repo),
+            "--subrepo-path", "dx-compiler",
+            "--work", str(tmp_path / "work"),
+        )
+        out = combined(result)
+        assert result.returncode == 2, out
+        assert "Traceback" in out, out                      # the crash is surfaced
+        assert "NOT drift" in out, out                      # ... and named for what it is
+        assert "out of date" not in out, out                # never the drift verdict
+        assert "run_all.sh generate" not in out, out        # nor the regenerate hint
+
+
+class TestPythonVersionPreflight:
+    def test_python_older_than_3_8_exits_2(self, tmp_path):
+        repo = _make_isolated_repo(tmp_path, "dx-compiler-copy", SUITE_ROOT / "dx-compiler")
+        env = _fake_python3(
+            tmp_path,
+            'case "$*" in\n'
+            '  *--version*) echo "Python 3.6.9"; exit 0;;\n'
+            '  *version_info*) exit 1;;\n'
+            "esac",
+        )
+        result = _run_script_env(
+            env,
+            "--suite-dir", str(SUITE_ROOT),
+            "--repo-dir", str(repo),
+            "--subrepo-path", "dx-compiler",
+            "--work", str(tmp_path / "work"),
+        )
+        out = combined(result)
+        assert result.returncode == 2, out
+        assert ">= 3.8" in out, out
+        assert "3.6.9" in out, out
+        assert "out of date" not in out, out

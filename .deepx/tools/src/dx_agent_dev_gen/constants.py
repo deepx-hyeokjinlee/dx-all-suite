@@ -1,5 +1,7 @@
 """Platform-specific tool mappings and shared constants."""
 
+from __future__ import annotations
+
 # Capability -> Copilot tool IDs (VS Code)
 COPILOT_TOOLS: dict[str, list[str]] = {
     "read": [

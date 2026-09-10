@@ -223,3 +223,43 @@ def test_ghes_and_cloud_differ_only_in_expected_places():
         compared += 1
     if compared == 0:
         pytest.skip("no sub-repo has both variant files yet")
+
+
+def test_ghes_python_step_checks_version_and_how_to_fix_names_tool_errors(gate):
+    """GHES run 982: the self-hosted pool has Python 3.8 runners. The ghes deps
+    step must print the interpreter version and fail fast below the 3.8 floor,
+    and 'How to fix' must say that a Traceback / exit 2 is a tool or runner
+    problem — NOT drift — so nobody 'regenerates' to fix a crash."""
+    label, root, subrepo_path, variant, path, doc = gate
+    if variant != "ghes":
+        pytest.skip("cloud pins Python via actions/setup-python")
+    steps = _job(doc)["steps"]
+    deps = next(s for s in steps if str(s.get("name", "")).startswith("Python deps"))
+    run = deps.get("run", "")
+    assert "python3 --version" in run, f"{label}: deps step must print `python3 --version`"
+    assert "(3, 8)" in run, f"{label}: deps step must gate on sys.version_info >= (3, 8)"
+    fix = next(s for s in steps if s.get("name") == "How to fix")
+    assert "NOT drift" in fix.get("run", ""), f"{label}: How-to-fix must distinguish tool errors from drift"
+
+
+def test_clone_step_waits_for_same_name_suite_branch_and_refuses_an_old_suite(gate):
+    """ghes-sync pushes nested repos first and dx-all-suite last (seconds to a minute
+    later). A sub-repo gate that starts in between used to fall back to the suite's
+    default branch — an OLD suite without subrepo_check.sh — and die with
+    `bash: suite/.deepx/tools/scripts/subrepo_check.sh: No such file` (3 of 4 gates
+    red on the first GHES sync, 2026-09-10). The clone step must (1) wait, bounded by
+    SUITE_BRANCH_WAIT, for the same-name suite branch to appear and (2) if it still has
+    to fall back, refuse a suite that lacks the script with an explicit ::error:: telling
+    the user to sync the suite first and re-run."""
+    label, root, subrepo_path, variant, path, doc = gate
+    steps = _job(doc)["steps"]
+    clone = next(s for s in steps if str(s.get("name", "")).startswith("Clone dx-all-suite"))
+    run = clone.get("run", "")
+    env = clone.get("env", {})
+    assert "SUITE_BRANCH_WAIT" in env, f"{label}/{variant}: clone step must expose SUITE_BRANCH_WAIT"
+    assert "SUITE_BRANCH_WAIT" in run and "sleep" in run and "ls-remote --heads" in run, (
+        f"{label}/{variant}: clone step must poll ls-remote for the same-name suite branch"
+    )
+    assert 'suite/.deepx/tools/scripts/subrepo_check.sh' in run and "::error::" in run and "re-run" in run, (
+        f"{label}/{variant}: clone step must refuse an old suite (no subrepo_check.sh) with an explicit error"
+    )

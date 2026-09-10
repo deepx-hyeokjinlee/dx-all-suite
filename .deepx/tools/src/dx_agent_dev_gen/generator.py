@@ -18,6 +18,15 @@ from .transformers import (
 from .constants import COPILOT_TOOLS, CLAUDE_TOOLS, OPENCODE_TOOLS, GENERATED_HEADER
 
 
+def _rel_or_abs(path: Path, base: Path) -> Path:
+    """*path* relative to *base* when it is inside it, else *path* unchanged.
+    (Path.is_relative_to is 3.9+; the gates run on Python 3.8 runners.)"""
+    try:
+        return path.relative_to(base)
+    except ValueError:
+        return path
+
+
 class Generator:
     """Generates platform-specific files from .deepx/ canonical source."""
 
@@ -252,7 +261,7 @@ class Generator:
             if stem not in ko_files:
                 report.append(
                     f"[ERROR] {stem}: EN fragment has no KO counterpart "
-                    f"(missing {ko_dir.relative_to(self.repo) if ko_dir.is_relative_to(self.repo) else ko_dir}/{stem}.md)"
+                    f"(missing {_rel_or_abs(ko_dir, self.repo)}/{stem}.md)"
                 )
                 clean = False
             else:

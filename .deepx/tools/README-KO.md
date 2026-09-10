@@ -249,7 +249,7 @@ pipx install --force --editable .deepx/tools   # PEP 668-safe; --force also repo
 .venv/bin/dx-agent-gen --help  # or: source .venv/bin/activate
 ```
 
-Python 3.10+ 필요. 의존성 (자동 설치됨):
+Python 3.8+ 필요 (GHES self-hosted runner는 3.8 — 모든 모듈에 `from __future__ import annotations` 유지). 의존성 (자동 설치됨):
 - `jinja2 >= 3.1` — 템플릿 렌더링
 - `pyyaml >= 6.0` — YAML frontmatter
 
