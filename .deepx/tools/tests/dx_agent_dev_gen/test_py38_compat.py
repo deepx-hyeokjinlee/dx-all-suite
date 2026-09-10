@@ -91,6 +91,33 @@ def test_no_dict_union_operator_in_gate_test_code():
     )
 
 
+# GHES self-hosted runners: Ubuntu 20.04 = git 2.25 (no initial-branch option on init) and
+# Python 3.8.10 (no tarfile `filter=` — backported only to 3.8.17+; a newer local 3.8 hides it).
+OLD_RUNNER_HAZARDS = (
+    (re.compile(r'"init",\s*(?:"-q",\s*)?"(?:-b|--initial-branch)"|git init[^\n]*\s(?:-b|--initial-branch)\b'),
+     "`git init -b/--initial-branch` needs git >= 2.28 — use `git init` + `git symbolic-ref HEAD refs/heads/<b>`"),  # py38-ok
+    (re.compile(r"extractall\([^)\n]*filter="),
+     "tarfile.extractall(filter=...) needs 3.12 / 3.8.17+ — guard with `if hasattr(tarfile, 'data_filter')`"),  # py38-ok
+)
+
+
+def test_no_constructs_that_break_on_the_old_runner_image():
+    hits = []
+    for d in GATE_TEST_DIRS:
+        for p in (SUITE / d).rglob("*.py"):
+            text = p.read_text(encoding="utf-8")
+            for i, line in enumerate(text.splitlines(), 1):
+                if "py38-ok" in line:
+                    continue
+                for rx, why in OLD_RUNNER_HAZARDS:
+                    if rx.search(line):
+                        # an extractall guarded in the same file by hasattr(tarfile, "data_filter") is fine
+                        if "extractall" in line and 'hasattr(tarfile, "data_filter")' in text:
+                            continue
+                        hits.append(f"{p.relative_to(SUITE)}:{i}: {line.strip()}  <- {why}")
+    assert hits == [], "constructs that fail on the GHES runner image (git 2.25 / python 3.8.10):\n" + "\n".join(hits)
+
+
 def _python38_with_deps() -> str | None:
     py = shutil.which("python3.8")
     if not py:

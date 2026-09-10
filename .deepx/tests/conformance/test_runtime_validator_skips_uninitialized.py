@@ -42,7 +42,11 @@ def archive_copy(tmp_path_factory) -> Path:
     data = subprocess.run(["git", "-C", str(RUNTIME_ROOT), "archive", "--format=tar", "HEAD"],
                           check=True, capture_output=True).stdout
     with tarfile.open(fileobj=io.BytesIO(data)) as tar:
-        tar.extractall(dest, filter="data")
+        # `filter=` exists from 3.12 (backported to 3.8.17+); the GHES runners run 3.8.10
+        if hasattr(tarfile, "data_filter"):
+            tar.extractall(dest, filter="data")
+        else:
+            tar.extractall(dest)  # trusted archive: our own git archive of HEAD
     # Test the WORKING-TREE validator (the code under test), not the one at HEAD —
     # otherwise this test can only go green after the fix has been committed.
     shutil.copyfile(SCRIPT, dest / ".deepx" / "scripts" / "validate_framework.py")

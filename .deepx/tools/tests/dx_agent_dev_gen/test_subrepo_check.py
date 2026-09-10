@@ -240,7 +240,8 @@ def _build_fake_bare_suite(tmp_path: Path) -> Path:
         else:
             shutil.copy2(entry, fake_suite / ".deepx" / "templates" / entry.name)
 
-    _git("init", "-q", "-b", "main", cwd=fake_suite)
+    _git("init", "-q", cwd=fake_suite)
+    _git("symbolic-ref", "HEAD", "refs/heads/main", cwd=fake_suite)   # `init -b` needs git >= 2.28; GHES runners have 2.25
     _git("config", "user.email", "test@example.com", cwd=fake_suite)
     _git("config", "user.name", "Test", cwd=fake_suite)
     _git("add", "-A", cwd=fake_suite)

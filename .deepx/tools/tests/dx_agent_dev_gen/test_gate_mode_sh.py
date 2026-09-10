@@ -38,7 +38,7 @@ def _git(repo: Path, *args: str) -> str:
 def repo(tmp_path_factory) -> dict:
     """A: file → B: gitlink `sub` added (pointer change) → C: file edited (no gitlink change)."""
     r = tmp_path_factory.mktemp("gate-mode-repo")
-    _git(r, "init", "-q", "-b", "main")
+    _git(r, "init", "-q"); _git(r, "symbolic-ref", "HEAD", "refs/heads/main")   # `init -b` needs git >= 2.28; GHES runners have 2.25
     _git(r, "config", "user.email", "t@example.com"); _git(r, "config", "user.name", "t")
     (r / "README.md").write_text("a\n"); _git(r, "add", "README.md"); _git(r, "commit", "-q", "-m", "A")
     a = _git(r, "rev-parse", "HEAD")
