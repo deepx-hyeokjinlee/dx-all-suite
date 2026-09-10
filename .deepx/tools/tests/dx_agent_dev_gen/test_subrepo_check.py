@@ -144,6 +144,19 @@ class TestSuiteUrlDerivation:
         assert result.returncode == 0, combined(result)
         assert result.stdout.strip() == expected, combined(result)
 
+    def test_derivation_uses_the_raw_origin_url_not_an_insteadof_rewrite(self, tmp_path):
+        """GHES runners carry `url.https://github.com/.insteadOf git@github.com:` (credential
+        manager / CI image), so `git remote get-url` returns the REWRITTEN url and the derived
+        suite url silently changed scheme (run 1751). Derive from the configured value."""
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        _git("init", "-q", cwd=repo)
+        _git("remote", "add", "origin", "git@github.com:org/dx_app.git", cwd=repo)
+        _git("config", "url.https://github.com/.insteadOf", "git@github.com:", cwd=repo)
+        result = run_script("--print-suite-url", "--repo-dir", str(repo))
+        assert result.returncode == 0, combined(result)
+        assert result.stdout.strip() == "git@github.com:org/dx-all-suite.git", combined(result)
+
 
 class TestAllFourSubreposCleanWithSuiteDir:
     @pytest.mark.parametrize("subrepo_path", SUBREPO_PATHS)

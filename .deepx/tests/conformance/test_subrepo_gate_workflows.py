@@ -21,6 +21,7 @@ checkout) is SKIPPED, not failed.
 from __future__ import annotations
 
 import re
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -88,6 +89,21 @@ def _job(doc: dict) -> dict:
 
 def _runs(job: dict) -> str:
     return "\n".join(s.get("run", "") for s in job.get("steps", []) if isinstance(s, dict))
+
+
+def _stale_hint(label: str, root: Path) -> str:
+    """Appended to parity failures: in branch-tip mode a sub-repo is checked out at its
+    integration branch (main, or dev for dx_app/dx_stream). When only ONE sub-repo fails
+    these tests, that branch simply has not merged the workflow PR yet (GHES runs
+    1748/1751: dx-runtime main) — not a defect in the files under test."""
+    try:
+        sha = subprocess.run(["git", "-C", str(root), "rev-parse", "--short", "HEAD"],
+                             text=True, capture_output=True, timeout=20).stdout.strip() or "?"
+    except Exception:  # noqa: BLE001
+        sha = "?"
+    return (f" [hint: {label} is checked out at {sha}; if only this sub-repo fails, its integration branch "
+            f"has not merged the gate-workflow PR yet — merge feature/dx-agent-dev there or preview with "
+            f"submodule_refs='{label}=feature/dx-agent-dev']")
 
 
 def test_old_single_file_workflow_is_gone(repo_case):
@@ -183,7 +199,10 @@ def test_all_four_workflows_identical_modulo_path(variant_name):
         pytest.skip(f"{variant_name}: fewer than 2 workflow files present")
     base_label, base_text = entries[0]
     for label, text in entries[1:]:
-        assert text == base_text, f"{variant_name}: {label} differs from {base_label} beyond <SUBREPO_PATH>"
+        assert text == base_text, (
+            f"{variant_name}: {label} differs from {base_label} beyond <SUBREPO_PATH>"
+            + _stale_hint(label, dict((c[0], c[1]) for c in CASES)[label])
+        )
 
 
 def test_ghes_and_cloud_differ_only_in_expected_places():
@@ -236,7 +255,7 @@ def test_ghes_python_step_checks_version_and_how_to_fix_names_tool_errors(gate):
     steps = _job(doc)["steps"]
     deps = next(s for s in steps if str(s.get("name", "")).startswith("Python deps"))
     run = deps.get("run", "")
-    assert "python3 --version" in run, f"{label}: deps step must print `python3 --version`"
+    assert "python3 --version" in run, f"{label}: deps step must print `python3 --version`" + _stale_hint(label, root)
     assert "(3, 8)" in run, f"{label}: deps step must gate on sys.version_info >= (3, 8)"
     fix = next(s for s in steps if s.get("name") == "How to fix")
     assert "NOT drift" in fix.get("run", ""), f"{label}: How-to-fix must distinguish tool errors from drift"
@@ -256,7 +275,7 @@ def test_clone_step_waits_for_same_name_suite_branch_and_refuses_an_old_suite(ga
     clone = next(s for s in steps if str(s.get("name", "")).startswith("Clone dx-all-suite"))
     run = clone.get("run", "")
     env = clone.get("env", {})
-    assert "SUITE_BRANCH_WAIT" in env, f"{label}/{variant}: clone step must expose SUITE_BRANCH_WAIT"
+    assert "SUITE_BRANCH_WAIT" in env, f"{label}/{variant}: clone step must expose SUITE_BRANCH_WAIT" + _stale_hint(label, root)
     assert "SUITE_BRANCH_WAIT" in run and "sleep" in run and "ls-remote --heads" in run, (
         f"{label}/{variant}: clone step must poll ls-remote for the same-name suite branch"
     )

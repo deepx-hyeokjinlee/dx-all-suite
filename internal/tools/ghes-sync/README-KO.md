@@ -82,28 +82,21 @@ repo별 키: `src_url`, `dst_url`(전체 URL이 host+name보다 우선), `src_ho
 | 분류 | **CREATE**(dst에 브랜치 없음) · **FAST-FORWARD** · **UP-TO-DATE**(no-op) · **DST-AHEAD**(dst가 미러 tip을 포함하고 더 앞섬, 예: merge-update — push할 것 없음, 미러가 뒤처진 상태: `--reverse`로 되가져옴) · **DIVERGED**(양쪽에 서로 없는 커밋 → 해당 repo 실패, push 없음) |
 | gitlink 검증 | 새 커밋들의 `gitlinks` 경로(`160000` 항목)가 sub-repo의 동기화된 tip에서 도달 가능해야 함(이 실행에서 처리되지 않은 sub-repo면 dst 현재 상태 기준). `strict`는 parent push 차단, `warn`은 경고 후 push |
 | push | `git push <dst> refs/remotes/src/<branch>:refs/heads/<dst_branch>` — ff-only, `--force` 없음; `--tags`면 `refs/tags/*` 추가 |
-| 브랜치 갱신(`--update-branch`) | 브랜치를 딴 뒤 dst의 PR base(`pr_base`)가 전진했으면 임시 worktree에서 base를 브랜치에 **merge**(GitHub의 "Update branch"와 동일, rebase 아님 — force push 없음, submodule pointer 유효 유지)하고 merge commit을 ff push. **conflict**면 push 없이 진행 중인 merge를 `<cache_dir>/<repo>.merge`에 남겨 그 자리에서 해결하게 함(아래 *update-branch conflict 해결* 참고). `--dry-run`도 로컬 merge를 수행해 push 없이 conflict를 탐지(남기는 것은 없음). 플래그 없으면 base 전진을 알리기만 함. merge 커밋 identity: `GHES_SYNC_GIT_NAME`/`GHES_SYNC_GIT_EMAIL`, 없으면 git config. 이후 미러는 그 merge commit만큼 뒤처짐 — `--reverse` 참고 |
+| 브랜치 갱신(`--update-branch`) | 브랜치를 딴 뒤 dst의 PR base(`pr_base`)가 전진했으면 임시 worktree에서 base를 브랜치에 **merge**(GitHub의 "Update branch"와 동일, rebase 아님 — force push 없음, submodule pointer 유효 유지)하고 merge commit을 ff push. **conflict**면 merge를 abort하고 아무것도 남기지 않음 — 수동으로 해결(아래 *update-branch conflict 해결* 참고). `--dry-run`도 로컬 merge를 수행해 push 없이 conflict를 탐지(남기는 것은 없음). 플래그 없으면 base 전진을 알리기만 함. merge 커밋 identity: `GHES_SYNC_GIT_NAME`/`GHES_SYNC_GIT_EMAIL`, 없으면 git config. 이후 미러는 그 merge commit만큼 뒤처짐 — `--reverse` 참고 |
 | PR | `mode = pr`이고 `dst_branch != pr_base`이면 열린 PR 재사용(`gh pr list --head --base`) 또는 커밋 목록을 본문으로 `gh pr create`; base보다 앞선 커밋이 0이면 생성 안 함 |
 | 요약 | `repo · action · src · dst-before · dst-after · pr · status` 표; exit 0 / 1(repo 실패) / 2(설정·환경 오류) |
 
-### update-branch conflict 해결
+### update-branch conflict 해결 (수동)
 
-conflict는 sync를 실행하는 기계(폐쇄망: GHES push 가능, 미러 push 불가)에서 발생하므로, 도구는 merge를
-캐시의 worktree `<cache_dir>/<repo>.merge`에 남겨 두고 거기서 마무리하게 한다:
+깨끗하게 merge되는 경우만 자동이다. conflict가 나면 도구는 abort하고 아무것도 남기거나 push하지 않으므로,
+본인 checkout에서 해결한 뒤 도구가 이어받게 한다:
 
-```bash
-cd ~/.cache/ghes-sync/dx_app.merge      # 경로는 에러 메시지에 출력됨
-# 충돌 파일 수정 (git status로 확인)
-git add -A && git commit --no-edit      # "Merge <base> into <branch>" 메시지 유지
-bash internal/tools/ghes-sync/ghes-sync.sh --update-branch   # resume: 완료된 merge를 GHES에 ff push하고 worktree 제거
-```
-그 뒤 `--reverse`로 미러를 맞춘다(`--pull-only` 여기서, `--push-only` 일반망에서).
-worktree가 남아 있는 동안 `--update-branch` 없이 실행하면 경고만(`PENDING merge-update worktree`), 함께 실행하면
-`MERGE_HEAD`가 남아 있는 한 다시 실패하고, merge를 abort한 상태(`git merge --abort`)면 worktree를 버리고 새로 시도한다.
+| 위치 | 할 일 | 그다음 |
+|---|---|---|
+| 폐쇄망(GHES push 가능) | 본인 checkout에서 `git fetch <dst_url> <pr_base> && git merge FETCH_HEAD` → 해결 → commit → `git push <dst_url> HEAD:refs/heads/<branch>`(GHES 브랜치에 ff) | forward sync는 DST-AHEAD 표시; 미러는 `--reverse`로 맞춤 |
+| 개발 기계(github.com push 가능) | 미러 checkout에서 같은 merge 후 `git push origin <branch>` | forward sync가 FAST-FORWARD로 반영 |
 
-개발 기계(github.com push 가능, GHES 불가)에서의 대안: 미러 checkout에서 `git fetch <dst_url> <pr_base> && git merge FETCH_HEAD`
-→ 해결 → 미러 push → 일반 forward sync(FAST-FORWARD). conflict 상황에 `--force-with-lease`는 **절대** 쓰지 않는다 — 방금 만든
-해결 커밋을 지워 버린다.
+conflict를 "고치려고" `--force-with-lease`/`--reset-to-base`를 쓰지 않는다 — 해결 커밋이 사라진다.
 
 ## 운용 절차
 
@@ -136,6 +129,24 @@ bash internal/tools/ghes-sync/ghes-sync.sh --reverse --push-only
 push할 것이므로 할 일 없음) · **DIVERGED**(양쪽 모두 전진) → `--force-with-lease`가 없으면 실패, 있으면 사라질
 미러 전용 커밋 목록을 출력한 뒤 미러 브랜치를 GHES 브랜치로 덮어쓴다(`--force-with-lease=<branch>:<방금 fetch한 미러 tip>`).
 `--force-with-lease`는 `--reverse`와 함께만 허용되며, forward 방향은 절대 force하지 않는다.
+
+### PR이 모두 merge된 뒤 — `--reverse --reset-to-base`
+
+GHES는 PR을 squash merge하므로 `main`/`dev`에는 PR당 새 커밋 1개가 남고, 미러의 `feature/dx-agent-dev`
+(원래 커밋들)는 다시는 ff가 될 수 없다. `--reset-to-base`는 repo별로 미러 브랜치를 GHES의 `pr_base`
+(`main`, dx_app/dx_stream은 `dev`) tip으로 옮긴다(nested repo 먼저):
+
+```bash
+# 폐쇄망                                            # 일반망 (같은 캐시)
+ghes-sync.sh --reverse --pull-only                  ghes-sync.sh --reverse --push-only --reset-to-base
+```
+repo별로 미러 브랜치가 이미 base에 포함되어 있으면(merge commit 방식) 단순 FAST-FORWARD, 아니면 **RESET**:
+현재 미러 tip을 먼저 미러의 `backup/<branch>/<YYYYmmdd-HHMMSS>`에 저장하고(`--no-backup`으로 생략), 사라지는
+미러 전용 커밋을 나열한 뒤 base tip을 `--force-with-lease=<branch>:<방금 fetch한 미러 tip>`으로 push한다 —
+사용자 입장에서는 무조건 덮어쓰기이며, fetch와 push 사이에 누가 미러 브랜치에 push한 경우에만 거부된다(재실행).
+`reverse_branches`(`main`/`dev` 자체)도 같은 실행에서 ff로 동기화된다. 끝나면 개발 checkout을 갱신한다:
+`git fetch origin && git reset --hard origin/feature/dx-agent-dev`(도구가 출력). `--reset-to-base`는
+`--reverse`와 함께만 허용된다.
 
 ## 문제 해결
 

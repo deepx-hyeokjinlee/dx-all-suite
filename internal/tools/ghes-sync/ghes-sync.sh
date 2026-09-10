@@ -6,7 +6,8 @@
 # Usage:
 #   ghes-sync.sh [--config FILE] [--repo NAME ...] [--pull-only | --push-only]
 #                [--dry-run] [--tags] [--no-pr] [--update-branch] [--non-interactive]
-#                [--reverse [--force-with-lease]] [--cache-dir DIR] [--print-config] [--help]
+#                [--reverse [--force-with-lease] [--reset-to-base [--no-backup]]]
+#                [--cache-dir DIR] [--print-config] [--help]
 #
 #   --config FILE     INI config (default: sync.conf next to this script)
 #   --repo NAME       process only this repo (repeatable; conf order is kept)
@@ -17,7 +18,7 @@
 #   --no-pr           never create PRs (push only)
 #   --update-branch   when the PR base (pr_base) moved on dst, merge it INTO the branch (a merge
 #                     commit — never a rebase, never a force push) and ff-push it; a conflict
-#                     fails the repo with the files and the manual recipe. --dry-run still merges
+#                     aborts (nothing kept) and prints the manual recipe. --dry-run still merges
 #                     locally, so conflicts are detected without pushing.
 #   --non-interactive never prompt (CI): no git credential prompt, no PAT prompt; missing
 #                     credentials fail fast. Default when stdin is not a TTY or GHES_SYNC_INTERACTIVE=0.
@@ -28,6 +29,12 @@
 #   --force-with-lease (--reverse only) on DIVERGED overwrite the mirror branch with the GHES
 #                     branch (lease = the mirror tip just fetched) after listing the mirror-only
 #                     commits that are dropped. The forward direction never forces.
+#   --reset-to-base   (--reverse only) after the PRs were (squash-)merged: point the mirror's
+#                     `branch` at GHES's `pr_base` tip per repo — ff when possible, otherwise
+#                     RESET: save the mirror tip to backup/<branch>/<timestamp> on the mirror,
+#                     list the dropped mirror-only commits, push with --force-with-lease (an
+#                     unconditional overwrite for you; refused only if the mirror branch moved
+#                     between fetch and push). --no-backup skips the backup branch.
 #   --cache-dir DIR   bare-repo cache (default: conf cache_dir, else $XDG_CACHE_HOME/ghes-sync)
 #   --print-config    print the effective per-repo settings and exit
 #
@@ -71,7 +78,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 CONFIG="$SCRIPT_DIR/sync.conf"
 declare -a ONLY_REPOS=()
 PULL_ONLY=0; PUSH_ONLY=0; DRY_RUN=0; TAGS=0; NO_PR=0; PRINT_CONFIG=0; CACHE_OVERRIDE=""; NON_INTERACTIVE=0; UPDATE_BRANCH=0
-REVERSE=0; FORCE_LEASE=0
+REVERSE=0; FORCE_LEASE=0; RESET_TO_BASE=0; NO_BACKUP=0
 
 usage() { sed -n '2,/^set -euo pipefail/p' "${BASH_SOURCE[0]}" | sed '$d' | sed 's/^# \{0,1\}//'; }
 log()   { printf '[%s] %s\n' "$PROG" "$*"; }
@@ -94,6 +101,8 @@ while [ $# -gt 0 ]; do
     --update-branch) UPDATE_BRANCH=1; shift ;;
     --reverse)   REVERSE=1; shift ;;
     --force-with-lease) FORCE_LEASE=1; shift ;;
+    --reset-to-base) RESET_TO_BASE=1; shift ;;
+    --no-backup) NO_BACKUP=1; shift ;;
     --print-config) PRINT_CONFIG=1; shift ;;
     -h|--help)   usage; exit 0 ;;
     *) die2 "unknown argument '$1' (see --help)" ;;
@@ -101,6 +110,7 @@ while [ $# -gt 0 ]; do
 done
 [ "$PULL_ONLY" -eq 1 ] && [ "$PUSH_ONLY" -eq 1 ] && die2 "--pull-only and --push-only are mutually exclusive"
 [ "$FORCE_LEASE" -eq 1 ] && [ "$REVERSE" -eq 0 ] && die2 "--force-with-lease is only accepted together with --reverse (the forward direction mirror -> GHES never forces)"
+[ "$RESET_TO_BASE" -eq 1 ] && [ "$REVERSE" -eq 0 ] && die2 "--reset-to-base is only accepted together with --reverse (it rewrites the MIRROR branch from GHES's pr_base)"
 command -v git >/dev/null 2>&1 || die2 "git not found in PATH"
 INTERACTIVE=1
 [ -t 0 ] || INTERACTIVE=0
@@ -329,58 +339,25 @@ check_gitlinks() {  # uses R_*, S, D, cache; returns 1 when strict and a pointer
 }
 
 # ── --update-branch: merge the moved PR base into the branch (never rebase / force) ──
-# A conflict is left in a fixed worktree, $CACHE_DIR/<repo>.merge, so it can be resolved on
-# THIS machine (the closed-network one, which can push GHES but not the mirror); the next
-# --update-branch run detects the finished merge there and pushes it (resume).
-resolve_recipe() {
-  printf 'Resolve it IN PLACE: cd %s && <edit the conflicting files> && git add -A && git commit --no-edit ; then rerun ghes-sync.sh --update-branch — it pushes the finished merge to GHES (ff) and removes the worktree; the mirror follows via --reverse (--pull-only here, --push-only on the open network). Alternative on the dev machine (github.com pushable): in the mirror checkout run git fetch %s %s && git merge FETCH_HEAD, resolve, push the mirror, then run the normal forward sync (FAST-FORWARD). Never use --force-with-lease for this.' \
-    "$MERGE_WT" "$R_DST_URL" "$R_PR_BASE"
+# Only a clean merge is automated. A conflict is resolved BY HAND (user decision): the tool
+# aborts, keeps no worktree and prints the recipe for both machines.
+manual_recipe() {
+  printf 'Resolve it by hand — closed network (GHES pushable): in your checkout run git fetch %s %s && git merge FETCH_HEAD, resolve, commit, then git push %s HEAD:refs/heads/%s (ff onto the GHES branch); the next forward run shows DST-AHEAD and --reverse brings the mirror up. Dev machine (github.com pushable): the same merge in the mirror checkout, push the mirror, the forward run pushes it as FAST-FORWARD. Never --force-with-lease / --reset-to-base for this.' \
+    "$R_DST_URL" "$R_PR_BASE" "$R_DST_URL" "$R_DST_BRANCH"
 }
-drop_merge_wt() { git -C "$cache" worktree remove --force "$MERGE_WT" >/dev/null 2>&1 || rm -rf "$MERGE_WT"; git -C "$cache" worktree prune >/dev/null 2>&1 || true; }
-
-resume_merge() {  # $MERGE_WT exists (earlier conflict). Push a finished merge, fail while unresolved, drop a stale one.
-  local h files
-  if git -C "$MERGE_WT" rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then
-    files="$(git -C "$MERGE_WT" diff --name-only --diff-filter=U 2>/dev/null | tr '\n' ' ')"
-    fail "merge-update still UNRESOLVED in $MERGE_WT (conflicting: ${files:-see git status}). $(resolve_recipe)"; return 1
-  fi
-  h="$(git -C "$MERGE_WT" rev-parse HEAD 2>/dev/null || true)"
-  if [ -z "$h" ] || [ "$h" = "$TIP" ] || git -C "$cache" merge-base --is-ancestor "$h" "$TIP" 2>/dev/null; then
-    warn "$R_NAME: discarding stale merge worktree $MERGE_WT (no finished merge on top of $(short "$TIP") — aborted earlier?)"
-    drop_merge_wt; return 0
-  fi
-  if ! git -C "$cache" merge-base --is-ancestor "$TIP" "$h" 2>/dev/null; then
-    fail "merge worktree $MERGE_WT has HEAD $(short "$h") which does not descend from the current branch tip $(short "$TIP") — the branch moved since. Merge/rebase it onto $(short "$TIP") there, or remove the directory (git -C $cache worktree remove --force $MERGE_WT) and rerun."; return 1
-  fi
-  log "$R_NAME: resuming — finished merge-update $(short "$h") found in $MERGE_WT"
-  if [ "$DRY_RUN" -eq 1 ]; then
-    log "$R_NAME: DRY-RUN: would git push $R_DST_URL $(short "$h"):refs/heads/$R_DST_BRANCH (worktree kept)"
-  else
-    auth_opts "$R_DST_URL" "$DST_TOKEN"
-    if ! tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_DST_URL" "$h:refs/heads/$R_DST_BRANCH"; then
-      fail "push of the resolved merge-update commit was rejected by dst (nothing forced; worktree kept)"; return 1
-    fi
-    git -C "$cache" update-ref "refs/remotes/dst/$R_DST_BRANCH" "$h"; DST_AFTER[$R_NAME]="$h"
-    drop_merge_wt
-    log "$R_NAME: pushed the resolved merge-update $(short "$h") and removed $MERGE_WT"
-  fi
-  TIP="$h"; ACTION[$R_NAME]=MERGE-UPDATED
-  DETAIL[$R_NAME]="resumed: resolved merge pushed — mirror is behind, bring it back with --reverse"
-  return 0
-}
-
-merge_update() {  # $1 = number of base commits the branch lacks; uses R_*, cache, TIP, MERGE_WT; sets TIP/ACTION or fails
-  local behind="$1" m files name email msg
+merge_update() {  # $1 = number of base commits the branch lacks; uses R_*, cache, TIP; sets TIP/ACTION or fails
+  local behind="$1" wt m files name email msg
   name="${GHES_SYNC_GIT_NAME:-$(git config user.name 2>/dev/null || true)}";   [ -n "$name" ]  || name="ghes-sync"
   email="${GHES_SYNC_GIT_EMAIL:-$(git config user.email 2>/dev/null || true)}"; [ -n "$email" ] || email="ghes-sync@noreply.local"
+  wt="$(mktemp -d "${TMPDIR:-/tmp}/ghes-sync-wt.XXXXXX")"; rmdir "$wt"
   git -C "$cache" worktree prune >/dev/null 2>&1 || true
-  if ! git -C "$cache" worktree add -q --detach "$MERGE_WT" "$TIP" >/dev/null 2>&1; then
-    fail "cannot create the merge worktree $MERGE_WT"; return 1
+  if ! git -C "$cache" worktree add -q --detach "$wt" "$TIP" >/dev/null 2>&1; then
+    fail "cannot create a temporary worktree of the cache for the merge-update"; return 1
   fi
   msg="Merge $R_PR_BASE into $R_DST_BRANCH (ghes-sync --update-branch)"
-  if git -C "$MERGE_WT" -c user.name="$name" -c user.email="$email" merge -q --no-ff --no-edit -m "$msg" "refs/remotes/dst/$R_PR_BASE" >/dev/null 2>&1; then
-    m="$(git -C "$MERGE_WT" rev-parse HEAD)"
-    drop_merge_wt
+  if git -C "$wt" -c user.name="$name" -c user.email="$email" merge -q --no-ff --no-edit -m "$msg" "refs/remotes/dst/$R_PR_BASE" >/dev/null 2>&1; then
+    m="$(git -C "$wt" rev-parse HEAD)"
+    git -C "$cache" worktree remove --force "$wt" >/dev/null 2>&1 || true; git -C "$cache" worktree prune >/dev/null 2>&1 || true
     if [ "$DRY_RUN" -eq 1 ]; then
       log "$R_NAME: DRY-RUN: would merge $R_PR_BASE ($behind commit(s)) into $R_DST_BRANCH -> $(short "$m") and git push $R_DST_URL $(short "$m"):refs/heads/$R_DST_BRANCH"
     else
@@ -395,13 +372,10 @@ merge_update() {  # $1 = number of base commits the branch lacks; uses R_*, cach
     DETAIL[$R_NAME]="mirror is behind by the merge commit — bring it back with --reverse (from a machine that can push github.com)"
     return 0
   fi
-  files="$(git -C "$MERGE_WT" diff --name-only --diff-filter=U 2>/dev/null | tr '\n' ' ')"
-  if [ "$DRY_RUN" -eq 1 ]; then
-    git -C "$MERGE_WT" merge --abort >/dev/null 2>&1 || true; drop_merge_wt
-    fail "merge CONFLICT merging $R_PR_BASE into $R_DST_BRANCH (files: ${files:-unknown}) — nothing pushed, nothing kept (--dry-run). Run without --dry-run to get a worktree at $MERGE_WT to resolve in."
-    return 1
-  fi
-  fail "merge CONFLICT merging $R_PR_BASE into $R_DST_BRANCH (files: ${files:-unknown}) — nothing pushed. The merge is left in $MERGE_WT. $(resolve_recipe)"
+  files="$(git -C "$wt" diff --name-only --diff-filter=U 2>/dev/null | tr '\n' ' ')"
+  git -C "$wt" merge --abort >/dev/null 2>&1 || true
+  git -C "$cache" worktree remove --force "$wt" >/dev/null 2>&1 || true; git -C "$cache" worktree prune >/dev/null 2>&1 || true
+  fail "merge CONFLICT merging $R_PR_BASE into $R_DST_BRANCH (files: ${files:-unknown}) — nothing pushed, nothing kept. $(manual_recipe)"
   return 1
 }
 
@@ -573,12 +547,6 @@ process() {
     fi
   fi
   SYNCED_OK[$R_NAME]=1   # in --dry-run: "would be synced" — lets the parent's gitlink check simulate the real run
-  # A merge worktree left by an earlier --update-branch conflict?
-  local MERGE_WT="$CACHE_DIR/$R_NAME.merge"
-  if [ -d "$MERGE_WT" ]; then
-    if [ "$UPDATE_BRANCH" -eq 1 ]; then resume_merge || return
-    else warn "$R_NAME: a PENDING merge-update worktree exists at $MERGE_WT (earlier --update-branch conflict). Resolve + commit there and rerun with --update-branch, or remove it: git -C $cache worktree remove --force $MERGE_WT"; fi
-  fi
   # PR base moved on dst since the branch was cut? (only meaningful for a PR branch)
   if [ "$R_MODE" = pr ] && [ -n "$R_PR_BASE" ] && [ "$R_DST_BRANCH" != "$R_PR_BASE" ] \
      && git -C "$cache" rev-parse -q --verify "refs/remotes/dst/$R_PR_BASE" >/dev/null 2>&1 \
@@ -709,7 +677,59 @@ process_reverse() {
     fi
     git -C "$cache" update-ref "refs/remotes/src/$b" "$S"; DST_AFTER[$ROW_KEY]="$S"
   done
+  [ "$RESET_TO_BASE" -eq 1 ] && [ "$PULL_ONLY" -eq 0 ] && reset_to_base
   ROW_KEY=""
+}
+
+# --reset-to-base: mirror <branch>  <-  GHES <pr_base>   (after the PR was squash-merged)
+reset_to_base() {
+  local b="$R_BRANCH" base="$R_PR_BASE" S D n dropped ts backup
+  [ -n "$base" ] && [ "$base" != "$b" ] || return 0
+  rv_row "$b<=$base"
+  S="$(git -C "$cache" rev-parse -q --verify "refs/remotes/dst/$base" 2>/dev/null || true)"
+  if [ -z "$S" ]; then fail "GHES '$base' is not in the cache — run '--reverse --pull-only' where GHES is reachable first"; return; fi
+  # mirror <branch> may not have been fetched by the loop above (it is when it is in reverse_branches)
+  if printf '%s\n' "$MIRROR_HEADS" | grep -qx "refs/heads/$b"; then
+    auth_opts "$R_SRC_URL" "$SRC_TOKEN"
+    git "${AUTH_OPTS[@]}" -C "$cache" fetch -q --no-tags "$R_SRC_URL" "+refs/heads/$b:refs/remotes/src/$b"
+  else git -C "$cache" update-ref -d "refs/remotes/src/$b" 2>/dev/null || true; fi
+  D="$(git -C "$cache" rev-parse -q --verify "refs/remotes/src/$b" 2>/dev/null || true)"
+  SRC_SHA[$ROW_KEY]="$S"; DST_BEFORE[$ROW_KEY]="$D"; DST_AFTER[$ROW_KEY]="$D"
+  local refspec="refs/remotes/dst/$base:refs/heads/$b" lease=""
+  if [ -z "$D" ]; then ACTION[$ROW_KEY]=CREATE
+  elif [ "$D" = "$S" ]; then ACTION[$ROW_KEY]=UP-TO-DATE; log "$ROW_KEY: mirror $b already at GHES $base $(short "$S")"; return
+  elif git -C "$cache" merge-base --is-ancestor "$D" "$S"; then ACTION[$ROW_KEY]=FAST-FORWARD
+  else
+    ACTION[$ROW_KEY]=RESET; lease="--force-with-lease=refs/heads/$b:$D"
+    n="$(git -C "$cache" rev-list --count "$S..$D")"; dropped="$(git -C "$cache" log --format='- %h %s' "$S..$D")"
+    log "$ROW_KEY: RESET — mirror $b @ $(short "$D") will be overwritten with GHES $base @ $(short "$S"); $n mirror-only commit(s) leave the branch:"
+    printf '%s\n' "$dropped"
+    if [ "$NO_BACKUP" -eq 0 ]; then
+      ts="$(date +%Y%m%d-%H%M%S)"; backup="refs/heads/backup/$b/$ts"
+      if [ "$DRY_RUN" -eq 1 ]; then log "$ROW_KEY: DRY-RUN: git push $R_SRC_URL $(short "$D"):$backup"
+      else
+        auth_opts "$R_SRC_URL" "$SRC_TOKEN"
+        tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_SRC_URL" "$D:$backup" \
+          || { fail "could not push the backup branch $backup to the mirror — nothing overwritten"; return; }
+        log "$ROW_KEY: backed up the old mirror tip to $backup"
+      fi
+      DETAIL[$ROW_KEY]="old tip saved as ${backup#refs/heads/}"
+    else DETAIL[$ROW_KEY]="no backup (--no-backup)"; fi
+  fi
+  log "$ROW_KEY: ${ACTION[$ROW_KEY]} (GHES $base $(short "$S"), mirror $b $(short "$D"))"
+  local pushcmd="git push ${lease:+$lease }$R_SRC_URL $refspec"
+  if [ "$DRY_RUN" -eq 1 ]; then log "$ROW_KEY: DRY-RUN: $pushcmd"; return; fi
+  log "$ROW_KEY: $pushcmd"
+  auth_opts "$R_SRC_URL" "$SRC_TOKEN"
+  if [ -n "$lease" ]; then
+    tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$lease" "$R_SRC_URL" "$refspec" \
+      || { fail "push rejected by the mirror: the branch moved between fetch and push (lease), or permission — rerun"; return; }
+  else
+    tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_SRC_URL" "$refspec" \
+      || { fail "push rejected by the mirror (non-fast-forward or permission)"; return; }
+  fi
+  git -C "$cache" update-ref "refs/remotes/src/$b" "$S"; DST_AFTER[$ROW_KEY]="$S"
+  log "$ROW_KEY: done. Update your dev checkout: git fetch origin && git reset --hard origin/$b"
 }
 
 if [ "$REVERSE" -eq 1 ]; then

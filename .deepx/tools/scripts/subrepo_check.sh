@@ -210,7 +210,10 @@ derive_suite_url() {
   # scheme/host/org prefix (works for both SSH-style git@host:org/name.git
   # and https://host/org/name.git forms).
   local origin base dir
-  origin="$(git -C "$REPO_DIR" remote get-url origin 2>/dev/null || true)"
+  # The CONFIGURED value, not `remote get-url`: the latter applies url.<base>.insteadOf
+  # rewrites (present on CI images / credential-manager hosts) and would silently turn
+  # git@host:org/... into https://host/org/... .
+  origin="$(git -C "$REPO_DIR" config --get remote.origin.url 2>/dev/null || true)"
   if [ -z "$origin" ]; then
     err "cannot derive --suite-url: no 'origin' remote configured in $REPO_DIR"
     exit 2

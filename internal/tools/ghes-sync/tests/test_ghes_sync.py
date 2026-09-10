@@ -465,70 +465,20 @@ def test_update_branch_merges_the_moved_base_and_ff_pushes(env):
     assert _worktrees(env.cache / "dx_app.git") == [] # temp worktree cleaned up
 
 
-def test_update_branch_conflict_keeps_a_worktree_to_resolve_in_and_pushes_nothing(env):
-    """The conflict is left in <cache_dir>/<repo>.merge (a worktree of the bare cache)
-    so it can be resolved on the closed-network machine itself; the guidance names the
-    path and both machine-specific flows."""
+def test_update_branch_conflict_aborts_and_gives_manual_guidance(env):
+    """Conflicts are resolved by hand (user decision 2026-09-10): nothing is pushed, no
+    worktree is kept, and the guidance covers both machines — closed network (merge in
+    your checkout, ff-push GHES feature, later --reverse) and dev machine (merge in the
+    mirror checkout, push the mirror, forward sync)."""
     tip, moved = _pr_branch_with_moved_base(env, conflict=True)
     r = env.run("--no-pr", "--update-branch")
     assert r.returncode == 1, out(r)
     assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == tip
-    wt = env.cache / "dx_app.merge"
-    assert wt.is_dir() and (wt / "a.txt").exists()
-    assert git("rev-parse", "-q", "--verify", "MERGE_HEAD", cwd=wt, check=False).returncode == 0   # merge in progress
     o = out(r)
-    assert "conflict" in o.lower() and "a.txt" in o and str(wt) in o
-    assert "git commit" in o and "--update-branch" in o          # resume recipe
-    assert "--reverse" in o and "mirror" in o.lower()            # closed-network flow
-    assert [w for w in _worktrees(env.cache / "dx_app.git") if w.endswith("dx_app.merge")]
-
-
-def test_update_branch_rerun_with_unresolved_conflict_fails_again(env):
-    tip, moved = _pr_branch_with_moved_base(env, conflict=True)
-    env.run("--no-pr", "--update-branch")
-    r = env.run("--no-pr", "--update-branch")
-    assert r.returncode == 1, out(r)
-    assert "unresolved" in out(r).lower() and str(env.cache / "dx_app.merge") in out(r)
-    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == tip
-
-
-def test_update_branch_resumes_a_resolved_merge_and_cleans_up(env):
-    tip, moved = _pr_branch_with_moved_base(env, conflict=True)
-    env.run("--no-pr", "--update-branch")
-    wt = env.cache / "dx_app.merge"
-    (wt / "a.txt").write_text("resolved\n", encoding="utf-8")
-    git("add", "-A", cwd=wt)
-    git("commit", "-q", "--no-edit", cwd=wt)                    # keeps the merge message
-    resolved = git("rev-parse", "HEAD", cwd=wt).stdout.strip()
-    r = env.run("--no-pr", "--update-branch")
-    assert r.returncode == 0, out(r)
-    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == resolved
-    bare = env.repos.bare("dst", "dx_app")
-    assert git("merge-base", "--is-ancestor", tip, resolved, cwd=bare, check=False).returncode == 0
-    assert git("merge-base", "--is-ancestor", moved, resolved, cwd=bare, check=False).returncode == 0
-    assert not wt.exists() and _worktrees(env.cache / "dx_app.git") == []
-    assert "MERGE-UPDATED" in r.stdout.rsplit("SUMMARY", 1)[-1] and "resum" in out(r).lower()
-
-
-def test_pending_merge_worktree_without_flag_is_reported_not_pushed(env):
-    tip, moved = _pr_branch_with_moved_base(env, conflict=True)
-    env.run("--no-pr", "--update-branch")
-    r = env.run("--no-pr")
-    assert r.returncode == 0, out(r)
-    assert "pending" in out(r).lower() and str(env.cache / "dx_app.merge") in out(r)
-    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == tip
-
-
-def test_aborted_merge_worktree_is_discarded_and_merge_retried(env):
-    tip, moved = _pr_branch_with_moved_base(env)      # clean merge possible
-    # simulate a leftover from an earlier conflict that the user aborted
-    cache = env.cache / "dx_app.git"
-    env.run("--pull-only")                                 # populate the cache
-    git("worktree", "add", "-q", "--detach", str(env.cache / "dx_app.merge"), tip, cwd=cache)
-    r = env.run("--no-pr", "--update-branch")
-    assert r.returncode == 0, out(r)
-    assert "MERGE-UPDATED" in r.stdout.rsplit("SUMMARY", 1)[-1]
+    assert "conflict" in o.lower() and "a.txt" in o
+    assert "git merge" in o and "refs/heads/" in o and "--reverse" in o and "mirror" in o.lower()
     assert not (env.cache / "dx_app.merge").exists()
+    assert _worktrees(env.cache / "dx_app.git") == []
 
 
 def test_without_update_branch_a_moved_base_is_only_reported(env):
@@ -546,7 +496,6 @@ def test_update_branch_dry_run_detects_conflicts_but_pushes_nothing(env):
     assert "conflict" in out(r).lower()
     assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == tip
     assert not (env.cache / "dx_app.merge").exists()      # dry-run leaves no state behind
-    assert "--dry-run" in out(r)                          # ...and says how to get a worktree to resolve in
 
 
 def test_update_branch_dry_run_clean_merge_pushes_nothing(env):
@@ -698,3 +647,89 @@ def test_reverse_default_branches_include_main_when_pr_base_is_dev(env):
     assert env.repos.rev("src", "dx_app", "refs/heads/main") == ghes_main
     tail = r.stdout.rsplit("SUMMARY", 1)[-1]
     assert "dx_app:dev" in tail and "dx_app:main" in tail and f"dx_app:{BR}" in tail
+
+
+# ── --reverse --reset-to-base: after squash-merge, point the mirror feature at GHES's base ──
+
+def _squash_merged_scenario(env, ff: bool = False):
+    """mirror feature has 2 commits; GHES dev (pr_base) got them as ONE squash commit
+    (ff=False) or as a merge commit that contains them (ff=True)."""
+    r = env.repos
+    r.make("dx_app")
+    r.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    r.mirror_branch("dx_app", "main")
+    r.commit("src", "dx_app", BR, "feat 1", files={"a": "1"}, parent_branch="main")
+    tip = r.commit("src", "dx_app", BR, "feat 2", files={"b": "1"})
+    r.mirror_branch("dx_app", BR)
+    git("update-ref", "refs/heads/dev", "refs/heads/main", cwd=r.bare("dst", "dx_app"))
+    if ff:  # merge-commit style: dev contains the feature commits (dev := feature tip, then one more commit)
+        git("update-ref", "refs/heads/dev", f"refs/heads/{BR}", cwd=r.bare("dst", "dx_app"))
+        dev = r.commit("dst", "dx_app", "dev", "merge feature into dev", files={"c": "1"})
+    else:
+        dev = r.commit("dst", "dx_app", "dev", "feat 1 + feat 2 (squash, #12)", files={"a": "1", "b": "1"})
+    env.write_conf([("dx_app", "pr_base = dev")])
+    return tip, dev
+
+
+def test_reset_to_base_overwrites_mirror_feature_with_ghes_base_and_backs_it_up(env):
+    tip, dev = _squash_merged_scenario(env)
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+    backups = [l.split()[1] for l in git("show-ref", cwd=env.repos.bare("src", "dx_app")).stdout.splitlines()
+               if f"refs/heads/backup/{BR}/" in l]
+    assert len(backups) == 1 and env.repos.rev("src", "dx_app", backups[0]) == tip
+    o = out(r)
+    assert "feat 1" in o and "feat 2" in o                       # dropped mirror-only commits are listed
+    assert "RESET" in r.stdout.rsplit("SUMMARY", 1)[-1]
+    assert "reset --hard" in o                                    # dev-checkout follow-up hint
+    assert env.gh_calls() == []
+
+
+def test_reset_to_base_no_backup_flag(env):
+    tip, dev = _squash_merged_scenario(env)
+    r = env.run("--reverse", "--reset-to-base", "--no-backup")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+    assert "refs/heads/backup/" not in git("show-ref", cwd=env.repos.bare("src", "dx_app")).stdout
+
+
+def test_reset_to_base_is_a_fast_forward_when_base_contains_the_feature(env):
+    tip, dev = _squash_merged_scenario(env, ff=True)
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+    assert "refs/heads/backup/" not in git("show-ref", cwd=env.repos.bare("src", "dx_app")).stdout
+    assert "FAST-FORWARD" in r.stdout.rsplit("SUMMARY", 1)[-1]
+
+
+def test_reset_to_base_dry_run_changes_nothing(env):
+    tip, dev = _squash_merged_scenario(env)
+    r = env.run("--reverse", "--reset-to-base", "--dry-run")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == tip
+    assert "refs/heads/backup/" not in git("show-ref", cwd=env.repos.bare("src", "dx_app")).stdout
+    assert "RESET" in r.stdout and "DRY-RUN" in r.stdout
+
+
+def test_reset_to_base_requires_reverse(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "")])
+    r = env.run("--reset-to-base", "--no-pr")
+    assert r.returncode == 2, out(r)
+    assert "--reverse" in out(r)
+
+
+def test_reset_to_base_two_steps_then_forward_is_up_to_date(env):
+    tip, dev = _squash_merged_scenario(env)
+    assert env.run("--reverse", "--pull-only").returncode == 0
+    conf = env.conf.read_text(encoding="utf-8").replace(f"dst_host = file://{env.repos.dst}", "dst_host = file:///nonexistent/ghes")
+    env.conf.write_text(conf, encoding="utf-8")
+    r = env.run("--reverse", "--push-only", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+    env.conf.write_text(conf.replace("dst_host = file:///nonexistent/ghes", f"dst_host = file://{env.repos.dst}"), encoding="utf-8")
+    # forward: GHES feature (still the old commits) vs mirror feature (= dev): GHES is behind or diverged? The GHES
+    # feature branch is normally deleted after the merge; here it still exists, so we only check the tool does not crash.
+    r = env.run("--no-pr", "--dry-run")
+    assert r.returncode in (0, 1), out(r)

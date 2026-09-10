@@ -87,31 +87,21 @@ section (before any parent that lists it in `gitlinks`). Adding a branch mapping
 | classify | **CREATE** (dst branch absent) · **FAST-FORWARD** · **UP-TO-DATE** (no-op) · **DST-AHEAD** (dst contains the mirror tip plus more, e.g. a merge-update — nothing to push, the mirror is behind: bring it back with `--reverse`) · **DIVERGED** (both sides have commits the other lacks → repo fails, nothing pushed) |
 | gitlink check | every new commit's `160000` entries listed in `gitlinks` must be reachable from the sub-repo's synced tip (or, if that sub-repo was not processed this run, from what dst already has). `strict` blocks the parent push; `warn` pushes with a warning |
 | push | `git push <dst> refs/remotes/src/<branch>:refs/heads/<dst_branch>` — ff-only, never `--force`; `--tags` adds `refs/tags/*` |
-| update branch (`--update-branch`) | when the PR base (`pr_base`) moved on dst since the branch was cut: merge the base INTO the branch in a temporary worktree (GitHub's "Update branch", never a rebase — no force push, submodule pointers stay valid) and ff-push the merge commit; **conflict** → nothing pushed; the half-done merge is left in `<cache_dir>/<repo>.merge` for you to resolve in place (see *Resolving an update-branch conflict* below). `--dry-run` performs the local merge, so it detects conflicts without pushing (and keeps nothing). Without the flag a moved base is only reported. Merge identity: `GHES_SYNC_GIT_NAME` / `GHES_SYNC_GIT_EMAIL`, else your git config. The mirror is then behind by that merge commit — see `--reverse` |
+| update branch (`--update-branch`) | when the PR base (`pr_base`) moved on dst since the branch was cut: merge the base INTO the branch in a temporary worktree (GitHub's "Update branch", never a rebase — no force push, submodule pointers stay valid) and ff-push the merge commit; **conflict** → nothing pushed; the merge is aborted and nothing is kept — resolve it by hand (see *Resolving an update-branch conflict* below). `--dry-run` performs the local merge, so it detects conflicts without pushing (and keeps nothing). Without the flag a moved base is only reported. Merge identity: `GHES_SYNC_GIT_NAME` / `GHES_SYNC_GIT_EMAIL`, else your git config. The mirror is then behind by that merge commit — see `--reverse` |
 | PR | `mode = pr` and `dst_branch != pr_base`: reuse the open PR (`gh pr list --head --base`) or `gh pr create` with the commit list as body; nothing when 0 commits ahead of the base |
 | summary | table `repo · action · src · dst-before · dst-after · pr · status`; exit 0 / 1 (a repo failed) / 2 (config or setup error) |
 
-### Resolving an update-branch conflict
+### Resolving an update-branch conflict (by hand)
 
-The conflict shows up on the machine that runs the sync (closed network: can push GHES, cannot push
-the mirror), so the tool leaves the merge in a worktree of its cache — `<cache_dir>/<repo>.merge` —
-and you finish it there:
+Only a clean merge is automated. On a conflict the tool aborts, keeps nothing and pushes nothing;
+resolve it in your own checkout and let the tool continue from there:
 
-```bash
-cd ~/.cache/ghes-sync/dx_app.merge      # the path is printed in the error
-# edit the conflicting files (git status shows them)
-git add -A && git commit --no-edit      # keeps the "Merge <base> into <branch>" message
-bash internal/tools/ghes-sync/ghes-sync.sh --update-branch   # resumes: pushes the finished merge to GHES (ff), removes the worktree
-```
-Then bring the mirror up with `--reverse` (`--pull-only` here, `--push-only` on the open network).
-While the worktree exists, a run without `--update-branch` only warns (`PENDING merge-update worktree`);
-a run with it fails again while `MERGE_HEAD` is still present, and discards the worktree if you aborted
-the merge (`git merge --abort`) so a fresh attempt is made.
+| where you are | do | then |
+|---|---|---|
+| closed network (GHES pushable) | in your checkout: `git fetch <dst_url> <pr_base> && git merge FETCH_HEAD`, resolve, commit, `git push <dst_url> HEAD:refs/heads/<branch>` (ff onto the GHES branch) | forward sync shows DST-AHEAD; bring the mirror up with `--reverse` |
+| dev machine (github.com pushable) | in the mirror checkout: same merge, then `git push origin <branch>` | forward sync pushes it as FAST-FORWARD |
 
-Alternative on the dev machine (github.com pushable, no GHES): in the mirror checkout
-`git fetch <dst_url> <pr_base> && git merge FETCH_HEAD`, resolve, push the mirror, run the normal
-forward sync — it is a plain FAST-FORWARD. **Never** use `--force-with-lease` for a conflict: it would
-drop the very commit you just made.
+Never use `--force-with-lease` / `--reset-to-base` to "fix" a conflict — it drops the resolution.
 
 ## Run-book
 
@@ -146,6 +136,27 @@ lacks — the normal forward run will push them; nothing to do) · **DIVERGED** 
 unless `--force-with-lease` is given, which then overwrites the mirror branch with the GHES branch
 (`--force-with-lease=<branch>:<mirror tip just fetched>`) after listing every mirror-only commit that is
 dropped. `--force-with-lease` is only accepted together with `--reverse`; the forward direction never forces.
+
+### After the PRs are merged — `--reverse --reset-to-base`
+
+GHES squash-merges the PRs, so `main`/`dev` end up with ONE new commit per PR and the mirror's
+`feature/dx-agent-dev` (the original commits) can never fast-forward to it again. `--reset-to-base`
+points the mirror branch at GHES's `pr_base` (`main`, or `dev` for dx_app/dx_stream), per repo,
+nested repos first:
+
+```bash
+# closed network                                    # open network (same cache)
+ghes-sync.sh --reverse --pull-only                  ghes-sync.sh --reverse --push-only --reset-to-base
+```
+Per repo: if the mirror branch is already contained in the base (merge-commit style merge) it is a
+plain FAST-FORWARD; otherwise **RESET**: the current mirror tip is first saved to
+`backup/<branch>/<YYYYmmdd-HHMMSS>` on the mirror (skip with `--no-backup`), the mirror-only commits
+that disappear are listed, and the base tip is pushed with `--force-with-lease=<branch>:<mirror tip
+just fetched>` — for you that is an unconditional overwrite; it only refuses when someone pushed to
+the mirror branch between the fetch and the push (rerun). `reverse_branches` (`main`/`dev`
+themselves) are synced ff in the same run. Afterwards update your dev checkout:
+`git fetch origin && git reset --hard origin/feature/dx-agent-dev` (the tool prints this).
+`--reset-to-base` is only accepted together with `--reverse`.
 
 ## Troubleshooting
 
