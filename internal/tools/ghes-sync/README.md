@@ -101,7 +101,7 @@ resolve it in your own checkout and let the tool continue from there:
 | where you are | do | then |
 |---|---|---|
 | closed network (GHES pushable) | in your checkout: `git fetch <dst_url> <pr_base> && git merge FETCH_HEAD`, resolve, commit, `git push <dst_url> HEAD:refs/heads/<branch>` (ff onto the GHES branch) | forward sync shows DST-AHEAD; bring the mirror up with `--reverse` |
-| dev machine (github.com pushable) | in the mirror checkout: same merge, then `git push origin <branch>` | forward sync pushes it as FAST-FORWARD |
+| dev machine (github.com pushable) | in the mirror checkout: same merge, then `git push mirror <branch>` | forward sync pushes it as FAST-FORWARD |
 
 Never use `--force-with-lease` / `--reset-to-base` to "fix" a conflict — it drops the resolution.
 
@@ -157,7 +157,8 @@ that disappear are listed, and the base tip is pushed with `--force-with-lease=<
 just fetched>` — for you that is an unconditional overwrite; it only refuses when someone pushed to
 the mirror branch between the fetch and the push (rerun). `reverse_branches` (`main`/`dev`
 themselves) are synced ff in the same run. Afterwards update your dev checkout:
-`git fetch origin && git reset --hard origin/feature/dx-agent-dev` (the tool prints this).
+`git fetch mirror && git reset --hard mirror/feature/dx-agent-dev` (the tool prints this; remotes follow the
+`ghes` / `mirror` / `ghcloud` convention — `setup_remotes.sh --rename-origin` applies it).
 `--reset-to-base` is only accepted together with `--reverse`.
 
 ## Troubleshooting

@@ -38,9 +38,12 @@
 #   --cache-dir DIR   bare-repo cache (default: conf cache_dir, else $XDG_CACHE_HOME/ghes-sync)
 #   --print-config    print the effective per-repo settings and exit
 #
-# Config (INI): [defaults] src_host dst_host branch dst_branch pr_base mode cache_dir
-#               gitlink_check(strict|warn|off) reverse_branches; [repo NAME] src_url dst_url
-#               branch dst_branch pr_base mode gitlinks("<repo>:<path> ...") reverse_branches.
+# Config (INI): [defaults] src_host dst_host ghcloud_host branch dst_branch pr_base mode
+#               cache_dir gitlink_check(strict|warn|off) reverse_branches; [repo NAME] src_url
+#               dst_url branch dst_branch pr_base mode gitlinks("<repo>:<path> ...")
+#               reverse_branches path(checkout dir relative to the suite, for setup_remotes.sh).
+# Remote naming convention for dev checkouts (setup_remotes.sh): ghes = dst_host, mirror =
+#               src_host, ghcloud = ghcloud_host (github.com/DEEPX-AI, read-only).
 #               Section order =
 #               processing order (nested repos BEFORE the parent that points at them).
 #
@@ -172,8 +175,8 @@ auth_hint() {  # auth_hint src|dst HOSTURL
 # ---------------------------------------------------------------------------
 declare -A DEF=() CFG=()
 declare -a REPOS=()
-KNOWN_DEF="src_host dst_host branch dst_branch pr_base mode cache_dir gitlink_check reverse_branches"
-KNOWN_REPO="src_url dst_url src_host dst_host branch dst_branch pr_base mode gitlinks reverse_branches"
+KNOWN_DEF="src_host dst_host ghcloud_host branch dst_branch pr_base mode cache_dir gitlink_check reverse_branches"
+KNOWN_REPO="src_url dst_url src_host dst_host ghcloud_host branch dst_branch pr_base mode gitlinks reverse_branches path"
 
 parse_conf() {
   [ -f "$CONFIG" ] || die2 "config not found: $CONFIG"
@@ -241,6 +244,9 @@ resolve() {
   R_PR_BASE="$(eff "$name" pr_base)"
   R_MODE="$(eff "$name" mode)"; has_word "$R_MODE" "pr push" || die2 "[repo $name]: mode must be pr|push (got '$R_MODE')"
   R_GITLINKS="${CFG[$name.gitlinks]:-}"
+  R_PATH="${CFG[$name.path]:-}"                    # checkout path relative to the suite dir (setup_remotes.sh)
+  v="$(eff "$name" ghcloud_host)"; [ -n "$v" ] || v="https://github.com/DEEPX-AI"
+  R_GHCLOUD_URL="$(join_url "$v" "$name")"        # public channel (read-only for us)
   R_GL_CHECK="$(eff "$name" gitlink_check)"; has_word "$R_GL_CHECK" "strict warn off" || die2 "gitlink_check must be strict|warn|off"
 }
 
@@ -279,8 +285,8 @@ if [ "$PRINT_CONFIG" -eq 1 ]; then
   for n in "${TARGETS[@]}"; do
     resolve "$n"
     printf '[%s]\n' "$n"
-    printf '  src_url = %s\n  dst_url = %s\n  branch = %s\n  dst_branch = %s\n  pr_base = %s\n  mode = %s\n  gitlinks = %s\n  gitlink_check = %s\n' \
-      "$R_SRC_URL" "$R_DST_URL" "$R_BRANCH" "$R_DST_BRANCH" "$R_PR_BASE" "$R_MODE" "$R_GITLINKS" "$R_GL_CHECK"
+    printf '  src_url = %s\n  dst_url = %s\n  ghcloud_url = %s\n  path = %s\n  branch = %s\n  dst_branch = %s\n  pr_base = %s\n  mode = %s\n  gitlinks = %s\n  gitlink_check = %s\n' \
+      "$R_SRC_URL" "$R_DST_URL" "$R_GHCLOUD_URL" "$R_PATH" "$R_BRANCH" "$R_DST_BRANCH" "$R_PR_BASE" "$R_MODE" "$R_GITLINKS" "$R_GL_CHECK"
   done
   exit 0
 fi
@@ -670,7 +676,7 @@ process_reverse() {
     if [ "$PULL_ONLY" -eq 1 ]; then ACTION[$ROW_KEY]=FETCHED; log "$ROW_KEY: fetched GHES $(short "$S"), mirror $(short "$D")"; continue; fi
     local lease=""
     if [ -z "$D" ]; then ACTION[$ROW_KEY]=CREATE
-    elif [ "$D" = "$S" ]; then ACTION[$ROW_KEY]=UP-TO-DATE
+    elif [ "$D" = "$S" ]; then ACTION[$ROW_KEY]=UP-TO-DATE; log "$ROW_KEY: UP-TO-DATE ($(short "$S"))"; continue
     elif git -C "$cache" merge-base --is-ancestor "$D" "$S"; then ACTION[$ROW_KEY]=FAST-FORWARD
     elif git -C "$cache" merge-base --is-ancestor "$S" "$D"; then
       ACTION[$ROW_KEY]=TO-AHEAD
@@ -765,7 +771,7 @@ reset_to_base() {
       || { fail "push to the mirror failed (nothing forced) — git: ${GPUSH_ERR:-?}"; return; }
   fi
   git -C "$cache" update-ref "refs/remotes/src/$b" "$S"; DST_AFTER[$ROW_KEY]="$S"
-  log "$ROW_KEY: done. Update your dev checkout: git fetch origin && git reset --hard origin/$b"
+  log "$ROW_KEY: done. Update your dev checkout: git fetch mirror && git reset --hard mirror/$b   (remote names: setup_remotes.sh)"
 }
 
 if [ "$REVERSE" -eq 1 ]; then

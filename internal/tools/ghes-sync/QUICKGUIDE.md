@@ -8,13 +8,29 @@ The tool never reads your working checkout. It works on its own **bare cache**
 
 Always start with `--dry-run`; it fetches, classifies and prints every push/PR it *would* do.
 
+## Remote naming convention (dev checkouts)
+
+| remote | URL | role |
+|---|---|---|
+| `ghes` | `https://gh.deepx.ai/deepx/<repo>.git` | closed-network SCM (source of truth) |
+| `mirror` | `https://github.com/deepx-dhyang/<repo>.git` | private mirror the sync tool reads/writes |
+| `ghcloud` | `https://github.com/DEEPX-AI/<repo>.git` | public channel (read-only for us) |
+
+Apply it to the suite and its four harness sub-repos in one go (idempotent; `--rename-origin` turns an
+`origin` that equals one of the three into that name; `--dry-run` shows the plan):
+```bash
+bash internal/tools/ghes-sync/setup_remotes.sh --rename-origin
+```
+All commands below use these names. Never put a token in a remote URL — use a credential helper or
+`GHES_SYNC_*_TOKEN`; a URL with a PAT ends up in `.git/config`, `git remote -v` output and pasted logs.
+
 ---
 
 ## Scenario 1 — Mirror → GHES (normal development flow)
 
 | Step | Where | Command / action |
 |---|---|---|
-| 1 | dev box | Commit your work and push it to the mirror, nested repos first: `git push origin feature/dx-agent-dev` in dx_app / dx_stream → dx-runtime → dx-compiler → dx-all-suite. Do **not** bump submodule pointers unless intended. |
+| 1 | dev box | Commit your work and push it to the mirror, nested repos first: `git push mirror feature/dx-agent-dev` in dx_app / dx_stream → dx-runtime → dx-compiler → dx-all-suite. Do **not** bump submodule pointers unless intended. |
 | 2 | closed network | `bash internal/tools/ghes-sync/ghes-sync.sh --dry-run` — expect `CREATE` / `FAST-FORWARD` / `UP-TO-DATE` per repo and a PR plan. |
 | 3 | closed network | `bash internal/tools/ghes-sync/ghes-sync.sh` — fetches the mirror branch, verifies submodule pointers, ff-pushes the same-name branch to GHES, opens or reuses the PR into `pr_base` (`main`; `dev` for dx_app/dx_stream). Title: `ci: sync <repo> <branch> -> <base> (N commits)`. |
 | 4 | GHES UI | Review / merge the PRs. The suite gate (`harness-gate`) and sub-repo gates (`subrepo-gate`) run on them. |
@@ -26,9 +42,9 @@ interactive terminal without tokens, git / Git Credential Manager prompts are al
 **Variants**
 - The PR base moved on GHES since you branched (other PRs merged) and you want the branch up to date:
   add `--update-branch`. A clean merge is pushed automatically (merge commit, never rebase/force).
-  A **conflict aborts** — resolve it by hand in your checkout: `git fetch <dst_url> <pr_base> && git merge FETCH_HEAD`,
-  resolve, commit, then on the closed network `git push <dst_url> HEAD:refs/heads/<branch>` (ff), or on the dev box push the
-  mirror and rerun the forward sync (FAST-FORWARD). Never `--force-with-lease`/`--reset-to-base` for a conflict.
+  A **conflict aborts** — resolve it by hand in your checkout: `git fetch ghes <pr_base> && git merge ghes/<pr_base>`,
+  resolve, commit, then on the closed network `git push ghes HEAD:refs/heads/<branch>` (ff), or on the dev box
+  `git push mirror feature/dx-agent-dev` and rerun the forward sync (FAST-FORWARD). Never `--force-with-lease`/`--reset-to-base` for a conflict.
 - Only some repos: `--repo dx_app --repo dx-runtime`. Push without PRs: `--no-pr`. Tags: `--tags`.
 - `DST-AHEAD` in the summary = GHES has commits the mirror lacks (e.g. that merge-update) — nothing to push; bring the
   mirror up with Scenario 3.
@@ -46,8 +62,8 @@ fast-forward to it. This resets the mirror branch to GHES's integration branch a
 |---|---|---|
 | 2.1 | closed network | `bash internal/tools/ghes-sync/ghes-sync.sh --reverse --pull-only` — fetches GHES `feature/dx-agent-dev`, `pr_base` (`main`/`dev`) and `main` of every repo into the cache. Pushes nothing. Summary rows show `FETCHED`. |
 | 2.2 | — | Carry the cache to the open network: same laptop, or copy `~/.cache/ghes-sync/` (bare repos; ~size of the repos). Nothing else needs to move — not your checkout. |
-| 2.3 | open network | `bash internal/tools/ghes-sync/ghes-sync.sh --reverse --push-only --reset-to-base --dry-run` — check the plan: per repo `main`/`dev` (ff) and the row `<repo>:feature/dx-agent-dev<=<pr_base>` marked `RESET` (or `FAST-FORWARD` if the base already contains the branch) with the list of mirror-only commits that will leave the branch. Then run it without `--dry-run`. RESET first pushes `backup/feature/dx-agent-dev/<YYYYmmdd-HHMMSS>` to the mirror (`--no-backup` to skip), then overwrites the branch (internally `--force-with-lease`; refused only if someone pushed to the mirror branch meanwhile — rerun). |
-| 2.4 | open network (dev checkout) | `git fetch origin && git checkout feature/dx-agent-dev && git reset --hard origin/feature/dx-agent-dev` (stash/commit local changes first). Sub-repos: the same in each, nested first, or `git submodule update --init` if the suite pointers moved. Also `git pull --ff-only` on `main`/`dev` if you track them. |
+| 2.3 | open network | **Before this step make sure every mirror-only commit on `feature/dx-agent-dev` has already reached GHES** (cherry-picked/merged) — RESET drops them from the branch (they stay in `backup/…`). `bash internal/tools/ghes-sync/ghes-sync.sh --reverse --push-only --reset-to-base --dry-run` — check the plan: per repo `main`/`dev` (ff) and the row `<repo>:feature/dx-agent-dev<=<pr_base>` marked `RESET` (or `FAST-FORWARD` if the base already contains the branch) with the list of mirror-only commits that will leave the branch. Then run it without `--dry-run`. RESET first pushes `backup/feature/dx-agent-dev/<YYYYmmdd-HHMMSS>` to the mirror (`--no-backup` to skip), then overwrites the branch (internally `--force-with-lease`; refused only if someone pushed to the mirror branch meanwhile — rerun). |
+| 2.4 | open network (dev checkout) | `git fetch mirror && git checkout feature/dx-agent-dev && git reset --hard mirror/feature/dx-agent-dev` (stash/commit local changes first). Sub-repos: the same in each (nested first) — `git submodule update` also works since the suite's pointers now equal the sub-repo tips. Also `git pull --ff-only mirror main` (or `dev`) if you track them. |
 
 Afterwards a forward `--dry-run` shows `UP-TO-DATE` everywhere (the GHES feature branch is usually deleted at merge; if it
 still exists it may show `DST-AHEAD`/`DIVERGED` — harmless until you push new work).
@@ -55,6 +71,13 @@ still exists it may show `DST-AHEAD`/`DIVERGED` — harmless until you push new 
 `--reset-to-base` / `--force-with-lease` are accepted only with `--reverse`; the forward direction never forces.
 
 ---
+
+**`main` / `dev` are synced in the same run.** `reverse_branches` defaults to *branch + pr_base + main*, so
+every `--reverse` (with or without `--reset-to-base`) also fast-forwards the mirror's `main` and `dev` to
+GHES — no extra step. A `TO-AHEAD` row on `main`/`dev` means the mirror has commits GHES lacks there;
+the tool does not touch it (the forward run only syncs the feature branch). Find out why before acting
+(`git log ghes/main..mirror/main` in that repo): if GHES was rewound and GHES is right, rerun with
+`--force-with-lease`; if the mirror has real work, get it onto GHES first.
 
 ## Scenario 3 — GHES → Mirror, same-name branches only (`--reverse`)
 
@@ -66,7 +89,7 @@ on `main`, a merge-update commit on the feature branch (`DST-AHEAD` in a forward
 | 3.1 | closed network | `ghes-sync.sh --reverse --pull-only` |
 | 3.2 | — | carry `~/.cache/ghes-sync/` |
 | 3.3 | open network | `ghes-sync.sh --reverse --push-only` — per branch `CREATE` / `FAST-FORWARD` / `UP-TO-DATE` / `TO-AHEAD` (mirror ahead: nothing to do, the forward run will push it) |
-| 3.4 | dev checkout | `git pull --ff-only` on the affected branches |
+| 3.4 | dev checkout | `git pull --ff-only mirror <branch>` on the affected branches |
 
 `DIVERGED` here means both sides moved. If GHES is right (e.g. you force-pushed a resolved branch on GHES), rerun 3.3 with
 `--force-with-lease`: the mirror-only commits are listed, then the mirror branch is overwritten. If a **sub-repo** branch

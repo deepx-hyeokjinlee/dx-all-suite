@@ -565,3 +565,14 @@ class TestPythonVersionPreflight:
         assert ">= 3.8" in out, out
         assert "3.6.9" in out, out
         assert "out of date" not in out, out
+
+    @pytest.mark.parametrize("remote", ["mirror", "ghes"])
+    def test_derivation_falls_back_to_the_mirror_or_ghes_remote(self, tmp_path, remote):
+        """Dev checkouts follow the naming convention ghes / mirror / ghcloud (no `origin`)."""
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        _git("init", "-q", cwd=repo)
+        _git("remote", "add", remote, "https://h/o/dx_app.git", cwd=repo)
+        result = run_script("--print-suite-url", "--repo-dir", str(repo))
+        assert result.returncode == 0, combined(result)
+        assert result.stdout.strip() == "https://h/o/dx-all-suite.git", combined(result)

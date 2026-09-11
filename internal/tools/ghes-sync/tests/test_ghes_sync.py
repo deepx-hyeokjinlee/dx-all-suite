@@ -746,7 +746,7 @@ def test_quickguide_exists_and_covers_the_scenarios(name):
     assert p.is_file(), p
     text = p.read_text(encoding="utf-8")
     for needle in ("--reverse --pull-only", "--reverse --push-only --reset-to-base", "--update-branch",
-                   "--force-with-lease", "~/.cache/ghes-sync", "reset --hard origin/feature/dx-agent-dev",
+                   "--force-with-lease", "~/.cache/ghes-sync", "reset --hard mirror/feature/dx-agent-dev", "setup_remotes.sh",
                    "--dry-run", "DST-AHEAD", "TO-AHEAD"):
         assert needle in text, f"{name}: must mention {needle!r}"
     readme = (SUITE / "internal" / "tools" / "ghes-sync" / ("README.md" if name == "QUICKGUIDE.md" else "README-KO.md")).read_text(encoding="utf-8")
@@ -856,3 +856,100 @@ def test_to_ahead_hint_does_not_promise_a_forward_push_for_non_feature_branches(
     assert r.returncode == 0, out(r)
     line = [l for l in out(r).splitlines() if "dx_app:main" in l and "TO-AHEAD" in l][0]
     assert "forward run" not in line and "not pushed by the forward" in line.lower() or "check" in line.lower()
+
+
+# ── remote naming convention: ghes / mirror / ghcloud (setup_remotes.sh) ─────────
+
+SETUP = SUITE / "internal" / "tools" / "ghes-sync" / "setup_remotes.sh"
+
+
+def _fake_suite_tree(env, origin_is_mirror: bool = True) -> Path:
+    """A dev-checkout-like tree: suite + 4 nested git repos, each with an `origin`."""
+    root = env.tmp / "checkout"
+    for name, rel in (("dx-all-suite", "."), ("dx-compiler", "dx-compiler"), ("dx-runtime", "dx-runtime"),
+                      ("dx_app", "dx-runtime/dx_app"), ("dx_stream", "dx-runtime/dx_stream")):
+        d = root / rel
+        d.mkdir(parents=True, exist_ok=True)
+        git("init", "-q", cwd=d)
+        url = f"file://{env.repos.src}/{name}.git" if origin_is_mirror else f"https://elsewhere/{name}.git"
+        git("remote", "add", "origin", url, cwd=d)
+    env.write_conf([("dx_app", "path = dx-runtime/dx_app"), ("dx_stream", "path = dx-runtime/dx_stream"),
+                    ("dx-runtime", "path = dx-runtime"), ("dx-compiler", "path = dx-compiler"), ("dx-all-suite", "path = .")],
+                   extra_defaults="ghcloud_host = https://github.com/DEEPX-AI")
+    return root
+
+
+def _remotes(d: Path) -> dict:
+    out = git("remote", "-v", cwd=d).stdout.splitlines()
+    return {l.split()[0]: l.split()[1] for l in out if l.endswith("(fetch)")}
+
+
+def _run_setup(env, *args):
+    import subprocess as _sp, os as _os
+    return _sp.run(["bash", str(SETUP), "--config", str(env.conf), *args], text=True, capture_output=True,
+                   env={**_os.environ, "PATH": f"{env.bin}:{_os.environ['PATH']}"}, timeout=120)
+
+
+def test_setup_remotes_adds_ghes_mirror_ghcloud_to_all_five_repos(env):
+    root = _fake_suite_tree(env)
+    r = _run_setup(env, "--suite-dir", str(root))
+    assert r.returncode == 0, r.stdout + r.stderr
+    for name, rel in (("dx-all-suite", "."), ("dx-compiler", "dx-compiler"), ("dx_app", "dx-runtime/dx_app")):
+        rem = _remotes(root / rel)
+        assert rem["mirror"] == f"file://{env.repos.src}/{name}.git"
+        assert rem["ghes"] == f"file://{env.repos.dst}/{name}.git"
+        assert rem["ghcloud"] == f"https://github.com/DEEPX-AI/{name}.git"
+        assert "origin" in rem                                   # untouched without --rename-origin
+    assert "origin" in r.stdout and "--rename-origin" in r.stdout   # tells you origin == mirror
+
+
+def test_setup_remotes_rename_origin_and_idempotent(env):
+    root = _fake_suite_tree(env)
+    r = _run_setup(env, "--suite-dir", str(root), "--rename-origin")
+    assert r.returncode == 0, r.stdout + r.stderr
+    rem = _remotes(root / "dx-runtime")
+    assert "origin" not in rem and rem["mirror"].endswith("/dx-runtime.git")
+    r2 = _run_setup(env, "--suite-dir", str(root), "--rename-origin")
+    assert r2.returncode == 0 and "ok" in r2.stdout.lower() and "added" not in r2.stdout.lower(), r2.stdout
+
+
+def test_setup_remotes_dry_run_changes_nothing(env):
+    root = _fake_suite_tree(env)
+    r = _run_setup(env, "--suite-dir", str(root), "--dry-run")
+    assert r.returncode == 0, r.stdout + r.stderr
+    assert _remotes(root / "dx-compiler").keys() == {"origin"}
+    assert "DRY-RUN" in r.stdout
+
+
+def test_setup_remotes_does_not_rename_a_foreign_origin(env):
+    root = _fake_suite_tree(env, origin_is_mirror=False)
+    r = _run_setup(env, "--suite-dir", str(root), "--rename-origin")
+    assert r.returncode == 0, r.stdout + r.stderr
+    rem = _remotes(root / "dx-compiler")
+    assert rem["origin"] == "https://elsewhere/dx-compiler.git" and "mirror" in rem
+
+
+def test_print_config_exposes_path_and_ghcloud_url(env):
+    _fake_suite_tree(env)
+    r = env.run("--print-config")
+    assert r.returncode == 0, out(r)
+    app = re.search(r"\[dx_app\](.*?)(?=\n\[|\Z)", r.stdout, re.S).group(1)
+    assert "path = dx-runtime/dx_app" in app and f"ghcloud_url = https://github.com/DEEPX-AI/dx_app.git" in app
+
+
+# ── reverse: UP-TO-DATE must not push; suite-url derivation follows the naming convention ──
+
+def test_reverse_up_to_date_branch_is_not_pushed_again(env):
+    log = env.install_fake_git()
+    r_ = env.repos
+    r_.make("dx_app")
+    r_.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    r_.mirror_branch("dx_app", "main")
+    r_.commit("src", "dx_app", BR, "feat", files={"a": "1"}, parent_branch="main")
+    r_.mirror_branch("dx_app", BR)
+    git("fetch", "-q", r_.url("src", "dx_app"), "+refs/heads/*:refs/heads/*", cwd=r_.bare("dst", "dx_app"))   # GHES == mirror
+    env.write_conf([("dx_app", "")])
+    r = env.run("--reverse")
+    assert r.returncode == 0, out(r)
+    assert not [l for l in log.read_text().splitlines() if " push " in l], "UP-TO-DATE branches must not be pushed"
+    assert r.stdout.rsplit("SUMMARY", 1)[-1].count("UP-TO-DATE") == 2

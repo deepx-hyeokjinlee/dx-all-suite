@@ -96,7 +96,7 @@ repo별 키: `src_url`, `dst_url`(전체 URL이 host+name보다 우선), `src_ho
 | 위치 | 할 일 | 그다음 |
 |---|---|---|
 | 폐쇄망(GHES push 가능) | 본인 checkout에서 `git fetch <dst_url> <pr_base> && git merge FETCH_HEAD` → 해결 → commit → `git push <dst_url> HEAD:refs/heads/<branch>`(GHES 브랜치에 ff) | forward sync는 DST-AHEAD 표시; 미러는 `--reverse`로 맞춤 |
-| 개발 기계(github.com push 가능) | 미러 checkout에서 같은 merge 후 `git push origin <branch>` | forward sync가 FAST-FORWARD로 반영 |
+| 개발 기계(github.com push 가능) | 미러 checkout에서 같은 merge 후 `git push mirror <branch>` | forward sync가 FAST-FORWARD로 반영 |
 
 conflict를 "고치려고" `--force-with-lease`/`--reset-to-base`를 쓰지 않는다 — 해결 커밋이 사라진다.
 
@@ -147,7 +147,8 @@ repo별로 미러 브랜치가 이미 base에 포함되어 있으면(merge commi
 미러 전용 커밋을 나열한 뒤 base tip을 `--force-with-lease=<branch>:<방금 fetch한 미러 tip>`으로 push한다 —
 사용자 입장에서는 무조건 덮어쓰기이며, fetch와 push 사이에 누가 미러 브랜치에 push한 경우에만 거부된다(재실행).
 `reverse_branches`(`main`/`dev` 자체)도 같은 실행에서 ff로 동기화된다. 끝나면 개발 checkout을 갱신한다:
-`git fetch origin && git reset --hard origin/feature/dx-agent-dev`(도구가 출력). `--reset-to-base`는
+`git fetch mirror && git reset --hard mirror/feature/dx-agent-dev`(도구가 출력; remote 이름은
+`ghes` / `mirror` / `ghcloud` 규칙 — `setup_remotes.sh --rename-origin`으로 적용). `--reset-to-base`는
 `--reverse`와 함께만 허용된다.
 
 ## 문제 해결
