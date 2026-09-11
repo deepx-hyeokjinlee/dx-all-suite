@@ -161,6 +161,7 @@ repo별로 미러 브랜치가 이미 base에 포함되어 있으면(merge commi
 | `PR skipped (no gh CLI and no dst token)` | push는 완료. `GHES_SYNC_DST_TOKEN`(curl REST) 설정 또는 `gh` 설치 후 재실행 — 기존 브랜치를 재사용. |
 | `REST ... HTTP 401/404` | 토큰에 `repo` scope가 없거나 host 오류: API base는 `https://<host>/api/v3`(GHES) / `https://api.github.com`. |
 | `cannot fetch src … auth/network?` / `cannot reach dst …` | private repo 자격증명이 없거나 틀림(사전 조건 참고), 또는 이 기계에서 host 접근 불가. env 토큰은 그 호출에서 credential helper보다 우선. |
+| push 시 `GnuTLS recv error (-110)` / `RPC failed` | 일시적 TLS/네트워크 오류. push는 재시도되고(`GHES_SYNC_RETRIES`=3, `GHES_SYNC_RETRY_DELAY`=5초) git stderr가 표시됨. 지속되면 `git config --global http.version HTTP/1.1` 후 재실행(idempotent). |
 | `dst probe timed out after 30s` | 이 기계에서 GHES 접근 불가(망 확인). `GHES_SYNC_PROBE_TIMEOUT`(probe, 기본 30초) / `GHES_SYNC_NET_TIMEOUT`(fetch/push, 기본 1800초)로 조정. |
 | exit 2 + `unknown key` / `must be listed as an EARLIER [repo]` | 설정 오류 — 메시지에 섹션과 키가 표시됨. |
 

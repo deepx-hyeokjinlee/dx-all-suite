@@ -751,3 +751,108 @@ def test_quickguide_exists_and_covers_the_scenarios(name):
         assert needle in text, f"{name}: must mention {needle!r}"
     readme = (SUITE / "internal" / "tools" / "ghes-sync" / ("README.md" if name == "QUICKGUIDE.md" else "README-KO.md")).read_text(encoding="utf-8")
     assert name in readme, f"README must link {name}"
+
+
+# ── lessons from the first real --reverse --reset-to-base run (orangepi, GnuTLS -110) ──
+
+def _flaky_git(env, pattern: str, fail_times: int, stderr: str = "fatal: unable to access 'x': GnuTLS recv error (-110): The TLS connection was non-properly terminated."):
+    """Install a git shim that fails the first *fail_times* invocations whose argv matches
+    *pattern* (bash case pattern — match the SUBCOMMAND, e.g. '*" push "*'; a bare `*push*`
+    also matches tmp paths named after the test) with *stderr*, then behaves like the real git."""
+    import shutil as _sh
+    real = _sh.which("git")
+    counter = env.tmp / "flaky.count"
+    counter.write_text("0")
+    shim = env.bin / "git"
+    shim.write_text(
+        "#!/usr/bin/env bash\n"
+        f'case "$*" in {pattern})\n'
+        f"  n=$(cat '{counter}'); if [ \"$n\" -lt {fail_times} ]; then echo $((n+1)) > '{counter}'; echo \"{stderr}\" >&2; exit 128; fi;;\n"
+        "esac\n"
+        f"exec '{real}' \"$@\"\n"
+    )
+    shim.chmod(0o755)
+    return counter
+
+
+def test_push_is_retried_on_transient_network_errors(env):
+    tip, ghes_main, ghes_feat = _reverse_scenario(env)
+    counter = _flaky_git(env, '*" push "*', fail_times=2)
+    r = env.run("--reverse", extra_env={"GHES_SYNC_RETRY_DELAY": "0"})
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", "refs/heads/main") == ghes_main
+    assert "retry" in out(r).lower() and counter.read_text().strip() == "2"
+
+
+def test_persistent_push_failure_shows_git_stderr_and_a_network_hint(env):
+    _reverse_scenario(env)
+    _flaky_git(env, '*" push "*', fail_times=99)
+    r = env.run("--reverse", extra_env={"GHES_SYNC_RETRY_DELAY": "0"})
+    assert r.returncode == 1, out(r)
+    o = out(r)
+    assert "GnuTLS recv error" in o                      # the real git error, not a guess
+    assert "http.version" in o                          # the known GnuTLS -110 workaround is suggested
+    assert "lease mismatch or permission" not in o      # no misattribution
+
+
+def test_pull_only_records_branches_absent_on_ghes_so_push_only_skips_them(env):
+    """dx-runtime's GHES feature branch was deleted at merge; --push-only then FAILED with
+    'not in the cache — run --pull-only first' although --pull-only HAD run. The pull phase
+    must record 'absent on GHES' so the push phase reports SKIPPED, not FAIL."""
+    r_ = env.repos
+    r_.make("dx_app")
+    r_.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    r_.mirror_branch("dx_app", "main")
+    r_.commit("src", "dx_app", BR, "feat", files={"a": "1"}, parent_branch="main")   # mirror-only; GHES has no feature branch
+    ghes_main = r_.commit("dst", "dx_app", "main", "dci", files={"m": "1"})
+    env.write_conf([("dx_app", "pr_base = main")])
+    assert env.run("--reverse", "--pull-only").returncode == 0
+    conf = env.conf.read_text(encoding="utf-8").replace(f"dst_host = file://{env.repos.dst}", "dst_host = file:///nonexistent/ghes")
+    env.conf.write_text(conf, encoding="utf-8")
+    r = env.run("--reverse", "--push-only")
+    assert r.returncode == 0, out(r)
+    tail = r.stdout.rsplit("SUMMARY", 1)[-1]
+    assert f"dx_app:{BR}" in tail and "SKIPPED" in tail and "not on GHES" in out(r)
+    assert env.repos.rev("src", "dx_app", "refs/heads/main") == ghes_main
+
+
+def test_reset_to_base_does_not_also_sync_the_feature_branch_by_name(env):
+    """With --reset-to-base the mirror feature branch is about to be REPLACED by the base;
+    syncing GHES's (stale, possibly diverged) feature branch onto it first is wrong and noisy."""
+    tip, dev = _squash_merged_scenario(env)
+    env.repos.commit("dst", "dx_app", BR, "stale ghes feature", files={"s": "1"})   # GHES still has a diverged feature branch
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    tail = r.stdout.rsplit("SUMMARY", 1)[-1]
+    assert f"dx_app:{BR}<=dev" in tail and "RESET" in tail
+    assert f"dx_app:{BR} " not in tail and "DIVERGED" not in out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+
+
+def test_reset_backup_is_not_duplicated_on_rerun_after_a_failed_overwrite(env):
+    tip, dev = _squash_merged_scenario(env)
+    _flaky_git(env, "*--force-with-lease*", fail_times=99)          # backup push works, overwrite fails
+    r = env.run("--reverse", "--reset-to-base", extra_env={"GHES_SYNC_RETRY_DELAY": "0"})
+    assert r.returncode == 1, out(r)
+    (env.bin / "git").unlink()                                         # network "recovers"
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    backups = [l for l in git("show-ref", cwd=env.repos.bare("src", "dx_app")).stdout.splitlines() if "refs/heads/backup/" in l]
+    assert len(backups) == 1, backups                                  # reused, not duplicated
+    assert "already backed up" in out(r).lower()
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+
+
+def test_to_ahead_hint_does_not_promise_a_forward_push_for_non_feature_branches(env):
+    r_ = env.repos
+    r_.make("dx_app")
+    r_.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    r_.mirror_branch("dx_app", "main")
+    r_.commit("src", "dx_app", "main", "mirror main moved", files={"a": "1"})
+    r_.commit("src", "dx_app", BR, "feat", files={"b": "1"}, parent_branch="main")
+    r_.mirror_branch("dx_app", BR)
+    env.write_conf([("dx_app", "")])
+    r = env.run("--reverse")
+    assert r.returncode == 0, out(r)
+    line = [l for l in out(r).splitlines() if "dx_app:main" in l and "TO-AHEAD" in l][0]
+    assert "forward run" not in line and "not pushed by the forward" in line.lower() or "check" in line.lower()

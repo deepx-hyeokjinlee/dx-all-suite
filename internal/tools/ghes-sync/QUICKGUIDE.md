@@ -79,6 +79,7 @@ the parent.
 
 | Symptom | Meaning / fix |
 |---|---|
+| `GnuTLS recv error (-110)` / `RPC failed` / `early EOF` on push | Transient TLS/network trouble between this machine and github.com (seen on an Orange Pi with Debian's GnuTLS git). The tool retries each push 3× (`GHES_SYNC_RETRIES`, `GHES_SYNC_RETRY_DELAY`) and prints git's own error; if it keeps failing, set `git config --global http.version HTTP/1.1` (and `http.postBuffer 524288000`) and simply **rerun the same command** — every step is idempotent: done rows become UP-TO-DATE, an existing backup is reused. |
 | `cannot fetch src … auth/network?` / `cannot reach dst` | Missing or wrong PAT, or the host is not reachable from this machine. `--reverse --push-only` where github.com push is blocked simply fails like this — that is expected: run step 2.3/3.3 on the open network. |
 | `dst probe timed out after 30s` | GHES not reachable from here (wrong network). `GHES_SYNC_PROBE_TIMEOUT` / `GHES_SYNC_NET_TIMEOUT` tune the limits. |
 | `gitlink … is NOT reachable` | A parent repo points at a sub-repo commit that is not on the synced sub-repo branch. Fix the pointer or sync the right sub-repo branch first (nested repos are always processed first). |

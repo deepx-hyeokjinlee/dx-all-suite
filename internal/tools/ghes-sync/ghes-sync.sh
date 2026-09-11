@@ -124,6 +124,29 @@ HAVE_CURL=0; command -v curl >/dev/null 2>&1 && HAVE_CURL=1
 PROBE_TIMEOUT="${GHES_SYNC_PROBE_TIMEOUT:-30}"   # ls-remote connectivity probe
 NET_TIMEOUT="${GHES_SYNC_NET_TIMEOUT:-1800}"     # fetch / push (large first fetches take a while)
 tmo() { local secs="$1"; shift; if command -v timeout >/dev/null 2>&1; then timeout "$secs" "$@"; else "$@"; fi; }
+RETRIES="${GHES_SYNC_RETRIES:-3}"; RETRY_DELAY="${GHES_SYNC_RETRY_DELAY:-5}"
+GPUSH_ERR=""   # last git stderr line of the last gpush (plus a hint for known network errors)
+# gpush URL TOKEN REFSPEC [PUSH-OPTS...] — `git push -q OPTS URL REFSPEC` from $cache, retried on
+# transient (network/TLS) errors; rejections (non-ff, lease, auth) are not retried. Never adds --force.
+gpush() {
+  local url="$1" token="$2" refspec="$3"; shift 3
+  local attempt=1 rc errf; errf="$(mktemp)"
+  while :; do
+    auth_opts "$url" "$token"
+    tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$@" "$url" "$refspec" 2>"$errf"; rc=$?
+    [ "$rc" -eq 0 ] && { rm -f "$errf"; GPUSH_ERR=""; return 0; }
+    GPUSH_ERR="$(grep -vE '^(remote:|To |$)' "$errf" | tail -n1)"
+    if grep -qiE 'rejected|non-fast-forward|stale info|force-with-lease|permission|denied|authentication|401|403|404' "$errf"; then break; fi
+    if [ "$attempt" -ge "$RETRIES" ]; then break; fi
+    warn "push attempt $attempt/$RETRIES failed (${GPUSH_ERR:-no stderr}) — retry in ${RETRY_DELAY}s"
+    attempt=$((attempt + 1)); sleep "$RETRY_DELAY"
+  done
+  rm -f "$errf"
+  if printf '%s' "$GPUSH_ERR" | grep -qiE 'GnuTLS|TLS|SSL|RPC failed|early EOF|Connection reset|timed out|Could not resolve|unable to access|remote end hung up'; then
+    GPUSH_ERR="$GPUSH_ERR [network/TLS error — rerun; if it persists: git config --global http.version HTTP/1.1  (and http.postBuffer 524288000)]"
+  fi
+  return "$rc"
+}
 SRC_TOKEN="${GHES_SYNC_SRC_TOKEN:-${GH_TOKEN:-}}"
 DST_TOKEN="${GHES_SYNC_DST_TOKEN:-${GH_ENTERPRISE_TOKEN:-}}"
 
@@ -290,8 +313,11 @@ fetch_dst_ref() {
   if printf '%s\n' "$DST_HEADS" | grep -qx "refs/heads/$ref"; then
     auth_opts "$url" "$DST_TOKEN"
     git "${AUTH_OPTS[@]}" -C "$cache" fetch -q --no-tags "$url" "+refs/heads/$ref:refs/remotes/dst/$ref"
+    git -C "$cache" update-ref -d "refs/ghes-sync/absent/$ref" 2>/dev/null || true
   else
     git -C "$cache" update-ref -d "refs/remotes/dst/$ref" 2>/dev/null || true
+    # remember "absent on GHES" so a later --push-only (GHES unreachable) reports SKIPPED, not "not fetched"
+    git -C "$cache" update-ref "refs/ghes-sync/absent/$ref" "$(printf 'absent' | git -C "$cache" hash-object -w --stdin)"
   fi
 }
 
@@ -361,9 +387,8 @@ merge_update() {  # $1 = number of base commits the branch lacks; uses R_*, cach
     if [ "$DRY_RUN" -eq 1 ]; then
       log "$R_NAME: DRY-RUN: would merge $R_PR_BASE ($behind commit(s)) into $R_DST_BRANCH -> $(short "$m") and git push $R_DST_URL $(short "$m"):refs/heads/$R_DST_BRANCH"
     else
-      auth_opts "$R_DST_URL" "$DST_TOKEN"
-      if ! tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_DST_URL" "$m:refs/heads/$R_DST_BRANCH"; then
-        fail "push of the merge-update commit was rejected by dst (nothing forced)"; return 1
+      if ! gpush "$R_DST_URL" "$DST_TOKEN" "$m:refs/heads/$R_DST_BRANCH"; then
+        fail "push of the merge-update commit failed (nothing forced) — git: ${GPUSH_ERR:-?}"; return 1
       fi
       git -C "$cache" update-ref "refs/remotes/dst/$R_DST_BRANCH" "$m"; DST_AFTER[$R_NAME]="$m"
       log "$R_NAME: merged $R_PR_BASE ($behind commit(s)) into $R_DST_BRANCH -> $(short "$m"), pushed"
@@ -538,9 +563,8 @@ process() {
     if [ "$DRY_RUN" -eq 1 ]; then log "$R_NAME: DRY-RUN: $pushcmd"
     else
       log "$R_NAME: $pushcmd"
-      auth_opts "$R_DST_URL" "$DST_TOKEN"
-      if ! tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_DST_URL" "refs/remotes/src/$R_BRANCH:refs/heads/$R_DST_BRANCH"; then
-        fail "push rejected by dst (non-fast-forward or permission) — nothing was forced"; return
+      if ! gpush "$R_DST_URL" "$DST_TOKEN" "refs/remotes/src/$R_BRANCH:refs/heads/$R_DST_BRANCH"; then
+        fail "push to dst failed (nothing forced) — git: ${GPUSH_ERR:-?}"; return
       fi
       git -C "$cache" update-ref "refs/remotes/dst/$R_DST_BRANCH" "$S"
       DST_AFTER[$R_NAME]="$S"
@@ -561,8 +585,7 @@ process() {
   if [ "$TAGS" -eq 1 ]; then
     if [ "$DRY_RUN" -eq 1 ]; then log "$R_NAME: DRY-RUN: git push $R_DST_URL 'refs/tags/*:refs/tags/*'"
     else
-      auth_opts "$R_DST_URL" "$DST_TOKEN"
-      if ! git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_DST_URL" 'refs/tags/*:refs/tags/*'; then fail "tag push rejected (a tag differs on dst; tags are never forced)"; return; fi
+      if ! gpush "$R_DST_URL" "$DST_TOKEN" 'refs/tags/*:refs/tags/*'; then fail "tag push failed (tags are never forced) — git: ${GPUSH_ERR:-?}"; return; fi
     fi
   fi
   ensure_pr || true
@@ -601,13 +624,16 @@ check_gitlinks_reverse() {  # $1=from sha $2=to sha(may be empty): every new com
 }
 process_reverse() {
   resolve "$1"
-  local cache="$CACHE_DIR/$R_NAME.git" branches b S D probe_rc MIRROR_HEADS dropped n
+  local cache="$CACHE_DIR/$R_NAME.git" branches b S D probe_rc MIRROR_HEADS MIRROR_LS dropped n
   branches="$(eff "$R_NAME" reverse_branches)"
   if [ -z "$branches" ]; then   # default: the PR branch, its base, and main (dci / release commits)
     branches="$R_BRANCH"
     for b in "$R_PR_BASE" main; do
       [ -n "$b" ] && ! has_word "$b" "$branches" && branches="$branches $b"
     done
+  fi
+  if [ "$RESET_TO_BASE" -eq 1 ]; then   # the feature branch is about to be replaced by the base — never sync it by name too
+    local kept="" ; for b in $branches; do [ "$b" = "$R_BRANCH" ] || kept="$kept $b"; done; branches="${kept# }"
   fi
   log "== $R_NAME (REVERSE): $R_DST_URL -> $R_SRC_URL [$branches]"
   ensure_cache "$cache"
@@ -621,7 +647,8 @@ process_reverse() {
   fi
   # TO = mirror: always probed (needed to classify), fetched into refs/remotes/src/<b>
   auth_opts "$R_SRC_URL" "$SRC_TOKEN"; probe_rc=0
-  MIRROR_HEADS="$(tmo "$PROBE_TIMEOUT" git "${AUTH_OPTS[@]}" ls-remote --heads "$R_SRC_URL" 2>/dev/null | awk '{print $2}')" || probe_rc=$?
+  MIRROR_LS="$(tmo "$PROBE_TIMEOUT" git "${AUTH_OPTS[@]}" ls-remote --heads "$R_SRC_URL" 2>/dev/null)" || probe_rc=$?
+  MIRROR_HEADS="$(printf '%s\n' "$MIRROR_LS" | awk '{print $2}')"
   if [ "$probe_rc" -eq 124 ]; then rv_fail_all "$branches" "mirror probe timed out after ${PROBE_TIMEOUT}s — is $R_SRC_URL reachable?"; return
   elif [ "$probe_rc" -ne 0 ]; then rv_fail_all "$branches" "cannot reach the mirror (to) — $(auth_hint src "$R_SRC_URL")"; return; fi
   for b in $branches; do
@@ -635,7 +662,8 @@ process_reverse() {
     D="$(git -C "$cache" rev-parse -q --verify "refs/remotes/src/$b" 2>/dev/null || true)"
     SRC_SHA[$ROW_KEY]="$S"; DST_BEFORE[$ROW_KEY]="$D"; DST_AFTER[$ROW_KEY]="$D"
     if [ -z "$S" ]; then
-      if [ "$PUSH_ONLY" -eq 1 ]; then fail "GHES branch '$b' is not in the cache — run '--reverse --pull-only' where GHES is reachable first"
+      if [ "$PUSH_ONLY" -eq 1 ] && ! git -C "$cache" rev-parse -q --verify "refs/ghes-sync/absent/$b" >/dev/null 2>&1; then
+        fail "GHES branch '$b' is not in the cache — run '--reverse --pull-only' where GHES is reachable first"
       else ACTION[$ROW_KEY]=SKIPPED; DETAIL[$ROW_KEY]="branch '$b' does not exist on GHES"; log "$ROW_KEY: '$b' not on GHES — skipped"; fi
       continue
     fi
@@ -646,7 +674,11 @@ process_reverse() {
     elif git -C "$cache" merge-base --is-ancestor "$D" "$S"; then ACTION[$ROW_KEY]=FAST-FORWARD
     elif git -C "$cache" merge-base --is-ancestor "$S" "$D"; then
       ACTION[$ROW_KEY]=TO-AHEAD
-      DETAIL[$ROW_KEY]="mirror is $(git -C "$cache" rev-list --count "$S..$D") commit(s) ahead of GHES — nothing to do (the forward run pushes them)"
+      if [ "$b" = "$R_BRANCH" ]; then
+        DETAIL[$ROW_KEY]="mirror is $(git -C "$cache" rev-list --count "$S..$D") commit(s) ahead of GHES — nothing to do (the forward run pushes them)"
+      else
+        DETAIL[$ROW_KEY]="mirror is $(git -C "$cache" rev-list --count "$S..$D") commit(s) ahead of GHES — NOT pushed by the forward run (it only syncs '$R_BRANCH'); check why the mirror's $b is ahead (GHES $b reset/rewound?)"
+      fi
       log "$ROW_KEY: TO-AHEAD — ${DETAIL[$ROW_KEY]}"; continue
     else
       n="$(git -C "$cache" rev-list --count "$S..$D")"
@@ -669,11 +701,10 @@ process_reverse() {
     local pushcmd="git push ${lease:+$lease }$R_SRC_URL refs/remotes/dst/$b:refs/heads/$b"
     if [ "$DRY_RUN" -eq 1 ]; then log "$ROW_KEY: DRY-RUN: $pushcmd"; continue; fi
     log "$ROW_KEY: $pushcmd"
-    auth_opts "$R_SRC_URL" "$SRC_TOKEN"
     if [ -n "$lease" ]; then
-      tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$lease" "$R_SRC_URL" "refs/remotes/dst/$b:refs/heads/$b" || { fail "push rejected by the mirror (lease mismatch or permission)"; continue; }
+      gpush "$R_SRC_URL" "$SRC_TOKEN" "refs/remotes/dst/$b:refs/heads/$b" "$lease" || { fail "push to the mirror failed — git: ${GPUSH_ERR:-?}"; continue; }
     else
-      tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_SRC_URL" "refs/remotes/dst/$b:refs/heads/$b" || { fail "push rejected by the mirror (non-fast-forward or permission) — nothing was forced"; continue; }
+      gpush "$R_SRC_URL" "$SRC_TOKEN" "refs/remotes/dst/$b:refs/heads/$b" || { fail "push to the mirror failed (nothing forced) — git: ${GPUSH_ERR:-?}"; continue; }
     fi
     git -C "$cache" update-ref "refs/remotes/src/$b" "$S"; DST_AFTER[$ROW_KEY]="$S"
   done
@@ -705,13 +736,19 @@ reset_to_base() {
     log "$ROW_KEY: RESET — mirror $b @ $(short "$D") will be overwritten with GHES $base @ $(short "$S"); $n mirror-only commit(s) leave the branch:"
     printf '%s\n' "$dropped"
     if [ "$NO_BACKUP" -eq 0 ]; then
-      ts="$(date +%Y%m%d-%H%M%S)"; backup="refs/heads/backup/$b/$ts"
-      if [ "$DRY_RUN" -eq 1 ]; then log "$ROW_KEY: DRY-RUN: git push $R_SRC_URL $(short "$D"):$backup"
+      # an earlier (interrupted) run may already have saved exactly this tip — reuse it
+      local existing_backup
+      existing_backup="$(printf '%s\n' "$MIRROR_LS" | awk -v s="$D" -v pre="refs/heads/backup/$b/" 'index($2, pre)==1 && $1==s {print $2; exit}')"
+      if [ -n "$existing_backup" ]; then
+        backup="$existing_backup"; log "$ROW_KEY: old mirror tip $(short "$D") is already backed up as $backup — reusing it"
       else
-        auth_opts "$R_SRC_URL" "$SRC_TOKEN"
-        tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_SRC_URL" "$D:$backup" \
-          || { fail "could not push the backup branch $backup to the mirror — nothing overwritten"; return; }
-        log "$ROW_KEY: backed up the old mirror tip to $backup"
+        ts="$(date +%Y%m%d-%H%M%S)"; backup="refs/heads/backup/$b/$ts"
+        if [ "$DRY_RUN" -eq 1 ]; then log "$ROW_KEY: DRY-RUN: git push $R_SRC_URL $(short "$D"):$backup"
+        else
+          gpush "$R_SRC_URL" "$SRC_TOKEN" "$D:$backup" \
+            || { fail "could not push the backup branch $backup to the mirror — nothing overwritten — git: ${GPUSH_ERR:-?}"; return; }
+          log "$ROW_KEY: backed up the old mirror tip to $backup"
+        fi
       fi
       DETAIL[$ROW_KEY]="old tip saved as ${backup#refs/heads/}"
     else DETAIL[$ROW_KEY]="no backup (--no-backup)"; fi
@@ -720,13 +757,12 @@ reset_to_base() {
   local pushcmd="git push ${lease:+$lease }$R_SRC_URL $refspec"
   if [ "$DRY_RUN" -eq 1 ]; then log "$ROW_KEY: DRY-RUN: $pushcmd"; return; fi
   log "$ROW_KEY: $pushcmd"
-  auth_opts "$R_SRC_URL" "$SRC_TOKEN"
   if [ -n "$lease" ]; then
-    tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$lease" "$R_SRC_URL" "$refspec" \
-      || { fail "push rejected by the mirror: the branch moved between fetch and push (lease), or permission — rerun"; return; }
+    gpush "$R_SRC_URL" "$SRC_TOKEN" "$refspec" "$lease" \
+      || { case "$GPUSH_ERR" in *stale*|*lease*) fail "the mirror branch moved between fetch and push (lease) — rerun — git: $GPUSH_ERR";; *) fail "push to the mirror failed — git: ${GPUSH_ERR:-?}";; esac; return; }
   else
-    tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" push -q "$R_SRC_URL" "$refspec" \
-      || { fail "push rejected by the mirror (non-fast-forward or permission)"; return; }
+    gpush "$R_SRC_URL" "$SRC_TOKEN" "$refspec" \
+      || { fail "push to the mirror failed (nothing forced) — git: ${GPUSH_ERR:-?}"; return; }
   fi
   git -C "$cache" update-ref "refs/remotes/src/$b" "$S"; DST_AFTER[$ROW_KEY]="$S"
   log "$ROW_KEY: done. Update your dev checkout: git fetch origin && git reset --hard origin/$b"

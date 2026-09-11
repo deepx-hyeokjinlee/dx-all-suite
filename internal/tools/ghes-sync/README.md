@@ -171,6 +171,7 @@ themselves) are synced ff in the same run. Afterwards update your dev checkout:
 | `PR skipped (no gh CLI and no dst token)` | Push succeeded; set `GHES_SYNC_DST_TOKEN` (REST via curl) or install `gh`, then rerun — the existing branch is reused. |
 | `REST ... HTTP 401/404` | Token lacks `repo` scope or the wrong host: the API base is `https://<host>/api/v3` (GHES) / `https://api.github.com`. |
 | `cannot fetch src … auth/network?` / `cannot reach dst …` | No or wrong credential for a private repo (see Prerequisites), or the host is unreachable from this machine. An env token overrides the credential helper for that call. |
+| `GnuTLS recv error (-110)` / `RPC failed` on push | Transient TLS/network error; pushes are retried (`GHES_SYNC_RETRIES`=3, `GHES_SYNC_RETRY_DELAY`=5 s) and git's stderr is shown. Persistent: `git config --global http.version HTTP/1.1`, then rerun (idempotent). |
 | `dst probe timed out after 30s` | GHES not reachable from here (wrong network). Tune `GHES_SYNC_PROBE_TIMEOUT` (probe, default 30 s) / `GHES_SYNC_NET_TIMEOUT` (fetch/push, default 1800 s). |
 | exit 2 with `unknown key` / `must be listed as an EARLIER [repo]` | Config error — the message names the section and key. |
 

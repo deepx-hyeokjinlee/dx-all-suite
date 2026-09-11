@@ -75,6 +75,7 @@ release 커밋 등.
 
 | 증상 | 의미 / 조치 |
 |---|---|
+| push 시 `GnuTLS recv error (-110)` / `RPC failed` / `early EOF` | 이 기계와 github.com 사이의 일시적 TLS/네트워크 문제(Debian GnuTLS git을 쓰는 Orange Pi에서 관찰). 도구는 push를 3회 재시도(`GHES_SYNC_RETRIES`, `GHES_SYNC_RETRY_DELAY`)하고 git의 실제 에러를 출력한다. 계속 실패하면 `git config --global http.version HTTP/1.1`(및 `http.postBuffer 524288000`) 후 **같은 명령을 다시 실행** — 모든 단계는 idempotent: 끝난 행은 UP-TO-DATE, 기존 백업은 재사용. |
 | `cannot fetch src … auth/network?` / `cannot reach dst` | PAT가 없거나 틀림, 또는 이 기계에서 host 접근 불가. github.com push가 막힌 곳에서 `--reverse --push-only`를 돌리면 이렇게 실패하는 것이 정상 — 2.3/3.3은 일반망에서. |
 | `dst probe timed out after 30s` | 여기서 GHES 접근 불가(망 확인). `GHES_SYNC_PROBE_TIMEOUT` / `GHES_SYNC_NET_TIMEOUT`으로 조정. |
 | `gitlink … is NOT reachable` | parent repo가 동기화 브랜치에 없는 sub-repo 커밋을 가리킴. pointer를 고치거나 올바른 sub-repo 브랜치를 먼저 동기화(nested repo는 항상 먼저 처리됨). |
