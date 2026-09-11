@@ -1,5 +1,7 @@
 # ghes-sync — mirror → GHES branch sync
 
+> Scenario-by-scenario walkthrough: [QUICKGUIDE.md](QUICKGUIDE.md) · [QUICKGUIDE-KO.md](QUICKGUIDE-KO.md)
+
 `ghes-sync.sh` moves work from the private github.com mirror (`github.com/deepx-dhyang/*`)
 to the closed-network GHES (`gh.deepx.ai/deepx/*`): it fetches each configured source branch,
 verifies the submodule pointers it carries, **fast-forward pushes** the same-name branch to

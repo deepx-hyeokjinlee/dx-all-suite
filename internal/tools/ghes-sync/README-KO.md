@@ -1,5 +1,7 @@
 # ghes-sync — 미러 → GHES 브랜치 동기화
 
+> 시나리오별 절차: [QUICKGUIDE-KO.md](QUICKGUIDE-KO.md) · [QUICKGUIDE.md](QUICKGUIDE.md)
+
 `ghes-sync.sh`는 private github.com 미러(`github.com/deepx-dhyang/*`)의 작업을 폐쇄망
 GHES(`gh.deepx.ai/deepx/*`)로 옮긴다. 설정된 source 브랜치를 fetch → 커밋이 가리키는
 submodule pointer 검증 → 같은 이름 브랜치로 **fast-forward push**(force 절대 금지) →

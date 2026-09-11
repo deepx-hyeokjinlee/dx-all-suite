@@ -733,3 +733,21 @@ def test_reset_to_base_two_steps_then_forward_is_up_to_date(env):
     # feature branch is normally deleted after the merge; here it still exists, so we only check the tool does not crash.
     r = env.run("--no-pr", "--dry-run")
     assert r.returncode in (0, 1), out(r)
+
+
+# ── docs: the scenario quick guide exists (EN/KO) and names the real flags ────────
+
+import pytest as _pytest
+
+
+@_pytest.mark.parametrize("name", ["QUICKGUIDE.md", "QUICKGUIDE-KO.md"])
+def test_quickguide_exists_and_covers_the_scenarios(name):
+    p = SUITE / "internal" / "tools" / "ghes-sync" / name
+    assert p.is_file(), p
+    text = p.read_text(encoding="utf-8")
+    for needle in ("--reverse --pull-only", "--reverse --push-only --reset-to-base", "--update-branch",
+                   "--force-with-lease", "~/.cache/ghes-sync", "reset --hard origin/feature/dx-agent-dev",
+                   "--dry-run", "DST-AHEAD", "TO-AHEAD"):
+        assert needle in text, f"{name}: must mention {needle!r}"
+    readme = (SUITE / "internal" / "tools" / "ghes-sync" / ("README.md" if name == "QUICKGUIDE.md" else "README-KO.md")).read_text(encoding="utf-8")
+    assert name in readme, f"README must link {name}"
