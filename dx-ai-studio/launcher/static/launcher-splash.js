@@ -207,7 +207,10 @@
       '<div class="mark-slot">' +
         '<p class="mark-sub" id="splashSubtitle">AI Studio</p>' +
         '<blockquote class="mark-claim">' +
-          '<p class="claim-line">\u201cThe center of gravity in AI is shifting from the cloud to the physical world.\u201d</p>' +
+          '<p class="claim-line">' +
+            '<span class="claim-a">\u201cThe center of gravity in AI is shifting</span> ' +
+            '<span class="claim-b">from the cloud to <em>the physical world</em>.\u201d</span>' +
+          '</p>' +
           '<footer class="claim-by">Lokwon Kim \u00b7 Founder &amp; CEO, DEEPX \u00b7 CES 2026</footer>' +
         '</blockquote>' +
       '<div class="mark-cue" id="splashCue" aria-hidden="true">' +
