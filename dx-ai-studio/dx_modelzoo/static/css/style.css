@@ -121,6 +121,17 @@ body{overflow-x:auto;overflow-y:auto}
   word-break:break-word;overflow-wrap:anywhere}
 .mz-artifact-table th,.mz-accuracy-matrix th,.mz-runtime-performance th{
   color:var(--text-muted);font-weight:600;background:var(--surface-panel)}
+/* 정확도 행: 지표명과 기준 대비 델타.
+   지표명은 h4 의 uppercase 를 물려받으면 mAP 가 MAP 이 된다 — 대소문자가 곧
+   지표의 이름이므로 되돌린다. 델타 색은 방향을 아는 지표에만 붙는다
+   (is-better / is-worse; 모르는 지표는 부호만 남고 중립색). */
+.mz-metric-name{text-transform:none;letter-spacing:0;font-weight:600;color:var(--text-muted)}
+.mz-acc-delta{margin-left:var(--sp-1);font-size:var(--fs-sm);font-variant-numeric:tabular-nums;
+  color:var(--text-muted)}
+.mz-acc-delta.is-better{color:var(--status-ok)}
+.mz-acc-delta.is-worse{color:var(--status-error)}
+.mz-suspect{color:var(--status-warn)}
+.mz-card-acc{color:var(--text-secondary);font-weight:600;font-variant-numeric:tabular-nums}
 .mz-artifact-link{color:var(--accent);font-weight:600;text-decoration:none;
   word-break:break-all;overflow-wrap:anywhere}
 .mz-artifact-link:hover{text-decoration:underline}
@@ -318,8 +329,13 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 
 @media(max-width:900px){.mz-explorer-shell{grid-template-columns:1fr} .mz-filter-rail{position:static;max-height:none;overflow:visible}}
 @media(max-width:1440px){
+  /* 한 열로 접을 때 grid-column 만 1 로 되돌리면 두 열이 `grid-row:1` 을 그대로
+     들고 같은 셀에 겹쳐 쌓인다 — Key Facts 가 Use Case 밑에 깔려 1440px 이하
+     모든 화면에서 읽히지 않았다. 행도 함께 푼다. 그러면 DOM 순서대로
+     Key Facts → Specification → Compile → Use Case → Example → Demo 가 되는데,
+     데이터시트로 읽기에 그 편이 낫다. */
   .mz-detail-two-by-two{grid-template-columns:1fr}
-  .mz-detail-col-left,.mz-detail-col-right{grid-column:1}
+  .mz-detail-col-left,.mz-detail-col-right{grid-column:1;grid-row:auto}
   .mz-detail-side-sticky{position:static}
   .mz-detail-side-section .mz-key-facts{grid-template-columns:repeat(3,minmax(0,1fr))}
   .mz-spec-metrics-grid,.mz-spec-columns{grid-template-columns:1fr}
@@ -332,7 +348,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   .mz-filter-controls{flex-direction:column}
   .mz-detail-header{flex-direction:column}
   .mz-detail-two-by-two{grid-template-columns:1fr}
-  .mz-detail-col-left,.mz-detail-col-right{grid-column:1}
+  .mz-detail-col-left,.mz-detail-col-right{grid-column:1;grid-row:auto}
   .mz-detail-side-section .mz-key-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
   .mz-legal-grid{grid-template-columns:1fr}
 }

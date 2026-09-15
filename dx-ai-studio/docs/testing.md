@@ -361,6 +361,33 @@ as the migration lands, so the lint keeps catching the next regression:
 - `UNOWNED_COMPONENTS` — no shared owner yet, modules each reinvent it
   (`.card`: dx_app, dx_benchmark, dx_monitor, dx_stream).
 
+### Global script scope (`tests/shared/test_static_script_scope.py`)
+
+There is no bundler. A module page lists its `<script src>` tags in order and every
+top-level declaration in those files lands in one global lexical scope, so two files
+declaring the same name is not a style question:
+
+- `const` / `let` / `class` — the later file fails to parse **in its entirety**
+  (`SyntaxError: has already been declared`). Nothing renders from it and no Python
+  test notices.
+- `function` / `var` — parsing succeeds and the later definition silently wins,
+  including for calls made from the earlier file.
+
+Both happened. `METRIC_HIGHER_IS_BETTER` was declared in `catalog.js` and `detail.js`,
+which killed `detail.js` outright — the whole ModelZoo detail page rendered empty while
+the blocking stage stayed green. And `_localLabel` existed in both, so the ja/zh/es
+category fallback that `catalog.js` carries was overwritten by `detail.js`'s copy,
+which has no fallback.
+
+The gate reads the page's script list and reports both classes. Top-level is decided
+by indentation — every file here indents nested code, so a declaration at column 0 is
+top-level. Shared helpers live in the module's first-loaded file (`app.js` for
+ModelZoo); when two files legitimately need the same routine, that is where it goes.
+
+Only one gate saw the dead detail page before this: the opt-in `--browser` stage, via
+`tests/test_zoom_modal_audit.py`'s `detailView` emptiness check. That stage is not in
+the default run, which is exactly the gap the `--browser` note below describes.
+
 ### Unified app shell (`tests/test_dx_shell.py`, `tests/shared/test_shell.py`)
 
 `shared/static/dx-shell.css` + `shared/shell.py` render one skeleton (56px module
@@ -397,7 +424,7 @@ choice, which is the hardest case to notice by hand.
 |------|--------------|----------------------|
 | `--npu` | `tests/e2e/ -m e2e_npu` — the triple gate against real DX-M1 inference | One board backs it; a merge must not depend on that board's health |
 | `--visual` | `tests/visual/` — pixel diff vs committed screenshots | Baselines are per-host (font rasterisation differs) |
-| `--browser` | the ten Playwright suites, shardable with `--shard=i/N` | Slow; advisory until the engines are stable in CI. **Currently red — see below** |
+| `--browser` | the ten Playwright suites, shardable with `--shard=i/N` | Slow (~50 min); advisory until the engines are stable in CI. Green as of 2026-09-15 — see below |
 | `--coverage` | all ten `.coveragerc` sources vs `config/coverage_baseline.json` | Staged: visible, not yet gating |
 
 ### Real-NPU tier (`--npu`)
@@ -557,12 +584,37 @@ suites never ran and their state was simply unknown. And the CI job is
 the standing one. That is how a tutorial step pointing at deleted markup survived:
 the signal existed and was indistinguishable from the noise.
 
-#### `--browser` is red (2026-09-15)
+#### `--browser` was red (2026-09-15)
 
 `run_ci.sh` without flags reports zero failures, and that sentence has been quoted
-as "everything is green". It is not: the browser suites are opt-in, so nothing in
-the default run executes them, and `tests/test_tutorial_e2e_journey.py` has been
+as "everything is green". It was not: the browser suites are opt-in, so nothing in
+the default run executes them, and `tests/test_tutorial_e2e_journey.py` had been
 failing on three of its seven modules.
+
+**It passes end to end as of 2026-09-15 evening** — ten of ten suites, three
+`test_tutorial_e2e_journey` parameters deselected into `BROWSER_QUARANTINE` above:
+
+```
+i18n_audit/test_browser_copy_audit            13 passed
+launcher/test_sdk_library_module_nav_browser   4 passed
+shared/test_browser_runtime                    1 passed
+test_iframe_lang_sync_browser                 15 passed
+test_tutorial_e2e_journey                      5 passed, 3 deselected
+test_tutorial_spotlight_spot_check            11 passed
+test_ux_visual_gate                          495 passed
+test_zoom_full_audit                          34 passed
+test_zoom_layout_contracts                   180 passed
+test_zoom_modal_audit                        180 passed
+```
+
+Getting there took the stage changes described above plus one real defect the stage
+alone caught: `test_zoom_modal_audit` was failing all eight of its ModelZoo
+`detail-view` parameters on `detailView.innerHTML.length > 40`, because a duplicate
+`const` had killed `detail.js` at parse time (see **Global script scope** above). No
+other gate in the repository saw it.
+
+The rest of this section records what the red looked like, because the shape of the
+remaining quarantined failures still argues against the obvious reading.
 
 ```
 dx_modelzoo   download|step1   TARGET_MISSING  '[data-model-id][data-quant]'

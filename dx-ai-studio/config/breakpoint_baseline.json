@@ -48,7 +48,8 @@
   "launcher/static/style.css": [
     600,
     768,
-    1200
+    1200,
+    1440
   ],
   "shared/chat/static/chat-widget.css": [
     480

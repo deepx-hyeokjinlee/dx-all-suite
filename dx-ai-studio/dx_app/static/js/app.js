@@ -18,5 +18,5 @@ window.addEventListener('message', function(e) {
   }
 });
 
-window.addEventListener('DOMContentLoaded',init);
+window.addEventListener('DOMContentLoaded',initDxApp);
 

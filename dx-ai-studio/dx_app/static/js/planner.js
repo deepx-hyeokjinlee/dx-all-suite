@@ -1,6 +1,9 @@
 // (Planner TCO engine moved to dx_planner/ standalone server)
 
-async function init(){
+// reference.js 도 전역에 `init` 을 선언한다. 같은 전역 스코프라 나중 파일이
+// 이기므로, 이름을 나눠 두 부팅 경로가 서로를 덮지 않게 한다.
+// (계약: tests/shared/test_static_script_scope.py)
+async function initDxApp(){
   await loadModels();
   // loadModels() 는 카탈로그를 기다린다. 그 사이에 사용자가 (또는 튜토리얼이,
   // 딥링크가) 다른 화면으로 갔다면 여기서 되돌리면 안 된다 — 부팅이 끝나는

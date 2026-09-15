@@ -1,178 +1,205 @@
-"""Parser for the PUBLIC DEEPX Model Zoo (developer.deepx.ai/modelzoo).
+"""공개 DEEPX Model Zoo(developer.deepx.ai/modelzoo) 리더.
 
-The public page renders server-side HTML tables (class "model-zoo-table") with a 3-row
-grouped header:
+예전 이 파일은 서버 렌더 HTML 테이블(3행 그룹 헤더)을 파싱했다. 페이지가
+리팩토링되면서 그 테이블은 사라지고, 문서 안에 구조화된 페이로드가 실린다:
 
-  Class Name | Dataset | Input Resolution | Operations(GFLOPs) | Parameters(M) | License | Metric | Source
-            | Original(FP32){Accuracy,ONNX} | Q-Lite{Accuracy,DXNN,JSON} | Q-Pro{Accuracy,DXNN,JSON}
-            | Performance{FPS,FPS/Watt} | Sample Apps
+    window.__MODEL_ZOO_DATA__ = {
+      fields: [task, name, display, dataset, input, ops, params, license,
+               metric, source, rawAcc, onnx, qlAcc, qlDxnn, qlJson,
+               qpAcc, qpDxnn, qpJson, qmAcc, qmDxnn, qmJson, fps, fpsw],
+      base:   "https://sdk.deepx.ai/modelzoo/",
+      rows:   [[...], ...]
+    }
 
-The internal publish parser only handles flat single-row headers, so this dedicated parser
-resolves the grouped header by the (stable) leaf-column order and validates it against the
-expected header text before mapping — so a layout change warns instead of mis-mapping.
+공식 JSON 엔드포인트는 없다 — 실측으로 확인했다(페이지 네트워크 요청 6건,
+XHR/fetch 0건, /modelzoo/*.json 404, /api/modelzoo 는 페이지로 301, 버킷 목록 403).
+그래서 이건 여전히 스크래핑이지만, 대상이 HTML 테이블에서 인라인 JSON 으로
+바뀐 것이고 그쪽이 훨씬 튼튼하다: `fields` 가 열 이름을 주므로 위치에 기대지
+않는다. 이 저장소는 위치 기반 파싱 탓에 카탈로그 캐시의 필드가 한 칸씩 밀려
+(`fps` ← `fps_per_watt`) 잘못된 성능 수치를 내보낸 전례가 있다.
+
+공식 계약이 아니므로 **조용히 실패하지 않는다.** 전역이 없거나 필수 열이
+사라지면 부분 카탈로그를 만드는 대신 예외를 던진다.
 """
 from __future__ import annotations
 
-import re
-from html.parser import HTMLParser
+import json
+from typing import Any
 
-from dx_modelzoo.metadata.normalization import canonical_model_id
+_GLOBAL = "window.__MODEL_ZOO_DATA__"
 
-# Leaf columns in left-to-right order -> normalized field path. None = ignore (Sample Apps).
-_LEAF_FIELDS = [
-    "display.class_name",
-    "specification.dataset",
-    "specification.input_resolution",
-    "specification.operations",
-    "specification.parameters",
-    "legal.license",
-    "specification.metric.name",
-    "legal.source_url",
-    "evaluation.raw.accuracy",
-    "artifacts.onnx.remote_url",
-    "evaluation.qlite.accuracy",
-    "artifacts.qlite_dxnn.remote_url",
-    "artifacts.qlite_json.remote_url",
-    "evaluation.qpro.accuracy",
-    "artifacts.qpro_dxnn.remote_url",
-    "artifacts.qpro_json.remote_url",
-    "evaluation.qmaster.accuracy",
-    "artifacts.qmaster_dxnn.remote_url",
-    "artifacts.qmaster_json.remote_url",
-    "performance.fps",
-    "performance.fps_per_watt",
-    None,  # Sample Apps
-]
-# Fields whose cell value is a link (take href, not text).
-_LINK_FIELDS = {
-    "legal.source_url", "artifacts.onnx.remote_url",
-    "artifacts.qlite_dxnn.remote_url", "artifacts.qlite_json.remote_url",
-    "artifacts.qpro_dxnn.remote_url", "artifacts.qpro_json.remote_url",
-    "artifacts.qmaster_dxnn.remote_url", "artifacts.qmaster_json.remote_url",
+# 없으면 읽을 수 없는 열. (qm* 처럼 희소한 것은 필수가 아니다.)
+_REQUIRED_FIELDS = (
+    "task", "name", "display", "dataset", "input", "ops", "params",
+    "license", "metric", "source", "rawAcc", "onnx",
+    "qlAcc", "qlDxnn", "qlJson", "fps", "fpsw",
+)
+
+# 페이로드의 열 이름 → 우리가 쓰는 아티팩트 이름
+_ARTIFACTS = {
+    "onnx": "onnx",
+    "qlDxnn": "qlite_dxnn", "qlJson": "qlite_json",
+    "qpDxnn": "qpro_dxnn",  "qpJson": "qpro_json",
+    "qmDxnn": "qmaster_dxnn", "qmJson": "qmaster_json",
 }
-_FLOAT_FIELDS = {"performance.fps", "performance.fps_per_watt"}
-# The expected 3rd header row (leaf labels under the grouped headers) — used to validate.
-_EXPECTED_LEAF_ROW = [
-    "Accuracy", "ONNX",
-    "Accuracy", "DXNN", "JSON",
-    "Accuracy", "DXNN", "JSON",
-    "Accuracy", "DXNN", "JSON",
-    "FPS", "FPS/Watt",
-]
+_ACCURACY = {"rawAcc": "raw", "qlAcc": "qlite", "qpAcc": "qpro", "qmAcc": "qmaster"}
 
 
-class _RowParser(HTMLParser):
-    """Extract <tbody> rows from a single model-zoo table: each row -> list of (text, href)."""
+def _extract_payload(html: str) -> dict[str, Any]:
+    """전역 대입문에서 객체를 꺼낸다.
 
-    def __init__(self):
-        super().__init__()
-        self.rows: list[list[tuple]] = []
-        self._in_tbody = False
-        self._in_tr = False
-        self._in_td = False
-        self._cell_text: list[str] = []
-        self._cell_href = None
-        self._row: list[tuple] = []
-
-    def handle_starttag(self, tag, attrs):
-        if tag == "tbody":
-            self._in_tbody = True
-        elif tag == "tr" and self._in_tbody:
-            self._in_tr = True
-            self._row = []
-        elif tag in ("td", "th") and self._in_tr:
-            self._in_td = True
-            self._cell_text = []
-            self._cell_href = None
-        elif tag == "a" and self._in_td and self._cell_href is None:
-            for k, v in attrs:
-                if k == "href":
-                    self._cell_href = v
-                    break
-
-    def handle_endtag(self, tag):
-        if tag == "tbody":
-            self._in_tbody = False
-        elif tag == "tr" and self._in_tr:
-            self._in_tr = False
-            if self._row:
-                self.rows.append(self._row)
-        elif tag in ("td", "th") and self._in_td:
-            self._in_td = False
-            self._row.append(("".join(self._cell_text).strip(), self._cell_href))
-
-    def handle_data(self, data):
-        if self._in_td:
-            self._cell_text.append(data)
-
-
-def _model_tables(html: str) -> list[str]:
-    return [t for t in re.findall(r"<table\b[^>]*>.*?</table>", html, re.S | re.I)
-            if "model-zoo-table" in t[:200] or ("GFLOPs" in t and "FPS/Watt" in t)]
-
-
-def _set(fields: dict, path: str, value):
-    if value not in ("", None):
-        fields[path] = value
-
-
-def parse_public_modelzoo_html(html: str) -> tuple[dict, list]:
-    """Return ({model_id: {field: value}}, warnings)."""
-    models: dict = {}
-    warnings: list = []
-    tables = _model_tables(html)
-    if not tables:
-        return models, ["no model-zoo tables found"]
-
-    for table in tables:
-        # validate the leaf header row to catch layout drift
-        leaf_labels = re.findall(r"<th[^>]*>(.*?)</th>", table[:table.find("</thead>") + 8] if "</thead>" in table else table[:3000], re.S | re.I)
-        leaf_labels = [re.sub(r"<[^>]+>", "", x).strip() for x in leaf_labels]
-        if not any(set(_EXPECTED_LEAF_ROW).issubset(set(leaf_labels)) for _ in [0]):
-            warnings.append("table header missing expected leaf columns — skipped")
-            continue
-
-        rp = _RowParser()
-        rp.feed(table)
-        for row in rp.rows:
-            if len(row) < len(_LEAF_FIELDS) - 1:  # tolerate missing trailing Sample Apps cell
-                continue
-            name = (row[0][0] or "").strip()
-            if not name:
-                continue
-            fields = {}
-            for i, field in enumerate(_LEAF_FIELDS):
-                if field is None or i >= len(row):
-                    continue
-                text, href = row[i]
-                val = href if field in _LINK_FIELDS else text
-                if field in _FLOAT_FIELDS and val not in ("", None):
-                    try:
-                        val = float(re.sub(r"[^0-9.]", "", val))
-                    except ValueError:
-                        pass
-                _set(fields, field, val)
-            # Key by the shared artifact filename (local catalog ids derive from dxnn/onnx
-            # filenames, which differ from the public display name) — matches ~93% vs ~43%
-            # by display name. Fall back to the display name when no artifact link exists.
-            mid = _artifact_model_id(fields) or canonical_model_id(name)
-            if mid:
-                fields["display.class_name"] = name
-                models[mid] = fields
-    return models, warnings
-
-
-def _artifact_model_id(fields: dict) -> str:
-    """Derive a model id from the model's artifact filename (qlite/qpro DXNN or ONNX).
-
-    Pass the full filename to canonical_model_id so it strips the real extension exactly once
-    (Path.stem). Pre-stripping with rsplit then calling canonical_model_id double-strips and
-    corrupts names with a dot in the number, e.g. "...mobilnet0.5_120x120.dxnn" -> "...mobilnet0".
+    끝은 **괄호 균형**으로 찾는다. 정규식으로 첫 `}` 를 잡으면 중첩 객체에서
+    잘리고, 그러면 절반짜리 JSON 을 파싱하려다 엉뚱한 곳에서 터진다.
     """
-    for key in ("artifacts.qlite_dxnn.remote_url", "artifacts.qpro_dxnn.remote_url",
-                "artifacts.onnx.remote_url"):
-        url = fields.get(key)
+    at = html.find(_GLOBAL)
+    if at < 0:
+        raise ValueError(
+            f"{_GLOBAL} 을 찾을 수 없다 — 페이지 구조가 또 바뀌었거나 응답이 "
+            "우리가 기대한 문서가 아니다. 부분 카탈로그를 만들지 않는다."
+        )
+    start = html.find("{", at)
+    if start < 0:
+        raise ValueError(f"{_GLOBAL} 뒤에 객체가 없다")
+    depth = 0
+    for end in range(start, len(html)):
+        ch = html[end]
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return json.loads(html[start:end + 1])
+    raise ValueError(f"{_GLOBAL} 의 객체가 닫히지 않았다")
+
+
+def _as_number(value):
+    if value is None or value == "":
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def parse_public_payload(html: str) -> list[dict[str, Any]]:
+    """페이지 HTML → 모델 행 목록."""
+    payload = _extract_payload(html)
+    fields = payload.get("fields")
+    rows = payload.get("rows")
+    if not isinstance(fields, list) or not isinstance(rows, list):
+        raise ValueError(f"{_GLOBAL} 에 fields/rows 가 없다")
+
+    missing = [f for f in _REQUIRED_FIELDS if f not in fields]
+    if missing:
+        raise ValueError(
+            f"fields 에서 필수 열이 사라졌다: {missing} — 이름으로 읽으므로 "
+            "열이 바뀌면 값이 밀리는 대신 여기서 멈춘다."
+        )
+    at = {name: i for i, name in enumerate(fields)}
+    base = (payload.get("base") or "").rstrip("/") + "/"
+
+    def cell(row, name):
+        i = at.get(name)
+        return row[i] if i is not None and i < len(row) else None
+
+    out: list[dict[str, Any]] = []
+    for row in rows:
+        artifacts = {}
+        for field, key in _ARTIFACTS.items():
+            raw = cell(row, field)
+            if raw:
+                # 페이로드의 상대경로는 `~onnx/...` 꼴이다.
+                artifacts[key] = base + str(raw).lstrip("~/")
+        out.append({
+            "task": cell(row, "task"),
+            "name": cell(row, "name"),
+            "display": cell(row, "display"),
+            "dataset": cell(row, "dataset"),
+            "input": cell(row, "input"),
+            "ops": _as_number(cell(row, "ops")),
+            "params": _as_number(cell(row, "params")),
+            "license": cell(row, "license"),
+            "metric": cell(row, "metric"),
+            "source": cell(row, "source"),
+            "fps": _as_number(cell(row, "fps")),
+            "fps_per_watt": _as_number(cell(row, "fpsw")),
+            "accuracy": {tier: _as_number(cell(row, field))
+                         for field, tier in _ACCURACY.items()},
+            "artifacts": artifacts,
+        })
+    return out
+
+
+# ── 어댑터 인터페이스 ────────────────────────────────────────
+# 어댑터와 studio_id_map 은 {모델id: {leaf 경로: 값}} 을 기대한다. leaf 경로는
+# 예전 HTML 파서가 쓰던 것과 같다 — 스키마는 이미 specification.dataset /
+# parameters / metric.name / evaluation.qmaster 를 정의해 두고 있었고, 채우는
+# 쪽이 없었을 뿐이다. 그래서 흡수는 새 경로를 만드는 일이 아니라 비어 있던
+# 자리를 채우는 일이다.
+
+_LEAF_OF = {
+    "display":      "display.class_name",
+    "dataset":      "specification.dataset",
+    "input":        "specification.input_resolution",
+    "ops":          "specification.operations",
+    "params":       "specification.parameters",
+    "license":      "legal.license",
+    "metric":       "specification.metric.name",
+    "source":       "legal.source_url",
+    "fps":          "performance.fps",
+    "fps_per_watt": "performance.fps_per_watt",
+}
+_ACCURACY_LEAF = {
+    "raw": "evaluation.raw.accuracy", "qlite": "evaluation.qlite.accuracy",
+    "qpro": "evaluation.qpro.accuracy", "qmaster": "evaluation.qmaster.accuracy",
+}
+
+
+def _artifact_model_id(artifacts: dict) -> str:
+    """아티팩트 파일명에서 모델 id 를 만든다.
+
+    canonical_model_id 에 **전체 파일명**을 넘긴다. 미리 확장자를 떼고 넘기면
+    두 번 깎여서 숫자 안에 점이 있는 이름이 망가진다
+    (`...mobilnet0.5_120x120.dxnn` → `...mobilnet0`).
+    """
+    from dx_modelzoo.metadata.normalization import canonical_model_id
+
+    for key in ("qlite_dxnn", "qpro_dxnn", "onnx"):
+        url = artifacts.get(key)
         if url:
-            filename = url.rstrip("/").split("/")[-1]
-            return canonical_model_id(filename)
+            return canonical_model_id(url.rstrip("/").split("/")[-1])
     return ""
+
+
+def parse_public_modelzoo_html(html: str) -> tuple[dict, list[str]]:
+    """공개 페이지 HTML → (모델 dict, 경고 목록)."""
+    warnings: list[str] = []
+    models: dict[str, dict] = {}
+
+    for row in parse_public_payload(html):
+        fields: dict = {}
+        for src, leaf in _LEAF_OF.items():
+            value = row.get(src)
+            if value not in (None, ""):
+                fields[leaf] = value
+        for tier, leaf in _ACCURACY_LEAF.items():
+            value = row["accuracy"].get(tier)
+            # 없는 값은 키를 만들지 않는다. merge 는 '값이 있는 소스' 를 고르므로
+            # None 을 넣으면 다른 소스가 채운 값을 빈 값으로 덮어쓸 수 있다.
+            if value is not None:
+                fields[leaf] = value
+        for key, url in row["artifacts"].items():
+            fields[f"artifacts.{key}.remote_url"] = url
+
+        mid = _artifact_model_id(row["artifacts"])
+        if not mid:
+            from dx_modelzoo.metadata.normalization import canonical_model_id
+            mid = canonical_model_id(row.get("name") or row.get("display") or "")
+        if not mid:
+            warnings.append(f"모델 id 를 만들 수 없는 행: {row.get('display')!r}")
+            continue
+        if mid in models:
+            models[mid].update(fields)
+        else:
+            models[mid] = fields
+    return models, warnings

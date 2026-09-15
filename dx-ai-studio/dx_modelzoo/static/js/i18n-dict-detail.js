@@ -449,6 +449,10 @@ window._DX_MODELZOO_I18N_REGISTER({
     'zh-TW': '成品',
     es: 'Artefacto',
   },
+  'Q-Master': {
+    en: 'Q-Master', ko: 'Q-Master', ja: 'Q-Master',
+    'zh-CN': 'Q-Master', 'zh-TW': 'Q-Master', es: 'Q-Master',
+  },
   'Accuracy Matrix': {
     ko: '정확도 매트릭스',
     en: 'Accuracy Matrix',

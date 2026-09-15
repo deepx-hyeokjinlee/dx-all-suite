@@ -56,17 +56,6 @@ if (typeof window.handleImageFallback !== 'function') {
   window.handleImageFallback = _detailHandleImageFallback;
 }
 
-function _localLabel(obj, prefix) {
-  const lang = DXI18n.lang;
-  return obj[prefix + '_' + lang] || obj[prefix + '_' + lang.split('-')[0]] || obj[prefix + '_en'] || '';
-}
-
-function _localText(obj) {
-  if (!obj) return '';
-  const lang = DXI18n.lang;
-  return obj[lang] || obj[lang.split('-')[0]] || obj.en || '';
-}
-
 const DETAIL_ARTIFACTS = [
   { id: 'onnx', label: 'ONNX' },
   { id: 'qlite_dxnn', label: 'Q-Lite DXNN' },
@@ -183,21 +172,6 @@ function _artifactEndpoint(modelId, artifactId) {
   return `/api/catalog/${encodeURIComponent(modelId)}/artifacts/${artifactId}`;
 }
 
-function _artifactAvailable(model, artifactId) {
-  const artifact = (model.artifacts || {})[artifactId] || {};
-  if (artifact.available === false) return false;
-  return artifact.available === true ||
-    Boolean(artifact.download_endpoint || artifact.local_path || artifact.remote_url);
-}
-
-function _artifactBadge(model, artifactId, label) {
-  const available = _artifactAvailable(model, artifactId);
-  const status = available ? 'ready' : 'not-ready';
-  const icon = available ? '✅' : '⏳';
-  const title = available ? label : T('Artifact unavailable');
-  return `<span class="mz-download-badge ${status}" title="${escapeHtml(title)}">${icon} ${escapeHtml(label)}</span>`;
-}
-
 function _artifactAction(model, artifactId) {
   if (!_artifactAvailable(model, artifactId)) return _detailStatus('Artifact unavailable');
   const href = _artifactEndpoint(model.id, artifactId);
@@ -269,6 +243,7 @@ function renderDetail(container, model) {
             ${_artifactBadge(model, 'onnx', 'ONNX')}
             ${_artifactBadge(model, 'qlite_dxnn', 'Q-Lite')}
             ${_artifactBadge(model, 'qpro_dxnn', 'Q-Pro')}
+            ${(model.artifacts || {}).qmaster_dxnn ? _artifactBadge(model, 'qmaster_dxnn', 'Q-Master') : ''}
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap" data-detail-downloads>
@@ -288,7 +263,7 @@ function renderDetail(container, model) {
           </aside>
 
           <div class="mz-detail-panel mz-detail-panel-d">
-            <section class="mz-detail-section" id="sectionSpec">
+            <section class="mz-detail-section" id="sectionSpec" data-section="sectionTiers">
               <h3>📊 ${T('Specification')}</h3>
               <div class="mz-spec-metrics-grid">
                 ${renderAccuracyMatrix(model)}
@@ -420,21 +395,55 @@ function renderArtifactTable(model) {
   </div>`;
 }
 
+/* ── 양자화가 정확도에 치르는 값 ──────────────────────────────
+   예전에는 Raw / Q-Lite / Q-Pro 의 숫자만 세로로 놓았다. 그것만으로는 양자화가
+   무엇을 잃게 하는지 읽히지 않는다 — 이 제품이 파는 트레이드오프가 바로 그건데도.
+
+   그래서 기준(Raw) 대비 델타를 함께 적는다. 단, 지표마다 방향이 다르다:
+   Top1 은 클수록, RMSE 는 작을수록 좋다. 방향을 모르는 지표는 부호만 보여주고
+   좋다/나쁘다로 칠하지 않는다 — 모르는 것을 아는 척하는 쪽이 더 나쁘다.
+   방향 표는 app.js 가 한 벌만 들고 있다 (METRIC_HIGHER_IS_BETTER /
+   METRIC_LOWER_IS_BETTER). 서버 쪽 같은 표: dx_modelzoo/core/metrics.py */
+function _detailMetricName(model) {
+  const name = model.specification?.metric?.name;
+  if (name) return String(name);
+  const legacy = model.specification?.metric;
+  if (legacy && typeof legacy === 'object') return Object.keys(legacy)[0] || '';
+  return '';
+}
+
+function _accuracyDelta(metric, baseline, value) {
+  if (!_hasValue(baseline) || !_hasValue(value)) return null;
+  const delta = Number(value) - Number(baseline);
+  if (!isFinite(delta) || delta === 0) return null;
+  let verdict = null;
+  if (METRIC_HIGHER_IS_BETTER.has(metric)) verdict = delta > 0 ? 'better' : 'worse';
+  else if (METRIC_LOWER_IS_BETTER.has(metric)) verdict = delta < 0 ? 'better' : 'worse';
+  return { delta, verdict };
+}
+
 function renderAccuracyMatrix(model) {
   const evaluation = model.evaluation || {};
+  const metric = _detailMetricName(model);
+  const baseline = evaluation.raw?.accuracy;
   const rows = [
     ['Raw', evaluation.raw],
     ['Q-Lite', evaluation.qlite],
     ['Q-Pro', evaluation.qpro],
-  ].filter(([, evalEntry]) => _hasValue(evalEntry?.accuracy) || evalEntry?.source_status === 'suspect');
+    ['Q-Master', evaluation.qmaster],
+  ].filter(([, e]) => _hasValue(e?.accuracy) || e?.source_status === 'suspect');
   return `<div class="mz-datasheet-block">
-    <h4>${escapeHtml(T('Accuracy Matrix'))}</h4>
+    <h4>${escapeHtml(T('Accuracy Matrix'))}${metric ? ` <span class="mz-metric-name">${escapeHtml(metric)}</span>` : ''}</h4>
     <table class="mz-accuracy-matrix"><tbody>
-      ${rows.length ? rows.map(([label, evalEntry]) => {
-        if (evalEntry?.source_status === 'suspect') {
+      ${rows.length ? rows.map(([label, e]) => {
+        if (e?.source_status === 'suspect') {
           return `<tr><th>${escapeHtml(T(label))}</th><td class="mz-suspect">${escapeHtml(T('Suspect value: source verification required'))}</td></tr>`;
         }
-        return `<tr><th>${escapeHtml(T(label))}</th><td>${_detailValue(evalEntry?.accuracy, 'Not provided by source')}</td></tr>`;
+        const d = label === 'Raw' ? null : _accuracyDelta(metric, baseline, e?.accuracy);
+        const deltaHtml = d
+          ? ` <span class="mz-acc-delta${d.verdict ? ' is-' + d.verdict : ''}">${d.delta > 0 ? '+' : '\u2212'}${escapeHtml(Math.abs(d.delta).toFixed(2))}</span>`
+          : '';
+        return `<tr><th>${escapeHtml(T(label))}</th><td>${_detailValue(e?.accuracy, 'Not provided by source')}${deltaHtml}</td></tr>`;
       }).join('') : `<tr><td>${_detailStatus('Metadata pending')}</td></tr>`}
     </tbody></table>
   </div>`;

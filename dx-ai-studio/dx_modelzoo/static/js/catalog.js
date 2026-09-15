@@ -79,31 +79,9 @@ function handleImageFallback(img) {
   img.replaceWith(placeholder);
 }
 
-function _escapeAttr(s) {
-  if (s == null) return '';
-  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
 window.handleImageFallback = handleImageFallback;
 window.ModelZooImages = { optimizedImageCandidates, imageTagWithFallback, handleImageFallback };
 
-
-function _localLabel(obj, prefix) {
-  const lang = DXI18n.lang;
-  const direct = obj[prefix + '_' + lang] || obj[prefix + '_' + lang.split('-')[0]];
-  if (direct) return direct;
-  // The category data only ships label_en + label_ko. For ja/zh-CN/zh-TW/es fall back to
-  // the shared i18n dict (which has all 6 languages for the category names) keyed by the
-  // English label — otherwise the category column/chips stay English in those languages.
-  const en = obj[prefix + '_en'] || '';
-  return en ? T(en) : '';
-}
-
-function _localText(obj) {
-  if (!obj) return '';
-  const lang = DXI18n.lang;
-  return obj[lang] || obj[lang.split('-')[0]] || obj.en || '';
-}
 
 function _missingLabel(label) {
   return `<span class="mz-field-empty">${_escapeAttr(T(label))}</span>`;
@@ -140,6 +118,58 @@ function _bestAccuracyValue(m) {
   return legacyMetric || '';
 }
 
+/* ── 지표와 정확도 ────────────────────────────────────────────
+   정확도 숫자만 보여주면 비교할 수 없다. 이 테이블은 `3.499`(NME) 와
+   `98.667`(Top-1) 을 한 칸에 섞어 놓고 정렬까지 제공하고 있었는데, 서로 다른
+   지표 사이에는 순서가 존재하지 않는다.
+
+   방향도 지표마다 다르다 — Top1 은 클수록, RMSE 는 작을수록 좋다. 그래서 델타에
+   색을 칠하려면 어느 쪽인지 알아야 하고, 모르는 지표는 칠하지 않는다.
+   방향 표는 app.js 가 한 벌만 들고 있다 (METRIC_HIGHER_IS_BETTER /
+   METRIC_LOWER_IS_BETTER). 서버 쪽 같은 표: dx_modelzoo/core/metrics.py */
+function _metricName(m) {
+  const name = m.specification?.metric?.name;
+  if (name) return String(name);
+  // 옛 스냅샷은 metric 이 {mAP: 51.2} 같은 객체였다.
+  const legacy = m.specification?.metric;
+  if (legacy && typeof legacy === 'object') return Object.keys(legacy)[0] || '';
+  return '';
+}
+
+function _metricDirection(metric) {
+  if (!metric) return null;
+  if (METRIC_HIGHER_IS_BETTER.has(metric)) return 'higher';
+  if (METRIC_LOWER_IS_BETTER.has(metric)) return 'lower';
+  return null;
+}
+
+function _accuracyWithMetric(m) {
+  const value = _bestAccuracyValue(m);
+  if (value === '' || value == null) return '';
+  const metric = _metricName(m);
+  return metric ? metric + ' ' + value : String(value);
+}
+
+/* 같은 지표끼리만 비교한다. 다른 지표는 0 을 돌려 서로 순서를 만들지 않는다 —
+   정렬은 그 경우 원래 순서를 유지한다(안정 정렬). */
+function _compareAccuracy(a, b, metricOf) {
+  const ma = metricOf(a), mb = metricOf(b);
+  if (ma !== mb) return 0;
+  const va = parseFloat(_bestAccuracyValue(a));
+  const vb = parseFloat(_bestAccuracyValue(b));
+  if (isNaN(va) && isNaN(vb)) return 0;
+  if (isNaN(va)) return 1;
+  if (isNaN(vb)) return -1;
+  const dir = _metricDirection(ma);
+  // 작을수록 좋은 지표는 오름차순이 '좋은 순' 이다.
+  return dir === 'lower' ? va - vb : vb - va;
+}
+
+function _specNumber(m, key) {
+  const v = m.specification?.[key];
+  return (v === null || v === undefined || v === '') ? '' : String(v);
+}
+
 function _modelFpsText(m) {
   const performance = m.performance || {};
   const fps = performance.fps ?? m.specification?.fps;
@@ -170,34 +200,28 @@ function _computeUniqueModelCount(models) {
   return unique.size || (models || []).length;
 }
 
-function _artifactAvailable(m, artifactId) {
-  const artifact = (m.artifacts || {})[artifactId] || {};
-  if (artifact.available === false) return false;
-  return artifact.available === true ||
-    Boolean(artifact.download_endpoint || artifact.local_path || artifact.remote_url);
-}
-
-function _artifactBadge(m, artifactId, label) {
-  const available = _artifactAvailable(m, artifactId);
-  const status = available ? 'ready' : 'not-ready';
-  const icon = available ? '✅' : '⏳';
-  const title = available ? label : T('Artifact unavailable');
-  return `<span class="mz-download-badge ${status}" title="${_escapeAttr(title)}">${icon} ${_escapeAttr(label)}</span>`;
-}
-
 function _artifactBadges(m) {
   const qlite = _artifactAvailable(m, 'qlite_dxnn') || _artifactAvailable(m, 'qlite_json') ||
     m.downloaded_qlite || m.downloaded;
   const qpro = _artifactAvailable(m, 'qpro_dxnn') || _artifactAvailable(m, 'qpro_json') ||
     m.downloaded_qpro;
+  const qmaster = _artifactAvailable(m, 'qmaster_dxnn') || _artifactAvailable(m, 'qmaster_json') ||
+    m.downloaded_qmaster;
   const artifacts = {
     qlite_dxnn: qlite ? { available: true } : (m.artifacts || {}).qlite_dxnn,
     qpro_dxnn: qpro ? { available: true } : (m.artifacts || {}).qpro_dxnn,
+    qmaster_dxnn: qmaster ? { available: true } : (m.artifacts || {}).qmaster_dxnn,
   };
-  return [
+  const badges = [
     _artifactBadge({ artifacts }, 'qlite_dxnn', 'Q-Lite'),
     _artifactBadge({ artifacts }, 'qpro_dxnn', 'Q-Pro'),
-  ].join(' ');
+  ];
+  // Q-Master 는 공개 카탈로그 354개 중 15개뿐이다. 늘 그리면 대부분이 '없음'
+  // 이 되어 칩이 정보를 잃는다 — 있을 때만 자리를 차지한다.
+  if (artifacts.qmaster_dxnn) {
+    badges.push(_artifactBadge({ artifacts }, 'qmaster_dxnn', 'Q-Master'));
+  }
+  return badges.join(' ');
 }
 
 function _licenseBadge(m) {
@@ -556,9 +580,11 @@ const ModelZooVirtualCatalog = {
     const headers = [
       { key: 'name', label: T('Name') },
       { key: 'category', label: T('Category') },
-      { key: 'fps', label: 'FPS' },
-      { key: 'resolution', label: T('Input Resolution') },
+      { key: 'params', label: T('Params (M)') },
       { key: 'accuracy', label: T('Accuracy') },
+      { key: 'fps', label: 'FPS' },
+      { key: 'fps_per_watt', label: 'FPS / W' },
+      { key: 'resolution', label: T('Input Resolution') },
       { key: 'status', label: T('Status') },
     ];
     let html = '<table class="mz-list-table"><thead><tr>';
@@ -572,11 +598,11 @@ const ModelZooVirtualCatalog = {
     const afterHeight = Math.max(0, models.length - end) * LIST_ROW_HEIGHT;
 
     if (beforeHeight > 0) {
-      html += `<tr class="mz-spacer"><td colspan="6" style="height:${beforeHeight}px;padding:0;border:none"></td></tr>`;
+      html += `<tr class="mz-spacer"><td colspan="8" style="height:${beforeHeight}px;padding:0;border:none"></td></tr>`;
     }
     visible.forEach(m => { html += this.renderListRow(m); });
     if (afterHeight > 0) {
-      html += `<tr class="mz-spacer"><td colspan="6" style="height:${afterHeight}px;padding:0;border:none"></td></tr>`;
+      html += `<tr class="mz-spacer"><td colspan="8" style="height:${afterHeight}px;padding:0;border:none"></td></tr>`;
     }
     html += '</tbody></table>';
     const savedScrollTop = container.scrollTop || 0;
@@ -601,6 +627,8 @@ const ModelZooVirtualCatalog = {
     const legacyFps = m.specification?.fps ? `<span class="mz-card-fps">${_escapeAttr(m.specification.fps)} FPS</span>` : '';
     const fps = `<span class="${_escapeAttr(_modelFpsClass(m))}">${_escapeAttr(_modelFpsText(m))}</span>` || legacyFps;
     const resolution = _modelInputResolution(m);
+    // 지표명을 함께 적는다. 숫자만 두면 NME 3.5 와 Top-1 98.6 이 같은 척도로 읽힌다.
+    const accuracy = _accuracyWithMetric(m);
     const missing = Array.isArray(m.missing) ? m.missing : [];
     const missingCount = missing.length;
     const summary = _localText(m.display?.summary) || _localText(m.content?.use_case) || '';
@@ -619,6 +647,7 @@ const ModelZooVirtualCatalog = {
           ${fps}
           <span>${resolution ? _escapeAttr(resolution) : _missingLabel('Not provided by source')}</span>
         </div>
+        ${accuracy ? `<div class="mz-card-acc">${_escapeAttr(accuracy)}</div>` : ''}
         <div class="mz-card-artifacts">${_artifactBadges(m)}</div>
         ${missingCount ? `<div class="mz-card-missing">${_escapeAttr(missingCount)} ${_escapeAttr(T('Not provided by source'))}</div>` : ''}
       </div>
@@ -640,7 +669,9 @@ const ModelZooVirtualCatalog = {
     const legacyFps = _escapeAttr(m.specification?.fps || '-');
     const fpsText = _modelFpsText(m) || legacyFps;
     const resolution = _modelInputResolution(m);
-    const accuracyText = _bestAccuracyValue(m) || accuracy;
+    const accuracyText = _accuracyWithMetric(m) || accuracy;
+    const params = _specNumber(m, 'parameters');
+    const fpsw = m.performance?.fps_per_watt != null ? String(m.performance.fps_per_watt) : '';
     let statusBadges = '—';
     if (m.artifacts || m.downloaded_qlite || m.downloaded_qpro || m.downloaded) {
       statusBadges = _artifactBadges(m);
@@ -650,9 +681,11 @@ const ModelZooVirtualCatalog = {
     return `<tr class="mz-list-row" data-model-id="${_escapeAttr(m.id)}" data-help-id="model-row-${_escapeAttr(m.id)}">
       <td>${_escapeAttr(m.name)}</td>
       <td><span class="mz-card-cat">${categoryIcon} ${_escapeAttr(catLabel)}</span></td>
-      <td>${_escapeAttr(fpsText)}</td>
-      <td>${resolution ? _escapeAttr(resolution) : _missingLabel('Not provided by source')}</td>
+      <td>${params ? _escapeAttr(params) : _missingLabel('Not provided by source')}</td>
       <td>${accuracyText ? _escapeAttr(String(accuracyText)) : _missingLabel('Not provided by source')}</td>
+      <td>${_escapeAttr(fpsText)}</td>
+      <td>${fpsw ? _escapeAttr(fpsw) : _missingLabel('Not provided by source')}</td>
+      <td>${resolution ? _escapeAttr(resolution) : _missingLabel('Not provided by source')}</td>
       <td>${statusBadges}${_licenseBadge(m)}</td>
     </tr>`;
   },
@@ -894,6 +927,24 @@ function sortModels(models) {
       va = parseFloat(a.performance?.fps ?? a.specification?.fps) || 0;
       vb = parseFloat(b.performance?.fps ?? b.specification?.fps) || 0;
       return (vb - va) * dir;
+    }
+    if (_sortField === 'fps_per_watt') {
+      va = parseFloat(a.performance?.fps_per_watt) || 0;
+      vb = parseFloat(b.performance?.fps_per_watt) || 0;
+      return (vb - va) * dir;
+    }
+    if (_sortField === 'params') {
+      va = parseFloat(a.specification?.parameters);
+      vb = parseFloat(b.specification?.parameters);
+      if (isNaN(va) && isNaN(vb)) return 0;
+      if (isNaN(va)) return 1;
+      if (isNaN(vb)) return -1;
+      return (va - vb) * dir;
+    }
+    if (_sortField === 'accuracy') {
+      // 지표가 다르면 0 — 서로 순서를 만들지 않는다. Array.sort 는 안정 정렬이라
+      // 그 경우 원래 순서가 유지된다.
+      return _compareAccuracy(a, b, _metricName) * dir;
     }
     return String(va).localeCompare(String(vb)) * dir;
   });
