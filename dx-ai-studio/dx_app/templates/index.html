@@ -463,7 +463,7 @@
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
     <div>
       <h1 style="margin-bottom:4px">📥 <span class="accent" data-i18n="ModelZoo">ModelZoo</span></h1>
-      <p class="txt-dim txt-sm mb16" data-i18n="Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro DXNN files directly.">Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro DXNN files directly.</p>
+      <p class="txt-dim txt-sm mb16" data-i18n="Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro / Q-Master DXNN files directly.">Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro / Q-Master DXNN files directly.</p>
     </div>
     <a id="mz-homepage-link" href="https://developer.deepx.ai/modelzoo/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="gap:4px;white-space:nowrap">🌐 <span data-i18n="ModelZoo Homepage">ModelZoo Homepage</span> ↗</a>
   </div>
@@ -484,6 +484,7 @@
       <button class="btn btn-ghost btn-sm" onclick="mzSelectAllNew()">🆕 <span data-i18n="New Only">New Only</span></button>
       <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qlite')" style="color:var(--status-info)" data-i18n="Q-Lite All">Q-Lite All</button>
       <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qpro')" style="color:var(--app-accent)" data-i18n="Q-Pro All">Q-Pro All</button>
+      <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qmaster')" style="color:var(--npu)" data-i18n="Q-Master All">Q-Master All</button>
       <button class="btn btn-ghost btn-sm" onclick="mzDeselectAll()">☐ <span data-i18n="Deselect">Deselect</span></button>
       <button class="btn btn-ghost btn-sm" onclick="mzRefresh()" title="Refresh" data-i18n-title="Refresh">🔄</button>
     </div>
@@ -512,21 +513,26 @@
             <th rowspan="2" data-i18n="License">License</th>
             <th rowspan="2" data-i18n="Metric">Metric</th>
             <th colspan="2" style="text-align:center;border-bottom:1px solid var(--border-subtle)">Raw</th>
-            <th colspan="4" style="text-align:center;border-bottom:1px solid var(--border-subtle);background:#182640">Q-Lite</th>
-            <th colspan="4" style="text-align:center;border-bottom:1px solid var(--border-subtle);background:#202440">Q-Pro</th>
+            <th colspan="4" class="mz-grp mz-grp-ql">Q-Lite</th>
+            <th colspan="4" class="mz-grp mz-grp-qp">Q-Pro</th>
+            <th colspan="4" class="mz-grp mz-grp-qm">Q-Master</th>
             <th colspan="2" style="text-align:center;border-bottom:1px solid var(--border-subtle)">Performance</th>
           </tr>
           <tr>
             <th data-i18n="Accuracy">Accuracy</th>
             <th>ONNX</th>
-            <th style="background:#17233a">Acc</th>
-            <th style="background:#17233a">DXNN</th>
-            <th style="background:#17233a">JSON</th>
-            <th style="background:#17233a">DL</th>
-            <th style="background:#1c213a">Acc</th>
-            <th style="background:#1c213a">DXNN</th>
-            <th style="background:#1c213a">JSON</th>
-            <th style="background:#1c213a">DL</th>
+            <th class="mz-sub-ql">Acc</th>
+            <th class="mz-sub-ql">DXNN</th>
+            <th class="mz-sub-ql">JSON</th>
+            <th class="mz-sub-ql">DL</th>
+            <th class="mz-sub-qp">Acc</th>
+            <th class="mz-sub-qp">DXNN</th>
+            <th class="mz-sub-qp">JSON</th>
+            <th class="mz-sub-qp">DL</th>
+            <th class="mz-sub-qm">Acc</th>
+            <th class="mz-sub-qm">DXNN</th>
+            <th class="mz-sub-qm">JSON</th>
+            <th class="mz-sub-qm">DL</th>
             <th>FPS</th>
             <th>FPS/W</th>
           </tr>

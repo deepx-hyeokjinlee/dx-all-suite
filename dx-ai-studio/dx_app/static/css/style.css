@@ -685,10 +685,27 @@ tbody tr:hover td{background:var(--surface-hover)}
 .mz-full-table thead{position:sticky;top:0;z-index:3}
 .mz-full-table thead th{background:var(--control-bg);font-size:var(--fs-xs);padding:6px 8px}
 .mz-full-table td{padding:5px 8px;vertical-align:middle}
+/* 티어 그룹 헤더. 예전에는 템플릿에 다크 테마 남색 hex 가 인라인으로 박혀
+   있었다 — 라이트 테마에서 흰 표 위에 어두운 띠가 떠 보였다. 토큰에서 섞으면
+   두 테마를 다 따라간다. (리터럴을 예시로 적어두면 raw-color ratchet 이 그것도
+   센다 — 이 주석이 실제로 게이트를 올렸다.) */
+.mz-grp{text-align:center;border-bottom:1px solid var(--border-subtle)}
+.mz-grp-ql{background:color-mix(in srgb, var(--accent-strong) 12%, transparent)}
+.mz-grp-qp{background:color-mix(in srgb, var(--npu) 12%, transparent)}
+.mz-grp-qm{background:color-mix(in srgb, var(--status-info) 12%, transparent)}
+.mz-sub-ql{background:color-mix(in srgb, var(--accent-strong) 6%, transparent)}
+.mz-sub-qp{background:color-mix(in srgb, var(--npu) 6%, transparent)}
+.mz-sub-qm{background:color-mix(in srgb, var(--status-info) 6%, transparent)}
 .mz-col-ql{background:rgba(88,166,255,.04)}
 .mz-col-qp{background:rgba(163,113,247,.04)}
+/* Q-Master 는 354개 중 15개뿐이라 대부분의 행에서 비어 있다 — 그룹을 구분하되
+   Q-Pro 보다 옅게 두어 빈 칸이 시선을 끌지 않게 한다.
+   이웃 두 줄처럼 rgba() 리터럴을 쓰면 raw-color ratchet 이 올라간다. 토큰에서
+   섞어 쓰면 테마를 따라가고 게이트도 통과한다. */
+.mz-col-qm{background:color-mix(in srgb, var(--status-info) 3%, transparent)}
 .mz-chk-ql{accent-color:var(--accent-strong)!important}
 .mz-chk-qp{accent-color:var(--npu)!important}
+.mz-chk-qm{accent-color:var(--status-info)!important}
 .txt-link{color:var(--status-info);text-decoration:none}
 .txt-link:hover{text-decoration:underline}
 .mz-row-selected td{background:rgba(var(--accent-rgb),.06)!important}
