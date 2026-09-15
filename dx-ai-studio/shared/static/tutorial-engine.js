@@ -450,6 +450,15 @@ class DXTutorialEngine {
       };
       var _vis = _isVisible(target);
       if (!_vis) {
+        // 폴링은 최대 2초다. 그동안 앞 스텝의 스포트라이트와 툴팁을 그대로 두면
+        // 사용자는 이미 지나간 스텝의 상자를 보게 되고, 그 사이 Next 를 또 누르면
+        // 이 함수는 _stepToken 가드에 걸려 아무것도 렌더하지 않고 빠져나간다 —
+        // 화면이 앞 스텝에 멈춘 채로 남는다. 그래서 기다리기 전에 새 스텝의
+        // 내용을 floating 으로 먼저 보여주고, 타깃이 나타나면 아래에서 anchored
+        // 로 승격한다. 첫 조회에 성공한 스텝은 이 경로를 타지 않는다.
+        // (계약: tests/test_tutorial_stale_step.py)
+        this._spotlight.classList.remove('active');
+        this._renderTooltipFloating(step);
         for (var _pw = 0; _pw < 20; _pw++) {
           await new Promise(function(r) { setTimeout(r, 100); });
           if (this._stepToken !== token || !this._curSection) return; // 중간에 중단됐으면 종료

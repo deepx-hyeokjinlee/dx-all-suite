@@ -34,6 +34,7 @@ METRICS_JS = """() => {
     sectionId: engine && engine._curSection ? engine._curSection.id : null,
     stepIndex: engine ? engine._curStep : null,
     selector,
+    optionalTarget: !!(step && step.optionalTarget),
     overlayActive: !!ov,
     spotlightActive: !!sp,
     tooltipActive: !!tip,
@@ -65,14 +66,38 @@ def dismiss_confirm(page: Page) -> None:
     page.wait_for_timeout(150)
 
 
+def mock_left_over(page: Page) -> list[str]:
+    """투어가 끝난 뒤에도 남아 있는 튜토리얼 주입 요소.
+
+    beforeStep 이 심은 프리뷰는 afterStep 이 치워야 한다. 치우지 않으면 가짜
+    데이터가 진짜 결과 사이에 섞인 채로 남는다 — 사용자는 그것이 튜토리얼이
+    만든 것인 줄 알 수 없다.
+    """
+    return page.evaluate(
+        """() => [...document.querySelectorAll('[data-dxt-tutorial-mock]')]
+              .map(el => el.tagName.toLowerCase() + '.' + (el.className || '(no class)'))"""
+    )
+
+
 def analyze_step(metrics: dict[str, Any]) -> list[tuple[str, str]]:
+    """스텝 하나의 상태에서 결함을 뽑는다.
+
+    `data-dxt-tutorial-mock` 은 여기서 보지 않는다. 그것은 beforeStep 이 **의도적으로**
+    주입한 프리뷰이고, 그것을 스포트라이트로 가리키는 것이 그 스텝의 목적이다 — 스텝이
+    살아 있는 동안 존재하는 것이 정상이다. 예전에는 존재만으로 결함으로 셌고, 그래서
+    dx_agent_dev 의 showcase|step2 와 activity|step2 가 상시 빨강이었다. 실측하면
+    afterStep 이 제대로 치운다(투어 종료 후 0개). 잡아야 할 것은 "남는 것" 이므로
+    투어가 끝난 뒤에 센다 — mock_left_over() 가 그 계약이다.
+    """
     issues: list[tuple[str, str]] = []
-    if metrics.get("tutorialMockActive"):
-        issues.append(("MOCK_INJECTION", "data-dxt-tutorial-mock present in DOM"))
     selector = metrics.get("selector")
     if selector:
         if metrics.get("floating"):
-            issues.append(("FLOATING_FALLBACK", f"target {selector!r} floating"))
+            # 조건부 타깃은 floating 이 기대 결과다 — DX App 연결이나 모델 설치처럼
+            # 튜토리얼이 만들어낼 수 없는 상태에서만 존재하는 컨트롤들이다. 선언하지
+            # 않은 스텝이 floating 되면 여전히 잡힌다(썩은 셀렉터를 놓치지 않는다).
+            if not metrics.get("optionalTarget"):
+                issues.append(("FLOATING_FALLBACK", f"target {selector!r} floating"))
         elif not metrics.get("spotlightActive"):
             issues.append(("NO_SPOTLIGHT", f"target {selector!r} no spotlight"))
         elif not metrics.get("hasTarget"):

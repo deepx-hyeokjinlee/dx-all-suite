@@ -305,11 +305,10 @@ if [ "$RUN_BROWSER" = "1" ]; then
   # 알려진 결함은 명시적으로 안고 간다 — 블로킹 게이트의 QUARANTINE 과 같은 규율이다.
   # 목록은 tests/shared/test_ci_contracts.py 가 크기를 고정해 줄어들 수만 있고, 각
   # 항목은 docs/testing.md 에 근거와 함께 적혀 있어야 한다.
-  BROWSER_QUARANTINE=(
-    --deselect "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_modelzoo]"
-    --deselect "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_app]"
-    --deselect "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_agent_dev]"
-  )
+  # 비어 있다. 2026-09-15 에 세 항목이 모두 해제됐다 — 원인은 썩은 셀렉터가 아니라
+  # (1) 폴링 중 교체된 스텝이 앞 스텝의 시각물을 남기던 것, (2) 의도적으로 주입한
+  # 프리뷰를 존재만으로 결함으로 세던 것이었다. docs/testing.md 참조.
+  BROWSER_QUARANTINE=()
 
   # 한 스위트가 실패해도 나머지를 마저 돈다. set -e 아래에서 pytest 를 그냥 호출하면
   # 첫 실패가 스크립트를 통째로 끝내는데, 실측해 보니 열 개 중 다섯 개만 돌고 나머지

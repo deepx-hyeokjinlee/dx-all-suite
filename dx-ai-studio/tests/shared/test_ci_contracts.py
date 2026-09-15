@@ -155,11 +155,7 @@ def _quarantined_in_script() -> set:
 # 있고, 각 항목은 docs/testing.md 에 근거와 함께 적혀야 하며, 낡은 항목은 실패한다.
 # 이 목록이 생기기 전에는 스테이지 전체가 advisory 였고, 그래서 빨간불이 상시
 # 상태였다. 상시 빨강은 신호가 아니라 배경이라, 새 회귀가 그 안에 묻힌다.
-BROWSER_QUARANTINED = {
-    "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_modelzoo]",
-    "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_app]",
-    "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_agent_dev]",
-}
+BROWSER_QUARANTINED: set[str] = set()
 
 
 def _browser_quarantined_in_script() -> set:

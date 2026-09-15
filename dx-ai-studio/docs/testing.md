@@ -566,23 +566,42 @@ gate. So the debt cannot quietly grow.
 
 #### Quarantined browser failures
 
-The browser stage now carries its debt the way the blocking stage does: a
-`BROWSER_QUARANTINE` list in `run_ci.sh`, pinned by `tests/shared/test_ci_contracts.py`
-so it can only shrink, with every entry documented here. Everything outside the list
-is blocking — a new failure fails the stage.
+**비어 있다 (2026-09-15).** 세 항목이 모두 해제됐다. `BROWSER_QUARANTINE` 구조는
+남겨 둔다 — `tests/shared/test_ci_contracts.py` 가 목록이 늘어나는 것을 막고, 각
+항목이 여기 근거를 갖도록 강제한다. 지금은 브라우저 스테이지 전체가 블로킹이다.
 
-| Test | Defect | Needs |
-|------|--------|-------|
-| `test_tutorial_ui_journey_no_visual_defects[dx_modelzoo]` | `download|step1` targets `[data-model-id][data-quant]`, the download button that the step's own copy says is "only visible when DX App is connected". | A way for a step to declare a conditional target, so the engine's floating fallback is the expected outcome rather than a defect. |
-| `test_tutorial_ui_journey_no_visual_defects[dx_app]` | `rundemo|step3`, `rundemo|step4` and `modelzoo|step4` (`#mz-cart`) target elements that exist only after the page has been initialised or a model selected. | Same mechanism, or `beforeStep` hooks that bring the state into being first. |
-| `test_tutorial_ui_journey_no_visual_defects[dx_agent_dev]` | `showcase|step2` and `activity|step2` leave `data-dxt-tutorial-mock` in the DOM. The tutorial injects a preview element to spotlight a state that only exists mid-operation and does not always remove it. | The mock needs an owner that clears it on step exit. |
+무엇이었는지는 기록해 둘 값어치가 있다. **셀렉터 문제가 아니었다.**
 
-Two changes made the list worth having. The stage used to abort at the first failing
-suite — `set -euo pipefail` and a bare `pytest` in the loop — so five of the ten
-suites never ran and their state was simply unknown. And the CI job is
-`continue-on-error`, so a red was the normal state; a *new* red looked exactly like
-the standing one. That is how a tutorial step pointing at deleted markup survived:
-the signal existed and was indistinguishable from the noise.
+`analyze_step` 의 `_renderTooltip` / `_renderTooltipFloating` 을 감싸 "이 스텝이
+렌더까지 갔는가" 를 기록하니, 실패한 스텝은 전부 **렌더된 적이 없었다**:
+
+```
+dx_modelzoo  download|step1    렌더됨=False  직전렌더=download|0 anchored
+dx_app       run-single|step9  렌더됨=False  직전렌더=run-single|8 anchored
+             rundemo|step3     렌더됨=False  직전렌더=rundemo|2   anchored
+             rundemo|step4     렌더됨=False  직전렌더=rundemo|2   anchored
+```
+
+`_showStep()` 은 타깃이 안 보이면 최대 2초 폴링한다. 그 사이 스텝이 교체되면
+`_stepToken` 가드에 걸려 아무것도 렌더하지 않고 빠져나갔고, 화면에는 **앞 스텝의**
+스포트라이트와 툴팁이 남았다. 러너는 350ms 만 기다리고 측정하므로, 현재 스텝의
+셀렉터(실제로 없음)와 앞 스텝의 스포트라이트(active)를 함께 보고 `TARGET_MISSING`
+으로 분류했다. 사용자에게도 같은 일이 일어난다 — Next 를 누르면 최대 2초간 지나간
+스텝의 상자를 본다. 이제 폴링에 들어가기 전에 새 스텝을 floating 으로 먼저 띄우고,
+타깃이 나타나면 anchored 로 승격한다 (`tests/test_tutorial_stale_step.py`).
+
+네 개의 타깃은 모두 **조건부**였다 — DX App 연결, 추론 결과, 모델 설치처럼
+튜토리얼이 만들어낼 수 없는 상태에서만 존재한다. 문서 전체에서 셀렉터가 0개라
+"썩었다" 고 판단했다가 정정했다: `rundemo.js:205/337` 이 그것을 만들되 모델이
+설치된 분기에서만 만든다. 그래서 스텝이 `optionalTarget: true` 로 선언하고, 그런
+스텝만 floating 이 정상으로 취급된다. 선언하지 않은 스텝이 floating 되면 여전히
+`FLOATING_FALLBACK` 으로 잡힌다 — 멀쩡한 스텝의 셀렉터를 일부러 썩혀 확인했다.
+
+`MOCK_INJECTION` 2건은 **오탐이었다.** 이 문서에 "주입한 요소를 치우는 주인이
+없다" 고 적혀 있었는데 틀렸다. `afterStep` 이 치운다 (실측: 투어 종료 후 0개).
+게이트가 `[data-dxt-tutorial-mock]` 의 **존재**를 결함으로 셌는데, 그것을 스포트라이트로
+가리키는 것이 바로 그 스텝의 목적이다. 잡아야 할 것은 "남는 것" 이므로 투어가 끝난
+뒤에 센다 (`mock_left_over()`).
 
 #### `--browser` was red (2026-09-15)
 

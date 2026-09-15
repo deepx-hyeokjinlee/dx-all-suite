@@ -6,7 +6,7 @@ import pytest
 pytest.importorskip("playwright.sync_api")
 
 from tests.server_helpers import start_module_server  # noqa: E402
-from tests.tutorial_e2e_runner import run_ui_journey, summarize  # noqa: E402
+from tests.tutorial_e2e_runner import mock_left_over, run_ui_journey, summarize  # noqa: E402
 
 JOURNEY_MODULES = [
     {
@@ -123,5 +123,10 @@ def test_tutorial_ui_journey_no_visual_defects(page, mod):
         failures = summarize(results)
         assert results, f"{mod['id']}: journey produced no step checks"
         assert not failures, f"{mod['id']} UI journey defects:\n" + "\n".join(failures[:30])
+
+        # 주입한 프리뷰는 투어가 끝나면 사라져야 한다. 스텝이 살아 있는 동안의
+        # 존재는 정상이므로 analyze_step 이 아니라 여기서 센다.
+        left = mock_left_over(page)
+        assert not left, f"{mod['id']}: 투어 종료 후에도 남은 튜토리얼 주입 요소: {left}"
     finally:
         server.shutdown()
