@@ -453,14 +453,17 @@ def test_visual_baselines_have_no_orphans():
     directory listing while nothing ever reads them.
     """
     from tests.visual.baseline_spec import (
+        INTRO_STATES,
         axes,
         baseline_name,
+        intro_baseline_name,
         responsive_axes,
         responsive_baseline_name,
     )
 
     expected = {baseline_name(*combo) for combo in axes()}
     expected |= {responsive_baseline_name(*combo) for combo in responsive_axes()}
+    expected |= {intro_baseline_name(state) for state in INTRO_STATES}
     for engine_dir in VISUAL_BASELINE_DIR.glob("*"):
         if not engine_dir.is_dir():
             continue

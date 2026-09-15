@@ -431,9 +431,10 @@ compares each against a committed baseline:
 |---|---|---|
 | `<engine>/<module>__<theme>__<locale>.png` | 9 modules x {dark, light} x {en, es} at 1280x800 | 36 |
 | `<engine>/<module>__w<width>.png` | 9 modules x {650, 860, 1150, 1320} at dark/en | 36 |
+| `<engine>/launcher__intro__<state>.png` | the intro at `hero` and `work` | 2 |
 
-72 shots, 8.1MB. `tests/visual/baseline_spec.py` is the source of truth for the
-axes and carries the reasoning for each one; do not restate the numbers here.
+74 shots. `tests/visual/baseline_spec.py` is the source of truth for the axes and
+carries the reasoning for each one; do not restate the numbers here.
 
 This is **not** what `tests/test_ux_visual_gate.py` does — that audits tutorial
 spotlight geometry through the DOM. It catches "the highlight points at nothing";
@@ -472,17 +473,33 @@ what this axis watches, so one theme and one locale are enough.
 These widths are the precondition the breakpoint ratchet was waiting on; see
 `scripts/breakpoint_gate.py`.
 
-#### What the green light does *not* cover
+#### The intro axis
 
-The capture seeds `dx-splash-seen` before loading (`tests/visual/conftest.py`), so
-the intro never runs. That is deliberate — pixel-diffing an animation is not
-deterministic — but it means a passing visual suite says "the page after the splash
-did not move" and says nothing about the intro itself.
+The landing captures seed `dx-splash-seen` (`tests/visual/conftest.py`), so the
+intro never runs in them. That is deliberate — pixel-diffing a running animation
+is not deterministic — and it means those 72 shots say "the page after the splash
+did not move" and nothing more.
 
-The intro is held by structural contracts instead, in
-`tests/launcher/test_home_portal.py`: the grammar it obeys, the surface the light
-crosses, the cut into the app, the reduced-motion path, the honesty of the working
-beat, and the drawn scenes. A split of responsibility, not a gap.
+`test_intro_regression.py` covers the intro separately, and it does not wait on the
+sequence either. It cancels the pending timers, sets the overlay to a named state
+(`hero`, `work`), and shoots with `animations="disabled"`. So what is pinned is
+"the composition once hero has settled", not "the frame at 2.6s": retiming a beat
+does not turn it red, changing the picture does.
+
+Two traps, both hit while building it:
+
+- `reduced_motion="reduce"` sends the intro down its own `is-still` path, which is
+  a *different design*, and then removes the overlay after 700ms. The capture ends
+  up photographing the home page.
+- Leaving the timers running does the same thing more slowly. Two such captures
+  agree to the pixel, so a determinism check that does not look at the image will
+  happily report 0 differing pixels on two photographs of the wrong screen.
+
+Structural contracts in `tests/launcher/test_home_portal.py` still hold the grammar
+— the surface the light crosses, the cut into the app, the reduced-motion path, the
+honesty of the working beat, the drawn scenes. The pixel axis catches what a
+contract cannot: this session shipped a doubled X, a specular lost against a
+too-bright face, and an upside-down reflection, all with the contracts green.
 
 Refresh baselines after an intentional design change:
 

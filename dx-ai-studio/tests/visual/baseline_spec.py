@@ -11,7 +11,15 @@ VIEWPORT = {"width": 1280, "height": 800}
 _DEFAULT_SETTLE_MS = 6000
 
 SPECS: dict[str, dict] = {
-    "launcher": {"settle_ms": 8000},        # hub boots every module server first
+    "launcher": {
+        "settle_ms": 8000,                  # hub boots every module server first
+        # The gateway row prints the live port, and the test harness binds an
+        # ephemeral one — so the digits change every run. It is small enough to
+        # sit near the 0.02% limit rather than over it, which is worse than a
+        # clean failure: two of the four launcher shots flaked while the other
+        # two passed. Masked, like dx_monitor's telemetry.
+        "mask": ("#hubLauncherPort",),
+    },
     "dx_app": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_stream": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_compiler": {"settle_ms": _DEFAULT_SETTLE_MS},
@@ -112,3 +120,21 @@ def responsive_axes() -> list[tuple[str, int]]:
 
 def responsive_baseline_name(module: str, width: int) -> str:
     return f"{module}__w{width}.png"
+
+
+# ── 인트로 축 ──────────────────────────────────────────────────
+# 위 baseline 들은 캡처 전에 dx-splash-seen 을 심어 인트로를 통째로 건너뛴다.
+# 애니메이션을 시간으로 찍으면 같은 커밋에서도 타이핑이 한 글자 어긋나고 스윕이
+# 몇 px 다른 자리에 있어 게이트가 흔들리기 때문이다.
+#
+# 그래서 시간을 기다리지 않고 상태를 직접 세운다 — 클래스와 data-beat 와 문구를
+# 최종값으로 박은 뒤 animations="disabled" 로 찍는다. 그러면 무엇을 고정하는지가
+# "2.6초 시점의 화면"이 아니라 "hero 가 안착한 화면"이 되어, 타이밍을 조정해도
+# 붉어지지 않고 구도가 바뀌면 붉어진다.
+#
+# 반복 촬영 0픽셀을 확인하고 넣었다 (1280x800, 3회, hero/work 각각 0/1024000).
+INTRO_STATES = ("hero", "work")
+
+
+def intro_baseline_name(state: str) -> str:
+    return f"launcher__intro__{state}.png"
