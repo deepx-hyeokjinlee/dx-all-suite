@@ -3,7 +3,6 @@
 :root {
   --launcher-topbar-h: var(--dx-module-header-h);
   --border-glow: var(--accent);
-  --stream-color: #10B981;
   --sandbox-color: var(--status-info);
   --zoo-color: var(--npu);
   --app-color: var(--app-accent);
@@ -72,7 +71,9 @@ body {
   display: flex;
   align-items: center;
   gap: var(--sp-4);
-  flex: 1 1 auto;
+  /* 늘어나지 않는다. 링크 셋이 648px 을 쥐고 있어서 모듈 탭에 473px 밖에
+     남지 않았다 — 남는 폭은 열한 칸이 필요한 쪽이 가져간다. */
+  flex: 0 1 auto;
   min-width: 0;
   /* 좁아지면 넘치는 대신 감긴다 — 스크롤바 스타일은 공유 파운데이션의 일이다 */
   flex-wrap: wrap;
@@ -127,7 +128,7 @@ body.in-app .portal-nav { display: none; }
 .top-bar-center {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex: 1;
   min-width: 0;
   overflow-x: auto;
@@ -139,6 +140,9 @@ body.in-app .portal-nav { display: none; }
   display: flex;
   align-items: center;
   gap: var(--sp-4);
+  /* 탭 스트립과 붙지 않게. 예전에는 간격이 0 이라 잘린 마지막 탭이 Buy 알약
+     바로 옆에서 끊겨, 스크롤이 아니라 버튼이 탭을 덮은 것처럼 읽혔다. */
+  margin-left: var(--sp-4);
   flex-shrink: 0;
   position: relative;
   z-index: 10001;
@@ -212,12 +216,15 @@ body:not(.hw-native-visible) #hw-float {
 
 /* Nav tabs (shown when inside an app) */
 .nav-tab {
-  padding: 6px 16px;
+  /* 16px 였다. 열한 칸이 989px 를 요구하는데 1440 에서 939px 만 나와 50px 이
+     모자랐고, 좌우 3px 씩이 그 차이를 넘긴다 — 600 weight 14px 라벨에 16px 은
+     원래 넉넉한 편이다. */
+  padding: 6px 13px;
   border-radius: var(--radius);
   font-size: var(--fs-base);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s var(--ease);
+  transition: var(--transition);
   color: var(--text-muted);
   border: 1px solid transparent;
   flex-shrink: 0;
@@ -227,43 +234,30 @@ body:not(.hw-native-visible) #hw-float {
   background: var(--control-bg);
   color: var(--text);
 }
-.nav-tab.active {
-  background: var(--accent);
-  color: var(--text-primary);
-  border-color: var(--accent);
-}
-.nav-tab.active-sandbox {
-  background: var(--sandbox-color);
-  color: var(--text-primary);
-  border-color: var(--sandbox-color);
-}
-.nav-tab.active-stream {
-  background: var(--stream-color);
-  color: var(--text-on-accent);
-  border-color: var(--stream-color);
-}
+/* 어느 탭이 켜져 있든 같은 강조를 쓴다. 모듈마다 다른 채도 높은 알약(초록·
+   보라)은 팔레트 통일에서 살아남은 잔재였고, 색이 여덟 개면 강조가 아니라
+   배경이 된다. active-stream/active-zoo 는 라우터가 이름으로 참조하므로
+   남기되, 같은 곳을 가리키게 한다. */
+.nav-tab.active,
+.nav-tab.active-stream,
 .nav-tab.active-zoo {
-  background: var(--zoo-color);
+  background: var(--accent);
   color: var(--text-on-accent);
-  border-color: var(--zoo-color);
+  border-color: var(--accent);
 }
 .nav-tab.home-btn {
   font-size: var(--fs-lg);
   padding: 4px 10px;
 }
 
-/* Status dots */
-.status-dots {
-  display: flex; align-items: center; gap: 6px;
-  font-size: var(--fs-xs); color: var(--text-dim);
-}
-.dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--status-error);
-  transition: background-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
-}
-.dot.alive { background: var(--status-ok); box-shadow: 0 0 6px var(--status-ok); }
+/* 상단 바의 모듈 상태 점 묶음(.status-dots / .dot)은 홈 재설계에서 마크업이
+   빠졌는데 스타일만 남아 있었다. 그 상태로 튜토리얼 4번 스텝이 계속 .status-dots
+   를 가리켰고, 스타일이 남아 있다는 이유로 "어딘가 참조된다" 식의 검사로는
+   잡히지 않았다 — 스타일은 요소를 만들지 않는다. 상태 표시는 이제 모듈 카드의
+   .orbital-status 가 맡는다.
+
+   JS 쪽 setDot()/setStatus() 도 같은 이유로 no-op 으로 남아 있지만, 그 호출을
+   존재 확인하는 계약이 31곳 있어 함께 정리하려면 별도 작업이 필요하다. */
 
 /* ─── Studio boot gate (blocks early VS Code port-forward clicks) ─── */
 .studio-boot-gate {
@@ -771,16 +765,9 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   -webkit-text-fill-color: transparent;
 }
 
-/* Nav tab active glow */
-.nav-tab.active {
-  box-shadow: 0 0 12px rgba(var(--accent-rgb),0.3);
-}
-.nav-tab.active-sandbox {
-  box-shadow: 0 0 12px rgba(88,166,255,0.3);
-}
-.nav-tab.active-zoo {
-  box-shadow: 0 0 12px rgba(139,92,246,0.3);
-}
+/* glow 없음. 측정한 애플 폴드 전체의 box-shadow 집합은 비어 있고, 여기 있던
+   세 줄 중 하나는 제품에서 빠진 sandbox 의 것이었으며 하나는 정리했다던
+   보라(139,92,246)였다. */
 
 /* Launch card enhanced hover */
 .launch-card {
@@ -1176,6 +1163,34 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   text-wrap: balance;
   color: var(--brand-on-shade);
 }
+/* 문장에 이미 전환점이 있다 — "from the cloud → to the physical world". 그래서
+   강조는 장식이 아니라 그 전환을 짚는 일이고, 두 절이 차례로 들어오면 읽는
+   순서가 곧 문장의 논리가 된다.
+
+   밝기로만 강조한다. 무대가 무채색이고 파랑을 쓰면 워드마크와 싸운다. 그리고
+   이건 마크가 이미 하는 말과 같은 언어다: 빛이 지나간 자리가 밝아진다.
+
+   transform 이 아니라 opacity 만 움직인다. 절은 inline 이라 transform 이 먹지
+   않고, inline-block 으로 바꾸면 좁은 화면에서 절이 통째로 한 줄을 차지하려
+   들어 줄바꿈이 깨진다. 블록 전체의 상승은 .mark-claim 이 이미 맡고 있다. */
+.claim-a,
+.claim-b {
+  opacity: 0;
+  transition: opacity .5s var(--ap-ease);
+}
+.claim-b { color: var(--brand-subtle); }
+.claim-line em {
+  font-style: normal;
+  color: var(--brand-on-shade);
+  transition: color .6s var(--ap-ease);
+}
+.splash-overlay.is-closed .claim-a { opacity: 1; transition-delay: .18s; }
+.splash-overlay.is-closed .claim-b { opacity: 1; transition-delay: .62s; }
+/* 강조는 절이 자리를 잡은 다음에 온다 — 타입은 마지막에 온다는 규칙 그대로. */
+.splash-overlay.is-closed .claim-line em { transition-delay: 1.05s; }
+/* 움직임을 줄여 달라고 한 사람에게는 순서 없이 한 번에. */
+.splash-overlay.is-still .claim-a,
+.splash-overlay.is-still .claim-b { opacity: 1; transition: none; }
 .claim-by {
   font-size: var(--ap-t-body);
   font-weight: 600;
@@ -1612,7 +1627,28 @@ body {
 .orbital-card + .orbital-card { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
 .orbital-card:hover { background: var(--ap-fill); }
 .orbital-card:focus-visible { outline: 3px solid var(--ap-blue); outline-offset: -3px; }
-.orbital-status { display: none; }
+/* 모듈이 살아 있는지 한눈에. 분기점에서는 초록/빨강 점이었는데 홈을 다시
+   자르면서 display:none 으로 숨겼고, 그때 "점은 카드마다 붙어 있으니 괜찮다"고
+   적었다 — 붙어 있긴 했지만 보이지 않았다. 상단 바의 여덟 개 묶음도 같은 작업에서
+   없앴으므로, 결과적으로 홈은 모듈 상태를 아무 데서도 말하지 않았다. 모듈이 꺼져
+   있는 걸 눌러 보기 전에는 알 수 없다는 뜻이고, 그건 조용한 게 아니라 빠진 것이다.
+
+   되살리되 예전 네온은 안 쓴다. 측정한 애플 폴드의 box-shadow 집합은 비어 있고,
+   여기서 필요한 것은 발광이 아니라 판독이다. 꺼짐은 소리치지 않고 가라앉힌다 —
+   새 장비에서는 여덟 개가 다 꺼져 있으므로 빨강 여덟 개는 경고가 아니라 벽지다. */
+.orbital-status {
+  /* 흐름 안의 항목이다. 처음엔 절대배치로 얹었는데 test_the_home_has_no_absolutely
+     _positioned_furniture 가 잡았다 — 이 홈에서는 포스터 하나가 카드를 덮은 이력이
+     있어 "쌓이는 것은 두지 않는다"가 계약이다. 카드가 이미 flex 행이라 첫 항목으로
+     두면 같은 자리에 오고 더 단순하다. */
+  flex: 0 0 auto;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ap-line);
+  transition: background var(--dur) var(--ap-ease);
+}
+.orbital-status.alive { background: var(--ap-green); }
+.orbital-status.dead { background: var(--ap-line); }
 
 .mod-tile {
   flex-shrink: 0;
@@ -2708,3 +2744,18 @@ body {
   font-weight: 600; font-size: var(--ap-t-body); line-height: 1.4; white-space: nowrap;
 }
 .buy-topbar-btn:hover { background: var(--accent-light); }
+
+/* ── 모듈 탭 스트립 ─────────────────────────────────────────
+   1440 에서 열한 칸이 정확히 들어간다(939px). 그 아래에서는 들어갈 수 없다 —
+   라벨을 더 줄이면 무엇인지 알아볼 수 없고, 아홉 개를 500px 에 넣는 방법은
+   없다. 그래서 좁을 때는 스크롤을 유지하되, 딱 잘리는 대신 오른쪽 끝을
+   흐려 "더 있다"고 말하게 한다. 잘린 글자는 사고처럼 보이고 페이드는
+   안내처럼 보인다. */
+@media (max-width: 1440px) {
+  .top-bar-center {
+    -webkit-mask-image: linear-gradient(90deg,
+      rgba(0, 0, 0, 1) calc(100% - 28px), rgba(0, 0, 0, 0));
+    mask-image: linear-gradient(90deg,
+      rgba(0, 0, 0, 1) calc(100% - 28px), rgba(0, 0, 0, 0));
+  }
+}

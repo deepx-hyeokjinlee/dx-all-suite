@@ -796,7 +796,9 @@ def test_launcher_css_no_longer_defines_shared_foundation():
         "--text-dim:",
         "--border-glow:",
         "--app-color:",
-        "--stream-color:",
+        # --stream-color 는 뺐다. 런처에서 쓰던 마지막 자리(모듈별 활성 탭 색)가
+        # 통일 강조색으로 바뀌면서 참조가 사라졌고, dx_stream 은 자기 파일에서
+        # 따로 정의한다. 쓰이지 않는 토큰의 존재를 요구하면 정리를 막을 뿐이다.
         "--sandbox-color:",
         "--zoo-color:",
     ):
@@ -804,7 +806,9 @@ def test_launcher_css_no_longer_defines_shared_foundation():
     for selector in (
         ".top-bar",
         ".top-bar-right",
-        ".status-dots",
+        # .status-dots 는 마크업이 사라졌다(홈 재설계). 이 목록이 그 스타일을
+        # 붙잡고 있었고, 그 덕에 "어딘가 참조된다"는 이유로 고아 규칙이 남았다.
+        ".orbital-status",
         ".launch-card",
         ".splash-overlay",
     ):

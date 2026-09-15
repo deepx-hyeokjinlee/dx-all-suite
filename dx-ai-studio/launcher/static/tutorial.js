@@ -40,9 +40,16 @@
         { target: '#launcherToolbar', position: 'bottom',
           title: { en: 'Shared Top Toolbar', ko: '공유 상단 툴바', ja: '共通トップツールバー', 'zh-CN': '共享顶部工具栏', 'zh-TW': '共用頂部工具列', es: 'Barra superior compartida' },
           content: { en: 'The top toolbar hosts <strong>language (🌏)</strong> and <strong>tutorial (🎓)</strong> for every launcher view.', ko: '상단 툴바에서 <strong>언어(🌏)</strong>, <strong>튜토리얼(🎓)</strong>을 사용합니다.', ja: '上部ツールバーで<strong>言語(🌏)</strong>、<strong>チュートリアル(🎓)</strong>を利用します。', 'zh-CN': '顶部工具栏提供<strong>语言(🌏)</strong>和<strong>教程(🎓)</strong>。', 'zh-TW': '頂部工具列提供<strong>語言(🌏)</strong>和<strong>教學(🎓)</strong>。', es: 'La barra superior incluye <strong>idioma (🌏)</strong> y <strong>tutorial (🎓)</strong>.' } },
-        { target: '.status-dots', position: 'bottom',
-          title: { en: 'Module Health Dots', ko: '모듈 상태 점', ja: 'モジュール状態ドット', 'zh-CN': '模块状态点', 'zh-TW': '模組狀態點', es: 'Indicadores de módulos' },
-          content: { en: '<strong>Green</strong> means the module server is reachable; <strong>red</strong> means it is offline or not installed yet.', ko: '<strong>초록</strong>은 모듈 서버 연결 가능, <strong>빨강</strong>은 오프라인 또는 미설치 상태입니다.', ja: '<strong>緑</strong>はモジュールサーバー到達可能、<strong>赤</strong>はオフラインまたは未インストールです。', 'zh-CN': '<strong>绿色</strong>表示模块服务器可访问；<strong>红色</strong>表示离线或未安装。', 'zh-TW': '<strong>綠色</strong>表示模組伺服器可連線；<strong>紅色</strong>表示離線或未安裝。', es: '<strong>Verde</strong> = servidor del módulo accesible; <strong>rojo</strong> = sin conexión o no instalado.' } },
+        { target: '#orbStatusApp', position: 'bottom',
+          // 이 스텝은 상단 바에 있던 여덟 개 모듈 상태 점 묶음(.status-dots)을
+          // 가리켰다. 홈 재설계에서 그 줄은 사라지고 점이 각 모듈 카드로
+          // 옮겨갔는데(카드마다 자기 상태를 이고 있는 게 맞다) 튜토리얼은
+          // 따라가지 못했다. 타깃이 없으면 엔진이 2초쯤 폴링한 뒤에야
+          // floating tooltip 으로 떨어지므로, 다음을 눌러도 아무것도 안 뜨다가
+          // 한 번 더 누르면 다섯 번째가 뜨는 것처럼 보였다 — 건너뛴 게 아니라
+          // 가리킬 것이 없었던 것이다.
+          title: { en: 'Module Health Dot', ko: '모듈 상태 점', ja: 'モジュール状態ドット', 'zh-CN': '模块状态点', 'zh-TW': '模組狀態點', es: 'Indicador del módulo' },
+          content: { en: 'Every module row carries its own dot. <strong>Green</strong> means that module\'s server is reachable; <strong>red</strong> means it is offline or not installed yet. A running module also says <strong>Running</strong> on its row.', ko: '모듈 행마다 자기 상태 점이 붙어 있습니다. <strong>초록</strong>은 그 모듈 서버에 연결 가능, <strong>빨강</strong>은 오프라인 또는 미설치입니다. 돌고 있는 모듈은 행에 <strong>Running</strong> 도 표시됩니다.', ja: 'モジュール行ごとに状態ドットがあります。<strong>緑</strong>はそのモジュールのサーバーに到達可能、<strong>赤</strong>はオフラインまたは未インストールです。実行中のモジュールは行に<strong>Running</strong>と表示されます。', 'zh-CN': '每个模块行都有自己的状态点。<strong>绿色</strong>表示该模块服务器可访问；<strong>红色</strong>表示离线或未安装。正在运行的模块还会在行上显示 <strong>Running</strong>。', 'zh-TW': '每個模組列都有自己的狀態點。<strong>綠色</strong>表示該模組伺服器可連線；<strong>紅色</strong>表示離線或未安裝。執行中的模組還會在列上顯示 <strong>Running</strong>。', es: 'Cada fila de módulo lleva su propio indicador. <strong>Verde</strong> = el servidor de ese módulo está accesible; <strong>rojo</strong> = sin conexión o no instalado. Un módulo activo también muestra <strong>Running</strong> en su fila.' } },
         { target: '#studioGrid', position: 'bottom',
           title: { en: 'Launch DX Modules', ko: 'DX 모듈 실행', ja: 'DXモジュール起動', 'zh-CN': '启动DX模块', 'zh-TW': '啟動DX模組', es: 'Iniciar módulos DX' },
           content: { en: 'Pick an orbital card to open App, Stream, Compiler, Monitor, and other DX AI Studio modules inside the shared frame.', ko: '오비탈 카드에서 App, Stream, Compiler, Monitor 등 DX AI Studio 모듈을 공유 프레임에서 실행합니다.', ja: 'オービタルカードからApp、Stream、Compiler、MonitorなどのDX AI Studioモジュールを共有フレームで開きます。', 'zh-CN': '从轨道卡片打开 App、Stream、Compiler、Monitor 等 DX AI Studio 模块。', 'zh-TW': '從軌道卡片開啟 App、Stream、Compiler、Monitor 等 DX AI Studio 模組。', es: 'Elija una tarjeta orbital para abrir App, Stream, Compiler, Monitor y otros módulos de DX AI Studio.' } },
