@@ -44,6 +44,8 @@ getting-started/forked_dx_app_example/
 internal/*
 # re-include the committed internal tooling (a parent dir that is excluded cannot be re-included, hence internal/* above)
 !internal/tools/
+# ghes-sync: personal overlay (mirror org, branch) — never committed
+internal/tools/ghes-sync/sync.override.conf
 workspace/
 
 # SSL certificate

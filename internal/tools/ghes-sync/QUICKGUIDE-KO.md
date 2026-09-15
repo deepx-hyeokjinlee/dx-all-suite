@@ -1,7 +1,7 @@
 # ghes-sync — 시나리오별 빠른 가이드
 
 도구는 작업 checkout을 읽지 않는다. 자기 **bare 캐시**(`~/.cache/ghes-sync/<repo>.git`)와 `sync.conf`의 두 remote만 다룬다:
-**src** = github.com 미러(`deepx-dhyang/*`), **dst** = 폐쇄망 GHES(`gh.deepx.ai/deepx/*`).
+**src** = github.com 미러(`{DEEPX-MIRROR-ORG}/*`), **dst** = 폐쇄망 GHES(`gh.deepx.ai/deepx/*`).
 아래에서 "폐쇄망" = GHES에 접근되고 github.com은 *읽기만* 되는 기계, "일반망" = github.com에 push 가능한 기계(보통 개발 PC).
 상세는 [README-KO.md](README-KO.md).
 
@@ -12,10 +12,10 @@
 | remote | URL | 역할 |
 |---|---|---|
 | `ghes` | `https://gh.deepx.ai/deepx/<repo>.git` | 폐쇄망 SCM (원천) |
-| `mirror` | `https://github.com/deepx-dhyang/<repo>.git` | sync 도구가 읽고 쓰는 private 미러 |
-| `ghcloud` | `https://github.com/DEEPX-AI/<repo>.git` | 공개 채널 (읽기 전용) |
+| `mirror` | `https://github.com/{DEEPX-MIRROR-ORG}/<repo>.git` | sync 도구가 읽고 쓰는 private 미러 |
 
-suite와 4개 harness sub-repo에 한 번에 적용한다(idempotent; `--rename-origin`은 세 URL 중 하나와 같은
+공개 채널(`github.com/DEEPX-AI/*`)은 GHES release export로 만들어지는 것이라 개발용 remote가 아니다.
+suite와 4개 harness sub-repo에 한 번에 적용한다(idempotent; `--rename-origin`은 두 URL 중 하나와 같은
 `origin`을 그 이름으로 바꿈; `--dry-run`은 계획만 출력):
 ```bash
 bash internal/tools/ghes-sync/setup_remotes.sh --rename-origin
@@ -35,8 +35,10 @@ bash internal/tools/ghes-sync/setup_remotes.sh --rename-origin
 | 4 | GHES UI | PR 리뷰/merge. suite gate(`harness-gate`)와 sub-repo gate(`subrepo-gate`)가 PR에서 실행된다. |
 
 자격증명: `GHES_SYNC_SRC_TOKEN`(github.com PAT, 읽기) + `GHES_SYNC_DST_TOKEN` 또는 `GH_ENTERPRISE_TOKEN`(GHES PAT, repo scope),
-또는 `gh auth login --hostname <host> --with-token` + `gh auth setup-git`. 토큰 없이 대화형 터미널이면 git / Git Credential
-Manager prompt가 허용되고, CI에서는 `--non-interactive`.
+또는 `gh auth login --hostname <host> --with-token` + `gh auth setup-git --hostname <host>`. 도구는 절대 묻지 않는다:
+둘 다 없는 host는 첫 fetch 전에 정확한 해결 명령과 함께 실패한다. 첫 실행 전 `cp internal/tools/ghes-sync/sync.override.conf.example internal/tools/ghes-sync/sync.override.conf` 후
+그 파일에 `src_host`(본인 미러 org)와 `branch`(본인 feature 브랜치)를 설정한다 — gitignore 대상이며 공유 `sync.conf` 위에 덮어씌워진다.
+`sync.conf`의 두 키는 의도적으로 비어 있고, 채우지 않으면(또는 `GHES_SYNC_SRC_HOST` / `GHES_SYNC_BRANCH` export) 시작을 거부한다.
 
 **변형**
 - 브랜치를 딴 뒤 GHES base가 전진해(다른 PR merge) 브랜치를 최신으로 맞추려면 `--update-branch`. 깨끗한 merge는 자동 push

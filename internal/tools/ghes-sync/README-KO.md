@@ -2,7 +2,7 @@
 
 > 시나리오별 절차: [QUICKGUIDE-KO.md](QUICKGUIDE-KO.md) · [QUICKGUIDE.md](QUICKGUIDE.md)
 
-`ghes-sync.sh`는 private github.com 미러(`github.com/deepx-dhyang/*`)의 작업을 폐쇄망
+`ghes-sync.sh`는 private github.com 미러(`github.com/{DEEPX-MIRROR-ORG}/*`)의 작업을 폐쇄망
 GHES(`gh.deepx.ai/deepx/*`)로 옮긴다. 설정된 source 브랜치를 fetch → 커밋이 가리키는
 submodule pointer 검증 → 같은 이름 브랜치로 **fast-forward push**(force 절대 금지) →
 설정된 base(`main`, dx_app/dx_stream은 `dev`)로 PR 생성(또는 기존 PR 재사용). PR merge는 사람이 한다.
@@ -19,12 +19,12 @@ GHES에 접근 가능하고 github.com을 *읽을* 수 있는 기계에서 실�
   `gh`는 **선택**: 설치되어 있으면 `gh`로, 없으면 dst 토큰 + `curl`로 GHES REST API를 호출해 PR을 만든다.
   둘 다 없으면 브랜치 push는 수행하고 PR은 *경고 후 건너뜀*(exit 0 — 수동으로 열거나 토큰을 넣어 재실행).
 - **https 전용.** 폐쇄망 기계에서는 github.com으로 SSH가 안 되므로 `sync.conf`는
-  `https://github.com/deepx-dhyang`, `https://gh.deepx.ai/deepx`를 쓴다. `git@…`는 넣지 않는다.
+  `https://github.com/{DEEPX-MIRROR-ORG}`, `https://gh.deepx.ai/deepx`를 쓴다. `git@…`는 넣지 않는다.
 - **자격증명(양쪽 모두 private).** 동등한 두 방식:
 
   | | src = github.com 미러(읽기) | dst = GHES(push + PR) |
   |---|---|---|
-  | 환경변수(실행 단위, 저장 없음) | `GHES_SYNC_SRC_TOKEN`(fallback `GH_TOKEN`) — fine-grained PAT, `deepx-dhyang/*` 5개 repo에 *Contents: Read-only* | `GHES_SYNC_DST_TOKEN`(fallback `GH_ENTERPRISE_TOKEN`, `gh`가 PR 생성에 쓰는 변수와 동일) — `repo`(contents write + pull requests) PAT |
+  | 환경변수(실행 단위, 저장 없음) | `GHES_SYNC_SRC_TOKEN`(fallback `GH_TOKEN`) — fine-grained PAT, `{DEEPX-MIRROR-ORG}/*` 5개 repo에 *Contents: Read-only* | `GHES_SYNC_DST_TOKEN`(fallback `GH_ENTERPRISE_TOKEN`, `gh`가 PR 생성에 쓰는 변수와 동일) — `repo`(contents write + pull requests) PAT |
   | credential helper(기계당 1회) | `gh auth login --hostname github.com --with-token < pat.txt && gh auth setup-git --hostname github.com` | `gh auth login --hostname gh.deepx.ai [--with-token < pat.txt] && gh auth setup-git --hostname gh.deepx.ai` |
 
   환경변수를 쓰면 도구가 호출마다 `git -c http.https://<host>/.extraheader=AUTHORIZATION: basic <base64>`로 토큰을 전달한다 —
@@ -32,12 +32,11 @@ GHES에 접근 가능하고 github.com을 *읽을* 수 있는 기계에서 실�
   도구가 `GIT_TERMINAL_PROMPT=0`을 설정하므로 인증 힌트와 함께 즉시 실패한다. 폐쇄망 기계에서 `gh auth login`은
   `--with-token`으로 브라우저 없이 가능하고, `https://github.com/login/device`를 열 수 있으면 device/web 흐름도 된다.
 - env 토큰과 credential helper가 둘 다 있으면 해당 호출에는 header(env 토큰)가 우선한다.
-- **대화형 vs 비대화형.** 터미널(git bash, ssh 세션)에서 토큰 없이 실행하면 git이 직접 묻도록 허용한다:
-  Windows의 Git Credential Manager는 브라우저/device 로그인을 띄우고, 일반 git은 터미널에서 user + PAT를 묻는다
-  (user는 아무 값, password에 PAT; `git config --global credential.helper manager|store`로 기억 가능).
-  PR 단계에서 토큰도 `gh`도 없으면 GHES PAT를 한 번 입력받는다(저장하지 않음). TTY가 없거나 `--non-interactive`,
-  `GHES_SYNC_INTERACTIVE=0`(CI)이면 prompt를 차단(`GIT_TERMINAL_PROMPT=0`)하고 자격증명 부재 시 즉시 실패한다 —
-  이 경우 PAT를 secret으로 주입한다.
+- **비대화형 전용.** 도구는 절대 묻지 않는다(`GIT_TERMINAL_PROMPT=0`, PAT prompt 없음) — 대화형 로그인은 실제로 안정적으로
+  인증되지 않았다. host에 접근하기 전에 **자격증명 preflight**를 수행한다: 해당 쪽 토큰 env가 없으면 git credential helper에
+  묻고(`git credential fill`, prompt 없음), 응답이 없으면 env 변수 이름과
+  `gh auth login --hostname <host> --with-token && gh auth setup-git --hostname <host>`를 힌트로 출력하며 즉시 실패한다.
+  CI에서는 PAT를 secret으로 주입한다.
 
 ## 빠른 시작
 
@@ -49,13 +48,26 @@ bash internal/tools/ghes-sync/ghes-sync.sh                     # push + PR 보�
 bash internal/tools/ghes-sync/ghes-sync.sh --repo dx_app --no-pr   # repo 하나, push만
 ```
 
-## 설정 — `sync.conf`
+## 설정 — `sync.conf` + `sync.override.conf`
+
+`sync.conf`는 commit되어 공유되는 파일이다. **개인 값을 여기에 넣지 말 것**(계속 `git status`에 남는다). 옆의
+`sync.override.conf`에 넣는다 — gitignore 대상, 같은 INI 형식, `sync.conf` 위에 덮어씀:
+
+```bash
+cp internal/tools/ghes-sync/sync.override.conf.example internal/tools/ghes-sync/sync.override.conf
+# 그 파일에서 src_host(본인 미러 org)와 branch(본인 feature 브랜치)를 설정
+```
+두 키는 `sync.conf`에서 의도적으로 비어 있다. 설정되기 전(override 파일, `--override FILE`, 또는
+`GHES_SYNC_SRC_HOST` / `GHES_SYNC_BRANCH` env)까지 도구는 exit 2와 힌트로 멈춘다. `--print-config`가 적용된 override 파일을 보여 준다.
+
 
 ```ini
 [defaults]
-src_host  = https://github.com/deepx-dhyang  # url = <host>/<name>.git — https only
+src_host  =                                 # 필수 — 본인 private 미러 org, 예: https://github.com/{DEEPX-MIRROR-ORG}
+                                            # (https 전용; 또는 export GHES_SYNC_SRC_HOST). 비어 있으면 exit 2 + 힌트
 dst_host  = https://gh.deepx.ai/deepx
-branch    = feature/dx-agent-dev            # source 브랜치; dst_branch 기본값은 같은 이름
+branch    =                                 # 필수 — 본인 feature 브랜치, 예: feature/my-topic
+                                            # (또는 export GHES_SYNC_BRANCH); dst_branch 기본값은 같은 이름
 pr_base   = main                            # dst의 PR 대상; "" = 해당 repo PR 없음
 mode      = pr                              # pr = push + PR 보장 · push = push만
 cache_dir = ${XDG_CACHE_HOME:-~/.cache}/ghes-sync
@@ -148,7 +160,7 @@ repo별로 미러 브랜치가 이미 base에 포함되어 있으면(merge commi
 사용자 입장에서는 무조건 덮어쓰기이며, fetch와 push 사이에 누가 미러 브랜치에 push한 경우에만 거부된다(재실행).
 `reverse_branches`(`main`/`dev` 자체)도 같은 실행에서 ff로 동기화된다. 끝나면 개발 checkout을 갱신한다:
 `git fetch mirror && git reset --hard mirror/feature/dx-agent-dev`(도구가 출력; remote 이름은
-`ghes` / `mirror` / `ghcloud` 규칙 — `setup_remotes.sh --rename-origin`으로 적용). `--reset-to-base`는
+`ghes` / `mirror` 규칙 — `setup_remotes.sh --rename-origin`으로 적용). `--reset-to-base`는
 `--reverse`와 함께만 허용된다.
 
 ## 문제 해결

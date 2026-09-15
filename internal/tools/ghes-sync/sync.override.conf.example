@@ -1,0 +1,13 @@
+# sync.override.conf — YOUR local values, applied on top of sync.conf (same INI format).
+# Copy this file to sync.override.conf (gitignored) and edit. Only the keys you set here change.
+#
+#   cp internal/tools/ghes-sync/sync.override.conf.example internal/tools/ghes-sync/sync.override.conf
+
+[defaults]
+src_host = https://github.com/{DEEPX-MIRROR-ORG}   # your private github.com mirror org (https only)
+branch   = feature/{my-topic}                     # the feature branch you sync (same name on GHES)
+
+# Optional per-repo tweaks — e.g. a different PR base or extra branches for --reverse:
+# [repo dx_app]
+# pr_base = dev
+# reverse_branches = feature/{my-topic} dev main

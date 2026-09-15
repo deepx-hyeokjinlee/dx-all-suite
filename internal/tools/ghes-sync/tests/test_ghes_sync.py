@@ -295,18 +295,52 @@ def _b64(token: str) -> str:
     return base64.b64encode(f"x-access-token:{token}".encode()).decode()
 
 
-def test_committed_conf_uses_https_hosts_not_ssh():
-    """The closed-network machine has no SSH route to github.com — only https."""
+def test_committed_conf_has_no_hardcoded_mirror_org_or_branch():
+    """The committed sync.conf must be edited by each user: no personal mirror org, no
+    hardcoded feature branch, https only (the closed network has no SSH to github.com)."""
     text = CONF.read_text(encoding="utf-8")
-    assert "src_host  = https://github.com/deepx-dhyang" in text.replace("src_host =", "src_host  ="), text
+    assert "deepx-dhyang" not in text
+    assert re.search(r"^src_host\s*=\s*(#.*)?$", text, re.M), "src_host must be left EMPTY for the user to fill in"
+    assert re.search(r"^branch\s*=\s*(#.*)?$", text, re.M), "branch must be left EMPTY for the user to fill in"
     assert "dst_host  = https://gh.deepx.ai/deepx" in text.replace("dst_host =", "dst_host  ="), text
-    assert "git@" not in text
+    assert "git@" not in text and "ghcloud" not in text
+
+
+def test_committed_conf_refuses_to_run_unedited_with_a_hint(env):
+    r = subprocess.run(["bash", str(TOOL), "--config", str(CONF), "--print-config"], text=True, capture_output=True,
+                       env={k: v for k, v in __import__("os").environ.items() if not k.startswith("GHES_SYNC_")})
+    assert r.returncode == 2, r.stdout + r.stderr
+    o = r.stdout + r.stderr
+    assert "src_host" in o and "sync.conf" in o and "GHES_SYNC_SRC_HOST" in o
+
+
+def test_empty_src_host_and_branch_fail_with_hints_unless_env_overrides(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "")])
+    conf = env.conf.read_text(encoding="utf-8")
+    env.conf.write_text(re.sub(r"^src_host = .*$", "src_host =", conf, flags=re.M), encoding="utf-8")
+    r = env.run("--print-config")
+    assert r.returncode == 2 and "src_host" in out(r) and "GHES_SYNC_SRC_HOST" in out(r), out(r)
+    r = env.run("--print-config", extra_env={"GHES_SYNC_SRC_HOST": f"file://{env.repos.src}"})
+    assert r.returncode == 0 and f"src_url = file://{env.repos.src}/dx_app.git" in r.stdout, out(r)
+    env.conf.write_text(re.sub(r"^branch = .*$", "branch =", conf, flags=re.M), encoding="utf-8")
+    r = env.run("--print-config")
+    assert r.returncode == 2 and "branch" in out(r) and "GHES_SYNC_BRANCH" in out(r), out(r)
+    r = env.run("--print-config", extra_env={"GHES_SYNC_BRANCH": "topic/x"})
+    assert r.returncode == 0 and "branch = topic/x" in r.stdout, out(r)
+
+
+def test_ghcloud_host_is_no_longer_a_config_key(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "")], extra_defaults="ghcloud_host = https://github.com/DEEPX-AI")
+    r = env.run("--print-config")
+    assert r.returncode == 2 and "ghcloud_host" in out(r)
 
 
 def test_src_token_is_sent_as_extraheader_and_never_printed(env):
     log = env.install_fake_git()
     env.repos.make("dx_app")
-    env.write_conf([("dx_app", "src_url = https://github.invalid/deepx-dhyang/dx_app.git")])
+    env.write_conf([("dx_app", "src_url = https://github.invalid/mirror-org/dx_app.git")])
     r = env.run("--pull-only", "--repo", "dx_app", extra_env={"GHES_SYNC_SRC_TOKEN": "s3cretTOKEN"})
     assert r.returncode == 1, out(r)                       # .invalid never resolves → repo FAIL
     fetches = [l for l in log.read_text().splitlines() if " fetch " in l and "github.invalid" in l]
@@ -403,14 +437,33 @@ def test_rest_dry_run_creates_nothing(env):
     assert "DRY-RUN" in r.stdout and "/pulls" in r.stdout
 
 
-def test_help_lists_non_interactive_and_prompts_stay_disabled_without_tty(env):
+def test_tool_is_always_non_interactive(env):
+    """User decision 2026-09-15: interactive prompts never authenticated reliably, so the
+    tool is non-interactive only — no --non-interactive flag, GIT_TERMINAL_PROMPT=0 always,
+    no PAT prompt; missing credentials fail fast with a hint (see the preflight test)."""
     r = env.run("--help")
-    assert "--non-interactive" in r.stdout
+    assert "--non-interactive" not in r.stdout and "GHES_SYNC_INTERACTIVE" not in r.stdout
+    r = env.run("--non-interactive", "--no-pr")
+    assert r.returncode == 2, out(r)                       # unknown argument
     log = env.install_fake_git()
     _basic(env)
-    r = env.run("--no-pr", "--non-interactive")
+    r = env.run("--no-pr")
     assert r.returncode == 0, out(r)
     assert "GTP=0 |" in log.read_text() and "GTP=unset" not in log.read_text()
+
+
+def test_https_host_without_any_credential_fails_before_fetching(env):
+    """No token env and no credential helper for the host → fail fast with a hint
+    naming the env var and `gh auth setup-git`, without even attempting the fetch."""
+    log = env.install_fake_git()
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "src_url = https://github.invalid/mirror-org/dx_app.git")])
+    r = env.run("--pull-only", "--repo", "dx_app", extra_env={"GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_NOSYSTEM": "1",
+                                                              "GHES_SYNC_SRC_TOKEN": "", "GH_TOKEN": ""})
+    assert r.returncode == 1, out(r)
+    o = out(r)
+    assert "no credentials" in o.lower() and "GHES_SYNC_SRC_TOKEN" in o and "gh auth setup-git" in o
+    assert not [l for l in log.read_text().splitlines() if " fetch " in l and "github.invalid" in l], "must not attempt the fetch"
 
 
 def test_rest_existing_pr_is_reported_with_its_html_url(env):
@@ -858,7 +911,7 @@ def test_to_ahead_hint_does_not_promise_a_forward_push_for_non_feature_branches(
     assert "forward run" not in line and "not pushed by the forward" in line.lower() or "check" in line.lower()
 
 
-# ── remote naming convention: ghes / mirror / ghcloud (setup_remotes.sh) ─────────
+# ── remote naming convention: ghes / mirror (setup_remotes.sh) ───────────────────
 
 SETUP = SUITE / "internal" / "tools" / "ghes-sync" / "setup_remotes.sh"
 
@@ -874,8 +927,7 @@ def _fake_suite_tree(env, origin_is_mirror: bool = True) -> Path:
         url = f"file://{env.repos.src}/{name}.git" if origin_is_mirror else f"https://elsewhere/{name}.git"
         git("remote", "add", "origin", url, cwd=d)
     env.write_conf([("dx_app", "path = dx-runtime/dx_app"), ("dx_stream", "path = dx-runtime/dx_stream"),
-                    ("dx-runtime", "path = dx-runtime"), ("dx-compiler", "path = dx-compiler"), ("dx-all-suite", "path = .")],
-                   extra_defaults="ghcloud_host = https://github.com/DEEPX-AI")
+                    ("dx-runtime", "path = dx-runtime"), ("dx-compiler", "path = dx-compiler"), ("dx-all-suite", "path = .")])
     return root
 
 
@@ -890,7 +942,7 @@ def _run_setup(env, *args):
                    env={**_os.environ, "PATH": f"{env.bin}:{_os.environ['PATH']}"}, timeout=120)
 
 
-def test_setup_remotes_adds_ghes_mirror_ghcloud_to_all_five_repos(env):
+def test_setup_remotes_adds_ghes_and_mirror_to_all_five_repos(env):
     root = _fake_suite_tree(env)
     r = _run_setup(env, "--suite-dir", str(root))
     assert r.returncode == 0, r.stdout + r.stderr
@@ -898,7 +950,7 @@ def test_setup_remotes_adds_ghes_mirror_ghcloud_to_all_five_repos(env):
         rem = _remotes(root / rel)
         assert rem["mirror"] == f"file://{env.repos.src}/{name}.git"
         assert rem["ghes"] == f"file://{env.repos.dst}/{name}.git"
-        assert rem["ghcloud"] == f"https://github.com/DEEPX-AI/{name}.git"
+        assert "ghcloud" not in rem                               # the public channel is not a dev remote
         assert "origin" in rem                                   # untouched without --rename-origin
     assert "origin" in r.stdout and "--rename-origin" in r.stdout   # tells you origin == mirror
 
@@ -929,12 +981,12 @@ def test_setup_remotes_does_not_rename_a_foreign_origin(env):
     assert rem["origin"] == "https://elsewhere/dx-compiler.git" and "mirror" in rem
 
 
-def test_print_config_exposes_path_and_ghcloud_url(env):
+def test_print_config_exposes_path_and_no_ghcloud(env):
     _fake_suite_tree(env)
     r = env.run("--print-config")
     assert r.returncode == 0, out(r)
     app = re.search(r"\[dx_app\](.*?)(?=\n\[|\Z)", r.stdout, re.S).group(1)
-    assert "path = dx-runtime/dx_app" in app and f"ghcloud_url = https://github.com/DEEPX-AI/dx_app.git" in app
+    assert "path = dx-runtime/dx_app" in app and "ghcloud" not in r.stdout
 
 
 # ── reverse: UP-TO-DATE must not push; suite-url derivation follows the naming convention ──
@@ -953,3 +1005,32 @@ def test_reverse_up_to_date_branch_is_not_pushed_again(env):
     assert r.returncode == 0, out(r)
     assert not [l for l in log.read_text().splitlines() if " push " in l], "UP-TO-DATE branches must not be pushed"
     assert r.stdout.rsplit("SUMMARY", 1)[-1].count("UP-TO-DATE") == 2
+
+
+# ── sync.override.conf: local, gitignored overlay so sync.conf stays untouched ──────
+
+OVERRIDE_EXAMPLE = SUITE / "internal" / "tools" / "ghes-sync" / "sync.override.conf.example"
+
+
+def test_override_conf_overlays_sync_conf(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "")])
+    conf = env.conf.read_text(encoding="utf-8")
+    env.conf.write_text(re.sub(r"^(src_host|branch) = .*$", r"\1 =", conf, flags=re.M), encoding="utf-8")
+    ov = env.conf.with_name(env.conf.name.replace(".conf", ".override.conf"))
+    ov.write_text(f"[defaults]\nsrc_host = file://{env.repos.src}\nbranch = topic/o\n[repo dx_app]\npr_base = dev\n", encoding="utf-8")
+    r = env.run("--print-config")
+    assert r.returncode == 0, out(r)
+    app = re.search(r"\[dx_app\](.*?)(?=\n\[|\Z)", r.stdout, re.S).group(1)
+    assert f"src_url = file://{env.repos.src}/dx_app.git" in app and "branch = topic/o" in app and "pr_base = dev" in app
+    assert "override" in r.stdout.lower()                      # the tool says which override file it applied
+
+
+def test_override_conf_example_exists_and_real_override_is_gitignored():
+    assert OVERRIDE_EXAMPLE.is_file()
+    text = OVERRIDE_EXAMPLE.read_text(encoding="utf-8")
+    assert "src_host" in text and "branch" in text and "deepx-dhyang" not in text
+    r = subprocess.run(["git", "-C", str(SUITE), "check-ignore", "-q", "internal/tools/ghes-sync/sync.override.conf"])
+    assert r.returncode == 0, "sync.override.conf must be gitignored"
+    r = subprocess.run(["git", "-C", str(SUITE), "check-ignore", "-q", "internal/tools/ghes-sync/sync.override.conf.example"])
+    assert r.returncode != 0, "the .example must stay tracked"

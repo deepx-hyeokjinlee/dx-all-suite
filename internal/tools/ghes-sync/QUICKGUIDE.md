@@ -2,7 +2,7 @@
 
 The tool never reads your working checkout. It works on its own **bare cache**
 (`~/.cache/ghes-sync/<repo>.git`) and on the two remotes in `sync.conf`:
-**src** = github.com mirror (`deepx-dhyang/*`), **dst** = closed-network GHES (`gh.deepx.ai/deepx/*`).
+**src** = github.com mirror (`{DEEPX-MIRROR-ORG}/*`), **dst** = closed-network GHES (`gh.deepx.ai/deepx/*`).
 "Closed network" below = a machine that reaches GHES and can *read* github.com but not push to it.
 "Open network" = a machine that can push to github.com (usually your dev box). Reference: [README.md](README.md).
 
@@ -13,11 +13,11 @@ Always start with `--dry-run`; it fetches, classifies and prints every push/PR i
 | remote | URL | role |
 |---|---|---|
 | `ghes` | `https://gh.deepx.ai/deepx/<repo>.git` | closed-network SCM (source of truth) |
-| `mirror` | `https://github.com/deepx-dhyang/<repo>.git` | private mirror the sync tool reads/writes |
-| `ghcloud` | `https://github.com/DEEPX-AI/<repo>.git` | public channel (read-only for us) |
+| `mirror` | `https://github.com/{DEEPX-MIRROR-ORG}/<repo>.git` | private mirror the sync tool reads/writes |
 
-Apply it to the suite and its four harness sub-repos in one go (idempotent; `--rename-origin` turns an
-`origin` that equals one of the three into that name; `--dry-run` shows the plan):
+The public channel (`github.com/DEEPX-AI/*`) is produced by the GHES release export and is not a dev remote.
+Apply the convention to the suite and its four harness sub-repos in one go (idempotent; `--rename-origin` turns an
+`origin` that equals one of the two into that name; `--dry-run` shows the plan):
 ```bash
 bash internal/tools/ghes-sync/setup_remotes.sh --rename-origin
 ```
@@ -36,8 +36,12 @@ All commands below use these names. Never put a token in a remote URL — use a 
 | 4 | GHES UI | Review / merge the PRs. The suite gate (`harness-gate`) and sub-repo gates (`subrepo-gate`) run on them. |
 
 Credentials: `GHES_SYNC_SRC_TOKEN` (github.com PAT, read) and `GHES_SYNC_DST_TOKEN` or `GH_ENTERPRISE_TOKEN`
-(GHES PAT, repo scope) — or `gh auth login --hostname <host> --with-token` + `gh auth setup-git`. On an
-interactive terminal without tokens, git / Git Credential Manager prompts are allowed; `--non-interactive` for CI.
+(GHES PAT, repo scope) — or `gh auth login --hostname <host> --with-token` + `gh auth setup-git --hostname <host>`.
+The tool never prompts: a host with neither fails before the first fetch, with the exact command to fix it.
+Before the first run: `cp internal/tools/ghes-sync/sync.override.conf.example internal/tools/ghes-sync/sync.override.conf`
+and set `src_host` (your mirror org) and `branch` (your feature branch) there — the file is gitignored and applied on top of
+the shared `sync.conf`, whose two keys are intentionally empty (the tool refuses to start until they are set, or
+`GHES_SYNC_SRC_HOST` / `GHES_SYNC_BRANCH` are exported).
 
 **Variants**
 - The PR base moved on GHES since you branched (other PRs merged) and you want the branch up to date:

@@ -2,13 +2,13 @@
 # setup_remotes.sh — apply the remote naming convention to a dev checkout of the suite and
 # its four harness sub-repos, from the same sync.conf ghes-sync.sh uses:
 #
-#   ghes     dst_host/<repo>.git      gh.deepx.ai/deepx/*        (closed-network SCM)
-#   mirror   src_host/<repo>.git      github.com/deepx-dhyang/*  (private mirror)
-#   ghcloud  ghcloud_host/<repo>.git  github.com/DEEPX-AI/*      (public channel, read-only)
+#   ghes     dst_host/<repo>.git      gh.deepx.ai/deepx/*              (closed-network SCM)
+#   mirror   src_host/<repo>.git      github.com/{DEEPX-MIRROR-ORG}/*  (your private mirror)
+# (the public channel github.com/DEEPX-AI is produced by the release export — not a dev remote)
 #
 # Usage: setup_remotes.sh [--config FILE] [--suite-dir DIR] [--rename-origin] [--dry-run] [--help]
 #   --suite-dir DIR   the suite checkout (default: the dir containing internal/tools/ghes-sync)
-#   --rename-origin   when a repo's `origin` URL equals one of the three, rename it instead
+#   --rename-origin   when a repo's `origin` URL equals one of the two, rename it instead
 #                     of keeping a duplicate (a foreign origin is left alone)
 #   --dry-run         print what would change, change nothing
 # Repos and their checkout paths come from sync.conf ([repo NAME] path = ...). Idempotent:
@@ -57,7 +57,6 @@ flush() {
     local target=""
     [ "$origin_url" = "${V[src_url]}" ] && target=mirror
     [ "$origin_url" = "${V[dst_url]}" ] && target=ghes
-    [ "$origin_url" = "${V[ghcloud_url]}" ] && target=ghcloud
     if [ -n "$target" ]; then
       if [ "$RENAME" -eq 1 ]; then
         if git -C "$dir" config --get "remote.$target.url" >/dev/null 2>&1; then
@@ -76,7 +75,6 @@ flush() {
   fi
   ensure_remote "$dir" ghes    "${V[dst_url]}"
   ensure_remote "$dir" mirror  "${V[src_url]}"
-  ensure_remote "$dir" ghcloud "${V[ghcloud_url]}"
   name=""; V=()
 }
 while IFS= read -r line; do

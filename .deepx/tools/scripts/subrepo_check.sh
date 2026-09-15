@@ -213,7 +213,7 @@ derive_suite_url() {
   # The CONFIGURED value, not `remote get-url`: the latter applies url.<base>.insteadOf
   # rewrites (present on CI images / credential-manager hosts) and would silently turn
   # git@host:org/... into https://host/org/... .
-  # Dev checkouts may follow the ghes/mirror/ghcloud naming convention instead of `origin`.
+  # Dev checkouts may follow the ghes/mirror naming convention instead of `origin`.
   local r
   for r in origin mirror ghes; do
     origin="$(git -C "$REPO_DIR" config --get "remote.$r.url" 2>/dev/null || true)"

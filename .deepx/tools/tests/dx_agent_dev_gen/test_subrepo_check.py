@@ -568,7 +568,7 @@ class TestPythonVersionPreflight:
 
     @pytest.mark.parametrize("remote", ["mirror", "ghes"])
     def test_derivation_falls_back_to_the_mirror_or_ghes_remote(self, tmp_path, remote):
-        """Dev checkouts follow the naming convention ghes / mirror / ghcloud (no `origin`)."""
+        """Dev checkouts follow the naming convention ghes / mirror (no `origin`)."""
         repo = tmp_path / "repo"
         repo.mkdir()
         _git("init", "-q", cwd=repo)

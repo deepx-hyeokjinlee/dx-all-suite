@@ -2,7 +2,7 @@
 
 > Scenario-by-scenario walkthrough: [QUICKGUIDE.md](QUICKGUIDE.md) · [QUICKGUIDE-KO.md](QUICKGUIDE-KO.md)
 
-`ghes-sync.sh` moves work from the private github.com mirror (`github.com/deepx-dhyang/*`)
+`ghes-sync.sh` moves work from the private github.com mirror (`github.com/{DEEPX-MIRROR-ORG}/*`)
 to the closed-network GHES (`gh.deepx.ai/deepx/*`): it fetches each configured source branch,
 verifies the submodule pointers it carries, **fast-forward pushes** the same-name branch to
 GHES (never force) and opens — or finds — a PR from that branch into the configured base
@@ -22,12 +22,12 @@ public `github.com/DEEPX-AI` export.
   with `curl` and the dst token; with neither, the branch is still pushed and the PR is *skipped with a warning*
   (exit 0 — open it by hand or rerun with a token).
 - **https only.** The closed-network machine has no SSH route to github.com, so `sync.conf` uses
-  `https://github.com/deepx-dhyang` and `https://gh.deepx.ai/deepx`. Never put `git@…` there.
+  `https://github.com/{DEEPX-MIRROR-ORG}` and `https://gh.deepx.ai/deepx`. Never put `git@…` there.
 - **Credentials (both sides are private).** Two equivalent options:
 
   | | src = github.com mirror (read) | dst = GHES (push + PR) |
   |---|---|---|
-  | env var (per run, nothing stored) | `GHES_SYNC_SRC_TOKEN` (fallback `GH_TOKEN`) — fine-grained PAT, *Contents: Read-only* on the 5 `deepx-dhyang/*` repos | `GHES_SYNC_DST_TOKEN` (fallback `GH_ENTERPRISE_TOKEN`, which `gh` also uses for the PR) — PAT with `repo` (contents write + pull requests) |
+  | env var (per run, nothing stored) | `GHES_SYNC_SRC_TOKEN` (fallback `GH_TOKEN`) — fine-grained PAT, *Contents: Read-only* on the 5 `{DEEPX-MIRROR-ORG}/*` repos | `GHES_SYNC_DST_TOKEN` (fallback `GH_ENTERPRISE_TOKEN`, which `gh` also uses for the PR) — PAT with `repo` (contents write + pull requests) |
   | credential helper (once per machine) | `gh auth login --hostname github.com --with-token < pat.txt && gh auth setup-git --hostname github.com` | `gh auth login --hostname gh.deepx.ai [--with-token < pat.txt] && gh auth setup-git --hostname gh.deepx.ai` |
 
   With an env var the tool passes the token per call as `git -c http.https://<host>/.extraheader=AUTHORIZATION: basic <base64>` —
@@ -36,12 +36,11 @@ public `github.com/DEEPX-AI` export.
   auth hint instead. `gh auth login` on the closed-network machine works with `--with-token` (no browser needed); the
   device/web flow also works if the machine can open `https://github.com/login/device`.
 - If both an env token and a credential helper exist, the header (env token) wins for that call.
-- **Interactive vs non-interactive.** On a terminal (git bash, ssh session) with no token, git is allowed to ask:
-  Git Credential Manager on Windows opens the browser/device login, plain git asks for user + PAT on the terminal
-  (type anything as user, the PAT as password; `git config --global credential.helper manager|store` remembers it).
-  If no token and no `gh` are available for the PR step, the tool asks once for a GHES PAT (not stored). Without a TTY,
-  with `--non-interactive`, or `GHES_SYNC_INTERACTIVE=0` (CI), prompts are disabled (`GIT_TERMINAL_PROMPT=0`) and a
-  missing credential fails fast — inject the PATs as secrets there.
+- **Non-interactive only.** The tool never prompts (`GIT_TERMINAL_PROMPT=0`, no PAT prompt) — interactive logins
+  proved unreliable. Before touching a host it runs a **credential preflight**: with no token env for that side it asks
+  git's credential helpers (`git credential fill`, no prompt) and, if nothing answers, fails fast with a hint naming the
+  env var and `gh auth login --hostname <host> --with-token && gh auth setup-git --hostname <host>`. In CI inject the
+  PATs as secrets.
 
 ## Quick start
 
@@ -53,13 +52,27 @@ bash internal/tools/ghes-sync/ghes-sync.sh                     # push + ensure P
 bash internal/tools/ghes-sync/ghes-sync.sh --repo dx_app --no-pr   # one repo, push only
 ```
 
-## Configuration — `sync.conf`
+## Configuration — `sync.conf` + `sync.override.conf`
+
+`sync.conf` is committed and shared; **do not edit it for your own values** (it would sit in `git status`
+forever). Put them in `sync.override.conf` next to it — gitignored, same INI format, applied on top:
+
+```bash
+cp internal/tools/ghes-sync/sync.override.conf.example internal/tools/ghes-sync/sync.override.conf
+# then set src_host (your mirror org) and branch (your feature branch) in that file
+```
+The two keys are intentionally empty in `sync.conf`; until they are set (override file, `--override FILE`,
+or `GHES_SYNC_SRC_HOST` / `GHES_SYNC_BRANCH` env) the tool exits 2 with a hint. `--print-config` shows which
+override file was applied.
+
 
 ```ini
 [defaults]
-src_host  = https://github.com/deepx-dhyang  # url = <host>/<name>.git — https only
+src_host  =                                 # REQUIRED — your private mirror org, e.g. https://github.com/{DEEPX-MIRROR-ORG}
+                                            # (https only; or export GHES_SYNC_SRC_HOST). Empty → exit 2 with a hint.
 dst_host  = https://gh.deepx.ai/deepx
-branch    = feature/dx-agent-dev            # source branch; dst_branch defaults to the same name
+branch    =                                 # REQUIRED — your feature branch, e.g. feature/my-topic
+                                            # (or export GHES_SYNC_BRANCH); dst_branch defaults to the same name
 pr_base   = main                            # PR target on dst; "" = no PR for that repo
 mode      = pr                              # pr = push + ensure PR · push = push only
 cache_dir = ${XDG_CACHE_HOME:-~/.cache}/ghes-sync
@@ -158,7 +171,7 @@ just fetched>` — for you that is an unconditional overwrite; it only refuses w
 the mirror branch between the fetch and the push (rerun). `reverse_branches` (`main`/`dev`
 themselves) are synced ff in the same run. Afterwards update your dev checkout:
 `git fetch mirror && git reset --hard mirror/feature/dx-agent-dev` (the tool prints this; remotes follow the
-`ghes` / `mirror` / `ghcloud` convention — `setup_remotes.sh --rename-origin` applies it).
+`ghes` / `mirror` convention — `setup_remotes.sh --rename-origin` applies it).
 `--reset-to-base` is only accepted together with `--reverse`.
 
 ## Troubleshooting

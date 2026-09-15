@@ -4,12 +4,16 @@
 # (never force) → open/refresh a PR into the configured base branch.
 #
 # Usage:
-#   ghes-sync.sh [--config FILE] [--repo NAME ...] [--pull-only | --push-only]
-#                [--dry-run] [--tags] [--no-pr] [--update-branch] [--non-interactive]
+#   ghes-sync.sh [--config FILE] [--override FILE] [--repo NAME ...] [--pull-only | --push-only]
+#                [--dry-run] [--tags] [--no-pr] [--update-branch]
 #                [--reverse [--force-with-lease] [--reset-to-base [--no-backup]]]
 #                [--cache-dir DIR] [--print-config] [--help]
 #
 #   --config FILE     INI config (default: sync.conf next to this script)
+#   --override FILE   local overlay applied on top of --config (default: <config>.override.conf
+#                     next to it, i.e. sync.override.conf — gitignored; copy sync.override.conf.example).
+#                     Put YOUR values there (src_host = your mirror org, branch = your feature branch)
+#                     so sync.conf itself never shows up in `git status`.
 #   --repo NAME       process only this repo (repeatable; conf order is kept)
 #   --pull-only       fetch src/dst into the local cache, push nothing
 #   --push-only       skip the src fetch (use the cache), still fetch dst, push
@@ -20,8 +24,6 @@
 #                     commit — never a rebase, never a force push) and ff-push it; a conflict
 #                     aborts (nothing kept) and prints the manual recipe. --dry-run still merges
 #                     locally, so conflicts are detected without pushing.
-#   --non-interactive never prompt (CI): no git credential prompt, no PAT prompt; missing
-#                     credentials fail fast. Default when stdin is not a TTY or GHES_SYNC_INTERACTIVE=0.
 #   --reverse         GHES -> mirror: for each repo push the branches in `reverse_branches`
 #                     (default: branch + pr_base + main) from dst to src, ff-only, no PRs. The bare
 #                     cache is the carrier: `--reverse --pull-only` where GHES is reachable,
@@ -38,12 +40,14 @@
 #   --cache-dir DIR   bare-repo cache (default: conf cache_dir, else $XDG_CACHE_HOME/ghes-sync)
 #   --print-config    print the effective per-repo settings and exit
 #
-# Config (INI): [defaults] src_host dst_host ghcloud_host branch dst_branch pr_base mode
-#               cache_dir gitlink_check(strict|warn|off) reverse_branches; [repo NAME] src_url
-#               dst_url branch dst_branch pr_base mode gitlinks("<repo>:<path> ...")
-#               reverse_branches path(checkout dir relative to the suite, for setup_remotes.sh).
-# Remote naming convention for dev checkouts (setup_remotes.sh): ghes = dst_host, mirror =
-#               src_host, ghcloud = ghcloud_host (github.com/DEEPX-AI, read-only).
+# Config (INI): [defaults] src_host dst_host branch dst_branch pr_base mode cache_dir
+#               gitlink_check(strict|warn|off) reverse_branches; [repo NAME] src_url dst_url
+#               branch dst_branch pr_base mode gitlinks("<repo>:<path> ...") reverse_branches
+#               path(checkout dir relative to the suite, for setup_remotes.sh).
+#               REQUIRED and intentionally empty in the committed sync.conf: src_host, branch
+#               (dst_host too if you clear it) — set them in sync.override.conf or export
+#               GHES_SYNC_SRC_HOST / GHES_SYNC_DST_HOST / GHES_SYNC_BRANCH; otherwise exit 2 + hint.
+# Remote naming convention for dev checkouts (setup_remotes.sh): ghes = dst_host, mirror = src_host.
 #               Section order =
 #               processing order (nested repos BEFORE the parent that points at them).
 #
@@ -62,12 +66,12 @@
 #
 # Auth (closed network: https only, no SSH to github.com, private repos):
 #   Tokens are sent per call as `git -c http.<scheme://host>/.extraheader=AUTHORIZATION: basic <b64>`
-#   — nothing is written to any git config, URL or log. Interactive terminal without a token:
-#   git may ask (Git Credential Manager browser login on Windows, or user + PAT on the terminal)
-#   and the PR step asks once for a GHES PAT when neither gh nor a token is available.
-#   Non-interactive (no TTY / --non-interactive / CI): GIT_TERMINAL_PROMPT=0, fail fast.
+#   — nothing is written to any git config, URL or log. The tool is NON-INTERACTIVE ONLY: it never
+#   prompts (GIT_TERMINAL_PROMPT=0, GCM_INTERACTIVE=Never, no PAT prompt). Before touching a host it
+#   runs a credential preflight: token env set → ok; else `git credential fill` (helper, no prompt)
+#   must answer; else the repo fails at once with the exact fix.
 #   GHES_SYNC_SRC_TOKEN  PAT for the src host (github.com fine-grained PAT, Contents: read on the
-#                        deepx-dhyang repos). Fallback: GH_TOKEN.
+#                        mirror-org repos). Fallback: GH_TOKEN.
 #   GHES_SYNC_DST_TOKEN  PAT for the dst host (GHES: repo write + pull-request). Fallback:
 #                        GH_ENTERPRISE_TOKEN — the same variable `gh` uses for PR creation.
 #   Alternative without env vars: `gh auth login --hostname <host> --with-token < pat.txt` then
@@ -80,7 +84,7 @@ PROG="ghes-sync"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 CONFIG="$SCRIPT_DIR/sync.conf"
 declare -a ONLY_REPOS=()
-PULL_ONLY=0; PUSH_ONLY=0; DRY_RUN=0; TAGS=0; NO_PR=0; PRINT_CONFIG=0; CACHE_OVERRIDE=""; NON_INTERACTIVE=0; UPDATE_BRANCH=0
+PULL_ONLY=0; PUSH_ONLY=0; DRY_RUN=0; TAGS=0; NO_PR=0; PRINT_CONFIG=0; CACHE_OVERRIDE=""; UPDATE_BRANCH=0; OVERRIDE=""
 REVERSE=0; FORCE_LEASE=0; RESET_TO_BASE=0; NO_BACKUP=0
 
 usage() { sed -n '2,/^set -euo pipefail/p' "${BASH_SOURCE[0]}" | sed '$d' | sed 's/^# \{0,1\}//'; }
@@ -93,6 +97,7 @@ has_word() { local w; for w in $2; do [ "$w" = "$1" ] && return 0; done; return 
 while [ $# -gt 0 ]; do
   case "$1" in
     --config)    [ $# -ge 2 ] || die2 "--config needs a value"; CONFIG="$2"; shift 2 ;;
+    --override)  [ $# -ge 2 ] || die2 "--override needs a value"; OVERRIDE="$2"; shift 2 ;;
     --repo)      [ $# -ge 2 ] || die2 "--repo needs a value"; ONLY_REPOS+=("$2"); shift 2 ;;
     --cache-dir) [ $# -ge 2 ] || die2 "--cache-dir needs a value"; CACHE_OVERRIDE="$2"; shift 2 ;;
     --pull-only) PULL_ONLY=1; shift ;;
@@ -100,7 +105,6 @@ while [ $# -gt 0 ]; do
     --dry-run)   DRY_RUN=1; shift ;;
     --tags)      TAGS=1; shift ;;
     --no-pr)     NO_PR=1; shift ;;
-    --non-interactive) NON_INTERACTIVE=1; shift ;;
     --update-branch) UPDATE_BRANCH=1; shift ;;
     --reverse)   REVERSE=1; shift ;;
     --force-with-lease) FORCE_LEASE=1; shift ;;
@@ -115,14 +119,23 @@ done
 [ "$FORCE_LEASE" -eq 1 ] && [ "$REVERSE" -eq 0 ] && die2 "--force-with-lease is only accepted together with --reverse (the forward direction mirror -> GHES never forces)"
 [ "$RESET_TO_BASE" -eq 1 ] && [ "$REVERSE" -eq 0 ] && die2 "--reset-to-base is only accepted together with --reverse (it rewrites the MIRROR branch from GHES's pr_base)"
 command -v git >/dev/null 2>&1 || die2 "git not found in PATH"
-INTERACTIVE=1
-[ -t 0 ] || INTERACTIVE=0
-[ "${GHES_SYNC_INTERACTIVE:-1}" = 0 ] && INTERACTIVE=0
-[ "$NON_INTERACTIVE" -eq 1 ] && INTERACTIVE=0
-# Interactive: let git ask (credential helper UI / terminal prompt). Otherwise never block on a prompt.
-[ "$INTERACTIVE" -eq 1 ] || export GIT_TERMINAL_PROMPT=0
+# Non-interactive only: never block on a terminal prompt or a credential-manager UI.
+export GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=Never
 HAVE_GH=0;   command -v gh   >/dev/null 2>&1 && HAVE_GH=1
 HAVE_CURL=0; command -v curl >/dev/null 2>&1 && HAVE_CURL=1
+# Credential preflight — the tool never prompts, so make sure git WILL be able to authenticate.
+has_creds() {  # has_creds URL TOKEN → 0 when a token is set, the URL is not http(s), or a credential helper answers (no prompt)
+  local url="$1" token="$2"
+  [ -n "$token" ] && return 0
+  case "$url" in http://*|https://*) ;; *) return 0 ;; esac
+  printf 'url=%s\n\n' "$url" | git credential fill 2>/dev/null | grep -q '^password='
+}
+cred_hint() {  # cred_hint src|dst URL
+  local host="${2#*://}"; host="${host%%/*}"
+  local var="GHES_SYNC_SRC_TOKEN (or GH_TOKEN)"; [ "$1" = dst ] && var="GHES_SYNC_DST_TOKEN (or GH_ENTERPRISE_TOKEN)"
+  printf 'no credentials for %s and the tool never prompts — either export %s=<PAT>, or once per machine: gh auth login --hostname %s --with-token < pat.txt && gh auth setup-git --hostname %s' \
+    "$2" "$var" "$host" "$host"
+}
 # Network timeouts (seconds): an unreachable host must fail fast, not hang until the TCP timeout.
 PROBE_TIMEOUT="${GHES_SYNC_PROBE_TIMEOUT:-30}"   # ls-remote connectivity probe
 NET_TIMEOUT="${GHES_SYNC_NET_TIMEOUT:-1800}"     # fetch / push (large first fetches take a while)
@@ -175,11 +188,12 @@ auth_hint() {  # auth_hint src|dst HOSTURL
 # ---------------------------------------------------------------------------
 declare -A DEF=() CFG=()
 declare -a REPOS=()
-KNOWN_DEF="src_host dst_host ghcloud_host branch dst_branch pr_base mode cache_dir gitlink_check reverse_branches"
-KNOWN_REPO="src_url dst_url src_host dst_host ghcloud_host branch dst_branch pr_base mode gitlinks reverse_branches path"
+KNOWN_DEF="src_host dst_host branch dst_branch pr_base mode cache_dir gitlink_check reverse_branches"
+KNOWN_REPO="src_url dst_url src_host dst_host branch dst_branch pr_base mode gitlinks reverse_branches path"
 
-parse_conf() {
-  [ -f "$CONFIG" ] || die2 "config not found: $CONFIG"
+parse_conf() {  # parse_conf FILE OVERLAY(0|1) — OVERLAY: a [repo] already known from the base file is merged, not an error
+  local file="$1" overlay="${2:-0}"
+  [ -f "$file" ] || die2 "config not found: $file"
   local section="" raw line key val name
   while IFS= read -r raw || [ -n "$raw" ]; do
     line="$(trim "$raw")"
@@ -191,22 +205,22 @@ parse_conf() {
       if [ "$section" = defaults ]; then :
       elif [[ "$section" == repo\ * ]]; then
         name="$(trim "${section#repo}")"
-        has_word "$name" "${REPOS[*]:-}" && die2 "duplicate [repo $name]"
-        REPOS+=("$name"); section="repo:$name"
-      else die2 "unknown section [$section] in $CONFIG"; fi
+        if has_word "$name" "${REPOS[*]:-}"; then [ "$overlay" -eq 1 ] || die2 "duplicate [repo $name] in $file"
+        else REPOS+=("$name"); fi
+        section="repo:$name"
+      else die2 "unknown section [$section] in $file"; fi
       continue
     fi
-    [[ "$line" == *=* ]] || die2 "malformed line in $CONFIG: '$line'"
+    [[ "$line" == *=* ]] || die2 "malformed line in $file: '$line'"
     key="$(trim "${line%%=*}")"; val="$(trim "${line#*=}")"
     case "$section" in
-      defaults) has_word "$key" "$KNOWN_DEF" || die2 "unknown key '$key' in [defaults] (known: $KNOWN_DEF)"
+      defaults) has_word "$key" "$KNOWN_DEF" || die2 "unknown key '$key' in [defaults] of $file (known: $KNOWN_DEF)"
                 DEF[$key]="$val" ;;
-      repo:*)   has_word "$key" "$KNOWN_REPO" || die2 "unknown key '$key' in [$section] (known: $KNOWN_REPO)"
+      repo:*)   has_word "$key" "$KNOWN_REPO" || die2 "unknown key '$key' in [$section] of $file (known: $KNOWN_REPO)"
                 CFG["${section#repo:}.$key"]="$val" ;;
-      *)        die2 "key '$key' appears before any [section] in $CONFIG" ;;
+      *)        die2 "key '$key' appears before any [section] in $file" ;;
     esac
-  done < "$CONFIG"
-  [ "${#REPOS[@]}" -gt 0 ] || die2 "no [repo NAME] sections in $CONFIG"
+  done < "$file"
 }
 
 # eff NAME KEY → repo value, else [defaults], else built-in default
@@ -235,18 +249,25 @@ repo_slug() {
 resolve() {
   local name="$1" v
   R_NAME="$name"
-  R_BRANCH="$(eff "$name" branch)"; [ -n "$R_BRANCH" ] || die2 "[repo $name]: no 'branch' (set it in [defaults] or the repo)"
+  R_BRANCH="$(eff "$name" branch)"
+  [ -n "$R_BRANCH" ] || die2 "[repo $name]: 'branch' is EMPTY — set your feature branch in $OVERRIDE_HINT ([defaults] branch = feature/<topic>) or export GHES_SYNC_BRANCH=<branch>"
   R_DST_BRANCH="$(eff "$name" dst_branch)"; [ -n "$R_DST_BRANCH" ] || R_DST_BRANCH="$R_BRANCH"
   R_SRC_URL="${CFG[$name.src_url]:-}"
-  if [ -z "$R_SRC_URL" ]; then v="$(eff "$name" src_host)"; [ -n "$v" ] || die2 "[repo $name]: no src_url and no src_host"; R_SRC_URL="$(join_url "$v" "$name")"; fi
+  if [ -z "$R_SRC_URL" ]; then
+    v="$(eff "$name" src_host)"
+    [ -n "$v" ] || die2 "[repo $name]: 'src_host' is EMPTY — set your private mirror org in $OVERRIDE_HINT ([defaults] src_host = https://github.com/<MIRROR-ORG>) or export GHES_SYNC_SRC_HOST=<url>"
+    R_SRC_URL="$(join_url "$v" "$name")"
+  fi
   R_DST_URL="${CFG[$name.dst_url]:-}"
-  if [ -z "$R_DST_URL" ]; then v="$(eff "$name" dst_host)"; [ -n "$v" ] || die2 "[repo $name]: no dst_url and no dst_host"; R_DST_URL="$(join_url "$v" "$name")"; fi
+  if [ -z "$R_DST_URL" ]; then
+    v="$(eff "$name" dst_host)"
+    [ -n "$v" ] || die2 "[repo $name]: 'dst_host' is EMPTY — set the GHES org in $OVERRIDE_HINT ([defaults] dst_host = https://gh.deepx.ai/deepx) or export GHES_SYNC_DST_HOST=<url>"
+    R_DST_URL="$(join_url "$v" "$name")"
+  fi
   R_PR_BASE="$(eff "$name" pr_base)"
   R_MODE="$(eff "$name" mode)"; has_word "$R_MODE" "pr push" || die2 "[repo $name]: mode must be pr|push (got '$R_MODE')"
   R_GITLINKS="${CFG[$name.gitlinks]:-}"
   R_PATH="${CFG[$name.path]:-}"                    # checkout path relative to the suite dir (setup_remotes.sh)
-  v="$(eff "$name" ghcloud_host)"; [ -n "$v" ] || v="https://github.com/DEEPX-AI"
-  R_GHCLOUD_URL="$(join_url "$v" "$name")"        # public channel (read-only for us)
   R_GL_CHECK="$(eff "$name" gitlink_check)"; has_word "$R_GL_CHECK" "strict warn off" || die2 "gitlink_check must be strict|warn|off"
 }
 
@@ -267,7 +288,38 @@ validate() {
   done
 }
 
-parse_conf
+parse_conf "$CONFIG" 0
+OVERRIDE_FILE="${OVERRIDE:-${CONFIG%.conf}.override.conf}"
+OVERRIDE_APPLIED=""
+if [ -f "$OVERRIDE_FILE" ]; then parse_conf "$OVERRIDE_FILE" 1; OVERRIDE_APPLIED="$OVERRIDE_FILE"
+elif [ -n "$OVERRIDE" ]; then die2 "--override file not found: $OVERRIDE"; fi
+OVERRIDE_HINT="$OVERRIDE_FILE (gitignored; copy $(dirname "$CONFIG")/sync.override.conf.example)"
+[ "${#REPOS[@]}" -gt 0 ] || die2 "no [repo NAME] sections in $CONFIG"
+# env fallbacks for the values the committed sync.conf leaves empty on purpose
+[ -n "${DEF[src_host]:-}" ] || DEF[src_host]="${GHES_SYNC_SRC_HOST:-}"
+[ -n "${DEF[dst_host]:-}" ] || DEF[dst_host]="${GHES_SYNC_DST_HOST:-}"
+[ -n "${DEF[branch]:-}" ]   || DEF[branch]="${GHES_SYNC_BRANCH:-}"
+# Report EVERY missing required value at once (the committed sync.conf leaves src_host and branch empty on purpose).
+check_required() {
+  local n missing="" k
+  for n in "${REPOS[@]}"; do
+    [ -n "${CFG[$n.src_url]:-}" ] || [ -n "$(eff "$n" src_host)" ] || has_word src_host "$missing" || missing="$missing src_host"
+    [ -n "${CFG[$n.dst_url]:-}" ] || [ -n "$(eff "$n" dst_host)" ] || has_word dst_host "$missing" || missing="$missing dst_host"
+    [ -n "$(eff "$n" branch)" ] || has_word branch "$missing" || missing="$missing branch"
+  done
+  [ -n "$missing" ] || return 0
+  printf '[%s] ERROR: required setting(s) not set:%s\n' "$PROG" "$missing" >&2
+  printf '[%s]   They are left EMPTY in sync.conf on purpose. Set them in %s\n' "$PROG" "$OVERRIDE_HINT" >&2
+  for k in $missing; do
+    case "$k" in
+      src_host) printf '[%s]     [defaults] src_host = https://github.com/<YOUR-MIRROR-ORG>   (https only)   or: export GHES_SYNC_SRC_HOST=<url>\n' "$PROG" >&2 ;;
+      dst_host) printf '[%s]     [defaults] dst_host = https://gh.deepx.ai/deepx                          or: export GHES_SYNC_DST_HOST=<url>\n' "$PROG" >&2 ;;
+      branch)   printf '[%s]     [defaults] branch = feature/<your-topic>                                or: export GHES_SYNC_BRANCH=<branch>\n' "$PROG" >&2 ;;
+    esac
+  done
+  exit 2
+}
+check_required
 validate
 
 CACHE_DIR="${CACHE_OVERRIDE:-$(eff _ cache_dir)}"
@@ -282,16 +334,17 @@ else TARGETS=("${REPOS[@]}"); fi
 
 if [ "$PRINT_CONFIG" -eq 1 ]; then
   printf 'cache_dir = %s\n' "$CACHE_DIR"
+  printf 'override = %s\n' "${OVERRIDE_APPLIED:-none ($OVERRIDE_FILE not present)}"
   for n in "${TARGETS[@]}"; do
     resolve "$n"
     printf '[%s]\n' "$n"
-    printf '  src_url = %s\n  dst_url = %s\n  ghcloud_url = %s\n  path = %s\n  branch = %s\n  dst_branch = %s\n  pr_base = %s\n  mode = %s\n  gitlinks = %s\n  gitlink_check = %s\n' \
-      "$R_SRC_URL" "$R_DST_URL" "$R_GHCLOUD_URL" "$R_PATH" "$R_BRANCH" "$R_DST_BRANCH" "$R_PR_BASE" "$R_MODE" "$R_GITLINKS" "$R_GL_CHECK"
+    printf '  src_url = %s\n  dst_url = %s\n  path = %s\n  branch = %s\n  dst_branch = %s\n  pr_base = %s\n  mode = %s\n  gitlinks = %s\n  gitlink_check = %s\n' \
+      "$R_SRC_URL" "$R_DST_URL" "$R_PATH" "$R_BRANCH" "$R_DST_BRANCH" "$R_PR_BASE" "$R_MODE" "$R_GITLINKS" "$R_GL_CHECK"
   done
   exit 0
 fi
 
-if [ "$NO_PR" -eq 0 ] && [ "$PULL_ONLY" -eq 0 ] && [ "$HAVE_GH" -eq 0 ] && { [ "$HAVE_CURL" -eq 0 ] || { [ -z "$DST_TOKEN" ] && [ "$INTERACTIVE" -eq 0 ]; }; }; then
+if [ "$NO_PR" -eq 0 ] && [ "$PULL_ONLY" -eq 0 ] && [ "$HAVE_GH" -eq 0 ] && { [ "$HAVE_CURL" -eq 0 ] || [ -z "$DST_TOKEN" ]; }; then
   for n in "${TARGETS[@]}"; do
     if [ "$(eff "$n" mode)" = pr ]; then
       warn "no gh CLI and no dst token — branches will be pushed but PRs will be SKIPPED (set GHES_SYNC_DST_TOKEN for REST via curl, or install gh)"
@@ -418,13 +471,6 @@ api_base() {  # api_base DST_URL → https://api.github.com | <scheme>://<host>/
   local url="$1" scheme host; scheme="${url%%://*}"; host="${url#*://}"; host="${host%%/*}"
   if [ "$host" = github.com ]; then printf 'https://api.github.com'; else printf '%s://%s/api/v3' "$scheme" "$host"; fi
 }
-PR_TOKEN_PROMPTED=0
-maybe_prompt_dst_token() {  # interactive, no token, no gh → ask once (never stored)
-  [ "$INTERACTIVE" -eq 1 ] && [ "$HAVE_CURL" -eq 1 ] && [ "$PR_TOKEN_PROMPTED" -eq 0 ] || return 0
-  PR_TOKEN_PROMPTED=1
-  printf '[%s] PR step: no gh CLI and no dst token. Enter a GHES PAT (repo scope) to create PRs via REST, or press Enter to skip PRs: ' "$PROG" >&2
-  IFS= read -rs DST_TOKEN </dev/tty || DST_TOKEN=""; printf '\n' >&2
-}
 rest_curl() {  # rest_curl OUTFILE METHOD URL [DATAFILE] → prints http code; uses DST_TOKEN via a -K config (never argv)
   local out="$1" method="$2" url="$3" data="${4:-}" cfg code
   cfg="$(mktemp)"; chmod 600 "$cfg"
@@ -441,14 +487,10 @@ ensure_pr() {  # uses R_*, TIP, cache
   [ "$R_DST_BRANCH" != "$R_PR_BASE" ] || return 0
   local slug backend existing num url ahead title body resp code api owner name
   slug="$(repo_slug "$R_DST_URL")"; owner="${slug#*/}"; owner="${owner%/*}"; name="${slug##*/}"
-  # backend: explicit dst token + curl → REST · gh present → gh · interactive → ask for a token · else skip
+  # backend: explicit dst token + curl → REST · gh present → gh · else skip (never prompts)
   backend=""
   if [ -n "$DST_TOKEN" ] && [ "$HAVE_CURL" -eq 1 ]; then backend=rest
-  elif [ "$HAVE_GH" -eq 1 ]; then backend=gh
-  else
-    maybe_prompt_dst_token
-    [ -n "$DST_TOKEN" ] && [ "$HAVE_CURL" -eq 1 ] && backend=rest
-  fi
+  elif [ "$HAVE_GH" -eq 1 ]; then backend=gh; fi
   if [ -z "$backend" ]; then
     warn "$R_NAME: PR skipped (no gh CLI and no dst token) — branch is pushed; set GHES_SYNC_DST_TOKEN (REST via curl) or install gh and rerun, or open the PR by hand"
     PRINFO[$R_NAME]="skipped (no gh, no token)"; return 0
@@ -518,6 +560,8 @@ process() {
   ROWS+=("$R_NAME"); STATUS[$R_NAME]=OK; ACTION[$R_NAME]=-; DETAIL[$R_NAME]=""; PRINFO[$R_NAME]="-"
   log "== $R_NAME: $R_SRC_URL [$R_BRANCH] -> $R_DST_URL [$R_DST_BRANCH]"
   ensure_cache "$cache"
+  if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_SRC_URL" "$SRC_TOKEN"; then fail "$(cred_hint src "$R_SRC_URL")"; return; fi
+  if ! has_creds "$R_DST_URL" "$DST_TOKEN"; then fail "$(cred_hint dst "$R_DST_URL")"; return; fi
 
   if [ "$PUSH_ONLY" -eq 0 ]; then
     auth_opts "$R_SRC_URL" "$SRC_TOKEN"
@@ -643,6 +687,8 @@ process_reverse() {
   fi
   log "== $R_NAME (REVERSE): $R_DST_URL -> $R_SRC_URL [$branches]"
   ensure_cache "$cache"
+  if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_DST_URL" "$DST_TOKEN"; then rv_fail_all "$branches" "$(cred_hint dst "$R_DST_URL")"; return; fi
+  if ! has_creds "$R_SRC_URL" "$SRC_TOKEN"; then rv_fail_all "$branches" "$(cred_hint src "$R_SRC_URL")"; return; fi
   # FROM = GHES. Skipped with --push-only: the cache already carries what --pull-only fetched.
   if [ "$PUSH_ONLY" -eq 0 ]; then
     auth_opts "$R_DST_URL" "$DST_TOKEN"; probe_rc=0
