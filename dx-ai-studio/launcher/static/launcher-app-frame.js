@@ -1122,20 +1122,6 @@
       if (_maybeReloadForLauncherBoot(data)) return data;
       ns._healthStatus = data;
       ns._healthCheckedAt = Date.now();
-      setDot('dotApp',    data.app.alive);
-      setDot('dotStream', data.stream ? data.stream.alive : false);
-      setDot('dotZoo',    data.zoo ? data.zoo.alive : false);
-      setDot('dotCompiler', data.compiler ? data.compiler.alive : false);
-      setDot('dotPlanner',  data.planner ? data.planner.alive : false);
-      setDot('dotBenchmark', data.benchmark ? data.benchmark.alive : false);
-      setDot('dotMonitor',  data.monitor ? data.monitor.alive : false);
-      setDot('dotAgent',    data.agent ? data.agent.alive : false);
-      setStatus('statusApp',      data.app.alive);
-      setStatus('statusStream',   data.stream ? data.stream.alive : false);
-      setStatus('statusZoo',      data.zoo ? data.zoo.alive : false);
-      setStatus('statusCompiler', data.compiler ? data.compiler.alive : false);
-      setStatus('statusPlanner',  data.planner ? data.planner.alive : false);
-      setStatus('statusBenchmark', data.benchmark ? data.benchmark.alive : false);
       _setOrbStatus('orbStatusApp', data.app.alive);
       _setOrbStatus('orbStatusStream', data.stream ? data.stream.alive : false);
       _setOrbStatus('orbStatusZoo', data.zoo ? data.zoo.alive : false);
@@ -1148,21 +1134,6 @@
       updateModulePortLabels(data);
       return data;
     }).catch(function() {
-      setDot('dotApp', false);
-      setDot('dotStream', false);
-      setDot('dotZoo', false);
-      setDot('dotCompiler', false);
-      setDot('dotPlanner', false);
-      setDot('dotBenchmark', false);
-      setDot('dotMonitor', false);
-      setDot('dotAgent', false);
-      setStatus('statusApp', false);
-      setStatus('statusStream', false);
-      setStatus('statusZoo', false);
-      setStatus('statusCompiler', false);
-      setStatus('statusPlanner', false);
-      setStatus('statusBenchmark', false);
-      setStatus('statusMonitor', false);
       _setOrbStatus('orbStatusApp', false);
       _setOrbStatus('orbStatusStream', false);
       _setOrbStatus('orbStatusZoo', false);
@@ -1343,18 +1314,10 @@
     }
   }
 
-  function setDot(id, alive) {
-    var el = document.getElementById(id);
-    var targetClass = alive ? 'dot alive' : 'dot';
-    if (el && el.className !== targetClass) el.className = targetClass;
-  }
-
-  function setStatus(id, alive) {
-    var el = document.getElementById(id);
-    var targetClass = alive ? 'status-indicator alive' : 'status-indicator dead';
-    if (el && el.className !== targetClass) el.className = targetClass;
-  }
-
+  /* 건강 상태를 화면에 쓰는 유일한 경로. 예전에는 setDot()·setStatus() 가 같은 값을
+     두 번 더 썼는데, 그 대상(#dotApp, #statusApp …)은 홈 재설계에서 마크업이 사라진
+     뒤로 코드베이스 어디에도 존재하지 않아 15번의 조회가 매 폴링(5초)마다 헛돌았다.
+     테스트가 그 호출의 '존재'를 8곳에서 요구하고 있어 죽은 채로 남아 있었다. */
   function _setOrbStatus(id, alive) {
     var el = document.getElementById(id);
     var targetClass = alive ? 'orbital-status alive' : 'orbital-status dead';

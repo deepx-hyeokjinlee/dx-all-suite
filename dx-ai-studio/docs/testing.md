@@ -537,6 +537,26 @@ gate. So the debt cannot quietly grow.
 |------|--------|-------|
 | `test_all_models_have_complete_legal_block` | The `yolo26-depth-*` family reaches the catalog from the dx_app source tree, not the ModelZoo sync snapshot, so it carries only `commercial_use: restricted` and no full legal block. | Upstream licence data. **Do not fabricate** — a wrong licence claim is worse than a missing one. |
 
+#### Quarantined browser failures
+
+The browser stage now carries its debt the way the blocking stage does: a
+`BROWSER_QUARANTINE` list in `run_ci.sh`, pinned by `tests/shared/test_ci_contracts.py`
+so it can only shrink, with every entry documented here. Everything outside the list
+is blocking — a new failure fails the stage.
+
+| Test | Defect | Needs |
+|------|--------|-------|
+| `test_tutorial_ui_journey_no_visual_defects[dx_modelzoo]` | `download|step1` targets `[data-model-id][data-quant]`, the download button that the step's own copy says is "only visible when DX App is connected". | A way for a step to declare a conditional target, so the engine's floating fallback is the expected outcome rather than a defect. |
+| `test_tutorial_ui_journey_no_visual_defects[dx_app]` | `rundemo|step3`, `rundemo|step4` and `modelzoo|step4` (`#mz-cart`) target elements that exist only after the page has been initialised or a model selected. | Same mechanism, or `beforeStep` hooks that bring the state into being first. |
+| `test_tutorial_ui_journey_no_visual_defects[dx_agent_dev]` | `showcase|step2` and `activity|step2` leave `data-dxt-tutorial-mock` in the DOM. The tutorial injects a preview element to spotlight a state that only exists mid-operation and does not always remove it. | The mock needs an owner that clears it on step exit. |
+
+Two changes made the list worth having. The stage used to abort at the first failing
+suite — `set -euo pipefail` and a bare `pytest` in the loop — so five of the ten
+suites never ran and their state was simply unknown. And the CI job is
+`continue-on-error`, so a red was the normal state; a *new* red looked exactly like
+the standing one. That is how a tutorial step pointing at deleted markup survived:
+the signal existed and was indistinguishable from the noise.
+
 #### `--browser` is red (2026-09-15)
 
 `run_ci.sh` without flags reports zero failures, and that sentence has been quoted

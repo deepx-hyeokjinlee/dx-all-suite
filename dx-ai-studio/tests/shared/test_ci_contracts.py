@@ -151,6 +151,58 @@ def _quarantined_in_script() -> set:
     }
 
 
+# 브라우저 스테이지의 quarantine. 블로킹 쪽과 같은 규율을 받는다 — 줄어들 수만
+# 있고, 각 항목은 docs/testing.md 에 근거와 함께 적혀야 하며, 낡은 항목은 실패한다.
+# 이 목록이 생기기 전에는 스테이지 전체가 advisory 였고, 그래서 빨간불이 상시
+# 상태였다. 상시 빨강은 신호가 아니라 배경이라, 새 회귀가 그 안에 묻힌다.
+BROWSER_QUARANTINED = {
+    "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_modelzoo]",
+    "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_app]",
+    "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_agent_dev]",
+}
+
+
+def _browser_quarantined_in_script() -> set:
+    script = (ROOT / "scripts" / "run_ci.sh").read_text(encoding="utf-8")
+    block = script.split("BROWSER_QUARANTINE=(", 1)[1].split("\n  )", 1)[0]
+    return {
+        ln.strip().removeprefix("--deselect").strip().strip('"')
+        for ln in block.splitlines()
+        if ln.strip().startswith("--deselect")
+    }
+
+
+def test_browser_quarantine_never_grows():
+    """브라우저 쪽 부채도 늘어날 수 없다."""
+    added = _browser_quarantined_in_script() - BROWSER_QUARANTINED
+    assert not added, (
+        "브라우저 quarantine 에 항목이 추가됐다 — 회귀가 게이트를 통과했다는 뜻이다: "
+        f"{sorted(added)}"
+    )
+
+
+def test_browser_quarantine_entries_are_documented():
+    doc = (ROOT / "docs" / "testing.md").read_text(encoding="utf-8")
+    # 파라미터까지 포함한 전체 이름을 요구한다. 모듈 이름만 보면 "dx_modelzoo" 가
+    # 문서 곳곳에 있어 무엇이든 통과한다 — 처음 쓸 때 실제로 그렇게 통과했다.
+    undocumented = sorted(
+        n for n in _browser_quarantined_in_script() if n.split("::")[-1] not in doc
+    )
+    assert not undocumented, (
+        "docs/testing.md 에 근거가 없는 브라우저 quarantine 항목: " + str(undocumented)
+    )
+
+
+def test_browser_quarantine_entries_still_exist():
+    for node in _browser_quarantined_in_script():
+        path = ROOT / node.split("::", 1)[0]
+        assert path.is_file(), f"quarantine 된 파일이 사라졌다, 목록에서 지워라: {node}"
+        func = node.split("::")[-1].split("[")[0]
+        assert f"def {func}(" in path.read_text(encoding="utf-8"), (
+            f"quarantine 된 테스트가 사라졌다, 목록에서 지워라: {node}"
+        )
+
+
 def test_quarantine_list_never_grows():
     """The gate's deselect list is a debt ledger — it may shrink, never grow."""
     actual = _quarantined_in_script()

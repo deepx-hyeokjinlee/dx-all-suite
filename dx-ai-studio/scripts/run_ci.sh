@@ -302,10 +302,31 @@ if [ "$RUN_BROWSER" = "1" ]; then
   # next to them — it would claim coverage that does not exist. Only tests/e2e is
   # engine-parameterised (see the cross-engine step below). Migrating a legacy
   # suite means swapping its fixture for tests.browser_support.launch_browser.
+  # 알려진 결함은 명시적으로 안고 간다 — 블로킹 게이트의 QUARANTINE 과 같은 규율이다.
+  # 목록은 tests/shared/test_ci_contracts.py 가 크기를 고정해 줄어들 수만 있고, 각
+  # 항목은 docs/testing.md 에 근거와 함께 적혀 있어야 한다.
+  BROWSER_QUARANTINE=(
+    --deselect "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_modelzoo]"
+    --deselect "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_app]"
+    --deselect "tests/test_tutorial_e2e_journey.py::test_tutorial_ui_journey_no_visual_defects[dx_agent_dev]"
+  )
+
+  # 한 스위트가 실패해도 나머지를 마저 돈다. set -e 아래에서 pytest 를 그냥 호출하면
+  # 첫 실패가 스크립트를 통째로 끝내는데, 실측해 보니 열 개 중 다섯 개만 돌고 나머지
+  # 다섯 개는 상태조차 모른 채 넘어가고 있었다 — advisory 빨간불이 상시인 데다
+  # 불완전하기까지 하면 새 회귀는 잡음에 묻힌다.
+  _browser_failed=()
   for _bt in "${_shard_suites[@]}"; do
     echo "== Browser suite: $_bt (chromium) =="
-    "$PY" -m pytest "$_bt" -q --tb=short
+    if ! "$PY" -m pytest "$_bt" -q --tb=short "${BROWSER_QUARANTINE[@]}"; then
+      _browser_failed+=("$_bt")
+    fi
   done
+  if [ ${#_browser_failed[@]} -gt 0 ]; then
+    echo ""
+    echo "FAILED browser suites: ${_browser_failed[*]}" >&2
+    exit 1
+  fi
 
   # The genuinely cross-browser part. Pinned to shard 1 so the matrix runs it once.
   if [ -z "$SHARD_TOTAL" ] || [ "$SHARD_INDEX" = "1" ]; then
