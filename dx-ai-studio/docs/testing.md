@@ -424,8 +424,16 @@ PR labelled `run-npu`.
 
 ### Pixel visual regression (`--visual`)
 
-`tests/visual/` screenshots each module's landing page at 1280x800 and compares it
-to `tests/visual/baselines/<engine>/<module>.png`.
+`tests/visual/` screenshots every module's landing page across four axes and
+compares each against a committed baseline:
+
+| baseline | axes | shots |
+|---|---|---|
+| `<engine>/<module>__<theme>__<locale>.png` | 9 modules x {dark, light} x {en, es} at 1280x800 | 36 |
+| `<engine>/<module>__w<width>.png` | 9 modules x {650, 860, 1150, 1320} at dark/en | 36 |
+
+72 shots, 8.1MB. `tests/visual/baseline_spec.py` is the source of truth for the
+axes and carries the reasoning for each one; do not restate the numbers here.
 
 This is **not** what `tests/test_ux_visual_gate.py` does — that audits tutorial
 spotlight geometry through the DOM. It catches "the highlight points at nothing";
@@ -450,16 +458,31 @@ global `--accent` change moved only one of nine modules past the limit. At 0.02%
 
 #### Axes
 
-36 landing-page shots = 9 modules x {dark, light} x {en, es}. A single-axis baseline
-could not see this refactor: semantic tokens and the light theme change *colour*,
-and translation length changes *layout* (Benchmark -> "Evaluación de rendimiento"
-pushes the tab row into overflow). `es` is the axis because it is the longest.
+**Theme x locale.** A single-axis baseline could not see the token refactor:
+semantic tokens and the light theme change *colour*, and translation length changes
+*layout* (Benchmark -> "Evaluación de rendimiento" pushes the tab row into
+overflow). `es` is the locale because its labels are the longest.
 
-18 more shots = 9 modules x {860, 1150} at dark/en, from `responsive_axes()`. These
-exist for the breakpoint work: every other baseline is captured at 1280, so moving a
-fold from 900 to 960 turns nothing red. The two widths sit in the middle of the
-crowded bands (768-900 and 1100-1200) rather than on a boundary, where a 1px
-difference would flip the result and make the gate flaky.
+**Width.** The theme/locale shots are all captured at 1280, so moving a fold from
+900 to 960 turns nothing red. `responsive_axes()` adds four widths at dark/en,
+each sitting in the *middle* of a crowded band rather than on a boundary — on a
+boundary a 1px difference flips the result and the gate goes flaky. Colour is not
+what this axis watches, so one theme and one locale are enough.
+
+These widths are the precondition the breakpoint ratchet was waiting on; see
+`scripts/breakpoint_gate.py`.
+
+#### What the green light does *not* cover
+
+The capture seeds `dx-splash-seen` before loading (`tests/visual/conftest.py`), so
+the intro never runs. That is deliberate — pixel-diffing an animation is not
+deterministic — but it means a passing visual suite says "the page after the splash
+did not move" and says nothing about the intro itself.
+
+The intro is held by structural contracts instead, in
+`tests/launcher/test_home_portal.py`: the grammar it obeys, the surface the light
+crosses, the cut into the app, the reduced-motion path, the honesty of the working
+beat, and the drawn scenes. A split of responsibility, not a gap.
 
 Refresh baselines after an intentional design change:
 

@@ -171,6 +171,44 @@ def test_quarantine_entries_are_documented():
     )
 
 
+def test_testing_doc_describes_the_visual_suite_that_exists():
+    """docs/testing.md must not drift from tests/visual/baseline_spec.py.
+
+    It had: "each module's landing page at 1280x800" compared against
+    `baselines/<engine>/<module>.png`, and 36 + 18 shots. Reality by then was
+    two naming schemes, four responsive widths and 72 files — the doc was
+    describing the suite as it stood two expansions earlier.
+
+    A reader trusts a testing doc precisely when they cannot yet read the
+    harness, so a stale one costs more than no doc. Pinning the numbers that
+    actually changed (the widths and the total) keeps the prose honest without
+    freezing how it is worded.
+    """
+    from tests.visual import baseline_spec as spec
+
+    doc = (ROOT / "docs" / "testing.md").read_text(encoding="utf-8")
+    section = doc.split("### Pixel visual regression", 1)[1].split("\n## ", 1)[0]
+
+    baselines = sorted((ROOT / "tests" / "visual" / "baselines").rglob("*.png"))
+    assert baselines, "no baselines on disk"
+    assert str(len(baselines)) in section, (
+        f"the doc does not state the real baseline count ({len(baselines)})"
+    )
+
+    for width in spec.RESPONSIVE_WIDTHS:
+        assert str(width) in section, f"responsive width {width} is undocumented"
+
+    # Both naming schemes, because a reader looking for a file needs the shape.
+    assert "__<theme>__<locale>.png" in section
+    assert "__w<width>.png" in section
+
+    # The suite skips the intro on purpose; a doc that omits that oversells it.
+    assert "dx-splash-seen" in section, (
+        "the doc does not say the capture skips the intro, so a green visual run "
+        "reads as covering an animation it never photographs"
+    )
+
+
 def test_quarantined_tests_still_exist():
     """A quarantined node id that no longer resolves is stale — drop it from the list."""
     for node in _quarantined_in_script():
