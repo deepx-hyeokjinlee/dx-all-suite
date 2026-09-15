@@ -192,9 +192,9 @@
         .dxt-launcher-card:hover { background: var(--ap-panel); }
         .dxt-launcher-card .dxt-lc-text { flex: 1; min-width: 0; }
         .dxt-launcher-card .dxt-lc-icon { display: none; }
-        .dxt-launcher-card .dxt-lc-title { font-size: var(--ap-call); font-weight: 500; color: var(--ap-ink); }
-        .dxt-launcher-card .dxt-lc-desc { font-size: var(--ap-cap); color: var(--ap-ink-3); margin-top: 1px; }
-        .dxt-launcher-card .dxt-lc-mode { margin-left: 6px; font-size: var(--ap-cap); color: var(--ap-ink-3); }
+        .dxt-launcher-card .dxt-lc-title { font-size: var(--ap-t-lead); font-weight: 500; color: var(--ap-ink); }
+        .dxt-launcher-card .dxt-lc-desc { font-size: var(--ap-t-body); color: var(--ap-ink-3); margin-top: 1px; }
+        .dxt-launcher-card .dxt-lc-mode { margin-left: 6px; font-size: var(--ap-t-body); color: var(--ap-ink-3); }
         .dxt-launcher-card .dxt-lc-mode.is-on { color: var(--ap-blue); }
         .dxt-launcher-card .dxt-lc-switch {
           width: 40px; height: 22px; border-radius: 11px; border: none;

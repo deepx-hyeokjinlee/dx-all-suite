@@ -722,7 +722,7 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 /* Resume from QXNN (re-quantization) */
 .resume-card {
   background: var(--surface-panel); border-radius: var(--radius); margin-top: 1.5rem;
-  box-shadow: var(--shadow-md); border-top: 3px solid var(--accent); overflow: hidden;
+  box-shadow: var(--shadow); border-top: 3px solid var(--accent); overflow: hidden;
 }
 .resume-card-header {
   width: 100%; display: flex; align-items: center; justify-content: space-between;

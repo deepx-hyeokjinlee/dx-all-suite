@@ -991,7 +991,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .ref-tbl tr:hover td{background:rgba(var(--accent-rgb),.03)}
 /* ═══ Lab Extension Portal ═══ */
 .lab-home{display:flex;flex-direction:column;gap:var(--sp-4)}
-.lab-hero,.lab-status,.lab-card,.lab-flow-root,.lab-advanced-tools{border:1px solid var(--border-subtle);background:var(--card);border-radius:14px;padding:var(--sp-4)}
+.lab-hero,.lab-status,.lab-card,.lab-flow-root,.lab-advanced-tools{border:1px solid var(--border-subtle);background:var(--surface-panel);border-radius:14px;padding:var(--sp-4)}
 .lab-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--sp-3)}
 .lab-card{text-align:left;color:inherit;cursor:pointer}
 .lab-card:hover{border-color:var(--accent)}
@@ -1010,7 +1010,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-summary-details dt{color:var(--text-muted);font-size:var(--fs-sm)}
 .lab-composer-summary-details dd{margin:0;color:var(--text-primary);overflow-wrap:anywhere}
 .lab-composer-template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--sp-2);margin-top:var(--sp-3)}
-.lab-composer-template{border:1px solid var(--border-subtle);border-radius:var(--radius);background:var(--card);color:var(--text-secondary);padding:var(--sp-3);cursor:pointer;text-align:left;text-transform:capitalize}
+.lab-composer-template{border:1px solid var(--border-subtle);border-radius:var(--radius);background:var(--surface-panel);color:var(--text-secondary);padding:var(--sp-3);cursor:pointer;text-align:left;text-transform:capitalize}
 .lab-composer-template:hover{border-color:var(--accent);color:var(--accent-light)}
 .lab-composer-empty{margin:var(--sp-3) 0 0;border-left:3px solid var(--warn,#d29922);padding-left:var(--sp-3);color:var(--text-secondary);font-size:var(--fs-sm);line-height:1.6}
 .lab-composer-history{display:flex;gap:var(--sp-2);justify-content:flex-end;margin:-34px 0 var(--sp-3)}
@@ -1035,7 +1035,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-plugin-preview{margin-top:var(--sp-3);padding:var(--sp-3);border:1px dashed var(--border-strong);border-radius:var(--radius);background:rgba(var(--accent-rgb),.06)}
 .lab-composer-plugin-preview h4{margin:0 0 var(--sp-2);color:var(--text-primary);font-size:var(--fs-sm)}
 .lab-composer-plugin-preview p{margin:0 0 var(--sp-2);font-family:var(--mono);overflow-wrap:anywhere}
-.lab-composer-recipe-controls,.lab-composer-export-panel{margin-top:var(--sp-3);padding:var(--sp-3);border:1px solid var(--border-subtle);border-radius:var(--radius);background:var(--panel)}
+.lab-composer-recipe-controls,.lab-composer-export-panel{margin-top:var(--sp-3);padding:var(--sp-3);border:1px solid var(--border-subtle);border-radius:var(--radius);background:var(--surface-panel)}
 .lab-composer-recipe-controls h3,.lab-composer-export-panel h3{margin:0 0 var(--sp-3);font-size:var(--fs-sm)}
 .lab-composer-recipe-actions,.lab-composer-export-actions{display:flex;flex-wrap:wrap;gap:var(--sp-2);align-items:center}
 .lab-composer-recipe-file{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}

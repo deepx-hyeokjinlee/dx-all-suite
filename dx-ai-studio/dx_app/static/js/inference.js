@@ -186,7 +186,16 @@ function initRunPage(){
   });
   var cats=[...new Set(S.models.map(function(m){return m.category}))].sort();
   $('r-cat').innerHTML='<option value="">'+T('— Select Category —')+'</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('');
+  // 모델이 없으면 고를 것도 없다. 빈 드롭다운만 두면 고장으로 읽히므로 어디서
+  // 모델을 받는지 말해 주고, 그동안 고를 수 없는 컨트롤은 잠가 둔다.
+  _setRunEmptyState(cats.length === 0);
   _applyPendingAutoSelect();
+}
+
+function _setRunEmptyState(empty){
+  var notice=$('r-no-models');
+  if(notice){ if(empty)notice.removeAttribute('hidden'); else notice.setAttribute('hidden',''); }
+  ['r-cat','r-model'].forEach(function(id){ var el=$(id); if(el)el.disabled=empty; });
 }
 
 function onRCat(){

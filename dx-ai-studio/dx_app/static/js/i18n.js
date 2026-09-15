@@ -3382,6 +3382,23 @@ window._DX_I18N_DICT = {
     'zh-TW': '版本資訊',
     es: 'Información de versión',
   },
+  'No models are installed yet': {
+    ko: '설치된 모델이 없습니다', ja: 'インストール済みのモデルがありません',
+    'zh-CN': '尚未安装任何模型', 'zh-TW': '尚未安裝任何模型',
+    es: 'Aún no hay modelos instalados',
+  },
+  'Download one from ModelZoo to run inference.': {
+    ko: 'ModelZoo에서 모델을 내려받으면 추론을 실행할 수 있습니다.',
+    ja: 'ModelZoo からモデルをダウンロードすると推論を実行できます。',
+    'zh-CN': '从 ModelZoo 下载模型后即可运行推理。',
+    'zh-TW': '從 ModelZoo 下載模型後即可執行推論。',
+    es: 'Descargue uno desde ModelZoo para ejecutar inferencia.',
+  },
+  'Open ModelZoo': {
+    ko: 'ModelZoo 열기', ja: 'ModelZoo を開く',
+    'zh-CN': '打开 ModelZoo', 'zh-TW': '開啟 ModelZoo',
+    es: 'Abrir ModelZoo',
+  },
 };
 
 /* ─── CSS Selectors for DOM translation ─── */

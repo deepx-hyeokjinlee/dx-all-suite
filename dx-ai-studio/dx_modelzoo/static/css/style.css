@@ -382,10 +382,10 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   overflow: hidden;
   cursor: pointer;
   transition: border-color 0.15s var(--ease), transform 0.1s var(--ease);
-  background: var(--surface-2);
+  background: var(--surface-raised);
 }
 .mz-sample-thumb:hover { border-color: var(--accent); transform: scale(1.03); }
-.mz-sample-thumb.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-alpha); }
+.mz-sample-thumb.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
 .mz-sample-thumb img {
   width: 100%;
   height: 60px;

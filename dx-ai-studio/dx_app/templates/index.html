@@ -158,10 +158,10 @@
       </div>
       <div class="comp-log" id="setup-log" data-i18n="Select an item to run — logs will appear here.">Select an item to run — logs will appear here.</div>
       <!-- stdin input row -->
-      <div id="setup-stdin-row" style="display:none;margin-top:6px;padding:8px;background:var(--bg3);border-radius:6px;border:1px solid var(--bdr)">
+      <div id="setup-stdin-row" style="display:none;margin-top:6px;padding:8px;background:var(--surface-raised);border-radius:6px;border:1px solid var(--border-subtle)">
         <div style="font-size:11px;color:var(--status-warn);margin-bottom:5px" id="setup-stdin-prompt" data-i18n="Type input to send to the process (press Enter)">Type input to send to the process (press Enter)</div>
         <div style="display:flex;gap:6px;align-items:center">
-          <input id="setup-stdin-input" type="text" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--bdr);background:var(--surface-page);color:var(--text-primary);font-family:var(--mono);font-size:12px" data-i18n-placeholder="Enter value and press Enter" onkeydown="if(event.key==='Enter')setupSendInput()">
+          <input id="setup-stdin-input" type="text" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--border-subtle);background:var(--surface-page);color:var(--text-primary);font-family:var(--mono);font-size:12px" data-i18n-placeholder="Enter value and press Enter" onkeydown="if(event.key==='Enter')setupSendInput()">
           <button onclick="var i=$('setup-stdin-input');i.type=i.type==='password'?'text':'password'" class="btn btn-ghost btn-sm" title="Show/hide password" data-i18n-title="Show/hide password">👁</button>
           <button onclick="setupSendInput()" class="btn btn-primary btn-sm" data-i18n="Send">Send</button>
           <button onclick="setupHideStdin()" class="btn btn-ghost btn-sm" title="Close" data-i18n-title="Close">✕</button>
@@ -200,6 +200,18 @@
     <!-- Left: Config -->
     <div class="card rel" id="run-config-card">
       <h2 data-i18n="Configuration">Configuration</h2>
+      <!-- 모델이 하나도 설치되지 않으면 카테고리 목록이 비고, 그러면 이 화면은
+           "고를 것이 없다" 와 "고장났다" 를 구분해 주지 못한다. 어디서 모델이
+           오는지 말해 주는 것이 이 자리의 일이다. -->
+      <div class="fg" id="r-no-models" hidden>
+        <p style="margin:0 0 8px;color:var(--text-muted);font-size:12px">
+          <strong data-i18n="No models are installed yet">No models are installed yet</strong><br>
+          <span data-i18n="Download one from ModelZoo to run inference.">Download one from ModelZoo to run inference.</span>
+        </p>
+        <button type="button" class="btn btn-sm btn-accent" onclick="nav('modelzoo')">
+          ⬇️ <span data-i18n="Open ModelZoo">Open ModelZoo</span>
+        </button>
+      </div>
       <div class="fg"><label for="r-cat" data-i18n="Category">Category</label><select id="r-cat" onchange="onRCat()"></select></div>
       <div class="fg"><label for="r-model" data-i18n="Model">Model</label><select id="r-model" onchange="onRModel()"></select></div>
       <div class="grid2" style="gap:10px">
@@ -499,10 +511,10 @@
             <th rowspan="2">Params</th>
             <th rowspan="2" data-i18n="License">License</th>
             <th rowspan="2" data-i18n="Metric">Metric</th>
-            <th colspan="2" style="text-align:center;border-bottom:1px solid var(--bdr)">Raw</th>
-            <th colspan="4" style="text-align:center;border-bottom:1px solid var(--bdr);background:#182640">Q-Lite</th>
-            <th colspan="4" style="text-align:center;border-bottom:1px solid var(--bdr);background:#202440">Q-Pro</th>
-            <th colspan="2" style="text-align:center;border-bottom:1px solid var(--bdr)">Performance</th>
+            <th colspan="2" style="text-align:center;border-bottom:1px solid var(--border-subtle)">Raw</th>
+            <th colspan="4" style="text-align:center;border-bottom:1px solid var(--border-subtle);background:#182640">Q-Lite</th>
+            <th colspan="4" style="text-align:center;border-bottom:1px solid var(--border-subtle);background:#202440">Q-Pro</th>
+            <th colspan="2" style="text-align:center;border-bottom:1px solid var(--border-subtle)">Performance</th>
           </tr>
           <tr>
             <th data-i18n="Accuracy">Accuracy</th>
@@ -583,7 +595,7 @@
           <div class="fg"><label for="da-lang" data-i18n="Output Language">Output Language</label><select id="da-lang"><option value="both">Both</option><option value="cpp">C++</option><option value="python">Python</option></select></div>
           <div class="fg"><label for="da-pp" data-i18n="Postprocessor">Postprocessor</label><select id="da-pp"></select></div>
         </div>
-        <label style="font-size:12px;color:var(--dim);display:flex;align-items:center;gap:6px;margin:8px 0">
+        <label style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;margin:8px 0">
           <input type="checkbox" id="da-sync"> <span data-i18n="Sync only">Sync only</span>
         </label>
         <button class="btn btn-acc mt8" onclick="devAddModel()">➕ <span data-i18n="Add Model">Add Model</span></button>
@@ -616,7 +628,7 @@
       </div>
       <div class="dev-panel" id="dev-git">
         <div class="fg"><label for="dg-msg" data-i18n="Commit Message">Commit Message</label><input type="text" id="dg-msg" data-i18n-placeholder="chore: update"></div>
-        <label style="font-size:12px;color:var(--dim);display:flex;align-items:center;gap:6px;margin:8px 0">
+        <label style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;margin:8px 0">
           <input type="checkbox" id="dg-push"> <span data-i18n="Push after commit">Push after commit</span>
         </label>
         <button class="btn btn-blue mt8" onclick="devGitCommit()">📝 <span data-i18n="Commit">Commit</span></button>
@@ -729,8 +741,8 @@
 <!-- ═══ MODAL: Image preview ═══ -->
 <dialog class="modal-overlay" id="modal-imgpreview">
   <div style="position:relative;display:inline-block">
-    <button class="modal-x" onclick="closeModal('modal-imgpreview')" style="position:absolute;top:-12px;right:-12px;z-index:10;background:var(--s1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center">&times;</button>
-    <img id="img-preview" alt="Preview" style="max-width:92vw;max-height:90vh;border-radius:8px;box-shadow:var(--sh)">
+    <button class="modal-x" onclick="closeModal('modal-imgpreview')" style="position:absolute;top:-12px;right:-12px;z-index:10;background:var(--surface-raised);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center">&times;</button>
+    <img id="img-preview" alt="Preview" style="max-width:92vw;max-height:90vh;border-radius:8px;box-shadow:var(--shadow-lg)">
   </div>
 </dialog>
 
@@ -745,7 +757,7 @@
       <div style="position:relative">
         <input class="fb-cur-path" id="fb-cur-path" data-i18n-placeholder="Type a path or click to browse  (Tab = autocomplete)" autocomplete="off" spellcheck="false"
           oninput="fbPathInput(this.value)" onkeydown="fbPathKeydown(event)">
-        <div id="fb-ac-list" style="display:none;position:absolute;bottom:100%;left:0;right:0;max-height:180px;overflow-y:auto;background:var(--s2);border:1px solid var(--bdr);border-radius:6px 6px 0 0;z-index:10;font-size:12px"></div>
+        <div id="fb-ac-list" style="display:none;position:absolute;bottom:100%;left:0;right:0;max-height:180px;overflow-y:auto;background:var(--surface-overlay);border:1px solid var(--border-subtle);border-radius:6px 6px 0 0;z-index:10;font-size:12px"></div>
       </div>
       <div style="display:flex;gap:6px">
         <button class="btn btn-primary btn-sm" onclick="fbConfirm()">✅ <span data-i18n="Select">Select</span></button>
@@ -845,23 +857,23 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
           </div>
         </div>
         <!-- ❓ Reference table -->
-        <div id="ct-ref" style="display:none;margin-bottom:14px;border:1px solid var(--bdr);border-radius:8px;overflow:hidden">
-          <div style="padding:8px 12px;background:var(--bg2);font-size:11px;font-weight:700;display:flex;justify-content:space-between;align-items:center">
+        <div id="ct-ref" style="display:none;margin-bottom:14px;border:1px solid var(--border-subtle);border-radius:8px;overflow:hidden">
+          <div style="padding:8px 12px;background:var(--surface-sunken);font-size:11px;font-weight:700;display:flex;justify-content:space-between;align-items:center">
             <span>📋 <span data-i18n="Recommended Pipelines by Category">Recommended Pipelines by Category</span></span>
             <button class="btn btn-ghost" style="padding:0 6px;height:20px;font-size:10px" onclick="ctToggleRef()">✕</button>
           </div>
           <div style="max-height:260px;overflow-y:auto">
             <table style="width:100%;border-collapse:collapse;font-size:11px">
-              <thead><tr style="background:var(--bg3);position:sticky;top:0">
-                <th style="padding:5px 10px;text-align:left;color:var(--dim);font-weight:600" data-i18n="Category">Category</th>
-                <th style="padding:5px 10px;text-align:left;color:var(--dim);font-weight:600" data-i18n="Preprocessor">Preprocessor</th>
-                <th style="padding:5px 10px;text-align:left;color:var(--dim);font-weight:600" data-i18n="Postprocessor">Postprocessor</th>
-                <th style="padding:5px 10px;text-align:left;color:var(--dim);font-weight:600" data-i18n="Visualizer">Visualizer</th>
+              <thead><tr style="background:var(--surface-raised);position:sticky;top:0">
+                <th style="padding:5px 10px;text-align:left;color:var(--text-muted);font-weight:600" data-i18n="Category">Category</th>
+                <th style="padding:5px 10px;text-align:left;color:var(--text-muted);font-weight:600" data-i18n="Preprocessor">Preprocessor</th>
+                <th style="padding:5px 10px;text-align:left;color:var(--text-muted);font-weight:600" data-i18n="Postprocessor">Postprocessor</th>
+                <th style="padding:5px 10px;text-align:left;color:var(--text-muted);font-weight:600" data-i18n="Visualizer">Visualizer</th>
               </tr></thead>
               <tbody id="ct-ref-body"></tbody>
             </table>
           </div>
-          <div style="padding:6px 12px 8px;background:var(--bg2);border-top:1px solid var(--bdr);font-size:10px;color:var(--dim)">
+          <div style="padding:6px 12px 8px;background:var(--surface-sunken);border-top:1px solid var(--border-subtle);font-size:10px;color:var(--text-muted)">
             💡 <b>Letterbox</b>: preserves aspect ratio (recommended for Detection/Pose) &nbsp;|&nbsp; <b>SimpleResize</b>: simple resize (Seg/Depth/Enhancement) &nbsp;|&nbsp; <b>Grayscale</b>: single-channel models
           </div>
         </div>
@@ -898,7 +910,7 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
         </div>
       </div>
       <!-- Deploy panel -->
-      <div id="ct-dep" style="display:none;margin-top:10px;padding-top:12px;border-top:1px solid var(--bdr)">
+      <div id="ct-dep" style="display:none;margin-top:10px;padding-top:12px;border-top:1px solid var(--border-subtle)">
         <div class="fg" style="margin-bottom:10px"><label class="lbl" data-i18n="Model Name">Model Name</label>
           <input type="text" class="input" id="ct-dep-name" style="margin-top:5px" data-i18n-placeholder="Enter model name">
         </div>
