@@ -84,9 +84,14 @@ def _capture(
             page.goto(f"http://127.0.0.1:{port}/", wait_until="load", timeout=60_000)
             page.wait_for_timeout(spec["settle_ms"])
             # The tutorial TOC opens asynchronously and would cover the page.
+            # Belt and braces: close the TOC, stop anything still running, and
+            # return to the top. A tour that already scrolled leaves the page
+            # where it left it, and hideTOC does not undo that.
             page.evaluate(
                 "() => { const t = window._dxTutorial;"
-                " if (t && t.hideTOC) { try { t.hideTOC(); } catch (e) {} } }"
+                " if (t) { try { if (t.hideTOC) t.hideTOC();"
+                "                if (t.stop) t.stop(); } catch (e) {} }"
+                " window.scrollTo(0, 0); }"
             )
             page.wait_for_timeout(500)
             masks = [
