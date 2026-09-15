@@ -47,7 +47,9 @@ _DRIVE = """(state) => {
     ns._splashTimers.forEach(clearTimeout);
     ns._splashTimers.length = 0;
   }
-  ov.className = 'splash-overlay is-running' + (state === 'work' ? ' is-working' : '');
+  ov.className = 'splash-overlay is-running'
+    + (state === 'work' ? ' is-working' : '')
+    + (state === 'close' ? ' is-closed' : '');
   if (state === 'work') {
     const cue = document.getElementById('splashCue');
     cue.setAttribute('data-beat', '1');

@@ -52,7 +52,9 @@
      250ms 만에 밀려나서, 있었는지도 모르게 지나갔다. */
   var _WORK_IN  = 3400;
   var _CLOSE    = _WORK_IN + _BEAT * 3;       /* 9250 */
-  var _INTRO    = _CLOSE + 1650;              /* 10900 */
+  /* close 는 주장 하나로 닫는다. 읽을 시간이 필요하므로 hero 로 돌아오는
+     것보다 길게 잡는다 — 한 문장을 못 읽고 끝나면 없느니만 못하다. */
+  var _INTRO    = _CLOSE + 2600;              /* 11850 */
 
   function _t(key) {
     return (window.DXI18n && window.DXI18n.T) ? window.DXI18n.T(key) : key;
@@ -204,6 +206,10 @@
       '</div>' +
       '<div class="mark-slot">' +
         '<p class="mark-sub" id="splashSubtitle">AI Studio</p>' +
+        '<blockquote class="mark-claim">' +
+          '<p class="claim-line">\u201cThe center of gravity in AI is shifting from the cloud to the physical world.\u201d</p>' +
+          '<footer class="claim-by">Lokwon Kim \u00b7 Founder &amp; CEO, DEEPX \u00b7 CES 2026</footer>' +
+        '</blockquote>' +
       '<div class="mark-cue" id="splashCue" aria-hidden="true">' +
         '<div class="cue-scene" aria-hidden="true">' +
           '<img class="cue-shot" data-beat="0" src="/static/img/intro/scene-detect.svg" alt="Four camera channels with people and vehicles boxed as they are detected">' +

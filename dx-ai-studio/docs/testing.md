@@ -431,9 +431,9 @@ compares each against a committed baseline:
 |---|---|---|
 | `<engine>/<module>__<theme>__<locale>.png` | 9 modules x {dark, light} x {en, es} at 1280x800 | 36 |
 | `<engine>/<module>__w<width>.png` | 9 modules x {650, 860, 1150, 1320} at dark/en | 36 |
-| `<engine>/launcher__intro__<state>.png` | the intro at `hero` and `work` | 2 |
+| `<engine>/launcher__intro__<state>.png` | the intro at `hero`, `work` and `close` | 3 |
 
-74 shots. `tests/visual/baseline_spec.py` is the source of truth for the axes and
+75 shots. `tests/visual/baseline_spec.py` is the source of truth for the axes and
 carries the reasoning for each one; do not restate the numbers here.
 
 This is **not** what `tests/test_ux_visual_gate.py` does — that audits tutorial
@@ -482,7 +482,7 @@ did not move" and nothing more.
 
 `test_intro_regression.py` covers the intro separately, and it does not wait on the
 sequence either. It cancels the pending timers, sets the overlay to a named state
-(`hero`, `work`), and shoots with `animations="disabled"`. So what is pinned is
+(`hero`, `work`, `close`), and shoots with `animations="disabled"`. So what is pinned is
 "the composition once hero has settled", not "the frame at 2.6s": retiming a beat
 does not turn it red, changing the picture does.
 

@@ -133,7 +133,9 @@ def responsive_baseline_name(module: str, width: int) -> str:
 # 붉어지지 않고 구도가 바뀌면 붉어진다.
 #
 # 반복 촬영 0픽셀을 확인하고 넣었다 (1280x800, 3회, hero/work 각각 0/1024000).
-INTRO_STATES = ("hero", "work")
+# close 는 인트로의 결론이라 특히 지켜야 한다 — 인용문과 귀속이 한 프레임에
+# 같이 읽혀야 하고, 둘 중 하나만 깨져도 주장이 우리 것이 되어 버린다.
+INTRO_STATES = ("hero", "work", "close")
 
 
 def intro_baseline_name(state: str) -> str:

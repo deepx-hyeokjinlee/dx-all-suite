@@ -521,6 +521,51 @@ def test_the_working_beat_is_drawn_rather_than_photographed():
         assert photo in about, f"About lost {photo}"
 
 
+def test_the_closing_claim_is_quoted_not_written():
+    """Apple closes on one claim. Ours is not ours to write.
+
+    The three scenes before it — a camera, a warehouse, the die — are the
+    evidence for exactly one sentence, and the company already said it: DEEPX
+    declared the era of Physical AI at CES 2026 and its CEO put it in a line.
+    So the close quotes rather than composes.
+
+    That only stays true if it keeps the marks of a quotation: quote
+    characters, a <blockquote>, and an attribution naming who said it, in what
+    role, and where. Strip any of those and it silently becomes marketing copy
+    the studio is asserting on its own authority, which is a different and much
+    weaker thing — and one nobody can check.
+
+    It is deliberately untranslated. Re-authoring a named person's sentence in
+    five languages would make it ours again, which is the thing this guards
+    against; the i18n audit already skips strings identical across locales.
+    """
+    html = index()
+    splash = html[html.index('id="splashOverlay"'):html.index("</header>")]
+
+    assert "<blockquote" in splash, "the claim is no longer marked as a quotation"
+    assert "\u201c" in splash and "\u201d" in splash, "the quote marks are gone"
+
+    by = re.search(r'class="claim-by"[^>]*>([^<]+)<', splash)
+    assert by, "the claim has no attribution"
+    for part in ("Lokwon Kim", "DEEPX", "CES 2026"):
+        assert part in by.group(1), f"the attribution does not say {part!r}"
+    assert "CEO" in by.group(1), "the attribution does not say in what role"
+
+    # A reader must be able to check it, so the source travels with the markup.
+    # Scoped to the comment that introduces the quotation: the header's Buy link
+    # also points at deepx.ai, and a looser search was satisfied by that instead.
+    cite = re.search(r"<!--(?:(?!-->).)*?-->\s*<blockquote", splash, re.DOTALL)
+    assert cite, "the quotation is not introduced by a source comment"
+    assert "deepx.ai/" in cite.group(0), "the claim cites no source of its own"
+
+    # Not translated, on purpose — a data-i18n key here would invite exactly the
+    # re-authoring this guards against.
+    claim = splash[splash.index("<blockquote"):splash.index("</blockquote>")]
+    assert "data-i18n" not in claim, (
+        "the quotation is marked for translation, which turns it into our words"
+    )
+
+
 def test_the_name_and_the_console_share_one_slot():
     """Two things in one place, and neither may inherit the other's delay.
 

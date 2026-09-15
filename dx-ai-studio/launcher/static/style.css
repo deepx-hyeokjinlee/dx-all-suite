@@ -1050,13 +1050,6 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   transform: translateY(-4px);
   transition: opacity .38s var(--ap-ease), transform .38s var(--ap-ease);
 }
-.splash-overlay.is-closed .mark-sub {
-  opacity: .78;
-  transform: none;
-  transition: opacity .55s var(--ap-ease),
-              transform .55s cubic-bezier(.16, .84, .24, 1);
-}
-
 /* 장면. 애플의 context shot 은 제품이 실제로 쓰이는 세상을 보여주는 컷이고,
    이 회사가 파는 것은 physical AI 다 — 그러면 인트로에 세상이 없을 이유가 없다.
    레포에 이미 회사가 쓰는 실제 이미지가 있다: 엣지에서 도는 보안 카메라,
@@ -1148,6 +1141,58 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 /* 움직임을 줄여 달라고 한 사람에게는 일하는 장면도 캐럿도 없다. */
 .splash-overlay.is-still .mark-cue { display: none; }
 @media (prefers-reduced-motion: reduce) { .cue-caret { animation: none; } }
+
+/* ── 3. close ───────────────────────────────────────────
+   애플 광고는 주장 하나로 닫는다. 우리가 할 주장은 지어낼 필요가 없다 — 회사가
+   CES 2026 에서 이미 했다. 앞의 세 장면(카메라·창고·실리콘)이 정확히 이 문장의
+   근거라서, 보여준 다음에 말하는 순서가 된다.
+
+   인용문은 번역하지 않는다. 실존 인물에게 귀속된 문장을 내가 다섯 개 언어로 새로
+   쓰면 그건 인용이 아니라 창작이다. 출처를 함께 적어 두면 원문 그대로 두는 것이
+   편집 관례이기도 하고, i18n 감사도 전 로케일 동일 문자열은 "의도적으로 보편적"
+   으로 보고 넘어간다. */
+.mark-claim {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .6s var(--ap-ease), transform .6s cubic-bezier(.16, .84, .24, 1);
+  pointer-events: none;
+}
+.claim-line {
+  max-width: min(52ch, 86vw);
+  margin: 0;
+  font-size: clamp(15px, 1.5vw, var(--ap-t-title));
+  font-weight: 400;
+  letter-spacing: -.021em;
+  line-height: 1.42;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--brand-on-shade);
+}
+.claim-by {
+  font-size: var(--ap-t-body);
+  font-weight: 600;
+  letter-spacing: .012em;
+  color: var(--brand-subtle);
+  opacity: .72;
+}
+/* close 에서만 등장한다. hero 와 work 는 각자 슬롯을 쓴다. */
+.splash-overlay.is-closed .mark-claim { opacity: 1; transform: none; }
+/* 이름은 hero 에서 이미 나왔다. close 는 주장으로 닫는다 — 같은 자리에 둘을
+   겹쳐 놓으면 둘 다 안 읽힌다. */
+.splash-overlay.is-closed .mark-sub {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity .38s var(--ap-ease), transform .38s var(--ap-ease);
+}
+.splash-overlay.is-still .mark-claim { display: none; }
 
 /* 마지막: 앱을 켜고 마크째로 렌즈를 지나 나간다 — 페이드가 아니라 컷이다.
    이 블록은 .mark 규칙들보다 뒤에 와야 한다. .is-through 와 .is-running 은
