@@ -150,7 +150,7 @@
 }
 .dx-shell-status--on{display:flex}
 
-@media (max-width:1100px){
+@media (max-width:1200px){
   .dx-shell-main{padding:var(--sp-4)}
   .dx-shell-header{padding:0 var(--sp-4)}
   .dx-shell-tabs{padding:0 var(--sp-4)}

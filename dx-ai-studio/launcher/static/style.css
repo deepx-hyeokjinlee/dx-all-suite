@@ -1852,7 +1852,7 @@ body {
   .ws-foot .deepx-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .workspace { grid-template-columns: minmax(0, 1fr); }
 }
 
@@ -2284,7 +2284,7 @@ body {
 }
 /* When the panel stacks (same breakpoint as .platform-info-panel), the image goes
    full-width on top and stops being sticky. */
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .eco-hero { position: static; flex-basis: auto; width: 100%; max-width: 520px; margin: 0 auto; }
 }
 .eco-head h2 {
@@ -2587,7 +2587,7 @@ body {
 }
 
 /* Platform info — stack on narrow / zoomed viewports */
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
   .platform-info-panel {
     flex-direction: column;
     width: min(96vw, 100%);

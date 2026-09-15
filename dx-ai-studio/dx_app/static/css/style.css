@@ -1095,7 +1095,7 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 .lab-composer-selection-drop-target{border-style:dashed}
 .lab-composer-drop-active{border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(var(--accent-rgb),.25)!important}
 .lab-composer-factory-note{margin:0;border-left:2px solid var(--accent);padding-left:var(--sp-2);color:var(--text-secondary);font-size:var(--fs-xs);line-height:1.5}
-@media(max-width:1100px){
+@media(max-width:1200px){
   .lab-composer-builder{grid-template-columns:minmax(180px,1fr) minmax(0,2fr)}
   .lab-composer-inspector{grid-column:1/-1}
 }

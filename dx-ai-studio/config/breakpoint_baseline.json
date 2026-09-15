@@ -1,12 +1,11 @@
 {
   "dx_agent_dev/static/css/console.css": [
     768,
-    1100
+    1200
   ],
   "dx_app/static/css/style.css": [
     600,
     900,
-    1100,
     1200
   ],
   "dx_benchmark/static/css/style.css": [
@@ -41,7 +40,7 @@
   "dx_stream/static/css/stream.css": [
     600,
     900,
-    1100
+    1200
   ],
   "launcher/static/about-deepx.css": [
     1979
@@ -49,17 +48,17 @@
   "launcher/static/style.css": [
     600,
     768,
-    1100
+    1200
   ],
   "shared/chat/static/chat-widget.css": [
     480
   ],
   "shared/static/dx-shell.css": [
-    1100
+    1200
   ],
   "shared/static/dx-utilities.css": [
     600,
-    1100
+    1200
   ],
   "shared/static/tutorial.css": [
     600
