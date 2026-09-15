@@ -119,6 +119,54 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+  visual:
+    name: Pixel visual regression (advisory)
+    needs: pytest-gate
+    # Advisory by design: baselines are captured on THIS runner because font
+    # rasterisation differs between machines, so a red here means "the page moved"
+    # OR "you are on a different box" — not something to block a merge on until the
+    # runner is pinned. The diff PNGs are the actual deliverable.
+    continue-on-error: true
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provision test venv
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Ensure browser engine
+        run: |
+          "$VENV_PYTHON" -m playwright install chromium
+
+      - name: Visual regression
+        run: bash scripts/run_ci.sh --visual
+
+      - name: Upload visual diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs
+          path: dx-ai-studio/var/visual-diffs/
+          if-no-files-found: ignore
+          retention-days: 14
+
   coverage:
     name: Coverage vs baseline (advisory)
     needs: pytest-gate
@@ -130,6 +178,12 @@ jobs:
     defaults:
       run:
         working-directory: dx-ai-studio
+    env:
+      # Turns a per-module drop below the committed baseline into a non-zero exit.
+      # The job stays continue-on-error, so this makes a regression VISIBLE (red
+      # step, named module, delta) without blocking the merge — the staged step
+      # between "report-only" and gating.
+      DX_COVERAGE_ENFORCE: '1'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
