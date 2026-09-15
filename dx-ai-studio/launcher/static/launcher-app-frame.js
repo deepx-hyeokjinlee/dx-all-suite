@@ -731,17 +731,22 @@
   function showSdkLibrary() { LauncherRouter.navigate('sdk-library'); }
   function launch(app, query) { LauncherRouter.navigate('app', { app: app, query: query }); }
 
+  /* 탭 라벨은 짧게. 이 스트립은 열한 칸이 1272px 을 요구하는데 473px 만 받고
+     있었다 — 절반 넘게가 가로 스크롤 뒤에 숨어, 모듈 목록이면서 모듈을 못 보여
+     줬다. 이모지가 칸당 22px, "DX " 접두어가 25px 을 먹었고 둘 다 정보가 아니다:
+     이 줄에 있는 것은 전부 DX 이고, 아이콘은 홈의 모듈 목록이 이미 제대로 쓴다.
+     빼고 나면 980px 로 줄어 1440 에서 스크롤 없이 들어간다. */
   var NAV_TAB_LABELS = {
-    app: '📱 DX App',
-    stream: '🎬 DX Stream',
-    zoo: '🦁 Model Zoo',
-    compiler: '⚙️ Compiler',
-    planner: '🗺️ EdgeGuide',
-    benchmark: '📊 Benchmark',
-    dx_monitor: '📡 Monitor',
-    agent: '🤖 Agent Dev',
-    'sdk-library': '📚 SDK Library',
-    about: '🔬 About DEEPX',
+    app: 'App',
+    stream: 'Stream',
+    zoo: 'Model Zoo',
+    compiler: 'Compiler',
+    planner: 'EdgeGuide',
+    benchmark: 'Benchmark',
+    dx_monitor: 'Monitor',
+    agent: 'Agent Dev',
+    'sdk-library': 'SDK Library',
+    about: 'About',
   };
   var NAV_TAB_CONFIG = [
     { app: 'app', label: NAV_TAB_LABELS.app, action: function() { launch('app'); }, activeClass: 'active' },
@@ -843,9 +848,18 @@
     var home = document.createElement('div');
     home.className = 'nav-tab home-btn';
     home.dataset.home = '1';
-    home.textContent = '🏠';
+    /* 이모지 하나가 전부였다. 이제 줄의 나머지가 전부 글자라 톤이 어긋나고,
+       무엇보다 접근 가능한 이름이 없어 스크린리더가 "집" 을 읽었다. 같은 획
+       굵기의 글리프로 바꾸고 이름을 붙인다 — 라벨은 사전이 번역한다. */
+    home.innerHTML = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M2.2 6.6 8 2.2l5.8 4.4V13a.8.8 0 0 1-.8.8H3a.8.8 0 0 1-.8-.8Z"/>' +
+      '<path d="M6.4 13.8V9.4h3.2v4.4"/></svg>';
     home.setAttribute('tabindex', '0');
     home.setAttribute('role', 'button');
+    home.setAttribute('data-i18n-aria-label', 'Home');
+    home.setAttribute('aria-label',
+      (window.DXI18n && DXI18n.T) ? DXI18n.T('Home') : 'Home');
     home.addEventListener('click', goHome);
     home.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goHome(); }
