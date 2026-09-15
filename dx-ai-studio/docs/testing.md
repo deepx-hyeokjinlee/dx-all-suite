@@ -397,7 +397,7 @@ choice, which is the hardest case to notice by hand.
 |------|--------------|----------------------|
 | `--npu` | `tests/e2e/ -m e2e_npu` — the triple gate against real DX-M1 inference | One board backs it; a merge must not depend on that board's health |
 | `--visual` | `tests/visual/` — pixel diff vs committed screenshots | Baselines are per-host (font rasterisation differs) |
-| `--browser` | the ten Playwright suites, shardable with `--shard=i/N` | Slow; advisory until the engines are stable in CI |
+| `--browser` | the ten Playwright suites, shardable with `--shard=i/N` | Slow; advisory until the engines are stable in CI. **Currently red — see below** |
 | `--coverage` | all ten `.coveragerc` sources vs `config/coverage_baseline.json` | Staged: visible, not yet gating |
 
 ### Real-NPU tier (`--npu`)
@@ -519,6 +519,44 @@ gate. So the debt cannot quietly grow.
 | Test | Defect | Needs |
 |------|--------|-------|
 | `test_all_models_have_complete_legal_block` | The `yolo26-depth-*` family reaches the catalog from the dx_app source tree, not the ModelZoo sync snapshot, so it carries only `commercial_use: restricted` and no full legal block. | Upstream licence data. **Do not fabricate** — a wrong licence claim is worse than a missing one. |
+
+#### `--browser` is red (2026-09-15)
+
+`run_ci.sh` without flags reports zero failures, and that sentence has been quoted
+as "everything is green". It is not: the browser suites are opt-in, so nothing in
+the default run executes them, and `tests/test_tutorial_e2e_journey.py` has been
+failing on three of its seven modules.
+
+```
+dx_modelzoo   download|step1   TARGET_MISSING  '[data-model-id][data-quant]'
+dx_app        run-single|step9 TARGET_MISSING  '#r-topk'
+              rundemo|step3    TARGET_MISSING  '#rundemo-block-0 [data-axis="post"]'
+              rundemo|step4    TARGET_MISSING  '#rundemo-block-0 button[onclick*="rundemoRun"]'
+              modelzoo|step4   TARGET_MISSING  '#mz-cart'
+dx_agent_dev  showcase|step2   MOCK_INJECTION  data-dxt-tutorial-mock present in DOM
+              activity|step2   MOCK_INJECTION  data-dxt-tutorial-mock present in DOM
+```
+
+Pre-existing and not caused by the hub-portal work: the same three fail with that
+branch's changes stashed.
+
+What is *not* yet established is the root cause, and the categories argue against
+the obvious reading. `analyze_step` already has a `FLOATING_FALLBACK` bucket, and
+`tutorial-engine.js` degrades a missing target into a floating tooltip on purpose
+(`target not found/visible after polling → floating tooltip`), so a step whose
+control legitimately is not present should land in that bucket, not this one.
+`TARGET_MISSING` means the spotlight was active and the tooltip was *not* floating
+while `_queryTarget` returned nothing — a target that existed when the step opened
+and vanished before the metric read, which is a different bug from a rotted
+selector. At least one of the five even documents itself as conditional ("only
+visible when DX App is connected").
+
+So this needs an instrumented run per module before anything is changed. Guessing
+at a selector here risks papering over a re-render race with a hard-coded target.
+
+`MOCK_INJECTION` is a separate defect: the tutorial injects a preview element
+(`data-dxt-tutorial-mock`) to spotlight a state that only exists mid-operation, and
+does not always remove it.
 
 **Resolved 2026-08-27** (removed from the quarantine): the three dx_stream/dx_modelzoo
 failures all traced to one cause — dx-runtime shipped the `yolo26-depth` family
