@@ -123,6 +123,34 @@ command -v git >/dev/null 2>&1 || die2 "git not found in PATH"
 export GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=Never
 HAVE_GH=0;   command -v gh   >/dev/null 2>&1 && HAVE_GH=1
 HAVE_CURL=0; command -v curl >/dev/null 2>&1 && HAVE_CURL=1
+# Which env var supplied each token (for error messages).
+SRC_TOKEN_SRC=none; [ -n "${GHES_SYNC_SRC_TOKEN:-}" ] && SRC_TOKEN_SRC=GHES_SYNC_SRC_TOKEN || { [ -n "${GH_TOKEN:-}" ] && SRC_TOKEN_SRC=GH_TOKEN; }
+DST_TOKEN_SRC=none; [ -n "${GHES_SYNC_DST_TOKEN:-}" ] && DST_TOKEN_SRC=GHES_SYNC_DST_TOKEN || { [ -n "${GH_ENTERPRISE_TOKEN:-}" ] && DST_TOKEN_SRC=GH_ENTERPRISE_TOKEN; }
+
+# probe URL TOKEN → PROBE_OUT = `git ls-remote --heads` output, PROBE_ERR = git's last stderr line; returns git's rc (124 = timeout)
+PROBE_OUT=""; PROBE_ERR=""
+probe() {
+  local url="$1" token="$2" errf rc; errf="$(mktemp)"
+  auth_opts "$url" "$token"
+  PROBE_OUT="$(tmo "$PROBE_TIMEOUT" git "${AUTH_OPTS[@]}" ls-remote --heads "$url" 2>"$errf")"; rc=$?
+  PROBE_ERR="$(grep -v '^$' "$errf" | tail -n1)"; rm -f "$errf"
+  return "$rc"
+}
+# probe_reason src|dst URL RC → one-line diagnosis: timeout / token REJECTED (which env var) / NETWORK / other
+probe_reason() {
+  local side="$1" url="$2" rc="$3" var
+  if [ "$side" = src ]; then var="$SRC_TOKEN_SRC"; else var="$DST_TOKEN_SRC"; fi
+  if [ "$rc" -eq 124 ]; then printf 'probe timed out after %ss (GHES_SYNC_PROBE_TIMEOUT) — is %s reachable from this machine?' "$PROBE_TIMEOUT" "$url"; return; fi
+  if printf '%s' "$PROBE_ERR" | grep -qiE 'authentication failed|invalid username|invalid (password|token)|error: 401|error: 403|could not read (username|password)|permission denied|repository not found'; then
+    if [ "$var" = none ]; then printf 'git: %s — no token env was set; %s' "$PROBE_ERR" "$(auth_hint "$side" "$url")"
+    else printf 'git: %s — the token from %s was REJECTED (revoked/expired, wrong org, or no access to this repo). Mint a new PAT and re-export %s' "$PROBE_ERR" "$var" "$var"; fi
+  elif printf '%s' "$PROBE_ERR" | grep -qiE 'could not resolve|unable to access|connection|timed out|ssl|tls|network'; then
+    printf 'git: %s — NETWORK problem (host not reachable from this machine: wrong network / proxy / DNS), not auth' "$PROBE_ERR"
+  else
+    printf 'git: %s — %s' "${PROBE_ERR:-no error text}" "$(auth_hint "$side" "$url")"
+  fi
+}
+
 # Credential preflight — the tool never prompts, so make sure git WILL be able to authenticate.
 has_creds() {  # has_creds URL TOKEN → 0 when a token is set, the URL is not http(s), or a credential helper answers (no prompt)
   local url="$1" token="$2"
@@ -571,14 +599,10 @@ process() {
     elif [ "$frc" -ne 0 ]; then fail "cannot fetch src [$R_BRANCH] — $(auth_hint src "$R_SRC_URL")"; return; fi
     [ "$TAGS" -eq 1 ] && tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" fetch -q "$R_SRC_URL" "+refs/tags/*:refs/tags/*"
   fi
-  auth_opts "$R_DST_URL" "$DST_TOKEN"
   local probe_rc=0
-  DST_HEADS="$(tmo "$PROBE_TIMEOUT" git "${AUTH_OPTS[@]}" ls-remote --heads "$R_DST_URL" 2>/dev/null | awk '{print $2}')" || probe_rc=$?
-  if [ "$probe_rc" -eq 124 ]; then
-    fail "dst probe timed out after ${PROBE_TIMEOUT}s (GHES_SYNC_PROBE_TIMEOUT) — is $R_DST_URL reachable from this machine?"; return
-  elif [ "$probe_rc" -ne 0 ]; then
-    fail "cannot reach dst — $(auth_hint dst "$R_DST_URL")"; return
-  fi
+  probe "$R_DST_URL" "$DST_TOKEN" || probe_rc=$?
+  DST_HEADS="$(printf '%s\n' "$PROBE_OUT" | awk '{print $2}')"
+  if [ "$probe_rc" -ne 0 ]; then fail "cannot reach dst (GHES) — $(probe_reason dst "$R_DST_URL" "$probe_rc")"; return; fi
   fetch_dst_ref "$cache" "$R_DST_URL" "$R_DST_BRANCH"
   [ -n "$R_PR_BASE" ] && [ "$R_PR_BASE" != "$R_DST_BRANCH" ] && fetch_dst_ref "$cache" "$R_DST_URL" "$R_PR_BASE"
 
@@ -691,18 +715,16 @@ process_reverse() {
   if ! has_creds "$R_SRC_URL" "$SRC_TOKEN"; then rv_fail_all "$branches" "$(cred_hint src "$R_SRC_URL")"; return; fi
   # FROM = GHES. Skipped with --push-only: the cache already carries what --pull-only fetched.
   if [ "$PUSH_ONLY" -eq 0 ]; then
-    auth_opts "$R_DST_URL" "$DST_TOKEN"; probe_rc=0
-    DST_HEADS="$(tmo "$PROBE_TIMEOUT" git "${AUTH_OPTS[@]}" ls-remote --heads "$R_DST_URL" 2>/dev/null | awk '{print $2}')" || probe_rc=$?
-    if [ "$probe_rc" -eq 124 ]; then rv_fail_all "$branches" "GHES probe timed out after ${PROBE_TIMEOUT}s — run '--reverse --pull-only' where $R_DST_URL is reachable, then '--reverse --push-only' here"; return
-    elif [ "$probe_rc" -ne 0 ]; then rv_fail_all "$branches" "cannot reach GHES (from) — $(auth_hint dst "$R_DST_URL"); or run '--reverse --pull-only' where it is reachable and '--reverse --push-only' here"; return; fi
+    probe_rc=0; probe "$R_DST_URL" "$DST_TOKEN" || probe_rc=$?
+    DST_HEADS="$(printf '%s\n' "$PROBE_OUT" | awk '{print $2}')"
+    if [ "$probe_rc" -ne 0 ]; then rv_fail_all "$branches" "cannot reach GHES (from) — $(probe_reason dst "$R_DST_URL" "$probe_rc"). If GHES is simply not reachable here: run '--reverse --pull-only' where it is, then '--reverse --push-only' on this machine"; return; fi
     for b in $branches; do fetch_dst_ref "$cache" "$R_DST_URL" "$b"; done
   fi
   # TO = mirror: always probed (needed to classify), fetched into refs/remotes/src/<b>
-  auth_opts "$R_SRC_URL" "$SRC_TOKEN"; probe_rc=0
-  MIRROR_LS="$(tmo "$PROBE_TIMEOUT" git "${AUTH_OPTS[@]}" ls-remote --heads "$R_SRC_URL" 2>/dev/null)" || probe_rc=$?
+  probe_rc=0; probe "$R_SRC_URL" "$SRC_TOKEN" || probe_rc=$?
+  MIRROR_LS="$PROBE_OUT"
   MIRROR_HEADS="$(printf '%s\n' "$MIRROR_LS" | awk '{print $2}')"
-  if [ "$probe_rc" -eq 124 ]; then rv_fail_all "$branches" "mirror probe timed out after ${PROBE_TIMEOUT}s — is $R_SRC_URL reachable?"; return
-  elif [ "$probe_rc" -ne 0 ]; then rv_fail_all "$branches" "cannot reach the mirror (to) — $(auth_hint src "$R_SRC_URL")"; return; fi
+  if [ "$probe_rc" -ne 0 ]; then rv_fail_all "$branches" "cannot reach the mirror (to) — $(probe_reason src "$R_SRC_URL" "$probe_rc")"; return; fi
   for b in $branches; do
     if printf '%s\n' "$MIRROR_HEADS" | grep -qx "refs/heads/$b"; then
       git "${AUTH_OPTS[@]}" -C "$cache" fetch -q --no-tags "$R_SRC_URL" "+refs/heads/$b:refs/remotes/src/$b"

@@ -77,6 +77,21 @@ GHES는 squash merge라 `main`/`dev`에 PR당 새 커밋 1개가 남고, 미러�
 확인한다(`git log ghes/main..mirror/main`): GHES가 되감긴 것이고 GHES가 옳으면 `--force-with-lease`로 재실행, 미러에
 진짜 작업이 있으면 먼저 GHES에 올린다.
 
+### `--reverse`가 repo별로 맞추는 브랜치
+
+`--reverse`는 **같은 이름** 브랜치를 GHES → 미러로 push한다. 대상은 `reverse_branches`가 있으면 그 목록, 없으면
+**`branch` + `pr_base` + `main`**(중복 제거). `--reset-to-base`는 여기에 "GHES `pr_base` → 미러 `branch`" 한 행을
+추가하고, 대신 `branch`의 같은-이름 동기화는 *건너뛴다*(곧 덮어쓸 대상이므로). `branch = feature/X`일 때:
+
+| repo | `pr_base` | `--reverse`만 (같은 이름 → 같은 이름) | `--reset-to-base` 추가 |
+|---|---|---|---|
+| dx_app, dx_stream | dev | `feature/X`, `dev`, `main` | 미러 `feature/X` ← GHES `dev` (`feature/X` 같은-이름 동기화는 생략) |
+| dx-runtime, dx-compiler, dx-all-suite | main | `feature/X`, `main` | 미러 `feature/X` ← GHES `main` |
+
+repo별 헤더 로그가 이것을 그대로 보여 준다: `same-name branches: dev main | reset: mirror feature/X <= GHES dev`.
+`reverse_branches`는 `[defaults]`(모든 repo)와 `[repo NAME]` 섹션(그 repo만, defaults보다 우선) 어디에나 둘 수 있고,
+쓰지 않으면 위 표가 기본이다.
+
 ## 시나리오 3 — GHES → 미러, 같은 이름 브랜치만 (`--reverse`)
 
 history 재작성 없이 GHES 쪽에만 커밋이 생겼을 때: `main`의 `dci` bot bump, feature 브랜치의 merge-update 커밋(forward에서 `DST-AHEAD`),
@@ -100,6 +115,8 @@ release 커밋 등.
 | 증상 | 의미 / 조치 |
 |---|---|
 | push 시 `GnuTLS recv error (-110)` / `RPC failed` / `early EOF` | 이 기계와 github.com 사이의 일시적 TLS/네트워크 문제(Debian GnuTLS git을 쓰는 Orange Pi에서 관찰). 도구는 push를 3회 재시도(`GHES_SYNC_RETRIES`, `GHES_SYNC_RETRY_DELAY`)하고 git의 실제 에러를 출력한다. 계속 실패하면 `git config --global http.version HTTP/1.1`(및 `http.postBuffer 524288000`) 후 **같은 명령을 다시 실행** — 모든 단계는 idempotent: 끝난 행은 UP-TO-DATE, 기존 백업은 재사용. |
+| `cannot reach the mirror/GHES … — git: Authentication failed … (token from GH_TOKEN rejected)` | 도구가 사용한 토큰(메시지에 이름 표시)이 거부됨: revoke/만료(예: 유출 후 폐기), org 불일치, 미러 repo에 `Contents` 권한 없음. 새 PAT 발급; `GHES_SYNC_SRC_TOKEN`이 `GH_TOKEN`보다, `GHES_SYNC_DST_TOKEN`이 `GH_ENTERPRISE_TOKEN`보다 우선 — 어느 것이 export되어 있는지 확인. |
+| `cannot reach … — git: Could not resolve host / unable to access` | 인증이 아닌 네트워크 문제: 이 기계에서 host에 닿지 않음(망, proxy, DNS). |
 | `cannot fetch src … auth/network?` / `cannot reach dst` | PAT가 없거나 틀림, 또는 이 기계에서 host 접근 불가. github.com push가 막힌 곳에서 `--reverse --push-only`를 돌리면 이렇게 실패하는 것이 정상 — 2.3/3.3은 일반망에서. |
 | `dst probe timed out after 30s` | 여기서 GHES 접근 불가(망 확인). `GHES_SYNC_PROBE_TIMEOUT` / `GHES_SYNC_NET_TIMEOUT`으로 조정. |
 | `gitlink … is NOT reachable` | parent repo가 동기화 브랜치에 없는 sub-repo 커밋을 가리킴. pointer를 고치거나 올바른 sub-repo 브랜치를 먼저 동기화(nested repo는 항상 먼저 처리됨). |

@@ -83,6 +83,22 @@ the tool does not touch it (the forward run only syncs the feature branch). Find
 (`git log ghes/main..mirror/main` in that repo): if GHES was rewound and GHES is right, rerun with
 `--force-with-lease`; if the mirror has real work, get it onto GHES first.
 
+### What `--reverse` maps, per repo
+
+`--reverse` pushes **same-name** branches GHES → mirror. Which branches: `reverse_branches` if set, else
+**`branch` + `pr_base` + `main`** (deduplicated). `--reset-to-base` adds one more row — GHES `pr_base` →
+mirror `branch` — and then *skips* the same-name sync of `branch` (it is about to be replaced anyway).
+With `branch = feature/X`:
+
+| repo | `pr_base` | `--reverse` alone (same name → same name) | `--reset-to-base` adds |
+|---|---|---|---|
+| dx_app, dx_stream | dev | `feature/X`, `dev`, `main` | mirror `feature/X` ← GHES `dev` (and `feature/X` is not synced by name) |
+| dx-runtime, dx-compiler, dx-all-suite | main | `feature/X`, `main` | mirror `feature/X` ← GHES `main` |
+
+The header line of each repo shows exactly this: `same-name branches: dev main | reset: mirror feature/X <= GHES dev`.
+`reverse_branches` may be set under `[defaults]` (all repos) and/or under a `[repo NAME]` section (that repo only,
+wins over defaults); leaving it unset gives the table above.
+
 ## Scenario 3 — GHES → Mirror, same-name branches only (`--reverse`)
 
 Use when GHES gained commits on branches that also exist on the mirror and no history was rewritten: `dci` bot bumps
@@ -107,6 +123,8 @@ the parent.
 | Symptom | Meaning / fix |
 |---|---|
 | `GnuTLS recv error (-110)` / `RPC failed` / `early EOF` on push | Transient TLS/network trouble between this machine and github.com (seen on an Orange Pi with Debian's GnuTLS git). The tool retries each push 3× (`GHES_SYNC_RETRIES`, `GHES_SYNC_RETRY_DELAY`) and prints git's own error; if it keeps failing, set `git config --global http.version HTTP/1.1` (and `http.postBuffer 524288000`) and simply **rerun the same command** — every step is idempotent: done rows become UP-TO-DATE, an existing backup is reused. |
+| `cannot reach the mirror/GHES … — git: Authentication failed … (token from GH_TOKEN rejected)` | The token the tool used (named in the message) was refused: revoked/expired (e.g. after a leak), wrong org, or no `Contents` access on the mirror repos. Mint a new PAT; `GHES_SYNC_SRC_TOKEN` wins over `GH_TOKEN`, `GHES_SYNC_DST_TOKEN` over `GH_ENTERPRISE_TOKEN` — check which one is exported. |
+| `cannot reach … — git: Could not resolve host / unable to access` | Network, not auth: the host is not reachable from this machine (wrong network, proxy, DNS). |
 | `cannot fetch src … auth/network?` / `cannot reach dst` | Missing or wrong PAT, or the host is not reachable from this machine. `--reverse --push-only` where github.com push is blocked simply fails like this — that is expected: run step 2.3/3.3 on the open network. |
 | `dst probe timed out after 30s` | GHES not reachable from here (wrong network). `GHES_SYNC_PROBE_TIMEOUT` / `GHES_SYNC_NET_TIMEOUT` tune the limits. |
 | `gitlink … is NOT reachable` | A parent repo points at a sub-repo commit that is not on the synced sub-repo branch. Fix the pointer or sync the right sub-repo branch first (nested repos are always processed first). |

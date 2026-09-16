@@ -1036,3 +1036,40 @@ def test_override_conf_example_exists_and_real_override_is_gitignored():
     assert r.returncode == 0, "sync.override.conf must be gitignored"
     r = subprocess.run(["git", "-C", str(SUITE), "check-ignore", "-q", "internal/tools/ghes-sync/sync.override.conf.example"])
     assert r.returncode != 0, "the .example must stay tracked"
+
+
+# ── probe failures must show git's own error and say which token env was used ─────
+
+def _shim_ls_remote_fails(env, stderr: str):
+    import shutil as _sh
+    real = _sh.which("git")
+    shim = env.bin / "git"
+    shim.write_text("#!/usr/bin/env bash\n"
+                    f'case "$*" in *ls-remote*github.invalid*) echo "{stderr}" >&2; exit 128;; esac\n'   # only the https mirror probe fails
+                    f"exec '{real}' \"$@\"\n")
+    shim.chmod(0o755)
+
+
+def test_probe_rejected_token_is_reported_as_auth_with_the_env_var_name(env):
+    _reverse_scenario(env)
+    conf = env.conf.read_text(encoding="utf-8").replace(f"src_host = file://{env.repos.src}", "src_host = https://github.invalid/mirror-org")
+    env.conf.write_text(conf, encoding="utf-8")
+    _shim_ls_remote_fails(env, "fatal: Authentication failed for 'https://github.invalid/mirror-org/dx_app.git/'")
+    r = env.run("--reverse", extra_env={"GH_TOKEN": "ghp_revoked"})
+    assert r.returncode == 1, out(r)
+    o = out(r)
+    assert "Authentication failed" in o                          # git's real error is shown
+    assert "rejected" in o.lower() and "GH_TOKEN" in o           # ...classified, naming the token source actually used
+    assert "revoked" in o.lower() or "expired" in o.lower()
+
+
+def test_probe_network_failure_is_reported_as_network(env):
+    _reverse_scenario(env)
+    conf = env.conf.read_text(encoding="utf-8").replace(f"src_host = file://{env.repos.src}", "src_host = https://github.invalid/mirror-org")
+    env.conf.write_text(conf, encoding="utf-8")
+    _shim_ls_remote_fails(env, "fatal: unable to access 'https://github.invalid/mirror-org/dx_app.git/': Could not resolve host: github.invalid")
+    r = env.run("--reverse", extra_env={"GH_TOKEN": "ghp_x"})
+    assert r.returncode == 1, out(r)
+    o = out(r)
+    assert "Could not resolve host" in o and "network" in o.lower()
+    assert "rejected" not in o.lower()
