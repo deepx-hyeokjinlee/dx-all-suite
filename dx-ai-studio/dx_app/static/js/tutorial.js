@@ -98,9 +98,13 @@
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+  /* 카탈로그가 끝내 비어 있을 때만 쓰는 마지막 수단. innerHTML 만 쓰면 다음
+     mzRenderCart() 가 지우므로, 그것이 다시 그리지 않도록 표시를 남긴다. */
   function _mockModelzooCartFallback() {
     var cart = document.getElementById('mz-cart');
     if (!cart) return;
+    if (window.MZ) MZ.cart = MZ.cart || {};
+    cart.dataset.dxtPinned = '1';
     cart.style.display = '';
     cart.innerHTML = '<div class="mz-cart-summary">'
       + '<div class="mz-cart-left"><span class="mz-cart-icon">🛒</span> <strong>2</strong> models · <span class="txt-dim">4 files</span></div>'
@@ -108,14 +112,33 @@
       + '</div>';
   }
 
+  /* 티어 모양은 MZ_CHIPS 에서 만든다. 손으로 적으면 이름이 바뀔 때 조용히 어긋난다. */
+  function _demoCartEntry(first) {
+    var chips = (window.MZ_CHIPS || []).map(function (c) { return c.key; });
+    if (!chips.length) chips = ['qlite', 'qpro'];
+    var entry = {};
+    chips.forEach(function (k, i) { entry[k] = first ? i === 0 : i === 1; });
+    return entry;
+  }
+
+  /* nav('modelzoo') 는 initModelZoo() 를 부르는데 그것이 async 이고 await 되지
+     않는다. 모델이 아직 없으면 여기서 fallback 을 그리고, 잠시 뒤 fetch 가 끝나면서
+     initModelZoo() 의 mzRenderCart() 가 빈 MZ.cart 를 보고 방금 만든 카트를
+     display:none 으로 지웠다 — 스텝이 드물게 빨간불을 낸 이유다.
+
+     기다리지 않는다. beforeStep 에서 몇 초를 끌면 그 사이 스텝이 교체되어(저니
+     러너는 350ms 마다 Next 를 누른다) 오히려 floating 으로 떨어진다 — 한 번
+     그렇게 고쳤다가 되돌렸다. 대신 fallback 이 만든 카트에 표시를 남겨 나중의
+     mzRenderCart() 가 지우지 않게 한다.
+     계약: tests/dx_app/test_modelzoo_cart_demo.py */
   function _prepModelzooCartDemo() {
     goPage('modelzoo');
     var cart = document.getElementById('mz-cart');
     if (!cart) return;
     if (window.MZ && typeof mzRenderCart === 'function' && MZ.models && MZ.models.length >= 2) {
       MZ.cart = {};
-      MZ.cart[MZ.models[0].name] = { qlite: true, qpro: false };
-      MZ.cart[MZ.models[1].name] = { qlite: false, qpro: true };
+      MZ.cart[MZ.models[0].name] = _demoCartEntry(true);
+      MZ.cart[MZ.models[1].name] = _demoCartEntry(false);
       mzRenderCart();
     } else {
       _mockModelzooCartFallback();

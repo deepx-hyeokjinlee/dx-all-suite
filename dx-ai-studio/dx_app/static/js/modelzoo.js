@@ -333,6 +333,10 @@ function mzRenderCart() {
   var fileCount = mzCartFileCount();
 
   if (!names.length) {
+    /* 튜토리얼이 고정해 둔 시연 카트는 지우지 않는다. 카탈로그가 늦게 도착하면
+       이 함수가 다시 돌면서 방금 만든 시연을 display:none 으로 덮었다.
+       계약: tests/dx_app/test_modelzoo_cart_demo.py */
+    if (cartEl.dataset && cartEl.dataset.dxtPinned === '1') return;
     cartEl.style.display = 'none';
     return;
   }
