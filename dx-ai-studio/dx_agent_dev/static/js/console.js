@@ -642,29 +642,56 @@
         releaseRunLock();
         return;
       }
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          const frag = line.slice(6);
-          if (frag === '[DONE]') continue;
-          let evt;
-          try { evt = JSON.parse(frag); } catch (e) { continue; }
-          renderEvent(evt);
-        }
-      }
+      await _consumeStream(resp);
     } catch (e) {
       clearHeartbeat();
       appendError(String((e && e.message) || e));
       setBadge('Failed', 'failed');
       _turn = null;
+    } finally {
+      clearHeartbeat();
+      releaseRunLock();
+    }
+  }
+
+  /* SSE 본문을 읽어 화면에 흘린다. 실행을 시작할 때와 이미 도는 실행에 붙을 때가
+     같은 코드를 쓴다 — 붙는 쪽이 다르게 그리면 "이어받았다" 가 거짓말이 된다. */
+  async function _consumeStream(resp) {
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const frag = line.slice(6);
+        if (frag === '[DONE]') continue;
+        let evt;
+        try { evt = JSON.parse(frag); } catch (e) { continue; }
+        renderEvent(evt);
+      }
+    }
+  }
+
+  /* home 에서 시작한 실행을 여기서 이어받는 길. 예전에는 이 콘솔이 자기가 시작한
+     실행만 볼 수 있었고, 그래서 이동해 온 사용자에게는 아무 일도 일어나지 않았다. */
+  async function attachIfRunning(st) {
+    if (!st || !st.run_id || st.run_done || _running) return false;
+    _running = true;
+    setConsoleBusy(true);
+    setBadge('Running...', 'running');
+    startHeartbeat();
+    try {
+      const resp = await fetch('/api/agent/run/events?from=0');
+      if (!resp.ok || !resp.body) return false;
+      await _consumeStream(resp);
+      return true;
+    } catch (e) {
+      return false;
     } finally {
       clearHeartbeat();
       releaseRunLock();
@@ -799,6 +826,8 @@
     if (st && st.available) {
       setBadge('Ready', 'ok');
       fillAgentControls(st.agents);
+      /* 이미 도는 실행이 있으면 붙는다 — home 에서 넘어온 경우가 그것이다. */
+      if (st.run_id && !st.run_done) attachIfRunning(st);
     } else {
       showDegradedGallery(st);
     }

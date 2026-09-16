@@ -12,6 +12,7 @@ from dx_agent_dev.core.config import (DEFAULT_PORT, STATIC_DIR, TEMPLATES_DIR, S
                          WORKSPACE_ROOT, PROMPT_MAX_LEN, resolve_target)
 from dx_agent_dev.core import environment
 from dx_agent_dev.core.agent_runner import AgentRunner, CopilotAdapter, MockAdapter
+from dx_agent_dev.core.live_run import LiveRun
 from dx_agent_dev.core.conversation_store import ConversationStore
 from dx_agent_dev.core.message_pipeline import CLI_RESUME_AGENTS, prepare_sse_event
 from dx_agent_dev.core.prompt_wrap import wrap_autopilot_prompt, wrap_console_prompt, wrap_with_conversation_history
@@ -195,6 +196,12 @@ def _make_runner():
 
 
 _runner = _make_runner()
+
+# 실행을 HTTP 응답에서 떼어내는 슬롯. 예전에는 핸들러가 _runner.run() 제너레이터를
+# 직접 돌렸고, 브라우저가 스트림을 놓으면 GeneratorExit → agent_runner 의 finally →
+# subprocess 종료였다. home 의 "Open in DX Agent Dev" 가 그 경로를 탔다.
+# 자세한 내용: dx_agent_dev/core/live_run.py
+_live = LiveRun()
 _conversations = ConversationStore()
 
 
@@ -221,6 +228,8 @@ class AgentDevHandler(DXBaseHandler):
         if self.command == "GET":
             if self.url_path == "/api/agent/status":
                 return self.send_json(self._status())
+            if self.url_path == "/api/agent/run/events":
+                return self._attach_sse()
             if self.url_path == "/api/agent/showcases":
                 return self.send_json({"showcases": load_showcases()})
             if self.url_path == "/api/agent/login/status":
@@ -240,12 +249,17 @@ class AgentDevHandler(DXBaseHandler):
         forced = env.get("forced_mock", False)
         available = env["available"] or forced
         agents = [] if forced else environment.detect_available_agents()
+        snap = _live.snapshot()
         status = {
             "available": available,
             "reason": env.get("reason"),
             "busy": _runner.is_busy(),
             "showcase_count": len(load_showcases()),
             "agents": agents,
+            # 붙을 자리를 알려준다: 어느 실행인지, 몇 번째까지 나왔는지.
+            "run_id": snap["run_id"],
+            "event_count": snap["count"],
+            "run_done": snap["done"],
         }
         if not available:
             # Same localized guidance as the SSE degraded event (see _degraded_payload) — this
@@ -285,6 +299,47 @@ class AgentDevHandler(DXBaseHandler):
             "authenticated": adapter.is_authenticated(),
             "hint": adapter.login_cmd_hint,
         }
+
+
+    def _stream_live(self, from_index: int, conversation_id: str = ""):
+        """버퍼를 SSE 로 흘린다. 소비자가 끊겨도 실행에는 영향이 없다."""
+        self.start_sse()
+        try:
+            for ev in _live.events(from_index):
+                if ev.get("type") == "session":
+                    status_text = ev.get("status_text")
+                    if status_text:
+                        if not self.send_sse_data(json.dumps(
+                            {"type": "status", "text": status_text}, ensure_ascii=False,
+                        )):
+                            return
+                    continue
+                if ev.get("type") == "done" and conversation_id:
+                    ev = dict(ev)
+                    ev["conversation_id"] = conversation_id
+                out = prepare_sse_event(ev)
+                if out is None:
+                    continue
+                if not self.send_sse_data(json.dumps(out, ensure_ascii=False)):
+                    return
+        except (BrokenPipeError, ConnectionResetError):
+            pass
+        finally:
+            self.end_sse()
+
+    def _attach_sse(self):
+        """진행 중(또는 방금 끝난) 실행에 붙는다.
+
+        home 에서 시작한 실행을 Agent Dev 가 보는 길이고, 떠났다 돌아온 창이
+        이어받는 길이다.
+        """
+        from urllib.parse import parse_qs, urlparse
+        q = parse_qs(urlparse(self.path).query)
+        try:
+            from_index = int((q.get("from") or ["0"])[0])
+        except ValueError:
+            from_index = 0
+        self._stream_live(max(0, from_index))
 
     def _run_sse(self):
         body = self.read_json_body()
@@ -372,54 +427,42 @@ class AgentDevHandler(DXBaseHandler):
         assistant_chunks: list[str] = []
         session_dir_bound = bool(conv.session_dir)
 
-        self.start_sse()
+        # 이벤트를 보면서 대화에 바인딩하는 일은 **펌프 쪽**에서 한다. 예전에는 이
+        # 루프 안에 있었고, 그래서 창을 닫으면 실행이 죽는 것과 별개로 결과도
+        # 유실됐다. 소비자가 없어도 일어나야 하는 일이므로 응답에 두면 안 된다.
+        state = {"chunks": [], "bound": bool(conv.session_dir)}
+
+        def _absorb(ev):
+            t = ev.get("type")
+            if t == "session":
+                sid = ev.get("cli_session_id")
+                if sid:
+                    _conversations.bind_cli_session(conv, sid)
+            elif t == "message":
+                text = ev.get("text") or ""
+                if ev.get("final"):
+                    state["chunks"] = [text]
+                else:
+                    state["chunks"].append(text)
+            elif t == "done":
+                if not state["bound"] and ev.get("session_dir"):
+                    _conversations.bind_session_dir(conv, ev["session_dir"])
+                    state["bound"] = True
+                assistant_text = "".join(state["chunks"]).strip()
+                if assistant_text:
+                    from dx_agent_dev.core.message_sanitize import sanitize_assistant_text
+                    conv.add_assistant(sanitize_assistant_text(assistant_text))
+                _conversations.save(conv)
+
+        source = _runner.run(
+            prompt, harness, adapter=adapter, conversation=conv, run_ctx=run_ctx,
+        )
         try:
-            for ev in _runner.run(
-                prompt, harness, adapter=adapter, conversation=conv, run_ctx=run_ctx,
-            ):
-                if ev.get("type") == "session":
-                    sid = ev.get("cli_session_id")
-                    if sid:
-                        _conversations.bind_cli_session(conv, sid)
-                    status_text = ev.get("status_text")
-                    if status_text:
-                        if not self.send_sse_data(json.dumps(
-                            {"type": "status", "text": status_text}, ensure_ascii=False,
-                        )):
-                            break
-                    continue
+            _live.start(source, cancel=_runner.cancel, on_event=_absorb)
+        except RuntimeError:
+            return self.send_error_json(409, "agent busy")
 
-                if ev.get("type") == "message":
-                    text = ev.get("text") or ""
-                    if ev.get("delta"):
-                        assistant_chunks.append(text)
-                    elif ev.get("final"):
-                        assistant_chunks = [text]
-                    else:
-                        assistant_chunks.append(text)
-
-                if ev.get("type") == "done":
-                    ev = dict(ev)
-                    ev["conversation_id"] = conv.id
-                    if not session_dir_bound and ev.get("session_dir"):
-                        _conversations.bind_session_dir(conv, ev["session_dir"])
-                        session_dir_bound = True
-
-                out = prepare_sse_event(ev)
-                if out is None:
-                    continue
-                if not self.send_sse_data(json.dumps(out, ensure_ascii=False)):
-                    break
-
-            assistant_text = "".join(assistant_chunks).strip()
-            if assistant_text:
-                from dx_agent_dev.core.message_sanitize import sanitize_assistant_text
-                conv.add_assistant(sanitize_assistant_text(assistant_text))
-            _conversations.save(conv)
-        except (BrokenPipeError, ConnectionResetError):
-            pass
-        finally:
-            self.end_sse()
+        self._stream_live(0, conversation_id=conv.id)
 
 
 def create_server(port: int = PORT):
