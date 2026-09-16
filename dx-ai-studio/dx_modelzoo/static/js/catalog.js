@@ -296,6 +296,22 @@ const ModelZooVirtualCatalog = {
     };
     container.addEventListener('scroll', onScroll);
     window.addEventListener('scroll', onScroll);
+    // 스크롤러가 컨테이너도 window 도 아닐 수 있다. 앱 셸이 통합되면서 overflow 가
+    // 조상(main.dx-shell-main)으로 옮겨갔고, 그때부터 이 가상화는 스크롤을 한 번도
+    // 보지 못한 채 첫 화면 분량만 그리고 있었다. 특정 클래스를 박아 넣으면 셸이 또
+    // 바뀔 때 같은 자리에서 다시 깨지므로, 넘치는 조상을 전부 구독한다.
+    // (같은 방식의 선례: shared/static/tutorial-engine.js 의 _bindScrollRootsFor)
+    this._scrollRootSeen = this._scrollRootSeen || new WeakSet();
+    let node = container.parentElement;
+    while (node && node !== document.documentElement) {
+      const st = window.getComputedStyle ? window.getComputedStyle(node) : null;
+      const ov = st ? (st.overflow || '') + (st.overflowY || '') : '';
+      if (/auto|scroll|overlay/.test(ov) && !this._scrollRootSeen.has(node)) {
+        this._scrollRootSeen.add(node);
+        node.addEventListener('scroll', onScroll, { passive: true });
+      }
+      node = node.parentElement;
+    }
     window.addEventListener('resize', () => {
       this._measuredCardHeight = null;
       onScroll();
@@ -329,6 +345,20 @@ const ModelZooVirtualCatalog = {
     this._listSortBound = true;
   },
 
+  /** 컨테이너를 실제로 스크롤하는 조상. 없으면 null (= window 스크롤). */
+  _scrollRoot() {
+    let node = this._container && this._container.parentElement;
+    while (node && node !== document.documentElement) {
+      const st = window.getComputedStyle ? window.getComputedStyle(node) : null;
+      const ov = st ? (st.overflow || '') + (st.overflowY || '') : '';
+      if (/auto|scroll|overlay/.test(ov) && node.scrollHeight > node.clientHeight + 1) {
+        return node;
+      }
+      node = node.parentElement;
+    }
+    return null;
+  },
+
   _getEffectiveScrollTop() {
     const container = this._container;
     if (!container) return 0;
@@ -339,10 +369,19 @@ const ModelZooVirtualCatalog = {
         (overflowY === 'auto' || overflowY === 'scroll')) {
       return container.scrollTop || 0;
     }
-    // window 스크롤 모드: container의 문서 내 위치를 기준으로 계산
-    const rect = container.getBoundingClientRect();
-    const containerDocTop = rect.top + window.scrollY;
-    return Math.max(0, window.scrollY - containerDocTop);
+    // 그 외에는 스크롤 루트의 뷰포트 상단을 기준으로 컨테이너가 얼마나 위로
+    // 밀려났는지를 쓴다. 이 식 하나로 세 경우(컨테이너/조상/window 스크롤)를 덮는다.
+    //
+    // 예전 식 `window.scrollY - (rect.top + window.scrollY)` 도 전개하면 `-rect.top`
+    // 이라 조상 스크롤을 이미 따라가고 있었다 — 40장에서 멈춘 원인은 이 계산이 아니라
+    // renderViewport() 를 부르는 사람이 없었던 것이다(위 _bindScroll 참조). 여기서
+    // 달라지는 것은 rootTop 항 하나다: 스크롤러의 상단이 뷰포트 y=0 이 아니라 헤더
+    // 아래에 있으면 옛 식은 그 높이만큼 어긋난다. 오버스캔이 흡수해 눈에 띄지 않지만
+    // 맞는 값은 이쪽이다.
+    const root = this._scrollRoot();
+    const containerTop = container.getBoundingClientRect().top;
+    const rootTop = root ? root.getBoundingClientRect().top : 0;
+    return Math.max(0, rootTop - containerTop);
   },
 
   setViewMode(mode) {

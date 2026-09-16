@@ -366,7 +366,16 @@ def js_function_body(src, name):
 
 
 def test_catalog_js_defines_virtualized_catalog_contract():
-    """catalog.js에 ModelZooVirtualCatalog와 핵심 API가 존재해야 합니다."""
+    """catalog.js에 ModelZooVirtualCatalog와 핵심 API가 존재해야 합니다.
+
+    **이 테스트는 가상화가 동작한다는 증거가 아니다.** 이름이 있는지만 본다.
+    2026-09 에 가상화는 실제로 죽어 있었다 — 앱 셸이 overflow 를 조상으로 옮긴 뒤
+    스크롤 리스너가 어디에도 붙지 않아 347개 중 40장만 그린 채 멈춰 있었는데, 여기
+    있는 토큰은 전부 제자리에 있었으므로 이 파일은 계속 초록이었다.
+
+    동작을 지키는 것은 tests/test_catalog_virtual_scroll_browser.py 다. 이쪽은
+    "이름이 사라지는 것" 만 회귀로 잡는다.
+    """
     src = read_text(ROOT / "dx_modelzoo" / "static" / "js" / "catalog.js")
     for token in (
         "ModelZooVirtualCatalog",
@@ -376,6 +385,9 @@ def test_catalog_js_defines_virtualized_catalog_contract():
         "renderCardItem",
         "renderListRow",
         "MAX_CACHED_PAGES",
+        # 스크롤 루트를 찾는 쪽. 이것이 사라지면 조상이 스크롤을 갖는 레이아웃에서
+        # 다시 첫 화면에 멈춘다.
+        "_scrollRoot",
     ):
         assert token in src, f"catalog.js에 '{token}'이 없습니다"
 

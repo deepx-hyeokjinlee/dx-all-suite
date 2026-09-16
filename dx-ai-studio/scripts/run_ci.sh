@@ -75,9 +75,12 @@ fi
 # process; sharing one pytest process lets one suite contaminate another's loop.
 BROWSER_TESTS=(
   tests/i18n_audit/test_browser_copy_audit.py
+  tests/launcher/test_home_router.py
   tests/launcher/test_sdk_library_module_nav_browser.py
   tests/shared/test_browser_runtime.py
+  tests/test_catalog_virtual_scroll_browser.py
   tests/test_iframe_lang_sync_browser.py
+  tests/test_tutorial_stale_step.py
   tests/test_tutorial_e2e_journey.py
   tests/test_tutorial_spotlight_spot_check.py
   tests/test_ux_visual_gate.py

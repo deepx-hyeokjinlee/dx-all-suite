@@ -7,9 +7,12 @@ ROOT = Path(__file__).resolve().parents[2]
 
 BROWSER_SUITE_PATHS = {
     "tests/i18n_audit/test_browser_copy_audit.py",
+    "tests/launcher/test_home_router.py",
     "tests/launcher/test_sdk_library_module_nav_browser.py",
     "tests/shared/test_browser_runtime.py",
+    "tests/test_catalog_virtual_scroll_browser.py",
     "tests/test_iframe_lang_sync_browser.py",
+    "tests/test_tutorial_stale_step.py",
     "tests/test_tutorial_e2e_journey.py",
     "tests/test_tutorial_spotlight_spot_check.py",
     "tests/test_ux_visual_gate.py",
@@ -61,6 +64,41 @@ def test_run_ci_excludes_browser_tests_from_default_gate():
     assert not missing, f"Browser suite inventory is incomplete: {missing}"
     assert '"${IGNORE_BROWSER[@]}"' in script
     assert 'RUN_BROWSER=1' in script or "--browser" in script
+
+
+def test_every_playwright_suite_is_registered_as_a_browser_suite():
+    """playwright 를 쓰는 테스트 파일은 전부 BROWSER_TESTS 에 올라와 있어야 한다.
+
+    인벤토리는 손으로 관리되는 목록이고, 지금까지 "목록의 항목이 스크립트에 있는가"
+    만 검사했다. 반대 방향 — 디스크의 브라우저 스위트가 목록에 있는가 — 은 아무도
+    보지 않았고, 그래서 새 브라우저 테스트가 조용히 게이트 밖에 남을 수 있었다.
+    실제로 2026-09 에 두 개가 그렇게 새어 있었다(`test_tutorial_stale_step.py`,
+    `test_catalog_virtual_scroll_browser.py`). 등록되지 않으면 --browser 로 돌지
+    않고, 대신 기본 게이트의 공유 pytest 프로세스에서 브라우저를 띄우게 된다 —
+    이 파일 맨 위 주석이 피하려던 바로 그 상황이다.
+    """
+    import re
+
+    pattern = re.compile(r"importorskip\(\s*[\"']playwright|from playwright|^import playwright", re.M)
+    offenders = []
+    for path in sorted((ROOT / "tests").rglob("*.py")):
+        rel = path.relative_to(ROOT).as_posix()
+        if rel in BROWSER_SUITE_PATHS:
+            continue
+        parts = path.relative_to(ROOT).parts
+        # conftest / 헬퍼 / 자기 자신 / 별도 게이트로 도는 디렉토리는 제외
+        if path.name in ("conftest.py", "server_helpers.py", "tutorial_e2e_runner.py"):
+            continue
+        if rel == "tests/shared/test_ci_contracts.py":
+            continue
+        if "visual" in parts or "e2e" in parts:
+            continue
+        if pattern.search(path.read_text(encoding="utf-8", errors="replace")):
+            offenders.append(rel)
+    assert not offenders, (
+        "playwright 를 쓰는데 BROWSER_TESTS 에 등록되지 않았다: "
+        + ", ".join(offenders)
+    )
 
 
 def test_run_ci_prefilters_explicit_root_browser_paths():
