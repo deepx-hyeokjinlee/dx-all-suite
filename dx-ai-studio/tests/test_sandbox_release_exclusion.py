@@ -103,16 +103,23 @@ def test_launcher_home_copy_and_cards_are_eight_module_release():
     # the angle is gone — the ring survives only in the splash, which computes
     # its own bearings from the module count. What this test is for is unchanged:
     # eight modules, in order, with no ninth and no sandbox.
+    # 2026-09: 여덟 행이 평평한 목록이라 한 덩어리로 읽혀서 BUILD / MODELS / MEASURE
+    # 세 묶음으로 나눴고, 그러면서 순서가 묶음을 따라갔다. 이 테스트가 지키려는 것은
+    # 주석에 적힌 그대로 — 여덟 개, 아홉 번째 없음, sandbox 없음 — 이고 구체적인
+    # 나열 순서는 그 목적에 부수적이다. 묶음을 바꾸면 여기도 같이 고친다.
     cards = re.findall(r'class="orbital-card"[^>]*\sdata-app="([^"]+)"', html)
     assert cards == [
+        # BUILD
         "app",
         "stream",
+        "agent",
+        # MODELS
         "zoo",
         "compiler",
-        "planner",
+        # MEASURE
         "benchmark",
+        "planner",
         "dx_monitor",
-        "agent",
     ]
 
 

@@ -237,24 +237,7 @@
         _finish(false);
         return;
       }
-      var reader = resp.body.getReader();
-      var decoder = new TextDecoder();
-      var buffer = '';
-      (function pump() {
-        reader.read().then(function (chunk) {
-          if (chunk.done) { _finish(true); return; }
-          buffer += decoder.decode(chunk.value, { stream: true });
-          var lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-          lines.forEach(function (line) {
-            if (line.indexOf('data: ') !== 0) return;
-            var frag = line.slice(6);
-            if (frag === '[DONE]') return;
-            try { renderEvent(JSON.parse(frag)); } catch (e) { /* partial frame */ }
-          });
-          pump();
-        }).catch(function () { _finish(false); });
-      })();
+      _consume(resp);
     }).catch(function () {
       _error(_t('Could not reach DX Agent Dev'));
       _finish(false);
@@ -269,9 +252,58 @@
   /* ── setup chips ─────────────────────────────────────────── */
 
 
+  /* SSE 본문을 읽어 화면에 흘린다. 시작할 때와 이미 도는 실행에 붙을 때가 같은
+     코드를 쓴다 — 붙는 쪽이 다르게 그리면 "이어받았다" 가 거짓말이 된다. */
+  function _consume(resp) {
+    var reader = resp.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+    (function pump() {
+      reader.read().then(function (chunk) {
+        if (chunk.done) { _finish(true); return; }
+        buffer += decoder.decode(chunk.value, { stream: true });
+        var lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        lines.forEach(function (line) {
+          if (line.indexOf('data: ') !== 0) return;
+          var frag = line.slice(6);
+          if (frag === '[DONE]') return;
+          try { renderEvent(JSON.parse(frag)); } catch (e) { /* partial frame */ }
+        });
+        pump();
+      }).catch(function () { _finish(false); });
+    })();
+  }
+
+  /* 열릴 때 이미 도는 실행이 있으면 붙는다. 이것이 없으면 서버가 실행을 들고 있어도
+     사용자에게는 여전히 "작업이 사라진" 것이다 — home 을 떠났다 돌아온 경우가
+     정확히 그랬다. */
+  function attachIfRunning() {
+    return fetch('/agent/api/agent/status').then(function (r) { return r.json(); })
+      .then(function (st) {
+        if (!st || !st.run_id || st.run_done) return false;
+        var view = $('homeWork');
+        if (!view) return false;
+        _show($('homeAnswer'), false);
+        _show(view, true);
+        $('workNarration').innerHTML = '';
+        $('workTerminalOut').innerHTML = '';
+        _turn = null; _turns = []; _ended = ''; _follow = true;
+        _setBusy(true);
+        return fetch('/agent/api/agent/run/events?from=0').then(function (resp) {
+          if (!resp.ok || !resp.body) { _finish(false); return false; }
+          _consume(resp);
+          return true;
+        });
+      })
+      .catch(function () { return false; });
+  }
+
   function init() {
     var view = $('homeWork');
     if (!view) return;
+
+    attachIfRunning();
 
     var out = $('workTerminalOut');
     if (out) {
@@ -310,8 +342,13 @@
     var openModule = $('workOpenModule');
     if (openModule) {
       openModule.addEventListener('click', function () {
-        window.location.href = '/agent/#ask=' +
-          encodeURIComponent($('workAsk').textContent || '');
+        /* 전체 이동이면 스트림이 끊긴다. 예전에는 그것이 곧 실행의 종료였고
+           (agent_runner 의 finally 가 GeneratorExit 에서 subprocess 를 죽였다),
+           그래서 이 버튼은 이름과 달리 "중단하고 이동" 이었다. 이제 실행은 서버가
+           들고 있지만, 셸 안에서 움직이면 화면 전환도 즉시다. */
+        var path = '/agent/#ask=' + encodeURIComponent($('workAsk').textContent || '');
+        if (ns.homeLeaveTo) { ns.homeLeaveTo(path); return; }
+        window.location.assign(path);
       });
     }
 

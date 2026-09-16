@@ -291,7 +291,12 @@ def test_the_catalogue_size_lands_on_the_card_that_opens_it():
     """
     js = (ROOT / "launcher" / "static" / "home-sections.js").read_text(encoding="utf-8")
     assert "/zoo/api/catalog" in js, "the count must come from the zoo, not a constant"
-    assert 'data-app="zoo"' in js, "the count has to land on the Model Zoo card"
+    # 카드를 고르는 셀렉터는 이제 MODULE_FACTS 의 app 키에서 조립된다 (여섯 모듈이
+    # 같은 코드를 쓰므로). 예전에는 `data-app="zoo"` 리터럴을 찾았는데 그건 철자를
+    # 본 것이지 성질을 본 것이 아니었다 — 지켜야 할 것은 "zoo 가 그 표에 있고,
+    # 그리는 코드가 data-app 으로 카드를 찾는다" 이다.
+    assert "orbital-card[data-app=" in js, "the count has to land on a module card"
+    assert "'zoo'" in js, "the Model Zoo must still be one of the counted modules"
     html = index()
     assert 'id="homeModelRow"' not in html, "the duplicate model row is back"
 

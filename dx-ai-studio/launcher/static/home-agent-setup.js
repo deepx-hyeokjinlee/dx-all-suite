@@ -159,15 +159,30 @@
         if (!_agents.length) { _degraded(status); return; }
         _show($('setupDegraded'), false);
         _show($('setupForm'), true);
+        _show($('setupFold'), true);
         _fill($('setupAgent'), _agents.map(function (a) { return a.name; }), _agents[0].name);
         _selectAgent(_agents[0].name);
+        _paintFoldSummary();
       })
       .catch(function () {
         /* The module is not running. The Build section still explains itself;
            it just cannot say who would do the building. */
         _show($('setupForm'), false);
+        _show($('setupFold'), false);
         _show($('setupDegraded'), false);
       });
+  }
+
+  /* 접힌 채로도 무엇이 골라져 있는지는 보여야 한다 — 접는 것과 숨기는 것은 다르다. */
+  function _paintFoldSummary() {
+    var out = $('setupFoldValue');
+    if (!out) return;
+    var agent = $('setupAgent');
+    var model = $('setupModel');
+    var parts = [];
+    if (agent && agent.value) parts.push(agent.value);
+    if (model && model.value) parts.push(model.value);
+    out.textContent = parts.join(' \u00B7 ');
   }
 
   /* What the console posts to /api/agent/run. */
@@ -183,8 +198,13 @@
     if (!$('setupForm')) return;
     var agent = $('setupAgent');
     if (agent) {
-      agent.addEventListener('change', function () { _selectAgent(agent.value); });
+      agent.addEventListener('change', function () {
+        _selectAgent(agent.value);
+        _paintFoldSummary();
+      });
     }
+    var model = $('setupModel');
+    if (model) model.addEventListener('change', _paintFoldSummary);
     load();
     if (window.DXI18n && DXI18n.onLangChange) {
       DXI18n.onLangChange(function () { if (_current) _paintAuth(_current); });

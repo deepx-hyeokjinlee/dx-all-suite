@@ -134,6 +134,7 @@
 
   function ask(text) {
     if (!text || !String(text).trim()) return Promise.resolve(null);
+    _saveDraft('');
     return _ensureData().then(function () {
       var result = window.DXHomeRouter.resolve(text, _catalog, _demos);
       render(text, result);
@@ -141,11 +142,32 @@
     });
   }
 
+  /* home 에서 나가는 길이 둘인데 하나만 파괴적이었다. 모듈 카드는 셸 안에서
+     pushState 로 움직여 문서가 그대로인데, 여기는 location.href 로 SPA 를 떠났다 —
+     그래서 돌아오면 새 문서였고 쓰던 문장이 사라졌다. 카드와 같은 길을 쓴다.
+     계약: tests/launcher/test_home_draft_browser.py */
+  function _leaveHome(path) {
+    if (!path) return;
+    var ns2 = window.DXLauncher;
+    if (ns2 && typeof ns2.loadAppIframeIfNeeded === 'function' &&
+        typeof ns2.appFromPath === 'function') {
+      var key = ns2.appFromPath(path.split('#')[0]);
+      if (key) {
+        try {
+          window.history.pushState(null, '', path);
+          ns2.loadAppIframeIfNeeded(key);
+          return;
+        } catch (e) { /* 셸이 준비되지 않았으면 아래로 */ }
+      }
+    }
+    window.location.href = path;
+  }
+
   function _openRoute(btn) {
     var path = MODULE_PATH[btn.dataset.module];
     if (!path) return;
     if (btn.dataset.demo !== undefined) path += '#demo=' + btn.dataset.demo;
-    window.location.href = path;
+    _leaveHome(path);
   }
 
   /* The handoff carries the sentence. Agent Dev's own input already says
@@ -159,16 +181,50 @@
       return;
     }
     /* 작업 뷰를 못 쓰는 상황이면 모듈로 넘긴다 — 문장은 그대로 실어서. */
-    window.location.href = '/agent/#ask=' + encodeURIComponent(text);
+    _leaveHome('/agent/#ask=' + encodeURIComponent(text));
+  }
+
+  /* 쓰다 만 문장은 작업이다. 모듈에 다녀오거나 새로고침해도 잃지 않게 저장한다 —
+     보내고 나면 지운다(보낸 문장이 다음에 또 떠 있으면 그건 남은 게 아니라 고장이다).
+     sessionStorage 라 탭을 닫으면 사라진다: 초안이지 기록이 아니다. */
+  var DRAFT_KEY = 'dxHome.ask.draft';
+
+  function _saveDraft(text) {
+    try {
+      if (text && text.trim()) sessionStorage.setItem(DRAFT_KEY, text);
+      else sessionStorage.removeItem(DRAFT_KEY);
+    } catch (e) { /* storage off — 저장이 안 될 뿐 입력은 동작한다 */ }
+  }
+
+  function _restoreDraft() {
+    var box = $('homeAsk');
+    if (!box) return;
+    try {
+      var saved = sessionStorage.getItem(DRAFT_KEY);
+      if (saved && !box.value) box.value = saved;
+    } catch (e) { /* storage off */ }
   }
 
   function init() {
     var form = $('homeAskForm');
     if (!form) return;
+    _restoreDraft();
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       ask($('homeAsk').value);
     });
+    /* 여러 줄을 쓸 수 있게 textarea 로 열었으므로 Enter 가 줄바꿈이 된다. 프롬프트
+       입력의 관례대로 Enter 는 보내고, 줄을 바꾸려면 Shift+Enter 를 쓴다. */
+    var box = $('homeAsk');
+    if (box) {
+      box.addEventListener('input', function () { _saveDraft(box.value); });
+      box.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+          e.preventDefault();
+          ask(box.value);
+        }
+      });
+    }
     var chips = $('homeAskChips');
     if (chips) {
       chips.addEventListener('click', function (e) {
@@ -206,6 +262,8 @@
   }
 
   ns.homeAsk = ask;
+  /* 작업 뷰도 같은 길로 나간다 — 나가는 방법이 둘이면 하나는 반드시 낡는다. */
+  ns.homeLeaveTo = _leaveHome;
   ns.initHomeAnswer = init;
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
