@@ -551,18 +551,46 @@ stays in CI.
 
 ## Quarantined pre-existing failures
 
-Stage 5/7 deselects one test that was **already failing before the PR gate existed**.
-They are real content defects, not environment gaps, so they are NOT papered over with
-skip guards — they are deselected in `scripts/run_ci.sh` (`QUARANTINE=(...)`) where they
-stay visible and counted.
+**비어 있다 (2026-09-16).** 마지막 항목이 해제되어 stage 5/7 은 이제 아무것도
+deselect 하지 않는다. `QUARANTINE=(...)` 구조와 `tests/shared/test_ci_contracts.py`
+의 ratchet 은 남겨 둔다 — 목록은 줄어드는 방향으로만 바뀌고, 새 항목은 여기에
+근거를 적어야 들어올 수 있다.
 
-`tests/shared/test_ci_contracts.py` enforces three things: the list may only **shrink**,
-every entry must be documented here, and a stale entry (test deleted/renamed) fails the
-gate. So the debt cannot quietly grow.
+무엇이었는지, 그리고 **여기 적혀 있던 진단이 왜 틀렸는지**는 남길 값어치가 있다.
 
-| Test | Defect | Needs |
-|------|--------|-------|
-| `test_all_models_have_complete_legal_block` | The `yolo26-depth-*` family reaches the catalog from the dx_app source tree, not the ModelZoo sync snapshot, so it carries only `commercial_use: restricted` and no full legal block. | Upstream licence data. **Do not fabricate** — a wrong licence claim is worse than a missing one. |
+이 표에는 `test_all_models_have_complete_legal_block` 이 "yolo26-depth 계열은 dx_app
+소스 트리에서 오고 ModelZoo 동기화 스냅샷에는 없다 → **상류 라이선스 데이터가 필요하다.
+지어내지 말 것**" 으로 적혀 있었다. 앞의 절반은 맞고 결론은 틀렸다.
+
+공개 ModelZoo 페이지를 열어보면 다섯 개가 전부 있다:
+
+```
+yolo26_depth_n-1   Ultralytics YOLO26-n-depth   Depth Estimation
+                   source  = https://github.com/ultralytics/ultralytics
+                   license = AGPL-3.0   dataset = NYUDepthv2   metric = RMSE
+```
+
+`public_modelzoo_adapter` 는 이미 이것을 정확히 뽑고 있었다. 지어낼 것이 없었고,
+확인하지 않은 것이 문제였다. 실제 원인은 두 겹이다:
+
+1. **`generated_catalog.json` 이 stale** — 2026-09-08 산출물이라 348개 중 yolo26_depth
+   가 0개였다. 이 모델들이 공개되기 전에 만들어진 파일이다.
+2. **재동기화만으로는 붙지 않는다** — studio id 는 `yolo26_depth_n`, 생성 id 는
+   `yolo26_depth_n_768x768` 이고, `core/catalog.py:_match_generated` 의 접미사
+   화이트리스트(`_q_lite` / `_q_pro` / `_q_master` / `_1`)에 해상도가 없다. 그것은
+   실수가 아니라 의도였다 — 주석이 `foo` 와 `foo_1280` 을 섞지 않겠다고 적고 있다.
+
+그래서 해상도 접미사는 **후보가 유일할 때만** 접도록 했다. 실측하면 이 규칙으로 새로
+매칭되는 studio id 는 정확히 5개이고 모호 사례는 0건이다. 유일성 검사를 빼는 변이로
+안전장치가 살아 있는지 확인했다 (`tests/dx_modelzoo/test_generated_id_match.py`).
+
+재동기화는 항목 3개(`efficientnet_edgetpu_*`)를 잃는다 — 상류에서 내려간 모델이고
+저장소 어디에서도 참조하지 않는다. `yolov5n6` 의 `source_url` 은 릴리스 태그에서
+저장소 루트로 덜 구체적이 되는데, 이것도 상류가 바꾼 값이다. 지난 값을 손으로
+고정해 두면 다음에 상류가 바뀔 때 조용히 어긋난다 — 이 버그가 정확히 그 모양이었다.
+
+부수 효과 하나: 그 다섯 개의 `commercial_use` 가 `restricted`(license 미상 fallback)
+에서 `copyleft`(실제 AGPL 분류)로 바뀐다. 같은 "쓰기 조심" 이라도 이유가 정확해진다.
 
 #### Quarantined browser failures
 

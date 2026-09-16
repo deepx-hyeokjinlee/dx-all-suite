@@ -325,6 +325,14 @@ def _metadata_source_from_generated(generated_catalog):
 # suffix — directional so meaningful resolution variants (e.g. *_1280) are never collapsed.
 _GEN_ID_SUFFIXES = ("_q_lite", "_q_pro", "_q_master", "_1")
 
+# 해상도 접미사(768x768 등)는 위 화이트리스트에 없다. 그래서 studio 의
+# `yolo26_depth_n` 이 생성 카탈로그의 `yolo26_depth_n_768x768` 을 못 찾아 legal 이
+# 통째로 비어 있었다. 화이트리스트에 해상도를 하나씩 더하는 대신, 후보가 **유일할
+# 때만** 접는다 — 위 주석이 지키려던 것은 "foo 와 foo_1280 을 섞지 않는다" 이고,
+# 후보가 둘 이상이면 그 위험이 실재하므로 그때는 매칭하지 않는다.
+# 계약: tests/dx_modelzoo/test_generated_id_match.py
+_RES_SUFFIX = re.compile(r"^\d+x\d+$")
+
 def _match_generated(model_id, gen_map):
     g = gen_map.get(model_id)
     if g is not None:
@@ -333,6 +341,13 @@ def _match_generated(model_id, gen_map):
         g = gen_map.get(model_id + suf)
         if g is not None:
             return g
+    prefix = model_id + "_"
+    cands = [
+        k for k in gen_map
+        if k.startswith(prefix) and _RES_SUFFIX.match(k[len(prefix):])
+    ]
+    if len(cands) == 1:
+        return gen_map[cands[0]]
     return None
 
 

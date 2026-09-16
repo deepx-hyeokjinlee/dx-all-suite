@@ -150,9 +150,10 @@ echo ""
 # are deselected here (visible, greppable, counted) instead of being silenced inside
 # the test files. tests/shared/test_ci_contracts.py pins the size of this list, so it
 # can only ever SHRINK. See docs/testing.md "Quarantined pre-existing failures".
-QUARANTINE=(
-  --deselect tests/dx_modelzoo/test_legal_enrich.py::test_all_models_have_complete_legal_block
-)
+# 비어 있다. 2026-09-16 에 마지막 항목(yolo26_depth legal)이 해제됐다 — 상류에
+# 데이터가 없는 것이 아니라 generated_catalog.json 이 그 모델들의 공개 이전 산출물이었고,
+# studio id 가 생성 id 의 해상도 접미사와 매칭되지 않았다. docs/testing.md 참조.
+QUARANTINE=()
 
 echo "== 5/7 Module + shared + root contract suites (no browser) =="
 "$PY" -m pytest \

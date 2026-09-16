@@ -136,9 +136,7 @@ def test_run_ci_excludes_e2e_from_shared_process_stages():
 # Pre-existing failures deselected from the blocking gate. This list is a debt
 # ledger: it may SHRINK, never grow. Adding an entry means a new regression was
 # waved through, which is exactly what the gate exists to prevent.
-QUARANTINED = {
-    "tests/dx_modelzoo/test_legal_enrich.py::test_all_models_have_complete_legal_block",
-}
+QUARANTINED: set[str] = set()
 
 
 def _quarantined_in_script() -> set:
