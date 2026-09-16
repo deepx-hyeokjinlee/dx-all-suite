@@ -879,6 +879,8 @@ def test_reset_to_base_does_not_also_sync_the_feature_branch_by_name(env):
     tail = r.stdout.rsplit("SUMMARY", 1)[-1]
     assert f"dx_app:{BR}<=dev" in tail and "RESET" in tail
     assert f"dx_app:{BR} " not in tail and "DIVERGED" not in out(r)
+    # the header spells out what is same-name and what is the reset mapping
+    assert "same-name branches: dev main" in r.stdout and f"reset: mirror {BR} <= GHES dev" in r.stdout
     assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
 
 

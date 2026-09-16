@@ -685,7 +685,7 @@ process_reverse() {
   if [ "$RESET_TO_BASE" -eq 1 ]; then   # the feature branch is about to be replaced by the base — never sync it by name too
     local kept="" ; for b in $branches; do [ "$b" = "$R_BRANCH" ] || kept="$kept $b"; done; branches="${kept# }"
   fi
-  log "== $R_NAME (REVERSE): $R_DST_URL -> $R_SRC_URL [$branches]"
+  log "== $R_NAME (REVERSE): GHES $R_DST_URL -> mirror $R_SRC_URL | same-name branches: ${branches:-none}$( [ "$RESET_TO_BASE" -eq 1 ] && [ -n "$R_PR_BASE" ] && [ "$R_PR_BASE" != "$R_BRANCH" ] && printf ' | reset: mirror %s <= GHES %s' "$R_BRANCH" "$R_PR_BASE" )"
   ensure_cache "$cache"
   if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_DST_URL" "$DST_TOKEN"; then rv_fail_all "$branches" "$(cred_hint dst "$R_DST_URL")"; return; fi
   if ! has_creds "$R_SRC_URL" "$SRC_TOKEN"; then rv_fail_all "$branches" "$(cred_hint src "$R_SRC_URL")"; return; fi

@@ -7,7 +7,11 @@
 src_host = https://github.com/{DEEPX-MIRROR-ORG}   # your private github.com mirror org (https only)
 branch   = feature/{my-topic}                     # the feature branch you sync (same name on GHES)
 
-# Optional per-repo tweaks — e.g. a different PR base or extra branches for --reverse:
+# Optional. `reverse_branches` (same-name branches for --reverse) can live under [defaults]
+# (all repos) and/or under a [repo NAME] section (that repo only, wins over [defaults]).
+# Unset = branch + pr_base + main per repo — usually what you want.
+# reverse_branches = feature/{my-topic} main
+#
 # [repo dx_app]
 # pr_base = dev
 # reverse_branches = feature/{my-topic} dev main
