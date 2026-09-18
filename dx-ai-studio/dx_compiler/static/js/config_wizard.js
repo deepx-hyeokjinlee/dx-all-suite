@@ -206,6 +206,32 @@
         el.textContent = msg;
     }
 
+    /* 차원에 대한 즉시 피드백. 생성 버튼을 누른 뒤 400 을 보는 것보다, 쓰는
+       순간 말하는 편이 낫다 — calibration_num 이 이미 그렇게 한다.
+       유효 범위는 .deepx/toolsets/config-schema.md: 모두 양의 정수, -1 과 0 불가.
+       batch 가 1인지는 여기서 보지 않는다 — 서버도 보지 않는다(모델을 모른다).
+       계약: tests/dx_compiler/test_config_wizard_shape_input.js 대응 파이썬 */
+    function validateInputShapes() {
+        const el = document.getElementById('wiz-shape-warning');
+        if (!el) return;
+        const bad = [];
+        document.querySelectorAll('.input-shape-row').forEach(row => {
+            const raw = (row.querySelector('.shape-dims').value || '').trim();
+            if (!raw) return;
+            raw.split(',').forEach(tok => {
+                const t = tok.trim();
+                if (t === '') return;
+                const n = Number(t);
+                if (!Number.isInteger(n) || n < 1) bad.push(t);
+            });
+        });
+        const msg = bad.length
+            ? T('Dimensions must be positive whole numbers: ') + bad.join(', ')
+            : '';
+        el.style.display = msg ? '' : 'none';
+        el.textContent = msg;
+    }
+
     function addInputRow(name, shape) {
         name = name || '';
         shape = shape || [1, 3, 224, 224];
@@ -355,8 +381,13 @@
         const inputShapes = {};
         document.querySelectorAll('.input-shape-row').forEach(row => {
             const name = row.querySelector('.shape-name').value.trim();
+            /* 예전에는 `.filter(d => !isNaN(d))` 로 잘못 쓴 값을 조용히 버렸다.
+               `1,3,abc,224` 가 `[1,3,224]` 가 되어 4차원을 넣었는데 3차원이
+               전송되고, 아무도 그 사실을 말해주지 않았다. 그대로 실어 보내고
+               validateInputShapes 가 말하게 한다. 서버도 400 으로 막는다(SR-758). */
             const dims = row.querySelector('.shape-dims').value.trim()
-                .split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+                .split(',').filter(t => t.trim() !== '')
+                .map(d => { const n = Number(d.trim()); return Number.isInteger(n) ? n : d.trim(); });
             if (name && dims.length) inputShapes[name] = dims;
         });
         config.input_shapes = inputShapes;
@@ -515,6 +546,13 @@
         if (calibNum) {
             calibNum.addEventListener('input', validateCalibNum);
             calibNum.addEventListener('change', validateCalibNum);
+        }
+        /* 차원 행은 동적으로 늘어나므로 목록에 위임한다 — 행마다 바인딩하면
+           나중에 추가된 행이 조용히 빠진다. */
+        const shapeList = document.getElementById('input-shapes-list');
+        if (shapeList) {
+            shapeList.addEventListener('input', validateInputShapes);
+            shapeList.addEventListener('change', validateInputShapes);
         }
     });
 

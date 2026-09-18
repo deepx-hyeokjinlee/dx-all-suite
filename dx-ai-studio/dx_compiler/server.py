@@ -928,7 +928,30 @@ class CompilerHandler(DXBaseHandler):
         except Exception:
             return self.send_error_json(400, "Invalid JSON")
 
-        config = {"inputs": config_data.get("input_shapes", {})}
+        # SR-758: 이 한 줄이 무엇이 들어오든 그대로 복사했다. 바로 아래 calibration_num
+        # 은 int() 로 감싸고 400 을 내는데, inputs 만 지나쳤다 — 그래서 음수 차원이나
+        # 문자열이 config.json 까지 내려가 컴파일 단계에서야 터졌다.
+        # 유효 범위는 .deepx/toolsets/config-schema.md 가 정한다:
+        # "Dimensions: All must be positive integers (no -1, no 0)".
+        # batch 가 1 인지와 키가 ONNX 노드 이름과 맞는지는 여기서 보지 않는다 —
+        # 이 API 는 모델을 읽지 않으므로 알 수 없고, 알 수 없는 것을 막으면 모델을
+        # 아직 고르지 않은 마법사 단계의 정당한 입력까지 거부한다.
+        # 계약: tests/dx_compiler/test_config_input_shapes.py
+        input_shapes = config_data.get("input_shapes", {})
+        if not isinstance(input_shapes, dict):
+            return self.send_error_json(400, "Invalid input_shapes: expected an object")
+        for name, shape in input_shapes.items():
+            if not isinstance(shape, (list, tuple)):
+                return self.send_error_json(
+                    400, f"Invalid input_shapes for {name!r}: expected a list of dimensions")
+            for dim in shape:
+                # bool 을 먼저 거른다 — 파이썬에서 True 는 int 의 인스턴스다.
+                if isinstance(dim, bool) or not isinstance(dim, int) or dim < 1:
+                    return self.send_error_json(
+                        400,
+                        f"Invalid input_shapes for {name!r}: {dim!r} — "
+                        "dimensions must be positive integers")
+        config = {"inputs": input_shapes}
 
         if config_data.get("loader_mode") == "default":
             default_loader = {}
@@ -941,10 +964,19 @@ class CompilerHandler(DXBaseHandler):
             config["default_loader"] = default_loader
 
         if config_data.get("calibration_num"):
+            # 타입은 보고 범위는 보지 않았다 — int("-5") 는 통과한다. 프론트의
+            # validateCalibNum 은 n <= 0 을 막으므로 GUI 로는 보이지 않지만, API 를
+            # 직접 부르면 음수 표본 수가 config.json 까지 내려간다. 같은 규칙을 둔다.
             try:
-                config["calibration_num"] = int(config_data["calibration_num"])
+                calib_num = int(config_data["calibration_num"])
             except (ValueError, TypeError):
                 return self.send_error_json(400, "Invalid calibration_num")
+            if calib_num < 1:
+                return self.send_error_json(
+                    400,
+                    f"Invalid calibration_num: {calib_num} — "
+                    "must be a positive number of samples")
+            config["calibration_num"] = calib_num
         if config_data.get("calibration_method"):
             config["calibration_method"] = config_data["calibration_method"]
 

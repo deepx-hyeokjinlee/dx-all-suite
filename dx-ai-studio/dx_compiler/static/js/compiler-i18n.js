@@ -414,6 +414,13 @@ window._DX_I18N_DICT = {
     'zh-TW': '資料集路徑為空。預設載入器需要資料集目錄以進行真實校準。',
     es: 'La ruta del conjunto de datos está vacía. El cargador por defecto necesita un directorio de datos para una calibración realista.',
   },
+  'Dimensions must be positive whole numbers: ': {
+    ko: '차원은 양의 정수여야 합니다: ',
+    ja: '次元は正の整数である必要があります: ',
+    'zh-CN': '维度必须为正整数： ',
+    'zh-TW': '維度必須為正整數： ',
+    es: 'Las dimensiones deben ser enteros positivos: ',
+  },
   'Calibration samples should be a positive number; values <= 0 are invalid for calibration.': {
     ko: '보정 샘플 수는 양수여야 합니다. 0 이하 값은 보정에 유효하지 않습니다.',
     ja: 'キャリブレーションサンプル数は正の数である必要があります。0以下の値は無効です。',
