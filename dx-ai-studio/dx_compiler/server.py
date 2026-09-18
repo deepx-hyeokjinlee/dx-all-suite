@@ -23,12 +23,17 @@ _STUDIO_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _STUDIO_DIR.parent
 
 
+class _Rejected(Exception):
+    """검증이 입력을 거부했고 400 응답이 이미 나갔다는 신호. route() 가 삼킨다."""
+
+
 class _ViewerDepsError(Exception):
     """ONNX viewer deps (numpy/onnx) unavailable in-process AND no venv to delegate to."""
 
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared.chat import ChatEngine
 
+from dx_compiler.core.validation import ValidationError, validate_fs_path, validate_opt_level
 from dx_compiler.core.config import (
     SCRIPT_DIR, STATIC_DIR, TEMPLATES_DIR, UPLOAD_DIR,
     DEFAULT_PORT, SERVER_NAME, SUITE_ROOT, is_safe_path, static_version,
@@ -233,7 +238,31 @@ class CompilerHandler(DXBaseHandler):
         return _render_template(template_name, ctx)
 
 
+    def _validated(self, fn, *args, **kwargs):
+        """검증자를 부르고 ValidationError 를 400 으로 바꾼다.
+
+        호출부마다 try 를 쓰지 않게 하는 한 곳. 여기가 이 서버에서 "사용자 입력
+        오류는 400" 이라는 규칙이 사는 자리다 — 500 은 우리 잘못을 뜻하므로
+        사용자가 보낸 값 때문에 나면 안 된다.
+
+        검증에 실패하면 400 을 보내고 ``_Rejected`` 를 던진다. 호출부는 잡지
+        않는다 — route() 가 잡아서 조용히 끝낸다(응답은 이미 나갔다).
+        """
+        try:
+            return fn(*args, **kwargs)
+        except ValidationError as exc:
+            self.send_error_json(400, str(exc))
+            raise _Rejected from None
+
     def route(self):
+        path = self.url_path
+
+        try:
+            return self._route_inner()
+        except _Rejected:
+            return  # 400 응답은 _validated 가 이미 보냈다
+
+    def _route_inner(self):
         path = self.url_path
 
         if self.handle_chat_routes(_chat_engine):
@@ -343,7 +372,7 @@ class CompilerHandler(DXBaseHandler):
         model_path = fields.get("model_path", "")
         config_path = fields.get("config_path", "")
         output_dir = fields.get("output_dir", "")
-        opt_level = int(fields.get("opt_level", "1"))
+        opt_level = self._validated(validate_opt_level, fields.get("opt_level"))
         aggressive_partitioning = fields.get("aggressive_partitioning", "false") == "true"
         gen_log = fields.get("gen_log", "false") == "true"
         quant_debug = fields.get("quant_debug", "false") == "true"
@@ -412,12 +441,10 @@ class CompilerHandler(DXBaseHandler):
         except Exception:
             return self.send_error_json(400, "Invalid JSON body")
 
-        qxnn_path = (body.get("qxnn_path") or "").strip()
-        output_dir = (body.get("output_dir") or "").strip()
-        if not qxnn_path or not qxnn_path.lower().endswith(".qxnn"):
+        qxnn_path = self._validated(validate_fs_path, body.get("qxnn_path"), "qxnn_path")
+        output_dir = self._validated(validate_fs_path, body.get("output_dir"), "output_dir")
+        if not qxnn_path.lower().endswith(".qxnn"):
             return self.send_error_json(400, "qxnn_path must point to a .qxnn file")
-        if not output_dir:
-            return self.send_error_json(400, "output_dir is required")
 
         recalibration_method = body.get("recalibration_method") or None
         if recalibration_method == "":
@@ -1035,9 +1062,7 @@ class CompilerHandler(DXBaseHandler):
         except Exception:
             return self.send_error_json(400, "Invalid JSON")
 
-        path = body.get("path", "").strip()
-        if not path:
-            return self.send_error_json(400, "Missing 'path' field")
+        path = self._validated(validate_fs_path, body.get("path"), "path")
         if not is_safe_path(path):
             return self.send_error_json(403, "Access denied")
         try:
