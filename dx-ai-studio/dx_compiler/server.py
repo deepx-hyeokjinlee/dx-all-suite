@@ -34,8 +34,9 @@ from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared.chat import ChatEngine
 
 from dx_compiler.core.validation import (
-    ValidationError, validate_enhanced_scheme_json, validate_fs_path,
-    validate_node_names, validate_opt_level,
+    ValidationError, validate_calibration_method, validate_enhanced_scheme,
+    validate_enhanced_scheme_json, validate_fs_path, validate_node_names,
+    validate_opt_level, validate_recalibration_method,
 )
 from dx_compiler.core.config import (
     SCRIPT_DIR, STATIC_DIR, TEMPLATES_DIR, UPLOAD_DIR,
@@ -386,6 +387,9 @@ class CompilerHandler(DXBaseHandler):
 
         parsed_scheme = self._validated(
             validate_enhanced_scheme_json, enhanced_scheme_raw)
+        # resume 이 이미 하던 검사다. 새 규칙이 아니라, 여기서 안 부르고
+        # 있었을 뿐이다 — 그래서 DXQ-P99 가 /compile 로는 통과했다.
+        parsed_scheme = self._validated(validate_enhanced_scheme, parsed_scheme)
 
         if use_q_pro:
             parsed_scheme = None
@@ -449,32 +453,17 @@ class CompilerHandler(DXBaseHandler):
         if not qxnn_path.lower().endswith(".qxnn"):
             return self.send_error_json(400, "qxnn_path must point to a .qxnn file")
 
-        recalibration_method = body.get("recalibration_method") or None
-        if recalibration_method == "":
-            recalibration_method = None
-        valid_recal = {"minmax", "ema", "iqr"}
-        if recalibration_method is not None and recalibration_method not in valid_recal:
-            return self.send_error_json(
-                400,
-                f"recalibration_method must be one of {sorted(valid_recal)}",
-            )
+        recalibration_method = self._validated(
+            validate_recalibration_method, body.get("recalibration_method"))
 
-        dataset_path = (body.get("dataset_path") or "").strip() or None
+        dataset_path = self._validated(
+            validate_fs_path, body.get("dataset_path"), "dataset_path", required=False) or None
         use_q_pro = bool(body.get("use_q_pro", False))
         enhanced_scheme = body.get("enhanced_scheme")
         if use_q_pro:
             enhanced_scheme = None
-        elif enhanced_scheme is not None:
-            if not isinstance(enhanced_scheme, dict):
-                return self.send_error_json(400, "enhanced_scheme must be a JSON object")
-            # Reject unknown DXQ keys before they reach dx_com.compile (parity with the
-            # reference ResumeRequest.validate_enhanced_scheme).
-            valid_dxq = {"DXQ-P0", "DXQ-P1", "DXQ-P2", "DXQ-P3", "DXQ-P4", "DXQ-P5"}
-            bad = [k for k in enhanced_scheme if k not in valid_dxq]
-            if bad:
-                return self.send_error_json(
-                    400, f"Unknown DXQ key(s): {bad}. Valid: {sorted(valid_dxq)}"
-                )
+        else:
+            enhanced_scheme = self._validated(validate_enhanced_scheme, enhanced_scheme)
         if use_q_pro and body.get("enhanced_scheme"):
             return self.send_error_json(400, "use_q_pro and enhanced_scheme are mutually exclusive")
 
@@ -1011,8 +1000,10 @@ class CompilerHandler(DXBaseHandler):
                     f"Invalid calibration_num: {calib_num} — "
                     "must be a positive number of samples")
             config["calibration_num"] = calib_num
-        if config_data.get("calibration_method"):
-            config["calibration_method"] = config_data["calibration_method"]
+        calibration_method = self._validated(
+            validate_calibration_method, config_data.get("calibration_method"))
+        if calibration_method:
+            config["calibration_method"] = calibration_method
 
         config_dir = UPLOAD_DIR / "configs"
         config_dir.mkdir(parents=True, exist_ok=True)

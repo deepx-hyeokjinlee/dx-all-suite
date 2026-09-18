@@ -138,3 +138,80 @@ def validate_enhanced_scheme_json(raw, field: str = "enhanced_scheme"):
         return _json.loads(raw)
     except (ValueError, TypeError) as exc:
         raise ValidationError(f"Invalid {field}: not valid JSON — {exc}") from None
+
+
+# 이름이 비슷하지만 **같은 것이 아니다.** 합치지 말 것.
+#
+#   config.json 의 calibration_method   : {ema, minmax}
+#       config-schema.md:76 이 표로 둘만 적어 두었다.
+#   resume 의 recalibration_method      : {minmax, ema, iqr}
+#       02_06_Execution_of_DX-COM.md:103 이 "(Resume-only)" 라고 명시했다.
+#
+# 하나로 합치면 iqr 이 config.json 에 들어간다. 이 주석이 그것을 막는 유일한
+# 장치다 — 없으면 다음 사람이 "중복" 으로 보고 합친다.
+_CALIBRATION_METHODS = ("ema", "minmax")
+_RECALIBRATION_METHODS = ("ema", "iqr", "minmax")
+
+
+def validate_calibration_method(raw):
+    """config.json 의 calibration_method. `{ema, minmax}` 뿐이다."""
+    if raw is None or raw == "":
+        return None
+    # 타입 검사를 따로 두지 않는다. 문자열이 아니면 아래 membership 에서
+    # 어차피 걸리고, 그 메시지가 값과 허용 집합을 둘 다 보여주므로 더 낫다.
+    # (변이 검사에서 타입 분기만 살아남았다 = 아무 테스트도 구분하지 못한다
+    #  = 새로 알려주는 것이 없다. 살리려고 계약을 만드는 것은 지표 맞추기다.)
+    if raw not in _CALIBRATION_METHODS:
+        raise ValidationError(
+            f"Invalid calibration_method: {raw!r} — "
+            f"must be one of {list(_CALIBRATION_METHODS)}")
+    return raw
+
+
+def validate_recalibration_method(raw):
+    """resume 전용. `{minmax, ema, iqr}`.
+
+    빈 문자열은 "지정 안 함" 으로 친다 — 기존 동작이고 바꾸지 않는다.
+    """
+    if raw is None:
+        return None
+    if isinstance(raw, str) and not raw.strip():
+        return None
+    if raw not in _RECALIBRATION_METHODS:   # 위와 같은 이유로 타입 분기 없음
+        raise ValidationError(
+            f"recalibration_method must be one of {sorted(_RECALIBRATION_METHODS)}")
+    return raw
+
+
+# 02_06_Execution_of_DX-COM.md:490 — "Supported Schemes: DXQ-P0 through DXQ-P5"
+_DXQ_KEYS = ("DXQ-P0", "DXQ-P1", "DXQ-P2", "DXQ-P3", "DXQ-P4", "DXQ-P5")
+
+
+def validate_enhanced_scheme(raw):
+    """DXQ 스킴 묶음. 키는 화이트리스트, 값은 객체여야 한다.
+
+    **인자 이름은 막지 않는다.** 02_06:493 을 보면 스킴마다 다르다 —
+    `alpha`, `beta`, `cosim_num`, `num_samples`. 이름을 화이트리스트하면
+    preprocessing transform 이름과 같은 과잉 차단이 된다. 문서 목록이
+    최신이라는 보장도 없다. 값이 객체인지까지만 본다.
+
+    `/compile/resume` 이 이미 하던 검사를 여기로 옮긴 것이다. 새 규칙이 아니다 —
+    `/compile` 이 부르지 않고 있었을 뿐이다.
+    """
+    if raw is None:
+        return None
+    if not isinstance(raw, dict):
+        return _bad_scheme("enhanced_scheme must be a JSON object")
+    bad = [k for k in raw if k not in _DXQ_KEYS]
+    if bad:
+        return _bad_scheme(f"Unknown DXQ key(s): {bad}. Valid: {sorted(_DXQ_KEYS)}")
+    for key, params in raw.items():
+        if not isinstance(params, dict):
+            return _bad_scheme(
+                f"Invalid enhanced_scheme[{key!r}]: expected an object of scheme "
+                f"parameters, got {type(params).__name__}")
+    return raw
+
+
+def _bad_scheme(message: str):
+    raise ValidationError(message)
