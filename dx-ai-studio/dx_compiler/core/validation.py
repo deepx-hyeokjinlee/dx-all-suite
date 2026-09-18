@@ -83,3 +83,58 @@ def validate_fs_path(raw, field: str, *, required: bool = True) -> str:
     if not text and required:
         raise ValidationError(f"{field} is required")
     return text
+
+
+def validate_node_names(raw, field: str) -> list:
+    """그래프 노드 이름 목록. **문자열을 거부한다.**
+
+    거부하는 이유가 미묘하다. 파이썬에서 문자열은 순회 가능하므로
+    ``set("ab")`` 이 ``{'a','b'}`` 가 된다. 노드 이름이 한 글자인 그래프에서는
+    그 두 글자가 실재하는 노드로 보이고, 서버는 **200 과 함께 사용자가 말하지
+    않은 노드 두 개를 선택한다.** 오류가 없다. 아무도 모른다.
+
+    지금까지 동작은 정확히 반대였다:
+
+        input_nodes="ab"    -> 200, 노드 a·b 로 해석     (틀린 형태가 성공)
+        input_nodes=["ab"]  -> 500, "ab 가 없다"          (맞는 형태가 실패)
+
+    그래서 편의를 봐주지 않는다. 문자열 하나를 받아 ``[raw]`` 로 감싸주면
+    친절해 보이지만, 그 순간 "ab" 가 노드 하나인지 둘인지 서버가 추측하게 된다.
+    추측하지 않고 거부한다.
+    """
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        raise ValidationError(
+            f"Invalid {field}: expected a list of node names, got a string. "
+            f"A single node must still be a list — use [{raw!r}], not {raw!r}.")
+    if not isinstance(raw, (list, tuple)):
+        raise ValidationError(
+            f"Invalid {field}: expected a list of node names, got {type(raw).__name__}")
+    for item in raw:
+        if not isinstance(item, str) or not item.strip():
+            raise ValidationError(
+                f"Invalid {field}: {item!r} — node names must be non-empty strings")
+    return list(raw)
+
+
+def validate_enhanced_scheme_json(raw, field: str = "enhanced_scheme"):
+    """멀티파트로 오는 enhanced_scheme 의 **JSON 파싱만** 본다.
+
+    예전에는 파싱에 실패하면 조용히 ``None`` 이 됐다. 사용자가 DXQ 를 요청했는데
+    아무 말 없이 평범한 컴파일이 돌았다 — 요청한 것과 실행된 것이 다르고
+    아무도 모른다. 조용한 오답은 오류보다 나쁘다.
+
+    키·값 검증은 여기서 하지 않는다. `/compile/resume` 이 이미 하고 있고,
+    그것을 이 모듈로 옮기는 일은 따로 한다 (계획 S3).
+    """
+    import json as _json
+
+    if raw is None or raw == "":
+        return None
+    if not isinstance(raw, str):
+        return raw
+    try:
+        return _json.loads(raw)
+    except (ValueError, TypeError) as exc:
+        raise ValidationError(f"Invalid {field}: not valid JSON — {exc}") from None

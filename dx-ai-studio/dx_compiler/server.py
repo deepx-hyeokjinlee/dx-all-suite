@@ -33,7 +33,10 @@ class _ViewerDepsError(Exception):
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared.chat import ChatEngine
 
-from dx_compiler.core.validation import ValidationError, validate_fs_path, validate_opt_level
+from dx_compiler.core.validation import (
+    ValidationError, validate_enhanced_scheme_json, validate_fs_path,
+    validate_node_names, validate_opt_level,
+)
 from dx_compiler.core.config import (
     SCRIPT_DIR, STATIC_DIR, TEMPLATES_DIR, UPLOAD_DIR,
     DEFAULT_PORT, SERVER_NAME, SUITE_ROOT, is_safe_path, static_version,
@@ -381,12 +384,8 @@ class CompilerHandler(DXBaseHandler):
         use_q_pro = fields.get("use_q_pro", "false") == "true"
         enhanced_scheme_raw = fields.get("enhanced_scheme", "")
 
-        parsed_scheme = None
-        if enhanced_scheme_raw:
-            try:
-                parsed_scheme = json.loads(enhanced_scheme_raw)
-            except json.JSONDecodeError:
-                parsed_scheme = None
+        parsed_scheme = self._validated(
+            validate_enhanced_scheme_json, enhanced_scheme_raw)
 
         if use_q_pro:
             parsed_scheme = None
@@ -427,8 +426,12 @@ class CompilerHandler(DXBaseHandler):
             return self.send_error_json(400, "Job is not paused")
 
         body = self.read_json_body()
-        job.selected_input_nodes = body.get("input_nodes", [])
-        job.selected_output_nodes = body.get("output_nodes", [])
+        # 둘 다 먼저 검증하고 나서 쓴다. 하나를 쓰고 다음에서 거부하면 job 이
+        # 반만 바뀐 채로 남는다.
+        input_nodes = self._validated(validate_node_names, body.get("input_nodes"), "input_nodes")
+        output_nodes = self._validated(validate_node_names, body.get("output_nodes"), "output_nodes")
+        job.selected_input_nodes = input_nodes
+        job.selected_output_nodes = output_nodes
         job.pause_event.set()
         self.send_json({"status": "resumed"})
 
@@ -524,8 +527,8 @@ class CompilerHandler(DXBaseHandler):
             return self.send_error_json(400, "No prepared graph available")
 
         body = self.read_json_body()
-        input_nodes = body.get("input_nodes", [])
-        output_nodes = body.get("output_nodes", [])
+        input_nodes = self._validated(validate_node_names, body.get("input_nodes"), "input_nodes")
+        output_nodes = self._validated(validate_node_names, body.get("output_nodes"), "output_nodes")
 
         if not input_nodes and not output_nodes:
             return self.send_json({
@@ -566,6 +569,10 @@ class CompilerHandler(DXBaseHandler):
                 "included_count": total - len(excluded_set),
                 "total_count": total,
             })
+        except ValueError as e:
+            # validate_target_nodes 가 "그런 노드가 없다" 로 던지는 것. 사용자가
+            # 이름을 잘못 쓴 것이므로 400 이다 — 500 은 우리 잘못을 뜻한다.
+            return self.send_error_json(400, str(e))
         except Exception as e:
             return self.send_error_json(500, str(e))
 
