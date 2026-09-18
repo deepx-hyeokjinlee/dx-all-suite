@@ -140,13 +140,27 @@ def test_the_modules_stand_in_three_columns(home):
     assert len(set(tops)) == 1, f"세 열이 나란하지 않다: {tops}"
 
 
-def test_the_modules_fall_back_to_one_column_when_narrow(browser):
-    server, ctx, page = _open(browser, width=700, height=900)
-    try:
-        tops = page.evaluate(
-            "() => [...document.querySelectorAll('#studioGrid .studio-col')]"
-            ".map(e => Math.round(e.getBoundingClientRect().top))")
-        assert len(tops) == 3
-        assert len(set(tops)) == 3, f"좁은데 세 열이 나란하다: {tops}"
-    finally:
-        page.close(); ctx.close(); server.shutdown()
+def test_the_modules_reflow_when_the_width_runs_out(browser):
+    """좁아지면 열이 줄어야 한다 — 몇 행이 되는지는 고정하지 않는다.
+
+    이 검사는 한때 "좁으면 세 행" 이었다. 그때는 768px media query 로 1열을 강제했기
+    때문이다. 지금은 `repeat(auto-fit, minmax(280px, 1fr))` 이라 폭에 맞춰 스스로
+    접히므로, 700px 에서는 2행(2+1)이 된다. 행 수를 세는 것은 구현을 베끼는 것이고,
+    지켜야 할 성질은 "넓을 때보다 열이 적어진다" 이다.
+    (auto-fit 으로 바꾸면서 이 테스트를 같이 고치지 않아 한동안 빨간불이었다 —
+    run_ci 가 브라우저 스위트를 제외하므로 드러나지 않았다.)
+    """
+    def rows(width):
+        server, ctx, page = _open(browser, width=width, height=900)
+        try:
+            tops = page.evaluate(
+                "() => [...document.querySelectorAll('#studioGrid .studio-col')]"
+                ".map(e => Math.round(e.getBoundingClientRect().top))")
+            assert len(tops) == 3, f"열이 셋이 아니다: {tops}"
+            return len(set(tops))
+        finally:
+            page.close(); ctx.close(); server.shutdown()
+
+    wide, narrow = rows(1512), rows(700)
+    assert wide == 1, f"넓은데 한 행이 아니다: {wide}행"
+    assert narrow > wide, f"좁아졌는데 접히지 않았다: {wide}행 → {narrow}행"

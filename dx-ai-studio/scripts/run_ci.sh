@@ -8,6 +8,7 @@
 #   bash scripts/run_ci.sh --ux         # + full UX acceptance gate (slow, release only)
 #   bash scripts/run_ci.sh --npu        # + real-NPU inference tier (nightly / run-npu)
 #   bash scripts/run_ci.sh --visual     # + pixel visual-regression vs committed baselines
+#   bash scripts/run_ci.sh --offline    # + blocking suite with external network blocked
 #   bash scripts/run_ci.sh --browser --shard=1/3   # browser suites, shard 1 of 3
 #
 # Cross-browser is env-driven: DX_BROWSER_ENGINES=chromium,firefox[,webkit].
@@ -22,6 +23,7 @@ RUN_BROWSER=0
 RUN_UX=0
 RUN_NPU=0
 RUN_VISUAL=0
+RUN_OFFLINE=0
 SHARD_INDEX=""
 SHARD_TOTAL=""
 
@@ -32,6 +34,7 @@ for arg in "$@"; do
     --ux) RUN_UX=1 ;;
     --npu) RUN_NPU=1 ;;
     --visual) RUN_VISUAL=1 ;;
+    --offline) RUN_OFFLINE=1 ;;
     --shard=*)
       _spec="${arg#--shard=}"
       SHARD_INDEX="${_spec%%/*}"
@@ -196,6 +199,27 @@ echo "== 6/7 Inference E2E triple gate (e2e_mock, isolated) =="
 # The blocking stage must be hermetic no matter what the caller exported.
 env -u DX_E2E_NPU_MODEL -u DX_E2E_NPU_MODEL_FILE -u DX_E2E_NPU_STRICT \
   "$PY" -m pytest tests/e2e/ -q --tb=short -m e2e_mock
+
+if [ "$RUN_OFFLINE" = "1" ]; then
+  echo ""
+  echo "== Optional: offline contract (external network blocked) =="
+  # 개발이 폐쇄망에서 일반망으로 옮겨가면서 "인터넷에 의존하는 코드를 애초에 쓸 수
+  # 없다" 는 안전장치가 사라졌다. 이제 그런 코드는 PR 을 올리는 폐쇄망 PC 에서 처음
+  # 드러난다 — push → pull → push → PR 왕복 뒤에. 여기서 30초에 끝낸다.
+  # 고객도 폐쇄망에 배치하므로 제품 요건이기도 하다: docs/offline-contract.md
+  # launcher 와 dx_agent_dev 는 각자 프로세스로 돈다 — 기본 게이트가 그러는 것과
+  # 같은 이유다(포트 충돌, 그리고 dx_agent_dev 가 자기 패키지를 최상위 `core` 로
+  # import 해서 다른 모듈의 `core` 와 부딪힌다).
+  DX_OFFLINE_GUARD=1 "$PY" -m pytest \
+    tests/dx_app/ tests/dx_stream/ tests/dx_compiler/ tests/dx_modelzoo/ \
+    tests/dx_planner/ tests/dx_benchmark/ tests/dx_monitor/ \
+    tests/shared/ tests/release/ tests/i18n_audit/ \
+    -q --tb=short \
+    --ignore=tests/dx_stream/benchmark \
+    "${IGNORE_BROWSER[@]}"
+  DX_OFFLINE_GUARD=1 "$PY" -m pytest tests/launcher/ -q --tb=short "${IGNORE_BROWSER[@]}"
+  DX_OFFLINE_GUARD=1 "$PY" -m pytest tests/dx_agent_dev/ -q --tb=short
+fi
 
 if [ "$RUN_VISUAL" = "1" ]; then
   echo ""

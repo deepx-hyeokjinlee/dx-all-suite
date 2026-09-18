@@ -1,5 +1,6 @@
 """Root conftest — repo root import 우선순위를 안정화한다."""
 from pathlib import Path
+import os
 import sys
 
 from tests.browser_support import resolve_chromium_executable
@@ -17,6 +18,15 @@ import tools.i18n_audit  # noqa: E402,F401
 def pytest_configure(config):
     """Let browser tests reuse a host Chromium when Playwright has no cache."""
     del config
+
+    # DX_OFFLINE_GUARD=1 이면 외부 소켓을 막은 채로 돈다. run_ci.sh --offline 이
+    # 이것을 켠다 — 폐쇄망에서 개발하던 시절에는 환경이 해주던 일이다.
+    # localhost 는 막지 않는다: 테스트가 모듈 서버를 띄워 127.0.0.1 로 말한다.
+    # 등급과 예외는 docs/offline-contract.md.
+    if os.environ.get("DX_OFFLINE_GUARD") == "1":
+        from tests.offline_guard import install as install_offline_guard
+
+        install_offline_guard()
     executable = resolve_chromium_executable()
     if executable is None:
         return
