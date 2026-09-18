@@ -1631,7 +1631,12 @@ body {
    계약: tests/launcher/test_home_workspace_browser.py */
 .studio-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* breakpoint 를 쓰지 않는다. 폭이 모자라면 스스로 접히므로 "몇 px 에서 접을까"
+     라는 질문 자체가 없어진다 — 어제 여기에 768 을 하나 더 심었는데, 그 값을
+     900 으로 옮기는 실험을 하고 나서야 애초에 필요 없었다는 걸 알았다.
+     280px 는 가장 긴 설명("Build NPU apps with natural-language commands")이
+     두 줄 안에 들어가는 폭이다. */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--sp-4);
   align-items: start;
   background: transparent;
@@ -1643,9 +1648,7 @@ body {
   box-shadow: var(--ap-shadow);
   overflow: hidden;
 }
-@media (max-width: 768px) {
-  .studio-grid { grid-template-columns: 1fr; }
-}
+
 .orbital-card {
   position: relative;
   display: flex;
