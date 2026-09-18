@@ -789,6 +789,24 @@ const ModelZooVirtualCatalog = {
 };
 
 
+/** 카탈로그가 만들어진 날짜(로컬 표기). 값이 없으면 빈 문자열 — 없는 것을
+    "알 수 없음" 으로 채우면 낡은 것과 구분되지 않는다. */
+function _catalogGeneratedAt() {
+  /* app.js 가 /api/catalog 응답을 _catalogData 에 담는다 (bundler 가 없으므로
+     classic script 들이 한 스코프를 공유한다 — 같은 이유로 이 저장소에서 const
+     충돌 사고가 있었다). */
+  var data = (typeof _catalogData !== 'undefined' && _catalogData) || null;
+  var at = (data && data.generated_at) || '';
+  if (!at) return '';
+  try {
+    var d = new Date(at);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString();
+  } catch (e) {
+    return '';
+  }
+}
+
 function updateCatalogHeading() {
   const titleEl = document.getElementById('catalogTitle');
   const subtitleEl = document.getElementById('catalogSubtitle');
@@ -808,7 +826,18 @@ function updateCatalogHeading() {
     }
   }
   if (subtitleEl) {
-    subtitleEl.textContent = `${variantCount} ${T('model variants')} · ${uniqueModelCount} ${T('unique models')}`;
+    /* 목록이 언제 만들어졌는지 함께 말한다. 개별 모델의 상세 화면은 이미 보여주지만,
+       "이 목록 전체가 낡았나" 를 묻는 자리는 여기다 — 그것을 말하지 않아 8일 묵은
+       카탈로그가 조용히 서빙된 적이 있다(2026-09-16).
+       언제 다시 동기화할지는 운영 판단이고, 여기서는 보이게만 한다.
+       계약: tests/dx_modelzoo/test_catalog_freshness.py */
+    var parts = [
+      `${variantCount} ${T('model variants')}`,
+      `${uniqueModelCount} ${T('unique models')}`,
+    ];
+    var synced = _catalogGeneratedAt();
+    if (synced) parts.push(`${T('synced')} ${synced}`);
+    subtitleEl.textContent = parts.join(' · ');
   }
   if (countEl) {
     countEl.textContent = `${variantCount} ${T('models found')}`;

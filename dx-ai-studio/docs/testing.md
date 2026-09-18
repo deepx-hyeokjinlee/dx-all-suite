@@ -592,6 +592,28 @@ yolo26_depth_n-1   Ultralytics YOLO26-n-depth   Depth Estimation
 부수 효과 하나: 그 다섯 개의 `commercial_use` 가 `restricted`(license 미상 fallback)
 에서 `copyleft`(실제 AGPL 분류)로 바뀐다. 같은 "쓰기 조심" 이라도 이유가 정확해진다.
 
+### 알고 있는 노출 — ModelZoo `internal` 소스
+
+`dx_app/core/modelzoo.py` 는 두 소스를 다르게 판다:
+
+| source | 무엇을 읽나 | 검증 |
+|---|---|---|
+| `public` | `window.__MODEL_ZOO_DATA__` 페이로드 | 픽스처 + 실제 페이지로 확인함 |
+| `internal` | `modelzoo-publish-api.devops.dpx.ai` 의 20칼럼 테이블 | **HTML 을 파싱해보는 테스트가 없다** |
+
+URL 이 무엇인지는 계약이 있다(`test_metadata_sync.py:607`, `test_modelzoo_homepage_link.py`).
+없는 것은 "그 HTML 이 지금도 우리가 가정한 모양인가" 다. 그 호스트는 사내망에만 있어
+이 저장소의 게이트가 닿지 못한다.
+
+왜 적어두는가: 공개 페이지가 정확히 이렇게 조용히 깨졌다. 테이블이 사라지고 인라인
+JSON 으로 바뀌었는데 스크래퍼는 따라가지 않았고, 그 경로는 500 을 내면서도 아무 게이트도
+울리지 않았다(2026-09-15 에 고침). `internal` 은 같은 모양의 위험을 그대로 안고 있고,
+다른 점은 우리가 그것을 확인할 수 없다는 것뿐이다.
+
+무엇을 하면 되는가: 사내망에서 그 응답을 한 번 받아 픽스처로 커밋하면, 최소한
+"우리가 가정한 모양" 이 계약으로 고정된다. 지금은 `_parse_models()` 의 20칼럼 분기가
+아무 픽스처 없이 서 있다.
+
 #### Quarantined browser failures
 
 **비어 있다 (2026-09-15).** 세 항목이 모두 해제됐다. `BROWSER_QUARANTINE` 구조는

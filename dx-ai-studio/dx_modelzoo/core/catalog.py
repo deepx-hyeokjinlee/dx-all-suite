@@ -666,6 +666,14 @@ def reload_catalog():
         "categories": CATEGORIES,
         "count": len(merged),
     }
+    # 이 목록이 언제·무엇으로부터 만들어졌는지. 값은 늘 파일에 있었지만 개별 모델의
+    # 상세 화면에만 닿았다 — 정작 "이 목록 전체가 낡았나" 를 묻는 자리인 목록 화면은
+    # 알 수 없었고, 그래서 8일 묵은 카탈로그가 조용히 서빙됐다(2026-09-16).
+    # 계약: tests/dx_modelzoo/test_catalog_freshness.py
+    if generated:
+        for key in ("generated_at", "source_profile"):
+            if generated.get(key):
+                next_cache[key] = generated[key]
     with _catalog_lock:
         _catalog_cache = next_cache
     print(f"[{__name__}] Loaded {len(merged)} models, {len(CATEGORIES)} categories"

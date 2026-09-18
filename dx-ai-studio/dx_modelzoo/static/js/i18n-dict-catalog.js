@@ -153,6 +153,14 @@ window._DX_MODELZOO_I18N_REGISTER({
     'zh-TW': '不重複的模型',
     es: 'modelos únicos',
   },
+  'synced': {
+    ko: '동기화',
+    en: 'synced',
+    ja: '同期',
+    'zh-CN': '已同步',
+    'zh-TW': '已同步',
+    es: 'sincronizado',
+  },
   'View as cards': {
     ko: '카드로 보기',
     en: 'View as cards',

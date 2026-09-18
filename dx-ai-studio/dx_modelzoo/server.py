@@ -130,10 +130,16 @@ class ModelZooHandler(DXBaseHandler):
                 models = filter_models(cat["models"], category=category, search=search)
                 stats = catalog_stats(models)
                 safe_models = [sanitize_browser_model(model) for model in models]
-                return self.send_json({"ok": True, "models": safe_models,
-                                       "categories": cat["categories"], "count": len(safe_models),
-                                       "variant_count": stats["variant_count"],
-                                       "unique_model_count": stats["unique_model_count"]})
+                payload = {"ok": True, "models": safe_models,
+                           "categories": cat["categories"], "count": len(safe_models),
+                           "variant_count": stats["variant_count"],
+                           "unique_model_count": stats["unique_model_count"]}
+                # 이 목록이 언제·무엇으로부터 만들어졌는지. 핸들러가 필드를 골라 담으므로
+                # get_catalog() 에 실어두는 것만으로는 화면까지 닿지 않는다.
+                for key in ("generated_at", "source_profile"):
+                    if cat.get(key):
+                        payload[key] = cat[key]
+                return self.send_json(payload)
 
             if path == "/api/categories":
                 cat = get_catalog()
