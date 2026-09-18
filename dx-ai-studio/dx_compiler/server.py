@@ -35,8 +35,9 @@ from shared.chat import ChatEngine
 
 from dx_compiler.core.validation import (
     ValidationError, validate_calibration_method, validate_enhanced_scheme,
-    validate_enhanced_scheme_json, validate_fs_path, validate_node_names,
-    validate_opt_level, validate_recalibration_method,
+    validate_enhanced_scheme_json, validate_file_extensions, validate_fs_path,
+    validate_node_names, validate_opt_level, validate_preprocessings,
+    validate_recalibration_method,
 )
 from dx_compiler.core.config import (
     SCRIPT_DIR, STATIC_DIR, TEMPLATES_DIR, UPLOAD_DIR,
@@ -978,20 +979,33 @@ class CompilerHandler(DXBaseHandler):
 
         if config_data.get("loader_mode") == "default":
             default_loader = {}
-            if config_data.get("dataset_path"):
-                default_loader["dataset_path"] = config_data["dataset_path"]
-            if config_data.get("file_extensions"):
-                default_loader["file_extensions"] = config_data["file_extensions"]
-            if config_data.get("preprocessings"):
-                default_loader["preprocessings"] = config_data["preprocessings"]
+            dataset_path = self._validated(
+                validate_fs_path, config_data.get("dataset_path"), "dataset_path",
+                required=False)
+            if dataset_path:
+                default_loader["dataset_path"] = dataset_path
+            file_extensions = self._validated(
+                validate_file_extensions, config_data.get("file_extensions"))
+            if file_extensions:
+                default_loader["file_extensions"] = file_extensions
+            preprocessings = self._validated(
+                validate_preprocessings, config_data.get("preprocessings"))
+            if preprocessings:
+                default_loader["preprocessings"] = preprocessings
             config["default_loader"] = default_loader
 
         if config_data.get("calibration_num"):
             # 타입은 보고 범위는 보지 않았다 — int("-5") 는 통과한다. 프론트의
             # validateCalibNum 은 n <= 0 을 막으므로 GUI 로는 보이지 않지만, API 를
             # 직접 부르면 음수 표본 수가 config.json 까지 내려간다. 같은 규칙을 둔다.
+            raw_calib = config_data["calibration_num"]
+            if isinstance(raw_calib, bool):
+                # input_shapes 의 차원에서는 bool 을 막아 놓고 여기서는 안 막았다.
+                # int(True) 가 1 이라 `true` 가 표본 수 1 로 조용히 저장된다.
+                return self.send_error_json(
+                    400, f"Invalid calibration_num: {raw_calib!r} — expected a number")
             try:
-                calib_num = int(config_data["calibration_num"])
+                calib_num = int(raw_calib)
             except (ValueError, TypeError):
                 return self.send_error_json(400, "Invalid calibration_num")
             if calib_num < 1:

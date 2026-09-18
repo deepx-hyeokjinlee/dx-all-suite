@@ -232,6 +232,47 @@
         el.textContent = msg;
     }
 
+    /* 전처리 값에 대한 즉시 피드백. validateInputShapes 와 같은 규칙·같은 자리.
+       서버(validation.validate_preprocessings)와 규칙이 같아야 한다 —
+       크기류(width/height/size/scale)는 양수, std 에 0 금지.
+       axis·x·pad_value 는 **보지 않는다**: 저장소의 실제 config 를 보면 스칼라도
+       리스트도 되고 axis 는 음수도 된다. 여기서 막으면 정당한 값이 막힌다. */
+    var PREP_POSITIVE = ['width', 'height', 'size', 'scale'];
+
+    function validatePreprocessings() {
+        const el = document.getElementById('wiz-prep-warning');
+        if (!el) return;
+        const problems = [];
+        document.querySelectorAll('.prep-item').forEach(item => {
+            const tName = item.dataset.transform;
+            item.querySelectorAll('.prep-input').forEach(inp => {
+                const key = inp.dataset.param;
+                const raw = (inp.value || '').trim();
+                if (raw === '') return;
+                if (PREP_POSITIVE.indexOf(key) !== -1) {
+                    const n = Number(raw);
+                    if (!isFinite(n) || n <= 0) {
+                        problems.push(tName + '.' + key + ' = ' + raw);
+                    }
+                    return;
+                }
+                if (key === 'std') {
+                    const parts = raw.split(',').map(t => t.trim()).filter(t => t !== '');
+                    parts.forEach(t => {
+                        const n = Number(t);
+                        if (!isFinite(n)) problems.push(tName + '.std = ' + t);
+                        else if (n === 0) problems.push(tName + '.std = 0');
+                    });
+                }
+            });
+        });
+        const msg = problems.length
+            ? T('Check these preprocessing values: ') + problems.join('; ')
+            : '';
+        el.style.display = msg ? '' : 'none';
+        el.textContent = msg;
+    }
+
     function addInputRow(name, shape) {
         name = name || '';
         shape = shape || [1, 3, 224, 224];
@@ -553,6 +594,13 @@
         if (shapeList) {
             shapeList.addEventListener('input', validateInputShapes);
             shapeList.addEventListener('change', validateInputShapes);
+        }
+        /* 전처리도 같은 이유로 컨테이너에 위임한다 — 전처리 항목은 추가·삭제로
+           계속 바뀌므로 개별 입력칸에 붙이면 나중에 추가된 것이 조용히 빠진다. */
+        const prepPipeline = document.getElementById('prep-pipeline');
+        if (prepPipeline) {
+            prepPipeline.addEventListener('input', validatePreprocessings);
+            prepPipeline.addEventListener('change', validatePreprocessings);
         }
     });
 

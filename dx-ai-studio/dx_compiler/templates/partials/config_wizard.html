@@ -79,6 +79,9 @@
         <legend data-i18n="Preprocessing Pipeline">Preprocessing Pipeline</legend>
         <p class="wizard-desc" data-i18n="Add transforms in execution order.">Add transforms in execution order.</p>
         <div id="prep-pipeline"></div>
+        <!-- 전처리 경고. wiz-shape-warning / wiz-calib-warning 과 같은 모양 —
+             서버 400 을 보기 전에 쓰는 순간 말한다. -->
+        <div id="wiz-prep-warning" class="alert-warning" style="display:none;" aria-live="polite"></div>
         <div class="prep-add-row">
           <select id="prep-select">
             <option value="">— Select transform —</option>

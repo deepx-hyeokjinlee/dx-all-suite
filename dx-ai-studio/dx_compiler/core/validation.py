@@ -215,3 +215,128 @@ def validate_enhanced_scheme(raw):
 
 def _bad_scheme(message: str):
     raise ValidationError(message)
+
+
+# 크기가 될 수 있는 것은 양수뿐이다. 파라미터 **이름** 에 규칙을 붙인다 —
+# transform 이름에 붙이면 centercrop 이 빠지고, 새 transform 이 생길 때마다
+# 규칙을 다시 짜야 한다.
+_POSITIVE_PARAMS = ("width", "height", "size", "scale")
+
+# 여기 없는 것은 일부러 안 본다. 저장소의 실제 config 를 읽어 보면 같은
+# 파라미터가 스칼라도 되고 리스트도 된다:
+#     {"transpose": {"axis": [2, 0, 1]}}   {"expandDim": {"axis": 0}}
+#     {"div": {"x": 255.0}}                {"div": {"x": [255, 255, 255]}}
+#     {"resize": {"pad_value": [114, 114, 114]}}   UI 기본값은 스칼라 0
+# 부호도 자유롭다 (axis 는 numpy 규칙상 음수 허용). 규칙을 세우면 지금 도는
+# config 가 막힌다. 뜻이 분명한 것만 본다.
+
+
+def _is_number(v) -> bool:
+    """bool 을 숫자로 치지 않는다 — 파이썬에서 True 는 int 의 인스턴스다."""
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def validate_preprocessings(raw):
+    """config.json 의 default_loader.preprocessings.
+
+    QA 티켓 SR-758 이 지목한 자리다. GUI 로 그대로 재현된다 — 파라미터 입력칸이
+    자유 입력이고 수집 코드가 `isNaN(num) ? raw : num` 이라 타이핑한 값이
+    그대로 실린다.
+
+    **transform 이름은 막지 않는다.** 벤더 레지스트리(02_06:394)에 resize2·
+    resize3·resize_tv 가 있는데 UI 는 내보내지 않는다. UI 목록으로 막으면 정당한
+    config 가 거부되고, 문서 목록이 최신이라는 보장도 없다. 이름은 모델을 읽는
+    컴파일 단계가 판단한다.
+    """
+    if raw is None:
+        return None
+    if not isinstance(raw, list):
+        raise ValidationError(
+            "Invalid preprocessings: expected an array of operations, "
+            f"got {type(raw).__name__}")
+    for index, entry in enumerate(raw):
+        _validate_one(entry, index)
+    return raw
+
+
+def _validate_one(entry, index: int) -> None:
+    where = f"preprocessings[{index}]"
+    if not isinstance(entry, dict):
+        raise ValidationError(
+            f"Invalid {where}: expected an object like "
+            f'{{"resize": {{...}}}}, got {type(entry).__name__}')
+    if len(entry) != 1:
+        # 한 원소에 transform 이 둘이면 어느 것이 먼저인지 알 수 없다.
+        # preprocessings 는 **순서가 뜻을 가지는** 배열이다.
+        raise ValidationError(
+            f"Invalid {where}: expected exactly one transform per entry, "
+            f"got {len(entry)} ({sorted(entry)}). Split them into separate entries.")
+
+    name, params = next(iter(entry.items()))
+    if params is None:
+        return  # pil_2_cv 처럼 인자가 없는 transform
+    if not isinstance(params, dict):
+        raise ValidationError(
+            f"Invalid {where}.{name}: expected an object of parameters, "
+            f"got {type(params).__name__}")
+
+    for key in _POSITIVE_PARAMS:
+        if key in params:
+            value = params[key]
+            if not _is_number(value) or value <= 0:
+                raise ValidationError(
+                    f"Invalid {where}.{name}.{key}: {value!r} — must be a positive number")
+
+    _validate_normalization(params, f"{where}.{name}")
+
+
+def _validate_normalization(params: dict, where: str) -> None:
+    """mean/std 는 채널별 값이다.
+
+    transform 이름이 아니라 **파라미터 이름** 으로 거는 이유: normalize 만
+    보면 normalize2 같은 변종을 놓친다. std 가 나눗셈의 분모라는 사실은
+    이름이 무엇이든 성립한다.
+    """
+    present = [k for k in ("mean", "std") if k in params]
+    for key in present:
+        value = params[key]
+        if not isinstance(value, (list, tuple)) or not value:
+            raise ValidationError(
+                f"Invalid {where}.{key}: expected a non-empty list of per-channel "
+                f"numbers, got {value!r}")
+        for item in value:
+            if not _is_number(item):
+                raise ValidationError(
+                    f"Invalid {where}.{key}: {item!r} — channel values must be numbers")
+    if "std" in params:
+        for item in params["std"]:
+            if item == 0:
+                raise ValidationError(
+                    f"Invalid {where}.std: contains 0 — normalization divides by std")
+    if len(present) == 2 and len(params["mean"]) != len(params["std"]):
+        raise ValidationError(
+            f"Invalid {where}: mean has {len(params['mean'])} channel(s) but std has "
+            f"{len(params['std'])} — they must describe the same channels")
+
+
+def validate_file_extensions(raw):
+    """default_loader.file_extensions — 확장자 배열.
+
+    config-schema.md:126 이 `["jpeg", "png", "jpg", "bmp"]` 로 배열임을 보인다.
+    문자열 `"jpg"` 를 받으면 dx_com 이 글자 단위로 순회해 'j','p','g' 를
+    확장자로 본다 — calculate-exclude 의 input_nodes 와 같은 함정이다.
+    """
+    if raw is None or raw == []:
+        return None
+    if isinstance(raw, str):
+        raise ValidationError(
+            f"Invalid file_extensions: expected a list, got a string. "
+            f"Use [{raw!r}], not {raw!r}.")
+    if not isinstance(raw, (list, tuple)):
+        raise ValidationError(
+            f"Invalid file_extensions: expected a list, got {type(raw).__name__}")
+    for item in raw:
+        if not isinstance(item, str) or not item.strip():
+            raise ValidationError(
+                f"Invalid file_extensions: {item!r} — extensions must be non-empty strings")
+    return list(raw)

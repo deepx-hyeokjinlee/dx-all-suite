@@ -414,6 +414,13 @@ window._DX_I18N_DICT = {
     'zh-TW': '資料集路徑為空。預設載入器需要資料集目錄以進行真實校準。',
     es: 'La ruta del conjunto de datos está vacía. El cargador por defecto necesita un directorio de datos para una calibración realista.',
   },
+  'Check these preprocessing values: ': {
+    ko: '다음 전처리 값을 확인하세요: ',
+    ja: '次の前処理の値を確認してください: ',
+    'zh-CN': '请检查以下预处理值： ',
+    'zh-TW': '請檢查以下前處理值： ',
+    es: 'Compruebe estos valores de preprocesamiento: ',
+  },
   'Dimensions must be positive whole numbers: ': {
     ko: '차원은 양의 정수여야 합니다: ',
     ja: '次元は正の整数である必要があります: ',
