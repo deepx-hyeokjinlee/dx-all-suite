@@ -14,7 +14,7 @@ window._DX_I18N_DICT = {
   },
   'Dashboard': {
     ko: '대시보드', ja: 'ダッシュボード',
-    'zh-CN': '仪表板', 'zh-TW': '儀表板',
+    'zh-CN': '仪表盘', 'zh-TW': '儀表板',
     es: 'Panel de control',
   },
   'Models': {
@@ -139,7 +139,7 @@ window._DX_I18N_DICT = {
     es: 'Actualizar estado',
   },
   'Send': {
-    ko: '보내기', ja: '送信',
+    ko: '전송', ja: '送信',
     'zh-CN': '发送', 'zh-TW': '傳送',
     es: 'Enviar',
   },
@@ -3906,7 +3906,7 @@ window._DX_I18N_PLACEHOLDERS = {
     es: 'Seleccione un modelo y haga clic en ▶ Ejecutar todo',
   },
   'Task Filter': {
-    ko: '태스크 필터', ja: 'タスクフィルター',
+    ko: '태스크 필터', ja: 'Taskフィルター',
     'zh-CN': '任务筛选', 'zh-TW': '任務篩選',
     es: 'Filtro de tarea',
   },

@@ -164,7 +164,7 @@ window._DX_MODELZOO_I18N_REGISTER({
   'Run Inference': {
     en: 'Run Inference',
     ko: '추론 실행',
-    ja: '推論を実行',
+    ja: '推論実行',
     'zh-CN': '运行推理',
     'zh-TW': '執行推論',
     es: 'Ejecutar inferencia',

@@ -130,6 +130,17 @@ def optimize_images(
     Image = _load_pillow()
 
     images_found = _discover_images(source_root, model=model, limit=limit)
+    if not images_found and model is None:
+        # 원본이 없으면 **소리 내어** 실패한다. 예전에는 처리 0건으로 조용히
+        # 성공했다 — `data/thumbnails` 와 `data/examples` 를 git 에서 뺀 뒤
+        # (2026-09-21) 새로 clone 한 사람이 보게 될 모습이 바로 이것이고,
+        # "아무 일도 안 일어났는데 성공" 은 이 스크립트의 원래 결함(출력이
+        # 있으면 무조건 스킵)과 같은 종류의 침묵이다.
+        raise FileNotFoundError(
+            f"No source images under {source_root}. "
+            "thumbnails/ and examples/ are not tracked in git — regenerate them first "
+            "with `python -m dx_modelzoo.scripts.generate_thumbnails` "
+            "(needs the dx_app server on port 8080 and the .dxnn models installed).")
 
     report = {
         "processed": 0,

@@ -97,7 +97,7 @@
       title: { en: 'Config', ko: '설정 파일', ja: '設定ファイル', 'zh-CN': '配置文件', 'zh-TW': '設定檔', es: 'Configuración' },
       content: { en: 'Upload a config JSON or create one with Build Config.', ko: '설정 JSON을 업로드하거나 Build Config로 직접 생성합니다.', ja: '設定JSONをアップロードするか、Build Configで作成します。', 'zh-CN': '上传配置JSON或使用Build Config创建。', 'zh-TW': '上傳設定JSON或使用Build Config建立。', es: 'Cargue un JSON de configuración o créelo con Build Config.' } },
     { target: '#output_dir_row', position: 'left',
-      title: { en: 'Output', ko: '출력 경로', ja: '出力パス', 'zh-CN': '输出路径', 'zh-TW': '輸出路徑', es: 'Salida' },
+      title: { en: 'Output', ko: '출력', ja: '出力', 'zh-CN': '输出', 'zh-TW': '輸出', es: 'Salida' },
       content: { en: 'Output directory for compiled results. Type a path, or click 📁 to browse server folders (and create new ones).', ko: '컴파일 결과물이 저장될 경로입니다. 직접 입력하거나 📁 버튼으로 서버 폴더를 탐색(새 폴더 생성)할 수 있습니다.', ja: 'コンパイル結果の出力ディレクトリです。パスを入力するか、📁 でサーバーのフォルダを参照（新規作成も）できます。', 'zh-CN': '编译结果的输出目录。可直接输入路径，或点击 📁 浏览服务器文件夹（并新建文件夹）。', 'zh-TW': '編譯結果的輸出目錄。可直接輸入路徑，或點擊 📁 瀏覽伺服器資料夾（並新增資料夾）。', es: 'Directorio de salida para los resultados. Escriba una ruta o haga clic en 📁 para explorar carpetas del servidor (y crear nuevas).' } },
     { target: '#compile-main-btn', position: 'left',
       title: { en: 'Compile', ko: '컴파일', ja: 'コンパイル', 'zh-CN': '编译', 'zh-TW': '編譯', es: 'Compilar' },

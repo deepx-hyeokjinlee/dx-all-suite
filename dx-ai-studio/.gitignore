@@ -34,3 +34,14 @@ dx_modelzoo/data/sync_report.json
 # Editors / OS
 .DS_Store
 *.swp
+
+# ModelZoo 썸네일/예제 **원본**. 브라우저가 실제로 받는 것은 data/optimized/ 이고
+# (catalog.js 가 .webp → .jpg → 원본 순으로 시도한다) 원본은 그 입력일 뿐이다.
+# 788개 전부 최적화본이 있음을 확인하고 뺐다 — 85MB.
+# 되살리려면 dx_app 서버 + .dxnn 모델 + NPU 가 필요하다:
+#   python -m dx_modelzoo.scripts.generate_thumbnails
+#   python -m dx_modelzoo.scripts.optimize_images --write
+# 원본 없이 optimize_images 를 돌리면 조용히 넘어가지 않고 실패한다
+# (tests/dx_modelzoo/test_optimize_images_needs_sources.py).
+dx_modelzoo/data/thumbnails/
+dx_modelzoo/data/examples/

@@ -22,7 +22,7 @@ window._DX_I18N_DICT = {
     es: 'Ejecutando...',
   },
   'Completed': {
-    ko: '완료됨',
+    ko: '완료',
     ja: '完了',
     'zh-CN': '已完成',
     'zh-TW': '已完成',

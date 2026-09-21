@@ -145,19 +145,33 @@ def test_stem_collision_produces_distinct_outputs(tmp_path):
 @pytest.mark.requires_pillow
 @_requires_pil
 def test_cli_summary_zero_source_bytes(tmp_path, monkeypatch, capsys):
-    """I-1: source_bytes가 0일 때 퍼센트 출력에서 ZeroDivisionError가 발생하지 않아야 합니다."""
+    """I-1: source_bytes가 0일 때 퍼센트 출력에서 ZeroDivisionError가 발생하지 않아야 합니다.
+
+    예전에는 **빈 소스 트리** 로 이 상황을 만들었다. 2026-09-21 부터 그것은
+    FileNotFoundError 다 — data/thumbnails 와 data/examples 를 git 에서 빼면서,
+    원본이 없는 채로 도는 것을 조용히 성공시키지 않기로 했다
+    (tests/dx_modelzoo/test_optimize_images_needs_sources.py).
+
+    이 테스트가 지키려던 것은 빈 트리가 아니라 **0으로 나누지 않는 것** 이므로,
+    같은 상황을 `--model` 필터로 만든다. 아무것도 매칭되지 않아 source_bytes 가
+    0 이 되는 것은 같고, 새 계약과 부딪히지 않는다.
+    """
     import sys
+
+    from PIL import Image
 
     optimizer = load_optimizer()
     source_root = tmp_path / "data"
     (source_root / "thumbnails").mkdir(parents=True)
     (source_root / "examples").mkdir(parents=True)
+    Image.new("RGB", (8, 8), (7, 7, 7)).save(source_root / "thumbnails" / "present.jpg")
     out_root = tmp_path / "output"
 
     monkeypatch.setattr(sys, "argv", [
         "optimize_images.py",
         "--source-root", str(source_root),
         "--output-root", str(out_root),
+        "--model", "matches-nothing",
     ])
 
     optimizer.main()

@@ -331,10 +331,10 @@ window._DX_MODELZOO_I18N_REGISTER({
   },
   'Use dxcom default settings.': {
     en: 'Use dxcom default settings.',
-    ko: '기본 dxcom 설정을 사용하세요.',
-    ja: 'dxcom のデフォルト設定を使用してください。',
+    ko: 'dxcom 기본 설정 사용.',
+    ja: 'dxcom のデフォルト設定を使用します。',
     'zh-CN': '使用 dxcom 默认设置。',
-    'zh-TW': '請使用 dxcom 預設設定。',
+    'zh-TW': '使用 dxcom 預設設定。',
     es: 'Use la configuración predeterminada de dxcom.',
   },
   'No demo code available.': {

@@ -182,7 +182,7 @@ window._DX_I18N_DICT = {
   'Browse available models and download them.': { ko: '사용 가능한 모델을 확인하고 다운로드하세요.', ja: '利用可能なモデルを確認してダウンロードします。', 'zh-CN': '浏览可用模型并下载。', 'zh-TW': '瀏覽可用模型並下載。',es:'Explore los modelos disponibles y descárguelos.'},
   'Face': { ko: '얼굴', ja: '顔', 'zh-CN': '人脸', 'zh-TW': '人臉',es:'Rostro'},
   'Detail': { ko: '상세', ja: '詳細', 'zh-CN': '详细', 'zh-TW': '詳細',es:'Detalle'},
-  'Category': { ko: '카테고리', ja: 'カテゴリ', 'zh-CN': '分类', 'zh-TW': '類別',es:'Categoría'},
+  'Category': { ko: '카테고리', ja: 'カテゴリ', 'zh-CN': '类别', 'zh-TW': '類別',es:'Categoría'},
   'Input Size': { ko: '입력 크기', ja: '入力サイズ', 'zh-CN': '输入尺寸', 'zh-TW': '輸入大小',es:'Tamaño de entrada'},
   'File Size': { ko: '파일 크기', ja: 'ファイルサイズ', 'zh-CN': '文件大小', 'zh-TW': '檔案大小',es:'Tamaño de archivo'},
   'Status': { ko: '상태', ja: 'ステータス', 'zh-CN': '状态', 'zh-TW': '狀態',es:'Estado'},

@@ -60,7 +60,7 @@ window._DX_MODELZOO_I18N_REGISTER({
   'Category': {
     en: 'Category',
     ko: '카테고리',
-    ja: 'カテゴリー',
+    ja: 'カテゴリ',
     'zh-CN': '类别',
     'zh-TW': '類別',
     es: 'Categoría',
