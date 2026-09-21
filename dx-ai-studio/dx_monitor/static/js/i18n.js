@@ -1,8 +1,8 @@
 window._DX_I18N_DICT = {
   'NPU Topology': {
     ko: 'NPU 토폴로지',
-    ja: 'NPUトポロジー',
-    'zh-CN': 'NPU拓扑',
+    ja: 'NPU トポロジー',
+    'zh-CN': 'NPU 拓扑',
     'zh-TW': 'NPU拓撲',
     es: 'Topología NPU',
   },
@@ -22,9 +22,9 @@ window._DX_I18N_DICT = {
   },
   'CPU Load': {
     ko: 'CPU 부하',
-    ja: 'CPU負荷',
-    'zh-CN': 'CPU负载',
-    'zh-TW': 'CPU負載',
+    ja: 'CPU 負荷',
+    'zh-CN': 'CPU 负载',
+    'zh-TW': 'CPU 負載',
     es: 'Carga de CPU',
   },
   'Memory': {
@@ -36,9 +36,9 @@ window._DX_I18N_DICT = {
   },
   'NPU Temp': {
     ko: 'NPU 온도',
-    ja: 'NPU温度',
-    'zh-CN': 'NPU温度',
-    'zh-TW': 'NPU溫度',
+    ja: 'NPU 温度',
+    'zh-CN': 'NPU 温度',
+    'zh-TW': 'NPU 溫度',
     es: 'Temp. NPU',
   },
   'Disk': {
@@ -148,9 +148,9 @@ window._DX_I18N_DICT = {
   },
   'NPU Util': {
     ko: 'NPU 사용률',
-    ja: 'NPU使用率',
-    'zh-CN': 'NPU利用率',
-    'zh-TW': 'NPU使用率',
+    ja: 'NPU 使用率',
+    'zh-CN': 'NPU 利用率',
+    'zh-TW': 'NPU 使用率',
     es: 'Util. NPU',
   },
   'View All': {
@@ -345,7 +345,7 @@ window._DX_I18N_DICT = {
   '⚡ Voltage': { ko: '⚡ 전압', ja: '⚡ 電圧', 'zh-CN': '⚡ 电压', 'zh-TW': '⚡ 電壓',es:'⚡ Voltaje'},
   '🔄 Clock': { ko: '🔄 클럭', ja: '🔄 クロック', 'zh-CN': '🔄 时钟', 'zh-TW': '🔄 時脈',es:'🔄 Reloj'},
   '🧪 Cores': { ko: '🧪 코어', ja: '🧪 コア', 'zh-CN': '🧪 核心', 'zh-TW': '🧪 核心',es:'🧪 Núcleos'},
-  '🔧 Firmware': { ko: '🔧 펌웨어', ja: '🔧 ファームウェア', 'zh-CN': '🔧 固件', 'zh-TW': '🔧 韌體', es: '🔧 Firmware del dispositivo'},
+  '🔧 Firmware': { ko: '🔧 펌웨어', ja: '🔧 ファームウェア', 'zh-CN': '🔧 固件', 'zh-TW': '🔧 韌體', es: '🔧 Firmware'},
   '🧩 Chip': { ko: '🧩 칩', ja: '🧩 チップ', 'zh-CN': '🧩 芯片', 'zh-TW': '🧩 晶片', es: '🧩 Procesador'},
   '📋 Board': { ko: '📋 보드', ja: '📋 ボード', 'zh-CN': '📋 板卡', 'zh-TW': '📋 板卡',es:'📋 Placa'},
   '💿 DDR Type': { ko: '💿 DDR 타입', ja: '💿 DDR タイプ', 'zh-CN': '💿 DDR 类型', 'zh-TW': '💿 DDR 類型',es:'💿 Tipo DDR'},

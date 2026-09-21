@@ -93,8 +93,8 @@ window._DX_MODELZOO_I18N_REGISTER({
     en: 'Execution path', ko: '실행 경로', ja: '実行パス',
     'zh-CN': '执行路径', 'zh-TW': '執行路徑', es: 'Ruta de ejecución',
   },
-  'Sync': { en: 'Sync', ko: 'Sync', ja: 'Sync', 'zh-CN': '同步', 'zh-TW': '同步', es: 'Sync' },
-  'Async': { en: 'Async', ko: 'Async', ja: 'Async', 'zh-CN': '异步', 'zh-TW': '非同步', es: 'Async' },
+  'Sync': { en: 'Sync', ko: '동기', ja: '同期', 'zh-CN': '同步', 'zh-TW': '同步', es: 'Sincronizar' },
+  'Async': { en: 'Async', ko: '비동기', ja: '非同期', 'zh-CN': '异步', 'zh-TW': '非同步', es: 'Asíncrono' },
   'Sync · C++ postproc': {
     en: 'Sync · C++ postproc', ko: 'Sync · C++ 후처리', ja: 'Sync · C++ 後処理',
     'zh-CN': '同步 · C++ 后处理', 'zh-TW': '同步 · C++ 後處理', es: 'Sync · postprocesado C++',

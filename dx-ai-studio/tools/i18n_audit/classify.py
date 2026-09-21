@@ -46,7 +46,13 @@ def _should_skip_stale_copy(record: AuditRecord, en: str) -> bool:
         return True
     if en.endswith("↗"):
         return True
-    if en in {"Error", "Error:", "ERROR", "❌ Error", "❌ Error:", "Python", "CPU", "FPS", "ORT", "OBB", "PPU", "Pose", "Multi", "Hardware", "Zoom", "visible"}:
+    if en in {"Error", "Error:", "ERROR", "❌ Error", "❌ Error:", "Python", "CPU", "FPS", "ORT", "OBB", "PPU", "Pose", "Multi", "Hardware", "Zoom", "visible",
+                # Firmware 는 스페인어에서도 그대로 쓰는 외래어다 — 바로 옆의 Hardware 와
+                # 같은 경우다. 예전에는 'Firmware del dispositivo'(기기 펌웨어)로 늘려
+                # 적어 stale-copy 를 피하고 있었지만, 영어에 없는 말을 덧붙인 것이라
+                # 라벨이 2.6배 길어졌다(dashboard.js:563 의 메트릭 라벨). 올바른 번역이
+                # 영어와 같아지는 경우를 결함으로 세면 안 된다.
+                "Firmware", "🔧 Firmware"}:
         return True
     vals = {(record.texts.get(lang) or "").strip() for lang in LANGUAGES if (record.texts.get(lang) or "").strip()}
     if len(vals) == 1:

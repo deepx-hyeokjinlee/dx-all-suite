@@ -118,7 +118,7 @@
             if (typeof setChartMode === 'function') setChartMode('temp');
           } },
         { target: '#cm-cpu', position: 'bottom',
-          title: { ko: 'CPU 부하', en: 'CPU Load', ja: 'CPU負荷', 'zh-CN': 'CPU负载', 'zh-TW': 'CPU負載' , es: 'Carga de CPU' },
+          title: { ko: 'CPU 부하', en: 'CPU Load', ja: 'CPU 負荷', 'zh-CN': 'CPU 负载', 'zh-TW': 'CPU 負載' , es: 'Carga de CPU' },
           content: { ko: '<strong>CPU 평균 부하</strong>를 차트로 추적합니다. 80%를 초과하면 프로세스를 점검하세요.', en: 'Tracks <strong>CPU average load</strong> in chart form. Investigate processes if above 80%.', ja: '<strong>CPU平均負荷</strong>をチャートで追跡します。80%を超えたらプロセスを確認してください。', 'zh-CN': '以图表追踪<strong>CPU平均负载</strong>。超过80%时请检查进程。', 'zh-TW': '以圖表追蹤<strong>CPU平均負載</strong>。超過80%時請檢查程序。' , es: 'Rastrea la <strong>carga media de CPU</strong> en forma de gráfico. Si supera el 80 %, revise los procesos.' },
           beforeStep: function () {
             _scrollTo('#cm-cpu');
@@ -149,7 +149,7 @@
       beforeStart: function () { _ensureMonitorDemo(); },
       steps: [
         { target: '#npu-topo', position: 'right',
-          title: { ko: 'NPU 토폴로지', en: 'NPU Topology', ja: 'NPUトポロジー', 'zh-CN': 'NPU拓扑', 'zh-TW': 'NPU拓撲' , es: 'Topología del NPU' },
+          title: { ko: 'NPU 토폴로지', en: 'NPU Topology', ja: 'NPU トポロジー', 'zh-CN': 'NPU 拓扑', 'zh-TW': 'NPU拓撲' , es: 'Topología del NPU' },
           content: { ko: '각 NPU 디바이스의 <strong>온도, 전압, 클럭, DRAM, 사용률</strong>과 펌웨어/칩/보드 메타데이터를 표시합니다.', en: 'Shows per-device <strong>temperature, voltage, clock, DRAM, utilization</strong> and firmware/chip/board metadata.', ja: '各NPUデバイスの<strong>温度、電圧、クロック、DRAM、使用率</strong>とファームウェア/チップ/ボードメタデータを表示します。', 'zh-CN': '显示每个设备的<strong>温度、电压、时钟、DRAM、利用率</strong>和固件/芯片/板卡元数据。', 'zh-TW': '顯示每個裝置的<strong>溫度、電壓、時脈、DRAM、使用率</strong>和韌體/晶片/板卡中繼資料。' , es: 'Muestra por dispositivo <strong>temperatura, voltaje, reloj, DRAM, utilización</strong> y metadatos de firmware/chip/placa.' },
           beforeStep: function () { _ensureMonitorDemo(); _scrollTo('#npu-topo'); },
           afterStep: function () { _clearMonitorMock(); } },

@@ -229,7 +229,7 @@ window._DX_I18N_DICT = {
   },
   '🔧 Install': { ko: '🔧 설치', ja: '🔧 インストール', 'zh-CN': '🔧 安装', 'zh-TW': '🔧 安裝',es:'🔧 Instalar'},
   '🗑 Clear Log': { ko: '🗑 로그 지우기', ja: '🗑 ログクリア', 'zh-CN': '🗑 清除日志', 'zh-TW': '🗑 清除日誌',es:'🗑 Limpiar registro'},
-  'NPU Linux Driver': { ko: 'NPU 리눅스 드라이버', ja: 'NPU Linuxドライバー', 'zh-CN': 'NPU Linux驱动', 'zh-TW': 'NPU Linux驅動程式',es:'Controlador Linux NPU'},
+  'NPU Linux Driver': { ko: 'NPU 리눅스 드라이버', ja: 'NPU Linux ドライバー', 'zh-CN': 'NPU Linux驱动', 'zh-TW': 'NPU Linux 驅動程式',es:'Controlador Linux NPU'},
   'DEEPX NPU kernel driver status': { ko: 'DEEPX NPU 커널 드라이버 상태', ja: 'DEEPX NPUカーネルドライバーの状態', 'zh-CN': 'DEEPX NPU内核驱动状态', 'zh-TW': 'DEEPX NPU核心驅動程式狀態',es:'Estado del controlador de kernel NPU DEEPX'},
   '🔌 Install': { ko: '🔌 설치', ja: '🔌 インストール', 'zh-CN': '🔌 安装', 'zh-TW': '🔌 安裝',es:'🔌 Instalar'},
   'GStreamer Plugin Build': { ko: 'GStreamer 플러그인 빌드', ja: 'GStreamerプラグインビルド', 'zh-CN': 'GStreamer插件构建', 'zh-TW': 'GStreamer外掛程式建置',es:'Compilación de plugin GStreamer'},

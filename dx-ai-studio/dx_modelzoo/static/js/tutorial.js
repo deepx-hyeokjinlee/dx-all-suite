@@ -347,7 +347,7 @@
           beforeStep: function () { _mockDownload('complete'); } },
         // ONNX 모델 링크 — onnx_url이 있는 모델에서만 존재
         { target: '#btnOnnxLink', position: 'bottom',
-          title: { ko: 'ONNX 모델 링크', en: 'ONNX Model Link', ja: 'ONNXモデルリンク', 'zh-CN': 'ONNX模型链接', 'zh-TW': 'ONNX模型連結', es: 'Enlace de modelo ONNX' },
+          title: { ko: 'ONNX 모델 링크', en: 'ONNX Model Link', ja: 'ONNX モデルリンク', 'zh-CN': 'ONNX 模型链接', 'zh-TW': 'ONNX 模型連結', es: 'Enlace de modelo ONNX' },
           content: { ko: '<strong>ONNX 원본 모델</strong>을 다운로드할 수 있는 링크입니다. NPU 컴파일 전 원본 모델이 필요할 때 사용하세요.', en: 'Link to download the <strong>original ONNX model</strong>. Use when you need the source model before NPU compilation.', ja: '<strong>ONNX元モデル</strong>をダウンロードできるリンクです。NPUコンパイル前にソースモデルが必要な場合に使用してください。', 'zh-CN': '下载<strong>原始ONNX模型</strong>的链接。在NPU编译前需要源模型时使用。', 'zh-TW': '下載<strong>原始ONNX模型</strong>的連結。在NPU編譯前需要來源模型時使用。', es: 'Enlace para descargar el <strong>modelo ONNX original</strong>. Úselo cuando necesite el modelo fuente antes de la compilación para NPU.' },
           beforeStep: function () { scrollTo('#sectionCompile'); } },
         // 모델 그래프 보기 버튼 — 항상 존재

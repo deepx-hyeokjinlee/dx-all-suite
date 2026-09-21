@@ -275,8 +275,8 @@ window._DX_I18N_DICT = {
     es: 'Dispositivos NPU',
   },
   'No NPU detected': {
-    ko: 'NPU가 감지되지 않음', ja: 'NPUが検出されません',
-    'zh-CN': '未检测到NPU', 'zh-TW': '未偵測到NPU',
+    ko: 'NPU가 감지되지 않음', ja: 'NPU が検出されません',
+    'zh-CN': '未检测到 NPU', 'zh-TW': '未偵測到 NPU',
     es: 'No se detectó NPU',
   },
   'No runs yet': {
