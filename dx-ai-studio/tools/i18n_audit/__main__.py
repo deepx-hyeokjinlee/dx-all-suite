@@ -18,7 +18,9 @@ def main() -> int:
     args = parser.parse_args()
 
     from .browser_evidence import load_browser_evidence
-    from .classify import classify_records, classify_stale_copy
+    from .classify import (classify_length_overflow, classify_placeholder_mismatch,
+                           classify_records, classify_stale_copy,
+                           classify_terminology_drift)
     from .extractors import extract_inventory
     from .integrity import check_findings_gate, check_integrity_gate, check_runtime_switching_gate
     from .report import build_payload, write_json, write_markdown
@@ -33,6 +35,12 @@ def main() -> int:
     tutorial_records = extract_tutorial_records(args.repo)
     findings = findings + classify_records(tutorial_records) + classify_stale_copy(tutorial_records)
     records = records + tutorial_records
+    # 칸이 채워졌는지(missing-language / stale-copy) 위의 층. 리포트에 실어야
+    # 사람이 본다 — 테스트에만 두면 상한만 지킬 뿐 내용이 보이지 않는다.
+    # --fail-on-findings 는 missing-language 만 막으므로 게이트를 붉히지는 않는다.
+    findings = findings + (classify_terminology_drift(records)
+                           + classify_placeholder_mismatch(records)
+                           + classify_length_overflow(records))
     runtime_records = extract_runtime_inventory(args.repo)
     runtime_findings = classify_runtime_gaps(runtime_records)
     findings = findings + runtime_findings

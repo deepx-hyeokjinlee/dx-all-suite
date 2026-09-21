@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+from dataclasses import dataclass
 import html
 import json
 import re
@@ -392,3 +393,66 @@ def extract_from_python_source(source: str, *, module: str, source_file: str) ->
             extract_from_json_obj(obj, module=module, source_file=source_file, path=prefix)
         )
     return records
+
+
+# ── 서버가 만들어 화면에 그대로 띄우는 영어 문자열 ──────────────────────────────
+#
+# extract_from_python_source 는 dict/list 리터럴 **할당만** 본다. 번역 테이블은
+# 잡지만 `send_error_json(400, "...")` 처럼 함수 인자로 들어간 문자열은 구조적으로
+# 못 본다. 그런데 그 문자열은 화면에 그대로 뜬다 —
+#     config_wizard.js:531  alert(T('Config generation failed: ') + data.error)
+# 앞은 번역되고 뒤는 영어다.
+#
+# 화면에 닿는 호출만 본다. 로깅이나 내부 예외까지 세면 신호가 묻힌다.
+_USER_FACING_CALLS = frozenset({
+    "send_error_json",   # HTTP 오류 본문 → 프론트가 data.error 로 표시
+    "ValidationError",   # 경계 검증 → send_error_json 으로 변환돼 같은 자리에 뜬다
+})
+
+# 사람이 읽는 문장만 센다. 식별자/경로/코드값은 번역 대상이 아니다.
+_MIN_MESSAGE_LEN = 4
+
+
+@dataclass(frozen=True)
+class ServerMessage:
+    module: str
+    source_file: str
+    line: int
+    text: str
+
+
+def _literal_parts(node) -> str:
+    """f-string 에서 **리터럴 부분만** 이어 붙인다.
+
+    치환되는 값(`{raw!r}`)은 번역 대상이 아니고 내용도 실행 시점에 정해진다.
+    문장 골격만 보면 번역이 필요한지 판단하기에 충분하다.
+    """
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.JoinedStr):
+        return "".join(v.value for v in node.values
+                       if isinstance(v, ast.Constant) and isinstance(v.value, str))
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        return _literal_parts(node.left) + _literal_parts(node.right)
+    return ""
+
+
+def extract_server_messages(source: str, *, module: str, source_file: str) -> list[ServerMessage]:
+    """사용자에게 그대로 보이는 서버측 영어 문자열을 찾는다."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+    out: list[ServerMessage] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        name = getattr(node.func, "attr", None) or getattr(node.func, "id", None)
+        if name not in _USER_FACING_CALLS:
+            continue
+        for arg in node.args:
+            text = _literal_parts(arg).strip()
+            if len(text) >= _MIN_MESSAGE_LEN and any(c.isalpha() for c in text):
+                out.append(ServerMessage(module=module, source_file=source_file,
+                                         line=getattr(node, "lineno", 0), text=text))
+    return out
