@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 BROWSER_SUITE_PATHS = {
     "tests/i18n_audit/test_browser_copy_audit.py",
+    "tests/test_toolbar_reachable_when_narrow.py",
     "tests/launcher/test_home_hierarchy_browser.py",
     "tests/launcher/test_home_measured_filter_browser.py",
     "tests/launcher/test_home_draft_browser.py",

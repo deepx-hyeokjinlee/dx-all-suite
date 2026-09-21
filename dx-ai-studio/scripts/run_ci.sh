@@ -89,6 +89,7 @@ BROWSER_TESTS=(
   tests/shared/test_browser_runtime.py
   tests/test_catalog_virtual_scroll_browser.py
   tests/test_iframe_lang_sync_browser.py
+  tests/test_toolbar_reachable_when_narrow.py
   tests/test_tutorial_stale_step.py
   tests/test_tutorial_e2e_journey.py
   tests/test_tutorial_spotlight_spot_check.py
