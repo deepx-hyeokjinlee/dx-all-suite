@@ -78,17 +78,28 @@ EXAMPLE_TYPES = {
 }
 
 # 태스크별 기본 샘플 이미지 (inference 용)
+# dx_app 이 v3.2.0/v3.2.1 에서 샘플을 교체했는데 이 표가 따라가지 않아, 한 달 넘게
+# 없는 파일을 가리키고 있었다. server.py 의 기본 이미지 선택은 파일명이 목록에 없으면
+# 조용히 `images[0]` 으로 떨어지므로 오류 없이 엉뚱한 그림이 떴다 —
+# 초해상도 데모에 위성사진이 나오는 식이었다.
+#
+#   680366d (v3.2.0-rc) dota8_test/ 10장(93MB) 삭제 → sample_airport_satellite_view.png 추가
+#   c6c35e4 (v3.2.1-rc) sample_superresolution.png 삭제 → sample_lowres275x150.png 추가
+#
+# 둘 다 같은 커밋에서 대체물을 함께 넣었다. 자산이 사라진 것이 아니라 교체된 것이다.
+# 진짜 출처는 dx_app/scripts/run_examples.sh 의 CATEGORY_IMAGE 표이고,
+# 이제 tests/dx_modelzoo/test_conf_categories_are_known.py 가 어긋나면 말한다.
 SAMPLE_IMAGES = {
     "object_detection": "sample/img/sample_street.jpg",
     "face_detection": "sample/img/sample_face.jpg",
     "pose_estimation": "sample/img/sample_people.jpg",
-    "obb_detection": "sample/dota8_test/P0284.png",
+    "obb_detection": "sample/img/sample_airport_satellite_view.png",
     "classification": "sample/img/sample_dog.jpg",
     "instance_segmentation": "sample/img/sample_street.jpg",
     "semantic_segmentation": "sample/img/sample_parking.jpg",
     "depth_estimation": "sample/img/sample_horse.jpg",
     "image_denoising": "sample/img/sample_denoising.jpg",
-    "super_resolution": "sample/img/sample_superresolution.png",
+    "super_resolution": "sample/img/sample_lowres275x150.png",
     "image_enhancement": "sample/img/sample_lowlight.jpg",
     "embedding": "sample/img/face_pair",
     "attribute_recognition": "sample/img/sample_person_a1.jpg",

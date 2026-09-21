@@ -91,3 +91,36 @@
 
 **테스트가 통과하는 것과 제품이 오프라인에서 동작하는 것은 다르다.** 위 등급표의
 실측 열이 그 간극을 메우는 부분이고, 제품 동작이 바뀌면 그 열도 다시 재야 한다.
+
+## 알려진 문제 — offline 스테이지가 드물게 SIGSEGV 로 죽는다
+
+**실측 (2026-09-21)**: `bash scripts/run_ci.sh --offline` 5회 중 1회.
+직접 같은 pytest 명령을 돌리면 2회 모두 깨끗했고, `run_ci.sh --offline` 를 연속
+3회 돌려도 깨끗했다. 재현 조건을 아직 특정하지 못했다.
+
+```
+Fatal Python error: Segmentation fault
+Current thread ...:
+  shared/dx_server.py:878 in _dispatch_request     ← send_error_json(500, ...)
+  shared/dx_server.py:889 in do_POST
+Extension modules: greenlet._greenlet, numpy._core._multiarray_umath,
+                   numpy.linalg._umath_linalg, google._upb._message
+```
+
+**어디서 나는가**: 핸들러가 예기치 못한 예외를 던져 `_dispatch_request` 의
+defense-in-depth 가 500 을 되돌려 보내는 그 지점이다. 스택이 얕으므로 재귀나
+스택 오버플로는 아니다. 순수 파이썬 소켓 쓰기에서 나는 segfault 이므로 C 확장
+쪽(greenlet / protobuf)을 의심하고 있으나 **확인하지 못했다.**
+
+**왜 offline 에서만 보이는가**: `tests/offline_guard.py` 가 `socket.socket.connect`
+를 가로채 외부 주소에 `OSError` 를 던진다. 그래서 밖으로 나가려는 핸들러가
+예외를 내고 500 경로를 타는 것이 **offline 스테이지에서만** 일상적으로 일어난다.
+기본 게이트는 그 경로를 거의 밟지 않는다.
+
+**무엇이 아닌가**: 이 가드는 `3e4dea1`(2026-09-18)에서 들어왔다. 2026-09-21 의
+`SAMPLE_IMAGES` 경로 수정과는 무관하다 — 문자열 두 개가 소켓 쓰기를 죽일 경로가
+없고, 수정 전후로 발생 양상이 같다.
+
+**다음에 볼 것**: `faulthandler` 를 켜 두고 반복 실행해 크래시 직전의 요청을
+특정한다. 500 을 유발한 원래 예외가 로그에 `traceback.print_exc()` 로 남으므로,
+크래시 난 실행의 로그에서 그 직전 트레이스백을 찾으면 어느 핸들러인지 좁혀진다.

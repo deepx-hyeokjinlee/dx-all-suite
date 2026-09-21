@@ -49,7 +49,16 @@ def test_demo_input_is_representative_image_for_file_tasks():
     ms = _catalog_models()
     assert ms["yolov7_w6"].get("demo_input") == "sample/img/sample_street.jpg"
     assert ms["scrfd500m_ppu"].get("demo_input") == "sample/img/sample_face.jpg"  # override
-    assert ms["yolo26n_obb"].get("demo_input") == "sample/dota8_test/P0284.png"   # cross-dir file
+    # dx_app 이 v3.2.0(680366d) 에서 dota8_test/ 10장(93MB)을 지우고
+    # sample_airport_satellite_view.png 로 교체했다. 자산이 사라진 것이 아니라 교체된
+    # 것이고, studio 의 SAMPLE_IMAGES 만 따라가지 못해 한 달 넘게 없는 파일을 가리켰다.
+    #
+    # 주의 — 이 함수 이름이 약속하는 "썸네일과 같은 이미지" 는 지금 **아직** 성립하지
+    # 않는다. yolo26*_obb / espcn_* 썸네일은 교체 전 원본(DOTA 항공사진 / 모나크 나비)
+    # 으로 만들어진 것이 남아 있다. 재생성하려면 dx_app 서버와 .dxnn 모델이 필요하다:
+    #     python3 -m dx_modelzoo.scripts.generate_thumbnails --model yolo26n_obb
+    # 재생성 전까지는 목록의 그림과 "Use Default" 결과가 다르다.
+    assert ms["yolo26n_obb"].get("demo_input") == "sample/img/sample_airport_satellite_view.png"
 
 
 def test_demo_input_is_pair_dir_for_reid_embedding():
