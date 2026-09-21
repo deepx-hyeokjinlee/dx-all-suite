@@ -1,4 +1,11 @@
 // viewer_panel.js — Manages the embedded model viewer panel with phase tabs
+
+/* 서버 오류를 표시 직전에 번역한다. shared/static/server-error-i18n.js 가
+   로드되지 않았으면 원문을 그대로 쓴다 — 조용히 비우지 않는다. */
+function _srvErr(msg) {
+  return (typeof window.translateServerError === 'function')
+    ? window.translateServerError(msg) : msg;
+}
 (function() {
     'use strict';
 
@@ -1005,7 +1012,7 @@
         .then(function(data) {
             if (data.error) {
                 var info = document.getElementById('ns-range-info');
-                if (info) info.textContent = 'Error: ' + data.error;
+                if (info) info.textContent = 'Error: ' + _srvErr(data.error);
                 return;
             }
             excludedNodesSet = new Set(data.excluded_nodes);

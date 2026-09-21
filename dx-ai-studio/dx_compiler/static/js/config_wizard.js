@@ -1,4 +1,11 @@
 /* Config Builder Wizard */
+
+/* 서버 오류를 표시 직전에 번역한다. shared/static/server-error-i18n.js 가
+   로드되지 않았으면 원문을 그대로 쓴다 — 조용히 비우지 않는다. */
+function _srvErr(msg) {
+  return (typeof window.translateServerError === 'function')
+    ? window.translateServerError(msg) : msg;
+}
 (function() {
     let currentStep = 1;
     const totalSteps = 4;
@@ -107,7 +114,7 @@
                 btn.disabled = false;
                 btn.textContent = T('🔍 Auto Detect from Model');
                 if (data.error) {
-                    if (wizWarn) { wizWarn.style.display = ''; wizWarn.textContent = T('Auto-detect skipped:') + ' ' + data.error; }
+                    if (wizWarn) { wizWarn.style.display = ''; wizWarn.textContent = T('Auto-detect skipped:') + ' ' + _srvErr(data.error); }
                     return;
                 }
                 // Clear existing rows
@@ -528,7 +535,7 @@
             nextBtn.disabled = false;
             nextBtn.textContent = T('✅ Use This Config');
             if (data.error) {
-                alert(T('Config generation failed: ') + data.error);
+                alert(T('Config generation failed: ') + _srvErr(data.error));
                 return;
             }
             // Set config_path and close wizard

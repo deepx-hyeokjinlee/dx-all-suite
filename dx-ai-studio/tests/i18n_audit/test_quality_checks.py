@@ -190,6 +190,14 @@ class TestServerMessagesAreCounted:
     # 부분을 이어 붙이는 방식이 어림셈과 한 건 달랐다. 상한은 어림이 아니라
     # 검사기가 세는 값이어야 한다.
     #   dx_compiler 70 · shared 9 · dx_agent_dev 8 · dx_benchmark 3 · launcher 2
+    # 92 건 자체는 그대로다 — **서버 코드를 건드리지 않기로** 했기 때문이다.
+    # 대신 표시 직전에 프론트가 번역한다(shared/static/server-error-i18n.js,
+    # 2026-09-21). 이 상한이 재는 것은 "서버에 영어 문자열이 몇 개인가" 이지
+    # "사용자가 영어를 보는가" 가 아니다. 후자는
+    # tests/test_server_error_i18n.py 가 본다.
+    #
+    # 그러므로 이 수를 0 으로 모는 것은 목표가 아니다. 새 메시지가 늘어나는
+    # 것만 막는다 — 늘어나면 번역 패턴도 같이 늘려야 한다.
     MAX_UNTRANSLATED_SERVER_MESSAGES = 92
 
     def test_the_extractor_exists(self):
