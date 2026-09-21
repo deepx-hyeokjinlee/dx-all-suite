@@ -4,7 +4,8 @@ import subprocess,threading,webbrowser,mimetypes,collections
 from http.server import HTTPServer,SimpleHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from urllib.parse import urlparse,parse_qs
-from pathlib import Path
+import os as _os
+from pathlib import Path, PurePosixPath
 from concurrent.futures import ThreadPoolExecutor,as_completed
 
 SCRIPT_DIR  = Path(__file__).resolve().parent.parent   # dx_app/ (one level above core/)
@@ -15,6 +16,40 @@ CPP_DIR     = DX_APP_ROOT/"src"/"cpp_example"
 PY_DIR      = DX_APP_ROOT/"src"/"python_example"
 ASSETS_DIR  = DX_APP_ROOT/"assets"
 SAMPLE_DIR  = DX_APP_ROOT/"sample"
+
+# 모델이 어디 설치되는지는 설정으로 정한다. .dxnn 하나가 85MB 인 것도 있어 다른
+# 디스크에 두고 싶다는 요구가 자연스럽고, 테스트는 이 설정으로 **결정성** 을 얻는다:
+# dx_app 랜딩의 모델 표는 로컬 설치 상태에 따라 다섯 열이 달라지며 통째로
+# 리플로우된다(비주얼 베이스라인이 최대 22% 어긋났다). 하네스가 빈 디렉터리를
+# 가리키면 어느 머신에서 찍어도 같은 그림이 된다 — dx_monitor 가
+# DX_MONITOR_SKIP_HARDWARE_INIT 으로 하드웨어 읽기를 끄는 것과 같은 이유다.
+# 다만 운영 코드에 테스트 플래그를 심지 않고 경로를 설정 가능하게 만든다.
+# 계약: tests/dx_app/test_models_dir_is_configurable.py
+_MODELS_DIR_ENV = _os.environ.get("DX_APP_MODELS_DIR") or ""
+MODELS_DIR  = Path(_MODELS_DIR_ENV) if _MODELS_DIR_ENV else ASSETS_DIR/"models"
+
+# conf/registry 는 모델을 'assets/models/foo.dxnn' 로 적는다. 그 접두사만 MODELS_DIR
+# 로 갈아끼운다 — assets/videos 처럼 모델 트리 밖의 것은 건드리지 않는다.
+_MODEL_PREFIX = ("assets", "models")
+
+
+def resolve_model_path(model_file: str, root=None):
+    """model_file(상대경로) → 실제 파일 경로.
+
+    **환경변수가 설정되지 않았으면 예전과 글자 그대로 같게 동작한다**(root/model_file).
+    이것이 중요하다: 여러 테스트가 호출부 모듈의 `DX_APP_ROOT` 속성을
+    monkeypatch 해서 경로를 갈아끼운다. 무조건 MODELS_DIR 를 쓰면 그 이음매가
+    끊긴다 — 실제로 끊어 보고 19건이 깨졌다.
+
+    그래서 우회는 **설정이 명시적으로 있을 때만** 한다. `root` 는 호출부가 자기
+    모듈 속성을 넘겨 그 이음매를 유지하기 위한 것이다.
+    """
+    base = root if root is not None else DX_APP_ROOT
+    if _MODELS_DIR_ENV:
+        parts = PurePosixPath(model_file).parts
+        if parts[:2] == _MODEL_PREFIX:
+            return MODELS_DIR.joinpath(*parts[2:])
+    return base/model_file
 CONFIG_FILE = DX_APP_ROOT/"config"/"test_models.conf"
 # C++ binary location varies by how dx_app was provisioned: a source build lands
 # under build_<arch>/src/cpp_example, while the dx-runtime tree ships prebuilt

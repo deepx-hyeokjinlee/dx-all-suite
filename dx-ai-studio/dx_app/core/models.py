@@ -4,7 +4,7 @@ import os, re, json
 from pathlib import Path
 from dx_app.core.config import (BUILD_DIR, CPP_DIR, PY_DIR, ASSETS_DIR, CONFIG_FILE, SAMPLE_DIR,
                     SKIP_CAT, CATEGORIES, CAT_LABEL, CAT_IMAGE, CAT_VIDEO,
-                    TASK_TYPES, POSTPROCESSORS, DX_APP_ROOT)
+                    TASK_TYPES, POSTPROCESSORS, DX_APP_ROOT, resolve_model_path)
 from dx_app.core.inference_exec import _find_fallback_binary, _is_executable_file, _python_runtime_ready
 from shared.catalog_sources import parse_test_models_conf as _shared_parse_test_models_conf
 
@@ -137,8 +137,8 @@ def _required_dxnn_exists(model_file):
     if model_file.startswith("-"):
         import shlex as _shlex
         _args=_shlex.split(model_file)
-        return all((DX_APP_ROOT/a).exists() for a in _args if not a.startswith("-") and a.endswith(".dxnn"))
-    return bool(model_file)and(DX_APP_ROOT/model_file).exists()
+        return all(resolve_model_path(a, DX_APP_ROOT).exists() for a in _args if not a.startswith("-") and a.endswith(".dxnn"))
+    return bool(model_file)and resolve_model_path(model_file, DX_APP_ROOT).exists()
 
 
 def _cpp_runner_ready(category,model_name,variant):

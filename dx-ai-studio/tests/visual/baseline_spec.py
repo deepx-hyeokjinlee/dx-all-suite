@@ -20,19 +20,16 @@ SPECS: dict[str, dict] = {
         # two passed. Masked, like dx_monitor's telemetry.
         "mask": ("#hubLauncherPort",),
     },
-    # 전제 — 이 베이스라인은 **모델이 하나도 설치되지 않은 상태** 로 찍는다.
+    # 이 표는 **로컬에 무엇이 설치돼 있는지** 에 따라 다섯 열이 달라진다 —
     # models.js 의 `dl = !!runnable` 이 설치된 모델에만 C++/PYTHON/MODE 열을 켜고
-    # ACTIONS 에 Graph 버튼을 더한다. 다섯 열의 내용 폭이 달라지며 표가 통째로
-    # 리플로우되므로, 모델을 설치한 머신에서는 최대 22% 가 어긋난다(실측).
+    # ACTIONS 에 Graph 버튼을 더한다. 표가 통째로 리플로우돼 베이스라인이 최대 22%
+    # 어긋났다. 한동안 "모델이 없는 상태에서 찍을 것" 이라는 전제로 버텼지만,
+    # 그것은 개발자에게 준수를 떠넘기는 것이었다 — 모델 설치는 이 제품의 정상
+    # 사용이다.
     #
-    # ACTIONS 열은 폭을 고정해 두었다(style.css `.m-actions` min-width) — 모델을
-    # 받을 때마다 버튼이 좌우로 뛰던 것을 없앤 UX 수정이고, 리플로우도 그만큼
-    # 줄었다. 나머지 네 열까지 고정하려면 table-layout:fixed 재설계가 필요한데,
-    # 이 스위트는 파일 첫머리가 말하듯 host-specific 이라 **advisory** 이므로
-    # 거기까지 가지 않았다.
-    #
-    # 그러므로 재촬영은 `dx-runtime/dx_app/assets/models` 를 비운 상태에서 한다.
-    # (새로 clone 한 상태 = CI 가 보는 상태)
+    # 이제 하네스가 빈 모델 디렉터리를 가리켜 상태를 고정한다
+    # (tests/visual/conftest.py 의 DX_APP_MODELS_DIR). 설치돼 있든 아니든 같은
+    # 그림이 나오므로 전제가 필요 없다.
     "dx_app": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_stream": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_compiler": {"settle_ms": _DEFAULT_SETTLE_MS},

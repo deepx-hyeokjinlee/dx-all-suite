@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from dx_app.core import config
-from dx_app.core.config import DX_APP_ROOT, ASSETS_DIR, SCRIPTS_DIR, CONFIG_FILE
+from dx_app.core.config import DX_APP_ROOT, ASSETS_DIR, SCRIPTS_DIR, CONFIG_FILE, MODELS_DIR as _CFG_MODELS_DIR
 from dx_app.core._html_dom import parse_html
 from shared.catalog_sources import parse_test_models_conf as _shared_parse_test_models_conf
 
@@ -23,7 +23,9 @@ SOURCE_URLS = {
     SOURCE_INTERNAL: "https://modelzoo-publish-api.devops.dpx.ai/publish/html",
 }
 
-MODELS_DIR = ASSETS_DIR / "models"
+# 설정 가능한 모델 디렉터리를 쓴다 (config.MODELS_DIR). 예전에는 여기서
+# ASSETS_DIR/'models' 를 다시 만들어 설정을 무시했다.
+MODELS_DIR = _CFG_MODELS_DIR
 QPRO_DIR = MODELS_DIR / "q-pro"
 QMASTER_DIR = MODELS_DIR / "q-master"
 

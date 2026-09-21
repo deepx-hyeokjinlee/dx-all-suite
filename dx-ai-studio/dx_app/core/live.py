@@ -11,7 +11,7 @@ the function body (see below) so module-load time stays acyclic.
 import os, re, math, time, uuid, subprocess, tempfile, threading, atexit
 from pathlib import Path
 from dx_app.core import config
-from dx_app.core.config import DX_APP_ROOT, BUILD_DIR
+from dx_app.core.config import DX_APP_ROOT, BUILD_DIR, resolve_model_path
 from shared.runtime import ld_library_path
 from dx_app.core.performance import _parse_perf
 from dx_app.core.inference_exec import _err, _TMP
@@ -60,7 +60,7 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
                     return _err("model_not_found", f"Model file not found: {arg}")
                 model_args[i] = str(mfp)
     else:
-        mp = DX_APP_ROOT / model_file
+        mp = resolve_model_path(model_file, DX_APP_ROOT)
         if not mp.exists():
             return _err("model_not_found", f"Model file not found: {model_file}")
 

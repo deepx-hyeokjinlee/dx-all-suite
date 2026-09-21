@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dx_app.core import config
 from dx_app.core.config import (DX_APP_ROOT, CPP_DIR, PY_DIR, BUILD_DIR, ASSETS_DIR,
                     SAMPLE_DIR, OUTPUTS_DIR, SCRIPTS_DIR, CAT_IMAGE, CAT_VIDEO,
-                    _RUNTIME_PYTHON, _RUNTIME_PYTHONPATH)
+                    _RUNTIME_PYTHON, _RUNTIME_PYTHONPATH, resolve_model_path)
 from shared.runtime import ld_library_path
 from shared import debug_log
 from dx_app.core.dx_app_security import resolve_existing_file
@@ -106,7 +106,7 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
                     return _err("model_not_found", f"Model file not found: {arg}")
                 model_args[i] = str(mfp)
     else:
-        mp = DX_APP_ROOT / model_file
+        mp = resolve_model_path(model_file, DX_APP_ROOT)
         if not mp.exists(): return _err("model_not_found", f"Model file not found: {model_file}")
     _b64_tmp = None
     if input_type == "image" and image_base64:

@@ -7,9 +7,25 @@ alone moved 48.8% of the pixels between two captures of the same commit.
 """
 from __future__ import annotations
 
+import os
+import tempfile
+
 import pytest
 
 from tests.browser_support import launch_browser, selected_engines
+
+# dx_app 의 모델 표는 **로컬에 무엇이 설치돼 있는지** 에 따라 다르게 그려진다:
+# models.js 의 `dl = !!runnable` 이 설치된 모델에만 C++/PYTHON/MODE 열을 켜고
+# ACTIONS 에 Graph 버튼을 더한다. 다섯 열의 폭이 달라지며 표가 통째로 리플로우돼
+# 베이스라인이 최대 22% 어긋났다 — 개발자 파일시스템을 그대로 찍고 있었던 것이다.
+#
+# 빈 디렉터리를 가리켜 "아무것도 설치되지 않음" 으로 고정한다. dx_monitor 에
+# DX_MONITOR_SKIP_HARDWARE_INIT 을 세워 실제 하드웨어 읽기를 끄는 것과 같은 이유다.
+# 이 스위트는 `pytest tests/visual/` 로 **별도 프로세스** 에서 돌므로(run_ci.sh:230)
+# 여기서 환경을 세워도 다른 스위트에 새지 않는다.
+# 계약: tests/dx_app/test_models_dir_is_configurable.py
+_EMPTY_MODELS_DIR = tempfile.mkdtemp(prefix="dx-visual-empty-models-")
+os.environ.setdefault("DX_APP_MODELS_DIR", _EMPTY_MODELS_DIR)
 
 # Applied before any page script runs, so neither the splash nor the tutorial
 # walkthrough enters the capture.
