@@ -20,6 +20,19 @@ SPECS: dict[str, dict] = {
         # two passed. Masked, like dx_monitor's telemetry.
         "mask": ("#hubLauncherPort",),
     },
+    # 전제 — 이 베이스라인은 **모델이 하나도 설치되지 않은 상태** 로 찍는다.
+    # models.js 의 `dl = !!runnable` 이 설치된 모델에만 C++/PYTHON/MODE 열을 켜고
+    # ACTIONS 에 Graph 버튼을 더한다. 다섯 열의 내용 폭이 달라지며 표가 통째로
+    # 리플로우되므로, 모델을 설치한 머신에서는 최대 22% 가 어긋난다(실측).
+    #
+    # ACTIONS 열은 폭을 고정해 두었다(style.css `.m-actions` min-width) — 모델을
+    # 받을 때마다 버튼이 좌우로 뛰던 것을 없앤 UX 수정이고, 리플로우도 그만큼
+    # 줄었다. 나머지 네 열까지 고정하려면 table-layout:fixed 재설계가 필요한데,
+    # 이 스위트는 파일 첫머리가 말하듯 host-specific 이라 **advisory** 이므로
+    # 거기까지 가지 않았다.
+    #
+    # 그러므로 재촬영은 `dx-runtime/dx_app/assets/models` 를 비운 상태에서 한다.
+    # (새로 clone 한 상태 = CI 가 보는 상태)
     "dx_app": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_stream": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_compiler": {"settle_ms": _DEFAULT_SETTLE_MS},

@@ -288,7 +288,14 @@ tbody tr:hover td{background:var(--surface-hover)}
 .input::placeholder{color:var(--text-faint)}
 
 /*═══ Model action btns ═══*/
-.m-actions{display:flex;gap:var(--sp-1);flex-wrap:nowrap}
+/* 이 열의 내용은 **로컬에 모델이 설치돼 있는지** 에 따라 달라진다 — models.js 가
+   설치된 모델에만 `📊 Graph` 버튼을 붙이고 Download 라벨을 Re-download 로 늘린다.
+   마지막 열이라 폭이 변하면 왼쪽 열들이 좁아지며 표 전체가 리플로우됐다: 모델을
+   하나 받을 때마다 표가 들썩였고, 실측으로 175px ↔ 246px 였다.
+   가장 넓은 상태(246px)로 고정해 설치 여부와 무관하게 자리를 잡아둔다. 네 뷰포트
+   폭(650/860/1150/1320) 모두 같은 값이라 미디어 쿼리가 필요 없다.
+   계약: tests/dx_app/test_models_table_stable_width.py */
+.m-actions{display:flex;gap:var(--sp-1);flex-wrap:nowrap;min-width:246px}
 .m-action-btn{background:none;border:1px solid var(--border-subtle);color:var(--text-muted);border-radius:var(--radius-sm);
   padding:3px 8px;font-size:var(--fs-xs);cursor:pointer;transition:.15s var(--ease);font-family:inherit;white-space:nowrap;
   text-decoration:none;display:inline-block;vertical-align:middle;line-height:1.5}
