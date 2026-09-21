@@ -1,13 +1,49 @@
 {
   "images": [
     {
-      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26x_obb.jpg",
-      "subdir": "thumbnails",
-      "source_bytes": 2205909,
-      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_obb-jpg.webp",
-      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_obb-jpg.jpg",
-      "webp_bytes": 22626,
-      "jpg_bytes": 30680
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/deitbase384_result.jpg",
+      "subdir": "examples",
+      "source_bytes": 201045,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/deitbase384_result-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/deitbase384_result-jpg.jpg",
+      "webp_bytes": 151004,
+      "jpg_bytes": 197228
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/levit128_result.jpg",
+      "subdir": "examples",
+      "source_bytes": 200661,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit128_result-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit128_result-jpg.jpg",
+      "webp_bytes": 150832,
+      "jpg_bytes": 196811
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/levit192_result.jpg",
+      "subdir": "examples",
+      "source_bytes": 200259,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit192_result-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit192_result-jpg.jpg",
+      "webp_bytes": 150470,
+      "jpg_bytes": 196438
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/levit256_result.jpg",
+      "subdir": "examples",
+      "source_bytes": 200935,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit256_result-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit256_result-jpg.jpg",
+      "webp_bytes": 150894,
+      "jpg_bytes": 197089
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/levit384_result.jpg",
+      "subdir": "examples",
+      "source_bytes": 200793,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit384_result-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/levit384_result-jpg.jpg",
+      "webp_bytes": 150740,
+      "jpg_bytes": 196931
     },
     {
       "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/yolo26x_obb_result.jpg",
@@ -17,8 +53,3149 @@
       "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/yolo26x_obb_result-jpg.jpg",
       "webp_bytes": 104060,
       "jpg_bytes": 143668
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/3ddfa_v2_mobilnet0_5_120x120.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 26186,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/3ddfa_v2_mobilnet0_5_120x120-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/3ddfa_v2_mobilnet0_5_120x120-jpg.jpg",
+      "webp_bytes": 16952,
+      "jpg_bytes": 28480
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/3ddfa_v2_mobilnetv1_120x120.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 26119,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/3ddfa_v2_mobilnetv1_120x120-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/3ddfa_v2_mobilnetv1_120x120-jpg.jpg",
+      "webp_bytes": 17022,
+      "jpg_bytes": 28399
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/alexnet.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47078,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/alexnet-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/alexnet-jpg.jpg",
+      "webp_bytes": 29042,
+      "jpg_bytes": 38756
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/arcface_iresnet100_ms1m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27821,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_iresnet100_ms1m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_iresnet100_ms1m-jpg.jpg",
+      "webp_bytes": 12126,
+      "jpg_bytes": 24928
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/arcface_iresnet50_ms1m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27848,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_iresnet50_ms1m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_iresnet50_ms1m-jpg.jpg",
+      "webp_bytes": 12158,
+      "jpg_bytes": 24933
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/arcface_mobilefacenet.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27823,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_mobilefacenet-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_mobilefacenet-jpg.jpg",
+      "webp_bytes": 12124,
+      "jpg_bytes": 24943
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/arcface_r50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27820,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_r50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/arcface_r50-jpg.jpg",
+      "webp_bytes": 12140,
+      "jpg_bytes": 24931
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/beit_large_patch16.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46986,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/beit_large_patch16-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/beit_large_patch16-jpg.jpg",
+      "webp_bytes": 28786,
+      "jpg_bytes": 38715
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/bisenetv1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 14461,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/bisenetv1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/bisenetv1-jpg.jpg",
+      "webp_bytes": 6530,
+      "jpg_bytes": 13505
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/bisenetv2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 14098,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/bisenetv2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/bisenetv2-jpg.jpg",
+      "webp_bytes": 6362,
+      "jpg_bytes": 13139
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/casvit_m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 28232,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_m-jpg.jpg",
+      "webp_bytes": 15478,
+      "jpg_bytes": 27294
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/casvit_s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 31371,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_s-jpg.jpg",
+      "webp_bytes": 17966,
+      "jpg_bytes": 26842
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/casvit_t.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 28240,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_t-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_t-jpg.jpg",
+      "webp_bytes": 15518,
+      "jpg_bytes": 27300
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/casvit_t_seg_fpn_resnet50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13906,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_t_seg_fpn_resnet50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_t_seg_fpn_resnet50-jpg.jpg",
+      "webp_bytes": 6356,
+      "jpg_bytes": 12922
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/casvit_xs.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 31417,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_xs-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/casvit_xs-jpg.jpg",
+      "webp_bytes": 17996,
+      "jpg_bytes": 26879
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/centerpose_regnetx_1_6gf_fpn.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43339,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/centerpose_regnetx_1_6gf_fpn-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/centerpose_regnetx_1_6gf_fpn-jpg.jpg",
+      "webp_bytes": 24980,
+      "jpg_bytes": 37263
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/centerpose_regnetx_800mf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43227,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/centerpose_regnetx_800mf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/centerpose_regnetx_800mf-jpg.jpg",
+      "webp_bytes": 24922,
+      "jpg_bytes": 37277
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/centerpose_repvgg_a0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43858,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/centerpose_repvgg_a0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/centerpose_repvgg_a0-jpg.jpg",
+      "webp_bytes": 25594,
+      "jpg_bytes": 37643
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolo_tinynasl20_m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43877,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl20_m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl20_m-jpg.jpg",
+      "webp_bytes": 24904,
+      "jpg_bytes": 37311
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolo_tinynasl20_t.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43994,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl20_t-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl20_t-jpg.jpg",
+      "webp_bytes": 24588,
+      "jpg_bytes": 37317
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolo_tinynasl25_s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44072,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl25_s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl25_s-jpg.jpg",
+      "webp_bytes": 24686,
+      "jpg_bytes": 37432
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolo_tinynasl35_m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43810,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl35_m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolo_tinynasl35_m-jpg.jpg",
+      "webp_bytes": 24896,
+      "jpg_bytes": 37233
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolol.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43784,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolol-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolol-jpg.jpg",
+      "webp_bytes": 24920,
+      "jpg_bytes": 37243
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolom.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44077,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolom-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolom-jpg.jpg",
+      "webp_bytes": 24636,
+      "jpg_bytes": 37342
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolos.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43909,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolos-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolos-jpg.jpg",
+      "webp_bytes": 24872,
+      "jpg_bytes": 37346
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/damoyolot.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43875,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolot-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/damoyolot-jpg.jpg",
+      "webp_bytes": 24586,
+      "jpg_bytes": 37154
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplab_v3_mobilenet_v2_wo_dilation_sim.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 12857,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplab_v3_mobilenet_v2_wo_dilation_sim-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplab_v3_mobilenet_v2_wo_dilation_sim-jpg.jpg",
+      "webp_bytes": 5588,
+      "jpg_bytes": 12099
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3_resnet101.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13117,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3_resnet101-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3_resnet101-jpg.jpg",
+      "webp_bytes": 5700,
+      "jpg_bytes": 12276
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3_resnet50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13124,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3_resnet50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3_resnet50-jpg.jpg",
+      "webp_bytes": 5788,
+      "jpg_bytes": 12250
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3mobilenetv2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13018,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3mobilenetv2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3mobilenetv2-jpg.jpg",
+      "webp_bytes": 5684,
+      "jpg_bytes": 12191
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3plus_drn_512x512.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 12950,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plus_drn_512x512-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plus_drn_512x512-jpg.jpg",
+      "webp_bytes": 5550,
+      "jpg_bytes": 12151
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3plus_resnet101.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13137,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plus_resnet101-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plus_resnet101-jpg.jpg",
+      "webp_bytes": 5626,
+      "jpg_bytes": 12254
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3plus_resnet50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 12972,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plus_resnet50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plus_resnet50-jpg.jpg",
+      "webp_bytes": 5648,
+      "jpg_bytes": 12203
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3plusmobilenet.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13345,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plusmobilenet-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plusmobilenet-jpg.jpg",
+      "webp_bytes": 5906,
+      "jpg_bytes": 12450
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deeplabv3plusmobilenetv2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13049,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plusmobilenetv2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deeplabv3plusmobilenetv2-jpg.jpg",
+      "webp_bytes": 5698,
+      "jpg_bytes": 12196
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deepmar_resnet18_person_attr_resnet_v1_18.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 18158,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deepmar_resnet18_person_attr_resnet_v1_18-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deepmar_resnet18_person_attr_resnet_v1_18-jpg.jpg",
+      "webp_bytes": 7344,
+      "jpg_bytes": 17015
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deepmar_resnet50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 17796,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deepmar_resnet50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deepmar_resnet50-jpg.jpg",
+      "webp_bytes": 7170,
+      "jpg_bytes": 16738
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_base.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46865,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base-jpg.jpg",
+      "webp_bytes": 28848,
+      "jpg_bytes": 38630
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_base384_distilled.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47000,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base384_distilled-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base384_distilled-jpg.jpg",
+      "webp_bytes": 28510,
+      "jpg_bytes": 38694
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_base_distilled_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46888,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base_distilled_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base_distilled_1-jpg.jpg",
+      "webp_bytes": 28910,
+      "jpg_bytes": 38629
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_base_distilled_2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46988,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base_distilled_2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_base_distilled_2-jpg.jpg",
+      "webp_bytes": 29020,
+      "jpg_bytes": 38723
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_small.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46850,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_small-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_small-jpg.jpg",
+      "webp_bytes": 28902,
+      "jpg_bytes": 38621
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_small_distilled.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46917,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_small_distilled-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_small_distilled-jpg.jpg",
+      "webp_bytes": 29004,
+      "jpg_bytes": 38657
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_tiny.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46840,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_tiny-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_tiny-jpg.jpg",
+      "webp_bytes": 28772,
+      "jpg_bytes": 38594
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deit_tiny_distilled.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46859,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_tiny_distilled-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deit_tiny_distilled-jpg.jpg",
+      "webp_bytes": 28370,
+      "jpg_bytes": 38620
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/deitbase384.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46959,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deitbase384-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/deitbase384-jpg.jpg",
+      "webp_bytes": 28980,
+      "jpg_bytes": 38703
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/densenet121.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46776,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet121-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet121-jpg.jpg",
+      "webp_bytes": 28788,
+      "jpg_bytes": 38553
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/densenet161.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46965,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet161-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet161-jpg.jpg",
+      "webp_bytes": 28956,
+      "jpg_bytes": 38707
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/densenet169.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46877,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet169-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet169-jpg.jpg",
+      "webp_bytes": 28958,
+      "jpg_bytes": 38651
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/densenet201.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46985,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet201-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/densenet201-jpg.jpg",
+      "webp_bytes": 28844,
+      "jpg_bytes": 38670
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/depth_anything_v2_vitb.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 19698,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/depth_anything_v2_vitb-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/depth_anything_v2_vitb-jpg.jpg",
+      "webp_bytes": 8616,
+      "jpg_bytes": 17330
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/depth_anything_v2_vitl.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 19879,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/depth_anything_v2_vitl-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/depth_anything_v2_vitl-jpg.jpg",
+      "webp_bytes": 8766,
+      "jpg_bytes": 17476
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/depth_anything_v2_vits.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 19807,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/depth_anything_v2_vits-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/depth_anything_v2_vits-jpg.jpg",
+      "webp_bytes": 8620,
+      "jpg_bytes": 17400
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/dncnn3.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 57558,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn3-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn3-jpg.jpg",
+      "webp_bytes": 31474,
+      "jpg_bytes": 44694
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/dncnn_15.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 128131,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_15-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_15-jpg.jpg",
+      "webp_bytes": 77452,
+      "jpg_bytes": 93034
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/dncnn_25.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 118082,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_25-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_25-jpg.jpg",
+      "webp_bytes": 72572,
+      "jpg_bytes": 87697
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/dncnn_50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27388,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_50-jpg.jpg",
+      "webp_bytes": 11300,
+      "jpg_bytes": 25438
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/dncnn_color_blind.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 130409,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_color_blind-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_color_blind-jpg.jpg",
+      "webp_bytes": 78744,
+      "jpg_bytes": 94219
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/dncnn_gray_blind.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 65769,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_gray_blind-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dncnn_gray_blind-jpg.jpg",
+      "webp_bytes": 37248,
+      "jpg_bytes": 49978
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/dope_hope_ketchup.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 38447,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dope_hope_ketchup-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/dope_hope_ketchup-jpg.jpg",
+      "webp_bytes": 21340,
+      "jpg_bytes": 34986
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientdetd1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43859,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientdetd1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientdetd1-jpg.jpg",
+      "webp_bytes": 24540,
+      "jpg_bytes": 37138
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientdetd2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43835,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientdetd2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientdetd2-jpg.jpg",
+      "webp_bytes": 24932,
+      "jpg_bytes": 37255
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientdetd4.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43992,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientdetd4-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientdetd4-jpg.jpg",
+      "webp_bytes": 24562,
+      "jpg_bytes": 37301
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientformer_l3.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46739,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientformer_l3-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientformer_l3-jpg.jpg",
+      "webp_bytes": 28736,
+      "jpg_bytes": 38510
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientformer_l7.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46869,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientformer_l7-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientformer_l7-jpg.jpg",
+      "webp_bytes": 28864,
+      "jpg_bytes": 38637
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientformerv2_l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46897,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientformerv2_l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientformerv2_l-jpg.jpg",
+      "webp_bytes": 28468,
+      "jpg_bytes": 38629
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnet_lite0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46769,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite0-jpg.jpg",
+      "webp_bytes": 28666,
+      "jpg_bytes": 38555
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnet_lite1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46783,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite1-jpg.jpg",
+      "webp_bytes": 28750,
+      "jpg_bytes": 38557
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnet_lite2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46909,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite2-jpg.jpg",
+      "webp_bytes": 28938,
+      "jpg_bytes": 38634
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnet_lite3.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46866,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite3-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite3-jpg.jpg",
+      "webp_bytes": 28932,
+      "jpg_bytes": 38632
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnet_lite4.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46900,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite4-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnet_lite4-jpg.jpg",
+      "webp_bytes": 28832,
+      "jpg_bytes": 38613
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetb2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46943,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb2-jpg.jpg",
+      "webp_bytes": 28900,
+      "jpg_bytes": 38619
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetb3.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46751,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb3-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb3-jpg.jpg",
+      "webp_bytes": 28884,
+      "jpg_bytes": 38533
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetb4.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47023,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb4-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb4-jpg.jpg",
+      "webp_bytes": 28570,
+      "jpg_bytes": 38709
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetb5.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46831,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb5-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb5-jpg.jpg",
+      "webp_bytes": 28394,
+      "jpg_bytes": 38574
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetb6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46865,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb6-jpg.jpg",
+      "webp_bytes": 28852,
+      "jpg_bytes": 38618
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetb7.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46965,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb7-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetb7-jpg.jpg",
+      "webp_bytes": 28454,
+      "jpg_bytes": 38683
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetv2l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46911,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetv2l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetv2l-jpg.jpg",
+      "webp_bytes": 28954,
+      "jpg_bytes": 38665
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetv2m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46859,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetv2m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetv2m-jpg.jpg",
+      "webp_bytes": 28736,
+      "jpg_bytes": 38598
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/efficientnetv2s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46869,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetv2s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/efficientnetv2s-jpg.jpg",
+      "webp_bytes": 28900,
+      "jpg_bytes": 38646
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/eigenplaces_resnet18.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27970,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/eigenplaces_resnet18-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/eigenplaces_resnet18-jpg.jpg",
+      "webp_bytes": 12302,
+      "jpg_bytes": 25125
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/eigenplaces_resnet50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27991,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/eigenplaces_resnet50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/eigenplaces_resnet50-jpg.jpg",
+      "webp_bytes": 12296,
+      "jpg_bytes": 25132
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/face_attr_resnet_v1_18.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 16994,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/face_attr_resnet_v1_18-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/face_attr_resnet_v1_18-jpg.jpg",
+      "webp_bytes": 6814,
+      "jpg_bytes": 16247
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/fastdepth_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 21249,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastdepth_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastdepth_1-jpg.jpg",
+      "webp_bytes": 9360,
+      "jpg_bytes": 18625
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/fastsam_s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 37642,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastsam_s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastsam_s-jpg.jpg",
+      "webp_bytes": 20762,
+      "jpg_bytes": 32247
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/fastvit_ma36.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46964,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastvit_ma36-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastvit_ma36-jpg.jpg",
+      "webp_bytes": 29030,
+      "jpg_bytes": 38724
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/fastvit_sa24.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46991,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastvit_sa24-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastvit_sa24-jpg.jpg",
+      "webp_bytes": 28962,
+      "jpg_bytes": 38715
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/fastvit_sa36.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46760,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastvit_sa36-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fastvit_sa36-jpg.jpg",
+      "webp_bytes": 28870,
+      "jpg_bytes": 38545
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/fcn8_resnet50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13168,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fcn8_resnet50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fcn8_resnet50-jpg.jpg",
+      "webp_bytes": 5764,
+      "jpg_bytes": 12295
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/fcn8_resnet_v1_18.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 14592,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fcn8_resnet_v1_18-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/fcn8_resnet_v1_18-jpg.jpg",
+      "webp_bytes": 6568,
+      "jpg_bytes": 13517
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ghostnet.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46908,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ghostnet-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ghostnet-jpg.jpg",
+      "webp_bytes": 28924,
+      "jpg_bytes": 38640
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/handlandmarklite_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 18242,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/handlandmarklite_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/handlandmarklite_1-jpg.jpg",
+      "webp_bytes": 7450,
+      "jpg_bytes": 16039
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/hardnet39ds.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46782,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/hardnet39ds-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/hardnet39ds-jpg.jpg",
+      "webp_bytes": 28848,
+      "jpg_bytes": 38552
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/hardnet68.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46986,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/hardnet68-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/hardnet68-jpg.jpg",
+      "webp_bytes": 28870,
+      "jpg_bytes": 38714
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/inceptionv1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46933,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/inceptionv1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/inceptionv1-jpg.jpg",
+      "webp_bytes": 28914,
+      "jpg_bytes": 38695
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/levit128.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46889,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit128-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit128-jpg.jpg",
+      "webp_bytes": 28786,
+      "jpg_bytes": 38624
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/levit192.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46728,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit192-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit192-jpg.jpg",
+      "webp_bytes": 28804,
+      "jpg_bytes": 38523
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/levit256.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46860,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit256-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit256-jpg.jpg",
+      "webp_bytes": 28986,
+      "jpg_bytes": 38624
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/levit384.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46883,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit384-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/levit384-jpg.jpg",
+      "webp_bytes": 28850,
+      "jpg_bytes": 38620
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mediapipe_hand_detector.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 17957,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mediapipe_hand_detector-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mediapipe_hand_detector-jpg.jpg",
+      "webp_bytes": 6140,
+      "jpg_bytes": 16799
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mnasnet0_5.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46899,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet0_5-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet0_5-jpg.jpg",
+      "webp_bytes": 28404,
+      "jpg_bytes": 38640
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mnasnet0_75.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46984,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet0_75-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet0_75-jpg.jpg",
+      "webp_bytes": 28990,
+      "jpg_bytes": 38708
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mnasnet1_0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46786,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet1_0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet1_0-jpg.jpg",
+      "webp_bytes": 28416,
+      "jpg_bytes": 38554
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mnasnet1_3.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46940,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet1_3-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mnasnet1_3-jpg.jpg",
+      "webp_bytes": 28890,
+      "jpg_bytes": 38647
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mobilenetv1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46925,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mobilenetv1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mobilenetv1-jpg.jpg",
+      "webp_bytes": 28890,
+      "jpg_bytes": 38633
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mobilenetv2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46743,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mobilenetv2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mobilenetv2-jpg.jpg",
+      "webp_bytes": 28782,
+      "jpg_bytes": 38552
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mobilenetv3large.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46715,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mobilenetv3large-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mobilenetv3large-jpg.jpg",
+      "webp_bytes": 28734,
+      "jpg_bytes": 38518
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/nanodet_repvgg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44256,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodet_repvgg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodet_repvgg-jpg.jpg",
+      "webp_bytes": 24938,
+      "jpg_bytes": 37349
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/nanodet_repvgga1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44033,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodet_repvgga1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodet_repvgga1-jpg.jpg",
+      "webp_bytes": 24924,
+      "jpg_bytes": 37354
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/nanodet_repvgga12.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44026,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodet_repvgga12-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodet_repvgga12-jpg.jpg",
+      "webp_bytes": 24878,
+      "jpg_bytes": 37322
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/nanodetplusm.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44900,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodetplusm-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodetplusm-jpg.jpg",
+      "webp_bytes": 25380,
+      "jpg_bytes": 38054
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/nanodetplusm_15.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44085,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodetplusm_15-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/nanodetplusm_15-jpg.jpg",
+      "webp_bytes": 25208,
+      "jpg_bytes": 37621
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/osnet0_25.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 45040,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/osnet0_25-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/osnet0_25-jpg.jpg",
+      "webp_bytes": 27552,
+      "jpg_bytes": 37676
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/osnet0_5.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 45059,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/osnet0_5-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/osnet0_5-jpg.jpg",
+      "webp_bytes": 27200,
+      "jpg_bytes": 37554
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/pidnet_s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13919,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/pidnet_s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/pidnet_s-jpg.jpg",
+      "webp_bytes": 6256,
+      "jpg_bytes": 13140
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx16gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46715,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx16gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx16gf-jpg.jpg",
+      "webp_bytes": 28788,
+      "jpg_bytes": 38500
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx1_6gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46984,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx1_6gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx1_6gf-jpg.jpg",
+      "webp_bytes": 28574,
+      "jpg_bytes": 38681
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx1_6gf_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 45089,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx1_6gf_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx1_6gf_h-jpg.jpg",
+      "webp_bytes": 27480,
+      "jpg_bytes": 37579
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx32gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46801,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx32gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx32gf-jpg.jpg",
+      "webp_bytes": 28662,
+      "jpg_bytes": 38552
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx3_2gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46896,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx3_2gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx3_2gf-jpg.jpg",
+      "webp_bytes": 28910,
+      "jpg_bytes": 38630
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx400mf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46768,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx400mf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx400mf-jpg.jpg",
+      "webp_bytes": 28690,
+      "jpg_bytes": 38535
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx800mf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46887,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx800mf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx800mf-jpg.jpg",
+      "webp_bytes": 28952,
+      "jpg_bytes": 38652
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnetx8gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46897,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx8gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnetx8gf-jpg.jpg",
+      "webp_bytes": 28394,
+      "jpg_bytes": 38645
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety16gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46821,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety16gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety16gf-jpg.jpg",
+      "webp_bytes": 28680,
+      "jpg_bytes": 38581
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety1_6gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46883,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety1_6gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety1_6gf-jpg.jpg",
+      "webp_bytes": 28926,
+      "jpg_bytes": 38648
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety200mf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47035,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety200mf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety200mf-jpg.jpg",
+      "webp_bytes": 28588,
+      "jpg_bytes": 38742
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety32gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46805,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety32gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety32gf-jpg.jpg",
+      "webp_bytes": 28868,
+      "jpg_bytes": 38583
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety3_2gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46801,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety3_2gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety3_2gf-jpg.jpg",
+      "webp_bytes": 28412,
+      "jpg_bytes": 38556
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety400mf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46731,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety400mf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety400mf-jpg.jpg",
+      "webp_bytes": 28780,
+      "jpg_bytes": 38521
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety800mf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46913,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety800mf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety800mf-jpg.jpg",
+      "webp_bytes": 28890,
+      "jpg_bytes": 38645
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/regnety8gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46780,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety8gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/regnety8gf-jpg.jpg",
+      "webp_bytes": 28714,
+      "jpg_bytes": 38536
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/repghost_2_0x.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46972,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repghost_2_0x-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repghost_2_0x-jpg.jpg",
+      "webp_bytes": 28584,
+      "jpg_bytes": 38668
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/repvgg_a0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46854,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_a0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_a0-jpg.jpg",
+      "webp_bytes": 28864,
+      "jpg_bytes": 38610
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/repvgg_a1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46841,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_a1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_a1-jpg.jpg",
+      "webp_bytes": 28884,
+      "jpg_bytes": 38578
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/repvgg_a2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46777,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_a2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_a2-jpg.jpg",
+      "webp_bytes": 28798,
+      "jpg_bytes": 38563
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/repvgg_b0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47093,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_b0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_b0-jpg.jpg",
+      "webp_bytes": 28940,
+      "jpg_bytes": 38808
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/repvgg_b1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46664,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_b1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/repvgg_b1-jpg.jpg",
+      "webp_bytes": 28640,
+      "jpg_bytes": 38449
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resmlp24.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46694,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resmlp24-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resmlp24-jpg.jpg",
+      "webp_bytes": 28838,
+      "jpg_bytes": 38495
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnet101.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46878,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet101-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet101-jpg.jpg",
+      "webp_bytes": 28910,
+      "jpg_bytes": 38616
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnet152.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46770,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet152-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet152-jpg.jpg",
+      "webp_bytes": 28826,
+      "jpg_bytes": 38543
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnet18.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46984,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet18-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet18-jpg.jpg",
+      "webp_bytes": 28980,
+      "jpg_bytes": 38717
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnet18_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 45031,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet18_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet18_h-jpg.jpg",
+      "webp_bytes": 27164,
+      "jpg_bytes": 37556
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnet34.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47070,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet34-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet34-jpg.jpg",
+      "webp_bytes": 28964,
+      "jpg_bytes": 38751
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnet50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47016,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnet50-jpg.jpg",
+      "webp_bytes": 29030,
+      "jpg_bytes": 38735
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnext101_32x8d.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46805,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext101_32x8d-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext101_32x8d-jpg.jpg",
+      "webp_bytes": 28756,
+      "jpg_bytes": 38565
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnext101_64x4d.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46892,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext101_64x4d-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext101_64x4d-jpg.jpg",
+      "webp_bytes": 28894,
+      "jpg_bytes": 38653
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnext26_32x4d.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46880,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext26_32x4d-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext26_32x4d-jpg.jpg",
+      "webp_bytes": 28884,
+      "jpg_bytes": 38646
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnext50_32x4d.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46929,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext50_32x4d-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext50_32x4d-jpg.jpg",
+      "webp_bytes": 28756,
+      "jpg_bytes": 38642
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/resnext50_32x4d_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44970,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext50_32x4d_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/resnext50_32x4d_h-jpg.jpg",
+      "webp_bytes": 27184,
+      "jpg_bytes": 37547
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/retinaface_mobilenet0_25_640.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40617,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/retinaface_mobilenet0_25_640-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/retinaface_mobilenet0_25_640-jpg.jpg",
+      "webp_bytes": 23630,
+      "jpg_bytes": 34898
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/retinaface_mobilenet_v1_736x1280.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40724,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/retinaface_mobilenet_v1_736x1280-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/retinaface_mobilenet_v1_736x1280-jpg.jpg",
+      "webp_bytes": 23730,
+      "jpg_bytes": 34961
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/rn50x16_openai.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27990,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/rn50x16_openai-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/rn50x16_openai-jpg.jpg",
+      "webp_bytes": 12308,
+      "jpg_bytes": 25140
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/scdepthv3.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 19107,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scdepthv3-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scdepthv3-jpg.jpg",
+      "webp_bytes": 8278,
+      "jpg_bytes": 16946
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/scrfd10g.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40626,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd10g-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd10g-jpg.jpg",
+      "webp_bytes": 23568,
+      "jpg_bytes": 34894
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/scrfd2_5g.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40603,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd2_5g-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd2_5g-jpg.jpg",
+      "webp_bytes": 23646,
+      "jpg_bytes": 34941
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/scrfd500m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40732,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd500m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd500m-jpg.jpg",
+      "webp_bytes": 23686,
+      "jpg_bytes": 34917
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/scrfd500m_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40644,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd500m_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/scrfd500m_ppu-jpg.jpg",
+      "webp_bytes": 23560,
+      "jpg_bytes": 34915
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/segformer_b0_512x1024.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 14099,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/segformer_b0_512x1024-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/segformer_b0_512x1024-jpg.jpg",
+      "webp_bytes": 6348,
+      "jpg_bytes": 13113
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/segformer_b0_512x1024_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 14066,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/segformer_b0_512x1024_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/segformer_b0_512x1024_h-jpg.jpg",
+      "webp_bytes": 6340,
+      "jpg_bytes": 13071
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/sfa3d_608x608.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 12877,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/sfa3d_608x608-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/sfa3d_608x608-jpg.jpg",
+      "webp_bytes": 6432,
+      "jpg_bytes": 10689
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/shufflenetv1x1_0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46914,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv1x1_0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv1x1_0-jpg.jpg",
+      "webp_bytes": 28898,
+      "jpg_bytes": 38643
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/shufflenetv2x0_5.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47058,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x0_5-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x0_5-jpg.jpg",
+      "webp_bytes": 29046,
+      "jpg_bytes": 38782
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/shufflenetv2x1_0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46843,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x1_0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x1_0-jpg.jpg",
+      "webp_bytes": 28870,
+      "jpg_bytes": 38551
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/shufflenetv2x1_5.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47002,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x1_5-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x1_5-jpg.jpg",
+      "webp_bytes": 28848,
+      "jpg_bytes": 38702
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/shufflenetv2x2_0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46723,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x2_0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/shufflenetv2x2_0-jpg.jpg",
+      "webp_bytes": 28772,
+      "jpg_bytes": 38526
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/squeezenet1_0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46918,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/squeezenet1_0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/squeezenet1_0-jpg.jpg",
+      "webp_bytes": 28882,
+      "jpg_bytes": 38663
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/squeezenet1_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47186,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/squeezenet1_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/squeezenet1_1-jpg.jpg",
+      "webp_bytes": 29130,
+      "jpg_bytes": 38840
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/squeezenet1_1_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 45014,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/squeezenet1_1_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/squeezenet1_1_h-jpg.jpg",
+      "webp_bytes": 27428,
+      "jpg_bytes": 37552
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ssdmv1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44719,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ssdmv1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ssdmv1-jpg.jpg",
+      "webp_bytes": 25388,
+      "jpg_bytes": 37577
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ssdmv2lite.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44621,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ssdmv2lite-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ssdmv2lite-jpg.jpg",
+      "webp_bytes": 25352,
+      "jpg_bytes": 37850
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ssdvgg16.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44377,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ssdvgg16-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ssdvgg16-jpg.jpg",
+      "webp_bytes": 25150,
+      "jpg_bytes": 37559
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/stdc2_model_maxmiou50.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 13948,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/stdc2_model_maxmiou50-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/stdc2_model_maxmiou50-jpg.jpg",
+      "webp_bytes": 6166,
+      "jpg_bytes": 13082
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/superpoint.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 49405,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/superpoint-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/superpoint-jpg.jpg",
+      "webp_bytes": 30464,
+      "jpg_bytes": 42221
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ulfgfd_rfb_320.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40440,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_rfb_320-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_rfb_320-jpg.jpg",
+      "webp_bytes": 23592,
+      "jpg_bytes": 34791
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ulfgfd_rfb_320_without_postprocessing.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40440,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_rfb_320_without_postprocessing-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_rfb_320_without_postprocessing-jpg.jpg",
+      "webp_bytes": 23592,
+      "jpg_bytes": 34791
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ulfgfd_rfb_640.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40544,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_rfb_640-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_rfb_640-jpg.jpg",
+      "webp_bytes": 23542,
+      "jpg_bytes": 34893
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ulfgfd_slim_320.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40441,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_slim_320-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_slim_320-jpg.jpg",
+      "webp_bytes": 23546,
+      "jpg_bytes": 34801
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/ulfgfd_slim_320_without_postprocessing.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40441,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_slim_320_without_postprocessing-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/ulfgfd_slim_320_without_postprocessing-jpg.jpg",
+      "webp_bytes": 23546,
+      "jpg_bytes": 34801
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/unet_mobilenet_v2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 29110,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/unet_mobilenet_v2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/unet_mobilenet_v2-jpg.jpg",
+      "webp_bytes": 13912,
+      "jpg_bytes": 25408
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg11.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46910,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg11-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg11-jpg.jpg",
+      "webp_bytes": 28626,
+      "jpg_bytes": 38639
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg11bn.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46924,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg11bn-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg11bn-jpg.jpg",
+      "webp_bytes": 28742,
+      "jpg_bytes": 38675
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg13.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46936,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg13-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg13-jpg.jpg",
+      "webp_bytes": 28748,
+      "jpg_bytes": 38666
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg13bn.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46886,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg13bn-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg13bn-jpg.jpg",
+      "webp_bytes": 28900,
+      "jpg_bytes": 38622
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg16.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47077,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg16-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg16-jpg.jpg",
+      "webp_bytes": 28638,
+      "jpg_bytes": 38774
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg16bn.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 47015,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg16bn-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg16bn-jpg.jpg",
+      "webp_bytes": 28500,
+      "jpg_bytes": 38733
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg19.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46836,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg19-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg19-jpg.jpg",
+      "webp_bytes": 28870,
+      "jpg_bytes": 38586
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vgg19bn.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46857,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg19bn-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vgg19bn-jpg.jpg",
+      "webp_bytes": 28410,
+      "jpg_bytes": 38641
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vit_b_32_256_datacomp_s34b_b86k.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27968,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_b_32_256_datacomp_s34b_b86k-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_b_32_256_datacomp_s34b_b86k-jpg.jpg",
+      "webp_bytes": 12340,
+      "jpg_bytes": 25131
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vit_base_bn.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46973,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_base_bn-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_base_bn-jpg.jpg",
+      "webp_bytes": 28490,
+      "jpg_bytes": 38710
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vit_base_p16.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46903,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_base_p16-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_base_p16-jpg.jpg",
+      "webp_bytes": 28960,
+      "jpg_bytes": 38658
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vit_l_14_datacomp_xl_s13b_b90k.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27967,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_l_14_datacomp_xl_s13b_b90k-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_l_14_datacomp_xl_s13b_b90k-jpg.jpg",
+      "webp_bytes": 12296,
+      "jpg_bytes": 25131
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vit_l_14_quickgelu_dfn2b.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27968,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_l_14_quickgelu_dfn2b-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_l_14_quickgelu_dfn2b-jpg.jpg",
+      "webp_bytes": 12304,
+      "jpg_bytes": 25136
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vit_pose_small_bn.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 41688,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_pose_small_bn-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_pose_small_bn-jpg.jpg",
+      "webp_bytes": 23894,
+      "jpg_bytes": 35886
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vit_small_p16.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46772,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_small_p16-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vit_small_p16-jpg.jpg",
+      "webp_bytes": 28768,
+      "jpg_bytes": 38555
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vitb32.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46968,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vitb32-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vitb32-jpg.jpg",
+      "webp_bytes": 28592,
+      "jpg_bytes": 38682
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/vitl32.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46850,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vitl32-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/vitl32-jpg.jpg",
+      "webp_bytes": 28816,
+      "jpg_bytes": 38598
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/wideresnet101_2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46876,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/wideresnet101_2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/wideresnet101_2-jpg.jpg",
+      "webp_bytes": 28866,
+      "jpg_bytes": 38632
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/wideresnet50_2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46882,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/wideresnet50_2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/wideresnet50_2-jpg.jpg",
+      "webp_bytes": 28878,
+      "jpg_bytes": 38648
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolact_regnetx_1_6gf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40093,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolact_regnetx_1_6gf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolact_regnetx_1_6gf-jpg.jpg",
+      "webp_bytes": 22098,
+      "jpg_bytes": 34090
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolact_regnetx_800mf.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40923,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolact_regnetx_800mf-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolact_regnetx_800mf-jpg.jpg",
+      "webp_bytes": 22782,
+      "jpg_bytes": 34937
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11l_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40942,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11l_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11l_seg-jpg.jpg",
+      "webp_bytes": 22716,
+      "jpg_bytes": 34759
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11m_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43214,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11m_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11m_pose-jpg.jpg",
+      "webp_bytes": 24698,
+      "jpg_bytes": 37062
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11m_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40814,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11m_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11m_seg-jpg.jpg",
+      "webp_bytes": 22710,
+      "jpg_bytes": 34681
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11n_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43242,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11n_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11n_pose-jpg.jpg",
+      "webp_bytes": 24752,
+      "jpg_bytes": 37179
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11n_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40686,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11n_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11n_seg-jpg.jpg",
+      "webp_bytes": 22524,
+      "jpg_bytes": 34551
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11s_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43283,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11s_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11s_pose-jpg.jpg",
+      "webp_bytes": 24826,
+      "jpg_bytes": 37127
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11s_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40521,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11s_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11s_seg-jpg.jpg",
+      "webp_bytes": 22428,
+      "jpg_bytes": 34417
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11x_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43393,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11x_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11x_pose-jpg.jpg",
+      "webp_bytes": 24812,
+      "jpg_bytes": 37182
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo11x_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40902,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11x_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo11x_seg-jpg.jpg",
+      "webp_bytes": 22732,
+      "jpg_bytes": 34807
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43865,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l-jpg.jpg",
+      "webp_bytes": 24688,
+      "jpg_bytes": 37339
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26l_cls.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46897,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l_cls-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l_cls-jpg.jpg",
+      "webp_bytes": 28856,
+      "jpg_bytes": 38667
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26l_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43241,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l_pose-jpg.jpg",
+      "webp_bytes": 24892,
+      "jpg_bytes": 37242
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26l_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40459,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26l_seg-jpg.jpg",
+      "webp_bytes": 22540,
+      "jpg_bytes": 34444
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44127,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m-jpg.jpg",
+      "webp_bytes": 25084,
+      "jpg_bytes": 37409
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26m_cls.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46793,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m_cls-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m_cls-jpg.jpg",
+      "webp_bytes": 28880,
+      "jpg_bytes": 38558
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26m_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43206,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m_pose-jpg.jpg",
+      "webp_bytes": 24920,
+      "jpg_bytes": 37220
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26m_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40652,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26m_seg-jpg.jpg",
+      "webp_bytes": 22600,
+      "jpg_bytes": 34629
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26n.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44010,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n-jpg.jpg",
+      "webp_bytes": 24964,
+      "jpg_bytes": 37362
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26n_cls.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46903,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n_cls-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n_cls-jpg.jpg",
+      "webp_bytes": 28916,
+      "jpg_bytes": 38679
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26n_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43228,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n_pose-jpg.jpg",
+      "webp_bytes": 24836,
+      "jpg_bytes": 37222
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26n_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40257,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26n_seg-jpg.jpg",
+      "webp_bytes": 22322,
+      "jpg_bytes": 34130
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43887,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s-jpg.jpg",
+      "webp_bytes": 24732,
+      "jpg_bytes": 37324
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26s_cls.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46874,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s_cls-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s_cls-jpg.jpg",
+      "webp_bytes": 28708,
+      "jpg_bytes": 38634
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26s_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43307,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s_pose-jpg.jpg",
+      "webp_bytes": 24964,
+      "jpg_bytes": 37256
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26s_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40827,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26s_seg-jpg.jpg",
+      "webp_bytes": 22572,
+      "jpg_bytes": 34652
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26x.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43985,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x-jpg.jpg",
+      "webp_bytes": 25032,
+      "jpg_bytes": 37448
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26x_cls.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 46887,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_cls-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_cls-jpg.jpg",
+      "webp_bytes": 28892,
+      "jpg_bytes": 38665
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26x_obb.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 2205909,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_obb-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_obb-jpg.jpg",
+      "webp_bytes": 22626,
+      "jpg_bytes": 30680
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26x_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43182,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_pose-jpg.jpg",
+      "webp_bytes": 25182,
+      "jpg_bytes": 37327
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolo26x_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40621,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolo26x_seg-jpg.jpg",
+      "webp_bytes": 22652,
+      "jpg_bytes": 34449
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolopv2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 27558,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolopv2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolopv2-jpg.jpg",
+      "webp_bytes": 14982,
+      "jpg_bytes": 23893
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov10b.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43998,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10b-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10b-jpg.jpg",
+      "webp_bytes": 24986,
+      "jpg_bytes": 37394
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov10l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43970,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10l-jpg.jpg",
+      "webp_bytes": 24606,
+      "jpg_bytes": 37432
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov10m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43849,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10m-jpg.jpg",
+      "webp_bytes": 24982,
+      "jpg_bytes": 37248
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov10n.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43935,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10n-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10n-jpg.jpg",
+      "webp_bytes": 24906,
+      "jpg_bytes": 37273
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov10n_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43884,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10n_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10n_ppu-jpg.jpg",
+      "webp_bytes": 24594,
+      "jpg_bytes": 37296
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov10s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43759,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10s-jpg.jpg",
+      "webp_bytes": 24916,
+      "jpg_bytes": 37179
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov10x.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43986,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10x-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov10x-jpg.jpg",
+      "webp_bytes": 24524,
+      "jpg_bytes": 37342
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov11l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43890,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11l-jpg.jpg",
+      "webp_bytes": 25058,
+      "jpg_bytes": 37302
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov11m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44098,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11m-jpg.jpg",
+      "webp_bytes": 25052,
+      "jpg_bytes": 37408
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov11n.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44094,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11n-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11n-jpg.jpg",
+      "webp_bytes": 24688,
+      "jpg_bytes": 37305
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov11n_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43862,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11n_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11n_ppu-jpg.jpg",
+      "webp_bytes": 25002,
+      "jpg_bytes": 37187
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov11s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43835,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11s-jpg.jpg",
+      "webp_bytes": 25004,
+      "jpg_bytes": 37307
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov11x.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43855,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11x-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov11x-jpg.jpg",
+      "webp_bytes": 25212,
+      "jpg_bytes": 37364
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov12n_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43966,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov12n_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov12n_ppu-jpg.jpg",
+      "webp_bytes": 24834,
+      "jpg_bytes": 37234
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43887,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3-jpg.jpg",
+      "webp_bytes": 24464,
+      "jpg_bytes": 37166
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3_2.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44128,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_2-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_2-jpg.jpg",
+      "webp_bytes": 24990,
+      "jpg_bytes": 37205
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3_2_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43940,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_2_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_2_ppu-jpg.jpg",
+      "webp_bytes": 25160,
+      "jpg_bytes": 37405
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3_3_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44047,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_3_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_3_ppu-jpg.jpg",
+      "webp_bytes": 24994,
+      "jpg_bytes": 37424
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3_gluon_416.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44000,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_gluon_416-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_gluon_416-jpg.jpg",
+      "webp_bytes": 24530,
+      "jpg_bytes": 37225
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3_gluon_608.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44000,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_gluon_608-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3_gluon_608-jpg.jpg",
+      "webp_bytes": 25164,
+      "jpg_bytes": 37453
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3tiny_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44282,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3tiny_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3tiny_1-jpg.jpg",
+      "webp_bytes": 25150,
+      "jpg_bytes": 37436
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov3tiny_1_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44074,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3tiny_1_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov3tiny_1_ppu-jpg.jpg",
+      "webp_bytes": 24688,
+      "jpg_bytes": 37483
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov4_2_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43767,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov4_2_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov4_2_ppu-jpg.jpg",
+      "webp_bytes": 25078,
+      "jpg_bytes": 37202
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov4_leaky_512_512.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43819,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov4_leaky_512_512-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov4_leaky_512_512-jpg.jpg",
+      "webp_bytes": 24698,
+      "jpg_bytes": 37172
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov4tiny_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43875,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov4tiny_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov4tiny_1-jpg.jpg",
+      "webp_bytes": 25118,
+      "jpg_bytes": 37433
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43422,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5_pose-jpg.jpg",
+      "webp_bytes": 25110,
+      "jpg_bytes": 37150
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43899,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l-jpg.jpg",
+      "webp_bytes": 24926,
+      "jpg_bytes": 37200
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5l6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44025,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l6-jpg.jpg",
+      "webp_bytes": 24926,
+      "jpg_bytes": 37446
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5l_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43830,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l_h-jpg.jpg",
+      "webp_bytes": 24594,
+      "jpg_bytes": 37308
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5l_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40876,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5l_seg-jpg.jpg",
+      "webp_bytes": 22592,
+      "jpg_bytes": 34705
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44264,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m-jpg.jpg",
+      "webp_bytes": 25172,
+      "jpg_bytes": 37426
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44238,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m6-jpg.jpg",
+      "webp_bytes": 24980,
+      "jpg_bytes": 37419
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m6_61_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44238,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m6_61_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m6_61_h-jpg.jpg",
+      "webp_bytes": 25006,
+      "jpg_bytes": 37447
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m_6_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44166,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_6_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_6_1-jpg.jpg",
+      "webp_bytes": 25052,
+      "jpg_bytes": 37504
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40659,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_face-jpg.jpg",
+      "webp_bytes": 23748,
+      "jpg_bytes": 34963
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43824,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_h-jpg.jpg",
+      "webp_bytes": 25086,
+      "jpg_bytes": 37316
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40902,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_seg-jpg.jpg",
+      "webp_bytes": 22956,
+      "jpg_bytes": 34932
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5m_wo_spp_640.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43812,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_wo_spp_640-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5m_wo_spp_640-jpg.jpg",
+      "webp_bytes": 25134,
+      "jpg_bytes": 37454
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5n.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44270,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n-jpg.jpg",
+      "webp_bytes": 25256,
+      "jpg_bytes": 37331
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5n6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44410,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n6-jpg.jpg",
+      "webp_bytes": 25312,
+      "jpg_bytes": 37565
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5n6_61_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44112,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n6_61_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n6_61_h-jpg.jpg",
+      "webp_bytes": 25230,
+      "jpg_bytes": 37396
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5n_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40725,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n_face-jpg.jpg",
+      "webp_bytes": 23752,
+      "jpg_bytes": 35002
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5n_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40740,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5n_seg-jpg.jpg",
+      "webp_bytes": 22636,
+      "jpg_bytes": 34587
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5pose_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43185,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5pose_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5pose_ppu-jpg.jpg",
+      "webp_bytes": 25184,
+      "jpg_bytes": 37246
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44155,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s-jpg.jpg",
+      "webp_bytes": 25020,
+      "jpg_bytes": 37457
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44109,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s6-jpg.jpg",
+      "webp_bytes": 24668,
+      "jpg_bytes": 37119
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s6_61_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44056,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s6_61_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s6_61_h-jpg.jpg",
+      "webp_bytes": 24696,
+      "jpg_bytes": 37410
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_4.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44209,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_4-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_4-jpg.jpg",
+      "webp_bytes": 25162,
+      "jpg_bytes": 37456
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_bbox_decoding_only_640.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43949,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_bbox_decoding_only_640-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_bbox_decoding_only_640-jpg.jpg",
+      "webp_bytes": 24654,
+      "jpg_bytes": 37273
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_c3tr_640.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44958,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_c3tr_640-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_c3tr_640-jpg.jpg",
+      "webp_bytes": 25276,
+      "jpg_bytes": 37876
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40768,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_face-jpg.jpg",
+      "webp_bytes": 23628,
+      "jpg_bytes": 35006
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_h.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43996,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_h-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_h-jpg.jpg",
+      "webp_bytes": 24836,
+      "jpg_bytes": 37230
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43990,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_ppu-jpg.jpg",
+      "webp_bytes": 24660,
+      "jpg_bytes": 37303
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40772,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_seg-jpg.jpg",
+      "webp_bytes": 22610,
+      "jpg_bytes": 34808
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5s_wo_spp_640.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43784,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_wo_spp_640-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5s_wo_spp_640-jpg.jpg",
+      "webp_bytes": 24912,
+      "jpg_bytes": 37188
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5x.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44035,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5x-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5x-jpg.jpg",
+      "webp_bytes": 24888,
+      "jpg_bytes": 37430
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5x6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43780,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5x6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5x6-jpg.jpg",
+      "webp_bytes": 24996,
+      "jpg_bytes": 37280
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5x_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43222,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5x_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5x_seg-jpg.jpg",
+      "webp_bytes": 24838,
+      "jpg_bytes": 36729
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov5xs_wo_spp_512.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44094,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5xs_wo_spp_512-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov5xs_wo_spp_512-jpg.jpg",
+      "webp_bytes": 24584,
+      "jpg_bytes": 37465
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44045,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6l-jpg.jpg",
+      "webp_bytes": 24912,
+      "jpg_bytes": 37354
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6l6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43999,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6l6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6l6-jpg.jpg",
+      "webp_bytes": 25106,
+      "jpg_bytes": 37343
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43799,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6m-jpg.jpg",
+      "webp_bytes": 25056,
+      "jpg_bytes": 37400
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6n.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44111,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n-jpg.jpg",
+      "webp_bytes": 25062,
+      "jpg_bytes": 37298
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6n_0_1_0.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44411,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n_0_1_0-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n_0_1_0-jpg.jpg",
+      "webp_bytes": 25336,
+      "jpg_bytes": 37698
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6n_0_2_1.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44341,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n_0_2_1-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n_0_2_1-jpg.jpg",
+      "webp_bytes": 25376,
+      "jpg_bytes": 37623
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6n_0_2_1_nms_core.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44324,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n_0_2_1_nms_core-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6n_0_2_1_nms_core-jpg.jpg",
+      "webp_bytes": 25120,
+      "jpg_bytes": 37608
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov6s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44049,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov6s-jpg.jpg",
+      "webp_bytes": 24642,
+      "jpg_bytes": 37389
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43914,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7-jpg.jpg",
+      "webp_bytes": 24958,
+      "jpg_bytes": 37372
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40649,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_face-jpg.jpg",
+      "webp_bytes": 23654,
+      "jpg_bytes": 34897
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_lite_t_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40617,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_lite_t_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_lite_t_face-jpg.jpg",
+      "webp_bytes": 23538,
+      "jpg_bytes": 34839
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44029,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_ppu-jpg.jpg",
+      "webp_bytes": 25052,
+      "jpg_bytes": 37323
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_w6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43912,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6-jpg.jpg",
+      "webp_bytes": 24988,
+      "jpg_bytes": 37302
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_w6_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40618,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6_face-jpg.jpg",
+      "webp_bytes": 23628,
+      "jpg_bytes": 34920
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_w6_tta_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40623,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6_tta_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6_tta_face-jpg.jpg",
+      "webp_bytes": 23600,
+      "jpg_bytes": 34896
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_w6_wo_decoding.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 48235,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6_wo_decoding-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_w6_wo_decoding-jpg.jpg",
+      "webp_bytes": 27242,
+      "jpg_bytes": 40529
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7_wo_decoding.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44109,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_wo_decoding-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7_wo_decoding-jpg.jpg",
+      "webp_bytes": 24822,
+      "jpg_bytes": 37499
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7d6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43948,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7d6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7d6-jpg.jpg",
+      "webp_bytes": 24758,
+      "jpg_bytes": 37316
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7e6.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44019,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7e6-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7e6-jpg.jpg",
+      "webp_bytes": 24946,
+      "jpg_bytes": 37490
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7e6e.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43935,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7e6e-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7e6e-jpg.jpg",
+      "webp_bytes": 24538,
+      "jpg_bytes": 37352
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7s_face.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40646,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7s_face-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7s_face-jpg.jpg",
+      "webp_bytes": 23594,
+      "jpg_bytes": 34860
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7tiny.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43968,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7tiny-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7tiny-jpg.jpg",
+      "webp_bytes": 24982,
+      "jpg_bytes": 37169
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7x.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44166,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7x-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7x-jpg.jpg",
+      "webp_bytes": 25014,
+      "jpg_bytes": 37418
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov7x_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44114,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7x_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov7x_ppu-jpg.jpg",
+      "webp_bytes": 25030,
+      "jpg_bytes": 37375
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8l.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43796,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8l-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8l-jpg.jpg",
+      "webp_bytes": 24968,
+      "jpg_bytes": 37286
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8l_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43154,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8l_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8l_pose-jpg.jpg",
+      "webp_bytes": 24732,
+      "jpg_bytes": 37097
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8l_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40899,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8l_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8l_seg-jpg.jpg",
+      "webp_bytes": 22722,
+      "jpg_bytes": 34923
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43995,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8m-jpg.jpg",
+      "webp_bytes": 24520,
+      "jpg_bytes": 37276
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8m_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43236,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8m_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8m_pose-jpg.jpg",
+      "webp_bytes": 24856,
+      "jpg_bytes": 37164
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8m_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40934,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8m_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8m_seg-jpg.jpg",
+      "webp_bytes": 22672,
+      "jpg_bytes": 34815
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8n.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43981,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n-jpg.jpg",
+      "webp_bytes": 25118,
+      "jpg_bytes": 37334
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8n_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43221,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n_pose-jpg.jpg",
+      "webp_bytes": 24800,
+      "jpg_bytes": 37154
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8n_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43991,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n_ppu-jpg.jpg",
+      "webp_bytes": 24594,
+      "jpg_bytes": 37372
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8n_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40778,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8n_seg-jpg.jpg",
+      "webp_bytes": 22956,
+      "jpg_bytes": 34844
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43909,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s-jpg.jpg",
+      "webp_bytes": 24910,
+      "jpg_bytes": 37315
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8s_bbox_decoding_only_640.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43903,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_bbox_decoding_only_640-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_bbox_decoding_only_640-jpg.jpg",
+      "webp_bytes": 25010,
+      "jpg_bytes": 37320
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8s_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43272,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_pose-jpg.jpg",
+      "webp_bytes": 24894,
+      "jpg_bytes": 37233
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8s_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43937,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_ppu-jpg.jpg",
+      "webp_bytes": 24682,
+      "jpg_bytes": 37349
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8s_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40853,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8s_seg-jpg.jpg",
+      "webp_bytes": 22694,
+      "jpg_bytes": 34880
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8x.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43951,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8x-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8x-jpg.jpg",
+      "webp_bytes": 25090,
+      "jpg_bytes": 37307
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8x_pose.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43235,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8x_pose-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8x_pose-jpg.jpg",
+      "webp_bytes": 25052,
+      "jpg_bytes": 37216
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov8x_seg.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 40539,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8x_seg-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov8x_seg-jpg.jpg",
+      "webp_bytes": 22562,
+      "jpg_bytes": 34565
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov9_gelan_c.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43900,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9_gelan_c-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9_gelan_c-jpg.jpg",
+      "webp_bytes": 25098,
+      "jpg_bytes": 37369
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov9c.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43870,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9c-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9c-jpg.jpg",
+      "webp_bytes": 24978,
+      "jpg_bytes": 37318
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov9m.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44010,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9m-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9m-jpg.jpg",
+      "webp_bytes": 24820,
+      "jpg_bytes": 37362
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov9s.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43880,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9s-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9s-jpg.jpg",
+      "webp_bytes": 24878,
+      "jpg_bytes": 37285
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov9t.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44040,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9t-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9t-jpg.jpg",
+      "webp_bytes": 24998,
+      "jpg_bytes": 37469
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolov9t_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43960,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9t_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolov9t_ppu-jpg.jpg",
+      "webp_bytes": 24792,
+      "jpg_bytes": 37326
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolox_l_leaky.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43802,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_l_leaky-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_l_leaky-jpg.jpg",
+      "webp_bytes": 25006,
+      "jpg_bytes": 37220
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolox_s_2_ppu.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43924,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_s_2_ppu-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_s_2_ppu-jpg.jpg",
+      "webp_bytes": 24948,
+      "jpg_bytes": 37266
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolox_s_leaky.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44006,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_s_leaky-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_s_leaky-jpg.jpg",
+      "webp_bytes": 24610,
+      "jpg_bytes": 37401
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yolox_s_wide_leaky.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43865,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_s_wide_leaky-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yolox_s_wide_leaky-jpg.jpg",
+      "webp_bytes": 24620,
+      "jpg_bytes": 37166
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yoloxl.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43786,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxl-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxl-jpg.jpg",
+      "webp_bytes": 24428,
+      "jpg_bytes": 37155
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yoloxm.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43933,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxm-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxm-jpg.jpg",
+      "webp_bytes": 24598,
+      "jpg_bytes": 37229
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yoloxs.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43978,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxs-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxs-jpg.jpg",
+      "webp_bytes": 24798,
+      "jpg_bytes": 37240
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yoloxtiny.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 44006,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxtiny-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxtiny-jpg.jpg",
+      "webp_bytes": 24474,
+      "jpg_bytes": 37121
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/yoloxx.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 43813,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxx-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/yoloxx-jpg.jpg",
+      "webp_bytes": 24526,
+      "jpg_bytes": 37251
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/zero_dce.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 36061,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/zero_dce-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/zero_dce-jpg.jpg",
+      "webp_bytes": 19462,
+      "jpg_bytes": 29855
+    },
+    {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/zero_dce_pp.jpg",
+      "subdir": "thumbnails",
+      "source_bytes": 35361,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/zero_dce_pp-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/zero_dce_pp-jpg.jpg",
+      "webp_bytes": 18834,
+      "jpg_bytes": 29238
     }
   ],
-  "total_source_bytes": 4411818,
-  "total_output_bytes": 301034
+  "total_source_bytes": 20027257,
+  "total_output_bytes": 22797296
 }
