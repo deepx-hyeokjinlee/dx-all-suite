@@ -1008,7 +1008,12 @@ def test_shared_brand_assets_define_component_contract():
     # topbar gap이 간격을 담당하므로 page title은 margin-left를 가지면 안 된다.
     page_title_rule = re.search(r"\.dx-brand-page-title\s*\{(?P<body>.*?)\}", css, re.S).group("body")
     assert "margin-left" not in page_title_rule, "margin-left causes double spacing with topbar gap"
-    assert "padding-left: 14px" in page_title_rule
+    # 값이 아니라 **무엇으로 간격을 주는지** 를 본다. 예전에는 `padding-left: 14px`
+    # 를 글자 그대로 못박아서, 간격을 4px 스케일로 당기는 작업(2026-09-22)이 이
+    # 계약과 부딪혔다. 이 테스트가 지키려는 것은 "margin 이 아니라 padding" 이지
+    # 특정 픽셀이 아니다.
+    assert re.search(r"padding-left:\s*(var\(--sp-|\d+px)", page_title_rule), (
+        f"page title 이 padding-left 로 간격을 주지 않는다: {page_title_rule!r}")
     assert "window.DXBrand" in js
     assert "function mount" in js
     assert "document.createElement(safeHref ? 'a' : 'div')" in js

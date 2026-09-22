@@ -35,11 +35,11 @@
 }
 .dx-shell-rail-mark svg{width:22px;height:22px;display:block}
 .dx-shell-rail-list{
-  flex:1;display:flex;flex-direction:column;gap:4px;padding:10px 0;width:100%;
+  flex:1;display:flex;flex-direction:column;gap:4px;padding:8px 0;width:100%;
   align-items:center;overflow-y:auto;overflow-x:hidden;
 }
 .dx-shell-rail-foot{
-  width:100%;padding:10px 0;display:flex;justify-content:center;
+  width:100%;padding:8px 0;display:flex;justify-content:center;
   border-top:1px solid var(--border-subtle);
 }
 
@@ -116,7 +116,7 @@
 .dx-shell--no-tabs .dx-shell-tabs{display:none}
 
 .dx-tab{
-  display:flex;align-items:center;gap:var(--sp-2);padding:0 13px;flex-shrink:0;
+  display:flex;align-items:center;gap:var(--sp-2);padding:0 12px;flex-shrink:0;
   font-size:12.5px;color:var(--text-muted);white-space:nowrap;cursor:pointer;
   background:none;border:none;border-bottom:2px solid transparent;
   font-family:inherit;transition:var(--transition);
@@ -129,7 +129,7 @@
 .dx-tab svg{width:15px;height:15px;flex-shrink:0;display:block}
 
 .dx-tab-overflow{
-  margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 10px;
+  margin-left:auto;flex-shrink:0;display:flex;align-items:center;gap:4px;padding:0 8px;
   font-family:var(--mono);font-size:11.5px;color:var(--text-muted);
   background:none;border:none;cursor:pointer;
 }
@@ -142,7 +142,7 @@
 }
 .dx-tab-menu.open{display:block}
 .dx-tab-menu .dx-tab{
-  width:100%;padding:9px 16px;border-bottom:none;justify-content:flex-start;
+  width:100%;padding:8px 16px;border-bottom:none;justify-content:flex-start;
 }
 
 /* ── 본문 / 상태 바 ──────────────────────────────────────── */

@@ -18,14 +18,14 @@
 .dx-text-glow { text-shadow: var(--text-glow-accent); }
 
 /* ═══ Diagnostics (shared by dx_app, dx_stream) ═══ */
-.diag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.diag-card{padding:12px 14px;border-radius:var(--radius);border:1px solid var(--border-subtle)}
+.diag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.diag-card{padding:12px 12px;border-radius:var(--radius);border:1px solid var(--border-subtle)}
 .diag-card-ok{background:rgba(63,185,80,.06);border-color:rgba(63,185,80,.2)}
 .diag-card-fail{background:rgba(248,81,73,.06);border-color:rgba(248,81,73,.2)}
 .diag-card-title{font-size:var(--fs-base);font-weight:600;margin-bottom:4px}
 .diag-card-detail{font-size:var(--fs-xs);color:var(--text-muted);font-family:var(--mono);word-break:break-all}
-.diag-card-fix{font-size:var(--fs-xs);color:var(--status-warn);margin-top:6px;padding:6px 8px;background:rgba(210,153,34,.08);border-radius:var(--radius-sm);font-family:var(--mono)}
-.diag-summary-bar{padding:10px 16px;border-radius:var(--radius);font-size:var(--fs-base);margin-bottom:8px}
+.diag-card-fix{font-size:var(--fs-xs);color:var(--status-warn);margin-top:4px;padding:4px 8px;background:rgba(210,153,34,.08);border-radius:var(--radius-sm);font-family:var(--mono)}
+.diag-summary-bar{padding:8px 16px;border-radius:var(--radius);font-size:var(--fs-base);margin-bottom:8px}
 .diag-pass{background:rgba(63,185,80,.1);color:var(--status-ok);border:1px solid rgba(63,185,80,.25)}
 .diag-fail{background:rgba(248,81,73,.1);color:var(--status-error);border:1px solid rgba(248,81,73,.25)}
 
@@ -40,7 +40,7 @@
 .mt8{margin-top:8px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--sp-4)}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 
 /* dx_app / dx_monitor / dx_stream 이 같은 규칙을 각자 복제하고 있었다.
    접히는 폭이 파일마다 갈리기 시작하면 같은 격자가 화면마다 다르게 접힌다. */

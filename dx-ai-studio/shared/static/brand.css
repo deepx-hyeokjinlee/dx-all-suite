@@ -2,7 +2,7 @@
   --dx-brand-accent: var(--accent, var(--accent));
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   min-height: 36px;
   text-decoration: none;
   color: inherit;
@@ -37,7 +37,7 @@
 }
 /* 브랜드 옆 보조 페이지 타이틀은 의도적으로 낮은 강조색을 사용한다. */
 .dx-brand-page-title {
-  padding-left: 14px;
+  padding-left: 12px;
   border-left: 1px solid var(--border-subtle, rgba(255,255,255,.12));
   color: var(--text-muted, #8b93a7);
 }

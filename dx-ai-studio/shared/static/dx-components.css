@@ -8,7 +8,7 @@
 
 /* ═══ Buttons ═══ */
 .btn{
-  display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:var(--radius);
+  display:inline-flex;align-items:center;gap:4px;padding:8px 16px;border-radius:var(--radius);
   /* 투명한 1px 테두리를 미리 깔아 둔다. 변형은 border-color 만 바꾸면 되고,
      테두리 있는 변형(.btn-ghost)과 없는 변형(.btn-primary) 사이에서 1px 만큼
      크기가 튀지 않는다. dx_benchmark 가 자기 사본에서만 이렇게 하고 있었다. */
@@ -49,7 +49,7 @@
 /* Small size modifier */
 /* 크기만 바꾼다. 외형(배경·테두리 색)은 변형의 몫이다 — dx_app 사본이
    여기에 배경까지 넣는 바람에 .btn-ghost 41개가 ghost 로 보이지 않았다. */
-.btn-sm{padding:5px 12px;font-size:var(--fs-sm);border-radius:var(--radius-sm)}
+.btn-sm{padding:4px 12px;font-size:var(--fs-sm);border-radius:var(--radius-sm)}
 
 /* ═══ Form fields (.fg = field group) ═══ */
 .fg{margin-bottom:12px}
@@ -79,7 +79,7 @@
      흐름 배치가 필요한 모듈은 컨테이너 쪽에서 준다.
    - 그림자는 공유 depth 토큰을 쓴다. monitor 만 그림자가 없던 것은 의도가
      아니라 토큰을 안 쓴 결과다. */
-:root{ --card-padding:20px; }
+:root{ --card-padding:16px; }
 
 .card{
   background:var(--surface-raised);
@@ -95,7 +95,7 @@
   border-color:var(--border-strong);
 }
 .card-header{
-  display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;
 }
 
 /* ═══ Primary / accent button ═══
@@ -129,7 +129,7 @@
    하단 우측으로 통일한다: 3개 중 2개가 그렇고, 헤더와 겹치지 않으며,
    column-reverse 라 새 토스트가 항상 시선이 머무는 아래쪽에 쌓인다. */
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column-reverse;gap:var(--sp-2);pointer-events:none}
-.toast{padding:10px 16px;border-radius:10px;font-size:var(--fs-base);box-shadow:var(--shadow);
+.toast{padding:8px 16px;border-radius:10px;font-size:var(--fs-base);box-shadow:var(--shadow);
   transform:translateX(120%);transition:.3s var(--ease);max-width:420px;
   display:flex;align-items:center;gap:var(--sp-2);backdrop-filter:blur(12px);pointer-events:auto;}
 .toast.show{transform:none}
@@ -162,7 +162,7 @@
    남겨 두었다 — .card 와 똑같은 우회다. 배치(flex 여부)는 컴포넌트가 아니라
    담는 쪽의 몫이라 여기 넣지 않는다. */
 .stat{background: var(--surface-raised);border:1px solid var(--border-subtle);border-radius:var(--radius);
-  padding:16px 20px;position:relative;overflow:hidden;transition:var(--transition);
+  padding:16px 16px;position:relative;overflow:hidden;transition:var(--transition);
   box-shadow: var(--surface-raised-shadow);}
 
 /* stat 내부. :hover 만 dx_monitor 가 토큰 대신 값을 손으로 적고 있었다. */
@@ -175,26 +175,26 @@
 
 /* ═══ 여러 모듈이 공유하던 작은 컴포넌트 ═══ */
 .card-glow{box-shadow:0 0 0 1px var(--accent),0 0 30px rgba(var(--accent-rgb),.06)}
-.chip{padding:5px 14px;border:1px solid var(--border-subtle);border-radius:20px;font-size:var(--fs-sm);
+.chip{padding:4px 12px;border:1px solid var(--border-subtle);border-radius:20px;font-size:var(--fs-sm);
   cursor:pointer;transition:var(--transition);color:var(--text-muted);background:transparent;font-family:var(--font);}
-.chip-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.comp-status-badge{display:inline-flex;align-items:center;gap:var(--sp-1);padding:3px 10px;border-radius:var(--radius-lg);font-size:var(--fs-xs);font-weight:700}
-.npu-metric{display:flex;justify-content:space-between;font-size:var(--fs-sm);padding:3px 0;border-bottom:1px solid rgba(42,52,65,.4)}
+.chip-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.comp-status-badge{display:inline-flex;align-items:center;gap:var(--sp-1);padding:4px 8px;border-radius:var(--radius-lg);font-size:var(--fs-xs);font-weight:700}
+.npu-metric{display:flex;justify-content:space-between;font-size:var(--fs-sm);padding:4px 0;border-bottom:1px solid rgba(42,52,65,.4)}
 .setup-card-desc{font-size:var(--fs-sm);color:var(--text-muted);line-height:1.5}
-.setup-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.setup-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
 .setup-card-title{font-weight:600;font-size:var(--fs-md);margin-bottom:4px}
-.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
 
 /* ═══ Reference 페이지 ═══
    dx_app 과 dx_stream 이 Reference 화면 전체(.ref-*)를 서로 복제하고 있었다.
    31개 rule 이 두 벌, 값은 한 글자도 다르지 않았다. 화면이 같으니 정의도 하나다. */
-.ref-box{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:var(--radius);margin:12px 0;font-size:var(--fs-base);line-height:1.6}
+.ref-box{display:flex;align-items:flex-start;gap:8px;padding:12px 16px;border-radius:var(--radius);margin:12px 0;font-size:var(--fs-base);line-height:1.6}
 .ref-box-icon{font-size:var(--fs-lg);flex-shrink:0;margin-top:1px}
 .ref-card-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--sp-3)}
-.ref-cat{margin:6px 0 0;padding:2px 2px 0}
+.ref-cat{margin:4px 0 0;padding:2px 2px 0}
 .ref-cat-desc{font-size:var(--fs-xs);color:var(--text-muted);margin-top:1px}
 .ref-cat-title{font-size:var(--fs-base);font-weight:700;color:var(--text-primary)}
-.ref-detail-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--sp-4);margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border-subtle)}
+.ref-detail-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--sp-4);margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border-subtle)}
 .ref-detail-kicker{font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:1px;color:var(--accent);font-weight:700;margin-bottom:4px}
 .ref-expand{position:relative;width:100%;background:var(--surface-panel);
   border:1px solid var(--accent);border-radius:var(--radius-lg);
@@ -206,14 +206,14 @@
   border-radius:50%;border:1px solid var(--border-subtle);background:var(--control-bg);
   color:var(--text-muted);cursor:pointer;display:flex;align-items:center;
   justify-content:center;font-size:var(--fs-md);z-index:2;}
-.ref-expand-inner{padding:22px;max-height:60vh;overflow-y:auto}
+.ref-expand-inner{padding:24px;max-height:60vh;overflow-y:auto}
 .ref-flow{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;margin:12px 0;padding:var(--sp-3);background:var(--control-bg);border-radius:var(--radius);border:1px solid var(--border-subtle)}
 .ref-flow-arrow{color:var(--text-faint);font-size:var(--fs-md)}
-.ref-flow-step{padding:6px 12px;background:var(--accent-dim);border:1px solid rgba(var(--accent-rgb),.2);
+.ref-flow-step{padding:4px 12px;background:var(--accent-dim);border:1px solid rgba(var(--accent-rgb),.2);
   border-radius:var(--radius);font-size:var(--fs-sm);font-weight:600;color:var(--accent-light);}
 .ref-grid{display:flex;flex-direction:column;gap:var(--sp-4)}
 .ref-layout{display:flex;flex-direction:column;gap:var(--sp-4);width:100%;flex:1}
-.ref-search{width:100%;padding:10px 12px 10px 36px;background:var(--control-bg);border:1px solid var(--border-subtle);
+.ref-search{width:100%;padding:8px 12px 8px 32px;background:var(--control-bg);border:1px solid var(--border-subtle);
   border-radius:var(--radius);color:var(--text-primary);font-size:var(--fs-base);transition:var(--transition);}
 .ref-search-bar{margin-bottom:12px}
 .ref-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:var(--fs-md);opacity:.5}
@@ -222,14 +222,14 @@
 .ref-section-icon{font-size:var(--fs-3xl);flex-shrink:0}
 .ref-section-info{display:flex;flex-direction:column;flex:1;min-width:0}
 .ref-section-name{font-size:var(--fs-md);font-weight:700;color:var(--text-primary)}
-.ref-tab{padding:6px 14px;font-size:var(--fs-sm);font-weight:500;color:var(--text-muted);
+.ref-tab{padding:4px 12px;font-size:var(--fs-sm);font-weight:500;color:var(--text-muted);
   border-radius:var(--radius) var(--radius) 0 0;cursor:pointer;transition:var(--transition);}
 .ref-tab-content{display:none}
-.ref-tabs{display:flex;gap:var(--sp-1);margin-bottom:14px;border-bottom:1px solid var(--border-subtle);padding-bottom:8px;flex-wrap:wrap}
+.ref-tabs{display:flex;gap:var(--sp-1);margin-bottom:12px;border-bottom:1px solid var(--border-subtle);padding-bottom:8px;flex-wrap:wrap}
 .ref-tbl{width:100%;border-collapse:collapse;font-size:var(--fs-sm);margin:12px 0}
-.ref-toolbar{margin-bottom:0;padding:16px 18px}
-.ref-topic-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;
-  width:100%;padding:14px 14px 12px;
+.ref-toolbar{margin-bottom:0;padding:16px 16px}
+.ref-topic-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;
+  width:100%;padding:12px 12px 12px;
   background: var(--surface-raised);border:1px solid var(--border-subtle);
   border-radius:var(--radius-lg);cursor:pointer;transition:var(--transition);font-family:var(--font);
   box-shadow: var(--surface-raised-shadow);}
@@ -240,7 +240,7 @@
    dx_monitor 는 여기서도 .npu-card 배경과 .chart-box 그림자를 토큰 대신 손으로
    적고 있었다 — .card / .stat / .stat:hover 에 이은 네 번째, 다섯 번째다. */
 .setup-card{background: var(--surface-raised);border:1px solid var(--border-subtle);border-radius:10px;
-  padding:var(--sp-4);display:flex;flex-direction:column;gap:10px;transition:var(--transition);
+  padding:var(--sp-4);display:flex;flex-direction:column;gap:8px;transition:var(--transition);
   box-shadow: var(--surface-raised-shadow);}
 .chart-box{position:relative;width:100%;height:200px;background:var(--control-bg);border:1px solid var(--border-subtle);border-radius:var(--radius);overflow:hidden;box-shadow:var(--inset-highlight)}
 .npu-card{background: var(--surface-raised);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:var(--sp-4);
