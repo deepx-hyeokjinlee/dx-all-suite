@@ -65,6 +65,12 @@ def detect_available_agents():
     authenticated: True/False(확정) 또는 None(unknown). 어댑터의 값싼 자격증명 검사 결과.
     """
     from dx_agent_dev.core.agents_config import AGENTS
+    pinned = os.environ.get("DX_AGENT_DEV_PIN_AGENTS")
+    if pinned is not None:
+        # 비주얼 회귀용 고정: 개발자 PATH/로그인 상태 대신 주어진 이름을 순서대로,
+        # 로그인된 것으로 돌려준다. 계약: tests/dx_agent_dev/test_agents_can_be_pinned.py
+        names = [n.strip() for n in pinned.split(",") if n.strip() in AGENTS]
+        return [_agent_entry(n, AGENTS[n], True) for n in names]
     from dx_agent_dev.core.adapters import make_adapter
     out = []
     for name, cfg in AGENTS.items():
@@ -74,15 +80,19 @@ def detect_available_agents():
                 authed = adapter.is_authenticated() if adapter else None
             except Exception:
                 authed = None
-            out.append({
-                "name": name,
-                "models": list(cfg["models"]),
-                "default_model": cfg["default_model"],
-                "authenticated": authed,
-                "reasoning_efforts": list(cfg.get("reasoning_efforts", [])),
-                "default_effort": cfg.get("default_effort"),
-            })
+            out.append(_agent_entry(name, cfg, authed))
     return out
+
+
+def _agent_entry(name, cfg, authed):
+    return {
+        "name": name,
+        "models": list(cfg["models"]),
+        "default_model": cfg["default_model"],
+        "authenticated": authed,
+        "reasoning_efforts": list(cfg.get("reasoning_efforts", [])),
+        "default_effort": cfg.get("default_effort"),
+    }
 
 
 def detect_environment():

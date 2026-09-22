@@ -27,6 +27,12 @@ from tests.browser_support import launch_browser, selected_engines
 _EMPTY_MODELS_DIR = tempfile.mkdtemp(prefix="dx-visual-empty-models-")
 os.environ.setdefault("DX_APP_MODELS_DIR", _EMPTY_MODELS_DIR)
 
+# 같은 이유로 dx_agent_dev 콘솔의 에이전트 드롭다운도 고정한다. 그대로 두면 PATH 에
+# 무엇이 있는지 · 어느 CLI 에 로그인했는지가 찍힌다(VS Code 세션이 copilot 을 PATH 에
+# 올리자 8장이 코드 변경 없이 깨졌다). 계약: tests/dx_agent_dev/test_agents_can_be_pinned.py
+# 둘 이상이어야 에이전트 선택기가 보이는 다중 배치(console.js updateAgentPickerLayout)를 찍는다.
+os.environ.setdefault("DX_AGENT_DEV_PIN_AGENTS", "claude,cursor")
+
 # Applied before any page script runs, so neither the splash nor the tutorial
 # walkthrough enters the capture.
 STABILISE_INIT = """
