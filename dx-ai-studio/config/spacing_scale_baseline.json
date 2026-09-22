@@ -1,0 +1,23 @@
+{
+  "docs/source/stylesheets/extra.css": 2,
+  "dx_agent_dev/static/css/console.css": 38,
+  "dx_app/static/css/style.css": 226,
+  "dx_benchmark/static/css/style.css": 26,
+  "dx_compiler/static/css/style.css": 45,
+  "dx_modelzoo/static/css/style.css": 25,
+  "dx_monitor/static/css/style.css": 10,
+  "dx_planner/static/css/style.css": 23,
+  "dx_stream/static/css/pipeline-iso.css": 19,
+  "dx_stream/static/css/stream.css": 52,
+  "launcher/static/about-deepx.css": 55,
+  "launcher/static/sdk-library.css": 52,
+  "launcher/static/style.css": 94,
+  "shared/chat/static/chat-widget.css": 19,
+  "shared/static/brand.css": 2,
+  "shared/static/dx-base.css": 1,
+  "shared/static/dx-components.css": 33,
+  "shared/static/dx-shell.css": 6,
+  "shared/static/dx-utilities.css": 6,
+  "shared/static/toolbar.css": 3,
+  "shared/static/tutorial.css": 51
+}

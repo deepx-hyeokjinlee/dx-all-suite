@@ -129,6 +129,9 @@ echo "== i18n lang-span ratchet =="
 echo "== breakpoint ratchet =="
 "$PY" -m scripts.breakpoint_gate || exit 1
 
+echo "== 간격 스케일 ratchet =="
+"$PY" -m scripts.spacing_scale_gate || exit 1
+
 echo ""
 echo "== 0/7 Infra + release contracts =="
 "$PY" -m pytest \
