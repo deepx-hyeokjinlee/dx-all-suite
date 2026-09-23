@@ -76,7 +76,9 @@ def test_the_home_has_no_absolutely_positioned_furniture():
     """
     css = (ROOT / "launcher/static/style.css").read_text(encoding="utf-8")
     assert ".landing-poster" not in css, "the floating poster component is back"
-    home = css[css.index("/* ─── Workspace ───"): css.index("/* ─── Working view ───")]
+    # 무대의 배치는 home-stage.css 한 파일에 있다 (spec 2026-09-23). 예전에는 style.css 의
+    # "Workspace" ~ "Working view" 구간이었고, 그 구간은 무대로 바뀌면서 지워졌다.
+    home = (ROOT / "launcher/static/home-stage.css").read_text(encoding="utf-8")
     # A ::before/::after anchored inside its own relatively-positioned parent
     # is a mark, not a layer — the chevrons between the workflow steps are
     # drawn that way. What must not come back is a positioned *element*.

@@ -86,6 +86,22 @@ def distinct(counts: dict[str, list[int]]) -> list[int]:
     return sorted({v for vals in counts.values() for v in vals})
 
 
+def new_values(counts: dict[str, list[int]], baseline: dict[str, list[int]]) -> dict[str, list[int]]:
+    """파일별로, 스케일에도 그 파일의 기준값에도 없는 breakpoint.
+
+    스케일 값은 파편화를 늘리지 않으므로 어느 파일이든 기준값 없이 쓴다. 처음 판에서는
+    메시지만 "스케일 중에서 고르라" 고 했고 판정은 스케일을 보지 않아, 새 파일이 스케일
+    값을 써도 막혔다. 계약: tests/test_breakpoint_gate.py
+    """
+    out: dict[str, list[int]] = {}
+    for rel, values in counts.items():
+        allowed = set(baseline.get(rel, [])) | set(SCALE)
+        new = [v for v in values if v not in allowed]
+        if new:
+            out[rel] = new
+    return out
+
+
 def main() -> int:
     counts = scan()
     if "--write" in sys.argv:
@@ -98,15 +114,11 @@ def main() -> int:
         return 0
 
     baseline = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
-    problems = []
-    for rel, values in counts.items():
-        allowed = set(baseline.get(rel, []))
-        new = [v for v in values if v not in allowed]
-        if new:
-            problems.append(
-                f"  {rel}: 새 breakpoint {new} — {SCALE} 중에서 고르거나 "
-                f"이 파일이 이미 쓰는 값 {sorted(allowed)} 을 쓰세요"
-            )
+    problems = [
+        f"  {rel}: 새 breakpoint {new} — {SCALE} 중에서 고르거나 "
+        f"이 파일이 이미 쓰는 값 {sorted(baseline.get(rel, []))} 을 쓰세요"
+        for rel, new in new_values(counts, baseline).items()
+    ]
     per_file = collections.Counter(len(v) for v in counts.values())
     print(
         f"breakpoint 고유값 {len(distinct(counts))}개 · "

@@ -57,6 +57,12 @@
       }
     }
     if (e.key === 'Escape') {
+      /* home 에서는 무대를 되돌린다: 콘솔 (안 돌 때) 이 먼저, 그다음 답 (spec 2026-09-23 §5.7b). */
+      if (!ns.currentApp) {
+        if ((ns.closeHomeWork && ns.closeHomeWork()) ||
+            (ns.closeHomeAnswer && ns.closeHomeAnswer())) e.preventDefault();
+        return;
+      }
       if (ns.currentApp === 'about' && window._aboutHasActivePanel) {
         if (window.closeAboutPanel) window.closeAboutPanel();
       } else if (ns.currentApp === 'about') {

@@ -63,49 +63,6 @@ body {
   overflow-y: auto;
 }
 
-/* ─── Portal Nav ──────────────────────────────────────
-   홈이 같은 여덟 곳을 두 번 안내하고 있었다 — 상단의 점 여덟 개와
-   그 아래 타일 여덟 개. 다른 모든 화면은 한 곳에서 안내한다.
-   섹션 하나가 곧 하나의 목적지다. */
-.portal-nav {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-4);
-  /* 늘어나지 않는다. 링크 셋이 648px 을 쥐고 있어서 모듈 탭에 473px 밖에
-     남지 않았다 — 남는 폭은 열한 칸이 필요한 쪽이 가져간다. */
-  flex: 0 1 auto;
-  min-width: 0;
-  /* 좁아지면 넘치는 대신 감긴다 — 스크롤바 스타일은 공유 파운데이션의 일이다 */
-  flex-wrap: wrap;
-  row-gap: var(--sp-1);
-}
-.portal-nav-item {
-  position: relative;
-  padding: 6px 2px;
-  font-size: var(--fs-sm);
-  font-weight: 400;
-  color: var(--text-secondary);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color var(--ap-dur) var(--ap-ease);
-}
-.portal-nav-item:hover { color: var(--text-primary); }
-.portal-nav-item.is-current {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-/* 활성 표시는 밑줄 하나 — 배경 알약을 쓰면 앱 안의 탭 행과 헷갈린다 */
-.portal-nav-item.is-current::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: -9px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--accent);
-}
-/* 앱 안으로 들어가면 상단은 그 앱의 탭 행이 된다 */
-body.in-app .portal-nav { display: none; }
-
 /* ─── Top Bar ─────────────────────────────────────────*/
 .top-bar {
   position: fixed;
@@ -482,16 +439,6 @@ body:not(.hw-native-visible) #hw-float {
   margin: 0 auto;
   animation: fadeIn 0.8s ease-out;
 }
-
-/* About DEEPX and SDK Library. They carried a gold and a cyan neon variant
-   with corner brackets and a scale(1.08) hover — two more accents on a page
-   that has settled on one. They are cards like the others now. */
-.about-book-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sp-3);
-  max-width: 520px;
-}
 .about-book-card {
   position: relative;
   display: flex;
@@ -519,13 +466,6 @@ body:not(.hw-native-visible) #hw-float {
   line-height: 1.3;
 }
 .about-book-card .orbital-port { font-size: var(--fs-xs); margin-top: 4px; }
-
-/* Footer */
-.landing-footer {
-  padding: var(--sp-6);
-  color: var(--text-dim);
-  font-size: var(--fs-sm);
-}
 .landing-footer-version {
   margin-top: 6px;
   font-size: var(--fs-xs);
@@ -1342,17 +1282,6 @@ body {
   padding: 0 22px;
 }
 .logo-text { font-size: var(--ap-t-body); font-weight: 600; color: var(--ap-ink); letter-spacing: -.01em; }
-.portal-nav { gap: 2px; }
-.portal-nav-item {
-  padding: 5px 11px;
-  border-radius: 980px;
-  font-size: var(--ap-t-body);
-  font-weight: 400;
-  color: var(--ap-ink-2);
-}
-.portal-nav-item:hover { color: var(--ap-ink); background: var(--ap-fill); }
-.portal-nav-item.is-current { color: var(--ap-ink); font-weight: 400; background: var(--ap-fill); }
-.portal-nav-item.is-current::after { display: none; }
 .studio-beta-badge {
   background: var(--ap-fill); color: var(--ap-ink-3);
   border: 0; font-size: 10px; font-weight: 400; letter-spacing: .02em;
@@ -1363,33 +1292,6 @@ body {
   font-size: var(--ap-t-body); font-weight: 400; letter-spacing: -.005em;
 }
 .buy-topbar-btn:hover { background: var(--ap-blue-hi); }
-
-/* ─── Workspace ────────────────────────────────────────
-   이 화면을 여는 사람은 읽으러 온 게 아니라 실행하러 온다. 이전 홈은
-   전폭 섹션 일곱 개를 세로로 쌓았고, 그래서 유일한 실행 대상인 모듈
-   여덟 개가 스크롤 두 번 아래에 있었다. 왼쪽은 할 수 있는 것, 오른쪽은
-   지금 사실인 것. 한 화면에 끝난다. */
-.workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: var(--sp-6);
-  width: 100%;
-  /* apple.com 의 1024 를 그대로 가져왔던 건 레퍼런스 오적용이었다. 그건
-     마케팅 페이지의 본문 단 폭이고, 여기는 앱 작업대다. HIG Layout 은
-     "콘텐츠를 화면/윈도우 가득 채우라"고 하고 macOS 앱은 실제로 윈도우를
-     채운다. 폭은 창이 정하고, 아주 넓은 화면에서만 행이 지나치게 길어지지
-     않도록 상한을 둔다. */
-  max-width: 1680px;
-  margin: 0 auto;
-  padding: var(--sp-6) var(--sp-5) var(--sp-4);
-  box-sizing: border-box;
-  align-items: start;
-}
-/* 에이전트가 도는 동안엔 작업 뷰가 화면 전체를 갖는다 — 상태 패널은
-   그때 볼 것이 아니다. */
-.workspace.is-working { grid-template-columns: minmax(0, 1fr); }
-.workspace.is-working .ws-side { display: none; }
-.ws-main { min-width: 0; display: flex; flex-direction: column; gap: var(--sp-5); }
 
 /* ── the command line ── */
 /* The biggest thing on the first screen used to be a 14px "✦". Nothing else
@@ -1505,117 +1407,6 @@ body {
   background: var(--ap-fill); border-radius: var(--ap-r-sm); padding: 2px 6px;
 }
 
-/* ── blocks ── */
-/* 애플은 섹션 라벨을 대문자로 늘려 쓰지 않는다. 문장 표기, 본문보다 한
-   단계 작게, 이름 그대로. */
-.ws-block-head { display: flex; align-items: baseline; gap: var(--sp-3); margin-bottom: 8px; padding-inline: 4px; }
-/* 섹션 제목이 목록 행(17px)과 같은 크기라 아무것도 앞장서지 않았다.
-   측정: 애플의 섹션 제목은 24px/600 이 가장 흔하다 — apple.com 72건,
-   developer.apple.com 34건. 24px 의 측정 트래킹은 +0.216px 다. */
-.ws-block-head h2 {
-  margin: 0; font-size: var(--ap-t-section); font-weight: 600;
-  letter-spacing: .009em; text-transform: none; color: var(--ap-ink);
-}
-/* 제목이 셋이면 주인공이 없다. 실측에서 Build·Measured·Modules 가 전부 24px/600
-   이라 눈이 들어갈 입구가 없었다. Build 는 제품의 문장을 담은 블록이므로 한 단계
-   올리고, 나머지 둘은 서로 같은 높이로 한 단계 내린다 — 둘 중 하나만 내리면
-   위계가 셋이 되어 다시 읽기 어려워진다. 굵기와 색은 건드리지 않는다.
-   계약: tests/launcher/test_home_hierarchy_browser.py */
-#measured .ws-block-head h2,
-#studio .ws-block-head h2 { font-size: var(--ap-t-title); }
-/* 오른쪽 상태 컬럼은 종속이므로 한 단계 낮게 둔다. */
-.ws-panel h3 {
-  margin: 0; font-size: var(--ap-t-lead); font-weight: 600;
-  letter-spacing: -.022em; text-transform: none; color: var(--ap-ink);
-}
-.ws-count { font-size: var(--ap-t-body); color: var(--ap-ink-3); margin-left: auto; }
-
-/* 섹션이 무엇을 위한 것인지 한 줄. 축소 다음에 이 줄을 다시 넣는 건
-   모순이 아니다 — 설명 없는 화면은 단순한 게 아니라 불투명한 것이고,
-   여기서 덜어낼 수 없는 건 두 입구의 관계다. */
-.ws-note {
-  margin: 0 0 var(--sp-3);
-  padding-inline: 4px;
-  /* 62ch 는 문단의 읽기 폭이지 한 줄짜리 부제의 폭이 아니다 — 세 단어만
-     둘째 줄로 떨어져 있었다. 넓히고, 그래도 접힐 좁은 폭에서는 두 줄이
-     고르게 나뉘도록 balance 를 준다. */
-  max-width: 96ch;
-  font-size: var(--ap-t-body);
-  color: var(--ap-ink-2);
-  line-height: 1.45;
-  text-wrap: balance;
-}
-.ws-block-head { margin-bottom: 5px; }
-.ws-block-head + .ws-note { margin-bottom: var(--sp-3); }
-
-/* ── the path, as one line ── */
-.ws-flow { padding-top: var(--sp-2); }
-.ws-flow .flow-row {
-  display: flex; flex-wrap: wrap; align-items: center;
-  gap: var(--sp-2) var(--sp-4); list-style: none; margin: 0; padding: 0;
-}
-.ws-flow .flow-node {
-  position: relative; display: flex; align-items: center; gap: 7px;
-  border: 0; background: none; padding: 0; color: var(--ap-ink-3);
-}
-.ws-flow .flow-node svg { width: 14px; height: 14px; }
-.ws-flow .flow-node b { color: var(--ap-ink-3); font-size: var(--ap-t-body); font-weight: 400; }
-.ws-flow .flow-node span { display: none; }
-.ws-flow .flow-node:not(:last-child)::after {
-  content: ''; position: absolute; right: calc(var(--sp-4) / -2 - 2px); top: 50%;
-  width: 5px; height: 5px;
-  border-right: 1.5px solid var(--border-strong);
-  border-top: 1.5px solid var(--border-strong);
-  transform: translateY(-50%) rotate(45deg);
-}
-
-/* ── 실측 표 ─────────────────────────────────────────────
-   숫자가 주인공이라 tabular-nums 로 자리를 맞추고 오른쪽에 정렬한다.
-   행은 목록과 같은 헤어라인으로 갈린다 — 여기와 Modules 는 같은 종류의
-   물건이라 다르게 생길 이유가 없다. */
-.perf {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--ap-panel);
-  border-radius: var(--ap-r-lg);
-  overflow: hidden;
-}
-.perf tr { cursor: pointer; transition: background var(--ap-dur) var(--ap-ease); }
-.perf tr + tr td { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
-.perf tr:hover { background: var(--ap-panel-2); }
-.perf tr:active { background: var(--ap-fill); }
-.perf td { padding: 11px 16px; font-size: var(--ap-t-body); }
-.perf-name {
-  font-size: var(--ap-t-lead);
-  font-weight: 400;
-  letter-spacing: -.022em;
-  color: var(--ap-ink);
-  white-space: nowrap;
-}
-.perf-task { color: var(--ap-ink-3); width: 40%; }
-.perf-fps {
-  text-align: right;
-  white-space: nowrap;
-  color: var(--ap-ink-2);
-  font-variant-numeric: tabular-nums;
-}
-.perf-fps b {
-  font-size: var(--ap-t-lead);
-  font-weight: 600;
-  letter-spacing: -.022em;
-  color: var(--ap-ink);
-}
-.perf-all {
-  display: inline-block;
-  margin-top: var(--sp-3);
-  padding-inline: 4px;
-  font-size: var(--ap-t-body);
-  font-weight: 600;
-  color: var(--ap-blue);
-  text-decoration: none;
-}
-.perf-all:hover { text-decoration: none; }
-
 /* ── 모듈 목록 ──────────────────────────────────────────
    여덟 장의 똑같은 카드가 그리드에 깔린 건 지루한데, 목록의 행이 똑같은
    건 목록이라서 맞다. macOS System Settings 의 grouped inset list 를 쓴다:
@@ -1641,12 +1432,6 @@ body {
   align-items: start;
   background: transparent;
   box-shadow: none;
-}
-.studio-col {
-  background: var(--ap-panel);
-  border-radius: var(--ap-r-lg);
-  box-shadow: var(--ap-shadow);
-  overflow: hidden;
 }
 
 .orbital-card {
@@ -1721,18 +1506,13 @@ body {
    이걸 뒤집어 놨더니(내 페이지: 400이 69, 600이 7) 화면이 빠져 보였다.
    여기서 갈리는 건 크기가 아니라 역할이다 — 라벨·링크·칩·상태는 UI 라
    600, 카드 설명은 산문이라 400 이되 색을 본문색으로 올린다. */
-.portal-nav-item,
 .buy-topbar-btn,
-.ws-count,
 .ws-facts dt,
 .ws-facts dd,
-.ws-running li,
 .ask-chip,
 .card-state,
-.ws-foot .deepx-link,
-.learn-row,
-.replay-btn,
-.ws-flow .flow-node b { font-weight: 600; }
+.stage-bar .deepx-link,
+.replay-btn { font-weight: 600; }
 
 /* 산문은 regular 로 두되, 제일 흐린 회색이 아니라 본문색으로 읽는다.
    측정: apple.com 의 지배 텍스트색은 --ap-body 자리의 값(220 노드)이고,
@@ -1759,7 +1539,6 @@ body {
    커브지 애플 커브가 아니다. 토큰은 9개 모듈 공용이라 못 바꾸고, 홈이
    소유한 컴포넌트에서만 측정 커브로 덮는다. */
 .buy-topbar-btn,
-.learn-row,
 .ws-facts .port-link,
 #launcherToolbar .dx-toolbar-btn {
   /* `all` 을 쓰면 outline 까지 애니메이션된다. Tab 으로 순회하며 재보니
@@ -1780,30 +1559,11 @@ body {
 .ask-chip { letter-spacing: -.01em; }
 .studio-beta-badge { font-size: var(--ap-t-body); padding: 1px 7px; }
 
-/* ── 상태 ────────────────────────────────────────────────
-   apple.com 에서 hover / press / focus 를 각각 잡아 차이만 뽑았다.
-
-     nav link  hover  color rgba(0,0,0,.8) → rgb(0,0,0)   (배경 변화 없음)
-               press  변화 없음
-               focus  outline 2px solid rgb(0,113,227), offset -7px
-     card/cta  hover  bg 페이지 회색 → 흰색      (밝아짐)
-               press  bg 흰색 → 그보다 어두운 회색 (쉬는 값 아래로)
-               focus  outline 2px solid, offset +3px
-
-   즉 텍스트 링크는 색만 진해지고 배경을 얻지 않으며, 면을 가진 것은
-   hover 에 밝아졌다가 press 에 쉬는 값보다 어두워진다. press 상태는 이
-   페이지에 아예 없었다. */
-.portal-nav-item:hover { color: var(--ap-ink); background: none; }
-.portal-nav-item:active { color: var(--ap-ink); }
-
 .orbital-card:hover { background: var(--ap-panel-2); }
 .orbital-card:active { background: var(--ap-fill); }
 
-.ws-foot .deepx-link:hover { color: var(--ap-blue-hi); text-decoration: none; }
-.ws-foot .deepx-link:active { opacity: .6; }
-
-.learn-row:hover { color: var(--ap-blue); background: none; }
-.learn-row:active { opacity: .6; }
+.stage-bar .deepx-link:hover { color: var(--ap-blue-hi); text-decoration: none; }
+.stage-bar .deepx-link:active { opacity: .6; }
 
 .ask-chip:hover { background: var(--ap-panel-2); color: var(--ap-ink); }
 .ask-chip:active { background: var(--ap-fill); }
@@ -1821,9 +1581,7 @@ body {
    홈의 링크가 전부 hover 에 밑줄을 얻고 있었다. 측정한 애플의 nav link
    hover 는 색만 진해지고 밑줄이 없다. 파일은 9개 모듈 공용이라 홈이
    소유한 링크에서만 되돌린다. */
-.portal-nav-item:hover,
-.learn-row:hover,
-.ws-foot .deepx-link:hover,
+.stage-bar .deepx-link:hover,
 .about-book-card:hover,
 .ws-facts .port-link:hover { text-decoration: none; }
 
@@ -1834,8 +1592,6 @@ body {
    box-shadow: 0 0 0 4px var(--accent-dim) 글로우를 얹는다. 애플의 측정
    결과에서 focus 시 달라진 것은 outline 과 outline-offset 뿐이었다 —
    글로우는 없다. 목록 행만 구분선 그림자를 되돌려 준다. */
-.portal-nav-item:focus-visible,
-.learn-row:focus-visible,
 .about-book-card:focus-visible,
 .ask-chip:focus-visible,
 .ask-go:focus-visible,
@@ -1844,33 +1600,21 @@ body {
 .ws-facts .port-link:focus-visible,
 #launcherToolbar .dx-toolbar-btn:focus-visible,
 .orbital-card:focus-visible,
-.ws-foot .deepx-link:focus-visible { box-shadow: none; }
+.stage-bar .deepx-link:focus-visible { box-shadow: none; }
 .orbital-card + .orbital-card:focus-visible { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
-
-.portal-nav-item:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: -2px; }
 .ws-facts .port-link:focus-visible,
 #launcherToolbar .dx-toolbar-btn:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 3px; }
 /* 입력창은 링을 자기 자신이 아니라 감싸는 바에 그린다 — 바가 곧 컨트롤이다. */
 .home-ask:focus-within { outline: 2px solid var(--ap-blue); outline-offset: 3px; }
 .ask-input:focus-visible { outline: none; box-shadow: none; }
 .orbital-card:focus-visible,
-.learn-row:focus-visible,
 .about-book-card:focus-visible,
 .ask-chip:focus-visible,
 .ask-go:focus-visible,
 .buy-topbar-btn:focus-visible,
 .replay-btn:focus-visible,
-.ws-foot .deepx-link:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 3px; }
+.stage-bar .deepx-link:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 3px; }
 .orbital-card:focus-visible { outline-offset: -2px; }
-
-/* ── the state column ── */
-.ws-side { display: flex; flex-direction: column; gap: var(--sp-4); min-width: 0; }
-.ws-panel {
-  padding: 15px 16px; border: 0;
-  border-radius: var(--ap-r-lg); background: var(--ap-panel);
-  box-shadow: var(--ap-shadow);
-}
-.ws-panel h3 { margin-bottom: 10px; }
 /* The silicon this studio compiles for, at the top of the panel that reports
    whether it is present. The fold had no image at all while this render sat at
    the very bottom of the page. */
@@ -1906,8 +1650,7 @@ body {
 }
 
 /* 빈 라벨은 자리를 갖지 않는다. */
-.card-state:empty,
-.ws-count:empty { display: none; }
+.card-state:empty { display: none; }
 .ws-facts { margin: 0; display: flex; flex-direction: column; }
 .ws-facts > div {
   display: flex; justify-content: space-between; gap: var(--sp-3);
@@ -1916,70 +1659,29 @@ body {
 .ws-facts > div:first-child { box-shadow: none; }
 .ws-facts dt { font-size: var(--ap-t-body); color: var(--ap-ink-3); }
 .ws-facts dd { margin: 0; font-size: var(--ap-t-body); color: var(--ap-ink); font-variant-numeric: tabular-nums; }
-.ws-running { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.ws-running li { display: flex; align-items: center; gap: 8px; font-size: var(--ap-t-body); color: var(--ap-ink); }
-.ws-running li::before {
-  content: ''; width: 7px; height: 7px; border-radius: 50%;
-  background: var(--ap-green); flex-shrink: 0;
-}
-.ws-running li.is-none { color: var(--ap-ink-3); }
-.ws-running li.is-none::before { background: var(--ap-ink-3); }
-
-/* Learn holds the two launcher views and nothing else. Everything that leaves
-   the app — docs, downloads, GitHub — went to .ws-foot: a state column that
-   also carries a link directory is not a state column. */
-.ws-side .about-book-row { display: block; max-width: none; }
-.ws-side .about-book-card {
+.studio-grid .about-book-card {
   flex-direction: row; align-items: center; gap: 12px;
   padding: 9px 0; border: 0; border-radius: 0; background: none;
 }
-.ws-side .about-book-card + .about-book-card { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
-.ws-side .about-book-card:hover { background: none; }
-.ws-side .about-book-card:hover .orbital-name { color: var(--ap-blue); }
-.ws-side .about-book-card .orbital-icon { margin: 0; color: var(--ap-ink-3); }
-.ws-side .about-book-card .orbital-name { font-size: var(--ap-t-lead); font-weight: 400; }
-.ws-side .about-book-card .orbital-port { display: none; }
-
-/* The two marketing renders are cyberpunk product art. In a restrained UI
-   they were the loudest thing on the page and fought everything around them.
-   They are rows here; the artwork still opens in the overlay it always had. */
-.learn-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 9px 0; cursor: pointer; text-decoration: none;
-  font-size: var(--ap-t-lead); color: var(--ap-ink);
-  box-shadow: inset 0 1px 0 var(--ap-line-soft);
-}
-.learn-row::after { content: '\203A'; color: var(--ap-ink-3); font-size: var(--ap-t-body); }
-.learn-row:hover { color: var(--ap-blue); }
-.learn-row:focus-visible { outline: 2px solid var(--ap-blue); outline-offset: 2px; }
-
-/* ── below the work surface ── */
-.ws-foot {
-  width: 100%;
-  max-width: 1680px;
-  margin: 0 auto;
-  padding: var(--sp-5) var(--sp-5) 0;
-  box-sizing: border-box;
-  border-top: 1px solid var(--ap-line);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
-}
-.ws-foot .deepx-links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px var(--sp-5); }
-.ws-foot .deepx-link {
+.studio-grid .about-book-card + .about-book-card { box-shadow: inset 0 1px 0 var(--ap-line-soft); }
+.studio-grid .about-book-card:hover { background: none; }
+.studio-grid .about-book-card:hover .orbital-name { color: var(--ap-blue); }
+.studio-grid .about-book-card .orbital-icon { margin: 0; color: var(--ap-ink-3); }
+.studio-grid .about-book-card .orbital-name { font-size: var(--ap-t-lead); font-weight: 400; }
+.studio-grid .about-book-card .orbital-port { display: none; }
+.stage-bar .deepx-links { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px var(--sp-5); }
+.stage-bar .deepx-link {
   padding: 6px 0; background: none; border: 0;
   font-size: var(--ap-t-body); font-weight: 400; color: var(--ap-blue);
 }
-.ws-foot .deepx-link:hover { background: none; }
-.ws-foot .deepx-link::after { content: ' \203A'; color: inherit; font-size: var(--ap-t-body); }
-.ws-foot .replay-btn { align-self: flex-start; }
+.stage-bar .deepx-link:hover { background: none; }
+.stage-bar .deepx-link::after { content: ' \203A'; color: inherit; font-size: var(--ap-t-body); }
+.home-tour .replay-btn { align-self: flex-start; }
 @media (max-width: 768px) {
-  .ws-foot .deepx-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stage-bar .deepx-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 1200px) {
-  .workspace { grid-template-columns: minmax(0, 1fr); }
-}
+
 
 /* ─── Home Hero ───────────────────────────────────────
    링 가운데의 "DEEPX / AI Studio / 8 Modules" 는 마케팅 콜라주 뒤에서
@@ -2253,8 +1955,6 @@ body {
    ONNX 에서 실리콘까지가 이 제품이다. 래스터 다이어그램은 테마를
    못 따라가므로 currentColor 를 물려받는 인라인 SVG 로 그린다. */
 /* Five boxes in a row are five boxes; the chevrons are what make them a path. */
-@media (max-width: 768px) { .flow-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .flow-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* ── Orbital Container ── */
 /* 여덟 타일을 원 둘레에 절대 배치하면 줄이는 것만 되고 다시 감기지는
@@ -2818,47 +2518,6 @@ body {
 .setup-fold[open] .setup-fold-summary::after { content: '\2039'; }
 .setup-fold-summary:hover .setup-fold-value { color: var(--ap-ink-2); }
 .setup-fold-value { color: var(--ap-ink-3); }
-
-
-/* 측정 표의 검색과 카테고리. 새 색을 만들지 않는다 — 기존 토큰만 쓴다. */
-.perf-filter {
-  display: flex; align-items: center; gap: var(--sp-3);
-  margin-bottom: var(--sp-3); flex-wrap: wrap;
-}
-.perf-search {
-  flex: 0 1 220px; min-width: 160px;
-  border: 1px solid var(--border-subtle); border-radius: 980px;
-  padding: 6px 14px; background: var(--surface-panel);
-  font-family: inherit; font-size: var(--ap-t-body); color: var(--ap-ink);
-}
-.perf-search::placeholder { color: var(--ap-ink-3); }
-.perf-search:focus { outline: 2px solid var(--ap-blue); outline-offset: 2px; }
-.perf-cats { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
-.perf-cat {
-  border: 1px solid transparent; border-radius: 980px;
-  padding: 5px 12px; background: var(--surface-hover);
-  font-family: inherit; font-size: var(--ap-t-body); color: var(--ap-ink-2);
-  cursor: pointer;
-}
-.perf-cat:hover { background: var(--surface-hover-strong); }
-.perf-cat.is-on { background: var(--ap-ink); color: var(--text-on-accent); }
-.perf-empty { margin: var(--sp-3) 4px; font-size: var(--ap-t-body); color: var(--ap-ink-3); }
-
-
-/* 평평한 여덟 행은 한 덩어리로 읽힌다. 얇은 라벨 셋으로 리듬을 준다 — 박스는
-   늘리지 않는다. 라벨이 구분선 역할을 하므로 라벨 바로 뒤 카드의 inset 선은
-   지운다 (.orbital-card + .orbital-card 가 그리던 것). */
-.studio-group {
-  margin: 0;
-  padding: var(--sp-4) 18px var(--sp-2);
-  font-size: var(--ap-t-body);
-  font-weight: 600;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  color: var(--ap-ink-3);
-}
-.studio-col .studio-group { box-shadow: none; }
-.studio-group + .orbital-card { box-shadow: none; }
 
 
 /* 예시와 실행은 입력과 같은 덩어리 안, 아래 줄에. */

@@ -167,10 +167,11 @@
     _running = on;
     var view = $('homeWork');
     if (view) view.classList.toggle('is-running', on);
-    /* The state column is not what you watch while the agent works — hand the
-       whole width to the transcript, which is what the split view is for. */
-    var ws = $('workspace');
-    if (ws) ws.classList.toggle('is-working', on);
+    /* 도는 동안에는 닫을 수 없다 — 먼저 Stop. 작업 화면을 실수로 잃지 않게.
+       무대를 Dock 으로 바꾸는 것은 CSS 가 #homeWork 가 보이는지에서 계산한다
+       (home-stage.css, spec 2026-09-23 §5.7b). */
+    var close = $('workClose');
+    if (close) close.hidden = on;
     var badge = $('workBadge');
     if (badge) badge.classList.toggle('is-running', on);
     if (on) {
@@ -339,6 +340,8 @@
     }
     var stopBtn = $('workStop');
     if (stopBtn) stopBtn.addEventListener('click', stop);
+    var closeBtn = $('workClose');
+    if (closeBtn) closeBtn.addEventListener('click', closeHomeWork);
     var openModule = $('workOpenModule');
     if (openModule) {
       openModule.addEventListener('click', function () {
@@ -367,6 +370,17 @@
     }
   }
 
+  /* 끝난 (또는 멈춘) 작업을 닫고 무대를 되돌린다. 도는 중이면 닫지 않는다. */
+  function closeHomeWork() {
+    if (_running) return false;
+    var view = $('homeWork');
+    if (!view || view.hidden) return false;
+    _show(view, false);
+    return true;
+  }
+
+  ns.closeHomeWork = closeHomeWork;
+  ns._homeWorkSetBusy = _setBusy;   // test_home_stage_browser.py 가 도는 상태를 만든다
   ns.homeAgentStart = start;
   ns.initHomeConsole = init;
   if (document.readyState === 'loading') {

@@ -1480,6 +1480,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/about-deepx.css", "text/css")
         elif path == "/about-deepx.js":
             self._send_shell_asset(BASE_DIR / "static/about-deepx.js", "application/javascript")
+        elif path == "/home-stage.css":
+            self._send_shell_asset(BASE_DIR / "static/home-stage.css", "text/css")
         elif path == "/sdk-library.css":
             self._send_shell_asset(BASE_DIR / "static/sdk-library.css", "text/css")
         elif path == "/sdk-library.js":

@@ -130,7 +130,8 @@ def test_a_module_that_is_down_does_not_block_the_others(browser):
 # ── 정상일 때는 조용해야 한다 ──────────────────────────────────
 #
 # 모듈이 전부 돌면(평상시) 화면은 같은 사실을 세 번 말했다: 목록 위 "8 of 8 running",
-# 행마다 "Running" 여덟 번, 오른쪽 패널에 같은 이름 여덟 개. 이 파일이 지키는 것은
+# 행마다 "Running" 여덟 번, 오른쪽 패널에 같은 이름 여덟 개. 무대 (spec 2026-09-23) 에서
+# 앞의 둘은 없어졌고, 도는 것은 아이콘이 빛으로 말한다 (P2/P3). 이 파일이 지키는 것은
 # "예외를 드러내고 평상시엔 침묵한다" 이다. 같은 파일의 기존 주석이 이미 같은 함정을
 # 다룬다 — "start → 여덟 개는 행동 유도가 여덟 개라는 뜻이고, 그러면 아무것도 행동
 # 유도가 아니다."
@@ -171,12 +172,6 @@ def _state_labels(page):
         ".map(e => e.textContent.trim()).filter(Boolean)")
 
 
-def _running_panel_visible(page):
-    return page.evaluate(
-        "() => { const l=document.getElementById('wsRunning'); if(!l) return false;"
-        " const p=l.closest('.ws-panel'); return !!(p && !p.hidden); }")
-
-
 def test_when_everything_runs_the_screen_stops_repeating_itself(browser):
     server, port = start_module_server("launcher")
     ctx, page = _open(browser, port)
@@ -187,13 +182,6 @@ def test_when_everything_runs_the_screen_stops_repeating_itself(browser):
         assert not _state_labels(page), (
             f"전부 도는데 행마다 상태 라벨이 있다: {_state_labels(page)}"
         )
-        assert not _running_panel_visible(page), (
-            "전부 도는데 Running 패널이 같은 목록을 되풀이한다"
-        )
-        count = page.evaluate(
-            "() => { const e=document.getElementById('moduleUpCount');"
-            " return e ? e.textContent.trim() : ''; }")
-        assert "8" in count, f"그 사실은 한 줄로 남아야 한다: {count!r}"
     finally:
         page.close(); ctx.close(); server.shutdown()
 
@@ -206,9 +194,6 @@ def test_when_one_is_down_the_screen_says_so(browser):
         alive = [k for k in keys if k != "benchmark"]
         _set_health(page, _health(alive, keys))
         page.wait_for_timeout(1200)
-        assert _running_panel_visible(page), (
-            "하나가 꺼졌는데 Running 패널이 나타나지 않는다"
-        )
         assert _state_labels(page), "예외 상태일 때는 행 라벨이 정보가 된다"
     finally:
         page.close(); ctx.close(); server.shutdown()

@@ -128,7 +128,7 @@ def test_setup_is_decided_before_the_run_not_during_it():
     never populated: the loader asked /api/agent/models for an `agents` key
     that endpoint does not return, so every run posted empty strings.
 
-    They live in the Build section now, visible at rest, and the console reads
+    They live in the input form now, visible at rest, and the console reads
     the choice rather than owning a second copy of it.
     """
     src = console()
@@ -141,7 +141,7 @@ def test_setup_is_decided_before_the_run_not_during_it():
     )
 
     html = INDEX.read_text(encoding="utf-8")
-    build = html[html.index('data-i18n="Build"'):html.index('id="studioGrid"')]
+    build = html[html.index('id="homeAskForm"'):html.index('id="studioGrid"')]
     for element_id in ("setupAgent", "setupModel", "setupEffort"):
         assert f'id="{element_id}"' in build, f"{element_id} must sit in Build, before any run"
 

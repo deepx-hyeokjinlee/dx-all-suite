@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 
-from scripts.breakpoint_gate import BASELINE_PATH, SCALE, distinct, scan
+from scripts.breakpoint_gate import BASELINE_PATH, SCALE, distinct, new_values, scan
 
 
 def test_scale_is_ordered_and_distinct():
@@ -18,16 +18,24 @@ def test_scale_is_ordered_and_distinct():
 
 def test_no_file_introduces_a_new_breakpoint():
     baseline = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
-    counts = scan()
-    new = {
-        rel: [v for v in values if v not in set(baseline.get(rel, []))]
-        for rel, values in counts.items()
-    }
-    new = {rel: vals for rel, vals in new.items() if vals}
+    new = new_values(scan(), baseline)
     assert not new, (
         f"새 breakpoint 가 생겼다 — {SCALE} 중에서 고르거나 그 파일이 이미 "
         f"쓰는 값을 쓰세요: {new}"
     )
+
+
+def test_scale_values_need_no_baseline_entry():
+    """메시지는 "스케일 중에서 고르라" 고 하는데 판정은 스케일을 보지 않았다 — 새 파일
+    (launcher/static/home-stage.css) 이 600 · 900 · 1200 을 쓰자 전부 '새 값' 으로 막혔다.
+    스케일 값은 파편화를 늘리지 않으므로 기준값 없이 허용한다."""
+    assert new_values({"new.css": list(SCALE)}, {}) == {}
+
+
+def test_values_off_the_scale_are_still_new():
+    assert new_values({"new.css": [900, 1100]}, {}) == {"new.css": [1100]}
+    # 이미 그 파일이 쓰던 값은 스케일 밖이어도 그대로 둔다 (옮기는 것은 별도 절차)
+    assert new_values({"old.css": [768, 1100]}, {"old.css": [768]}) == {"old.css": [1100]}
 
 
 def test_breakpoint_baseline_has_no_stale_values():

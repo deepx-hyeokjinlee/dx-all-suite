@@ -138,8 +138,8 @@
   }
 
   function buildTutorialCard() {
-    // orbital 레이아웃: footer 위에 삽입
-    const footer = document.querySelector('.landing-footer');
+    // 무대의 투어 자리 (spec 2026-09-23 §5.1). 없으면 예전처럼 #landing 끝.
+    const tour = document.getElementById('homeTour');
     const landing = document.getElementById('landing');
     if (!landing) return;
 
@@ -161,7 +161,7 @@
               onclick="event.stopPropagation()"></button>
     `;
 
-    if (footer) landing.insertBefore(card, footer);
+    if (tour) tour.insertBefore(card, tour.firstChild);
     else landing.appendChild(card);
 
     const sw = card.querySelector('.dxt-lc-switch');
@@ -175,7 +175,7 @@
       const style = document.createElement('style');
       style.id = 'dxt-card-style';
       style.textContent = `
-        /* The card is already inserted above .landing-footer, inside #landing —
+        /* The card is already inserted into #homeTour, inside #landing —
            position:fixed was the only thing lifting it out of the page, onto
            the hero. In flow it sits where the DOM already put it. Colours come
            from the theme; the hard-coded dark ones survived light mode as a

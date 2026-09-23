@@ -1,0 +1,151 @@
+/* ─── Launcher home — the stage ───────────────────────────────────────
+   spec: docs/superpowers/specs/2026-09-23-launcher-home-redesign-design.md §4, §5.7b
+   P1 은 자리만 정한다. 재질 (유리, 빛) 과 움직임은 뒤 단계가 이 파일에 더한다.
+
+   역할마다 한 영역: tour · hero · work · deck(위젯 · 아이콘 · 위젯) · bar.
+   position:absolute/fixed 는 쓰지 않는다 — 투어도 막대도 grid 가 놓는다.
+   계약: tests/launcher/test_home_stage_contract.py, test_home_stage_browser.py */
+
+.landing.home-stage {
+  display: grid;
+  /* 위쪽 줄은 여백 · hero 760 · 투어. 투어를 hero 와 같은 칸에 겹쳐 두면 투어 카드
+     (지금 420px, 모양은 P5) 가 부제를 가렸다 — 2026-09-23 1440 폭 캡처. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 760px) minmax(0, 1fr);
+  grid-template-areas: ". hero tour" "deck deck deck" "bar bar bar";
+  align-content: space-between;
+  justify-content: stretch;
+  row-gap: clamp(var(--sp-4), 3.5vh, var(--sp-6));
+  width: min(100%, 1280px);
+  min-height: 100vh;
+  margin-inline: auto;
+  padding: calc(var(--launcher-topbar-h) + clamp(var(--sp-4), 4vh, var(--sp-7))) var(--sp-5) var(--sp-4);
+  box-sizing: border-box;
+}
+
+/* 투어 컨트롤은 hero 오른쪽 열의 위. 좁아지면 (1200 이하) 자기 줄을 갖는다. */
+.home-tour {
+  grid-area: tour;
+  max-width: 100%;
+  justify-self: end;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-2);
+  z-index: 1;
+}
+
+.stage-hero {
+  grid-area: hero;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  text-align: center;
+}
+/* 크기는 지금 home 과 같다 (P4 에서 56px Display 로). 브라우저 기본값에 맡기지 않는다. */
+.stage-title { margin: 0; font-size: var(--fs-3xl); font-weight: var(--fw-semibold); color: var(--text-primary); }
+.stage-sub { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); }
+.stage-films { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--sp-2); }
+.stage-hero .home-ask { text-align: start; }
+
+/* 입력 뒤의 무대. 보일 때만 자리를 갖는다 (아래 Dock 규칙). */
+.stage-work { grid-area: work; display: none; min-width: 0; }
+.stage-close { float: inline-end; }
+
+/* deck: 위젯 · 아이콘 · 위젯 (spec §4.1 가로 예산 264 · 48 · 520 · 48 · 264) */
+.stage-deck {
+  grid-area: deck;
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr) 264px;
+  grid-template-areas: "dev grid meas";
+  gap: var(--sp-7);
+  align-items: start;
+}
+#homeDevice { grid-area: dev; }
+#homeMeasured { grid-area: meas; }
+.stage-deck .studio-grid {
+  grid-area: grid;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--sp-5) var(--sp-4);
+  align-items: start;
+}
+.stage-widget { min-width: 0; display: flex; flex-direction: column; gap: var(--sp-2); }
+.stage-widget-title { margin: 0; font-size: var(--fs-md); font-weight: var(--fw-semibold); }
+.stage-widget-note { margin: 0; }
+
+/* 타일 — 모양은 P2. 여기서는 세로로 세우기만 한다 (목록 행 → grid 칸). */
+.stage-deck .studio-grid > .orbital-card,
+.stage-deck .studio-grid > .about-book-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-1);
+  min-width: 0;
+}
+.stage-deck .studio-grid .mod-chev { display: none; }
+/* 세로 목록일 때 행 사이에 긋던 선 (inset box-shadow, style.css 의 .orbital-card + .orbital-card)
+   이 칸으로 옮겨 와 몇 칸 위에만 남았다. */
+.stage-deck .studio-grid > *,
+.stage-deck .studio-grid > *:focus-visible { box-shadow: none; }   /* focus 는 outline 이 그린다 */
+
+.stage-bar {
+  grid-area: bar;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-5);
+}
+.stage-legal { margin: 0; }
+
+/* ── Dock: 답이나 콘솔이 보이면 (spec §5.7b) ──────────────────────────
+   class 를 켜는 대신 보이는지에서 계산한다 — 여는 경로가 여럿이라 하나라도
+   켜기를 잊으면 화면이 어긋난다. :has() 는 잊을 수 없다. */
+#landing:has(#homeAnswer:not([hidden])),
+#landing:has(#homeWork:not([hidden])) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "hero hero" "dev meas" "work work" "dock dock" "bar bar";
+  /* 한 화면을 지킨다: 긴 답이나 긴 콘솔은 가운데 칸 안에서만 스크롤한다. */
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  height: 100vh;
+  align-content: stretch;
+}
+#landing:has(#homeAnswer:not([hidden])) .stage-work,
+#landing:has(#homeWork:not([hidden])) .stage-work { display: block; overflow: auto; }
+#landing:has(#homeAnswer:not([hidden])) .stage-deck,
+#landing:has(#homeWork:not([hidden])) .stage-deck { display: contents; }
+#landing:has(#homeAnswer:not([hidden])) .studio-grid,
+#landing:has(#homeWork:not([hidden])) .studio-grid {
+  grid-area: dock;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+#landing:has(#homeAnswer:not([hidden])) .studio-grid :is(.card-desc, .card-state, .orbital-port),
+#landing:has(#homeWork:not([hidden])) .studio-grid :is(.card-desc, .card-state, .orbital-port),
+#landing:has(#homeAnswer:not([hidden])) .stage-widget :is(.stage-widget-title, .ws-facts),
+#landing:has(#homeWork:not([hidden])) .stage-widget :is(.stage-widget-title, .ws-facts) { display: none; }
+#landing:has(#homeAnswer:not([hidden])) .home-tour,
+#landing:has(#homeWork:not([hidden])) .home-tour { display: none; }
+
+/* ── 좁아질 때 (spec §4.2, breakpoint 는 스케일 값만) ── */
+@media (max-width: 1200px) {
+  .landing.home-stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "tour" "hero" "deck" "bar";
+  }
+  .home-tour { flex-direction: row; }
+  .stage-deck {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "grid grid" "dev meas";
+  }
+}
+@media (max-width: 900px) {
+  .stage-deck .studio-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .stage-deck { grid-template-columns: minmax(0, 1fr); grid-template-areas: "grid" "dev" "meas"; }
+  .stage-deck .studio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

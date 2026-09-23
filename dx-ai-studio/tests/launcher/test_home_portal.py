@@ -108,20 +108,16 @@ def index() -> str:
     return INDEX.read_text(encoding="utf-8")
 
 
-def test_every_nav_item_points_at_something_that_exists():
-    """The nav named five sections; the workspace has three surfaces.
+def test_the_home_has_no_section_nav():
+    """The nav pointed at sections of one page — Home, Modules, Learn.
 
-    Asserting a fixed list is how a nav ends up pointing at anchors that were
-    deleted — which is exactly what happened when Models, Solutions and
-    Ecosystem left the home. Assert the link instead: whatever the nav offers
-    must resolve to an id in this document.
+    The home is one screen now (spec 2026-09-23 §5.1), so an anchor has nowhere
+    to scroll. SDK Library and About became books in the grid; the wordmark goes
+    home. A nav that still existed would point at nothing.
     """
     html = index()
-    assert 'class="portal-nav"' in html, "the home has no horizontal nav"
-    targets = re.findall(r'class="portal-nav-item[^"]*"[^>]*href="#([\w-]+)"', html)
-    assert targets, "the nav has no items"
-    for target in targets:
-        assert f'id="{target}"' in html, f"nav points at #{target}, which is not on the page"
+    assert 'class="portal-nav' not in html, "the section nav is back"
+    assert 'id="portalNav"' not in html
 
 
 def test_the_duplicate_dot_strip_is_gone():
@@ -160,15 +156,15 @@ def test_the_ring_left_the_resting_home():
 
 
 def test_the_prompt_is_the_first_thing_in_the_work_column():
-    """The hero is gone; the command line took its job.
+    """The command line comes before the tools.
 
-    A 38px headline and a two-line subtitle were spending the top of a local
-    app's work surface on a pitch. The placeholder says the same thing in the
-    place you would type it.
+    A 38px headline and a two-line subtitle once spent the top of a local app's
+    work surface on a pitch. The stage keeps a title, but the input is still the
+    first thing you can act on, above the module grid.
     """
     html = index()
     assert 'class="home-hero"' not in html, "the marketing hero is back"
-    main = html[html.index('class="ws-main"'):]
+    main = html[html.index('id="homeStage"'):]
     assert main.index('id="homeAsk"') < main.index('id="studioGrid"'), (
         "the prompt must come before the module grid"
     )
@@ -180,26 +176,17 @@ def test_the_modules_are_above_the_fold():
     """The only reason to open a launcher is to launch something.
 
     The previous home stacked seven full-width sections and put the eight
-    module cards fourth, two scrolls down. In the workspace they sit directly
-    under the command line, and everything that is not a tool is below both
-    columns.
+    module cards fourth, two scrolls down. On the stage they sit directly under
+    the command line, and everything that is not a tool is in the bar below.
     """
     html = index()
-    ws = html.index('class="workspace"')
+    stage = html.index('id="homeStage"')
     grid = html.index('id="studioGrid"')
-    foot = html.index('class="ws-foot"')
-    assert ws < grid < foot
+    bar = html.index('id="homeBar"')
+    assert stage < grid < bar
     for gone in ('id="models"', 'id="ecosystem"', 'id="solutions"'):
         assert gone not in html, f"{gone} is a page section, not a work surface"
 
-
-def test_the_state_column_yields_while_the_agent_runs():
-    """The working view was asked for at full width, and it gets it."""
-    css = style()
-    assert "grid-template-columns" in rule_body(css, ".workspace.is-working")
-    assert "display: none" in rule_body(css, ".workspace.is-working .ws-side")
-    js = (ROOT / "launcher" / "static" / "home-console.js").read_text(encoding="utf-8")
-    assert "is-working" in js, "nothing tells the workspace a run has started"
 
 
 def test_hero_never_shows_an_empty_box():
@@ -219,24 +206,6 @@ def test_hero_says_whether_the_hardware_is_there():
     html = index()
     assert 'id="heroDeviceChip"' in html
 
-
-def test_workflow_strip_is_drawable_in_both_themes():
-    """The path from ONNX to silicon is the product, so it should be legible.
-
-    It exists today as two raster diagrams authored on a dark ground. A PNG
-    cannot follow the theme, and shipping a second one per theme is the
-    duplication this redesign is removing — so the strip is inline SVG that
-    inherits currentColor.
-    """
-    html = index()
-    assert 'class="ws-flow"' in html, "no workflow strip on the home"
-    strip = html[html.index('class="ws-flow"'):]
-    strip = strip[: strip.index("</nav>")]
-    assert "<svg" in strip, "the strip must be drawn, not photographed"
-    assert ".png" not in strip and ".jpg" not in strip, (
-        "a raster diagram cannot follow the theme"
-    )
-    assert "currentColor" in strip, "the strip must inherit the text colour"
 
 
 # ── the answered state ──────────────────────────────────────────
@@ -318,15 +287,19 @@ def test_what_leaves_the_app_sits_below_the_work_surface():
 
     Neither is state and neither is a tool, so on a workspace they were filler
     with the same visual weight as the modules. The links that do lead
-    somewhere real survive in one quiet band under both columns.
+    somewhere real live in the bar under the stage; the replay control is part
+    of the tour, top right (spec 2026-09-23 §5.1, §5.7).
     """
     html = index()
-    foot = html[html.index('class="ws-foot"'):]
-    assert 'class="deepx-links"' in foot, "the DEEPX links lost their home"
-    assert 'id="replayBtn"' in foot, "the replay control was viewport-fixed; it is not now"
-    side = html[html.index('class="ws-side"'):html.index('class="ws-foot"')]
-    assert 'class="deepx-links"' not in side, (
-        "a state column that also carries a link directory is not a state column"
+    bar = html[html.index('id="homeBar"'):]
+    bar = bar[: bar.index("</footer>")]
+    assert 'class="deepx-links"' in bar, "the DEEPX links lost their home"
+    assert 'id="replayBtn"' not in bar, "replay is the tour's, not a destination"
+    tour = html[html.index('id="homeTour"'):html.index('id="homeStage"')]
+    assert 'id="replayBtn"' in tour, "the replay control left the tour"
+    widgets = html[html.index('id="homeDevice"'):html.index('id="homeBar"')]
+    assert 'class="deepx-links"' not in widgets, (
+        "a state widget that also carries a link directory is not a state widget"
     )
 
 

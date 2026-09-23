@@ -217,21 +217,21 @@ def test_benchmark_toolbar_preserves_edgeguide_button():
 
 
 
-def test_launcher_toolbar_sits_beside_the_portal_nav():
-    """The toolbar and the section nav are siblings in one bar.
+def test_launcher_toolbar_keeps_its_place_in_the_top_bar():
+    """The toolbar sits in the right of the top bar, and nothing else takes the centre.
 
-    This used to pin the toolbar next to the eight-module dot strip. The strip
-    repeated navigation the module cards already provided, so it went; what the
-    contract is really protecting is that the toolbar keeps its place in the top
-    bar while the nav takes the centre.
+    This used to pin the toolbar beside the section nav (and before that, beside
+    the eight-module dot strip). The nav went with the one-screen stage (spec
+    2026-09-23 §5.1) — an anchor on a page that does not scroll points at nothing.
+    What the contract protects is unchanged: the toolbar keeps its place in the bar.
     """
     nodes = parse_html_nodes(read_text(ROOT / "launcher" / "static" / "index.html"))
-    topbar = find_one(nodes, lambda node: has_classes(node, "top-bar-right"), "launcher top-bar-right")
+    bar = find_one(nodes, lambda node: has_classes(node, "top-bar"), "launcher top-bar")
+    right = find_one(nodes, lambda node: has_classes(node, "top-bar-right"), "launcher top-bar-right")
     toolbar = find_one(nodes, lambda node: has_id(node, "launcherToolbar") and has_classes(node, "toolbar"), "launcher toolbar")
-    nav = find_one(nodes, lambda node: has_id(node, "portalNav"), "launcher portal nav")
-    assert nodes[toolbar]["parent"] == topbar
-    assert nodes[nav]["parent"] == nodes[topbar]["parent"]
-
+    assert nodes[toolbar]["parent"] == right
+    assert nodes[right]["parent"] == bar
+    assert not [n for n in nodes if has_id(n, "portalNav")], "the section nav is back"
 
 def test_shared_foundation_css_files_exist():
     for name in ("dx-fonts.css", "dx-tokens.css", "dx-base.css", "dx-utilities.css"):

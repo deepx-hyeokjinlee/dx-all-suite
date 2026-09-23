@@ -247,6 +247,8 @@
     if (go) go.addEventListener('click', _handOffToAgent);
     var no = $('answerAgentCancel');
     if (no) no.addEventListener('click', function () { _show($('homeAnswer'), false); });
+    var closeBtn = $('answerClose');
+    if (closeBtn) closeBtn.addEventListener('click', closeHomeAnswer);
 
     /* Every label in the panel is built in JS, so data-i18n never reaches it.
        The sentence is kept on the panel, so a language change just answers it
@@ -261,6 +263,15 @@
     }
   }
 
+  /* 답을 닫고 무대를 되돌린다 (✕ · Esc). 닫혀 있으면 아무것도 하지 않는다. */
+  function closeHomeAnswer() {
+    var panel = $('homeAnswer');
+    if (!panel || panel.hidden) return false;
+    _show(panel, false);
+    return true;
+  }
+
+  ns.closeHomeAnswer = closeHomeAnswer;
   ns.homeAsk = ask;
   /* 작업 뷰도 같은 길로 나간다 — 나가는 방법이 둘이면 하나는 반드시 낡는다. */
   ns.homeLeaveTo = _leaveHome;

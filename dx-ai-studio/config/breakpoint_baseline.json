@@ -45,8 +45,12 @@
   "launcher/static/about-deepx.css": [
     1979
   ],
-  "launcher/static/style.css": [
+  "launcher/static/home-stage.css": [
     600,
+    900,
+    1200
+  ],
+  "launcher/static/style.css": [
     768,
     1200,
     1440

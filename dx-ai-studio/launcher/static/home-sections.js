@@ -31,7 +31,6 @@
 
   /* ── the catalogue's size, on the card that opens it ─────── */
 
-  var _counts = null;
   var _models = null;
 
   /* 각 모듈이 자기 숫자를 든다. 여덟 행이 이름 + 산문 한 줄로만 되어 있으면 서로
@@ -51,9 +50,8 @@
         if (!models.length) return null;
         var tasks = {};
         models.forEach(function (m) { var t = (m.display || {}).task; if (t) tasks[t] = 1; });
-        _counts = { models: models.length, tasks: Object.keys(tasks).length };
         _models = models;
-        _paintPerf(models);
+        _paintMeasuredCount(models);
         return [[models.length, 'models'], [Object.keys(tasks).length, 'tasks']];
       } },
     { app: 'app', url: '/app/api/demos', pick: function (d) {
@@ -109,117 +107,14 @@
 
   function _paintCount() { _paintFacts(); }
 
-  /* 어떤 모델을 보여줄지. 제일 빠른 것만 뽑으면 super-resolution 이 19,000
-     FPS 로 표를 독차지하는데, 그건 이 칩으로 무엇을 할 수 있는지에 대한
-     대답이 아니다. task 당 하나씩, 그 task 에서 가장 빠른 것을 고른다 —
-     사람들이 실제로 돌리는 일 다섯 가지가 각각 얼마나 나오는지가 답이다. */
-  var HEADLINE_TASKS = [
-    'object_detection', 'pose_estimation', 'semantic_segmentation',
-    'face_detection', 'classification'
-  ];
-
   function _fmt(n) {
     return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
-
-  /* 지금 걸린 필터. 기본(둘 다 비어 있음)은 예전과 같은 화면이다. */
-  var _perfQuery = '';
-  var _perfTask = '';
-  var PERF_LIMIT = 8;
-
-  function _perfRowsFor(models) {
-    var q = _perfQuery.trim().toLowerCase();
-    if (!q && !_perfTask) {
-      /* 기본: task 당 하나씩, 그 task 에서 가장 빠른 것. 제일 빠른 것만 뽑으면
-         super-resolution 이 표를 독차지하는데 그건 이 칩으로 무엇을 할 수 있는지에
-         대한 대답이 아니다. */
-      var best = {};
-      models.forEach(function (m) {
-        var d = m.display || {};
-        var fps = (m.performance || {}).fps;
-        if (!fps || HEADLINE_TASKS.indexOf(d.task) === -1) return;
-        if (!best[d.task] || fps > best[d.task].fps) {
-          best[d.task] = { fps: fps, name: d.class_name || d.name || m.id, id: m.id, task: d.task };
-        }
-      });
-      return HEADLINE_TASKS.map(function (t) { return best[t]; }).filter(Boolean);
-    }
-    /* 거르는 중에는 task 당 하나로 줄이지 않는다 — "내 모델이 몇 FPS 인가" 가
-       질문이므로 같은 task 안의 여러 개를 비교할 수 있어야 한다. */
-    var hits = [];
-    models.forEach(function (m) {
-      var d = m.display || {};
-      var fps = (m.performance || {}).fps;
-      if (!fps) return;
-      if (_perfTask && d.task !== _perfTask) return;
-      if (q) {
-        var hay = ((d.class_name || '') + ' ' + (d.name || '') + ' ' + m.id).toLowerCase();
-        if (hay.indexOf(q) === -1) return;
-      }
-      hits.push({ fps: fps, name: d.class_name || d.name || m.id, id: m.id, task: d.task });
-    });
-    hits.sort(function (a, b) { return b.fps - a.fps; });
-    return hits.slice(0, PERF_LIMIT);
-  }
-
-  function _paintPerfRows(models) {
-    var body = $('perfRows');
-    var empty = $('measuredEmpty');
-    if (!body) return;
-    var rows = _perfRowsFor(models);
-    body.innerHTML = '';
-    if (empty) empty.hidden = rows.length > 0;
-    rows.forEach(function (r) {
-      var tr = document.createElement('tr');
-      tr.dataset.modelId = r.id;
-      tr.innerHTML =
-        '<td class="perf-name">' + r.name + '</td>' +
-        '<td class="perf-task">' + r.task.replace(/_/g, ' ') + '</td>' +
-        '<td class="perf-fps"><b>' + _fmt(r.fps) + '</b> FPS</td>';
-      tr.addEventListener('click', function () {
-        window.location.href = '/zoo/#model=' + encodeURIComponent(r.id);
-      });
-      body.appendChild(tr);
-    });
-  }
-
-  function _paintPerfCats(models) {
-    var box = $('measuredCats');
-    if (!box) return;
-    var counts = {};
-    models.forEach(function (m) {
-      var d = m.display || {};
-      if (!(m.performance || {}).fps || !d.task) return;
-      counts[d.task] = (counts[d.task] || 0) + 1;
-    });
-    var tasks = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
-    /* 22개를 다 늘어놓으면 표보다 칩이 길어진다. 많은 순으로 몇 개만. */
-    tasks = tasks.slice(0, 6);
-    box.innerHTML = '';
-    var mk = function (task, label) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'perf-cat' + (_perfTask === task ? ' is-on' : '');
-      b.dataset.task = task;
-      b.textContent = label;
-      b.addEventListener('click', function () {
-        _perfTask = (_perfTask === task) ? '' : task;
-        _paintPerfCats(models);
-        _paintPerfRows(models);
-      });
-      box.appendChild(b);
-    };
-    mk('', _t('All'));
-    tasks.forEach(function (t) { mk(t, t.replace(/_/g, ' ')); });
-  }
-
-  function _paintPerf(models) {
-    var block = $('measured');
-    if (!block || !$('perfRows')) return;
-
-    _paintPerfCats(models);
-    _paintPerfRows(models);
-
+  /* 오른쪽 위젯의 한 줄. 표는 home 을 떠났다 (spec §5.6) — 무엇이 얼마나 빠른지는
+     Benchmark 와 Model Zoo 가 보여준다. 여기는 이 장치에서 몇 개를 쟀는지만 말한다. */
+  function _paintMeasuredCount(models) {
+    var note = $('measuredCount');
+    if (!note) return;
     var measured = 0;
     var tasks = {};
     models.forEach(function (m) {
@@ -227,21 +122,8 @@
       if (d.task) tasks[d.task] = 1;
       if ((m.performance || {}).fps) measured += 1;
     });
-    var note = $('measuredCount');
-    if (note) {
-      note.textContent = _fmt(measured) + ' ' + _t('measured') + ' · ' +
-        Object.keys(tasks).length + ' ' + _t('tasks');
-    }
-
-    var search = $('measuredSearch');
-    if (search && !search._dxBound) {
-      search._dxBound = true;
-      search.addEventListener('input', function () {
-        _perfQuery = search.value || '';
-        _paintPerfRows(models);
-      });
-    }
-    block.hidden = false;
+    note.textContent = _fmt(measured) + ' ' + _t('measured') + ' · ' +
+      Object.keys(tasks).length + ' ' + _t('tasks');
   }
 
   function loadCatalogueSize() {
@@ -268,7 +150,6 @@
     if (!health) return;
 
     var cards = document.querySelectorAll('.orbital-card[data-app]');
-    var up = [];
     var down = 0;
     cards.forEach(function (card) {
       var key = HEALTH_KEY[card.dataset.app] || card.dataset.app;
@@ -277,8 +158,8 @@
 
     /* "start →" 여덟 개는 행동 유도가 여덟 개라는 뜻이고, 그러면 아무것도 행동
        유도가 아니다. 상태 라벨도 같다 — 전부 돌 때(평상시) "Running" 여덟 개는
-       아무것도 말하지 않으면서 행마다 같은 폭을 차지하고, 그 사실은 목록 위
-       "8 of 8 running" 이 이미 말한다. 그러니 예외가 있을 때만 말한다.
+       아무것도 말하지 않으면서 칸마다 같은 폭을 차지한다. 그러니 예외가 있을 때만
+       말한다.
        점은 그대로 둔다 — 점은 한 글자도 차지하지 않으면서 상태를 말한다.
        계약: tests/launcher/test_home_density_browser.py */
     var exceptional = down > 0;
@@ -292,34 +173,6 @@
         line.textContent = (exceptional && alive) ? _t('Running') : '';
         line.className = 'card-state' + (alive ? ' is-alive' : '');
       }
-      if (alive) {
-        var name = card.querySelector('.orbital-name');
-        up.push(name ? name.textContent.trim() : card.dataset.app);
-      }
-    });
-
-    /* 0 은 셀 것이 없다는 뜻이라 세지 않는다. */
-    var count = $('moduleUpCount');
-    if (count) {
-      count.textContent = up.length
-        ? up.length + ' ' + _t('of') + ' 8 ' + _t('running')
-        : '';
-    }
-
-    var list = $('wsRunning');
-    if (!list) return;
-    /* 없음을 알리기 위해 패널 하나를 통째로 쓰지 않는다. 돌고 있는 것이
-       생기면 그때 나타난다. */
-    var panel = list.closest ? list.closest('.ws-panel') : null;
-    /* 전부 돌면 이 패널은 목록이 이미 말한 것을 되풀이할 뿐이다. 무언가 꺼져
-       있을 때에만 "그래도 이것들은 돌고 있다" 가 정보가 된다. */
-    if (panel) panel.hidden = !up.length || !exceptional;
-    list.innerHTML = '';
-    if (!up.length) return;
-    up.forEach(function (name) {
-      var li = document.createElement('li');
-      li.textContent = name;
-      list.appendChild(li);
     });
   }
 
@@ -334,7 +187,7 @@
     if (window.DXI18n && DXI18n.onLangChange) {
       DXI18n.onLangChange(function () {
         _paintCount();
-        if (_models) _paintPerf(_models);
+        if (_models) _paintMeasuredCount(_models);
         refreshModuleState();
       });
     }

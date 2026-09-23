@@ -61,20 +61,21 @@ def _px(page, selector, prop="fontSize"):
         " const v = getComputedStyle(e)[p]; return parseFloat(v); }", [selector, prop])
 
 
-BUILD_H = ".ws-block:not(#measured):not(#studio) .ws-block-head h2"
-MEASURED_H = "#measured .ws-block-head h2"
-MODULES_H = "#studio .ws-block-head h2"
+# 무대 (spec 2026-09-23): hero 제목 하나와, 양옆 위젯의 제목 둘.
+BUILD_H = "#homeStage .stage-title"
+MEASURED_H = "#homeMeasured .stage-widget-title"
+MODULES_H = "#homeDevice .stage-widget-title"
 
 
 def test_build_is_the_one_heading_that_leads(home):
     build, measured, modules = (_px(home, s) for s in (BUILD_H, MEASURED_H, MODULES_H))
     assert build and measured and modules, (build, measured, modules)
-    assert build > measured, f"Build {build}px 가 Measured {measured}px 보다 크지 않다"
-    assert build > modules, f"Build {build}px 가 Modules {modules}px 보다 크지 않다"
+    assert build > measured, f"Build {build}px 가 Measured 위젯 제목 {measured}px 보다 크지 않다"
+    assert build > modules, f"Build {build}px 가 Device 위젯 제목 {modules}px 보다 크지 않다"
 
 
 def test_the_two_supporting_headings_agree_with_each_other(home):
-    """둘 중 하나만 내리면 위계가 셋이 되어 다시 읽기 어려워진다."""
+    """양옆 위젯의 제목. 둘 중 하나만 내리면 위계가 셋이 되어 다시 읽기 어려워진다."""
     assert _px(home, MEASURED_H) == _px(home, MODULES_H)
 
 
@@ -211,23 +212,22 @@ def test_the_fold_summary_says_what_is_selected(home):
 # ── 리듬과 rail ────────────────────────────────────────────────
 
 
-def test_the_module_list_has_groups_instead_of_eight_flat_rows(home):
-    """평평한 8행은 한 덩어리로 읽힌다. 얇은 라벨 셋으로 리듬을 준다.
-
-    행의 순서와 구조는 바꾸지 않는다 — 런처 튜토리얼이 #studioGrid 와
-    .orbital-card 를 가리키므로 라벨만 끼워 넣는다.
+def test_the_grid_is_ten_tiles_in_two_rows(home):
+    """그룹 라벨 셋 (Build · Models · Measure) 은 세로 목록의 리듬이었다. 무대에서는
+    도구가 칸이고, 칸의 자리가 곧 순서다 (spec 2026-09-23 §4.1): 1행 App · Stream ·
+    Model Zoo · Compiler · SDK Library, 2행 Benchmark · EdgeGuide · Monitor · Agent Dev ·
+    About DEEPX. 튜토리얼은 #studioGrid 와 .orbital-card 를 가리키므로 둘 다 남는다.
     """
-    groups = home.evaluate(
-        "() => [...document.querySelectorAll('#studioGrid .studio-group')]"
-        ".map(e => e.textContent.trim())")
-    assert len(groups) == 3, f"모듈 그룹 라벨이 {len(groups)}개다: {groups}"
-
-    cards = home.evaluate(
-        "() => [...document.querySelectorAll('#studioGrid .orbital-card')]"
-        ".map(e => e.dataset.app)")
-    assert cards == ["app", "stream", "agent", "zoo", "compiler",
-                     "benchmark", "planner", "dx_monitor"], cards
-
+    assert home.evaluate("() => document.querySelectorAll('#studioGrid .studio-group').length") == 0
+    tiles = home.evaluate(
+        "() => [...document.querySelectorAll('#studioGrid > *')].map(e =>"
+        " e.dataset.app || (e.classList.contains('sdk-card') ? 'sdk' : 'about'))")
+    assert tiles == ["app", "stream", "zoo", "compiler", "sdk",
+                     "benchmark", "planner", "dx_monitor", "agent", "about"], tiles
+    rows = home.evaluate(
+        "() => new Set([...document.querySelectorAll('#studioGrid > *')]"
+        ".map(e => Math.round(e.getBoundingClientRect().top))).size")
+    assert rows == 2, f"1512 폭에서 {rows}줄이다"
 
 def test_the_device_card_carries_what_the_device_is_doing(browser):
     """Running 패널을 접으면서 짧아진 rail 을, 카드가 자기 주제로 채운다.
@@ -263,7 +263,7 @@ def test_device_facts_show_live_values_when_a_device_is_there(browser):
         page.evaluate(_QUIET)
         page.wait_for_timeout(600)
         facts = page.evaluate(
-            "() => [...document.querySelectorAll('.ws-facts dt')].map(e => e.textContent.trim())")
+            "() => [...document.querySelectorAll('#homeDevice .ws-facts dt')].map(e => e.textContent.trim())")
         assert any("emp" in f or "온도" in f or "Cores" in f or "코어" in f for f in facts), (
             f"장치가 있는데 변하는 값이 하나도 없다: {facts}"
         )
