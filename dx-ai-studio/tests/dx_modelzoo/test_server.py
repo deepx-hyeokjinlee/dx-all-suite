@@ -375,7 +375,7 @@ class TestServerRoutes:
         assert 'tutorial.css' in html, "tutorial.css 태그 누락"
 
     def test_shared_font_served(self, server):
-        resp = urlopen(f"http://127.0.0.1:{TEST_PORT}/static/shared/fonts/inter-v20-latin-regular.woff2")
+        resp = urlopen(f"http://127.0.0.1:{TEST_PORT}/static/shared/fonts/inter-4.1-var-latin.woff2")
         data = resp.read()
         content_type = resp.headers.get("Content-Type", "").lower()
         assert resp.status == 200

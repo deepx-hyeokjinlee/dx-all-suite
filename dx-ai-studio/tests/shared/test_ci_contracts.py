@@ -17,6 +17,7 @@ BROWSER_SUITE_PATHS = {
     "tests/launcher/test_home_router_browser.py",
     "tests/launcher/test_sdk_library_module_nav_browser.py",
     "tests/shared/test_browser_runtime.py",
+    "tests/shared/test_font_rendering_browser.py",
     "tests/test_catalog_virtual_scroll_browser.py",
     "tests/test_iframe_lang_sync_browser.py",
     "tests/test_tutorial_stale_step.py",
@@ -144,7 +145,8 @@ def test_ci_dependency_manifest_covers_collection_dependencies():
     }
 
     assert {
-        "pytest", "numpy", "onnx", "pillow", "playwright", "jinja2", "cffi"
+        "pytest", "numpy", "onnx", "pillow", "playwright", "jinja2", "cffi",
+        "fonttools", "brotli",
     } <= package_names
 
 

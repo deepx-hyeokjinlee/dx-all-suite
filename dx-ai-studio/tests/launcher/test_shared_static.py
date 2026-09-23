@@ -83,7 +83,7 @@ def test_launcher_serves_shared_css_foundation(launcher_server):
 
 def test_launcher_serves_shared_font_binary(launcher_server):
     resp = urlopen(
-        f"{launcher_server}/static/shared/fonts/inter-v20-latin-regular.woff2",
+        f"{launcher_server}/static/shared/fonts/inter-4.1-var-latin.woff2",
         timeout=5,
     )
     body = resp.read()
@@ -110,7 +110,7 @@ def test_launcher_serves_shared_chat_widget_static(launcher_server, asset_path):
     (
         "/static/sdk-library-data.json",
         "/static/about-data.json",
-        "/static/fonts/inter-v20-latin-regular.woff2",
+        "/static/fonts/inter-4.1-var-latin.woff2",
         "/static/img/deepx-logo.svg",
         "/static/img/about/dx-m1-die.jpg",
     ),

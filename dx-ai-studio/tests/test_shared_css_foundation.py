@@ -21,7 +21,7 @@ FOUNDATION_HREFS = [
 ]
 
 FONT_FILES = [
-    "inter-v20-latin-regular.woff2",
+    "inter-4.1-var-latin.woff2",
     "jetbrains-mono-v24-latin-regular.woff2",
     "NotoSans-Regular.ttf",
     "NotoSans-Bold.ttf",
@@ -242,7 +242,7 @@ def test_shared_foundation_css_files_exist():
 
 def test_shared_font_css_uses_shared_font_paths():
     css = read_text(SHARED_STATIC / "dx-fonts.css")
-    assert "/static/shared/fonts/inter-v20-latin-regular.woff2" in css
+    assert "/static/shared/fonts/inter-4.1-var-latin.woff2" in css
     assert "/static/shared/fonts/jetbrains-mono-v24-latin-regular.woff2" in css
     assert "/static/shared/fonts/NotoSans-Regular.ttf" in css
     assert "/static/fonts/" not in css

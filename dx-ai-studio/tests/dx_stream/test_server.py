@@ -132,11 +132,11 @@ def test_pipeline_iso_css_served(server):
 
 def test_shared_foundation_css_served(server):
     css = _get("/static/shared/dx-fonts.css").decode()
-    assert "/static/shared/fonts/inter-v20-latin-regular.woff2" in css
+    assert "/static/shared/fonts/inter-4.1-var-latin.woff2" in css
 
 
 def test_shared_font_served(server):
-    data = _get("/static/shared/fonts/inter-v20-latin-regular.woff2")
+    data = _get("/static/shared/fonts/inter-4.1-var-latin.woff2")
     assert data
     assert data[:4] == b"wOF2"
 

@@ -87,6 +87,7 @@ BROWSER_TESTS=(
   tests/launcher/test_home_router_browser.py
   tests/launcher/test_sdk_library_module_nav_browser.py
   tests/shared/test_browser_runtime.py
+  tests/shared/test_font_rendering_browser.py
   tests/test_catalog_virtual_scroll_browser.py
   tests/test_iframe_lang_sync_browser.py
   tests/test_toolbar_reachable_when_narrow.py
@@ -131,6 +132,9 @@ echo "== breakpoint ratchet =="
 
 echo "== 간격 스케일 ratchet =="
 "$PY" -m scripts.spacing_scale_gate || exit 1
+
+echo "== 글꼴 coverage (한중일 subset) =="
+"$PY" -m scripts.font_coverage_gate || exit 1
 
 echo ""
 echo "== 0/7 Infra + release contracts =="

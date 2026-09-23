@@ -27,8 +27,9 @@
   --dur:.24s;
   --dur-lg:.32s;
   --transition:all var(--dur) var(--ease);
-  --font:'Inter','Noto Sans','Noto Sans CJK',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-  --mono:'JetBrains Mono','Noto Sans Mono','Noto Sans CJK','Fira Code','Cascadia Code',monospace;
+  --font-cjk:'DX CJK SC';
+  --font:'Inter',var(--font-cjk),'Noto Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --mono:'JetBrains Mono','Noto Sans Mono',var(--font-cjk),'Fira Code','Cascadia Code',monospace;
   /* Type scale — derived from actual usage across all modules (dense NPU-tooling UI). */
   --fs-2xs:10px;--fs-xs:11px;--fs-sm:12px;--fs-base:13px;--fs-md:14px;--fs-lg:16px;--fs-xl:18px;--fs-2xl:20px;--fs-3xl:24px;--fs-4xl:32px;--fs-5xl:48px;
   --fw-regular:400;--fw-medium:500;--fw-semibold:600;--fw-bold:700;
@@ -49,3 +50,10 @@
   --op-compute:#4f46e5;--op-memory:#64748b;--op-activation:#059669;--op-normalization:#0d9488;
   --op-pooling:#7c3aed;--op-elementwise:#d97706;--op-quantize:#ca8a04;--op-other:#6b7280;
 }
+
+/* <html lang> 은 shared/static/i18n.js · launcher-language.js 가 언어를 바꿀 때 갱신한다.
+   --font 는 같은 요소(:root)에서 계산되므로 --font-cjk 만 바꾸면 따라온다. */
+:root:lang(ko){--font-cjk:'DX CJK KR','DX CJK SC'}
+:root:lang(ja){--font-cjk:'DX CJK JP','DX CJK SC'}
+:root:lang(zh-CN){--font-cjk:'DX CJK SC'}
+:root:lang(zh-TW){--font-cjk:'DX CJK TC','DX CJK SC'}
