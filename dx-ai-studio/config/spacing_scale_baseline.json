@@ -1,10 +1,5 @@
 {
-  "docs/source/stylesheets/extra.css": 2,
-  "dx_agent_dev/static/css/console.css": 38,
   "dx_app/static/css/style.css": 226,
-  "dx_benchmark/static/css/style.css": 26,
-  "dx_modelzoo/static/css/style.css": 25,
-  "dx_planner/static/css/style.css": 23,
   "dx_stream/static/css/stream.css": 3,
   "launcher/static/about-deepx.css": 55,
   "launcher/static/sdk-library.css": 52,
