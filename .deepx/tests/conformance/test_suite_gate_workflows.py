@@ -281,3 +281,40 @@ def test_how_to_fix_offers_the_dev_integration_rerun_on_a_failed_main_push(varia
     for needle in ("/actions/workflows/", "/dispatches", "submodule_refs", "gh workflow run", "Run workflow", "actions:write"):
         assert needle in run, f"How-to-fix must contain {needle!r}"
     assert '"$EVENT" = push' in run and '"$REF_NAME" = main' in run, "only a failed push to main triggers the follow-up"
+
+
+# ── 2026-09-23 run 1830 (PR #91, runner do-rt-08_01): exit 128 in the pointer-mode listing ──
+
+def test_pointer_mode_listing_is_not_recursive(variant):
+    """`git submodule status --recursive` walked into a stale dx_fw tree left on the reused runner
+    workspace and died on a broken nested .git; the informational listing must name the four
+    initialised paths only."""
+    _, v = variant
+    runs = _runs(_job(_load(v["file"])))
+    assert "submodule status --recursive" not in runs
+    assert "submodule status -- dx-runtime dx-compiler" in runs
+    assert "-C dx-runtime submodule status -- dx_app dx_stream" in runs
+
+
+def test_mode_step_fetches_the_merge_parent_for_pull_requests(variant):
+    """gate_mode.sh compares the test merge against its first parent (current base tip); the depth-1
+    checkout lacks it, so the mode step must fetch it — read from the raw commit object (shallow-safe)."""
+    _, v = variant
+    steps = _job(_load(v["file"]))["steps"]
+    mode = next(s for s in steps if s.get("id") == "mode")
+    run = mode.get("run", "")
+    assert "cat-file -p" in run and "parent" in run, "merge parent must be read from the raw commit object"
+    assert run.count("fetch -q --depth=1 origin") >= 2, "both the base and the merge parent must be fetched"
+
+
+def test_ghes_resets_the_reused_workspace_before_checkout():
+    """Self-hosted runners reuse $GITHUB_WORKSPACE; actions/checkout cleans the superproject only.
+    Initialised submodule trees from other jobs must be wiped before the checkout step."""
+    steps = _job(_load(VARIANTS["ghes"]["file"]))["steps"]
+    names = [s.get("name", "") for s in steps]
+    reset = next((i for i, s in enumerate(steps) if "submodule deinit --all --force" in s.get("run", "")), None)
+    assert reset is not None, "expected a workspace-reset step running `git submodule deinit --all --force`"
+    checkout = next(i for i, s in enumerate(steps) if str(s.get("uses", "")).startswith("actions/checkout"))
+    assert reset < checkout, f"reset must run before checkout: {names}"
+    run = steps[reset]["run"]
+    assert "GITHUB_WORKSPACE" in run and "rm -rf" in run and ".git/modules" in run

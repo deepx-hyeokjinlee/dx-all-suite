@@ -215,6 +215,9 @@ class Env:
         path = f"{self.bin}:{self.shadow_bin()}" if hide_gh else f"{self.bin}:{os.environ['PATH']}"
         env = {**os.environ, "PATH": path}
         env.pop("GIT_TERMINAL_PROMPT", None)          # the tool itself must set it
+        # Tests pin the Korean wording; force it regardless of the runner's locale. A test that wants the
+        # locale to decide passes extra_env={"GHES_SYNC_LANG": ""} (empty = unset for the tool).
+        env.setdefault("GHES_SYNC_LANG", "ko")
         env.update(extra_env or {})
         return subprocess.run(["bash", str(TOOL), "--config", str(self.conf), *args],
                               text=True, capture_output=True, timeout=timeout, env=env)

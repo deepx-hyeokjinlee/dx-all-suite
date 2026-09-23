@@ -17,6 +17,12 @@
 #                [--from SHA] [--to SHA]      # range to inspect (push: event.before..sha,
 #                                             #   pull_request: base.sha..merge sha). The
 #                                             #   caller must have fetched --from already.
+#                                             #   pull_request: when --to is the test merge, its
+#                                             #   FIRST PARENT (the current base tip) replaces
+#                                             #   --from, so bumps the base made after base.sha
+#                                             #   (update-submodule.yml) do not count as the PR's.
+#                                             #   The caller should fetch that parent too
+#                                             #   (`git cat-file -p <merge> | awk '/^parent /'`).
 #                [--input-mode MODE]          # workflow_dispatch input (branch-tip|pointer)
 #                [--repo DIR]                 # git repo to inspect (default: $PWD)
 #                [--help]
@@ -57,13 +63,27 @@ fi
 if ! git -C "$REPO" cat-file -e "${FROM}^{commit}" 2>/dev/null; then
     emit branch-tip "base $FROM not available locally (fetch failed or history rewritten) — default"
 fi
-# gitlinks (mode 160000) in the tree under test = the submodule pointer paths
-mapfile -t GITLINKS < <(git -C "$REPO" ls-files -s | awk '$1=="160000"{print $4}')
+# pull_request: GITHUB_SHA is GitHub's test merge of the PR into the CURRENT base tip, while
+# base.sha is the base tip when the PR was last updated. Diffing base.sha..merge therefore also
+# shows everything the base did in between (e.g. update-submodule.yml pointer bumps) and wrongly
+# selected pointer mode on 2026-09-23 (PR #91). The PR's own changes are exactly merge^1..merge.
+# Parents are read from the raw object (shallow-safe: rev-parse hides grafted parents).
+via=""
+if [ "$EVENT" = "pull_request" ]; then
+    parents="$(git -C "$REPO" cat-file -p "$TO" 2>/dev/null | awk '/^parent /{print $2} /^$/{exit}')"
+    p1="$(printf '%s\n' "$parents" | sed -n 1p)"; np="$(printf '%s\n' "$parents" | grep -c . || true)"
+    if [ "$np" -ge 2 ] && [ -n "$p1" ] && git -C "$REPO" cat-file -e "${p1}^{commit}" 2>/dev/null; then
+        FROM="$p1"; via=" (vs the test merge's first parent = current base tip, not base.sha)"
+    fi
+fi
+# gitlinks (mode 160000) = the submodule pointer paths, taken from the two COMMITS being compared
+# (not the working-tree index: the checkout may be another commit, and a PR can add a gitlink)
+mapfile -t GITLINKS < <({ git -C "$REPO" ls-tree -r "$FROM" 2>/dev/null; git -C "$REPO" ls-tree -r "$TO" 2>/dev/null; } | awk '$2=="commit"{print $4}' | sort -u)
 if [ "${#GITLINKS[@]}" -eq 0 ]; then
     emit branch-tip "no submodule gitlinks in $REPO — default"
 fi
 changed="$(git -C "$REPO" diff --name-only "$FROM" "$TO" -- "${GITLINKS[@]}" 2>/dev/null | tr '\n' ' ' | sed 's/ *$//')"
 if [ -n "$changed" ]; then
-    emit pointer "submodule pointer changed in this $EVENT range ${FROM:0:7}..${TO:0:7}: $changed"
+    emit pointer "submodule pointer changed in this $EVENT range ${FROM:0:7}..${TO:0:7}$via: $changed"
 fi
-emit branch-tip "no submodule pointer change in this $EVENT range ${FROM:0:7}..${TO:0:7}"
+emit branch-tip "no submodule pointer change in this $EVENT range ${FROM:0:7}..${TO:0:7}$via"

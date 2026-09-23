@@ -43,7 +43,7 @@ dx-all-suite contains five repos, each with its own `.deepx/`:
 
 Each sub-project `.deepx/` is self-contained. This top-level `.deepx/` adds:
 - Suite-wide router agents (`dx-suite-builder`, `dx-suite-validator`)
-- 18 shared fragments injected into all 5 repos (rename gates, session sentinels,
+- 19 shared fragments injected into all 5 repos (rename gates, session sentinels,
   process gates, autopilot guard, etc.)
 - The `dx-agent-gen` generator (single tool that processes all 5 repos)
 - All agent-driven test infrastructure (`tests/` conformance + `e2e/`)
@@ -76,7 +76,7 @@ Each sub-project `.deepx/` is self-contained. This top-level `.deepx/` adds:
 │   │   ├── CLAUDE-KO.md.tmpl
 │   │   ├── AGENTS-KO.md.tmpl
 │   │   └── copilot-instructions-KO.md.tmpl
-│   └── fragments/               ← 36 shared fragments (18 EN + 18 KO)
+│   └── fragments/               ← 38 shared fragments (19 EN + 19 KO)
 │       ├── en/
 │       └── ko/
 │
@@ -192,7 +192,7 @@ bash .deepx/tools/scripts/subrepo_check.sh --subrepo-path <dx-compiler|dx-runtim
 | **General SWE** | `dx-swe-*` | Any SDK / docs / general coding | `dx-swe-tdd` |
 | **End-User (Agent-Driven Dev)** | `dx-agent-*` | Building apps/pipelines via dx-agent-dev | `dx-agent-tdd` |
 | **Harness Eng** | `dx-harness-*` | Internal `.deepx/`, `tests/`, `tools/` maintenance | `dx-harness-validate` |
-| **Internal Business** | `dx-internal-*` | Internal ops that USE the harness (model/agent perf evals) | `dx-internal-model-eval` |
+| **Internal Business** | `dx-internal-*` | Internal ops that USE the harness (model/agent perf evals, acting on bot PR reviews) | `dx-internal-model-eval`, `dx-internal-pr-review-apply` |
 | **Meta** | `dx-skill-router` | Used in all tiers (universal pre-flight) | — |
 
 `dx-agent-*` skills reference the corresponding `dx-swe-*` skill and add DEEPX-
@@ -240,7 +240,7 @@ how to fix a red sub-repo gate.
 
 ---
 
-## 8. Shared Fragments (18 EN + 18 KO)
+## 8. Shared Fragments (19 EN + 19 KO)
 
 Fragments are reusable rule blocks injected into instruction files across all 5
 repos. Editing a fragment once propagates the change everywhere via
@@ -266,6 +266,7 @@ repos. Editing a fragment once propagates the change everywhere via
 | `plan-output` | Print full plan in chat after saving |
 | `self-contained-portable` | Generated outputs must run when copied outside the suite |
 | `ultralytics-deepx-export` | Ultralytics YOLO `.pt` → DeepX (`format=deepx`) routing |
+| `harness-bootstrap` | Standalone sub-repo: acquire the suite harness before editing `.deepx/`, STOP if unavailable |
 
 See [`docs/fragment-authoring-guide.md`](docs/fragment-authoring-guide.md) for
 how to add or modify a fragment.

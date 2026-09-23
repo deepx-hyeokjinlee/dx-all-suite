@@ -68,3 +68,22 @@ GENERATED_HEADER = """\
 <!-- Source: {source} -->
 <!-- Run: dx-agent-gen generate -->
 """
+
+# Header for generated SHELL assets. The HTML-comment header above is invalid in
+# a shell script, and it must be inserted AFTER the shebang, never before it.
+GENERATED_HEADER_SH = """\
+# AUTO-GENERATED from dx-all-suite .deepx/ — DO NOT EDIT DIRECTLY
+# Source: {source}
+# Run: dx-agent-gen generate
+"""
+
+# Verbatim assets fanned out from the suite into each SUB-REPO (the suite keeps
+# only the canonical copy — it is the harness and never bootstraps itself).
+# Key: path relative to the suite root. Value: path relative to the target repo.
+#
+# harness_bootstrap.sh must live inside each sub-repo because a standalone clone
+# has no suite above it from which to borrow the script — that is the whole
+# chicken-and-egg problem it solves.
+SUBREPO_ASSETS: dict[str, str] = {
+    ".deepx/templates/assets/harness_bootstrap.sh": ".deepx/scripts/harness_bootstrap.sh",
+}

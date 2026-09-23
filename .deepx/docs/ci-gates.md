@@ -59,8 +59,8 @@ Trigger: `pull_request`, `push` to `main` / `staging*` / `feature/**`,
 |---|---|---|---|
 | `update-submodule.yml` commits `ci(<date>): Update dx-runtime` and pushes to `main` | `push` | `github.event.before` .. `github.sha` | submodule gitlink changed → **`pointer`** (validate the recorded combination) |
 | A developer pushes `.deepx/` changes to a feature branch | `push` | `before` .. `sha` | no gitlink change → **`branch-tip`** |
-| A PR that only touches `.deepx/` / docs / workflows | `pull_request` | `base.sha` .. merge commit | no gitlink change → **`branch-tip`** |
-| A PR that bumps a submodule pointer by hand | `pull_request` | `base.sha` .. merge commit | gitlink changed → **`pointer`** |
+| A PR that only touches `.deepx/` / docs / workflows | `pull_request` | merge commit's first parent (current base tip) .. merge commit | no gitlink change → **`branch-tip`** — even when `main` bumped pointers after `base.sha` |
+| A PR that bumps a submodule pointer by hand | `pull_request` | merge commit's first parent .. merge commit | gitlink changed → **`pointer`** |
 | Manual run | `workflow_dispatch` | input `mode` | as chosen (`branch-tip` default) |
 
 The step fetches the base commit with header auth (the checkout is depth 1) and
@@ -268,7 +268,8 @@ in a `main` checkout, then `bash .deepx/tools/scripts/harness_gate.sh all`.
 | `[ERROR] … EN exceeds KO` (lint) | Add or extend `.deepx/templates/fragments/ko/<stem>.md`, regenerate. |
 | pytest failures | Reproduce with `bash .deepx/tools/scripts/harness_gate.sh tests`; conformance tests name the offending file. |
 | `cannot reach https://…/dx-all-suite.git (auth/network)` or `Authentication failed` | Missing/expired `GC_DCI_TOKEN` (mirror) or `GH_DCI_TOKEN` (GHES); on the public channel this means the suite repo is not public. |
-| `fatal: … dx_fw` or another unrelated submodule | The gate only inits four submodules; a `recursive` checkout was re-introduced — restore the explicit init step. |
+| `fatal: … dx_fw` or another unrelated submodule | The gate only inits four submodules; a `recursive` checkout or a `git submodule status --recursive` was re-introduced — restore the explicit init step / the four-path listing. On a self-hosted runner the *Reset the reused workspace* step must run before checkout (it wipes submodule trees other jobs left behind). |
+| `pointer` mode chosen although the PR touched no submodule | `gate_mode.sh` compares the test merge with its first parent; if the mode step could not fetch that parent it falls back to `base.sha..merge`, which includes bumps `main` made in between — check the "merge parent … not fetchable" line in the mode step. |
 | Suite gate red in `pointer` mode only | The recorded pointers lag the sub-repo work (expected on every feature branch and on the mirror until pointers are bumped); the `branch-tip` run tells you whether the merged state is clean. The mode and reason are in the job summary. |
 | Job never starts (queued) | The wrong variant ran on this host — check the job `if:` host guard; ghes needs a `self-hosted` runner. |
 | `startup_failure`, 0 s, 0 jobs, both variants ("workflow file issue") | The repo's Actions policy is `local_only` and blocks `actions/checkout` / `actions/setup-python` — allow GitHub-owned actions (§5.1 step 1). |

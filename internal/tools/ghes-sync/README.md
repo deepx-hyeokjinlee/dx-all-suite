@@ -27,7 +27,7 @@ public `github.com/DEEPX-AI` export.
 
   | | src = github.com mirror (read) | dst = GHES (push + PR) |
   |---|---|---|
-  | env var (per run, nothing stored) | `GHES_SYNC_SRC_TOKEN` (fallback `GH_TOKEN`) — fine-grained PAT, *Contents: Read-only* on the 5 `{DEEPX-MIRROR-ORG}/*` repos | `GHES_SYNC_DST_TOKEN` (fallback `GH_ENTERPRISE_TOKEN`, which `gh` also uses for the PR) — PAT with `repo` (contents write + pull requests) |
+  | env var (per run, nothing stored) | `GHES_SYNC_SRC_TOKEN` (fallback `GH_TOKEN`) — fine-grained PAT, *Contents: Read-only* on the 5 `{DEEPX-MIRROR-ORG}/*` repos | `GHES_SYNC_DST_TOKEN` (fallback `GH_ENTERPRISE_TOKEN`, then `GHES_TOKEN`; which `gh` also uses for the PR) — PAT with `repo` (contents write + pull requests) |
   | credential helper (once per machine) | `gh auth login --hostname github.com --with-token < pat.txt && gh auth setup-git --hostname github.com` | `gh auth login --hostname gh.deepx.ai [--with-token < pat.txt] && gh auth setup-git --hostname gh.deepx.ai` |
 
   With an env var the tool passes the token per call as `git -c http.https://<host>/.extraheader=AUTHORIZATION: basic <base64>` —
@@ -50,6 +50,7 @@ bash internal/tools/ghes-sync/ghes-sync.sh --print-config      # what would be s
 bash internal/tools/ghes-sync/ghes-sync.sh --dry-run           # fetch + classify, print push/gh commands
 bash internal/tools/ghes-sync/ghes-sync.sh                     # push + ensure PRs
 bash internal/tools/ghes-sync/ghes-sync.sh --repo dx_app --no-pr   # one repo, push only
+bash internal/tools/ghes-sync/ghes-sync.sh --reviewers dci          # + re-request the review bot on every PR that received a push
 ```
 
 ## Configuration — `sync.conf` + `sync.override.conf`
@@ -104,7 +105,34 @@ section (before any parent that lists it in `gitlinks`). Adding a branch mapping
 | push | `git push <dst> refs/remotes/src/<branch>:refs/heads/<dst_branch>` — ff-only, never `--force`; `--tags` adds `refs/tags/*` |
 | update branch (`--update-branch`) | when the PR base (`pr_base`) moved on dst since the branch was cut: merge the base INTO the branch in a temporary worktree (GitHub's "Update branch", never a rebase — no force push, submodule pointers stay valid) and ff-push the merge commit; **conflict** → nothing pushed; the merge is aborted and nothing is kept — resolve it by hand (see *Resolving an update-branch conflict* below). `--dry-run` performs the local merge, so it detects conflicts without pushing (and keeps nothing). Without the flag a moved base is only reported. Merge identity: `GHES_SYNC_GIT_NAME` / `GHES_SYNC_GIT_EMAIL`, else your git config. The mirror is then behind by that merge commit — see `--reverse` |
 | PR | `mode = pr` and `dst_branch != pr_base`: reuse the open PR (`gh pr list --head --base`) or `gh pr create` with the commit list as body; nothing when 0 commits ahead of the base |
-| summary | table `repo · action · src · dst-before · dst-after · pr · status`; exit 0 / 1 (a repo failed) / 2 (config or setup error) |
+| reviewers (`reviewers = dci` / `--reviewers dci`) | after a push that actually moved the branch (CREATE / FAST-FORWARD) and a PR exists or was created: (re)request those reviewers (`gh pr edit --add-reviewer`, or REST `POST …/requested_reviewers`). The GHES review bot (`dci`, n8n) runs when a PR opens but **not** on later pushes — re-requesting the reviewer is what wakes it again (same webhook as the UI button "Re-request review"). Off when unset; a failure is a warning, the sync itself succeeded. Pairs with `internal/tools/pr-review-apply` for acting on the review |
+| summary | table `repo · action · src · dst-before · dst-after · pr · status` — cells are ASCII so the columns stay aligned; `status` is `OK` / `FAIL`, with `[n]` pointing at a numbered note under the table that carries the full explanation; exit 0 / 1 (a repo failed) / 2 (config or setup error) |
+| output format | messages follow the output language (see *Output language*: Korean on a Korean locale, English otherwise; technical tokens — action names, env vars, git commands — are the same in both). Per-repo lines are `[ghes-sync] <repo(:branch)>  │ message` with the repo key padded to one width per run, so the `│` column lines up; `▶` starts a repo, `WARNING:` / `FAIL:` prefix problems |
+
+
+### When the base moved: default run vs `--update-branch`
+
+You will see this line whenever `pr_base` (`main` / `dev`) on GHES received commits after your branch was cut —
+typically other PRs were merged in the meantime (dci bumps, someone else's feature):
+
+```
+[ghes-sync] dx_stream    │ base 'dev' has 2 new commit(s) that feature/dx-agent-dev lacks — the PR is not up to date with its base; rerun with --update-branch to merge the base into the branch
+```
+
+It is a **notice, not a failure**: the push and the PR still happen. `--update-branch` is optional.
+
+| | default (no flag) | `--update-branch` |
+|---|---|---|
+| What lands on GHES | the mirror branch **as is** (mirror == GHES branch) | the mirror branch **plus one merge commit** (`Merge <base> into <branch> (ghes-sync --update-branch)`) — base merged INTO the branch; never a rebase, never a force push |
+| Base moved | notice only; the PR is created and GHES merges against the current base at merge time (its test-merge) — mergeable as long as there is no conflict | the tool merges first, so the PR branch itself contains the base; a **conflict pushes nothing** and prints the manual recipe |
+| When a conflict shows up | in the PR page ("This branch has conflicts") | immediately — `--dry-run --update-branch` checks without pushing |
+| PR CI | `pull_request` CI runs on GHES's test-merge, so base changes are included | the branch tip itself contains the base, so `push` CI sees it too |
+| Mirror afterwards | unchanged — the next forward run is `UP-TO-DATE` | GHES is ahead by the merge commit (`DST-AHEAD`) — run `--reverse` (see *Reverse direction* below) where github.com is pushable to bring it back |
+| Use it when | almost always | (1) the PR page shows conflicts, (2) branch protection requires "branches up to date before merging", (3) you want the gate to run on branch + base before merging |
+
+GHES's **Update branch** button does the same thing as `--update-branch` (a merge commit on the GHES branch); after
+either one the mirror is behind, so finish with `--reverse`. Recommended order: run without the flag, look at
+the PRs, and use `--update-branch --repo <name>` only for the repos that show a conflict.
 
 ### Resolving an update-branch conflict (by hand)
 
@@ -144,7 +172,7 @@ bash internal/tools/ghes-sync/ghes-sync.sh --reverse --pull-only
 bash internal/tools/ghes-sync/ghes-sync.sh --reverse --push-only
 ```
 A single `--reverse` (no `--pull-only`/`--push-only`) does both and is fine wherever both hosts are
-reachable; where github.com push is blocked it simply fails with `cannot reach/push`.
+reachable; where github.com push is blocked it simply fails with `cannot reach …` / `… push failed`.
 
 Classification per branch: CREATE · FAST-FORWARD · UP-TO-DATE · **TO-AHEAD** (the mirror has commits GHES
 lacks — the normal forward run will push them; nothing to do) · **DIVERGED** (both sides moved) → fails
@@ -161,7 +189,7 @@ nested repos first:
 
 ```bash
 # closed network                                    # open network (same cache)
-ghes-sync.sh --reverse --pull-only                  ghes-sync.sh --reverse --push-only --reset-to-base
+ghes-sync.sh --reverse --pull-only --reset-to-base  ghes-sync.sh --reverse --push-only --reset-to-base
 ```
 Per repo: if the mirror branch is already contained in the base (merge-commit style merge) it is a
 plain FAST-FORWARD; otherwise **RESET**: the current mirror tip is first saved to
@@ -172,21 +200,44 @@ the mirror branch between the fetch and the push (rerun). `reverse_branches` (`m
 themselves) are synced ff in the same run. Afterwards update your dev checkout:
 `git fetch mirror && git reset --hard mirror/feature/dx-agent-dev` (the tool prints this; remotes follow the
 `ghes` / `mirror` convention — `setup_remotes.sh --rename-origin` applies it).
+**GHES side too.** Whenever GHES is reachable in the run (`--pull-only` included), `--reset-to-base` also resets the
+GHES feature branch, which the squash-merge left diverged: the stale tip is saved to GHES `backup/<branch>/<ts>`, a merged
+PR with that head is looked up (REST with a dst token, else `gh`; warning only when none is found or no client exists),
+then GHES `<branch>` := `<pr_base>` tip with `--force-with-lease` — row `<repo>:<branch><=<pr_base>@GHES` (`CREATE` when
+GHES had deleted the branch at merge). So the closed-network step is `--reverse --pull-only --reset-to-base`, the
+open-network step `--reverse --push-only --reset-to-base`, and the next forward run is `UP-TO-DATE` on both sides.
+
 `--reset-to-base` is only accepted together with `--reverse`.
+
+## Output language
+
+Messages are printed in Korean or English. Selection order: `--lang ko|en` > `GHES_SYNC_LANG` > the terminal
+locale (`LC_ALL` > `LC_MESSAGES` > `LANG`; a value starting with `ko` selects Korean, anything else — including `C`
+or unset — English). Any other value exits 2. Action words (`CREATE`, `FAST-FORWARD`, `DST-AHEAD`, `DIVERGED`,
+`DRY-RUN`, `FAIL`, `WARNING`, `SKIPPED`), env-var / option names and git commands are identical in both languages, so
+scripts that grep for them keep working; `--help` follows the same selection. The examples in this file quote the
+English messages; [README-KO.md](README-KO.md) quotes the Korean ones.
+
+```bash
+bash internal/tools/ghes-sync/ghes-sync.sh --lang en --dry-run     # English regardless of the locale
+GHES_SYNC_LANG=ko bash internal/tools/ghes-sync/ghes-sync.sh       # Korean regardless of the locale
+```
 
 ## Troubleshooting
 
 | Symptom | Meaning / fix |
 |---------|---------------|
 | `DIVERGED` | GHES branch has commits the mirror lacks. Fetch that branch into the mirror, merge or rebase, push the mirror, rerun. The tool never force-pushes. |
-| `gitlink … is NOT reachable` | The parent repo points at a sub-repo commit that is not on the synced sub-repo branch (wrong branch, or the sub-repo failed earlier in the run). Fix the pointer or sync the right sub-repo branch first. |
+| `gitlink … NOT reachable` | The parent repo points at a sub-repo commit that is not on the synced sub-repo branch (wrong branch, or the sub-repo failed earlier in the run). Fix the pointer or sync the right sub-repo branch first. |
 | `PR base 'dev' does not exist on dst` | The configured `pr_base` is missing on GHES — fix `sync.conf`. |
 | `gh pr list failed` / auth errors | `gh auth status --hostname gh.deepx.ai`; the branch itself was already pushed. |
-| `PR skipped (no gh CLI and no dst token)` | Push succeeded; set `GHES_SYNC_DST_TOKEN` (REST via curl) or install `gh`, then rerun — the existing branch is reused. |
+| `PR skipped (no gh CLI, no dst token)` | Push succeeded; set `GHES_SYNC_DST_TOKEN` / `GH_ENTERPRISE_TOKEN` / `GHES_TOKEN` (REST via curl) or install `gh`, then rerun — the existing branch is reused. |
 | `REST ... HTTP 401/404` | Token lacks `repo` scope or the wrong host: the API base is `https://<host>/api/v3` (GHES) / `https://api.github.com`. |
-| `cannot fetch src … auth/network?` / `cannot reach dst …` | No or wrong credential for a private repo (see Prerequisites), or the host is unreachable from this machine. An env token overrides the credential helper for that call. |
+| `cannot fetch src […]` / `cannot reach dst (GHES) — git: … — … REJECTED / NETWORK` | No or wrong credential for a private repo (see Prerequisites), or the host is unreachable from this machine. An env token overrides the credential helper for that call. |
 | `GnuTLS recv error (-110)` / `RPC failed` on push | Transient TLS/network error; pushes are retried (`GHES_SYNC_RETRIES`=3, `GHES_SYNC_RETRY_DELAY`=5 s) and git's stderr is shown. Persistent: `git config --global http.version HTTP/1.1`, then rerun (idempotent). |
-| `dst probe timed out after 30s` | GHES not reachable from here (wrong network). Tune `GHES_SYNC_PROBE_TIMEOUT` (probe, default 30 s) / `GHES_SYNC_NET_TIMEOUT` (fetch/push, default 1800 s). |
+| `probe attempt N/3 failed — looks like a transient network/TLS error` | Transient TLS error on the `ls-remote` probe (GnuTLS -110 etc.); probes retry like pushes (`GHES_SYNC_RETRIES`). Only after the last attempt is the repo failed, and the message says `still failing after N attempts`. |
+| `cache cleanup: dropped stale copies of branches deleted on … — <branches>` | Informational: branches deleted on the remote (e.g. a feature branch after its squash-merge) were dropped from the bare cache so they cannot be mistaken for a DIVERGED branch. |
+| `probe timeout (30s, GHES_SYNC_PROBE_TIMEOUT exceeded)` | GHES not reachable from here (wrong network). Tune `GHES_SYNC_PROBE_TIMEOUT` (probe, default 30 s) / `GHES_SYNC_NET_TIMEOUT` (fetch/push, default 1800 s). |
 | exit 2 with `unknown key` / `must be listed as an EARLIER [repo]` | Config error — the message names the section and key. |
 
 ## Tests

@@ -55,8 +55,8 @@ Trigger: `pull_request`, `main` / `staging*` / `feature/**` 로의 `push`,
 |---|---|---|---|
 | `update-submodule.yml`이 `ci(<date>): Update dx-runtime` commit을 만들어 `main`에 push | `push` | `github.event.before` .. `github.sha` | submodule gitlink 변경 있음 → **`pointer`** (기록된 조합 검증) |
 | 개발자가 feature 브랜치에 `.deepx/` 변경을 push | `push` | `before` .. `sha` | gitlink 변경 없음 → **`branch-tip`** |
-| `.deepx/` / 문서 / workflow만 바꾼 PR | `pull_request` | `base.sha` .. merge commit | gitlink 변경 없음 → **`branch-tip`** |
-| submodule pointer를 수동으로 bump한 PR | `pull_request` | `base.sha` .. merge commit | gitlink 변경 있음 → **`pointer`** |
+| `.deepx/` / 문서 / workflow만 바꾼 PR | `pull_request` | merge commit의 first parent(현재 base tip) .. merge commit | gitlink 변경 없음 → **`branch-tip`** — `base.sha` 이후 `main`이 pointer를 bump했어도 |
+| submodule pointer를 수동으로 bump한 PR | `pull_request` | merge commit의 first parent .. merge commit | gitlink 변경 있음 → **`pointer`** |
 | 수동 실행 | `workflow_dispatch` | 입력 `mode` | 선택한 값 (`branch-tip` 기본) |
 
 이 step은 base commit을 header 인증으로 fetch한 뒤(checkout은 depth 1)
@@ -260,7 +260,8 @@ dx_app·dx_stream은 `dev`에서, dx-runtime·dx-all-suite는 `main`에서 통�
 | `[ERROR] … EN exceeds KO` (lint) | `.deepx/templates/fragments/ko/<stem>.md`를 추가/보강하고 재생성. |
 | pytest 실패 | `bash .deepx/tools/scripts/harness_gate.sh tests`로 재현; conformance test가 문제 파일을 알려준다. |
 | `cannot reach https://…/dx-all-suite.git (auth/network)` 또는 `Authentication failed` | `GC_DCI_TOKEN`(미러) / `GH_DCI_TOKEN`(GHES) 누락 또는 만료; 공개 채널에서라면 suite repo가 public이 아니라는 뜻. |
-| `fatal: … dx_fw` 등 무관한 submodule 오류 | gate는 submodule 4개만 init한다; `recursive` checkout이 다시 들어간 것 — 명시적 init step으로 복구. |
+| `fatal: … dx_fw` 등 무관한 submodule 오류 | gate는 submodule 4개만 init한다; `recursive` checkout 또는 `git submodule status --recursive`가 다시 들어간 것 — 명시적 init step / 4개 경로 목록으로 복구. self-hosted runner에서는 checkout 전에 *Reset the reused workspace* step이 돌아야 한다(다른 job이 남긴 submodule 트리를 지움). |
+| PR이 submodule을 건드리지 않았는데 `pointer` 모드가 선택됨 | `gate_mode.sh`는 test merge를 그 first parent와 비교한다; 모드 step이 그 parent를 fetch하지 못하면 `base.sha..merge`로 되돌아가 그 사이 `main`이 한 bump까지 포함된다 — 모드 step의 "merge parent … not fetchable" 줄을 확인. |
 | `pointer` 모드에서만 suite gate red | 기록된 pointer가 sub-repo 작업보다 뒤처짐(모든 feature 브랜치, 그리고 pointer bump 전의 미러에서 예상되는 상태); merge 후 상태가 clean한지는 `branch-tip` run이 알려준다. 모드와 이유는 job summary에 있다. |
 | Job이 시작되지 않음 (queued) | 이 host에서 잘못된 변형이 실행됨 — job `if:` host guard 확인; ghes는 `self-hosted` runner가 필요. |
 | 두 변형 모두 `startup_failure`, 0초, job 0개 ("workflow file issue") | repo의 Actions 정책이 `local_only`여서 `actions/checkout` / `actions/setup-python`이 차단됨 — GitHub 소유 action 허용 (§5.1 1번). |

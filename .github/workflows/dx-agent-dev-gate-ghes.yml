@@ -55,6 +55,21 @@ jobs:
     runs-on: self-hosted
     timeout-minutes: 20
     steps:
+      - name: Reset the reused workspace (self-hosted runner)
+        run: |
+          set -euo pipefail
+          # Self-hosted runners reuse $GITHUB_WORKSPACE and actions/checkout's clean touches the superproject
+          # only: submodule trees initialised by other jobs on this runner (e.g. dx-runtime/dx_fw with broken
+          # nested .git files) survived and made the pointer-mode listing exit 128 on 2026-09-23 (PR #91).
+          # Start every run from an empty tree; only the superproject object store (.git) is kept for speed.
+          [ "$PWD" = "$GITHUB_WORKSPACE" ] || { echo "::error::not in \$GITHUB_WORKSPACE ($PWD)"; exit 1; }
+          if [ -d .git ]; then
+            git submodule deinit --all --force >/dev/null 2>&1 || true
+            rm -rf .git/modules
+          fi
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- {} +
+          echo "workspace reset: $(ls -A | tr '\n' ' ')"
+
       - name: Checkout suite (no submodules yet)
         uses: actions/checkout@v4
         with:
@@ -77,6 +92,13 @@ jobs:
           # the base commit is outside the depth-1 checkout — fetch it (header auth, never a token in a URL)
           if [ -n "$FROM" ] && [ "$FROM" != "0000000000000000000000000000000000000000" ]; then
             git -c http.extraheader="$AUTH" fetch -q --depth=1 origin "$FROM" || echo "base $FROM not fetchable — gate_mode.sh will default to branch-tip"
+          fi
+          # pull_request: gate_mode.sh diffs the test merge against its FIRST PARENT (the current base tip),
+          # so base bumps made after base.sha do not count as the PR's — fetch that parent too. The parent id
+          # is read from the raw commit object because rev-parse hides the parents of a shallow commit.
+          if [ "$EVENT" = "pull_request" ]; then
+            P1="$(git cat-file -p "$GITHUB_SHA" | awk '/^parent /{print $2; exit}')"
+            [ -z "$P1" ] || git -c http.extraheader="$AUTH" fetch -q --depth=1 origin "$P1" || echo "merge parent $P1 not fetchable — gate_mode.sh falls back to base.sha"
           fi
           bash .deepx/tools/scripts/gate_mode.sh --event "$EVENT" --from "$FROM" --to "$GITHUB_SHA" --input-mode "$INPUT_MODE" | tee mode.out
           grep '^mode=' mode.out >> "$GITHUB_OUTPUT"
@@ -119,7 +141,10 @@ jobs:
             done
           else
             echo "submodules at recorded pointers (mode=pointer):"
-            git submodule status --recursive | grep -E 'dx-runtime|dx-compiler|dx_app|dx_stream'
+            # only the four initialised paths — never --recursive: a reused runner workspace can hold other
+            # submodule trees (dx_fw ...) with broken nested .git files, which made this listing exit 128
+            git submodule status -- dx-runtime dx-compiler
+            git -C dx-runtime submodule status -- dx_app dx_stream
           fi
 
       - name: Python deps (system python3, .gate-venv fallback)

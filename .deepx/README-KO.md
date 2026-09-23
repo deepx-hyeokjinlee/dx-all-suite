@@ -43,7 +43,7 @@ dx-all-suite는 5개의 repo를 포함하며, 각각 자체 `.deepx/`를 가집�
 
 각 sub-project `.deepx/`는 자체 완결적입니다. 이 최상위 레벨 `.deepx/`는 다음을 추가합니다:
 - Suite 전역 router agents (`dx-suite-builder`, `dx-suite-validator`)
-- 5개의 모든 repo에 주입되는 18개의 공유 fragment (rename gates, session sentinels,
+- 5개의 모든 repo에 주입되는 19개의 공유 fragment (rename gates, session sentinels,
   process gates, autopilot guard 등)
 - `dx-agent-gen` generator (5개의 모든 repo를 처리하는 단일 도구)
 - 모든 agent-driven 테스트 인프라 (`tests/` conformance + `e2e/`)
@@ -76,7 +76,7 @@ dx-all-suite는 5개의 repo를 포함하며, 각각 자체 `.deepx/`를 가집�
 │   │   ├── CLAUDE-KO.md.tmpl
 │   │   ├── AGENTS-KO.md.tmpl
 │   │   └── copilot-instructions-KO.md.tmpl
-│   └── fragments/               ← 36 shared fragments (18 EN + 18 KO)
+│   └── fragments/               ← 38 shared fragments (19 EN + 19 KO)
 │       ├── en/
 │       └── ko/
 │
@@ -192,7 +192,7 @@ bash .deepx/tools/scripts/subrepo_check.sh --subrepo-path <dx-compiler|dx-runtim
 | **General SWE** | `dx-swe-*` | 모든 SDK / docs / general coding | `dx-swe-tdd` |
 | **End-User (Agent-Driven Dev)** | `dx-agent-*` | dx-agent-dev를 통한 앱/파이프라인 빌드 | `dx-agent-tdd` |
 | **Harness Eng** | `dx-harness-*` | 내부 `.deepx/`, `tests/`, `tools/` 유지보수 | `dx-harness-validate` |
-| **Internal Business** | `dx-internal-*` | 하네스를 *사용하는* 내부 업무 (model/agent 성능 eval) | `dx-internal-model-eval` |
+| **Internal Business** | `dx-internal-*` | 하네스를 *사용하는* 내부 업무 (model/agent 성능 eval, 봇 PR 리뷰 처리) | `dx-internal-model-eval`, `dx-internal-pr-review-apply` |
 | **Meta** | `dx-skill-router` | 모든 tier에서 사용 (universal pre-flight) | — |
 
 `dx-agent-*` skill은 대응하는 `dx-swe-*` skill을 참조하고 DEEPX 고유 콘텐츠
@@ -241,7 +241,7 @@ sub-repo gate가 존재하는 이유는 sub-repo 혼자서는 자신의
 
 ---
 
-## 8. 공유 Fragments (18 EN + 18 KO)
+## 8. 공유 Fragments (19 EN + 19 KO)
 
 Fragment는 5개의 모든 repo의 명령어 파일에 주입되는 재사용 가능한 rule block입니다.
 Fragment를 한 번 수정하면 `bash .deepx/tools/scripts/run_all.sh generate`를 통해
@@ -267,6 +267,7 @@ Fragment를 한 번 수정하면 `bash .deepx/tools/scripts/run_all.sh generate`
 | `plan-output` | 저장 후 chat에 전체 plan 출력 |
 | `self-contained-portable` | 생성된 산출물은 suite 밖으로 복사해도 실행되어야 함 |
 | `ultralytics-deepx-export` | Ultralytics YOLO `.pt` → DeepX(`format=deepx`) 라우팅 |
+| `harness-bootstrap` | 단독 sub-repo checkout: `.deepx/` 수정 전 suite harness 확보, 불가 시 STOP |
 
 Fragment를 추가하거나 수정하는 방법은
 [`docs/fragment-authoring-guide.md`](docs/fragment-authoring-guide.md)를 참조.

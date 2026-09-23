@@ -114,3 +114,55 @@ def test_bad_input_mode_exits_2(repo):
 
 def test_unknown_flag_exits_2():
     assert _run("--nope").returncode == 2
+
+
+# ── pull_request: compare against the test merge's FIRST PARENT, not the stale base.sha ──
+# 2026-09-23 (PR #91 on GHES): `pull_request.base.sha` is the base tip when the PR was last updated;
+# the test merge is built on the CURRENT base tip. Everything main did in between (update-submodule
+# bumps) landed in `base.sha..merge` and flipped the mode to pointer although the PR touched no gitlink.
+
+@pytest.fixture(scope="module")
+def pr_repo(tmp_path_factory) -> dict:
+    """main: A → B (main bumps gitlink `sub`).  feature (from A): F (README only) / G (bumps `sub2`).
+    M  = merge(B, F): PR changed no gitlink, main did.   M2 = merge(B, G): the PR bumped a gitlink."""
+    r = tmp_path_factory.mktemp("gate-mode-pr")
+    _git(r, "init", "-q"); _git(r, "symbolic-ref", "HEAD", "refs/heads/main")
+    _git(r, "config", "user.email", "t@example.com"); _git(r, "config", "user.name", "t")
+    (r / "README.md").write_text("a\n"); _git(r, "add", "README.md"); _git(r, "commit", "-q", "-m", "A")
+    a = _git(r, "rev-parse", "HEAD")
+    _git(r, "update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},sub"); _git(r, "commit", "-q", "-m", "B: main bumps sub")
+    b = _git(r, "rev-parse", "HEAD")
+    _git(r, "checkout", "-q", "-b", "feature", a)
+    (r / "README.md").write_text("f\n"); _git(r, "add", "README.md"); _git(r, "commit", "-q", "-m", "F: docs only")
+    _git(r, "checkout", "-q", "-b", "merge1", b); _git(r, "merge", "-q", "--no-ff", "-m", "M", "feature")
+    m = _git(r, "rev-parse", "HEAD")
+    _git(r, "checkout", "-q", "-b", "feature2", a)
+    _git(r, "update-index", "--add", "--cacheinfo", f"160000,{'2' * 40},sub2"); _git(r, "commit", "-q", "-m", "G: PR bumps sub2")
+    _git(r, "checkout", "-q", "-b", "merge2", b); _git(r, "merge", "-q", "--no-ff", "-m", "M2", "feature2")
+    m2 = _git(r, "rev-parse", "HEAD")
+    _git(r, "checkout", "-q", "main")
+    return {"path": r, "a": a, "b": b, "m": m, "m2": m2}
+
+
+def test_pr_ignores_gitlink_bumps_made_by_the_base_since_base_sha(pr_repo):
+    """base.sha = A (stale), merge = M whose first parent is B: main bumped `sub`, the PR did not."""
+    kv = _kv(_run("--event", "pull_request", "--from", pr_repo["a"], "--to", pr_repo["m"], "--repo", str(pr_repo["path"])).stdout)
+    assert kv["mode"] == "branch-tip", kv
+    assert "parent" in kv["reason"] and pr_repo["b"][:7] in kv["reason"], kv
+
+
+def test_pr_that_bumps_a_gitlink_itself_still_selects_pointer(pr_repo):
+    kv = _kv(_run("--event", "pull_request", "--from", pr_repo["a"], "--to", pr_repo["m2"], "--repo", str(pr_repo["path"])).stdout)
+    assert kv["mode"] == "pointer" and "sub2" in kv["reason"] and "sub " not in kv["reason"] + " ", kv
+
+
+def test_push_event_still_uses_the_given_range(pr_repo):
+    """push has no test merge; before..sha stays authoritative (main's own bump → pointer)."""
+    kv = _kv(_run("--event", "push", "--from", pr_repo["a"], "--to", pr_repo["b"], "--repo", str(pr_repo["path"])).stdout)
+    assert kv["mode"] == "pointer"
+
+
+def test_pr_without_a_merge_commit_falls_back_to_the_given_base(repo):
+    """--to is a plain commit (single parent): keep the base.sha range, say why."""
+    kv = _kv(_run("--event", "pull_request", "--from", repo["a"], "--to", repo["b"], "--repo", str(repo["path"])).stdout)
+    assert kv["mode"] == "pointer" and "sub" in kv["reason"]

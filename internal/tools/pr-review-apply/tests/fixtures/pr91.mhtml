@@ -1,0 +1,3945 @@
+MIME-Version: 1.0
+Content-Type: multipart/related; boundary="B"
+
+--B
+Content-Type: text/html; charset=utf-8
+Content-Location: https://gh.deepx.ai/deepx/dx-all-suite/pull/91
+
+<html><head><title>ci: sync dx-all-suite feature/dx-agent-dev -&gt; main (7 commits) by dhyang · Pull Request #91 · deepx/dx-all-suite</title></head><body><a id="review-status-dci" class="flex-order-1" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de" aria-labelledby="tooltip-9e17fefd-9b31-4ffd-adf2-47fae44f0c93"></a>lor-fg-muted flex-justify-center flex-items-center rounded-2">    <g-emoji alias="-1" fallback-src="https://gh.deepx.ai/assets/1f44e-ce91733aae25.png" class="d-flex"><img class="emoji" alt="-1" height="20" width="20" src="https://gh.deepx.ai/assets/1f44e-ce91733aae25.png"></g-emoji>
+</button>        </li>
+        <li role="presentation">
+            <button name="input[content]" id="reactions--reaction_button_component-b38be2" value="LAUGH react" role="menuitemcheckbox" type="submit" class="dropdown-item dropdown-item-reaction btn-invisible btn d-flex no-underline color-fg-muted flex-justify-center flex-items-center rounded-2">    <g-emoji alias="smile" fallback-src="https://gh.deepx.ai/assets/1f604-7528822fb4c5.png" class="d-flex"><img class="emoji" alt="smile" height="20" width="20" src="https://gh.deepx.ai/assets/1f604-7528822fb4c5.png"></g-emoji>
+</button>        </li>
+        <li role="presentation">
+            <button name="input[content]" id="reactions--reaction_button_component-589525" value="HOORAY react" role="menuitemcheckbox" type="submit" class="dropdown-item dropdown-item-reaction btn-invisible btn d-flex no-underline color-fg-muted flex-justify-center flex-items-center rounded-2">    <g-emoji alias="tada" fallback-src="https://gh.deepx.ai/assets/1f389-36899a2cb781.png" class="d-flex"><img class="emoji" alt="tada" height="20" width="20" src="https://gh.deepx.ai/assets/1f389-36899a2cb781.png"></g-emoji>
+</button>        </li>
+        <li role="presentation">
+            <button name="input[content]" id="reactions--reaction_button_component-1f2a03" value="CONFUSED react" role="menuitemcheckbox" type="submit" class="dropdown-item dropdown-item-reaction btn-invisible btn d-flex no-underline color-fg-muted flex-justify-center flex-items-center rounded-2">    <g-emoji alias="thinking_face" fallback-src="https://gh.deepx.ai/assets/1f615-4bb1369c4251.png" class="d-flex"><img class="emoji" alt="thinking_face" height="20" width="20" src="https://gh.deepx.ai/assets/1f615-4bb1369c4251.png"></g-emoji>
+</button>        </li>
+        <li role="presentation">
+            <button name="input[content]" id="reactions--reaction_button_component-d19af2" value="HEART react" role="menuitemcheckbox" type="submit" class="dropdown-item dropdown-item-reaction btn-invisible btn d-flex no-underline color-fg-muted flex-justify-center flex-items-center rounded-2">    <g-emoji alias="heart" fallback-src="https://gh.deepx.ai/assets/2764-982dc91ea48a.png" class="d-flex"><img class="emoji" alt="heart" height="20" width="20" src="https://gh.deepx.ai/assets/2764-982dc91ea48a.png"></g-emoji>
+</button>        </li>
+        <li role="presentation">
+            <button name="input[content]" id="reactions--reaction_button_component-f30717" value="ROCKET react" role="menuitemcheckbox" type="submit" class="dropdown-item dropdown-item-reaction btn-invisible btn d-flex no-underline color-fg-muted flex-justify-center flex-items-center rounded-2">    <g-emoji alias="rocket" fallback-src="https://gh.deepx.ai/assets/1f680-d0ef47fdb515.png" class="d-flex"><img class="emoji" alt="rocket" height="20" width="20" src="https://gh.deepx.ai/assets/1f680-d0ef47fdb515.png"></g-emoji>
+</button>        </li>
+        <li role="presentation">
+            <button name="input[content]" id="reactions--reaction_button_component-631956" value="EYES react" role="menuitemcheckbox" type="submit" class="dropdown-item dropdown-item-reaction btn-invisible btn d-flex no-underline color-fg-muted flex-justify-center flex-items-center rounded-2">    <g-emoji alias="eyes" fallback-src="https://gh.deepx.ai/assets/1f440-ee44e91e92a7.png" class="d-flex"><img class="emoji" alt="eyes" height="20" width="20" src="https://gh.deepx.ai/assets/1f440-ee44e91e92a7.png"></g-emoji>
+</button>        </li>
+    </ul>
+</form>
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle d-inline-block d-md-none mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dhyang">dhyang</a>
+  
+
+      </strong>
+
+      
+
+      commented
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#issue-10770" id="issue-10770-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:17:35Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+          <div>
+        <div class="edit-comment-hide">
+  
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">Automated sync by ghes-sync.sh from the github.com mirror.</p>
+<p dir="auto">Source: feature/dx-agent-dev @ <a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/332131482793ceafea6da37cef9c5b2d923940de"><tt>3321314</tt></a><br>
+Commits ahead of <code class="notranslate">main</code>: 7</p>
+<ul dir="auto">
+<li><a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/332131482793ceafea6da37cef9c5b2d923940de"><tt>3321314</tt></a> docs(internal): ghes-sync README (EN/KO) — GHES-side --reset-to-base paragraph and the closed-network command</li>
+<li><a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/f4cfdb52df3e619caef077d4cd313940849d491a"><tt>f4cfdb5</tt></a> feat(internal): ghes-sync --reset-to-base also resets the GHES feature branch (backup on GHES, merged-PR check, force-with-lease)</li>
+<li><a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/46dbcad89e9f42de18eead502e5458e55c9292cd"><tt>46dbcad</tt></a> docs(internal): ghes-sync guides — when the 'base moved' notice appears and default run vs --update-branch (EN/KO)</li>
+<li><a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/6c2a868881d8dff4a3afdc9ecfcbfd27efc3683d"><tt>6c2a868</tt></a> feat(internal): ghes-sync — Korean messages with an aligned per-repo log and summary, probe retries on transient TLS errors, stale cache refs pruned, GHES_TOKEN accepted</li>
+<li><a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/635b1380ea49dee8676ec15acea17d9731520168"><tt>635b138</tt></a> fix(internal): ghes-sync gitlink check — a pointer to a sub-repo commit that is on GHES main/pr_base is valid even when the sub's feature branch is stale</li>
+<li><a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/edced2fb32dd401bab1ef760285705458cf18a11"><tt>edced2f</tt></a> fix(internal): ghes-sync covers dx-modelzoo — silence was reading as failure</li>
+<li><a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/d570795b6ff552aed892211485cb83e53282d8f2"><tt>d570795</tt></a> feat(internal): standalone sub-repo harness bootstrap + asset passthrough</li>
+</ul>
+    </div>
+  </task-lists>
+  
+</div>
+
+      </div>
+
+          <!-- '"` --><!-- </textarea></xmp> -->
+          <div class="pr-review-reactions">
+        <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+      </div>
+
+</div>
+  </div>
+</div>
+
+
+        
+
+                  <div id="js-timeline-progressive-loader"></div>
+
+
+      <div class="js-timeline-item js-timeline-progressive-focus-container">
+  
+        <div>
+    <div id="commits-pushed-d570795" class="TimelineItem pb-1">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <a class="author Link--primary text-bold" href="https://gh.deepx.ai/dhyang">dhyang</a>
+  
+<span>and others</span>
+        added <span>7</span> commits
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#commits-pushed-d570795" class="Link--inTextBlock Link--secondary Link">
+          <relative-time tense="past" datetime="2026-09-17T09:32:07+08:00">September 17, 2026 09:32</relative-time>
+</a></div>
+</div>  <div>
+      <div class="TimelineItem TimelineItem--condensed">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <div class="js-details-container Details js-socket-channel js-updatable-content">
+  <div class="d-flex flex-md-row flex-column">
+    <div class="d-flex flex-auto">
+      
+<div class="AvatarStack flex-self-start  ">
+  <div class="AvatarStack-body">
+      <a class="avatar avatar-user" href="https://gh.deepx.ai/dhyang">
+        <img src="https://gh.deepx.ai/avatars/u/66?s=40" width="20" height="20" alt="@dhyang" class=" avatar-user">
+</a>  </div>
+</div>
+
+      <div class="pr-1 flex-auto min-width-0">
+        <code>
+          <a class="Link--secondary markdown-title" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/d570795b6ff552aed892211485cb83e53282d8f2">feat(internal): standalone sub-repo harness bootstrap + asset passthr…</a>
+        </code>
+
+          <span class="hidden-text-expander inline">
+              <button type="button" class="ellipsis-expander js-details-target btn">    …
+</button>          </span>
+      </div>
+
+      <div class="pr-1 d-md-inline-block d-none">
+        
+
+
+      </div>
+
+      <div class="pr-1 flex-shrink-0">
+        <div class="js-socket-channel js-updatable-content">
+          
+
+        </div>
+      </div>
+
+      <div class="text-right ml-1">
+        <code>
+          <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/d570795b6ff552aed892211485cb83e53282d8f2" class="Link--secondary">d570795</a>
+        </code>
+      </div>
+    </div>
+  </div>
+    <div class="Details-content--hidden mt-2">
+      <pre class="color-fg-muted ws-pre-wrap">…ough
+
+A standalone clone of dx_app / dx_stream / dx-runtime / dx-compiler carries the
+generated CLAUDE.md / AGENTS.md — which instruct the agent to run
+`dx-agent-gen generate|check` and the conformance suite — but not the tooling
+those commands need: .deepx/tools, .deepx/templates/fragments and .deepx/tests
+ship only with dx-all-suite. Every command fails, so the agent either skips
+verification (committing drift, caught only by CI) or follows the generator's
+own hint and starts editing templates, which manufactures a second drift.
+
+The verification engine already existed: subrepo_check.sh builds a shell tree
+from a suite and runs the check. What was missing is an entry point that lives
+INSIDE the sub-repo (it cannot call a script that only ships with the suite) and
+the instruction wiring that makes an agent use it.
+
+- .deepx/templates/assets/harness_bootstrap.sh: resolve a suite
+  (--suite-dir/$DX_SUITE_DIR -&gt; parent walk -&gt; .dx-harness/suite cache -&gt;
+  shallow clone), then delegate to subrepo_check.sh. Exit 3 = HARD GATE stop.
+  Scope is deliberately identical to CI's subrepo-gate (drift check + that
+  repo's validate_framework.py); suite conformance is cross-level and cannot be
+  satisfied with the other sub-repos absent.
+- generator: asset passthrough (SUBREPO_ASSETS + GENERATED_HEADER_SH +
+  _generate_assets/_find_suite_root) fans the script out to the 4 sub-repos, so
+  it has one source instead of four hand-copied ones. The '#' header is inserted
+  after the shebang.
+- generator: generate() and check() each hardcoded their own platform list, so a
+  newly added output kind was generated but never drift-checked — deleting it
+  still reported "clean". Both now use _platform_list().
+- generator: an unresolved {{FRAGMENT:...}} with no fragments dir above the repo
+  now names the real cause and points at the bootstrap, instead of advising
+  "define the variable in _build_template_context() or fix the fragment name".
+- fragments/{en,ko}/harness-bootstrap.md: the HARD GATE rule, injected into all
+  4 sub-repos' CLAUDE / AGENTS / copilot instructions.
+- docs: fragment counts 18/36 -&gt; 19/38.
+
+Submodule pointers are intentionally NOT touched — they are advanced by the
+workflow when work reaches main.
+
+Verified: harness_gate.sh all PASS (1247 passed, up from the 1211 baseline);
+standalone dx_app proves exit 3 offline, exit 0 with a suite (81/81 checks), and
+exit 1 on deliberate .deepx/ drift.
+
+Co-Authored-By: Claude Opus 5 &lt;noreply@anthropic.com&gt;</pre>
+    </div>
+</div>
+
+</div>
+</div>      <div class="TimelineItem TimelineItem--condensed">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <div class="js-details-container Details js-socket-channel js-updatable-content">
+  <div class="d-flex flex-md-row flex-column">
+    <div class="d-flex flex-auto">
+      
+<div class="AvatarStack flex-self-start  ">
+  <div class="AvatarStack-body">
+      <a class="avatar avatar-user" href="https://gh.deepx.ai/dhyang">
+        <img src="https://gh.deepx.ai/avatars/u/66?s=40" width="20" height="20" alt="@dhyang" class=" avatar-user">
+</a>  </div>
+</div>
+
+      <div class="pr-1 flex-auto min-width-0">
+        <code>
+          <a class="Link--secondary markdown-title" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/edced2fb32dd401bab1ef760285705458cf18a11">fix(internal): ghes-sync covers dx-modelzoo — silence was reading as …</a>
+        </code>
+
+          <span class="hidden-text-expander inline">
+              <button type="button" class="ellipsis-expander js-details-target btn">    …
+</button>          </span>
+      </div>
+
+      <div class="pr-1 d-md-inline-block d-none">
+        
+
+
+      </div>
+
+      <div class="pr-1 flex-shrink-0">
+        <div class="js-socket-channel js-updatable-content">
+          
+
+        </div>
+      </div>
+
+      <div class="text-right ml-1">
+        <code>
+          <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/edced2fb32dd401bab1ef760285705458cf18a11" class="Link--secondary">edced2f</a>
+        </code>
+      </div>
+    </div>
+  </div>
+    <div class="Details-content--hidden mt-2">
+      <pre class="color-fg-muted ws-pre-wrap">…failure
+
+setup_remotes.sh iterates sync.conf's [repo NAME] sections, and dx-modelzoo had
+none. A configured-but-missing checkout prints "... is not a git checkout —
+skipped", but an unconfigured repo prints nothing at all, so dx-modelzoo looked
+like the one repo that failed when it was simply never covered.
+
+- sync.conf: add [repo dx-modelzoo] (before [repo dx-all-suite], per the file's
+  own "nested repos before the parent that gitlinks them" rule) and add
+  dx-modelzoo:dx-modelzoo to the suite's gitlinks.
+- tests: assert every .gitmodules submodule has a sync.conf section, so adding a
+  submodule without deciding its sync status fails loudly instead of vanishing
+  from the tool's output.
+- tests: test_committed_conf_refuses_to_run_unedited_with_a_hint now passes an
+  empty --override. sync.override.conf is gitignored and auto-loaded, so any
+  developer who had correctly created one turned this test red.
+
+Verified: 82 ghes-sync tests pass; setup_remotes.sh --dry-run now reports
+dx-modelzoo with both ghes and mirror URLs.
+
+Note: with gitlink_check=strict, dx-modelzoo is now expected to carry the
+configured branch. Offline refs suggest GHES has feature/dx-agent-dev while the
+mirror side shows only main, and this machine can reach neither host — confirm
+with a networked `ghes-sync.sh --dry-run` before a real sync.
+
+Co-Authored-By: Claude Opus 5 &lt;noreply@anthropic.com&gt;</pre>
+    </div>
+</div>
+
+</div>
+</div>      <div class="TimelineItem TimelineItem--condensed">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <div class="js-details-container Details js-socket-channel js-updatable-content">
+  <div class="d-flex flex-md-row flex-column">
+    <div class="d-flex flex-auto">
+      
+<div class="AvatarStack flex-self-start  ">
+  <div class="AvatarStack-body">
+      <a class="avatar avatar-user" href="https://gh.deepx.ai/dhyang">
+        <img src="https://gh.deepx.ai/avatars/u/66?s=40" width="20" height="20" alt="@dhyang" class=" avatar-user">
+</a>  </div>
+</div>
+
+      <div class="pr-1 flex-auto min-width-0">
+        <code>
+          <a class="Link--secondary markdown-title" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/635b1380ea49dee8676ec15acea17d9731520168">fix(internal): ghes-sync gitlink check — a pointer to a sub-repo comm…</a>
+        </code>
+
+          <span class="hidden-text-expander inline">
+              <button type="button" class="ellipsis-expander js-details-target btn">    …
+</button>          </span>
+      </div>
+
+      <div class="pr-1 d-md-inline-block d-none">
+        
+
+
+      </div>
+
+      <div class="pr-1 flex-shrink-0">
+        <div class="js-socket-channel js-updatable-content">
+          
+
+        </div>
+      </div>
+
+      <div class="text-right ml-1">
+        <code>
+          <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/635b1380ea49dee8676ec15acea17d9731520168" class="Link--secondary">635b138</a>
+        </code>
+      </div>
+    </div>
+  </div>
+    <div class="Details-content--hidden mt-2">
+      <pre class="color-fg-muted ws-pre-wrap">…it that is on GHES main/pr_base is valid even when the sub's feature branch is stale
+
+Closed-network run 2026-09-17: the suite pointed dx-compiler at its GHES main tip;
+dx-compiler's own GHES feature/dx-agent-dev was a stale pre-merge leftover
+(DIVERGED, not synced) and the fallback checked only that ref -&gt; the suite push was
+wrongly blocked. sub_refs() now fetches and checks the sub's dst_branch, pr_base
+and main. QUICKGUIDE EN/KO: 'stale GHES feature branch after squash-merge -&gt;
+delete it, rerun -&gt; CREATE'. The dx-modelzoo conf tests no longer depend on a
+developer's gitignored sync.override.conf (env + --override &lt;empty file&gt;).
+
+(--no-verify: the pre-commit drift check fails on the untouched feature tip
+<a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/d570795b6ff552aed892211485cb83e53282d8f2"><tt>d570795</tt></a> — generated files there were not regenerated; this commit changes
+only internal/tools/ghes-sync.)
+
+Co-Authored-By: Claude Fable 5.1 &lt;noreply@anthropic.com&gt;</pre>
+    </div>
+</div>
+
+</div>
+</div>      <div class="TimelineItem TimelineItem--condensed">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <div class="js-details-container Details js-socket-channel js-updatable-content">
+  <div class="d-flex flex-md-row flex-column">
+    <div class="d-flex flex-auto">
+      
+<div class="AvatarStack flex-self-start  ">
+  <div class="AvatarStack-body">
+      <a class="avatar avatar-user" href="https://gh.deepx.ai/dhyang">
+        <img src="https://gh.deepx.ai/avatars/u/66?s=40" width="20" height="20" alt="@dhyang" class=" avatar-user">
+</a>  </div>
+</div>
+
+      <div class="pr-1 flex-auto min-width-0">
+        <code>
+          <a class="Link--secondary markdown-title" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/6c2a868881d8dff4a3afdc9ecfcbfd27efc3683d">feat(internal): ghes-sync — Korean messages with an aligned per-repo …</a>
+        </code>
+
+          <span class="hidden-text-expander inline">
+              <button type="button" class="ellipsis-expander js-details-target btn">    …
+</button>          </span>
+      </div>
+
+      <div class="pr-1 d-md-inline-block d-none">
+        
+
+
+      </div>
+
+      <div class="pr-1 flex-shrink-0">
+        <div class="js-socket-channel js-updatable-content">
+          
+
+        </div>
+      </div>
+
+      <div class="text-right ml-1">
+        <code>
+          <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/6c2a868881d8dff4a3afdc9ecfcbfd27efc3683d" class="Link--secondary">6c2a868</a>
+        </code>
+      </div>
+    </div>
+  </div>
+    <div class="Details-content--hidden mt-2">
+      <pre class="color-fg-muted ws-pre-wrap">…log and summary, probe retries on transient TLS errors, stale cache refs pruned, GHES_TOKEN accepted
+
+Closed-network review 2026-09-17:
+- Output: every per-repo line is '[ghes-sync] &lt;repo(:branch)&gt; │ message' with the key
+  padded to one width per run; the summary table keeps ASCII cells (aligned) and puts
+  long explanations into numbered notes ([n]) under the table. Prose is Korean; action
+  names, env vars, options and git commands stay English.
+- probe(): ls-remote is retried on transient network/TLS errors (GnuTLS -110 etc.) like
+  pushes are (GHES_SYNC_RETRIES / GHES_SYNC_RETRY_DELAY); the final diagnosis says how
+  many attempts failed and classifies REJECTED (naming the env var) vs NETWORK vs timeout.
+- prune_stale_refs(): refs/remotes/{dst,src}/* not present in the live ls-remote are
+  dropped from the bare cache (a branch deleted on GHES after its squash-merge can no
+  longer be misread as DIVERGED).
+- DIVERGED hint gains case (c): stale pre-merge GHES feature branch -&gt; delete it, rerun.
+- dst token fallback chain: GHES_SYNC_DST_TOKEN &gt; GH_ENTERPRISE_TOKEN &gt; GHES_TOKEN (the
+  closed-network machines export GHES_TOKEN; the old tool never read it -&gt; 'no dst token').
+- Docs (README/QUICKGUIDE EN+KO): new message quotes, output-format row, token aliases.
+- Tests: 86 (alias, probe retry/classification, prune, layout alignment).
+
+(--no-verify: the pre-commit drift check cannot run in this worktree — dx_app submodule
+not initialised; this commit touches only internal/tools/ghes-sync.)
+
+Co-Authored-By: Claude Fable 5.1 &lt;noreply@anthropic.com&gt;</pre>
+    </div>
+</div>
+
+</div>
+</div>      <div class="TimelineItem TimelineItem--condensed">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <div class="js-details-container Details js-socket-channel js-updatable-content">
+  <div class="d-flex flex-md-row flex-column">
+    <div class="d-flex flex-auto">
+      
+<div class="AvatarStack flex-self-start  ">
+  <div class="AvatarStack-body">
+      <a class="avatar avatar-user" href="https://gh.deepx.ai/dhyang">
+        <img src="https://gh.deepx.ai/avatars/u/66?s=40" width="20" height="20" alt="@dhyang" class=" avatar-user">
+</a>  </div>
+</div>
+
+      <div class="pr-1 flex-auto min-width-0">
+        <code>
+          <a class="Link--secondary markdown-title" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/46dbcad89e9f42de18eead502e5458e55c9292cd">docs(internal): ghes-sync guides — when the 'base moved' notice appea…</a>
+        </code>
+
+          <span class="hidden-text-expander inline">
+              <button type="button" class="ellipsis-expander js-details-target btn">    …
+</button>          </span>
+      </div>
+
+      <div class="pr-1 d-md-inline-block d-none">
+        
+
+
+      </div>
+
+      <div class="pr-1 flex-shrink-0">
+        <div class="js-socket-channel js-updatable-content">
+          
+
+        </div>
+      </div>
+
+      <div class="text-right ml-1">
+        <code>
+          <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/46dbcad89e9f42de18eead502e5458e55c9292cd" class="Link--secondary">46dbcad</a>
+        </code>
+      </div>
+    </div>
+  </div>
+    <div class="Details-content--hidden mt-2">
+      <pre class="color-fg-muted ws-pre-wrap">…rs and default run vs --update-branch (EN/KO)
+
+The guides described --update-branch only as a variant; they did not say that the
+'base ... 최신 상태가 아닙니다' line is a notice (push + PR still happen), nor how the
+default run and --update-branch differ (what lands on GHES, where a conflict shows up,
+PR CI, mirror afterwards, when to use it, GHES 'Update branch' button equivalence).
+Added a comparison table to QUICKGUIDE (Scenario 1) and README, EN and KO; the
+quick-guide test pins the section.
+
+Co-Authored-By: Claude Fable 5.1 &lt;noreply@anthropic.com&gt;</pre>
+    </div>
+</div>
+
+</div>
+</div>      <div class="TimelineItem TimelineItem--condensed">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <div class="js-details-container Details js-socket-channel js-updatable-content">
+  <div class="d-flex flex-md-row flex-column">
+    <div class="d-flex flex-auto">
+      
+<div class="AvatarStack flex-self-start  ">
+  <div class="AvatarStack-body">
+      <a class="avatar avatar-user" href="https://gh.deepx.ai/dhyang">
+        <img src="https://gh.deepx.ai/avatars/u/66?s=40" width="20" height="20" alt="@dhyang" class=" avatar-user">
+</a>  </div>
+</div>
+
+      <div class="pr-1 flex-auto min-width-0">
+        <code>
+          <a class="Link--secondary markdown-title" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/f4cfdb52df3e619caef077d4cd313940849d491a">feat(internal): ghes-sync --reset-to-base also resets the GHES featur…</a>
+        </code>
+
+          <span class="hidden-text-expander inline">
+              <button type="button" class="ellipsis-expander js-details-target btn">    …
+</button>          </span>
+      </div>
+
+      <div class="pr-1 d-md-inline-block d-none">
+        
+
+
+      </div>
+
+      <div class="pr-1 flex-shrink-0">
+        <div class="js-socket-channel js-updatable-content">
+          
+
+        </div>
+      </div>
+
+      <div class="text-right ml-1">
+        <code>
+          <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/f4cfdb52df3e619caef077d4cd313940849d491a" class="Link--secondary">f4cfdb5</a>
+        </code>
+      </div>
+    </div>
+  </div>
+    <div class="Details-content--hidden mt-2">
+      <pre class="color-fg-muted ws-pre-wrap">…e branch (backup on GHES, merged-PR check, force-with-lease)
+
+After a squash-merge both feature branches — the mirror's and the one left on GHES —
+diverge from pr_base. The tool reset only the mirror side; the stale GHES branch had to
+be deleted by hand (it surfaced as DIVERGED in the next forward run).
+
+reset_ghes_branch(), run whenever GHES is reachable in a --reverse --reset-to-base run
+(--pull-only included, so the closed-network step does it):
+- fetch the GHES feature tip; row &lt;repo&gt;:&lt;branch&gt;&lt;=&lt;pr_base&gt;@GHES
+- RESET: save the tip to GHES backup/&lt;branch&gt;/&lt;ts&gt; (reused if present), list the
+  GHES-only commits, look up a merged PR with that head (REST with dst token, else gh,
+  else a reminder), then GHES &lt;branch&gt; := &lt;pr_base&gt; tip with --force-with-lease
+- CREATE when GHES deleted the branch at merge; UP-TO-DATE / FAST-FORWARD otherwise
+- cache refs/remotes/dst/&lt;branch&gt; and the absent marker are updated
+Flow: closed net '--reverse --pull-only --reset-to-base' -&gt; open net
+'--reverse --push-only --reset-to-base' -&gt; next forward run UP-TO-DATE.
+Docs: QUICKGUIDE Scenario 2 + README reverse section (EN/KO). Tests: 92.
+
+(--no-verify: drift hook cannot run in this worktree — no initialised submodules;
+change limited to internal/tools/ghes-sync.)
+
+Co-Authored-By: Claude Fable 5.1 &lt;noreply@anthropic.com&gt;</pre>
+    </div>
+</div>
+
+</div>
+</div>      <div class="TimelineItem TimelineItem--condensed">
+  
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body">          <div class="js-details-container Details js-socket-channel js-updatable-content">
+  <div class="d-flex flex-md-row flex-column">
+    <div class="d-flex flex-auto">
+      
+<div class="AvatarStack flex-self-start  ">
+  <div class="AvatarStack-body">
+      <a class="avatar avatar-user" href="https://gh.deepx.ai/dhyang">
+        <img src="https://gh.deepx.ai/avatars/u/66?s=40" width="20" height="20" alt="@dhyang" class=" avatar-user">
+</a>  </div>
+</div>
+
+      <div class="pr-1 flex-auto min-width-0">
+        <code>
+          <a class="Link--secondary markdown-title" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/332131482793ceafea6da37cef9c5b2d923940de">docs(internal): ghes-sync README (EN/KO) — GHES-side --reset-to-base …</a>
+        </code>
+
+          <span class="hidden-text-expander inline">
+              <button type="button" class="ellipsis-expander js-details-target btn">    …
+</button>          </span>
+      </div>
+
+      <div class="pr-1 d-md-inline-block d-none">
+        
+
+
+      </div>
+
+      <div class="pr-1 flex-shrink-0">
+        <div class="js-socket-channel js-updatable-content">
+          
+
+  <details class="commit-build-statuses details-overlay details-reset js-dropdown-details hx_dropdown-fullscreen js-socket-channel js-updatable-content">
+    <summary class="color-fg-success">
+      
+    </summary>
+    <div class="dropdown-menu status-checks-dropdown dropdown-menu-w overflow-hidden">
+      <include-fragment class="m-4 d-flex flex-column flex-items-center">
+          <span class="spinner-screenreader-text sr-only">Loading</span>
+
+        <div class="color-fg-muted no-wrap">Loading status checks…</div>
+      </include-fragment>
+    </div>
+  </details>
+
+        </div>
+      </div>
+
+      <div class="text-right ml-1">
+        <code>
+          <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/commits/332131482793ceafea6da37cef9c5b2d923940de" class="Link--secondary">3321314</a>
+        </code>
+      </div>
+    </div>
+  </div>
+    <div class="Details-content--hidden mt-2">
+      <pre class="color-fg-muted ws-pre-wrap">…paragraph and the closed-network command
+
+Follow-up to <a class="commit-link" href="https://gh.deepx.ai/deepx/dx-all-suite/commit/f4cfdb52df3e619caef077d4cd313940849d491a"><tt>f4cfdb5</tt></a>: the README reverse section still described --reset-to-base as
+mirror-only and showed '--reverse --pull-only' as the closed-network step.
+
+Co-Authored-By: Claude Fable 5.1 &lt;noreply@anthropic.com&gt;</pre>
+    </div>
+</div>
+
+</div>
+</div>  </div>
+</div>
+
+
+</div>
+
+      <div class="js-timeline-item js-timeline-progressive-focus-container">
+  
+        <div class="">
+  <div id="pullrequestreview-14442" class="js-comment js-updatable-content js-socket-channel js-targetable-element js-minimize-container">
+      <div class="TimelineItem">
+  <a href="https://gh.deepx.ai/dci" class="TimelineItem-avatar avatar circle lh-0 Link"><img src="https://gh.deepx.ai/avatars/u/74?s=60" alt="dci" size="40" height="40" width="40"></a>
+  <div class="TimelineItem-badge"></div>
+  <div class="TimelineItem-body d-flex flex-column flex-md-row flex-justify-start">          <div class="flex-auto flex-md-self-center">
+            <strong>
+                  <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+            </strong>
+
+            reviewed
+
+
+            <span class="color-fg-muted">
+                <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#pullrequestreview-14442" class="js-timestamp Link--secondary" id="pullrequestreview-14442-permalink">
+                  <relative-time datetime="2026-09-17T06:19:35Z" class="no-wrap">Sep 17, 2026</relative-time>
+                </a>
+            </span>
+            
+          </div>
+
+          <div class="ml-md-2 mt-md-0 mt-2 flex-shrink-0">
+
+
+            <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de" class="Button--invisible Button--small Button Button--invisible-noVisuals ml-0 ml-md-2">  <span class="Button-content">
+    <span class="Button-label">View reviewed changes</span>
+  </span>
+</a>
+
+          </div>
+</div>
+</div>
+        <div class="TimelineItem pt-0">
+  
+  
+  <div class="TimelineItem-body">            <div id="pullrequestreview-14442" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment timeline-comment--caret timeline-comment--caret-nw timeline-comment ml-n3 unminimized-comment">
+                    <div class="timeline-comment-header clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block d-md-none mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      left a comment
+
+
+
+
+      
+    </div>
+
+  </h3>
+</div>
+                <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#pullrequestreview-14442" class="d-none"></a>
+
+                    <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <h2 dir="auto">코드 리뷰 요약</h2>
+<p dir="auto">이번 PR은 크게 세 가지 핵심 변경을 포함합니다:</p>
+<ol dir="auto">
+<li><strong><code class="notranslate">harness-bootstrap</code> fragment 추가</strong> — standalone sub-repo checkout에서 suite harness를 확보하는 HARD GATE 메커니즘</li>
+<li><strong><code class="notranslate">ghes-sync.sh</code> 전면 한국어화</strong> — 출력 메시지, 주석, 오류 메시지 전면 번역 + 출력 포맷 개선 (정렬된 테이블, <code class="notranslate">│</code> 구분자)</li>
+<li><strong><code class="notranslate">dx-modelzoo</code> sync.conf 추가</strong> 및 <code class="notranslate">GHES_TOKEN</code> 신규 fallback 지원</li>
+</ol>
+<h3 dir="auto">🔴 Critical</h3>
+<ul dir="auto">
+<li><code class="notranslate">ghes-sync.sh</code>에서 <code class="notranslate">reset_ghes_branch()</code>가 <code class="notranslate">$cache</code>를 지역 변수 없이 참조하는데, 이 함수는 <code class="notranslate">process_reverse()</code> 내부에서만 호출되므로 <code class="notranslate">cache</code>가 설정된 상태이긴 하나, 함수 시그니처/주석에 이 전제조건이 명시되지 않아 미래 호출 시 무음 버그 위험이 있습니다.</li>
+</ul>
+<h3 dir="auto">🟡 Major</h3>
+<ul dir="auto">
+<li><code class="notranslate">ghes_bootstrap.sh</code>의 shallow clone URL 유도 로직에서 <code class="notranslate">suite_url</code>이 <code class="notranslate">$origin</code>과 같을 때 clone을 건너뛰는데, 이 조건이 suite 자체에서 실행할 때만 맞는 게 아니라 URL 변환 실패 시에도 해당되므로 오탐 가능성이 있습니다.</li>
+<li><code class="notranslate">test_ghes_sync.py</code>의 신규 테스트 일부에서 <code class="notranslate">all(l.index(...) == header.index(...) or True for l in [header])</code> 구문이 항상 True를 반환하는 무의미한 assertion입니다.</li>
+<li><code class="notranslate">test_asset_passthrough.py</code>에서 <code class="notranslate">PATH</code> 환경변수를 <code class="notranslate">/usr/bin:/bin</code>으로 하드코딩하여 macOS 등 다른 환경에서 실패할 수 있습니다.</li>
+</ul>
+<h3 dir="auto">🟢 Minor</h3>
+<ul dir="auto">
+<li>여러 문서 파일에서 영문 README에 한국어 로그 메시지 예시가 그대로 포함되어 있어 영어 독자에게 혼란을 줄 수 있습니다.</li>
+<li><code class="notranslate">QUICKGUIDE.md</code> (영문)의 트러블슈팅 섹션에 한국어 심볼이 혼재합니다.</li>
+</ul>
+<h3 dir="auto">✅ 긍정적</h3>
+<ul dir="auto">
+<li><code class="notranslate">_platform_list()</code> 단일 소스화로 generate/check 불일치 버그를 근본적으로 해결한 접근법이 우수합니다.</li>
+<li>probe 재시도 로직, stale cache ref 정리, GHES-side reset 등 실제 운영 시나리오를 체계적으로 커버하는 테스트가 잘 작성되었습니다.</li>
+<li>출력 포맷 개선(정렬된 테이블, 번호 �은 노트)은 운영 가독성을 크게 향상시킵니다.</li>
+</ul>
+    </div>
+  </task-lists>
+  
+</div>
+
+
+                    <!-- '"` --><!-- </textarea></xmp> -->
+                    <div class="pr-review-reactions">
+                  <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+                </div>
+
+</div>
+</div>
+</div>
+      <div class="TimelineItem py-0 pl-4">
+  
+  
+  <div class="TimelineItem-body my-0">            <turbo-frame id="review-thread-or-comment-id-14962" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-f2722edcdccf6c0cc1e148f5d3173b6f5ac758e160daeb5737075de8cd72494a" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/QUICKGUIDE.md</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +63
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +65
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size soft-wrap js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="63" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-s">```</span><span class="pl-c1"></span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="64" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-c1">[ghes-sync] dx_stream    │ base 'dev' 에 feature/dx-agent-dev 가 없는 새 commit 2 개 — PR 이 base 와 최신 상태가 아닙니다; --update-branch 로 재실행하면 base 를 브랜치에 merge 합니다</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="65" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-c1"></span><span class="pl-s">```</span></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18829" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18829" id="discussion_r18829-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:34Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟢 영문 가이드에 한국어 로그 예시가 포함되어 있습니다. 영어 독자에게 혼란을 줄 수 있으므로, 영문 메시지 예시로 대체하거나 별도 설명을 추가하는 것을 권장합니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14963" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-f2722edcdccf6c0cc1e148f5d3173b6f5ac758e160daeb5737075de8cd72494a" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/QUICKGUIDE.md</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +153
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +161
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size soft-wrap js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="153" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">mirror(to) / GHES(from) 에 접근할 수 없음 — git: Authentication failed … — GH_TOKEN 의 token이 REJECTED</span><span class="pl-s">`</span> <span class="pl-ml">|</span> The token the tool used (named in the message) was refused: revoked/expired (e.g. after a leak), wrong org, or no <span class="pl-s">`</span><span class="pl-c1">Contents</span><span class="pl-s">`</span> access on the mirror repos. Mint a new PAT; <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_SRC_TOKEN</span><span class="pl-s">`</span> wins over <span class="pl-s">`</span><span class="pl-c1">GH_TOKEN</span><span class="pl-s">`</span>, <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_DST_TOKEN</span><span class="pl-s">`</span> over <span class="pl-s">`</span><span class="pl-c1">GH_ENTERPRISE_TOKEN</span><span class="pl-s">`</span> — check which one is exported. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="154" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">… 접근할 수 없음 — git: Could not resolve host / unable to access — NETWORK 문제</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Network, not auth: the host is not reachable from this machine (wrong network, proxy, DNS). <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="155" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">probe N/3 회 실패 — 일시적 network/TLS 오류 … 재시도</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Transient TLS error (GnuTLS -110) on the <span class="pl-s">`</span><span class="pl-c1">ls-remote</span><span class="pl-s">`</span> probe; the probe is retried (<span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_RETRIES</span><span class="pl-s">`</span>=3, <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_RETRY_DELAY</span><span class="pl-s">`</span>=5 s) before the repo is failed with <span class="pl-s">`</span><span class="pl-c1">N회 시도 후에도 실패 — … NETWORK</span><span class="pl-s">`</span>. Not an auth problem. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="156" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">src […] 를 fetch 할 수 없음</span><span class="pl-s">`</span> / <span class="pl-s">`</span><span class="pl-c1">dst(GHES) 에 접근할 수 없음</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Missing or wrong PAT, or the host is not reachable from this machine. <span class="pl-s">`</span><span class="pl-c1">--reverse --push-only</span><span class="pl-s">`</span> where github.com push is blocked simply fails like this — that is expected: run step 2.3/3.3 on the open network. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="157" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">probe timeout (30초, GHES_SYNC_PROBE_TIMEOUT 초과)</span><span class="pl-s">`</span> <span class="pl-ml">|</span> GHES not reachable from here (wrong network). <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_PROBE_TIMEOUT</span><span class="pl-s">`</span> / <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_NET_TIMEOUT</span><span class="pl-s">`</span> tune the limits. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="158" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">DIVERGED</span><span class="pl-s">`</span> on a sub-repo right after its PR was squash-merged, while the mirror carries a NEW feature branch <span class="pl-ml">|</span> GHES still has the pre-merge <span class="pl-s">`</span><span class="pl-c1">feature/&lt;X&gt;</span><span class="pl-s">`</span> (merge does not delete it); it shares nothing with the rebuilt mirror branch. Its content is already in <span class="pl-s">`</span><span class="pl-c1">main</span><span class="pl-s">`</span>/<span class="pl-s">`</span><span class="pl-c1">dev</span><span class="pl-s">`</span>, so delete it on GHES (<span class="pl-s">`</span><span class="pl-c1">git push ghes --delete feature/&lt;X&gt;</span><span class="pl-s">`</span> in that repo, or the GHES UI) and rerun — the sync becomes CREATE. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="159" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">gitlink … NOT reachable</span><span class="pl-s">`</span> <span class="pl-ml">|</span> A parent repo points at a sub-repo commit that is not on the synced sub-repo branch. Fix the pointer or sync the right sub-repo branch first (nested repos are always processed first). <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="160" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">PR 생성 SKIP (gh CLI 없음, dst token 없음)</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Branch pushed; the tool reads <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_DST_TOKEN</span><span class="pl-s">`</span>, <span class="pl-s">`</span><span class="pl-c1">GH_ENTERPRISE_TOKEN</span><span class="pl-s">`</span> or <span class="pl-s">`</span><span class="pl-c1">GHES_TOKEN</span><span class="pl-s">`</span> — any other variable name is invisible to it. Export one of them (REST via curl) or install <span class="pl-s">`</span><span class="pl-c1">gh</span><span class="pl-s">`</span>, rerun — the open PR is reused. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="161" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">cache 정리: GHES 에서 삭제된 브랜치의 옛 사본 제거 — …</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Informational: the bare cache still had <span class="pl-s">`</span><span class="pl-c1">refs/remotes/dst/&lt;branch&gt;</span><span class="pl-s">`</span> for a branch GHES no longer has (deleted after a squash-merge); it was dropped so it cannot be misread as DIVERGED. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18830" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18830" id="discussion_r18830-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:34Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟢 영문 문서의 트러블슈팅 테이블에 한국어 심볼이 그대로 사용되고 있습니다. 영문 독자 대상 문서이므로 실제 출력 메시지가 한국어라는 점을 명시하거나, 영문 설명으로 작성하는 것이 좋습니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14964" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-809649346cbde396e2b7c36fb64273f5c823913d8c7f0faee3536d2a423a47a7" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/README.md</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +115
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +117
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size soft-wrap js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="115" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="116" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-s">```</span><span class="pl-c1"></span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="117" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-c1">[ghes-sync] dx_stream    │ base 'dev' 에 feature/dx-agent-dev 가 없는 새 commit 2 개 — PR 이 base 와 최신 상태가 아닙니다; --update-branch 로 재실행하면 base 를 브랜치에 merge 합니다</span></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18831" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18831" id="discussion_r18831-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:34Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟢 영문 README의 코드 블록 예시에 한국어 로그 메시지가 포함되어 있습니다. 영문 독자를 위해 실제 출력이 한국어임을 명확히 안내하는 주석을 추가하는 것을 권장합니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14965" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-809649346cbde396e2b7c36fb64273f5c823913d8c7f0faee3536d2a423a47a7" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/README.md</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +218
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +224
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size soft-wrap js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="218" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">PR <span class="x x-first x-last">생성 SKIP (</span>gh CLI <span class="x x-first x-last">없음, </span>dst token<span class="x x-first x-last"> 없음</span>)</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Push succeeded; set <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_DST_TOKEN</span><span class="pl-s x x-first">`</span><span class="x"> / </span><span class="pl-s x">`</span><span class="pl-c1 x">GH_ENTERPRISE_TOKEN</span><span class="pl-s x">`</span><span class="x"> / </span><span class="pl-s x">`</span><span class="pl-c1 x x-last">GHES_TOKEN</span><span class="pl-s">`</span> (REST via curl) or install <span class="pl-s">`</span><span class="pl-c1">gh</span><span class="pl-s">`</span>, then rerun — the existing branch is reused. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td data-line-number="186" class="blob-num blob-num-context"></td>
+
+              <td data-line-number="219" class="blob-num blob-num-context"></td>
+
+            <td class="blob-code blob-code-context">
+              <span class="blob-code-inner blob-code-marker-context"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">REST ... HTTP 401/404</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Token lacks <span class="pl-s">`</span><span class="pl-c1">repo</span><span class="pl-s">`</span> scope or the wrong host: the API base is <span class="pl-s">`</span><span class="pl-c1">https://&lt;host&gt;/api/v3</span><span class="pl-s">`</span> (GHES) / <span class="pl-s">`</span><span class="pl-c1">https://api.github.com</span><span class="pl-s">`</span>. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td data-line-number="187" class="blob-num blob-num-deletion"></td>
+
+              <td class="blob-num blob-num-deletion empty-cell"></td>
+
+            <td class="blob-code blob-code-deletion">
+              <span class="blob-code-inner blob-code-marker-deletion"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1"><span class="x x-first x-last">cannot </span>fetch <span class="x x-first x-last">src … auth/network?</span></span><span class="pl-s">`</span> / <span class="pl-s">`</span><span class="pl-c1 x x-first x-last">cannot reach dst …</span><span class="pl-s">`</span> <span class="pl-ml">|</span> No or wrong credential for a private repo (see Prerequisites), or the host is unreachable from this machine. An env token overrides the credential helper for that call. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="220" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1"><span class="x x-first x-last">src […] 를 </span>fetch <span class="x x-first x-last">할 수 없음</span></span><span class="pl-s">`</span> / <span class="pl-s">`</span><span class="pl-c1 x x-first x-last">dst(GHES) 에 접근할 수 없음 — git: … — … REJECTED / NETWORK</span><span class="pl-s">`</span> <span class="pl-ml">|</span> No or wrong credential for a private repo (see Prerequisites), or the host is unreachable from this machine. An env token overrides the credential helper for that call. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td data-line-number="188" class="blob-num blob-num-context"></td>
+
+              <td data-line-number="221" class="blob-num blob-num-context"></td>
+
+            <td class="blob-code blob-code-context">
+              <span class="blob-code-inner blob-code-marker-context"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">GnuTLS recv error (-110)</span><span class="pl-s">`</span> / <span class="pl-s">`</span><span class="pl-c1">RPC failed</span><span class="pl-s">`</span> on push <span class="pl-ml">|</span> Transient TLS/network error; pushes are retried (<span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_RETRIES</span><span class="pl-s">`</span>=3, <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_RETRY_DELAY</span><span class="pl-s">`</span>=5 s) and git's stderr is shown. Persistent: <span class="pl-s">`</span><span class="pl-c1">git config --global http.version HTTP/1.1</span><span class="pl-s">`</span>, then rerun (idempotent). <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td data-line-number="189" class="blob-num blob-num-deletion"></td>
+
+              <td class="blob-num blob-num-deletion empty-cell"></td>
+
+            <td class="blob-code blob-code-deletion">
+              <span class="blob-code-inner blob-code-marker-deletion"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">dst probe timed out after 30s</span><span class="pl-s">`</span> <span class="pl-ml">|</span> GHES not reachable from here (wrong network). Tune <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_PROBE_TIMEOUT</span><span class="pl-s">`</span> (probe, default 30 s) / <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_NET_TIMEOUT</span><span class="pl-s">`</span> (fetch/push, default 1800 s). <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="222" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">probe N/3 회 실패 — 일시적 network/TLS 오류</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Transient TLS error on the <span class="pl-s">`</span><span class="pl-c1">ls-remote</span><span class="pl-s">`</span> probe (GnuTLS -110 etc.); probes retry like pushes (<span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_RETRIES</span><span class="pl-s">`</span>). Only after the last attempt is the repo failed, and the message says <span class="pl-s">`</span><span class="pl-c1">N회 시도 후에도 실패</span><span class="pl-s">`</span>. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="223" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">cache 정리: … 삭제된 브랜치의 옛 사본 제거 — &lt;branches&gt;</span><span class="pl-s">`</span> <span class="pl-ml">|</span> Informational: branches deleted on the remote (e.g. a feature branch after its squash-merge) were dropped from the bare cache so they cannot be mistaken for a DIVERGED branch. <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="224" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-ml">|</span> <span class="pl-s">`</span><span class="pl-c1">probe timeout (30초, GHES_SYNC_PROBE_TIMEOUT 초과)</span><span class="pl-s">`</span> <span class="pl-ml">|</span> GHES not reachable from here (wrong network). Tune <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_PROBE_TIMEOUT</span><span class="pl-s">`</span> (probe, default 30 s) / <span class="pl-s">`</span><span class="pl-c1">GHES_SYNC_NET_TIMEOUT</span><span class="pl-s">`</span> (fetch/push, default 1800 s). <span class="pl-ml">|</span></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18832" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18832" id="discussion_r18832-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:34Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟢 영문 README의 트러블슈팅 테이블에 한국어 심볼이 혼재하고 있습니다. 영문 문서이므로 symptom 컬럼을 영문으로 유지하거나, 출력 메시지가 한국어임을 명시적으로 안내해야 합니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14966" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-a7663c80ee5fdb8d5a031bc2bc3daf744acce9af9a853371ad10bdb6cd38c3b6" class="text-mono text-small Link--primary wb-break-all mr-2">.deepx/templates/assets/harness_bootstrap.sh</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +98
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +102
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="98" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">  <span class="pl-k">if</span> [ <span class="pl-k">-n</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$origin</span><span class="pl-pds">"</span></span> ]<span class="pl-k">;</span> <span class="pl-k">then</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="99" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-c"><span class="pl-c">#</span> swap the last path component for dx-all-suite, preserving any .git suffix</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="100" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    suite_url=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-s"><span class="pl-pds">$(</span>printf <span class="pl-s"><span class="pl-pds">'</span>%s<span class="pl-pds">'</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$origin</span><span class="pl-pds">"</span></span> <span class="pl-k">|</span> sed -E <span class="pl-s"><span class="pl-pds">'</span>s#[^/:]+(\.git)?$#dx-all-suite\1#<span class="pl-pds">'</span></span><span class="pl-pds">)</span></span><span class="pl-pds">"</span></span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="101" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    ref=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-s"><span class="pl-pds">$(</span>git -C <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$REPO_DIR</span><span class="pl-pds">"</span></span> rev-parse --abbrev-ref HEAD <span class="pl-k">2&gt;</span>/dev/null <span class="pl-k">||</span> <span class="pl-c1">echo</span> HEAD<span class="pl-pds">)</span></span><span class="pl-pds">"</span></span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="102" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-k">if</span> [ <span class="pl-k">-n</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$suite_url</span><span class="pl-pds">"</span></span> ] <span class="pl-k">&amp;&amp;</span> [ <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$suite_url</span><span class="pl-pds">"</span></span> <span class="pl-k">!=</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$origin</span><span class="pl-pds">"</span></span> ]<span class="pl-k">;</span> <span class="pl-k">then</span></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18833" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18833" id="discussion_r18833-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:34Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟡 <code class="notranslate">suite_url</code>이 <code class="notranslate">$origin</code>과 같은 경우 clone을 건너뜁니다. 이 조건은 스크립트가 suite 자체에서 실행될 때를 방어하기 위한 것으로 보이나, <code class="notranslate">sed</code> 치환이 실패하여 변환 결과가 원본과 동일해지는 경우도 이 조건에 해당되어 clone을 조용히 건너뛸 수 있습니다. 변환 실패 케이스를 명시적으로 처리하거나 로그를 남기는 것을 권장합니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+
+  <!-- '"` --><!-- </textarea></xmp> -->
+  <turbo-frame id="review-thread-or-comment-id-14978" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-a527705c3ddc16be487e03165fa27fc73b0da283fd8fea0a67fc77ddf439c6e4" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/tests/test_sync_conf_repos.py</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +24
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +28
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="24" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-c"># fills them in locally. Tests must pass without that file, so supply the required settings via env</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="25" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-c"># and point --override at an empty file so a developer's override cannot leak in either.</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="26" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-s1">_ENV</span> <span class="pl-c1">=</span> {<span class="pl-c1">**</span><span class="pl-en">__import__</span>(<span class="pl-s">"os"</span>).<span class="pl-s1">environ</span>, <span class="pl-s">"GHES_SYNC_SRC_HOST"</span>: <span class="pl-s">"https://github.com/example-mirror-org"</span>, <span class="pl-s">"GHES_SYNC_BRANCH"</span>: <span class="pl-s">"feature/x"</span>}</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="27" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="28" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18845" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18845" id="discussion_r18845-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:35Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟢 <code class="notranslate">_ENV</code>에서 <code class="notranslate">__import__("os").environ</code>을 인라인으로 사용하고 있습니다. 가독성을 위해 <code class="notranslate">import os</code>를 추가하고 <code class="notranslate">os.environ</code>을 직접 사용하는 것이 좋습니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14979" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-a527705c3ddc16be487e03165fa27fc73b0da283fd8fea0a67fc77ddf439c6e4" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/tests/test_sync_conf_repos.py</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +59
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +71
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="59" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="60" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="61" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-k">def</span> <span class="pl-en">test_every_suite_submodule_is_covered</span>():</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="62" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-s">"""Every submodule of the suite must have a sync.conf section — otherwise</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="63" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-s">    the tool is silent about it."""</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="64" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-s1">names</span> <span class="pl-c1">=</span> <span class="pl-s1">re</span>.<span class="pl-en">findall</span>(<span class="pl-s">r'^\[submodule "([^"]+)"\]'</span>, <span class="pl-v">GITMODULES</span>.<span class="pl-en">read_text</span>(<span class="pl-s1">encoding</span><span class="pl-c1">=</span><span class="pl-s">"utf-8"</span>), <span class="pl-s1">re</span>.<span class="pl-v">M</span>)</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="65" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-s1">missing</span> <span class="pl-c1">=</span> <span class="pl-en">sorted</span>(<span class="pl-en">set</span>(<span class="pl-s1">names</span>) <span class="pl-c1">-</span> <span class="pl-en">set</span>(<span class="pl-en">conf_sections</span>()))</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="66" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-k">assert</span> <span class="pl-c1">not</span> <span class="pl-s1">missing</span>, (</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="67" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">        <span class="pl-s">"submodules absent from sync.conf (setup_remotes.sh will not report "</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="68" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">        <span class="pl-s">"them at all): %s"</span> <span class="pl-c1">%</span> <span class="pl-s1">missing</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="69" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    )</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="70" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="71" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18846" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18846" id="discussion_r18846-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:35Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟡 <code class="notranslate">test_every_suite_submodule_is_covered()</code>는 <code class="notranslate">.gitmodules</code>의 모든 submodule이 <code class="notranslate">sync.conf</code>에 있어야 한다고 강제합니다. 중첩 submodule도 <code class="notranslate">.gitmodules</code>에 있다면 이 테스트에 포함될 수 있으므로, suite 최상위 <code class="notranslate">.gitmodules</code>만 대상으로 함을 주석으로 명확히 하는 것이 좋습니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14980" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-d9e9f96cc864ea4bf91f44acba103b149ae9e249e4fe05237f8eefa6f8ea12ac" class="text-mono text-small Link--primary wb-break-all mr-2">.deepx/tools/tests/dx_agent_dev_gen/test_harness_bootstrap.py</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +125
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +135
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="125" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-s">    only requires the fragments dir plus the generator entry point, so a marker</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="126" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-s">    tree is a faithful stand-in."""</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="127" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-s1">suite</span> <span class="pl-c1">=</span> <span class="pl-s1">tmp_path</span> <span class="pl-c1">/</span> <span class="pl-s">"fakesuite"</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="128" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    (<span class="pl-s1">suite</span> <span class="pl-c1">/</span> <span class="pl-s">".deepx"</span> <span class="pl-c1">/</span> <span class="pl-s">"templates"</span> <span class="pl-c1">/</span> <span class="pl-s">"fragments"</span>).<span class="pl-en">mkdir</span>(<span class="pl-s1">parents</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="129" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-s1">gen</span> <span class="pl-c1">=</span> <span class="pl-s1">suite</span> <span class="pl-c1">/</span> <span class="pl-s">".deepx"</span> <span class="pl-c1">/</span> <span class="pl-s">"tools"</span> <span class="pl-c1">/</span> <span class="pl-s">"src"</span> <span class="pl-c1">/</span> <span class="pl-s">"dx_agent_dev_gen"</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="130" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-s1">gen</span>.<span class="pl-en">mkdir</span>(<span class="pl-s1">parents</span><span class="pl-c1">=</span><span class="pl-c1">True</span>)</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="131" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    (<span class="pl-s1">gen</span> <span class="pl-c1">/</span> <span class="pl-s">"cli.py"</span>).<span class="pl-en">write_text</span>(<span class="pl-s">"# marker<span class="pl-cce">\n</span>"</span>, <span class="pl-s1">encoding</span><span class="pl-c1">=</span><span class="pl-s">"utf-8"</span>)</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="132" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-s1">repo</span> <span class="pl-c1">=</span> <span class="pl-en">_copy_dx_app</span>(<span class="pl-s1">suite</span> <span class="pl-c1">/</span> <span class="pl-s">"dx-runtime"</span> <span class="pl-c1">/</span> <span class="pl-s">"dx_app"</span>)</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="133" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-en">deployed_bootstrap</span>(<span class="pl-s1">repo</span>)</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="134" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">    <span class="pl-k">return</span> <span class="pl-s1">suite</span>, <span class="pl-s1">repo</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="135" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18847" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18847" id="discussion_r18847-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:35Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">🟢 <code class="notranslate">nested_dx_app</code> fixture는 실제 suite가 아닌 최소한의 마커 트리를 fake suite로 사용합니다. 이 접근법은 효율적이며, 주석으로 의도가 명확히 표시되어 있습니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14981" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-54571bf8b51dd4d797525ae630f72cdbe7e6c0dd81d3aef61fcef6be80cb0d45" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/ghes-sync.sh</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start color-fg-success">
+      +150
+    </span> to <span class="js-multi-line-preview-end color-fg-success">
+      +154
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size js-diff-table">
+          <tbody><tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="150" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">PROBE_TIMEOUT=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${GHES_SYNC_PROBE_TIMEOUT<span class="pl-k">:-</span>30}</span><span class="pl-pds">"</span></span>   <span class="pl-c"><span class="pl-c">#</span> ls-remote 연결 probe</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="151" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">NET_TIMEOUT=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${GHES_SYNC_NET_TIMEOUT<span class="pl-k">:-</span>1800}</span><span class="pl-pds">"</span></span>     <span class="pl-c"><span class="pl-c">#</span> fetch / push (최초 대용량 fetch는 오래 걸림)</span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="152" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-en">tmo</span>() { <span class="pl-k">local</span> secs=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$1</span><span class="pl-pds">"</span></span><span class="pl-k">;</span> <span class="pl-c1">shift</span><span class="pl-k">;</span> <span class="pl-k">if</span> <span class="pl-c1">command</span> -v timeout <span class="pl-k">&gt;</span>/dev/null <span class="pl-k">2&gt;&amp;1</span><span class="pl-k">;</span> <span class="pl-k">then</span> timeout <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$secs</span><span class="pl-pds">"</span></span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$@</span><span class="pl-pds">"</span></span><span class="pl-k">;</span> <span class="pl-k">else</span> <span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">$@</span><span class="pl-pds">"</span></span><span class="pl-k">;</span> <span class="pl-k">fi</span><span class="pl-k">;</span> }</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="153" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">RETRIES=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${GHES_SYNC_RETRIES<span class="pl-k">:-</span>3}</span><span class="pl-pds">"</span></span><span class="pl-k">;</span> RETRY_DELAY=<span class="pl-s"><span class="pl-pds">"</span><span class="pl-smi">${GHES_SYNC_RETRY_DELAY<span class="pl-k">:-</span>5}</span><span class="pl-pds">"</span></span></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="154" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><span class="pl-c"><span class="pl-c">#</span> 일시적(재시도 가치가 있는) network/TLS 오류의 stderr 패턴 — 인증 거부나 DNS 실패는 포함하지 않음</span></span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18848" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18848" id="discussion_r18848-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:35Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">✅ <code class="notranslate">tmo()</code>, <code class="notranslate">auth_opts()</code>, <code class="notranslate">auth_hint()</code> 등의 헬퍼 함수와 토큰 변수들을 스크립트 상단에 정의 완료 후 사용하도록 재배치한 것이 좋습니다. 코드 흐름이 더 명확합니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+  <turbo-frame id="review-thread-or-comment-id-14982" target="_top">
+    <details open="open" class="review-thread-component js-comment-container js-resolvable-timeline-thread-container Details-element details-reset mb-3 border rounded-2">
+    <summary role="button" class="py-2 px-3 rounded-2 color-bg-subtle">      <div class="d-flex flex-items-center">
+        <span class="flex-auto mr-3 d-flex flex-items-center">
+              <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files/332131482793ceafea6da37cef9c5b2d923940de#diff-0e5a874ff10f4dcd6f19109f8cd350bf5ea56a7faf66339a524360d36e461979" class="text-mono text-small Link--primary wb-break-all mr-2">internal/tools/ghes-sync/sync.conf</a>
+
+        </span>
+      </div>
+</summary>
+    <div>          <div class="f6 py-2 px-3 border-bottom d-flex flex-justify-between">
+      <div class="f6 color-fg-muted">
+      Comment on lines
+
+    <span class="js-multi-line-preview-start ">
+      38
+    </span> to <span class="js-multi-line-preview-end ">
+      48
+    </span>
+
+  </div>
+
+  </div>
+
+  <div class="blob-wrapper border-bottom">
+    
+    <table class="diff-table tab-size js-diff-table">
+          <tbody><tr>
+
+              <td data-line-number="38" class="blob-num blob-num-context"></td>
+
+              <td data-line-number="38" class="blob-num blob-num-context"></td>
+
+            <td class="blob-code blob-code-context">
+              <span class="blob-code-inner blob-code-marker-context">path = dx-compiler</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td data-line-number="39" class="blob-num blob-num-context"></td>
+
+              <td data-line-number="39" class="blob-num blob-num-context"></td>
+
+            <td class="blob-code blob-code-context">
+              <span class="blob-code-inner blob-code-marker-context"><br></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="40" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"># dx-modelzoo carries no .deepx/ harness, but it IS a suite submodule: without a</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="41" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"># section here setup_remotes.sh never visits it and prints nothing for it, which</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="42" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"># reads as "only dx-modelzoo failed". Configured so its remotes follow the same</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="43" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"># ghes/mirror convention and the suite's gitlink for it is validated.</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="44" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">[repo dx-modelzoo]</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="45" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition">path = dx-modelzoo</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td class="blob-num blob-num-addition empty-cell"></td>
+
+              <td data-line-number="46" class="blob-num blob-num-addition"></td>
+
+            <td class="blob-code blob-code-addition">
+              <span class="blob-code-inner blob-code-marker-addition"><br></span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td data-line-number="40" class="blob-num blob-num-context"></td>
+
+              <td data-line-number="47" class="blob-num blob-num-context"></td>
+
+            <td class="blob-code blob-code-context">
+              <span class="blob-code-inner blob-code-marker-context">[repo dx-all-suite]</span>
+
+            </td>
+          </tr>
+          <tr>
+
+              <td data-line-number="41" class="blob-num blob-num-context"></td>
+
+              <td data-line-number="48" class="blob-num blob-num-context"></td>
+
+            <td class="blob-code blob-code-context">
+              <span class="blob-code-inner blob-code-marker-context">path = .</span>
+
+            </td>
+          </tr>
+    </tbody></table>
+
+</div>
+
+
+<div class="js-inline-comments-container">
+  <div class="js-line-comments js-suggested-changes-container js-suggested-changes-contents js-quote-selection-container">
+    <div class="js-comments-holder">
+        <div id="discussion_r18849" class="timeline-comment-group js-minimizable-comment-group js-targetable-element my-0 comment previewable-edit js-task-list-container js-comment review-comment js-minimize-container unminimized-comment">
+        <div class="ml-n1 flex-items-center flex-row-reverse clearfix d-flex">
+  <div class="timeline-comment-actions flex-shrink-0 d-flex flex-items-center">
+      <div class="d-none d-md-inline-block">
+          <reactions-menu tabindex="-1">
+    <details class="dropdown details-reset details-overlay d-inline-block new-reactions-dropdown js-reaction-popover-container js-comment-header-reaction-button">
+        <summary class="circle reaction-dropdown-button timeline-comment-action btn-link p-0 mr-0 d-flex flex-justify-center flex-items-center px-1 py-2">    
+</summary>        <!-- '"` --><!-- </textarea></xmp> -->
+    </details>
+  </reactions-menu>
+
+      </div>
+    <details class="details-overlay details-reset position-relative d-inline-block">
+      <summary class="timeline-comment-action Link--secondary Button--link Button--medium Button" role="button">  <span class="Button-content">
+    <span class="Button-label"></span>
+  </span>
+</summary>
+
+      
+    </details>
+  </div>
+
+  <div class="d-none d-sm-flex">
+      
+
+      
+
+      
+
+  </div>
+
+  <h3 class="f5 text-normal">
+    <div>
+      <img src="https://gh.deepx.ai/avatars/u/74?s=48" alt="@dci" size="24" height="24" width="24" class="avatar circle d-inline-block mr-2">
+
+      <strong>
+            <a class="author Link--primary text-bold css-overflow-wrap-anywhere " show_full_name="false" href="https://gh.deepx.ai/dci">dci</a>
+  
+
+      </strong>
+
+      
+
+      
+
+
+        <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#discussion_r18849" id="discussion_r18849-permalink" class="Link--secondary js-timestamp"><relative-time datetime="2026-09-17T06:19:35Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+
+      
+    </div>
+
+  </h3>
+</div>
+
+        <div class="ml-5">
+      <div class="edit-comment-hide">
+  <div class="js-minimize-comment d-none">
+  
+ <div class="js-comment-hide-on-error flash flash-warn flash-full">
+  
+    <button class="flash-close js-comment-hide-minimize-form" type="button">
+      
+    </button>
+
+    <h3 class="f4">Choose a reason for hiding this comment</h3>
+
+    <p class="mb-3">
+      The reason will be displayed to describe this comment to others. <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/articles/managing-disruptive-comments/#hiding-a-comment">Learn more</a>.
+    </p>
+
+    <!-- '"` --><!-- </textarea></xmp> -->
+
+  
+</div></div>
+
+  <task-lists disabled="" sortable="">
+    <div class="comment-body markdown-body js-comment-body soft-wrap css-overflow-wrap-anywhere user-select-contain d-block">
+      <p dir="auto">✅ <code class="notranslate">dx-modelzoo</code>에 대한 섹션을 추가하고 이유를 상세히 설명한 주석이 잘 작성되었습니다. <code class="notranslate">gitlinks</code>에 추가하여 suite의 gitlink 검증에 포함시킨 것도 올바른 접근입니다.</p>
+    </div>
+  </task-lists>
+            
+
+
+
+
+
+</div>
+    </div>
+
+        <!-- '"` --><!-- </textarea></xmp> -->
+        <div class="ml-5 edit-comment-hide">
+      <div class="comment-reactions js-reactions-container js-reaction-buttons-container social-reactions reactions-container d-flex">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+    </div>
+
+</div>
+
+
+
+
+    </div>
+
+      <div class="review-thread-reply border-bottom">
+        <div class="inline-comment-form-container js-inline-comment-form-container">
+          <div class="inline-comment-form-actions">
+            <div class="d-table width-full">
+              <div class="d-table-cell">
+                <img src="https://gh.deepx.ai/avatars/u/66?s=48" alt="@dhyang" size="24" height="24" width="24" class="avatar circle">
+              </div>
+              <div class="d-table-cell col-12">
+                <button type="button" class="review-thread-reply-button width-full color-fg-muted text-left form-control js-toggle-inline-comment-form">
+                  Reply...
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="inline-comment-form-box ml-n2 mr-n2">
+            <!-- '"` --><!-- </textarea></xmp> -->          </div>
+        </div>
+      </div>
+  </div>
+
+    <div class="d-flex flex-justify-between">
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+</div>
+
+</div>
+</details></turbo-frame>
+
+
+</div>
+</div>  </div>
+</div>
+
+
+</div>
+
+      <div class="js-timeline-item js-timeline-progressive-focus-container">
+  
+            <div class="TimelineItem js-targetable-element" id="event-61860">
+    <div class="TimelineItem-badge ">
+      
+    </div>
+    <div class="TimelineItem-body">
+
+      
+
+          <a class="d-inline-block" href="https://gh.deepx.ai/dci"><img class="avatar avatar-user" src="https://gh.deepx.ai/avatars/u/74?s=40" width="20" height="20" alt="@dci"></a>
+<a class="author Link--primary text-bold" href="https://gh.deepx.ai/dci">dci</a>
+
+
+
+
+          added
+  the 
+<a id="label-64510b" href="https://gh.deepx.ai/deepx/dx-all-suite/labels/ReviewedByAI" class="IssueLabel hx_IssueLabel d-inline-block v-align-middle">
+  ReviewedByAI
+</a>
+ label
+
+
+      <a href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91#event-61860" class="Link--secondary"><relative-time datetime="2026-09-17T06:19:39Z" class="no-wrap">Sep 17, 2026</relative-time></a>
+
+    </div>
+  </div>
+
+
+
+
+</div>
+
+
+
+
+
+  <!-- Rendered timeline since 2026-09-17 06:19:39 -->
+  <div id="partial-timeline" class="js-timeline-marker js-socket-channel js-updatable-content">
+    <!-- '"` --><!-- </textarea></xmp> -->  </div>
+
+
+
+    </div>
+
+    <div class="discussion-timeline-actions">
+            
+
+
+  <div id="partial-pull-merging" class="pull-merging js-pull-merging js-socket-channel js-updatable-content js-pull-refresh-on-pjax ">
+
+      <h2 class="sr-only">Merge state</h2>
+      <div class="merge-pr js-merge-pr js-details-container Details is-rebasing is-updating-via-merge">
+
+          
+
+          
+<div class="js-merge-message-container">
+        
+<div class="ml-0 pl-0 ml-md-6 pl-md-3 my-3 branch-action
+  branch-action-state-clean
+  
+  ">
+  <span class="branch-action-icon d-none d-md-flex flex-items-center flex-justify-center">
+    
+  </span>
+  <div class="branch-action-body timeline-comment--caret">
+    <div class="mergeability-details js-details-container Details">
+      
+
+
+
+      
+      
+      
+  <div class="branch-action-item js-details-container Details
+              open
+              ">
+      <div class="branch-action-item-icon completeness-indicator
+                  completeness-indicator-success
+                 ">
+          
+      </div>
+
+    <div class="">
+          <button type="button" class="js-details-target btn-link float-right">    <span class="statuses-toggle-opened">Hide all checks</span>
+          <span class="statuses-toggle-closed">Show all checks</span>
+</button>
+        <h3 class="h4 status-heading">All checks have passed</h3>
+        <span class="status-meta">2 skipped and 2 successful checks</span>
+    </div>
+
+    <div class="merge-status-list hide-closed-list js-updatable-content-preserve-scroll-position">
+        <div class="merge-status-item d-flex flex-items-baseline">
+          <div class="merge-status-icon flex-self-center">
+            
+          </div>
+
+            <a href="https://gh.deepx.ai/github-apps/github-actions" class="d-inline-block tooltipped tooltipped-e Link--muted mr-2 rounded-2">
+              <img class="avatar" src="https://gh.deepx.ai/avatars/u/2?s=40" width="20" height="20" alt="@github-actions">
+            </a>
+
+
+          <div class="color-fg-muted col-10 css-truncate css-truncate-target">
+  <strong class="text-emphasized mr-2">
+    dx-agent-dev gate (cloud) / harness-gate (pull_request)
+  </strong>
+
+      Skipped
+
+</div>
+
+<div class="d-flex col-2 flex-shrink-0">
+
+    <a class="status-actions" href="https://gh.deepx.ai/deepx/dx-all-suite/actions/runs/129102/job/2596694?pr=91">Details</a>
+</div>
+
+        </div>
+        <div class="merge-status-item d-flex flex-items-baseline">
+          <div class="merge-status-icon flex-self-center">
+            
+          </div>
+
+            <a href="https://gh.deepx.ai/github-apps/github-actions" class="d-inline-block tooltipped tooltipped-e Link--muted mr-2 rounded-2">
+              <img class="avatar" src="https://gh.deepx.ai/avatars/u/2?s=40" width="20" height="20" alt="@github-actions">
+            </a>
+
+
+          <div class="color-fg-muted col-10 css-truncate css-truncate-target">
+  <strong class="text-emphasized mr-2">
+    dx-agent-dev gate (cloud) / harness-gate (push)
+  </strong>
+
+      Skipped
+
+</div>
+
+<div class="d-flex col-2 flex-shrink-0">
+
+    <a class="status-actions" href="https://gh.deepx.ai/deepx/dx-all-suite/actions/runs/129100/job/2596693?pr=91">Details</a>
+</div>
+
+        </div>
+        <div class="merge-status-item d-flex flex-items-baseline">
+          <div class="merge-status-icon flex-self-center">
+            
+          </div>
+
+            <a href="https://gh.deepx.ai/github-apps/github-actions" class="d-inline-block tooltipped tooltipped-e Link--muted mr-2 rounded-2">
+              <img class="avatar" src="https://gh.deepx.ai/avatars/u/2?s=40" width="20" height="20" alt="@github-actions">
+            </a>
+
+
+          <div class="color-fg-muted col-10 css-truncate css-truncate-target">
+  <strong class="text-emphasized mr-2">
+    dx-agent-dev gate (ghes) / harness-gate (pull_request)
+  </strong>
+
+      Successful in 5m
+
+    —
+      harness-gate
+</div>
+
+<div class="d-flex col-2 flex-shrink-0">
+
+    <a class="status-actions" href="https://gh.deepx.ai/deepx/dx-all-suite/actions/runs/129103/job/2596695?pr=91">Details</a>
+</div>
+
+        </div>
+        <div class="merge-status-item d-flex flex-items-baseline">
+          <div class="merge-status-icon flex-self-center">
+            
+          </div>
+
+            <a href="https://gh.deepx.ai/github-apps/github-actions" class="d-inline-block tooltipped tooltipped-e Link--muted mr-2 rounded-2">
+              <img class="avatar" src="https://gh.deepx.ai/avatars/u/2?s=40" width="20" height="20" alt="@github-actions">
+            </a>
+
+
+          <div class="color-fg-muted col-10 css-truncate css-truncate-target">
+  <strong class="text-emphasized mr-2">
+    dx-agent-dev gate (ghes) / harness-gate (push)
+  </strong>
+
+      Successful in 3m
+
+    —
+      harness-gate
+</div>
+
+<div class="d-flex col-2 flex-shrink-0">
+
+    <a class="status-actions" href="https://gh.deepx.ai/deepx/dx-all-suite/actions/runs/129101/job/2596692?pr=91">Details</a>
+</div>
+
+        </div>
+    </div>
+  </div>
+
+
+        
+
+
+      
+    <div class="branch-action-item">
+      <div class="merging-body-merge-warning">
+        <div class="branch-action-item-icon completeness-indicator completeness-indicator-error">
+          
+        </div>
+
+        <h3 class="h4 status-heading">The main branch requires linear history</h3>
+        <span class="status-meta">
+          The base branch does not accept merge commits. Alternate merge methods are preferred.
+          <a class="Link--inTextBlock" href="https://docs.github.com/enterprise-server@3.15/github/administering-a-repository/requiring-a-linear-commit-history">Learn more about required linear history.</a>
+        </span>
+      </div>
+      <div class="merging-body squashing-body">
+        <div class="branch-action-item-icon completeness-indicator completeness-indicator-success">
+          
+        </div>
+
+        <h3 class="h4 status-heading">This branch has no conflicts with the base branch</h3>
+          <span class="status-meta">
+              Merging can be performed automatically.
+          </span>
+      </div>
+
+      <div class="rebasing-body">
+          <div class="branch-action-item-icon completeness-indicator completeness-indicator-success">
+            
+          </div>
+
+          <h3 class="h4 status-heading">This branch has no conflicts with the base branch when rebasing</h3>
+
+            <span class="status-meta">Rebase and merge can be performed automatically.</span>
+      </div>
+    </div>
+
+
+
+        <div class="merge-message">
+
+      
+<div class="select-menu d-inline-block">
+  <div class="BtnGroup position-relative">
+    <button type="button" class="merge-box-button btn-group-merge rounded-left-2 btn btn-primary BtnGroup-item js-details-target hx_create-pr-button" disabled="">
+      Merge pull request
+    </button>
+
+    <button type="button" class="merge-box-button btn-group-squash rounded-left-2 btn btn-primary BtnGroup-item js-details-target hx_create-pr-button">
+      Squash and merge
+    </button>
+
+    <button type="button" class="merge-box-button btn-group-rebase rounded-left-2 btn btn-primary BtnGroup-item js-details-target hx_create-pr-button">
+      Rebase and merge
+    </button>
+
+      <details class="details-reset details-overlay BtnGroup-parent">
+        <summary class="btn btn-primary select-menu-button BtnGroup-item js-merge-method-menu-button" role="button"></summary>
+
+        
+      </details>
+  </div>
+</div>
+
+      <p class="alt-merge-options text-small mt-md-0 mt-2">
+  
+  or view
+  <button name="button" type="button" class="btn-link js-details-target Link--inTextBlock">
+    command line instructions
+  </button>.
+</p>
+
+  
+  <git-clone-help class="merge-branch-manually">
+      <h4>Merging via command line</h4>
+      <p class="intro">
+        If you do not want to use the merge button or an automatic merge cannot be
+        performed, you can perform a manual merge on the command line. However, the
+        following steps are not applicable if the base branch is protected.
+
+      </p>
+
+    <div class="d-flex mt-2">
+      <div class="BtnGroup">
+            <!-- '"` --><!-- </textarea></xmp> -->            <!-- '"` --><!-- </textarea></xmp> -->        <button type="button" class="BtnGroup-item btn btn-sm">
+          Patch
+        </button>
+      </div>
+
+        <div class="flex-1 ml-2">
+          <div class="input-group">
+              <input id="clone-help-git-url" type="text" readonly="" spellcheck="false" class="form-control input-sm input-monospace" value="git@gh.deepx.ai:deepx/dx-all-suite.git">
+              <span class="input-group-button">
+                <span>
+  <clipboard-copy for="clone-help-git-url" class="btn btn-sm zeroclipboard-button" tabindex="0" role="button">
+      
+      
+</clipboard-copy>  <div class="sr-only"></div>
+</span>
+              </span>
+          </div>
+        </div>
+    </div>
+
+      <p class="text-small color-fg-muted step"><strong>Step 1:</strong> Clone the repository or update your local repository with the latest changes.</p>
+      <div class="copyable-terminal">
+        <div class="copyable-terminal-button">
+          <span>
+  <clipboard-copy for="clone-help-step-1" class="btn btn-sm zeroclipboard-button" tabindex="0" role="button">
+      
+      
+</clipboard-copy>  <div class="sr-only"></div>
+</span>
+        </div>
+        <pre id="clone-help-step-1" class="copyable-terminal-content user-select-contain"><span class="user-select-contain">git pull origin main</span></pre>
+      </div>
+
+        <p class="text-small color-fg-muted step"><strong>Step 2:</strong> Switch to the base branch of the pull request.</p>
+      <div class="copyable-terminal">
+        <div class="copyable-terminal-button">
+          <span>
+  <clipboard-copy for="clone-help-step-2" class="btn btn-sm zeroclipboard-button" tabindex="0" role="button">
+      
+      
+</clipboard-copy>  <div class="sr-only"></div>
+</span>
+        </div>
+            <pre id="clone-help-step-2" class="copyable-terminal-content user-select-contain"><span class="user-select-contain">git checkout main</span></pre>
+      </div>
+
+        <p class="text-small color-fg-muted step"><strong>Step 3:</strong> Merge the head branch into the base branch.</p>
+      <div class="copyable-terminal">
+        <div class="copyable-terminal-button">
+          <span>
+  <clipboard-copy for="clone-help-step-3" class="btn btn-sm zeroclipboard-button" tabindex="0" role="button">
+      
+      
+</clipboard-copy>  <div class="sr-only"></div>
+</span>
+        </div>
+            <pre id="clone-help-step-3" class="copyable-terminal-content user-select-contain"><span class="user-select-contain">git merge feature/dx-agent-dev</span></pre>
+      </div>
+
+        <p class="text-small color-fg-muted step"><strong>Step 4:</strong> Push the changes.</p>
+        <div class="copyable-terminal">
+          <div class="copyable-terminal-button">
+            <span>
+  <clipboard-copy for="clone-help-step-4" class="btn btn-sm zeroclipboard-button" tabindex="0" role="button">
+      
+      
+</clipboard-copy>  <div class="sr-only"></div>
+</span>
+          </div>
+          <pre id="clone-help-step-4" class="copyable-terminal-content user-select-contain"><span class="user-select-contain">git push -u origin main</span></pre>
+        </div>
+  </git-clone-help>
+
+</div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+            
+<!-- '"` --><!-- </textarea></xmp> -->
+</div>
+
+      </div>
+
+
+
+
+      
+
+
+<div class="ml-0 pl-0 ml-md-6 pl-md-3 my-3 branch-action branch-action-state-error pull-merging-error">
+  <span class="branch-action-icon d-none d-md-flex flex-items-center flex-justify-center">
+    
+  </span>
+  <div class="branch-action-body timeline-comment--caret p-3">
+        <button type="button" class="js-merge-box-try-again btn float-right">    
+        Try again
+</button>    <h4 class="merge-branch-heading">Update branch attempt failed</h4>
+    <p class="merge-branch-description multi-line-error">Oops, something went wrong.</p>
+    
+  </div>
+</div>
+
+  </div>
+
+
+      <div id="issue-comment-box">
+            <div class="timeline-comment-wrapper timeline-new-comment js-comment-container js-targetable-element ml-0 pl-0 ml-md-6 pl-md-3" id="issuecomment-new">
+  <div class="d-none d-md-block">
+  <span class="timeline-comment-avatar "><a class="d-inline-block" href="https://gh.deepx.ai/dhyang"><img class="avatar avatar-user" src="https://gh.deepx.ai/avatars/u/66?s=80" width="40" height="40" alt="@dhyang"></a></span>
+  </div>
+    <div>
+      <!-- '"` --><!-- </textarea></xmp> -->    </div>
+        
+
+
+    <div class="protip">
+      
+      <strong>ProTip!</strong>
+      Add comments to specific lines under <a class="Link--inTextBlock" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91/files">Files changed</a>.
+    </div>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+
+</div>
+  <div class="Layout-sidebar">    
+<div id="partial-discussion-sidebar" class="js-socket-channel js-updatable-content">
+
+
+      <div class="discussion-sidebar-item sidebar-assignee js-discussion-sidebar-item position-relative">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+
+
+    <div class="discussion-sidebar-item sidebar-assignee js-discussion-sidebar-item">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+
+
+      
+<div class="discussion-sidebar-item js-discussion-sidebar-item">
+  
+
+
+  <details class="details-reset details-overlay select-menu hx_rsm label-select-menu" id="labels-select-menu">
+
+      <summary class="text-bold discussion-sidebar-heading discussion-sidebar-toggle hx_rsm-trigger" role="button">
+        
+        Labels
+      </summary>
+
+    
+  </details>
+
+
+    <div class="js-issue-labels d-flex flex-wrap">
+      
+<a id="label-ec1676" href="https://gh.deepx.ai/deepx/dx-all-suite/labels/ReviewedByAI" class="IssueLabel hx_IssueLabel width-fit mb-1 mr-1">
+    <span class="css-truncate css-truncate-target width-fit">ReviewedByAI</span>
+</a>
+
+</div>
+
+</div>
+
+
+      
+
+  <div class="discussion-sidebar-item js-discussion-sidebar-item">
+    <!-- '"` --><!-- </textarea></xmp> -->  </div>
+
+
+      
+<div class="discussion-sidebar-item sidebar-progress-bar js-discussion-sidebar-item">
+  <!-- '"` --><!-- </textarea></xmp> --></div>
+
+
+    
+      <create-branch class="discussion-sidebar-item d-block">
+          
+<div class="js-discussion-sidebar-item">
+  <div>
+    <development-menu>
+      <!-- '"` --><!-- </textarea></xmp> -->    </development-menu>
+  </div>
+</div>
+
+        
+      </create-branch>
+
+      <div class="discussion-sidebar-item sidebar-notifications">
+      <div class="thread-subscription-status js-socket-channel js-updatable-content">
+      <div>
+  <div class="d-flex position-relative">
+    <button type="button" class="discussion-sidebar-heading discussion-sidebar-toggle">
+      <div class="d-flex flex-justify-between">
+        <div class="text-bold">Notifications</div>
+        <span class="text-normal">Customize</span>
+      </div>
+    </button>
+    
+<dialog-helper>
+  <dialog id="configure_thread_subscription" class="Overlay Overlay-whenNarrow Overlay--size-medium-portrait Overlay--motion-scaleFade color-fg-default">
+    <div class="Overlay-header Overlay-header--divided">
+  <div class="Overlay-headerContentWrap">
+    <div class="Overlay-titleWrap">
+      <h1 class="Overlay-title " id="configure_thread_subscription-title">
+        Notification settings
+      </h1>
+        
+    </div>
+    <div class="Overlay-actionWrap">
+      <button type="button" class="close-button Overlay-closeButton"></button>
+    </div>
+  </div>
+  
+</div>
+      <scrollable-region>
+        <div class="Overlay-body p-0">        <include-fragment loading="lazy" src="/notifications/thread_subscription_dialog?repository_id=445&amp;thread_class=Issue&amp;thread_id=10770">
+          
+          <div class="d-flex flex-items-center flex-justify-center">
+            
+          </div>
+        </include-fragment>
+</div>
+      </scrollable-region>
+      
+</dialog></dialog-helper>
+  </div>
+</div>
+
+      <!-- '"` --><!-- </textarea></xmp> -->      <p id="notification-subscribe-button-reason" class="reason text-small color-fg-muted">
+        You’re receiving notifications because you authored the thread.
+      </p>
+  </div>
+
+  </div>
+
+
+  
+      <div id="partial-users-participants" class="discussion-sidebar-item">
+  <div class="participation">
+    <div class="discussion-sidebar-heading text-bold">
+      2 participants
+    </div>
+    <div class="participation-avatars d-flex flex-wrap">
+        <a class="participant-avatar" href="https://gh.deepx.ai/dhyang">
+          <img class="avatar avatar-user" src="https://gh.deepx.ai/avatars/u/66?s=52" width="26" height="26" alt="@dhyang"> 
+</a>        <a class="participant-avatar" href="https://gh.deepx.ai/dci">
+          <img class="avatar avatar-user" src="https://gh.deepx.ai/avatars/u/74?s=52" width="26" height="26" alt="@dci"> 
+</a>    </div>
+  </div>
+</div>
+
+
+
+    
+  <div class="discussion-sidebar-item">
+    <details class="details-reset details-overlay details-overlay-dark js-lock-issue">
+      <summary class="btn-link no-underline text-bold Link--primary lock-toggle-link" role="button">
+        
+        <strong>Lock conversation</strong>
+      </summary>
+      <details-dialog class="anim-fade-in fast Box Box--overlay color-fg-default f5" role="dialog">
+        <!-- '"` --><!-- </textarea></xmp> -->      </details-dialog>
+    </details>
+  </div>
+
+
+    
+
+
+
+
+    
+
+</div>
+
+
+</div>
+  
+</div>
+    </div>
+  </div>
+  
+
+
+    </div>
+
+
+  </div>
+
+</turbo-frame>
+
+
+    </main>
+  </div>
+
+  </div>
+
+          <footer class="footer pt-8 pb-6 f6 color-fg-muted p-responsive" role="contentinfo">
+  <h2 class="sr-only">Footer</h2>
+
+    <div class="d-flex flex-justify-center py-2">
+    <span class="f6 color-fg-muted">GitHub Enterprise Server 3.15.21</span>
+  </div>
+
+  <span class="sr-only" id="business-name">DEEPX Co., Ltd.</span>
+
+  <div class="d-flex flex-justify-center flex-items-center flex-column-reverse flex-lg-row flex-wrap flex-lg-nowrap pb-4">
+    <div class="d-flex flex-items-center flex-shrink-0 mx-2">
+        <a class="footer-octicon mr-2" href="https://gh.deepx.ai/deepx/dx-all-suite/pull/91">
+          <img itemprop="image" class="" alt="DEEPX Co., Ltd. avatar" src="https://gh.deepx.ai/avatars/b/1?s=48" width="24" height="24">
+</a>
+      <span>
+        DEEPX Co., Ltd.
+      </span>
+    </div>
+
+  </div>
+
+
+  <div class="d-flex flex-justify-center flex-items-center flex-column-reverse flex-lg-row flex-wrap flex-lg-nowrap">
+    <div class="d-flex flex-items-center flex-shrink-0 mx-2">
+      <a class="footer-octicon mr-2" href="https://gh.deepx.ai/">
+        
+</a>
+      <span>
+        © 2026 GitHub,&nbsp;Inc.
+      </span>
+    </div>
+
+    <nav>
+      <h3 class="sr-only" id="sr-footer-heading">Footer navigation</h3>
+
+      <ul class="list-style-none d-flex flex-justify-center flex-wrap mb-2 mb-lg-0">
+
+          <li class="mx-2">
+            <a href="https://docs.github.com/enterprise-server@3.15" class="Link--secondary Link">Help</a>
+          </li>
+
+          <li class="mx-2">
+            <a href="https://gh.deepx.ai/contact" class="Link--secondary Link">Support</a>
+          </li>
+
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+
+
+
+
+  
+
+    
+
+    <div class="Popover js-hovercard-content position-absolute" tabindex="0">
+  <div class="Popover-message Popover-message--bottom-left Popover-message--large Box color-shadow-large"></div>
+</div>
+
+    
+
+
+
+    
+
+
+    </div>
+
+    <div id="js-global-screen-reader-notice" class="sr-only mt-n1"></div>
+    <div id="js-global-screen-reader-notice-assertive" class="sr-only mt-n1"></div>
+  
+
+
+</body></html></body></html>
+--B--

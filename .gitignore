@@ -46,6 +46,7 @@ internal/*
 !internal/tools/
 # ghes-sync: personal overlay (mirror org, branch) — never committed
 internal/tools/ghes-sync/sync.override.conf
+.dx-pr-review/
 workspace/
 
 # SSL certificate

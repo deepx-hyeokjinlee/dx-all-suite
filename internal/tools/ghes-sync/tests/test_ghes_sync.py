@@ -127,7 +127,9 @@ def test_diverged_fails_and_never_forces(env):
     assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == dst_extra  # untouched
     assert "force" in out(r).lower()  # hint says: never force, reconcile first
     # ...and names the GHES-is-right path (branch rewritten on GHES → reverse + force-with-lease)
-    assert "--reverse --push-only --force-with-lease" in out(r) and "submodule pointers" in out(r)
+    assert "--reverse --push-only --force-with-lease" in out(r) and "submodule pointer" in out(r)
+    # ...and the stale-merged-branch case (c): delete the leftover GHES branch, rerun → CREATE
+    assert "--delete" in out(r) and "squash-merge" in out(r)
 
 
 # ── gitlink check ─────────────────────────────────────────────────────────────
@@ -306,8 +308,15 @@ def test_committed_conf_has_no_hardcoded_mirror_org_or_branch():
     assert "git@" not in text and "ghcloud" not in text
 
 
-def test_committed_conf_refuses_to_run_unedited_with_a_hint(env):
-    r = subprocess.run(["bash", str(TOOL), "--config", str(CONF), "--print-config"], text=True, capture_output=True,
+def test_committed_conf_refuses_to_run_unedited_with_a_hint(env, tmp_path):
+    # sync.override.conf is gitignored and auto-loaded when present, so a
+    # developer who has (correctly) created one would otherwise turn this test
+    # red. Point --override at an empty file to test the committed conf alone.
+    empty_override = tmp_path / "empty.override.conf"
+    empty_override.write_text("", encoding="utf-8")
+    r = subprocess.run(["bash", str(TOOL), "--config", str(CONF),
+                        "--override", str(empty_override), "--print-config"],
+                       text=True, capture_output=True,
                        env={k: v for k, v in __import__("os").environ.items() if not k.startswith("GHES_SYNC_")})
     assert r.returncode == 2, r.stdout + r.stderr
     o = r.stdout + r.stderr
@@ -364,6 +373,10 @@ def test_dst_token_and_gh_enterprise_fallback_are_sent_as_extraheader(env):
     r = env.run("--no-pr", extra_env={"GH_ENTERPRISE_TOKEN": "entTOK"})   # gh's own variable works for git too
     lines = [l for l in log.read_text().splitlines() if "ls-remote" in l and "ghes.invalid" in l]
     assert lines and all(_b64("entTOK") in l for l in lines), lines
+    log.write_text("")
+    r = env.run("--no-pr", extra_env={"GHES_TOKEN": "plainGhesTOK"})       # the closed-network machines export GHES_TOKEN
+    lines = [l for l in log.read_text().splitlines() if "ls-remote" in l and "ghes.invalid" in l]
+    assert lines and all(_b64("plainGhesTOK") in l for l in lines), lines
 
 
 def test_file_urls_get_no_extraheader_and_prompts_are_disabled(env):
@@ -393,7 +406,7 @@ def test_unreachable_dst_probe_times_out_fast(env):
     r = env.run("--no-pr", extra_env={"GHES_SYNC_PROBE_TIMEOUT": "1"})
     assert _t.monotonic() - t0 < 10, "probe did not time out"
     assert r.returncode == 1, out(r)
-    assert "timed out" in out(r) and "GHES_SYNC_PROBE_TIMEOUT" in out(r)
+    assert "timeout" in out(r) and "GHES_SYNC_PROBE_TIMEOUT" in out(r)
 
 
 # ── no gh CLI (Windows git bash): REST fallback / skip, interactive prompts ──────
@@ -420,8 +433,8 @@ def test_without_gh_and_token_push_succeeds_and_pr_is_skipped_with_warning(env):
     r = env.run("--repo", "dx_app", hide_gh=True)   # non-TTY: no prompt possible
     assert r.returncode == 0, out(r)
     assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == s["app_tip"]
-    assert "WARNING" in out(r) and "skipped" in out(r)
-    assert "GHES_SYNC_DST_TOKEN" in out(r) or "gh" in out(r)
+    assert "WARNING" in out(r) and "SKIP" in out(r)
+    assert "GHES_SYNC_DST_TOKEN" in out(r) and "GHES_TOKEN" in out(r)      # every accepted dst token variable is named
     tail = r.stdout.rsplit("SUMMARY", 1)[-1]
     assert "skipped" in tail
 
@@ -462,7 +475,7 @@ def test_https_host_without_any_credential_fails_before_fetching(env):
                                                               "GHES_SYNC_SRC_TOKEN": "", "GH_TOKEN": ""})
     assert r.returncode == 1, out(r)
     o = out(r)
-    assert "no credentials" in o.lower() and "GHES_SYNC_SRC_TOKEN" in o and "gh auth setup-git" in o
+    assert "credential" in o.lower() and "GHES_SYNC_SRC_TOKEN" in o and "gh auth setup-git" in o
     assert not [l for l in log.read_text().splitlines() if " fetch " in l and "github.invalid" in l], "must not attempt the fetch"
 
 
@@ -680,7 +693,7 @@ def test_reverse_push_blocked_fails_clearly(env):
     env.conf.write_text(conf, encoding="utf-8")
     r = env.run("--reverse")
     assert r.returncode == 1, out(r)
-    assert "cannot reach" in out(r).lower() or "cannot fetch" in out(r).lower()
+    assert "접근할 수 없음" in out(r) or "fetch 할 수 없음" in out(r)
 
 
 def test_reverse_default_branches_include_main_when_pr_base_is_dev(env):
@@ -736,7 +749,7 @@ def test_reset_to_base_overwrites_mirror_feature_with_ghes_base_and_backs_it_up(
     assert "feat 1" in o and "feat 2" in o                       # dropped mirror-only commits are listed
     assert "RESET" in r.stdout.rsplit("SUMMARY", 1)[-1]
     assert "reset --hard" in o                                    # dev-checkout follow-up hint
-    assert env.gh_calls() == []
+    assert not [c for c in env.gh_calls() if c.startswith("pr create")]   # reverse never opens a PR (it may LIST merged PRs)
 
 
 def test_reset_to_base_no_backup_flag(env):
@@ -800,7 +813,10 @@ def test_quickguide_exists_and_covers_the_scenarios(name):
     text = p.read_text(encoding="utf-8")
     for needle in ("--reverse --pull-only", "--reverse --push-only --reset-to-base", "--update-branch",
                    "--force-with-lease", "~/.cache/ghes-sync", "reset --hard mirror/feature/dx-agent-dev", "setup_remotes.sh",
-                   "--dry-run", "DST-AHEAD", "TO-AHEAD"):
+                   "--dry-run", "DST-AHEAD", "TO-AHEAD",
+                   "--dry-run --update-branch", "Update branch",
+                   ("최신 상태가 아닙니다" if name.endswith("-KO.md") else "not up to date with its base"),   # default-vs---update-branch comparison, quoted in the doc's language
+                   "--reverse --pull-only --reset-to-base", "@GHES"):                     # GHES-side reset in Scenario 2
         assert needle in text, f"{name}: must mention {needle!r}"
     readme = (SUITE / "internal" / "tools" / "ghes-sync" / ("README.md" if name == "QUICKGUIDE.md" else "README-KO.md")).read_text(encoding="utf-8")
     assert name in readme, f"README must link {name}"
@@ -834,7 +850,7 @@ def test_push_is_retried_on_transient_network_errors(env):
     r = env.run("--reverse", extra_env={"GHES_SYNC_RETRY_DELAY": "0"})
     assert r.returncode == 0, out(r)
     assert env.repos.rev("src", "dx_app", "refs/heads/main") == ghes_main
-    assert "retry" in out(r).lower() and counter.read_text().strip() == "2"
+    assert "재시도" in out(r) and counter.read_text().strip() == "2"
 
 
 def test_persistent_push_failure_shows_git_stderr_and_a_network_hint(env):
@@ -865,7 +881,7 @@ def test_pull_only_records_branches_absent_on_ghes_so_push_only_skips_them(env):
     r = env.run("--reverse", "--push-only")
     assert r.returncode == 0, out(r)
     tail = r.stdout.rsplit("SUMMARY", 1)[-1]
-    assert f"dx_app:{BR}" in tail and "SKIPPED" in tail and "not on GHES" in out(r)
+    assert f"dx_app:{BR}" in tail and "SKIPPED" in tail and "GHES 에 없음" in out(r)
     assert env.repos.rev("src", "dx_app", "refs/heads/main") == ghes_main
 
 
@@ -880,7 +896,7 @@ def test_reset_to_base_does_not_also_sync_the_feature_branch_by_name(env):
     assert f"dx_app:{BR}<=dev" in tail and "RESET" in tail
     assert f"dx_app:{BR} " not in tail and "DIVERGED" not in out(r)
     # the header spells out what is same-name and what is the reset mapping
-    assert "same-name branches: dev main" in r.stdout and f"reset: mirror {BR} <= GHES dev" in r.stdout
+    assert "같은 이름으로 sync: dev main" in r.stdout and f"reset: mirror {BR} <= GHES dev" in r.stdout
     assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
 
 
@@ -894,7 +910,7 @@ def test_reset_backup_is_not_duplicated_on_rerun_after_a_failed_overwrite(env):
     assert r.returncode == 0, out(r)
     backups = [l for l in git("show-ref", cwd=env.repos.bare("src", "dx_app")).stdout.splitlines() if "refs/heads/backup/" in l]
     assert len(backups) == 1, backups                                  # reused, not duplicated
-    assert "already backed up" in out(r).lower()
+    assert "이미 backup" in out(r)
     assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
 
 
@@ -910,7 +926,7 @@ def test_to_ahead_hint_does_not_promise_a_forward_push_for_non_feature_branches(
     r = env.run("--reverse")
     assert r.returncode == 0, out(r)
     line = [l for l in out(r).splitlines() if "dx_app:main" in l and "TO-AHEAD" in l][0]
-    assert "forward run" not in line and "not pushed by the forward" in line.lower() or "check" in line.lower()
+    assert "push되지 않음" in line and "확인" in line          # no promise that the forward run pushes it
 
 
 # ── remote naming convention: ghes / mirror (setup_remotes.sh) ───────────────────
@@ -1059,7 +1075,7 @@ def test_probe_rejected_token_is_reported_as_auth_with_the_env_var_name(env):
     assert r.returncode == 1, out(r)
     o = out(r)
     assert "Authentication failed" in o                          # git's real error is shown
-    assert "rejected" in o.lower() and "GH_TOKEN" in o           # ...classified, naming the token source actually used
+    assert "REJECTED" in o and "GH_TOKEN" in o                   # ...classified, naming the token source actually used
     assert "revoked" in o.lower() or "expired" in o.lower()
 
 
@@ -1071,5 +1087,296 @@ def test_probe_network_failure_is_reported_as_network(env):
     r = env.run("--reverse", extra_env={"GH_TOKEN": "ghp_x"})
     assert r.returncode == 1, out(r)
     o = out(r)
-    assert "Could not resolve host" in o and "network" in o.lower()
-    assert "rejected" not in o.lower()
+    assert "Could not resolve host" in o and "NETWORK" in o
+    assert "REJECTED" not in o
+
+
+# ── gitlink fallback must consider every GHES branch of the sub-repo, not just its feature ─
+
+def test_gitlink_check_accepts_a_pointer_to_the_subrepo_ghes_main_when_the_subrepo_was_not_synced(env):
+    """Closed-network run 2026-09-17: dx-compiler's GHES feature branch was a stale pre-merge
+    leftover (DIVERGED, not synced), and the suite pointed dx-compiler at its GHES *main* tip.
+    The fallback looked only at GHES feature/dx-agent-dev and wrongly blocked the suite push."""
+    r_ = env.repos
+    r_.make("dx_app", "dx-runtime")
+    app_main = r_.commit("src", "dx_app", "main", "app base", files={"a": "0"})
+    r_.mirror_branch("dx_app", "main")
+    r_.commit("src", "dx-runtime", "main", "rt base", files={"r": "0"}, gitlinks={"dx_app": app_main})
+    r_.mirror_branch("dx-runtime", "main")
+    # GHES dx_app: main moved on (merged work), and a STALE feature branch that diverged from the mirror's
+    app_ghes_main = r_.commit("dst", "dx_app", "main", "squash-merged feature", files={"a": "1"})
+    r_.commit("dst", "dx_app", BR, "stale ghes feature", files={"s": "1"}, parent_branch="main")
+    # mirror dx_app: a NEW feature branch (rebuilt on main) -> DIVERGED against the stale GHES one
+    r_.commit("src", "dx_app", BR, "new feature", files={"n": "1"}, parent_branch="main")
+    # mirror dx-runtime feature points dx_app at the GHES main tip (which exists on GHES)
+    rt_tip = r_.commit("src", "dx-runtime", BR, "rt feature", files={"r": "1"}, gitlinks={"dx_app": app_ghes_main}, parent_branch="main")
+    env.write_conf([("dx_app", ""), ("dx-runtime", "gitlinks = dx_app:dx_app")])
+    r = env.run("--no-pr")
+    assert r.returncode == 1, out(r)                 # dx_app is DIVERGED (expected) ...
+    assert "DIVERGED" in r.stdout
+    assert env.repos.rev("dst", "dx-runtime", f"refs/heads/{BR}") == rt_tip   # ... but the parent MUST be pushed
+    assert not [l for l in out(r).splitlines() if "dx-runtime" in l and "gitlink" in l and "NOT reachable" in l], out(r)
+
+
+# ── 2026-09-17 closed-network review: stale cache refs, probe retries, readable output ─────
+
+def test_probe_is_retried_on_transient_tls_errors_and_then_succeeds(env):
+    """GnuTLS -110 on the first ls-remote must not fail the repo: probes retry like pushes do."""
+    _reverse_scenario(env)
+    counter = _flaky_git(env, '*ls-remote*', fail_times=2)
+    r = env.run("--reverse", extra_env={"GHES_SYNC_RETRY_DELAY": "0"})
+    assert r.returncode == 0, out(r)
+    assert "재시도" in out(r) and counter.read_text().strip() == "2"
+
+
+def test_persistent_probe_tls_failure_is_classified_as_network_with_the_attempt_count(env):
+    _reverse_scenario(env)
+    _flaky_git(env, '*ls-remote*', fail_times=99)
+    r = env.run("--reverse", extra_env={"GHES_SYNC_RETRY_DELAY": "0", "GHES_SYNC_RETRIES": "2"})
+    assert r.returncode == 1, out(r)
+    o = out(r)
+    assert "GnuTLS recv error" in o and "NETWORK" in o and "2회" in o
+    assert "REJECTED" not in o                                    # a TLS hiccup is not an auth failure
+
+
+def test_stale_cached_dst_ref_of_a_branch_deleted_on_ghes_is_pruned(env):
+    """A branch deleted on GHES (e.g. the feature branch after its squash-merge) must not
+    survive in the bare cache — a stale refs/remotes/dst/* would classify as DIVERGED."""
+    s = _basic(env)
+    assert env.run("--no-pr").returncode == 0
+    cache = env.cache / "dx_app.git"
+    old = s["app_main"]                                                           # an object the cache already has
+    git("update-ref", "refs/remotes/dst/zombie", old, cwd=cache)                   # a ref GHES does not have
+    git("update-ref", f"refs/remotes/dst/{BR}", old, cwd=cache)                      # and a stale copy of the feature
+    git("update-ref", "-d", f"refs/heads/{BR}", cwd=env.repos.bare("dst", "dx_app"))   # GHES deleted the feature branch
+    r = env.run("--no-pr", "--repo", "dx_app")
+    assert r.returncode == 0, out(r)
+    assert "CREATE" in r.stdout and "DIVERGED" not in out(r)
+    assert "cache 정리" in r.stdout and "zombie" in r.stdout
+    assert git("rev-parse", "-q", "--verify", "refs/remotes/dst/zombie", cwd=cache, check=False).returncode != 0
+    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == s["app_tip"]
+
+
+def test_per_repo_lines_share_one_separator_column_and_summary_columns_align(env):
+    """Readability (user request 2026-09-17): every per-repo line has the repo key padded to
+    one width before `│`; the summary table's columns line up and long explanations are
+    numbered notes under the table, not inline cells."""
+    s = _basic(env, dst_has_branch=True)
+    env.repos.commit("dst", "dx_app", BR, "ghes-side", files={"g": "1"})
+    env.repos.commit("src", "dx_app", BR, "mirror-side", files={"m": "1"})          # dx_app DIVERGED, dx-runtime blocked/ok
+    r = env.run("--no-pr")
+    o = out(r)
+    seps = {l.index("│") for l in o.splitlines() if l.startswith("[ghes-sync] ") and "│" in l}
+    assert len(seps) == 1, seps
+    tail = r.stdout.rsplit("SUMMARY", 1)[-1].splitlines()
+    header = next(l for l in tail if l.strip().startswith("repo"))
+    rows = [l for l in tail if l.strip().startswith(("dx_app", "dx-runtime"))]
+    assert rows, tail
+    col = header.index("status")
+    for row in rows:
+        assert row[col:].split()[0] in ("OK", "FAIL", "SKIPPED"), row       # status starts exactly under the header
+    assert any(l.strip().startswith("[1] dx_app:") and "DIVERGED" in l for l in tail), tail   # the long text lives in a note
+
+
+# ── GHES-side --reset-to-base (2026-09-17): the stale GHES feature branch is reset to pr_base too ──
+
+def _squash_merged_with_stale_ghes_feature(env):
+    tip, dev = _squash_merged_scenario(env)
+    stale = env.repos.commit("dst", "dx_app", BR, "stale ghes feature", files={"s": "1"})   # GHES branch survived the merge
+    return tip, dev, stale
+
+
+def _ghes_backups(env):
+    return [l.split()[1] for l in git("show-ref", cwd=env.repos.bare("dst", "dx_app")).stdout.splitlines()
+            if f"refs/heads/backup/{BR}/" in l]
+
+
+def test_reset_to_base_resets_the_ghes_feature_branch_with_a_ghes_backup(env):
+    tip, dev, stale = _squash_merged_with_stale_ghes_feature(env)
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == dev          # GHES feature := GHES dev
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev          # mirror feature := GHES dev (as before)
+    backups = _ghes_backups(env)
+    assert len(backups) == 1 and env.repos.rev("dst", "dx_app", backups[0]) == stale
+    tail = r.stdout.rsplit("SUMMARY", 1)[-1]
+    assert f"dx_app:{BR}<=dev@GHES" in tail and tail.count("RESET") >= 2
+    assert "stale ghes feature" in out(r)                                       # the GHES-only commit is listed
+    r = env.run("--no-pr", "--dry-run")                                         # both sides on dev → forward is a no-op
+    assert r.returncode == 0 and "UP-TO-DATE" in r.stdout.rsplit("SUMMARY", 1)[-1], out(r)
+
+
+def test_pull_only_reset_to_base_resets_ghes_but_leaves_the_mirror_for_the_open_network(env):
+    tip, dev, stale = _squash_merged_with_stale_ghes_feature(env)
+    r = env.run("--reverse", "--pull-only", "--reset-to-base")                 # closed network
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == dev
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == tip           # mirror untouched here
+    assert "RESET" in r.stdout and f"dx_app:{BR}<=dev@GHES" in r.stdout
+    conf = env.conf.read_text(encoding="utf-8").replace(f"dst_host = file://{env.repos.dst}", "dst_host = file:///nonexistent/ghes")
+    env.conf.write_text(conf, encoding="utf-8")
+    r = env.run("--reverse", "--push-only", "--reset-to-base")                 # open network
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+    assert "@GHES" not in r.stdout.rsplit("SUMMARY", 1)[-1]                     # no GHES step when GHES is not fetched
+
+
+def test_ghes_reset_dry_run_changes_nothing_on_ghes(env):
+    tip, dev, stale = _squash_merged_with_stale_ghes_feature(env)
+    r = env.run("--reverse", "--reset-to-base", "--dry-run")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == stale
+    assert _ghes_backups(env) == []
+    assert "@GHES" in r.stdout and "DRY-RUN" in r.stdout
+
+
+def test_ghes_feature_deleted_at_merge_is_recreated_at_the_base(env):
+    tip, dev = _squash_merged_scenario(env)                                    # GHES has no feature branch
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == dev
+    tail = r.stdout.rsplit("SUMMARY", 1)[-1]
+    assert f"dx_app:{BR}<=dev@GHES" in tail and "CREATE" in tail
+
+
+def test_ghes_reset_confirms_the_merged_pr_via_rest_when_a_token_is_present(env):
+    tip, dev, stale = _squash_merged_with_stale_ghes_feature(env)
+    env.remove_fake_gh()
+    env.install_fake_curl(list_json=f'[{{"number":12,"merged_at":"2026-09-17T01:02:03Z","head":{{"sha":"{stale}"}}}}]')
+    r = env.run("--reverse", "--reset-to-base", extra_env={"GHES_SYNC_DST_TOKEN": "dstTOK"}, hide_gh=True)
+    assert r.returncode == 0, out(r)
+    assert "merged PR 확인" in out(r) and "찾지 못함" not in out(r)
+    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == dev
+
+
+def test_ghes_reset_warns_but_proceeds_when_no_merged_pr_is_found(env):
+    tip, dev, stale = _squash_merged_with_stale_ghes_feature(env)
+    env.remove_fake_gh()
+    env.install_fake_curl(list_json="[]")
+    r = env.run("--reverse", "--reset-to-base", extra_env={"GHES_SYNC_DST_TOKEN": "dstTOK"}, hide_gh=True)
+    assert r.returncode == 0, out(r)
+    assert "WARNING" in out(r) and "찾지 못함" in out(r)
+    assert env.repos.rev("dst", "dx_app", f"refs/heads/{BR}") == dev and len(_ghes_backups(env)) == 1
+
+
+# ── reviewers (2026-09-18): re-request the review bot after a real push ──
+# The n8n review bot (account dci) runs when a PR opens, not on later pushes; re-requesting the
+# reviewer is what wakes it. Only a push that actually moved the branch (CREATE/FAST-FORWARD) counts.
+
+def test_reviewers_rerequested_after_fast_forward_push_to_existing_pr(env):
+    _basic(env, dst_has_branch=True)
+    env.repos.commit("src", "dx_app", BR, "more", files={"a.txt": "2\n"})
+    env.set_open_prs([{"number": 42, "url": "https://gh.example/deepx/dx_app/pull/42"}])
+    env.write_conf([("dx_app", "")], extra_defaults="reviewers = dci")
+    r = env.run("--repo", "dx_app")
+    assert r.returncode == 0, out(r)
+    assert "FAST-FORWARD" in r.stdout
+    assert any(c.startswith("pr edit 42") and "--add-reviewer dci" in c for c in env.gh_calls()), env.gh_calls()
+    assert "reviewer 재요청" in r.stdout
+
+
+def test_reviewers_not_requested_when_up_to_date(env):
+    _basic(env, dst_has_branch=True)
+    env.set_open_prs([{"number": 42, "url": "u"}])
+    env.write_conf([("dx_app", "")], extra_defaults="reviewers = dci")
+    r = env.run("--repo", "dx_app")
+    assert "UP-TO-DATE" in r.stdout
+    assert not any("--add-reviewer" in c for c in env.gh_calls())
+
+
+def test_reviewers_off_by_default_and_cli_override(env):
+    _basic(env, dst_has_branch=True)
+    env.repos.commit("src", "dx_app", BR, "more", files={"a.txt": "2\n"})
+    env.set_open_prs([{"number": 42, "url": "u"}])
+    env.write_conf([("dx_app", "")])
+    r = env.run("--repo", "dx_app")
+    assert r.returncode == 0, out(r)
+    assert not any("--add-reviewer" in c for c in env.gh_calls())
+    env.repos.commit("src", "dx_app", BR, "more2", files={"a.txt": "3\n"})
+    r = env.run("--repo", "dx_app", "--reviewers", "dci,alice")
+    assert r.returncode == 0, out(r)
+    assert any("--add-reviewer dci,alice" in c for c in env.gh_calls()), env.gh_calls()
+
+
+def test_reviewers_dry_run_logs_but_does_not_call(env):
+    _basic(env, dst_has_branch=True)
+    env.repos.commit("src", "dx_app", BR, "more", files={"a.txt": "2\n"})
+    env.set_open_prs([{"number": 42, "url": "u"}])
+    env.write_conf([("dx_app", "")], extra_defaults="reviewers = dci")
+    r = env.run("--repo", "dx_app", "--dry-run")
+    assert "DRY-RUN" in r.stdout and "reviewer 재요청" in r.stdout
+    assert not any("--add-reviewer" in c for c in env.gh_calls())
+
+
+def test_reviewers_rest_backend_posts_requested_reviewers(env):
+    _basic(env, dst_has_branch=True)
+    env.repos.commit("src", "dx_app", BR, "more", files={"a.txt": "2\n"})
+    log, _ = env.install_fake_curl(list_json='[{"number": 7, "html_url": "https://ghes.example/deepx/dx_app/pull/7"}]')
+    env.write_conf([("dx_app", "")], extra_defaults="reviewers = dci")
+    r = env.run("--repo", "dx_app", extra_env={"GHES_SYNC_DST_TOKEN": "dstTOK"}, hide_gh=True)
+    assert r.returncode == 0, out(r)
+    assert any("pulls/7/requested_reviewers" in l for l in log.read_text().splitlines()), log.read_text()
+
+
+# ── output language (2026-09-18): --lang ko|en > GHES_SYNC_LANG > locale (LC_ALL > LC_MESSAGES > LANG) ──
+_HANGUL = re.compile(r"[가-힣]")
+
+
+def _diverged(env):
+    _basic(env, dst_has_branch=True)
+    env.repos.commit("dst", "dx_app", BR, "ghes-side", files={"g": "1"})
+    env.repos.commit("src", "dx_app", BR, "mirror-side", files={"m": "1"})
+
+
+def test_lang_en_prints_english_diverged_and_summary(env):
+    _diverged(env)
+    r = env.run("--no-pr", "--repo", "dx_app", "--lang", "en")
+    o = out(r)
+    assert "DIVERGED" in o and "have commits the other lacks" in o and "SUMMARY" in o
+    assert not _HANGUL.search(o), o
+
+
+def test_lang_ko_is_the_default_for_a_korean_locale_and_en_otherwise(env):
+    _diverged(env)
+    ko = out(env.run("--no-pr", "--repo", "dx_app", extra_env={"GHES_SYNC_LANG": "", "LC_ALL": "ko_KR.UTF-8"}))
+    en = out(env.run("--no-pr", "--repo", "dx_app", extra_env={"GHES_SYNC_LANG": "", "LC_ALL": "en_US.UTF-8"}))
+    c = out(env.run("--no-pr", "--repo", "dx_app", extra_env={"GHES_SYNC_LANG": "", "LC_ALL": "C", "LC_MESSAGES": "", "LANG": ""}))
+    assert "서로 없는 commit" in ko and "요약" in ko
+    assert not _HANGUL.search(en) and "SUMMARY" in en
+    assert not _HANGUL.search(c)
+
+
+def test_lang_precedence_option_over_env_over_locale(env):
+    _diverged(env)
+    env_wins = out(env.run("--no-pr", "--repo", "dx_app", extra_env={"GHES_SYNC_LANG": "en", "LC_ALL": "ko_KR.UTF-8"}))
+    opt_wins = out(env.run("--no-pr", "--repo", "dx_app", "--lang", "ko", extra_env={"GHES_SYNC_LANG": "en", "LC_ALL": "en_US.UTF-8"}))
+    assert not _HANGUL.search(env_wins)
+    assert "서로 없는 commit" in opt_wins
+
+
+def test_lang_invalid_value_exits_2_naming_the_choices(env):
+    _basic(env)
+    r = env.run("--no-pr", "--lang", "fr")
+    assert r.returncode == 2 and "ko|en" in out(r)
+    r = env.run("--no-pr", extra_env={"GHES_SYNC_LANG": "fr"})
+    assert r.returncode == 2 and "GHES_SYNC_LANG" in out(r) and "ko|en" in out(r)
+
+
+def test_lang_help_follows_the_selection(env):
+    en = env.run("--lang", "en", "--help"); ko = env.run("--lang", "ko", "--help")
+    assert en.returncode == 0 and "Usage:" in en.stdout and "--lang" in en.stdout and not _HANGUL.search(en.stdout)
+    assert ko.returncode == 0 and "사용법" in ko.stdout and "--lang" in ko.stdout
+
+
+def test_lang_en_full_run_has_no_korean_at_all(env):
+    """fetch, classify (FAST-FORWARD), gitlink check, push, PR skipped (no gh/no token), summary + notes."""
+    s = _basic(env, dst_has_branch=True)
+    env.repos.commit("src", "dx_app", BR, "more", files={"a.txt": "2\n"})
+    env.repos.commit("src", "dx-runtime", BR, "rt more", files={"r.txt": "2\n"},
+                     gitlinks={"dx_app": env.repos.rev("src", "dx_app", f"refs/heads/{BR}")})
+    env.remove_fake_gh()                       # no gh, no token -> the PR is skipped with a warning
+    r = env.run("--lang", "en", hide_gh=True)
+    o = out(r)
+    assert r.returncode == 0, o
+    assert "FAST-FORWARD" in o and "PR skipped" in o and "SUMMARY" in o
+    assert not _HANGUL.search(o), [l for l in o.splitlines() if _HANGUL.search(l)]

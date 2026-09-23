@@ -15,7 +15,14 @@ from .transformers import (
     capabilities_to_tools,
     routes_to_handoffs,
 )
-from .constants import COPILOT_TOOLS, CLAUDE_TOOLS, OPENCODE_TOOLS, GENERATED_HEADER
+from .constants import (
+    COPILOT_TOOLS,
+    CLAUDE_TOOLS,
+    OPENCODE_TOOLS,
+    GENERATED_HEADER,
+    GENERATED_HEADER_SH,
+    SUBREPO_ASSETS,
+)
 
 
 def _rel_or_abs(path: Path, base: Path) -> Path:
@@ -47,11 +54,9 @@ class Generator:
         """Generate platform files. Returns {path: action} dict."""
         results: dict[Path, str] = {}
 
-        platforms = (
-            ["copilot", "claude", "opencode", "cursor", "instructions"]
-            if platform == "all"
-            else [platform]
-        )
+        # Single source for the platform set — an inline duplicate here once
+        # silently diverged from _PLATFORMS, so generate/check disagreed.
+        platforms = self._platform_list(platform)
 
         for plat in platforms:
             method = getattr(self, f"_generate_{plat}")
@@ -73,7 +78,14 @@ class Generator:
 
         return results
 
-    _PLATFORMS = ["copilot", "claude", "opencode", "cursor", "instructions"]
+    _PLATFORMS = [
+        "copilot",
+        "claude",
+        "opencode",
+        "cursor",
+        "instructions",
+        "assets",
+    ]
 
     def _platform_list(self, platform: str) -> list[str]:
         return self._PLATFORMS if platform == "all" else [platform]
@@ -182,11 +194,10 @@ class Generator:
         report: list[str] = []
         clean = True
 
-        platforms = (
-            ["copilot", "claude", "opencode", "cursor", "instructions"]
-            if platform == "all"
-            else [platform]
-        )
+        # Same single source as generate()/_collect_expected(): an inline
+        # duplicate here meant a newly added platform was generated but never
+        # drift-checked, so deleting one of its outputs still reported "clean".
+        platforms = self._platform_list(platform)
 
         for plat in platforms:
             method = getattr(self, f"_generate_{plat}")
@@ -666,11 +677,27 @@ class Generator:
                 leftover = re.findall(r"\{\{[A-Za-z_]+(?::[^}]*)?\}\}", content)
                 if leftover:
                     registry_vars = {"{{MODEL_COUNT}}", "{{TASK_COUNT}}", "{{TASK_LIST}}"}
+                    fragment_vars = [v for v in leftover if v.startswith("{{FRAGMENT:")]
                     if set(leftover) & registry_vars:
                         hint = (
                             "MODEL_COUNT/TASK_COUNT/TASK_LIST need dx_app's "
                             "config/model_registry.json — run "
                             "`git submodule update --init --recursive`."
+                        )
+                    elif fragment_vars and self._find_fragments_dir() is None:
+                        # The fragments are MISSING, not wrong: this is a
+                        # standalone sub-repo clone with no suite above it.
+                        # Saying "fix the template/fragment name" here sends the
+                        # reader off editing templates, turning a missing input
+                        # into a real committed drift.
+                        hint = (
+                            ".deepx/templates/fragments/ was not found in this repo "
+                            "or any parent — this looks like a standalone sub-repo "
+                            "checkout, so the shared fragments are absent (they ship "
+                            "only with dx-all-suite). Run: "
+                            "`bash .deepx/scripts/harness_bootstrap.sh --check`. "
+                            "Do NOT edit the templates or rename fragments to silence "
+                            "this — the fragments are missing, not wrong."
                         )
                     else:
                         hint = (
@@ -738,6 +765,62 @@ class Generator:
                 break
             current = parent
         return None
+
+    def _find_suite_root(self) -> Path | None:
+        """Find the dx-all-suite root — the only tree carrying BOTH the shared
+        fragments and the generator itself. Used to locate verbatim assets that
+        are fanned out to sub-repos.
+
+        Deliberately stricter than _find_fragments_dir(): a repo could in
+        principle carry fragments without being the suite, and assets must come
+        from the suite only.
+        """
+        current = self.repo.resolve()
+        for _ in range(6):  # max 6 levels up (dx_app is 4 below the suite)
+            if (
+                (current / ".deepx" / "templates" / "fragments").is_dir()
+                and (
+                    current
+                    / ".deepx"
+                    / "tools"
+                    / "src"
+                    / "dx_agent_dev_gen"
+                    / "cli.py"
+                ).is_file()
+            ):
+                return current
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return None
+
+    def _generate_assets(self) -> dict[Path, str]:
+        """Copy verbatim assets from the suite into this SUB-REPO.
+
+        No-ops for the suite itself (it holds the canonical copy) and when no
+        suite is reachable (a standalone checkout — nothing to copy from; the
+        already-deployed file simply stays put).
+        """
+        out: dict[Path, str] = {}
+        suite = self._find_suite_root()
+        if suite is None or suite == self.repo.resolve():
+            return out
+
+        for src_rel, dst_rel in SUBREPO_ASSETS.items():
+            src = suite / src_rel
+            if not src.is_file():
+                continue
+            body = src.read_text(encoding="utf-8")
+            header = GENERATED_HEADER_SH.format(source=src_rel)
+            if body.startswith("#!"):
+                shebang, _, rest = body.partition("\n")
+                body = "{}\n{}{}".format(shebang, header, rest)
+            else:
+                body = header + body
+            out[self.repo / dst_rel] = body
+
+        return out
 
     def _find_fragments_dir(self) -> Path | None:
         """Find .deepx/templates/fragments/ in current repo or parent repos."""
