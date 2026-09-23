@@ -466,6 +466,28 @@ def _save_pids():
         pass
 
 
+def _is_our_sub_server(pid):
+    """pid 가 start_sub_server 가 띄운 모양(`python <STUDIO_DIR>/<module>/server.py ...`)인가.
+
+    확인할 수 없으면(/proc 없음, 권한 없음, 이미 종료) False — 모르면 죽이지 않는다.
+    """
+    try:
+        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except OSError:
+        return False
+    studio = Path(STUDIO_DIR).resolve()
+    for arg in raw.split(b"\0")[1:]:
+        if not arg.endswith(b"server.py"):
+            continue
+        try:
+            script = Path(os.fsdecode(arg)).resolve()
+        except (OSError, ValueError):
+            continue
+        if script.parent.parent == studio:
+            return True
+    return False
+
+
 def _cleanup_old_pids():
     """Kill sub-servers left behind by a previous crashed launcher."""
     if not _PIDFILE.exists():
@@ -475,19 +497,27 @@ def _cleanup_old_pids():
     except Exception:
         _PIDFILE.unlink(missing_ok=True)
         return
+    if not isinstance(data, dict):  # 손상된 파일이 launcher 시작을 막지 않게
+        _PIDFILE.unlink(missing_ok=True)
+        return
 
     for name, pid in data.items():
+        # 번호는 재사용된다(재부팅, 서버가 먼저 죽은 경우). 우리 하위 서버의 모양일 때만
+        # 종료한다. 계약: tests/launcher/test_cleanup_old_pids.py
+        if not isinstance(pid, int) or not _is_our_sub_server(pid):
+            continue
         try:
-            os.kill(pid, 0)  # check if alive
-            try:
-                os.killpg(os.getpgid(pid), signal.SIGTERM)
-            except (ProcessLookupError, PermissionError):
+            # start_sub_server 는 setsid 로 띄워 서버가 제 group 의 leader 다. 아니면 그 group
+            # 은 남의 것(launcher 를 띄운 셸 등)이므로 group 째 보내지 않는다.
+            if os.getpgid(pid) == pid:
+                os.killpg(pid, signal.SIGTERM)
+            else:
                 os.kill(pid, signal.SIGTERM)
             time.sleep(0.3)
-            # Force kill if still alive
+            # Force kill if still alive — 0.3초 사이 번호가 재사용됐을 수 있어 다시 확인한다
             try:
-                os.kill(pid, 0)
-                os.kill(pid, signal.SIGKILL)
+                if _is_our_sub_server(pid):
+                    os.kill(pid, signal.SIGKILL)
             except (ProcessLookupError, PermissionError):
                 pass
         except (ProcessLookupError, PermissionError):
