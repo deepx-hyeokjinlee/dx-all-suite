@@ -155,6 +155,14 @@ def test_a_real_answer_scrolls_inside_its_row_instead_of_spilling(browser, serve
         assert r["#homeStageWork"][1] <= r["#studioGrid"][0] + 1, f"답이 Dock 을 덮는다: {r}"
         assert r["#homeStageWork"][0] >= r["#homeDevice"][1] - 1, f"답이 위젯을 덮는다: {r}"
         assert page.evaluate("() => document.documentElement.scrollHeight - innerHeight") <= 0
+        # 1280×800 에서도 경로 카드까지 한눈에 — Dock 에서는 시작을 돕던 chip · 포스터가 자리를
+        # 내준다 (2026-09-29 결정). 넘치면 칸 안에서 스크롤하지만, 한 번 가는 길 하나는 들어가야 한다.
+        fit = page.evaluate("""() => { const w = document.getElementById('homeStageWork');
+          return [w.scrollHeight, w.clientHeight]; }""")
+        assert fit[0] <= fit[1] + 1, f"답이 칸 안에서 잘린다: {fit}"
+        hidden = page.evaluate("""() => ['#homeAskChips', '#homeStage .stage-films']
+          .map(s => getComputedStyle(document.querySelector(s)).display)""")
+        assert hidden == ["none", "none"], hidden
     finally:
         ctx.close()
 

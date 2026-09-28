@@ -619,6 +619,12 @@
 }
 #landing:has(#homeAnswer:not([hidden])) .stage-work,
 #landing:has(#homeWork:not([hidden])) .stage-work { display: block; overflow: auto; }
+/* 시작을 돕던 chip 과 포스터는 답이 서면 자리를 내준다 — 1280×800 에서 답 칸이 123px 였다
+   (2026-09-29 결정: 입력창이 조금 올라가는 대신 경로 카드가 한눈에 든다). */
+/* 옛 배치의 아래 여백 (24px) 은 무대에서는 행 간격이 한다 — 칸 안에서 스크롤만 만들었다. */
+.stage-work .home-answer { margin-bottom: 0; }
+#landing:has(#homeAnswer:not([hidden])) :is(#homeAskChips, #homeStage .stage-films),
+#landing:has(#homeWork:not([hidden])) :is(#homeAskChips, #homeStage .stage-films) { display: none; }
 #landing:has(#homeAnswer:not([hidden])) .stage-deck,
 #landing:has(#homeWork:not([hidden])) .stage-deck { display: contents; }
 #landing:has(#homeAnswer:not([hidden])) .studio-grid,
