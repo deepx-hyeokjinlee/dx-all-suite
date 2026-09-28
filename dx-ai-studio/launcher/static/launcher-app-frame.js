@@ -453,6 +453,8 @@
     var rb        = document.getElementById('replayBtn');
 
     document.body.classList.toggle('app-frame-visible', viewName === 'app');
+    // 무대 조명 (home-stage.css body.home-visible) 은 home 에만 켠다 — spec 2026-09-23 §7 #2.
+    document.body.classList.toggle('home-visible', viewName === 'home');
     // The shared NPU Monitor float is injected into the launcher shell but should only show
     // on the launcher-native views (About, SDK Library) — module iframes carry their own, and
     // the home splash stays uncluttered.

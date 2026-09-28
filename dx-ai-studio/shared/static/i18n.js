@@ -64,22 +64,42 @@
     return null;
   }
 
+  /* 글자 교차 fade (launcher spec 2026-09-23 §7 #15). <html data-dx-fade> 로 고른 문서에서만 —
+     모듈은 그대로 즉시 바뀐다. _lang · 저장은 곧바로, 화면만 교차한다. 길이는 CSS 가
+     html[data-dx-fading="lang"] 로 정한다. dx-theme.js 의 _fade 와 같은 규칙. */
+  function _fade(kind, update) {
+    var root = document.documentElement;
+    var still = false;
+    try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) { /* noop */ }
+    if (!kind || !root || !('dxFade' in root.dataset) || still || document.readyState !== 'complete'
+        || typeof document.startViewTransition !== 'function') {
+      update();
+      return;
+    }
+    root.dataset.dxFading = kind;
+    var done = function () { if (root.dataset.dxFading === kind) delete root.dataset.dxFading; };
+    document.startViewTransition(update).finished.then(done, done);
+  }
+
   function setLang(lang) {
     if (SUPPORTED_LANGS.indexOf(lang) === -1) return;
+    var changed = lang !== _lang;
     _lang = lang;
     localStorage.setItem(STORAGE_KEY, lang);
-    SUPPORTED_LANGS.forEach(function (l) {
-      document.body.classList.remove('lang-' + l);
+    _fade(changed ? 'lang' : null, function () {
+      SUPPORTED_LANGS.forEach(function (l) {
+        document.body.classList.remove('lang-' + l);
+      });
+      document.body.classList.add('lang-' + lang);
+      if (document.documentElement) document.documentElement.lang = lang;
+      _applyDOM();
+      var i;
+      for (i = 0; i < _callbacks.length; i++) _callbacks[i](lang);
+      for (i = 0; i < _initCallbacks.length; i++) _initCallbacks[i](lang);
+      try {
+        window.dispatchEvent(new CustomEvent('dx-lang-applied', { detail: { lang: lang } }));
+      } catch (_) { /* non-DOM environments */ }
     });
-    document.body.classList.add('lang-' + lang);
-    if (document.documentElement) document.documentElement.lang = lang;
-    _applyDOM();
-    var i;
-    for (i = 0; i < _callbacks.length; i++) _callbacks[i](lang);
-    for (i = 0; i < _initCallbacks.length; i++) _initCallbacks[i](lang);
-    try {
-      window.dispatchEvent(new CustomEvent('dx-lang-applied', { detail: { lang: lang } }));
-    } catch (_) { /* non-DOM environments */ }
   }
 
   function toggleLang() {

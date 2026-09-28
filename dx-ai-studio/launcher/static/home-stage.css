@@ -128,9 +128,11 @@
 }
 .stage-hero .home-ask:focus-within { outline: none; }
 .ask-box {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
+  /* grid 인 이유: ::after 빛 테가 두 행에 걸친 grid item 이 된다 (absolute 없이 겹친다). */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  row-gap: var(--sp-2);
   padding: var(--sp-4) var(--sp-4) var(--sp-3) var(--sp-5);
   border-radius: 24px;
   border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
@@ -615,4 +617,97 @@
 @media (max-width: 600px) {
   .stage-deck { grid-template-columns: minmax(0, 1fr); grid-template-areas: "grid" "dev" "meas"; }
   .stage-deck .studio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+
+/* ═══ P6a 효과 — 반응하는 것 (spec §7 #2 #3 #9 #12 #14 #15) ════════════════════
+   움직임은 transform · opacity 만. 효과 줄이기는 dx-base.css 의 전역 규칙이 transition 을
+   0 으로 만든다 — 최종 상태만 보인다. JS 가 필요한 것은 home-effects.js. */
+
+/* #2 무대 조명 — 위 가운데의 윗조명 + 가장자리 비네팅. 정지. home 이 보일 때만
+   (setVisibleView 가 body.home-visible 을 토글). */
+:root {
+  --stage-toplight: color-mix(in srgb, var(--accent) 16%, transparent);
+  --stage-vignette: rgba(0, 0, 0, .55);
+}
+:root[data-theme="light"] {
+  --stage-toplight: color-mix(in srgb, var(--accent) 8%, white);
+  --stage-vignette: rgba(0, 0, 0, .05);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --stage-toplight: color-mix(in srgb, var(--accent) 8%, white);
+    --stage-vignette: rgba(0, 0, 0, .05);
+  }
+}
+body.home-visible {
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, var(--stage-toplight), transparent 70%),
+    radial-gradient(ellipse 110% 90% at 50% 40%, transparent 60%, var(--stage-vignette) 100%),
+    var(--surface-page);
+  background-attachment: fixed;
+}
+
+/* #3 입력창 빛 테 — 쉴 때 꺼짐, focus 면 켜짐. 키 입력의 물결은 home-effects.js (WAAPI). */
+.ask-box > .ask-input { grid-row: 1; grid-column: 1; }
+.ask-box > .ask-foot { grid-row: 2; grid-column: 1; }
+.ask-box::after {
+  content: "";
+  grid-row: 1 / -1;
+  grid-column: 1;
+  /* padding 까지 덮는다 (.ask-box 의 padding 과 같은 값). */
+  margin: calc(var(--sp-4) * -1) calc(var(--sp-4) * -1) calc(var(--sp-3) * -1) calc(var(--sp-5) * -1);
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent),
+    inset 0 0 28px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 0 32px -8px color-mix(in srgb, var(--accent) 45%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ap-ease);
+}
+.ask-box:focus-within::after { opacity: .55; }
+
+/* #9 책 — 표지가 살짝 돌고, 은박 위로 광택이 한 번 지나간다. 광택은 표지의 ::after (grid item). */
+.stage-deck .about-book-card .orbital-icon {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  transition: transform 300ms var(--ap-ease);
+}
+.stage-deck .about-book-card .orbital-icon > .mod-glyph { grid-area: 1 / 1; }
+.stage-deck .about-book-card .orbital-icon::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .32) 50%, transparent 65%);
+  opacity: 0;
+  transform: translateX(-60%);
+  pointer-events: none;
+  transition: opacity 300ms var(--ap-ease), transform 600ms var(--ap-ease);
+}
+.stage-deck .about-book-card:is(:hover, :focus-visible) .orbital-icon {
+  transform: perspective(480px) rotateY(-8deg);
+}
+.stage-deck .about-book-card:is(:hover, :focus-visible) .orbital-icon::after {
+  opacity: 1;
+  transform: translateX(60%);
+}
+
+/* #12 포스터 pill — 썸네일이 조금 다가온다. */
+.stage-film img { transition: transform 240ms var(--ap-ease); }
+.stage-film:is(:hover, :focus-visible) img { transform: scale(1.06); }
+
+/* #14 · #15 테마 · 언어 교차 — View Transitions (shared dx-theme.js · i18n.js 의 _fade,
+   <html data-dx-fade> 로 opt-in). 전환 중에만 붙는 data-dx-fading 이 길이를 고른다. */
+html[data-dx-fading="theme"]::view-transition-old(root),
+html[data-dx-fading="theme"]::view-transition-new(root) {
+  animation-duration: 600ms;
+  animation-timing-function: var(--ap-ease);
+}
+html[data-dx-fading="lang"]::view-transition-old(root),
+html[data-dx-fading="lang"]::view-transition-new(root) {
+  animation-duration: 200ms;
+  animation-timing-function: var(--ap-ease);
 }
