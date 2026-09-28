@@ -83,11 +83,11 @@ def test_every_role_is_in_the_fold(browser, server):
 
 
 def test_until_then_the_home_does_not_grow_back(browser, server):
-    """xfail 사이에 더 나빠지지 않게: 옛 home 은 1853px 였고 P1 뒤 1074px 다."""
+    """xfail 사이에 더 나빠지지 않게: 옛 home 1853px → P1 1074px → P2 931px (+ 여유 20)."""
     ctx, page = _open(browser, server, 1280, 800)
     try:
         height = page.evaluate("() => document.documentElement.scrollHeight")
-        assert height <= 1100, height
+        assert height <= 951, height
     finally:
         ctx.close()
 
@@ -141,6 +141,8 @@ def test_an_answer_docks_the_tools_below_it(browser, server):
     try:
         assert r["#studioGrid"][0] >= r["#homeAnswer"][1], "아이콘이 답 아래로 내려가지 않았다"
         assert _rows(page) == 1, "Dock 은 한 줄이다"
+        width = page.evaluate("() => document.getElementById('homeAskForm').getBoundingClientRect().width")
+        assert width <= 760, f"Dock 에서 입력창이 {width}px 로 늘어났다"
     finally:
         ctx.close()
 

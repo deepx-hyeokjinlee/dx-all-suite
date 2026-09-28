@@ -38,6 +38,10 @@
 .stage-hero {
   grid-area: hero;
   min-width: 0;
+  /* 폭은 hero 자신이 갖는다. 열 (760) 에만 맡겼더니 Dock 의 2열 grid 에서 입력창이
+     화면 폭 전체로 늘어났다 (2026-09-23 Dock 캡처). */
+  justify-self: center;
+  width: min(100%, 760px);
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
@@ -75,21 +79,137 @@
 .stage-widget-title { margin: 0; font-size: var(--fs-md); font-weight: var(--fw-semibold); }
 .stage-widget-note { margin: 0; }
 
-/* 타일 — 모양은 P2. 여기서는 세로로 세우기만 한다 (목록 행 → grid 칸). */
+/* ── 칸: 아이콘 8 + 책 2 (spec §5.3–5.4) ─────────────────────────────────
+   칸 하나는 4줄 grid: [말풍선 0px] [아이콘] [이름] [상태]. 말풍선은 높이 0 줄에서
+   위로 넘치게 둔다 — absolute 없이 겹친다 (P1 계약: 이 home 에는 떠 있는 가구가 없다).
+   .mod-text 는 display:contents 로 풀어 이름과 설명이 각자 줄을 갖게 한다. */
+.stage-deck { --icon: 72px; }
 .stage-deck .studio-grid > .orbital-card,
 .stage-deck .studio-grid > .about-book-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--sp-1);
+  display: grid;
+  /* 칸의 열은 셀 폭에 고정한다. auto 로 두면 말풍선 (max-content, 최대 200px) 이 열을
+     셀보다 넓혀, 설명이 긴 칸일수록 아이콘이 오른쪽으로 밀려 두 줄의 열이 어긋났다
+     (2026-09-23 1440 캡처). 말풍선만 셀 밖으로 양쪽 대칭으로 넘친다. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 0 auto auto auto;
+  justify-items: center;
+  align-content: start;
+  row-gap: var(--sp-2);
+  padding: var(--sp-1) 0;
   min-width: 0;
+  text-align: center;
+  background: transparent;
+  border-radius: var(--radius);
 }
-.stage-deck .studio-grid .mod-chev { display: none; }
+.stage-deck .studio-grid > *:hover { background: transparent; }
+.stage-deck .studio-grid .mod-text { display: contents; }
+.stage-deck .studio-grid :is(.mod-chev, .orbital-status) { display: none; }
 /* 세로 목록일 때 행 사이에 긋던 선 (inset box-shadow, style.css 의 .orbital-card + .orbital-card)
    이 칸으로 옮겨 와 몇 칸 위에만 남았다. */
 .stage-deck .studio-grid > *,
 .stage-deck .studio-grid > *:focus-visible { box-shadow: none; }   /* focus 는 outline 이 그린다 */
+
+/* 아이콘 — Liquid Glass. 색은 style.css 의 --mod-tint 하나에서 섞는다 (새 hex 없음).
+   광택 · 가장자리 빛 · 그림자는 무채색 rgba (css_token_gate 는 세지 않는다). */
+.stage-deck .mod-tile {
+  grid-row: 2;
+  width: var(--icon);
+  height: var(--icon);
+  border-radius: 22.37%;
+  color: white;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(255, 255, 255, .42), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(170deg,
+      color-mix(in srgb, var(--mod-tint) 78%, white) 0%,
+      var(--mod-tint) 52%,
+      color-mix(in srgb, var(--mod-tint) 72%, black) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .55),
+    inset 0 0 0 1px rgba(255, 255, 255, .14),
+    inset 0 -2px 6px rgba(0, 0, 0, .18),
+    0 10px 24px -12px color-mix(in srgb, var(--mod-tint) 70%, transparent),
+    0 2px 4px rgba(0, 0, 0, .10);
+  transition: opacity var(--dur) var(--ap-ease), filter var(--dur) var(--ap-ease);
+}
+/* glyph 두 겹: 뒤쪽 면 (채움 24%) + 앞쪽 선. 판 위에 뜨도록 모듈 색 그림자. */
+.stage-deck .mod-glyph {
+  width: 56%;
+  height: 56%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 1.5px color-mix(in srgb, var(--mod-tint) 55%, black));
+}
+.stage-deck .mod-glyph .g-fill { fill: currentColor; fill-opacity: .24; stroke: none; }
+
+/* 꺼졌다고 확인된 모듈만 가라앉힌다 (is-down 은 health 응답이 있어야 붙는다). */
+.stage-deck .orbital-card.is-down .mod-tile { opacity: .42; filter: saturate(.25); }
+
+.stage-deck .studio-grid .orbital-name {
+  grid-row: 3;
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--text-primary);
+}
+.stage-deck .studio-grid .card-state { grid-row: 4; font-size: var(--fs-xs); }
+.stage-deck .studio-grid .card-state:empty { display: none; }
+
+/* 말풍선 — 설명과 책의 부제. DOM 에 남아 _paintFacts 가 숫자를 쓰고 화면 낭독기가 읽는다. */
+.stage-deck .studio-grid :is(.card-desc, .orbital-port) {
+  grid-row: 1;
+  align-self: end;
+  z-index: 2;
+  width: max-content;
+  max-width: 200px;
+  margin-bottom: var(--sp-1);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  background: var(--text-primary);
+  color: var(--surface-page);
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ap-ease);
+}
+.stage-deck .studio-grid > :is(:hover, :focus-visible) :is(.card-desc, .orbital-port) { opacity: 1; }
+
+/* 책 — 천 표지 + 은박. 물건이라 두 테마에서 같다. 표지 아래 끝이 아이콘과 같은 줄. */
+.stage-deck .about-book-card .orbital-icon {
+  grid-row: 2;
+  align-self: end;
+  width: 56px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px 6px 6px 3px;
+  color: rgba(255, 255, 255, .86);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, .30) 0 5px, rgba(255, 255, 255, .10) 5px 6px, rgba(0, 0, 0, 0) 6px),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, .04) 0 1px, rgba(255, 255, 255, 0) 1px 3px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, .06) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+    var(--cover);
+  /* 가장자리 빛: 흑연 표지가 다크 무대에서 배경에 묻혔다 (2026-09-23 캡처). */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .20),
+    inset 0 0 0 1px rgba(255, 255, 255, .12),
+    0 10px 22px -12px rgba(0, 0, 0, .55),
+    0 2px 4px rgba(0, 0, 0, .12);
+}
+.stage-deck .about-book-card.sdk-card .orbital-icon { --cover: color-mix(in srgb, black 60%, var(--cat-1)); }
+.stage-deck .about-book-card:not(.sdk-card) .orbital-icon { --cover: color-mix(in srgb, black 80%, var(--cat-3)); }
+/* 은박: 눌러 찍힌 은색 — 위쪽 그림자와 아래쪽 반사로 판에 파인 것처럼. */
+.stage-deck .about-book-card .mod-glyph {
+  width: 52%;
+  height: 52%;
+  stroke-width: 1.8;
+  filter: drop-shadow(0 -1px 0 rgba(0, 0, 0, .55)) drop-shadow(0 1px 0 rgba(255, 255, 255, .22));
+}
 
 .stage-bar {
   grid-area: bar;
@@ -122,7 +242,10 @@
   grid-area: dock;
   grid-template-columns: repeat(10, minmax(0, 1fr));
   gap: var(--sp-2);
+  --icon: 48px;
 }
+#landing:has(#homeAnswer:not([hidden])) .about-book-card .orbital-icon,
+#landing:has(#homeWork:not([hidden])) .about-book-card .orbital-icon { width: 38px; height: 48px; }
 #landing:has(#homeAnswer:not([hidden])) .studio-grid :is(.card-desc, .card-state, .orbital-port),
 #landing:has(#homeWork:not([hidden])) .studio-grid :is(.card-desc, .card-state, .orbital-port),
 #landing:has(#homeAnswer:not([hidden])) .stage-widget :is(.stage-widget-title, .ws-facts),

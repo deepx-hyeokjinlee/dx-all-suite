@@ -111,5 +111,8 @@ def test_home_places_nothing_with_absolute_or_fixed():
 
 
 def test_stage_css_breakpoints_come_from_the_scale():
-    for w in re.findall(r"(?:max|min)-width:\s*(\d+)px", _css()):
-        assert int(w) in (600, 900, 1200, 1440), w
+    """@media 조건만 본다 — 처음 판은 파일 전체를 훑어, 말풍선의 max-width: 200px 를
+    breakpoint 로 읽었다 (scripts/breakpoint_gate.py 와 같은 범위)."""
+    for query in re.findall(r"@media([^{]*)\{", _css()):
+        for w in re.findall(r"(?:max|min)-width:\s*(\d+)px", query):
+            assert int(w) in (600, 900, 1200, 1440), w

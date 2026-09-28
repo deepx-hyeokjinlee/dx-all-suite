@@ -168,6 +168,9 @@
       var key = HEALTH_KEY[card.dataset.app] || card.dataset.app;
       var alive = !!(health[key] && health[key].alive);
       card.classList.toggle('is-up', alive);
+      /* 꺼졌다고 확인된 것만 흐리게 한다. 'is-up 이 없으면' 으로 쓰면 첫 health 응답
+         전 (최대 5초) 에 여덟 개가 모두 흐리다 (home-stage.css, spec 2026-09-23 §5.3). */
+      card.classList.toggle('is-down', !alive);
       var line = card.querySelector('[data-role="state"]');
       if (line) {
         line.textContent = (exceptional && alive) ? _t('Running') : '';
