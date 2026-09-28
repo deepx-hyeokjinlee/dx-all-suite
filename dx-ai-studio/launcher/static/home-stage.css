@@ -75,7 +75,7 @@
   font-size: 56px;
   font-weight: var(--fw-semibold);
   line-height: 1.05;
-  letter-spacing: -.03em;
+  letter-spacing: -.015em;
   font-optical-sizing: auto;
   text-wrap: balance;
   color: var(--text-primary);
@@ -85,7 +85,7 @@
   max-width: 720px;
   font-size: 21px;
   line-height: 1.4;
-  letter-spacing: -.01em;
+  letter-spacing: 0;
   text-wrap: balance;
   color: var(--text-secondary);
 }
