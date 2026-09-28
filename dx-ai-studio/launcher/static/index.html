@@ -101,6 +101,9 @@
 
   <!-- ── Landing Page (orbital layout) ── -->
   <main class="landing home-stage" id="landing">
+    <!-- 커서 조명 (spec §7 #16). 무대 전체에 걸친 grid item, 내용 아래 (z-index -1).
+         home-effects.js 가 안쪽 원을 transform 으로만 옮긴다. -->
+    <div class="stage-light" aria-hidden="true"><i></i></div>
     <!-- 투어 컨트롤. tutorial.js 가 #dxt-tutorial-card 를 여기 맨 앞에 넣는다.
          spec 2026-09-23 §5.1: 메뉴에 숨기지 않고 보이는 자리. -->
     <div class="home-tour" id="homeTour">

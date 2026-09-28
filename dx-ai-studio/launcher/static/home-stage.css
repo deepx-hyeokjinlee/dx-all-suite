@@ -207,7 +207,8 @@
 /* ── 위젯 (spec §5.5–5.6). 카운트업 · 맥박 · 막대 전환은 P6. ──────────── */
 
 /* 상태: 누르면 Monitor. 없으면 조명이 꺼진다 — 색으로 외치지 않는다. */
-.stage-device { cursor: pointer; border-radius: var(--radius); transition: opacity var(--dur) var(--ap-ease); }
+/* 장치가 빠지면 조명이 0.8s 에 걸쳐 꺼진다 (spec §7 #10). */
+.stage-device { cursor: pointer; border-radius: var(--radius); transition: opacity 800ms var(--ap-ease); }
 .stage-device:focus-visible { outline: 2px solid var(--accent); outline-offset: var(--sp-1); }
 .stage-device.is-off { opacity: .5; }
 .dev-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ap-green); }
@@ -234,13 +235,23 @@
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--text-primary) 8%, transparent);
 }
+/* 높이는 transform 으로: 트랙 전체 높이의 막대를 아래를 축으로 줄인다 (spec §7 — transform 만
+   움직인다). 값이 1초마다 와도 300ms 에 걸쳐 따라간다. 모서리는 scaleY 에 눌리므로 작게. */
 .dev-core i {
   grid-area: 1 / 1;
-  align-self: end;
   width: 100%;
-  height: max(2px, calc(var(--u, 0) * 1%));
-  border-radius: var(--radius-sm);
+  height: 100%;
+  border-radius: 3px;
   background: var(--accent);
+  transform-origin: 50% 100%;
+  transform: scaleY(max(.05, calc(var(--u, 0) / 100)));
+  transition: transform 300ms var(--ap-ease);
+}
+/* 쉬고 있으면 (모든 코어 < 5%) 4초마다 숨을 쉰다 — 꺼진 것이 아니라 기다린다. */
+.stage-device.is-idle .dev-core i { animation: dev-breathe 4s var(--ap-ease) infinite; }
+@keyframes dev-breathe {
+  0%, 100% { opacity: .45; }
+  50% { opacity: 1; }
 }
 .dev-core b { font-size: var(--fs-2xs); font-weight: var(--fw-regular); color: var(--text-muted); }
 .dev-line { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); font-variant-numeric: tabular-nums; }
@@ -710,4 +721,43 @@ html[data-dx-fading="lang"]::view-transition-old(root),
 html[data-dx-fading="lang"]::view-transition-new(root) {
   animation-duration: 200ms;
   animation-timing-function: var(--ap-ease);
+}
+
+
+/* ═══ P6b 효과 — 계속 도는 것 (spec §7 #4 #10 #11 #16) ═════════════════════════
+   placeholder 타이핑 · 카운트업 · 커서 조명의 움직임은 JS (home-effects.js · home-widgets.js).
+   코어 막대 · 맥박은 위의 위젯 절. */
+
+/* #16 커서 조명 — 무대 전체 (모든 행 · 열) 에 걸친 grid item. 내용 아래 (z-index -1), 무대
+   밖으로 넘치지 않게 clip — 넘치면 커서를 모서리로 옮길 때 문서가 스크롤을 얻는다. 가로는
+   창 폭까지, 세로는 padding 까지 넓힌다 (.landing.home-stage 의 padding 과 같은 식). */
+.stage-light {
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  z-index: -1;
+  margin:
+    calc((var(--launcher-topbar-h) + clamp(var(--sp-2), 1.5vh, var(--sp-5))) * -1)
+    calc((100vw - 100%) / -2)
+    calc(var(--sp-3) * -1);
+  overflow: clip;
+  pointer-events: none;
+}
+.stage-light > i {
+  --r: 320px;
+  display: block;
+  width: calc(var(--r) * 2);
+  height: calc(var(--r) * 2);
+  /* 칸 높이에 보태지 않는다 — 무대의 행을 늘리면 한 화면이 깨진다. */
+  margin-bottom: calc(var(--r) * -2);
+  border-radius: 50%;
+  background: radial-gradient(circle closest-side, var(--cursor-light), transparent);
+  opacity: 0;
+  will-change: transform;
+  transition: opacity 400ms var(--ap-ease);
+}
+.stage-light.is-on > i { opacity: 1; }
+:root { --cursor-light: rgba(255, 255, 255, .06); }
+:root[data-theme="light"] { --cursor-light: rgba(255, 255, 255, .75); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --cursor-light: rgba(255, 255, 255, .75); }
 }

@@ -91,3 +91,51 @@ def test_the_fade_lengths_are_the_spec_ones():
                r'html\[data-dx-fading="' + kind + r'"\]::view-transition-new\(root\)\s*\{[^}]*'
                r"animation-duration:\s*" + str(ms) + "ms")
         assert re.search(pat, CSS), kind
+
+
+# ── P6b: 계속 도는 것 (#4 #10 #11 #16) ─────────────────────────────────────
+
+WIDGETS = (STATIC / "home-widgets.js").read_text(encoding="utf-8")
+
+
+def test_the_placeholder_types_the_cycle_at_the_spec_pace():
+    js = _effects()
+    assert "DXHomePlaceholders" in js
+    for name, ms in (("TYPE_MS", 45), ("HOLD_MS", 1800), ("ERASE_MS", 20)):
+        assert re.search(name + r"\s*=\s*" + str(ms) + r"\b", js), name
+    assert "'focus'" in js and "'blur'" in js, "포커스하면 멈추고 떠나면 다시"
+    assert "document.hidden" in js, "가려진 탭에서는 멈춘다"
+
+
+def test_core_bars_move_by_transform_and_smooth_over_300ms():
+    bar = _rule(".dev-core i")
+    assert "scaleY(" in bar and "height:" not in bar.replace("height: 100%", "")
+    assert re.search(r"transition:\s*transform 300ms", bar)
+
+
+def test_an_idle_device_breathes_every_four_seconds():
+    assert re.search(r"\.stage-device\.is-idle \.dev-core i\s*\{[^}]*animation:\s*dev-breathe 4s", CSS)
+    assert "@keyframes dev-breathe" in CSS
+    assert "is-idle" in WIDGETS
+
+
+def test_a_missing_device_dims_over_800ms():
+    assert re.search(r"transition:\s*opacity 800ms", _rule(".stage-device"))
+
+
+def test_the_headline_counts_up_over_700ms():
+    assert re.search(r"COUNT_MS\s*=\s*700\b", WIDGETS)
+    assert "requestAnimationFrame" in WIDGETS
+    assert "prefers-reduced-motion: reduce" in WIDGETS
+
+
+def test_the_cursor_light_is_a_grid_item_moved_by_transform():
+    light = re.search(r'<div class="stage-light"[^>]*>', HTML)
+    assert light and 'aria-hidden="true"' in light.group(0)
+    assert HTML.index('class="stage-light"') < HTML.index('id="homeTour"'), "무대의 첫 층"
+    wrap = _rule(".stage-light")
+    assert "grid-row: 1 / -1" in wrap and "grid-column: 1 / -1" in wrap
+    assert "z-index: -1" in wrap and "pointer-events: none" in wrap and "overflow: clip" in wrap
+    assert "will-change: transform" in _rule(".stage-light > i")
+    js = _effects()
+    assert "translate3d(" in js and "requestAnimationFrame" in js

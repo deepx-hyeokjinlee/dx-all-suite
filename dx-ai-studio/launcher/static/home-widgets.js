@@ -8,7 +8,7 @@
    자리를 번갈아 덮어썼을 것이다. 스트림은 studio 가 준비된 뒤 켜지므로, 그 전에는
    hw_status 를 한 번만 읽는다.
 
-   카운트업 · 맥박 · 막대 전환은 효과 단계 (P6) 가 여기에 더한다.
+   카운트업은 여기 (_countTo), 막대 전환 · 맥박은 CSS (is-idle).
    계약: tests/launcher/test_home_widgets_contract.py, test_home_widgets_browser.py */
 (function () {
   'use strict';
@@ -83,6 +83,9 @@
     var mock = !!(hw && hw.mock && npu);
     /* 없음은 색으로 외치지 않고 조명을 끈다 (spec §5.5). */
     box.classList.toggle('is-off', !live && !mock);
+    /* 모든 코어가 5% 밑이면 쉬는 중 — 막대가 4초마다 숨을 쉰다 (spec §7 #10, CSS). */
+    var util = (npu && npu.utilization) || [];
+    box.classList.toggle('is-idle', (live || mock) && Math.max.apply(null, util.concat([0])) < 5);
 
     if (live || mock) {
       chip.className = 'ws-device' + (live ? ' is-live' : '');
@@ -155,12 +158,39 @@
     });
   }
 
+  /* 숫자는 지금 보이는 값에서 새 값까지 700ms 에 걸쳐 센다 (spec §7 #11). 효과 줄이기나
+     가려진 탭에서는 곧바로. */
+  var COUNT_MS = 700;
+  var _shownFps = 0;
+  var _countRaf = 0;
+
+  function _countTo(el, to) {
+    cancelAnimationFrame(_countRaf);
+    var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (still || document.hidden || _shownFps === to) {
+      _shownFps = to;
+      el.textContent = _fmt(to);
+      return;
+    }
+    var from = _shownFps;
+    var t0 = null;
+    function step(t) {
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, (t - t0) / COUNT_MS);
+      _shownFps = from + (to - from) * (1 - Math.pow(1 - k, 3));
+      if (k === 1) _shownFps = to;
+      el.textContent = _fmt(_shownFps);
+      if (k < 1) _countRaf = requestAnimationFrame(step);
+    }
+    _countRaf = requestAnimationFrame(step);
+  }
+
   function paintProof() {
     var body = $('homeProof');
     if (!body) return;
     if (!_rows.length) { body.hidden = true; return; }
     var row = _rows[_at % _rows.length];
-    $('homeProofFps').textContent = _fmt(row.fps);
+    _countTo($('homeProofFps'), row.fps);
     $('homeProofModel').textContent = 'YOLO26n · ' + _t(TASK_LABEL[row.task]);
     _paintDots($('homeProofDots'));
     body.hidden = false;
