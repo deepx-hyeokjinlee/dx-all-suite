@@ -19,12 +19,6 @@ _QUIET = """() => {
 _SEEN = ("try{sessionStorage.setItem('dx-splash-seen','1');localStorage.setItem('dx-splash-seen','1');"
          "localStorage.setItem('dx-tutorial-launcher-autostarted','1');}catch(e){}")
 
-# P1 은 자리만 옮기고 두 요소를 옛 크기로 둔다: 입력창 200px (P4 에서 72px) 과 설명이
-# 보이는 모듈 칸 178px × 2줄 (P2 에서 아이콘 72px + 이름). 2026-09-23 측정으로 1280×800 에서
-# 274px, 1440×900 에서 185px 넘치고, 두 요소가 spec 크기가 되면 280px 줄어 들어간다.
-# strict 라서 P2·P4 가 끝나 통과하기 시작하면 이 표시를 떼라고 실패한다.
-_UNTIL_P2_P4 = pytest.mark.xfail(
-    strict=True, reason="입력창 (P4) 과 아이콘 (P2) 이 spec 크기가 되기 전까지 넘친다")
 
 
 @pytest.fixture(scope="module")
@@ -56,7 +50,6 @@ def _open(browser, port, w, h, lang="en"):
     return ctx, page
 
 
-@_UNTIL_P2_P4
 @pytest.mark.parametrize("w,h", [(1280, 800), (1440, 900)])
 @pytest.mark.parametrize("lang", ["en", "es"])
 def test_the_home_is_one_screen(browser, server, w, h, lang):
@@ -68,7 +61,6 @@ def test_the_home_is_one_screen(browser, server, w, h, lang):
         ctx.close()
 
 
-@_UNTIL_P2_P4
 def test_every_role_is_in_the_fold(browser, server):
     ctx, page = _open(browser, server, 1280, 800)
     try:
@@ -82,14 +74,6 @@ def test_every_role_is_in_the_fold(browser, server):
         ctx.close()
 
 
-def test_until_then_the_home_does_not_grow_back(browser, server):
-    """xfail 사이에 더 나빠지지 않게: 옛 home 1853px → P1 1074px → P2 931px (+ 여유 20)."""
-    ctx, page = _open(browser, server, 1280, 800)
-    try:
-        height = page.evaluate("() => document.documentElement.scrollHeight")
-        assert height <= 951, height
-    finally:
-        ctx.close()
 
 
 def _rows(page):
@@ -147,7 +131,6 @@ def test_an_answer_docks_the_tools_below_it(browser, server):
         ctx.close()
 
 
-@_UNTIL_P2_P4
 def test_docked_widgets_stay_above_the_answer_on_one_screen(browser, server):
     ctx, page, r = _docked(browser, server)
     try:

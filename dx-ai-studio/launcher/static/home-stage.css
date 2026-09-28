@@ -8,50 +8,167 @@
 
 .landing.home-stage {
   display: grid;
-  /* 위쪽 줄은 여백 · hero 760 · 투어. 투어를 hero 와 같은 칸에 겹쳐 두면 투어 카드
-     (지금 420px, 모양은 P5) 가 부제를 가렸다 — 2026-09-23 1440 폭 캡처. */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 760px) minmax(0, 1fr);
-  grid-template-areas: ". hero tour" "deck deck deck" "bar bar bar";
+  /* 한 열. 투어는 hero 위 오른쪽의 얇은 한 줄 (spec §4.1 그림). P1 은 투어를 hero 옆 열에
+     두었는데, 투어 카드 (205px) 가 그 열을 차지해 hero 를 760 에 가뒀고 56px 제목이 두 줄로
+     접혔다 (118px, P4 측정). 제목은 hero 폭 전체를 쓰고, 부제 · 입력만 760 이다. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "tour" "hero" "deck" "bar";
   align-content: space-between;
   justify-content: stretch;
-  row-gap: clamp(var(--sp-4), 3.5vh, var(--sp-6));
+  /* 세로 여백은 창 높이를 따른다 — 1280×800 에서도 한 화면 (spec §4.2). */
+  row-gap: clamp(var(--sp-3), 2vh, var(--sp-6));
   width: min(100%, 1280px);
   min-height: 100vh;
   margin-inline: auto;
-  padding: calc(var(--launcher-topbar-h) + clamp(var(--sp-4), 4vh, var(--sp-7))) var(--sp-5) var(--sp-4);
+  padding: calc(var(--launcher-topbar-h) + clamp(var(--sp-2), 1.5vh, var(--sp-5))) var(--sp-5) var(--sp-3);
   box-sizing: border-box;
 }
 
-/* 투어 컨트롤은 hero 오른쪽 열의 위. 좁아지면 (1200 이하) 자기 줄을 갖는다. */
+/* 투어: 오른쪽 위 한 줄 — Tutorial mode 스위치 · Replay intro (spec §5.1). 카드는
+   tutorial.js 가 스타일째 끼워 넣으므로 #homeTour 로 우선순위를 올려 한 줄로 접는다.
+   설명 글은 숨기되 DOM 에 남긴다. */
 .home-tour {
   grid-area: tour;
   max-width: 100%;
   justify-self: end;
-  align-self: start;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--sp-2);
-  z-index: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-2) var(--sp-4);
 }
+#homeTour .dxt-launcher-card {
+  flex: 0 0 auto;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+#homeTour .dxt-launcher-card .dxt-lc-desc { display: none; }
+/* 주입 스타일의 글자 칸은 flex: 1 이라 남은 폭을 다 먹어 Replay 를 둘째 줄로 밀었다. */
+#homeTour .dxt-launcher-card .dxt-lc-text { flex: 0 0 auto; }
+#homeTour .dxt-launcher-card .dxt-lc-title { font-size: var(--fs-sm); font-weight: var(--fw-regular); color: var(--text-secondary); }
+#homeTour .replay-btn { font-size: var(--fs-sm); }
 
 .stage-hero {
   grid-area: hero;
   min-width: 0;
-  /* 폭은 hero 자신이 갖는다. 열 (760) 에만 맡겼더니 Dock 의 2열 grid 에서 입력창이
-     화면 폭 전체로 늘어났다 (2026-09-23 Dock 캡처). */
-  justify-self: center;
-  width: min(100%, 760px);
+  /* 제목은 hero 폭 전체, 부제 · 포스터 · 입력 · 안내는 760 (아래 규칙). Dock 의 2열 grid
+     에서도 입력이 화면 폭으로 늘어나지 않게 폭은 각자가 갖는다 (2026-09-23 Dock 캡처). */
+  justify-self: stretch;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
   text-align: center;
 }
-/* 크기는 지금 home 과 같다 (P4 에서 56px Display 로). 브라우저 기본값에 맡기지 않는다. */
-.stage-title { margin: 0; font-size: var(--fs-3xl); font-weight: var(--fw-semibold); color: var(--text-primary); }
-.stage-sub { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); }
+/* ── hero (spec §5.2) ────────────────────────────────────────────────
+   제목은 Inter 의 Display 자형 (opsz) 으로 — 56px 에서 글자가 촘촘해진다. */
+.stage-title {
+  margin: 0;
+  font-size: 56px;
+  font-weight: var(--fw-semibold);
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  font-optical-sizing: auto;
+  text-wrap: balance;
+  color: var(--text-primary);
+}
+.stage-sub {
+  margin: 0 auto;
+  max-width: 720px;
+  font-size: 21px;
+  line-height: 1.4;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+  color: var(--text-secondary);
+}
+
+/* 한국어는 기본 줄바꿈이 글자 단위라 부제가 "컴 / 파일하고", placeholder 가 "주 / 세요" 로
+   끊겼다 (2026-09-28 ko 캡처). 단어 단위로 끊는다. */
+.stage-hero :is(.stage-title, .stage-sub, .ask-input) { word-break: keep-all; overflow-wrap: anywhere; }
+
+/* "Watch the film" pill: 썸네일 + 제목. 누르면 지금과 같은 overlay. */
 .stage-films { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--sp-2); }
-.stage-hero .home-ask { text-align: start; }
+.stage-film {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) var(--sp-1);
+  border-radius: 980px;
+  background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  cursor: pointer;
+}
+.stage-film:hover { background: color-mix(in srgb, var(--text-primary) 10%, transparent); }
+.stage-film:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage-film img { width: 36px; height: 24px; object-fit: cover; border-radius: 980px; }
+.stage-film span::before { content: "\25B6"; margin-right: var(--sp-1); font-size: .75em; color: var(--text-muted); }
+
+/* 입력: form 은 틀일 뿐이고, 유리 상자가 쓰는 자리 · 누가 만들지 · 만들기를 담는다.
+   backdrop-filter 는 여기와 아래 막대 두 곳에만 (spec §5.2). */
+.stage-hero :is(.home-ask, .setup-degraded) { width: min(100%, 760px); margin-inline: auto; }
+.stage-hero .home-ask {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  text-align: start;
+}
+.stage-hero .home-ask:focus-within { outline: none; }
+.ask-box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-4) var(--sp-3) var(--sp-5);
+  border-radius: 24px;
+  border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
+  background: color-mix(in srgb, var(--surface-panel) 72%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .30),
+    0 20px 40px -24px rgba(0, 0, 0, .35),
+    0 2px 6px rgba(0, 0, 0, .06);
+  transition: border-color var(--dur) var(--ap-ease), box-shadow var(--dur) var(--ap-ease);
+}
+.ask-box:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .30),
+    0 20px 40px -24px rgba(0, 0, 0, .35),
+    0 0 0 4px var(--accent-dim);
+}
+/* 두 줄. 옛 입력창은 200px 였다 — 한 화면을 가장 많이 먹던 것 (P1 측정). */
+.stage-hero .ask-input { min-height: 0; padding: 0; font-size: 21px; line-height: 1.35; }
+.ask-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); }
+.ask-foot .setup-fold { margin: 0; }
+.ask-foot .setup-fold[open] { flex-basis: 100%; }
+.ask-foot .ask-go { margin-left: auto; }
+.stage-hero .ask-chips { justify-content: center; margin: 0; }
+.stage-hero .ask-chip { padding: var(--sp-1) var(--sp-3); }
+.ask-more {
+  border: 0;
+  border-radius: 980px;
+  padding: var(--sp-1) var(--sp-3);
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.ask-more:hover { text-decoration: underline; }
 
 /* 입력 뒤의 무대. 보일 때만 자리를 갖는다 (아래 Dock 규칙). */
 .stage-work { grid-area: work; display: none; min-width: 0; }
@@ -72,7 +189,7 @@
   grid-area: grid;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--sp-5) var(--sp-4);
+  gap: var(--sp-4);
   align-items: start;
 }
 .stage-widget { min-width: 0; display: flex; flex-direction: column; gap: var(--sp-2); }
@@ -176,8 +293,10 @@
   grid-template-rows: 0 auto auto auto;
   justify-items: center;
   align-content: start;
-  row-gap: var(--sp-2);
-  padding: var(--sp-1) 0;
+  /* 줄 사이는 row-gap 이 아니라 각 요소의 margin 으로 — 상태 줄이 비어 있어도 grid 는
+     빈 줄의 간격을 남겨 칸마다 24px 가 새었다 (P4 측정). */
+  row-gap: 0;
+  padding: 0;
   min-width: 0;
   text-align: center;
   background: transparent;
@@ -195,6 +314,7 @@
    광택 · 가장자리 빛 · 그림자는 무채색 rgba (css_token_gate 는 세지 않는다). */
 .stage-deck .mod-tile {
   grid-row: 2;
+  margin-bottom: var(--sp-2);
   width: var(--icon);
   height: var(--icon);
   border-radius: 22.37%;
@@ -237,7 +357,7 @@
   letter-spacing: -.01em;
   color: var(--text-primary);
 }
-.stage-deck .studio-grid .card-state { grid-row: 4; font-size: var(--fs-xs); }
+.stage-deck .studio-grid .card-state { grid-row: 4; margin-top: var(--sp-1); font-size: var(--fs-xs); }
 .stage-deck .studio-grid .card-state:empty { display: none; }
 
 /* 말풍선 — 설명과 책의 부제. DOM 에 남아 _paintFacts 가 숫자를 쓰고 화면 낭독기가 읽는다. */
@@ -263,6 +383,7 @@
 /* 책 — 천 표지 + 은박. 물건이라 두 테마에서 같다. 표지 아래 끝이 아이콘과 같은 줄. */
 .stage-deck .about-book-card .orbital-icon {
   grid-row: 2;
+  margin-bottom: var(--sp-2);
   align-self: end;
   width: 56px;
   height: 72px;
@@ -351,11 +472,6 @@
 
 /* ── 좁아질 때 (spec §4.2, breakpoint 는 스케일 값만) ── */
 @media (max-width: 1200px) {
-  .landing.home-stage {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "tour" "hero" "deck" "bar";
-  }
-  .home-tour { flex-direction: row; }
   .stage-deck {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas: "grid grid" "dev meas";

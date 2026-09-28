@@ -13,6 +13,7 @@ light-theme bug — but it needs a name before it can be one.
 """
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -445,9 +446,16 @@ def test_the_working_beat_shows_the_product_rather_than_claiming_it():
     beats = re.findall(r"ask:\s*'([^']+)'\s*,\s*by:\s*'([^']+)'", work.group(1))
     assert len(beats) >= 3, "one prompt is an example; three is the product working"
 
+    # The home offers requests in two places: the chips (showcase prompts) and the
+    # placeholder cycle, which also carries the short requests the router sends straight
+    # to a module (2026-09-28: the chips became showcase prompts, and the intro's three
+    # routed requests moved into the cycle rather than out of the home).
+    prompts = (ROOT / "launcher" / "static" / "home-prompts.js").read_text(encoding="utf-8")
+    cycle = prompts[prompts.index("window.DXHomePlaceholders"):]
     for ask, by in beats:
         assert "data-i18n=\"" + ask + "\"" in html or \
-               "data-i18n-placeholder=\"" + ask + "\"" in html, (
+               "data-i18n-placeholder=\"" + ask + "\"" in html or \
+               json.dumps(ask) in cycle, (
             f"{ask!r} is copy written for the intro, not something the home offers"
         )
         assert "'" + ask + "':" in html, f"{ask!r} is not in the dictionary"

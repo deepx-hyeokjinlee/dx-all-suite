@@ -225,13 +225,30 @@
         }
       });
     }
+    /* 예시는 실제로 만들어진 showcase 의 원문 (home-prompts.js) 이다. 채우고 기다린다 —
+       예전처럼 곧바로 실행하면 긴 원문을 읽거나 고칠 틈 없이 답이 뜨고 무대가 Dock 으로
+       바뀐다. 원문은 번역하지 않는다: 검증된 것은 영어 원문이다 (spec 2026-09-23 §5.2). */
     var chips = $('homeAskChips');
     if (chips) {
       chips.addEventListener('click', function (e) {
+        var more = e.target.closest('#homeAskMore');
+        if (more) {
+          Array.prototype.forEach.call(chips.querySelectorAll('.ask-chip[hidden]'), function (c) {
+            c.hidden = false;
+          });
+          more.hidden = true;
+          return;
+        }
         var chip = e.target.closest('.ask-chip');
         if (!chip) return;
-        $('homeAsk').value = chip.textContent.trim();
-        ask(chip.textContent.trim());
+        var prompts = window.DXHomePrompts || {};
+        var text = prompts[chip.dataset.prompt] || chip.textContent.trim();
+        var input = $('homeAsk');
+        input.value = text;
+        _saveDraft(text);
+        input.focus();
+        input.setSelectionRange(0, 0);
+        input.scrollTop = 0;
       });
     }
     var routes = $('answerRoutes');

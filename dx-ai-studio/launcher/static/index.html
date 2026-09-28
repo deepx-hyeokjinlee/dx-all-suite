@@ -112,25 +112,22 @@
 
     <!-- 만들기. 문구는 P4 에서 바뀐다 — 지금은 자리만 옮긴다. -->
     <section class="stage-hero" id="homeStage">
-      <h1 class="stage-title" data-i18n="Build">Build</h1>
-      <p class="stage-sub" data-i18n="Describe it. The studio picks the module, model and pipeline — or the agent builds it.">Describe it. The studio picks the module, model and pipeline — or the agent builds it.</p>
+      <h1 class="stage-title" data-i18n="Describe anything. Run it on DX-M1.">Describe anything. Run it on DX-M1.</h1>
+      <p class="stage-sub" data-i18n="Say what you need. The agent picks the model, compiles it, builds the app and measures it on this NPU.">Say what you need. The agent picks the model, compiles it, builds the app and measures it on this NPU.</p>
+      <!-- "Watch the film" 자리 (spec §5.2): 무엇인지 더 보고 싶은 순간에. 썸네일은 장식이다. -->
       <div class="stage-films">
-        <a class="stage-film" id="landingPoster" role="button" tabindex="0" onclick="openPlatformInfo()" data-i18n-title="DX-M1 and DX-M2 NPU lineup"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></a>
-        <a class="stage-film" id="ecosystemPoster" role="button" tabindex="0" onclick="openEcosystemInfo()" data-i18n-title="DEEPX Physical AI ecosystem"><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></a>
+        <a class="stage-film" id="landingPoster" role="button" tabindex="0" onclick="openPlatformInfo()" data-i18n-title="DX-M1 and DX-M2 NPU lineup"><img src="/static/img/about/marketing/m1_m2.webp" alt="" width="36" height="24" loading="lazy"><span data-i18n="Explore DX AI Studio">Explore DX AI Studio</span></a>
+        <a class="stage-film" id="ecosystemPoster" role="button" tabindex="0" onclick="openEcosystemInfo()" data-i18n-title="DEEPX Physical AI ecosystem"><img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="" width="36" height="24" loading="lazy"><span data-i18n="Physical AI Ecosystem">Physical AI Ecosystem</span></a>
       </div>
       <form class="home-ask" id="homeAskForm" autocomplete="off">
-        <textarea class="ask-input" id="homeAsk" rows="3"
-                 placeholder="4-channel CCTV, detect people, 30 FPS"
-                 data-i18n-placeholder="4-channel CCTV, detect people, 30 FPS"
+        <!-- 유리 상자: 쓰는 자리 · 누가 만들지 · 만들기. 예시는 상자 밖 아래 줄. -->
+        <div class="ask-box">
+          <textarea class="ask-input" id="homeAsk" rows="2"
+                 placeholder="Build a squat-counting fitness mini-game using yolo26n-pose on DEEPX NPU"
+                 data-i18n-placeholder="Build a squat-counting fitness mini-game using yolo26n-pose on DEEPX NPU"
                  aria-label="Describe what you want to build" data-i18n-aria-label="Describe what you want to build"></textarea>
-        <div class="ask-chips" id="homeAskChips">
-          <button type="button" class="ask-chip" data-i18n="compile yolo26n to DXNN">compile yolo26n to DXNN</button>
-          <button type="button" class="ask-chip" data-i18n="pose estimation on webcam">pose estimation on webcam</button>
-          <button type="button" class="ask-chip" data-i18n="4-channel CCTV object detection">4-channel CCTV object detection</button>
-          <button type="button" class="ask-chip" data-i18n="segment a video file">segment a video file</button>
-          <button class="ask-go" type="submit" data-i18n="Build it">Build it</button>
-        </div>
-        <details class="setup-fold" id="setupFold">
+          <div class="ask-foot">
+            <details class="setup-fold" id="setupFold">
           <summary class="setup-fold-summary">
             <span class="setup-fold-label" data-i18n="Agent">Agent</span>
             <span class="setup-fold-value" id="setupFoldValue"></span>
@@ -153,6 +150,22 @@
           <span class="setup-hint" id="setupHint" hidden><span data-i18n="Sign in with">Sign in with</span> <code></code></span>
         </div>
         </details>
+            <button class="ask-go" type="submit" data-i18n="Build it">Build it</button>
+          </div>
+        </div>
+        <!-- 실제로 만들어진 showcase 의 프롬프트 (home-prompts.js). 누르면 원문이 채워진다. -->
+        <div class="ask-chips" id="homeAskChips">
+          <button type="button" class="ask-chip" data-prompt="mini-game-squat-fitness" data-i18n="Squat game">Squat game</button>
+          <button type="button" class="ask-chip" data-prompt="paddleocr-video-ocr" data-i18n="Video OCR">Video OCR</button>
+          <button type="button" class="ask-chip" data-prompt="ultralytics-retrain-eval-deepx-export-braintumor" data-i18n="Brain MRI">Brain MRI</button>
+          <button type="button" class="ask-chip" data-prompt="ultralytics-yolo-deepx-export" data-i18n="YOLO → DeepX">YOLO → DeepX</button>
+          <button type="button" class="ask-chip" data-prompt="mini-game-stretching-coach" data-i18n="Stretching coach" hidden>Stretching coach</button>
+          <button type="button" class="ask-chip" data-prompt="rapiddoc-pdf2md" data-i18n="PDF → Markdown" hidden>PDF → Markdown</button>
+          <button type="button" class="ask-chip" data-prompt="ultralytics-retrain-eval-deepx-export-pills" data-i18n="Pill counter" hidden>Pill counter</button>
+          <button type="button" class="ask-chip" data-prompt="ultralytics-retrain-eval-deepx-export-ppe" data-i18n="Site-safety PPE" hidden>Site-safety PPE</button>
+          <button type="button" class="ask-chip" data-prompt="ultralytics-retrain-eval-deepx-export-wildlife" data-i18n="Safari camera" hidden>Safari camera</button>
+          <button type="button" class="ask-more" id="homeAskMore" aria-label="Show 5 more examples" data-i18n-aria-label="Show 5 more examples">+5</button>
+        </div>
       </form>
       <div class="setup-degraded" id="setupDegraded" hidden>
           <p class="sd-title" data-role="title"></p>
@@ -586,6 +599,28 @@
     'measured': { ko:'개 실측', ja:'件 実測', es:'medidos', 'zh-CN':'个已实测', 'zh-TW':'個已實測' },
     'Modules': { ko:'모듈', ja:'モジュール', es:'Módulos', 'zh-CN':'模块', 'zh-TW':'模組' },
     'Device': { ko:'장치', ja:'デバイス', es:'Dispositivo', 'zh-CN':'设备', 'zh-TW':'裝置' },
+    /* 무대의 hero (spec 2026-09-23 §5.2, §8.1). 프롬프트 원문 자체는 번역하지 않는다 (home-prompts.js). */
+    'Describe anything. Run it on DX-M1.': { ko:'무엇이든 말하세요. DX-M1 이 돌립니다.', ja:'何でも伝えてください。DX-M1 が動かします。', es:'Describe lo que sea. Ejecútalo en DX-M1.', 'zh-CN':'描述任何需求，在 DX-M1 上运行。', 'zh-TW':'描述任何需求，在 DX-M1 上執行。' },
+    'Say what you need. The agent picks the model, compiles it, builds the app and measures it on this NPU.': { ko:'원하는 것을 적으면 에이전트가 모델을 고르고, 컴파일하고, 앱을 만들고, 이 NPU 에서 측정합니다.', ja:'必要なことを書けば、エージェントがモデルを選び、コンパイルし、アプリを作り、この NPU で計測します。', es:'Di lo que necesitas. El agente elige el modelo, lo compila, crea la app y la mide en esta NPU.', 'zh-CN':'说出你的需求，智能体会选择模型、完成编译、构建应用，并在这块 NPU 上测量。', 'zh-TW':'說出你的需求，代理會選擇模型、完成編譯、建置應用，並在這顆 NPU 上量測。' },
+    'Show 5 more examples': { ko:'예시 5개 더 보기', ja:'例をあと 5 件表示', es:'Mostrar 5 ejemplos más', 'zh-CN':'再显示 5 个示例', 'zh-TW':'再顯示 5 個範例' },
+    'Squat game': { ko:'스쿼트 게임', ja:'スクワットゲーム', es:'Juego de sentadillas', 'zh-CN':'深蹲游戏', 'zh-TW':'深蹲遊戲' },
+    'Video OCR': { ko:'영상 OCR', ja:'動画 OCR', es:'OCR de video', 'zh-CN':'视频 OCR', 'zh-TW':'影片 OCR' },
+    'Brain MRI': { ko:'뇌 MRI', ja:'脳 MRI', es:'MRI cerebral', 'zh-CN':'脑部 MRI', 'zh-TW':'腦部 MRI' },
+    'YOLO → DeepX': { ko:'YOLO → DeepX', ja:'YOLO → DeepX', es:'YOLO → DeepX', 'zh-CN':'YOLO → DeepX', 'zh-TW':'YOLO → DeepX' },
+    'Stretching coach': { ko:'스트레칭 코치', ja:'ストレッチコーチ', es:'Entrenador de estiramientos', 'zh-CN':'拉伸教练', 'zh-TW':'伸展教練' },
+    'PDF → Markdown': { ko:'PDF → Markdown', ja:'PDF → Markdown', es:'PDF → Markdown', 'zh-CN':'PDF → Markdown', 'zh-TW':'PDF → Markdown' },
+    'Pill counter': { ko:'알약 계수', ja:'錠剤カウント', es:'Contador de pastillas', 'zh-CN':'药片计数', 'zh-TW':'藥錠計數' },
+    'Site-safety PPE': { ko:'현장 안전 PPE', ja:'現場安全 PPE', es:'EPP en obra', 'zh-CN':'现场安全 PPE', 'zh-TW':'現場安全 PPE' },
+    'Safari camera': { ko:'사파리 카메라', ja:'サファリカメラ', es:'Cámara de safari', 'zh-CN':'野生动物相机', 'zh-TW':'野生動物相機' },
+    'Build a squat-counting fitness mini-game using yolo26n-pose on DEEPX NPU': { ko:'DEEPX NPU 에서 yolo26n-pose 로 스쿼트 횟수를 세는 피트니스 미니게임을 만들어 주세요', ja:'DEEPX NPU 上で yolo26n-pose を使い、スクワットを数えるフィットネスミニゲームを作ってください', es:'Crea un minijuego de fitness que cuente sentadillas con yolo26n-pose en la NPU de DEEPX', 'zh-CN':'在 DEEPX NPU 上用 yolo26n-pose 做一个统计深蹲次数的健身小游戏', 'zh-TW':'在 DEEPX NPU 上用 yolo26n-pose 做一個計算深蹲次數的健身小遊戲' },
+    'Build an OCR inference app whose text detection + recognition runs on the DEEPX DX-M1 NPU.': { ko:'텍스트 검출과 인식을 DEEPX DX-M1 NPU 에서 돌리는 OCR 추론 앱을 만들어 주세요.', ja:'テキスト検出と認識を DEEPX DX-M1 NPU で実行する OCR 推論アプリを作ってください。', es:'Crea una app de inferencia OCR cuya detección y reconocimiento de texto se ejecuten en la NPU DEEPX DX-M1.', 'zh-CN':'构建一个在 DEEPX DX-M1 NPU 上运行文本检测和识别的 OCR 推理应用。', 'zh-TW':'建置一個在 DEEPX DX-M1 NPU 上執行文字偵測與辨識的 OCR 推論應用。' },
+    'Using the Ultralytics Python package, adapt the base yolo26n model for a medical edge device that screens MRI/CT brain scans for tumors.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 MRI/CT 뇌 영상에서 종양을 선별하는 의료용 엣지 장치에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを MRI/CT の脳画像から腫瘍をスクリーニングする医療用エッジ機器向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a un dispositivo médico de borde que detecte tumores en imágenes cerebrales de MRI/CT.', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为可从 MRI/CT 脑部影像中筛查肿瘤的医疗边缘设备模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為可從 MRI/CT 腦部影像中篩檢腫瘤的醫療邊緣裝置模型。' },
+    'Export the Ultralytics YOLO26n detection model to DeepX NPU format using the one-shot format=deepx export path, then run inference on the Ultralytics bus sample image.': { ko:'Ultralytics YOLO26n 검출 모델을 한 번에 끝나는 format=deepx 내보내기로 DeepX NPU 형식으로 바꾸고, Ultralytics bus 샘플 이미지로 추론해 주세요.', ja:'Ultralytics の YOLO26n 検出モデルをワンショットの format=deepx エクスポートで DeepX NPU 形式に変換し、Ultralytics の bus サンプル画像で推論してください。', es:'Exporta el modelo de detección YOLO26n de Ultralytics al formato NPU de DeepX con la exportación directa format=deepx y luego ejecuta la inferencia sobre la imagen de ejemplo bus de Ultralytics.', 'zh-CN':'使用一步式 format=deepx 导出，将 Ultralytics YOLO26n 检测模型转换为 DeepX NPU 格式，然后用 Ultralytics bus 示例图像进行推理。', 'zh-TW':'使用一步式 format=deepx 匯出，將 Ultralytics YOLO26n 偵測模型轉換為 DeepX NPU 格式，再以 Ultralytics bus 範例影像進行推論。' },
+    'Using the yolo26n-pose model on the DEEPX NPU, build a simple arcade-style stretching mini-game.': { ko:'DEEPX NPU 에서 yolo26n-pose 모델로 간단한 아케이드풍 스트레칭 미니게임을 만들어 주세요.', ja:'DEEPX NPU 上の yolo26n-pose モデルで、シンプルなアーケード風ストレッチミニゲームを作ってください。', es:'Con el modelo yolo26n-pose en la NPU de DEEPX, crea un sencillo minijuego de estiramientos de estilo arcade.', 'zh-CN':'在 DEEPX NPU 上用 yolo26n-pose 模型做一个简单的街机风格拉伸小游戏。', 'zh-TW':'在 DEEPX NPU 上用 yolo26n-pose 模型做一個簡單的街機風格伸展小遊戲。' },
+    'Build a PDF-to-Markdown app whose document-parsing pipeline (layout analysis + OCR + table/formula recognition) runs on the DEEPX DX-M1 NPU.': { ko:'문서 파싱 파이프라인(레이아웃 분석 + OCR + 표/수식 인식)이 DEEPX DX-M1 NPU 에서 도는 PDF → Markdown 변환 앱을 만들어 주세요.', ja:'ドキュメント解析パイプライン（レイアウト解析 + OCR + 表・数式認識）が DEEPX DX-M1 NPU で動く PDF → Markdown 変換アプリを作ってください。', es:'Crea una app de PDF a Markdown cuyo pipeline de análisis de documentos (análisis de diseño + OCR + reconocimiento de tablas y fórmulas) se ejecute en la NPU DEEPX DX-M1.', 'zh-CN':'构建一个 PDF 转 Markdown 应用，其文档解析流程（版面分析 + OCR + 表格/公式识别）在 DEEPX DX-M1 NPU 上运行。', 'zh-TW':'建置一個 PDF 轉 Markdown 應用，其文件解析流程（版面分析 + OCR + 表格／公式辨識）在 DEEPX DX-M1 NPU 上執行。' },
+    'Using the Ultralytics Python package, adapt the base yolo26n model for a pharmaceutical pill identification/counting station.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 알약 식별·계수 스테이션에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを錠剤の識別・カウント用ステーション向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a una estación de identificación y conteo de pastillas.', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为药片识别与计数工作站的模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為藥錠辨識與計數工作站的模型。' },
+    'Using the Ultralytics Python package, adapt the base yolo26n model for a construction/factory site-safety camera that checks PPE (personal protective equipment) compliance.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 건설·공장 현장에서 PPE(개인 보호구) 착용을 확인하는 안전 카메라에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを建設・工場現場で PPE（個人用保護具）の着用を確認する安全カメラ向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a una cámara de seguridad para obras y fábricas que compruebe el uso de EPP (equipos de protección personal).', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为检查建筑/工厂现场 PPE（个人防护装备）佩戴情况的安全摄像头模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為檢查營建／工廠現場 PPE（個人防護裝備）穿戴情況的安全攝影機模型。' },
+    'Using the Ultralytics Python package, adapt the base yolo26n model for a wildlife-monitoring / safari camera scenario.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 야생동물 관찰·사파리 카메라 시나리오에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを野生動物観察・サファリカメラのシナリオ向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a un escenario de cámara de vigilancia de fauna o safari.', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为野生动物监测／游猎摄像头场景的模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為野生動物監測／遊獵攝影機情境的模型。' },
     'No DX-M1 connected': { ko:'연결된 DX-M1 없음', ja:'接続された DX-M1 がありません', es:'No hay ningún DX-M1 conectado', 'zh-CN':'未连接 DX-M1', 'zh-TW':'未連接 DX-M1' },
     'Mock data': { ko:'모의 데이터', ja:'モックデータ', es:'Datos simulados', 'zh-CN':'模拟数据', 'zh-TW':'模擬資料' },
     'Open Monitor': { ko:'Monitor 열기', ja:'Monitor を開く', es:'Abrir Monitor', 'zh-CN':'打开 Monitor', 'zh-TW':'開啟 Monitor' },
@@ -1431,6 +1466,7 @@
   <script src="/platform-info.js"></script>
   <script src="/launcher-app-frame.js"></script>
   <script src="/home-router.js"></script>
+  <script src="/home-prompts.js"></script>
   <script src="/home-answer.js"></script>
   <script src="/home-agent-setup.js"></script>
   <script src="/home-console.js"></script>

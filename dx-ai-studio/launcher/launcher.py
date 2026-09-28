@@ -1466,6 +1466,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/launcher-app-frame.js", "application/javascript")
         elif path == "/home-router.js":
             self._send_shell_asset(BASE_DIR / "static/home-router.js", "application/javascript")
+        elif path == "/home-prompts.js":
+            self._send_shell_asset(BASE_DIR / "static/home-prompts.js", "application/javascript")
         elif path == "/home-answer.js":
             self._send_shell_asset(BASE_DIR / "static/home-answer.js", "application/javascript")
         elif path == "/home-console.js":

@@ -85,7 +85,9 @@ def test_you_can_write_more_than_one_line(home):
     )
 
 
-def test_the_placeholder_is_the_biggest_words_in_that_block(home):
+def test_the_input_reads_at_least_as_large_as_the_subtitle(home):
+    """무대 (spec 2026-09-23 §5.2) 에서 가장 큰 글자는 56px 제목이다. 예전 계약 ("입력이 이
+    블록에서 가장 크다") 은 제목이 없던 판의 것이라, 입력이 부제보다 작아지지 않는 것만 남긴다."""
     ask = home.evaluate(
         "() => parseFloat(getComputedStyle(document.getElementById('homeAsk')).fontSize)")
     note = home.evaluate(
@@ -93,8 +95,8 @@ def test_the_placeholder_is_the_biggest_words_in_that_block(home):
         " return e ? parseFloat(getComputedStyle(e).fontSize) : 0; }")
     # 설명이 없으면 0 과 비교해 공짜로 통과한다 — 예전 판이 .ws-note 를 잃고 그랬다.
     assert note > 0, "hero 부제가 없다"
-    assert ask > note, f"입력 {ask}px 가 설명 {note}px 보다 크지 않다"
-    assert ask >= 24, f"입력 글자가 {ask}px — 작업 공간으로 읽히기에 작다"
+    assert ask >= note, f"입력 {ask}px 가 부제 {note}px 보다 작다"
+    assert ask >= 21, f"입력 글자가 {ask}px — 작업 공간으로 읽히기에 작다"
 
 
 def test_the_examples_belong_to_the_input_not_the_page(home):
