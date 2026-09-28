@@ -192,6 +192,12 @@ def test_the_light_follows_the_cursor(browser, server):
         light = _light(page)
         assert abs(light["x"] - 420) <= 4 and abs(light["y"] - 320) <= 4, light
         assert light["o"] > 0.5
+        # 층이 clip 하므로, 층이 무대를 덮지 않으면 빛은 제자리에 있어도 보이지 않는다. 처음 판은
+        # 층의 높이가 0 이었다 (.landing 의 align-items: center) — 위치와 opacity 만 보던 이 테스트가
+        # 놓쳤다.
+        wrap = page.evaluate("""() => { const r = document.querySelector('#landing .stage-light').getBoundingClientRect();
+          return [r.left, r.top, r.right, r.bottom]; }""")
+        assert wrap[0] <= 0 and wrap[1] <= 44 and wrap[2] >= 1440 and wrap[3] >= 900 - 12, f"빛의 층이 무대를 덮지 않는다: {wrap}"
     finally:
         ctx.close()
 

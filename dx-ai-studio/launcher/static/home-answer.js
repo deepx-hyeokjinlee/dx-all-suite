@@ -130,6 +130,8 @@
     _show(plan, !matched);
     _show(panel, true);
     panel.dataset.ask = text;
+    /* 보낸 요청이 어디로 갔는지 — home-effects.js 가 그 모듈 아이콘으로 빛을 날린다 (spec §7 #5). */
+    document.dispatchEvent(new CustomEvent('dx-home-routed', { detail: routes.slice(0, 3) }));
   }
 
   function ask(text) {

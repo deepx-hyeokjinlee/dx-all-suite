@@ -121,10 +121,202 @@
     });
   }
 
+  /* ── 움직임 (P6c) ───────────────────────────────────────────────────── */
+
+  var STAGGER_MS = 60, ENTRY_MS = 500, TILE_STAGGER_MS = 16, SWEEP_MS = 900, FLY_MS = 600;
+  var NEAR_PX = 120, MAX_SCALE = 1.18, PRESS_SCALE = .96;
+
+  function lightLayer() { return document.querySelector('#landing .stage-light'); }
+
+  /* 빛 층의 요소 el 의 가운데가 화면 좌표 (x, y) 에 오게 하는 transform. */
+  function at(el, x, y) {
+    var r = lightLayer().getBoundingClientRect();
+    return 'translate3d(' + (x - r.left - el._dxW / 2) + 'px, ' + (y - r.top - el._dxH / 2) + 'px, 0)';
+  }
+  /* 빛 요소의 크기는 CSS 가 고정한다 — 한 번 재어 둔다. */
+  function sized(el) {
+    if (!el._dxW) {
+      var b = el.getBoundingClientRect();
+      el._dxW = b.width;
+      el._dxH = b.height;
+    }
+    return el;
+  }
+  function centre(el) {
+    var r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  }
+
+  /* #1 첫 진입 — 세션에 한 번. 화면 순서대로 떠오르고 (60ms 간격, 타일끼리는 16ms), 빛이 제목
+     뒤를 왼→오로 훑은 뒤 막대를 한 번 스친다. 셸이 드러나는 순간 (launcher-boot-pending 이 빠지고
+     home 이 보일 때) 에 시작한다 — 인트로가 끝나기 전에 끝나 버리지 않게. */
+  var ENTERED = 'dx-home-entered';
+
+  function firstEntry() {
+    try { if (sessionStorage.getItem(ENTERED)) return; } catch (e) { return; }
+    function ready() {
+      return !document.documentElement.classList.contains('launcher-boot-pending')
+        && document.body.classList.contains('home-visible');
+    }
+    function play() {
+      try { sessionStorage.setItem(ENTERED, '1'); } catch (e) { /* noop */ }
+      if (still()) return;
+      var order = ['#homeTour', '#homeStage .stage-title', '#homeStage .stage-sub', '#homeStage .stage-films',
+        '#homeAskForm .ask-box', '#homeAskChips', '#homeDevice'];
+      var delay = 0;
+      function rise(el, d) {
+        var a = el.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+          { duration: ENTRY_MS, delay: d, easing: EASE, fill: 'backwards' });
+        a.id = 'entry';
+      }
+      order.forEach(function (sel, i) {
+        var el = document.querySelector(sel);
+        delay = i * STAGGER_MS;
+        if (el) rise(el, delay);
+      });
+      var tiles = document.querySelectorAll('#studioGrid > *');
+      Array.prototype.forEach.call(tiles, function (el, j) { rise(el, (order.length) * STAGGER_MS + j * TILE_STAGGER_MS); });
+      delay = order.length * STAGGER_MS + Math.max(0, tiles.length - 1) * TILE_STAGGER_MS;
+      ['#homeMeasured', '#homeBar'].forEach(function (sel, i) {
+        var el = document.querySelector(sel);
+        if (el) rise(el, delay + (i + 1) * STAGGER_MS);
+      });
+      sweep();
+    }
+    if (ready()) { play(); return; }
+    var watch = new MutationObserver(function () {
+      if (!ready()) return;
+      watch.disconnect();
+      play();
+    });
+    watch.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    watch.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  function sweep() {
+    var band = document.querySelector('#landing .stage-sweep');
+    var title = document.querySelector('#homeStage .stage-title');
+    var bar = document.getElementById('homeBar');
+    if (!band || !title) return;
+    sized(band);
+    var t = title.getBoundingClientRect();
+    var ty = t.top + t.height / 2;
+    var a = band.animate([
+      { transform: at(band, t.left, ty), opacity: 0 },
+      { opacity: 1, offset: .2 },
+      { opacity: 1, offset: .75 },
+      { transform: at(band, t.right, ty), opacity: 0 }
+    ], { duration: SWEEP_MS, delay: 150, easing: EASE });
+    a.id = 'sweep';
+    if (!bar) return;
+    var b = bar.getBoundingClientRect();
+    var by = b.top + b.height / 2;
+    var g = band.animate([
+      { transform: at(band, b.left, by) + ' scaleY(.5)', opacity: 0 },
+      { opacity: .7, offset: .3 },
+      { transform: at(band, b.right, by) + ' scaleY(.5)', opacity: 0 }
+    ], { duration: 500, delay: 150 + SWEEP_MS, easing: EASE });
+    g.id = 'sweep';
+  }
+
+  /* #5 보내기 — 빛이 입력창에서 떨어져 라우팅된 모듈 아이콘에 닿고, 아이콘이 켜진다. 여러 곳이면
+     순서대로. render() 가 답을 열면 무대가 Dock 으로 바뀌므로, 그 배치가 끝난 frame 에서 잰다. */
+  var TILE_OF = { monitor: 'dx_monitor' };
+
+  function routedLight() {
+    document.addEventListener('dx-home-routed', function (e) {
+      if (still()) return;
+      var routes = (e.detail || []).map(function (r) { return r && r.module; }).filter(Boolean);
+      var seen = {};
+      routes = routes.filter(function (m) { return seen[m] ? false : (seen[m] = true); });
+      if (!routes.length) return;
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { fly(routes); });
+      });
+    });
+  }
+
+  function fly(modules) {
+    var orb = document.querySelector('#landing .stage-orb');
+    var box = document.querySelector('#homeAskForm .ask-box');
+    if (!orb || !box) return;
+    sized(orb);
+    var from = centre(box);
+    modules.forEach(function (m, i) {
+      var tile = document.querySelector('.orbital-card[data-app="' + (TILE_OF[m] || m) + '"] .mod-tile');
+      if (!tile) return;
+      var to = centre(tile);
+      var start = i * (FLY_MS + 120);
+      var a = orb.animate([
+        { transform: at(orb, from[0], from[1]) + ' scale(.6)', opacity: 0 },
+        { opacity: 1, offset: .15 },
+        { transform: at(orb, to[0], to[1]) + ' scale(1)', opacity: .9 }
+      ], { duration: FLY_MS, delay: start, easing: EASE });
+      a.id = 'orb';
+      var lit = tile.animate([{ opacity: 0 }, { opacity: 1, offset: .3 }, { opacity: 0 }],
+        { duration: 700, delay: start + FLY_MS - 60, easing: EASE, pseudoElement: '::after' });
+      lit.id = 'lit';
+    });
+  }
+
+  /* #6 Dock 확대 — 커서에서 120px 안의 모듈 아이콘이 가까운 만큼 커진다 (최대 1.18, 누르면 .96 배).
+     가장자리 specular 는 커서 쪽에서 비친다 (CSS 변수 → ::before). 읽기를 먼저 다 하고 쓰기를
+     나중에 해서 한 frame 에 layout 을 한 번만 부른다. */
+  function dockMagnify() {
+    var tiles = Array.prototype.slice.call(document.querySelectorAll('#studioGrid .orbital-card .mod-tile'));
+    if (!tiles.length) return;
+    var x = -1e4, y = -1e4, queued = false, pressed = null, dirty = false;
+
+    function paint() {
+      queued = false;
+      var rects = tiles.map(function (t) { return t.getBoundingClientRect(); });
+      var any = false;
+      tiles.forEach(function (t, i) {
+        var r = rects[i];
+        var d = Math.sqrt(Math.pow(x - (r.left + r.width / 2), 2) + Math.pow(y - (r.top + r.height / 2), 2));
+        var k = d < NEAR_PX ? Math.pow(1 - d / NEAR_PX, 2) : 0;
+        var s = 1 + (MAX_SCALE - 1) * k;
+        if (pressed === t) s *= PRESS_SCALE;
+        if (k > 0 || pressed === t) any = true;
+        t.style.transform = s === 1 ? '' : 'scale(' + s.toFixed(4) + ')';
+        t.style.setProperty('--near', k.toFixed(3));
+        if (k > 0) {
+          t.style.setProperty('--sx', ((x - r.left) / r.width * 100).toFixed(1) + '%');
+          t.style.setProperty('--sy', ((y - r.top) / r.height * 100).toFixed(1) + '%');
+        }
+      });
+      dirty = any;
+    }
+    function ask() { if (!queued) { queued = true; requestAnimationFrame(paint); } }
+
+    document.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch' || still()) return;
+      if (!document.body.classList.contains('home-visible')) return;
+      x = e.clientX;
+      y = e.clientY;
+      ask();
+    }, { passive: true });
+    document.addEventListener('pointerdown', function (e) {
+      if (still()) return;
+      var card = e.target.closest && e.target.closest('#studioGrid .orbital-card');
+      pressed = card ? card.querySelector('.mod-tile') : null;
+      if (pressed) ask();
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      document.addEventListener(ev, function () { if (pressed) { pressed = null; ask(); } });
+    });
+    document.addEventListener('pointerout', function (e) {
+      if (!e.relatedTarget && dirty) { x = y = -1e4; ask(); }
+    });
+  }
+
   function init() {
     inputRipple();
     placeholderCycle();
     cursorLight();
+    firstEntry();
+    routedLight();
+    dockMagnify();
   }
 
   if (document.readyState === 'loading') {

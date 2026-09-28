@@ -140,6 +140,25 @@ def test_docked_widgets_stay_above_the_answer_on_one_screen(browser, server):
         ctx.close()
 
 
+def test_a_real_answer_scrolls_inside_its_row_instead_of_spilling(browser, server):
+    """빈 답은 칸에 들어갔지만 경로 카드가 있는 진짜 답 (227px) 은 123px 칸의 가운데에 놓여 위아래로
+    52px 씩 넘쳤다 — Dock 아이콘을 덮었다 (P6c 녹화, 2026-09-28). .landing 의 align-items: center
+    (옛 flex 배치의 흔적) 가 grid item 을 늘이지 않고 가운데에 두었다."""
+    ctx, page = _open(browser, server, 1280, 800)
+    try:
+        page.fill("#homeAsk", "compile yolo26n to DXNN")
+        page.press("#homeAsk", "Enter")
+        page.wait_for_function("() => !document.getElementById('homeAnswer').hidden", timeout=5000)
+        page.wait_for_timeout(200)
+        r = page.evaluate("""() => Object.fromEntries(['#homeStageWork', '#studioGrid', '#homeDevice']
+          .map(s => [s, document.querySelector(s).getBoundingClientRect()]).map(([s, r]) => [s, [r.top, r.bottom]]))""")
+        assert r["#homeStageWork"][1] <= r["#studioGrid"][0] + 1, f"답이 Dock 을 덮는다: {r}"
+        assert r["#homeStageWork"][0] >= r["#homeDevice"][1] - 1, f"답이 위젯을 덮는다: {r}"
+        assert page.evaluate("() => document.documentElement.scrollHeight - innerHeight") <= 0
+    finally:
+        ctx.close()
+
+
 def test_escape_closes_the_answer_and_undocks(browser, server):
     ctx, page = _open(browser, server, 1280, 800)
     try:

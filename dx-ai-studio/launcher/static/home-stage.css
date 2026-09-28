@@ -15,6 +15,10 @@
   grid-template-areas: "tour" "hero" "deck" "bar";
   align-content: space-between;
   justify-content: stretch;
+  /* style.css 의 .landing (옛 flex 배치) 이 align-items: center 를 남겨, grid item 이 칸을 채우지 않고
+     가운데에 놓였다: Dock 의 답 (227px) 이 123px 칸에서 위아래로 넘쳐 아이콘을 덮었고, 무대의 빛
+     층은 높이 0 이 되어 clip 에 가려졌다 (2026-09-28). 칸을 채우게 한다. */
+  align-items: stretch;
   /* 세로 여백은 창 높이를 따른다 — 1280×800 에서도 한 화면 (spec §4.2). */
   row-gap: clamp(var(--sp-3), 2vh, var(--sp-6));
   width: min(100%, 1280px);
@@ -344,7 +348,31 @@
     inset 0 -2px 6px rgba(0, 0, 0, .18),
     0 10px 24px -12px color-mix(in srgb, var(--mod-tint) 70%, transparent),
     0 2px 4px rgba(0, 0, 0, .10);
-  transition: opacity var(--dur) var(--ap-ease), filter var(--dur) var(--ap-ease);
+  transition: opacity var(--dur) var(--ap-ease), filter var(--dur) var(--ap-ease),
+              transform 120ms var(--ap-ease);
+  /* glyph · specular (::before) · 도착 빛 (::after) 이 한 칸에 겹친다 (spec §7 #5 #6). */
+  display: grid;
+  place-items: center;
+}
+.stage-deck .mod-tile > .mod-glyph { grid-area: 1 / 1; }
+.stage-deck .mod-tile::before,
+.stage-deck .mod-tile::after {
+  content: "";
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+}
+/* 가장자리 specular — 커서 쪽 (--sx, --sy) 에서, 가까운 만큼 (--near). home-effects.js 가 쓴다. */
+.stage-deck .mod-tile::before {
+  background: radial-gradient(circle at var(--sx, 50%) var(--sy, 0%), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0) 55%);
+  opacity: var(--near, 0);
+}
+/* 보낸 요청이 닿으면 켜졌다 꺼지는 빛 (WAAPI, pseudoElement ::after). */
+.stage-deck .mod-tile::after {
+  background: radial-gradient(closest-side, rgba(255, 255, 255, .7), rgba(255, 255, 255, 0));
+  opacity: 0;
 }
 /* glyph 두 겹: 뒤쪽 면 (채움 24%) + 앞쪽 선. 판 위에 뜨도록 모듈 색 그림자. */
 .stage-deck .mod-glyph {
@@ -357,7 +385,15 @@
   stroke-linejoin: round;
   filter: drop-shadow(0 1px 1.5px color-mix(in srgb, var(--mod-tint) 55%, black));
 }
-.stage-deck .mod-glyph .g-fill { fill: currentColor; fill-opacity: .24; stroke: none; }
+/* 안쪽 면: 실행 중이면 켜진다 (spec §7 #7). 밝기는 opacity 로 — .55 × .44 = 예전의 .24. */
+.stage-deck .mod-glyph .g-fill {
+  fill: currentColor;
+  fill-opacity: .55;
+  opacity: .44;
+  stroke: none;
+  transition: opacity 400ms var(--ap-ease);
+}
+.stage-deck .orbital-card.is-up .mod-glyph .g-fill { opacity: 1; }
 
 /* 꺼졌다고 확인된 모듈만 가라앉힌다 (is-down 은 health 응답이 있어야 붙는다). */
 .stage-deck .orbital-card.is-down .mod-tile { opacity: .42; filter: saturate(.25); }
@@ -760,4 +796,42 @@ html[data-dx-fading="lang"]::view-transition-new(root) {
 :root[data-theme="light"] { --cursor-light: rgba(255, 255, 255, .75); }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) { --cursor-light: rgba(255, 255, 255, .75); }
+}
+
+
+/* ═══ P6c 효과 — 움직임 (spec §7 #1 #1' #5) ════════════════════════════════════
+   첫 진입의 stagger · sweep, 보내기의 orb, Dock 확대는 home-effects.js (WAAPI · rAF). */
+
+/* #1' 다시 home 으로: 0.4s 미끄러짐 대신 200ms fade (다른 view 는 그대로). */
+.landing.home-stage.view-slide-in { animation: stage-fade-in 200ms var(--ap-ease) both; }
+@keyframes stage-fade-in { from { opacity: 0; } }
+
+/* sweep · orb 는 커서 조명과 같은 층의 형제 — 칸 높이에 보태지 않는다 (음수 margin). */
+.stage-light > b {
+  display: block;
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.stage-sweep {
+  --h: 180px;
+  width: 420px;
+  height: var(--h);
+  margin-bottom: calc(var(--h) * -1);
+  background: radial-gradient(closest-side, var(--sweep-light), transparent);
+}
+.stage-orb {
+  --h: 56px;
+  width: var(--h);
+  height: var(--h);
+  margin-bottom: calc(var(--h) * -1);
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--accent) 35%, white),
+    color-mix(in srgb, var(--accent) 45%, transparent) 45%,
+    transparent);
+}
+:root { --sweep-light: color-mix(in srgb, var(--accent) 32%, transparent); }
+:root[data-theme="light"] { --sweep-light: color-mix(in srgb, var(--accent) 16%, transparent); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --sweep-light: color-mix(in srgb, var(--accent) 16%, transparent); }
 }

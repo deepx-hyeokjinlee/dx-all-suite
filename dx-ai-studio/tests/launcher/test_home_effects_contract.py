@@ -139,3 +139,42 @@ def test_the_cursor_light_is_a_grid_item_moved_by_transform():
     assert "will-change: transform" in _rule(".stage-light > i")
     js = _effects()
     assert "translate3d(" in js and "requestAnimationFrame" in js
+
+
+# ── P6c: 움직임 (#1 #5 #6 #7) ──────────────────────────────────────────────
+
+def test_the_movement_constants_are_the_spec_ones():
+    js = _effects()
+    for name, value in (("STAGGER_MS", "60"), ("SWEEP_MS", "900"), ("FLY_MS", "600"),
+                        ("NEAR_PX", "120"), ("MAX_SCALE", "1.18"), ("PRESS_SCALE", ".96")):
+        assert re.search(name + r"\s*=\s*" + re.escape(value) + r"\b", js), name
+
+
+def test_the_first_entry_plays_once_a_session():
+    js = _effects()
+    assert "dx-home-entered" in js and "sessionStorage" in js
+    assert "MutationObserver" in js and "launcher-boot-pending" in js
+
+
+def test_a_return_to_the_home_is_a_short_fade():
+    body = _rule(".landing.home-stage.view-slide-in")
+    assert re.search(r"animation:\s*stage-fade-in 200ms", body)
+    assert re.search(r"@keyframes stage-fade-in\s*\{\s*from\s*\{\s*opacity:\s*0;\s*\}", CSS), "fade 는 opacity 만"
+
+
+def test_the_answer_announces_where_it_routed():
+    answer = (STATIC / "home-answer.js").read_text(encoding="utf-8")
+    render = answer[answer.index("function render("):answer.index("function ask(")]
+    assert "dx-home-routed" in render
+    assert "'dx-home-routed'" in _effects()
+
+
+def test_the_orb_and_the_sweep_live_in_the_stage_light():
+    light = re.search(r'<div class="stage-light"[^>]*>(.*?)</div>', HTML, re.S).group(1)
+    assert 'class="stage-sweep"' in light and 'class="stage-orb"' in light
+
+
+def test_a_running_module_lights_its_glyph_by_opacity():
+    body = _rule(".stage-deck .orbital-card.is-up .mod-glyph .g-fill")
+    assert "opacity: 1" in body
+    assert re.search(r"transition:\s*opacity 400ms", _rule(".stage-deck .mod-glyph .g-fill"))
