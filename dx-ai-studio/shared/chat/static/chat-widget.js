@@ -40,6 +40,7 @@ window._DX_CHAT_I18N = window._DX_CHAT_I18N || {
   'Refresh failed.': { ko: '새로고침 실패.', ja: '更新に失敗しました。', es: 'Error al actualizar.', 'zh-CN': '刷新失败。', 'zh-TW': '重新整理失敗。' },
   'Testing...': { ko: '테스트 중...', ja: 'テスト中...', es: 'Probando...', 'zh-CN': '测试中...', 'zh-TW': '測試中...' },
   'Connected: ': { ko: '연결 성공: ', ja: '接続成功: ', es: 'Conectado: ', 'zh-CN': '已连接：', 'zh-TW': '已連線：' },
+  'Open DEEPX Agent on the web': { ko: '웹에서 DEEPX Agent 열기', ja: 'Web で DEEPX Agent を開く', es: 'Abrir DEEPX Agent en la web', 'zh-CN': '在网页中打开 DEEPX Agent', 'zh-TW': '在網頁中開啟 DEEPX Agent' },
   'DX Assistant': { ko: 'DX 어시스턴트', ja: 'DXアシスタント', es: 'Asistente DX', 'zh-CN': 'DX 助手', 'zh-TW': 'DX 助手' },
   '⚠️ AI assistant is not configured. Open chat settings to register your API key. Basic guidance is available without AI. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Open settings</button>': {
     ko: '⚠️ AI 어시스턴트가 설정되지 않았습니다. 채팅 설정에서 API 키를 등록하세요. 기본 안내는 AI 없이도 가능합니다. <button type="button" class="dx-chat-banner-action" data-action="settings-open">설정 열기</button>',
@@ -196,6 +197,9 @@ const DXChat = (() => {
       '<div class="dx-chat-header">',
       '  <span class="dx-chat-header-title">' + _t('DX Assistant') + '</span>',
       '  <div class="dx-chat-header-actions">',
+      /* 웹 챗봇 (DEEPX Agent) 은 launcher 막대에 따로 있던 링크였다. 같은 "물어보기" 이므로
+         챗 안에서 연다 — 모든 모듈의 챗에 생긴다 (spec 2026-09-23 §5.7). */
+      '    <a class="dx-chat-header-link" href="https://deepx.rapidflare.ai/" target="_blank" rel="noopener noreferrer" title="' + _t('Open DEEPX Agent on the web') + '" aria-label="' + _t('Open DEEPX Agent on the web') + '">DEEPX Agent <span aria-hidden="true">↗</span></a>',
       '    <button class="dx-chat-header-btn" data-action="settings" title="' + _t('AI settings', 'AI 설정') + '" aria-label="' + _t('AI settings', 'AI 설정') + '">⚙️</button>',
       '    <button class="dx-chat-header-btn" data-action="clear" title="' + _t('Clear chat', '대화 초기화') + '">🗑️</button>',
       '    <button class="dx-chat-header-btn" data-action="close" title="' + _t('Close', '닫기') + '">✕</button>',
@@ -322,6 +326,11 @@ const DXChat = (() => {
         if (clearBtn) clearBtn.title = _t('Clear chat', '대화 초기화');
         var closeBtn = win.querySelector('[data-action="close"]');
         if (closeBtn) closeBtn.title = _t('Close', '닫기');
+        var webLink = win.querySelector('.dx-chat-header-link');
+        if (webLink) {
+          webLink.title = _t('Open DEEPX Agent on the web');
+          webLink.setAttribute('aria-label', webLink.title);
+        }
         _renderConfigBanner();
       });
     }

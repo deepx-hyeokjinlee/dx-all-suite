@@ -414,6 +414,9 @@
   filter: drop-shadow(0 -1px 0 rgba(0, 0, 0, .55)) drop-shadow(0 1px 0 rgba(255, 255, 255, .22));
 }
 
+/* ── 유리 막대 (spec §5.7) ─────────────────────────────────────────────
+   위계 셋: 제목 (어디로 가는가) → 주요 pill 2 (테두리) → 나머지 5 (글자). 색은 제목의 ↗
+   하나. 입력창과 같은 유리 — backdrop-filter 는 이 둘에만. */
 .stage-bar {
   grid-area: bar;
   display: flex;
@@ -421,8 +424,137 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-2) var(--sp-5);
+  padding: var(--sp-2) var(--sp-4) var(--sp-2) var(--sp-5);
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--text-primary) 8%, transparent);
+  background: color-mix(in srgb, var(--surface-panel) 60%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .18),
+    0 16px 32px -24px rgba(0, 0, 0, .40);
+  /* 챗 버튼 (공용, fixed: 오른쪽 24 · 56px) 자리를 비운다 — 1280 에서 법적 고지를 덮었다.
+     막대 오른쪽 끝 = (100vw + min(100vw, 1280px)) / 2 - 24px 가 버튼 왼쪽 - 8px 를 넘는 만큼:
+     1280 이하에서 64px, 그 위에서 704px - 50vw, 1408 부터 0. */
+  margin-right: clamp(0px, calc(704px - 50vw), 64px);
 }
-.stage-legal { margin: 0; }
+#homeBar .deepx-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);
+}
+#homeBar .bar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-right: var(--sp-3);
+  color: var(--text-primary);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -.01em;
+  text-decoration: none;
+}
+#homeBar .bar-arrow { color: var(--accent); transition: transform var(--dur) var(--ap-ease); }
+#homeBar .bar-title:is(:hover, :focus-visible) .bar-arrow { transform: translate(2px, -2px); }
+
+/* 링크는 2행 grid — 0 높이 첫 행의 설명이 위로 넘친다 (타일의 말풍선과 같은 방식, absolute 없음). */
+/* 폭은 글자 줄이 정한다: 설명 (max-content) 이 칸을 넓히면 링크마다 ~220px 가 되어 막대가
+   세 줄로 접혔다 (P5 측정). 설명은 .bar-desc 의 음수 margin 으로 칸 계산에서 빠진다. */
+#homeBar .deepx-link {
+  display: inline-grid;
+  grid-template-rows: 0 auto;
+  justify-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+}
+#homeBar .deepx-link::after { content: none; }
+#homeBar .bar-line {
+  grid-row: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  transition: color var(--dur) var(--ap-ease), box-shadow var(--dur) var(--ap-ease),
+              border-color var(--dur) var(--ap-ease);
+}
+/* 테두리 없는 다섯은 좌우 여백이 hit 영역일 뿐이라 좁힌다 — en 은 이것으로 한 줄에 든다. */
+#homeBar .deepx-link:not(.is-primary) .bar-line { padding-inline: var(--sp-2); }
+#homeBar .deepx-link.is-primary .bar-line {
+  color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--text-primary) 18%, transparent);
+}
+/* hover: 링크 아래 빛. */
+#homeBar .deepx-link:is(:hover, :focus-visible) .bar-line {
+  color: var(--text-primary);
+  box-shadow: 0 10px 18px -12px color-mix(in srgb, var(--accent) 80%, transparent);
+}
+#homeBar .deepx-link.is-primary:is(:hover, :focus-visible) .bar-line {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+#homeBar .bar-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#homeBar .bar-icon.is-mark { fill: currentColor; stroke: none; }
+#homeBar .bar-desc {
+  --tip-w: 300px;
+  grid-row: 1;
+  align-self: end;
+  z-index: 2;
+  width: max-content;
+  max-width: var(--tip-w);
+  /* 양쪽 같은 음수 margin: 칸에 내는 폭은 0 이하가 되고, 가운데 정렬은 그대로다. */
+  margin-inline: calc(var(--tip-w) / -2);
+  margin-bottom: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  background: var(--text-primary);
+  color: var(--surface-page);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  line-height: 1.35;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ap-ease);
+}
+#homeBar .deepx-link:is(:hover, :focus-visible) .bar-desc { opacity: 1; }
+
+/* 닫힌 망: 흐리게, 누를 수 없게, 그리고 이유를 말한다 (home-bar.js). */
+#homeBar.is-offline :is(.bar-title, .deepx-link) { opacity: .4; cursor: not-allowed; }
+#homeBar.is-offline .bar-desc { visibility: hidden; }
+#homeBar.is-offline .bar-line { box-shadow: none; }
+.bar-offline {
+  margin-right: var(--sp-2);
+  padding: 0 var(--sp-2);
+  border: 1px solid color-mix(in srgb, var(--status-warn) 45%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--status-warn);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+}
+/* 긴 언어 (es · ja) 에서는 둘째 줄로 내려가되 오른쪽 끝을 지킨다. */
+.stage-legal {
+  margin: 0 0 0 auto;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
 
 /* ── Dock: 답이나 콘솔이 보이면 (spec §5.7b) ──────────────────────────
    class 를 켜는 대신 보이는지에서 계산한다 — 여는 경로가 여럿이라 하나라도
