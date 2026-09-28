@@ -231,19 +231,18 @@
     </section>
 
     <section class="stage-deck" id="homeDeck">
-      <aside class="stage-widget" id="homeDevice" aria-label="Device" data-i18n-aria-label="Device">
-        <h3 class="stage-widget-title" data-i18n="Device">Device</h3>
+      <aside class="stage-widget stage-device" id="homeDevice" role="button" tabindex="0" aria-label="Open Monitor" data-i18n-aria-label="Open Monitor">
+        <h3 class="stage-widget-title">DX-M1 <span class="dev-dot" aria-hidden="true"></span></h3>
         <p class="ws-device" id="heroDeviceChip" data-i18n="Checking DX-M1…">Checking DX-M1…</p>
-        <dl class="ws-facts">
-            <!-- 변하는 값이 먼저. SDK 버전과 포트는 변하지 않으므로 아래로 둔다.
-                 장치가 없으면 이 두 줄은 나타나지 않는다 (hidden 유지).
-                 계약: tests/launcher/test_home_hierarchy_browser.py -->
-            <div id="heroDeviceTempRow" hidden><dt data-i18n="Temperature">Temperature</dt><dd id="heroDeviceTemp"></dd></div>
-            <div id="heroDeviceCoresRow" hidden><dt data-i18n="Cores">Cores</dt><dd id="heroDeviceCores"></dd></div>
-            <div><dt data-i18n="DXNN SDK">DXNN SDK</dt><dd>{{SDK_VERSION}}</dd></div>
-            <div><dt data-i18n="Studio">Studio</dt><dd id="studioVersionHub"></dd></div>
-            <div><dt data-i18n="Gateway">Gateway</dt><dd id="hubLauncherPort" data-i18n-title="Launcher gateway">:—</dd></div>
-          </dl>
+        <!-- 코어 막대는 home-widgets.js 가 장치의 코어 수만큼 만든다 (spec §5.5). -->
+        <div class="dev-cores" id="homeCores" aria-hidden="true"></div>
+        <p class="dev-line" id="homeDeviceLine"></p>
+        <!-- 변하지 않는 값은 가리킬 때만 (spec §5.5 "hover: SDK 버전"). -->
+        <dl class="ws-facts stage-widget-more">
+          <div><dt data-i18n="DXNN SDK">DXNN SDK</dt><dd>{{SDK_VERSION}}</dd></div>
+          <div><dt data-i18n="Studio">Studio</dt><dd id="studioVersionHub"></dd></div>
+          <div><dt data-i18n="Gateway">Gateway</dt><dd id="hubLauncherPort" data-i18n-title="Launcher gateway">:—</dd></div>
+        </dl>
       </aside>
 
       <!-- 순서 (spec §4.1): 1행 app · stream · zoo · compiler · SDK Library
@@ -343,9 +342,15 @@
             </div>
       </div>
 
-      <aside class="stage-widget" id="homeMeasured" aria-label="Measured on DX-M1" data-i18n-aria-label="Measured on DX-M1">
+      <aside class="stage-widget stage-proof" id="homeMeasured" aria-label="Measured on DX-M1" data-i18n-aria-label="Measured on DX-M1">
         <h3 class="stage-widget-title" data-i18n="Measured on DX-M1">Measured on DX-M1</h3>
-        <p class="stage-widget-note" id="measuredCount"></p>
+        <!-- task 마다 YOLO26n 의 실측 FPS (spec §5.6). 가장 빠른 모델이 아니다. -->
+        <div class="proof-body" id="homeProof" hidden>
+          <p class="proof-fps"><b id="homeProofFps"></b> <span class="proof-unit">fps</span></p>
+          <p class="proof-model" id="homeProofModel"></p>
+          <div class="proof-dots" id="homeProofDots"></div>
+        </div>
+        <a class="stage-widget-link" id="measuredCount" href="/benchmark/"></a>
       </aside>
     </section>
 
@@ -581,6 +586,16 @@
     'measured': { ko:'개 실측', ja:'件 実測', es:'medidos', 'zh-CN':'个已实测', 'zh-TW':'個已實測' },
     'Modules': { ko:'모듈', ja:'モジュール', es:'Módulos', 'zh-CN':'模块', 'zh-TW':'模組' },
     'Device': { ko:'장치', ja:'デバイス', es:'Dispositivo', 'zh-CN':'设备', 'zh-TW':'裝置' },
+    'No DX-M1 connected': { ko:'연결된 DX-M1 없음', ja:'接続された DX-M1 がありません', es:'No hay ningún DX-M1 conectado', 'zh-CN':'未连接 DX-M1', 'zh-TW':'未連接 DX-M1' },
+    'Mock data': { ko:'모의 데이터', ja:'モックデータ', es:'Datos simulados', 'zh-CN':'模拟数据', 'zh-TW':'模擬資料' },
+    'Open Monitor': { ko:'Monitor 열기', ja:'Monitor を開く', es:'Abrir Monitor', 'zh-CN':'打开 Monitor', 'zh-TW':'開啟 Monitor' },
+    /* task 이름은 Model Zoo 사전 (dx_modelzoo/static/js/i18n-dict-shared.js) 과 같다. */
+    'Object Detection': { ko:'객체 탐지', ja:'物体検出', es:'Detección de objetos', 'zh-CN':'目标检测', 'zh-TW':'物件偵測' },
+    'Instance Segmentation': { ko:'인스턴스 분할', ja:'インスタンスセグメンテーション', es:'Segmentación de instancias', 'zh-CN':'实例分割', 'zh-TW':'實例分割' },
+    'Pose Estimation': { ko:'자세 추정', ja:'姿勢推定', es:'Estimación de pose', 'zh-CN':'姿态估计', 'zh-TW':'姿態估計' },
+    'Classification': { ko:'분류', ja:'分類', es:'Clasificación', 'zh-CN':'分类', 'zh-TW':'分類' },
+    'OBB Detection': { ko:'OBB 탐지', ja:'OBB 検出', es:'Detección OBB', 'zh-CN':'OBB 检测', 'zh-TW':'OBB 偵測' },
+    'Depth Estimation': { ko:'깊이 추정', ja:'深度推定', es:'Estimación de profundidad', 'zh-CN':'深度估计', 'zh-TW':'深度估計' },
     'Running': { ko:'실행 중', ja:'実行中', es:'En ejecución', 'zh-CN':'运行中', 'zh-TW':'執行中' },
     'Learn': { ko:'자료', ja:'資料', es:'Recursos', 'zh-CN':'资料', 'zh-TW':'資料' },
     'Gateway': { ko:'게이트웨이', ja:'ゲートウェイ', es:'Puerta de enlace', 'zh-CN':'网关', 'zh-TW':'閘道' },
@@ -1420,6 +1435,7 @@
   <script src="/home-agent-setup.js"></script>
   <script src="/home-console.js"></script>
   <script src="/home-sections.js"></script>
+  <script src="/home-widgets.js"></script>
   <script src="/launcher.js"></script>
   <script src="/tutorial.js"></script>
 </body>

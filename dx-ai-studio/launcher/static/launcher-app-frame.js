@@ -1094,56 +1094,9 @@
   /* 웹사이트는 "DX-M1 연결됨" 이라고 못 쓴다. 그 한 줄이 이게 브로슈어가
      아니라는 증거다. 런처는 이미 monitor 모듈을 /monitor/ 로 프록시하므로
      새 서버 코드 없이 그 모듈이 쓰는 엔드포인트를 그대로 부른다. */
-  /* Running 패널을 접으면서 짧아진 rail 을 카드가 자기 주제로 채운다. SDK 버전과
-     포트는 변하지 않는 값이고, 온도와 코어는 변한다 — 이미 같은 응답으로 받아온다.
-     장치가 없으면 두 줄은 나타나지 않는다: 빈 값을 보여주느니 자리를 비운다. */
-  function _paintDeviceFacts(hw) {
-    var npu = hw && hw.npus && hw.npus[0];
-    var tRow = document.getElementById('heroDeviceTempRow');
-    var cRow = document.getElementById('heroDeviceCoresRow');
-    var temps = (npu && npu.temperatures) || [];
-    if (tRow) {
-      if (temps.length) {
-        document.getElementById('heroDeviceTemp').textContent =
-          Math.round(Math.max.apply(null, temps)) + '\u00B0C';
-        tRow.hidden = false;
-      } else { tRow.hidden = true; }
-    }
-    if (cRow) {
-      if (npu && npu.cores) {
-        document.getElementById('heroDeviceCores').textContent = String(npu.cores);
-        cRow.hidden = false;
-      } else { cRow.hidden = true; }
-    }
-  }
-
-  function refreshHeroDevice() {
-    var chip = document.getElementById('heroDeviceChip');
-    if (!chip) return;
-    fetch('/dx_monitor/api/hw_status').then(function(r) { return r.json(); }).then(function(hw) {
-      var n = hw && hw.count ? hw.count : 0;
-      if (hw && hw.available && n > 0) {
-        chip.className = 'ws-device is-live';
-        chip.textContent = 'DX-M1 · ' + n + (n === 1 ? ' device' : ' devices');
-        _paintDeviceFacts(hw);
-      } else if (hw && hw.mock) {
-        chip.className = 'ws-device';
-        chip.textContent = 'DX-M1 · mock data';
-      } else {
-        /* 예전에는 정상이 초록 28px 이고 미검출이 색 없는 기본이었다 — 뒤집혀
-           있었다. 붙어 있는 것은 정상이라 조용하고, 없는 것이 눈에 띄어야 한다. */
-        chip.className = 'ws-device is-missing';
-        chip.textContent = 'DX-M1 · not detected';
-        _paintDeviceFacts(null);
-      }
-      chip.removeAttribute('data-i18n');
-    }).catch(function() {
-      chip.className = 'ws-device is-missing';
-      chip.textContent = 'DX-M1 · not detected';
-      _paintDeviceFacts(null);
-      chip.removeAttribute('data-i18n');
-    });
-  }
+  /* 장치 표시 (칩 · 코어 · 온도) 는 home-widgets.js 가 startSharedHwStream 의 dx-hw-data 로
+     칠한다. 여기 있던 15초 poll 은 같은 장치를 한 번 더 물어 같은
+     칩을 번갈아 덮어썼다 — spec 2026-09-23 §5.5. */
 
   function checkHealth() {
     return fetch('/api/health').then(function(res) { return res.json(); }).then(function(data) {
@@ -1437,8 +1390,6 @@
     setInterval(checkHealth, 5000);
     initOrbitalAccessibility();
     initHomeClickRouting();
-    refreshHeroDevice();
-    setInterval(refreshHeroDevice, 15000);
     refreshLauncherChrome();
   }
 
@@ -1462,7 +1413,6 @@
   ns.launch = launch;
   ns.updateNavTabs = updateNavTabs;
   ns.checkHealth = checkHealth;
-  ns.refreshHeroDevice = refreshHeroDevice;
   ns.appFromPath = appFromPath;
   ns.setVisibleView = setVisibleView;
   ns._updateToggleActive = _updateToggleActive;

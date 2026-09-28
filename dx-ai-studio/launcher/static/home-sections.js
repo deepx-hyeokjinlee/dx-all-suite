@@ -52,6 +52,9 @@
         models.forEach(function (m) { var t = (m.display || {}).task; if (t) tasks[t] = 1; });
         _models = models;
         _paintMeasuredCount(models);
+        /* 위젯 (home-widgets.js) 은 같은 카탈로그를 다시 받지 않고 이것을 쓴다. */
+        ns._homeCatalog = models;
+        document.dispatchEvent(new CustomEvent('dx-home-catalog', { detail: models }));
         return [[models.length, 'models'], [Object.keys(tasks).length, 'tasks']];
       } },
     { app: 'app', url: '/app/api/demos', pick: function (d) {

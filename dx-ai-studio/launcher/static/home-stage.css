@@ -76,8 +76,90 @@
   align-items: start;
 }
 .stage-widget { min-width: 0; display: flex; flex-direction: column; gap: var(--sp-2); }
-.stage-widget-title { margin: 0; font-size: var(--fs-md); font-weight: var(--fw-semibold); }
-.stage-widget-note { margin: 0; }
+.stage-widget-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+/* ── 위젯 (spec §5.5–5.6). 카운트업 · 맥박 · 막대 전환은 P6. ──────────── */
+
+/* 상태: 누르면 Monitor. 없으면 조명이 꺼진다 — 색으로 외치지 않는다. */
+.stage-device { cursor: pointer; border-radius: var(--radius); transition: opacity var(--dur) var(--ap-ease); }
+.stage-device:focus-visible { outline: 2px solid var(--accent); outline-offset: var(--sp-1); }
+.stage-device.is-off { opacity: .5; }
+.dev-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ap-green); }
+.stage-device.is-off .dev-dot { background: var(--ap-line); }
+.stage-device .ws-device { margin: 0; font-size: var(--fs-md); font-weight: var(--fw-regular); }   /* 옛 칩은 24px 였다 — "조용한 한 줄" */
+.stage-device .ws-device.is-missing { color: var(--text-muted); }
+
+/* 코어 막대: 좁은 세로 막대가 40px 트랙 안에서 사용률 % 높이. 트랙은 ::before, 막대는
+   같은 칸의 i. 칸 폭을 나눠 가졌을 때는 막대 하나가 80px 넘게 넓어 가로 조각처럼 보였고,
+   트랙 (surface-hover) 은 라이트 테마에서 안 보였다 (2026-09-28 캡처). */
+.dev-cores { display: flex; gap: var(--sp-3); }
+.dev-cores:empty { display: none; }
+.dev-core {
+  width: 12px;
+  display: grid;
+  grid-template-rows: 40px auto;
+  row-gap: var(--sp-1);
+  justify-items: center;
+}
+.dev-core::before {
+  content: "";
+  grid-area: 1 / 1;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+.dev-core i {
+  grid-area: 1 / 1;
+  align-self: end;
+  width: 100%;
+  height: max(2px, calc(var(--u, 0) * 1%));
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+}
+.dev-core b { font-size: var(--fs-2xs); font-weight: var(--fw-regular); color: var(--text-muted); }
+.dev-line { margin: 0; font-size: var(--fs-sm); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+/* 변하지 않는 값 (SDK · Studio · Gateway) 은 가리킬 때만. 위젯이 칸보다 낮아 자리가 흔들리지 않는다. */
+.stage-widget-more { display: none; margin: 0; }
+.stage-device:is(:hover, :focus-within) .stage-widget-more { display: block; }
+
+/* 증거: 큰 숫자 하나, 모델과 task, 점, Benchmark 링크. */
+.proof-body { display: flex; flex-direction: column; gap: var(--sp-1); }
+.proof-fps { margin: 0; display: flex; align-items: baseline; gap: var(--sp-1); }
+.proof-fps b {
+  font-size: var(--fs-5xl);
+  font-weight: var(--fw-semibold);
+  line-height: 1;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+.proof-unit { font-size: var(--fs-md); color: var(--text-muted); }
+.proof-model { margin: 0; font-size: var(--fs-sm); color: var(--text-secondary); }
+.proof-dots { display: flex; }
+/* 누를 자리는 16px, 보이는 점은 6px. */
+.proof-dot {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.proof-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ap-line); }
+.proof-dot.is-on::before { background: var(--text-primary); }
+.stage-widget-link { font-size: var(--fs-sm); color: var(--accent); text-decoration: none; }
+.stage-widget-link:not(:empty)::after { content: " \203A"; }
+.stage-widget-link:hover { text-decoration: underline; }
 
 /* ── 칸: 아이콘 8 + 책 2 (spec §5.3–5.4) ─────────────────────────────────
    칸 하나는 4줄 grid: [말풍선 0px] [아이콘] [이름] [상태]. 말풍선은 높이 0 줄에서
@@ -248,8 +330,22 @@
 #landing:has(#homeWork:not([hidden])) .about-book-card .orbital-icon { width: 38px; height: 48px; }
 #landing:has(#homeAnswer:not([hidden])) .studio-grid :is(.card-desc, .card-state, .orbital-port),
 #landing:has(#homeWork:not([hidden])) .studio-grid :is(.card-desc, .card-state, .orbital-port),
-#landing:has(#homeAnswer:not([hidden])) .stage-widget :is(.stage-widget-title, .ws-facts),
-#landing:has(#homeWork:not([hidden])) .stage-widget :is(.stage-widget-title, .ws-facts) { display: none; }
+/* 장치 위젯은 이름 ("DX-M1 ●") 을 남긴다 — 지우면 Dock 의 줄이 무엇의 온도인지 말하지 못한다. */
+#landing:has(#homeAnswer:not([hidden])) .stage-widget :is(.ws-facts, .proof-dots, .stage-widget-link),
+#landing:has(#homeWork:not([hidden])) .stage-widget :is(.ws-facts, .proof-dots, .stage-widget-link),
+#landing:has(#homeAnswer:not([hidden])) .stage-proof .stage-widget-title,
+#landing:has(#homeWork:not([hidden])) .stage-proof .stage-widget-title { display: none; }
+/* Dock 의 위젯은 한 줄: 코어 막대가 짧아지고 숫자가 작아진다 — agent 가 일하는 동안에도 보인다. */
+#landing:has(#homeAnswer:not([hidden])) .stage-widget,
+#landing:has(#homeWork:not([hidden])) .stage-widget { flex-direction: row; align-items: center; gap: var(--sp-3); }
+#landing:has(#homeAnswer:not([hidden])) .dev-core,
+#landing:has(#homeWork:not([hidden])) .dev-core { grid-template-rows: 16px; }
+#landing:has(#homeAnswer:not([hidden])) .dev-core b,
+#landing:has(#homeWork:not([hidden])) .dev-core b { display: none; }
+#landing:has(#homeAnswer:not([hidden])) .proof-body,
+#landing:has(#homeWork:not([hidden])) .proof-body { flex-direction: row; align-items: baseline; gap: var(--sp-2); }
+#landing:has(#homeAnswer:not([hidden])) .proof-fps b,
+#landing:has(#homeWork:not([hidden])) .proof-fps b { font-size: var(--fs-2xl); }
 #landing:has(#homeAnswer:not([hidden])) .home-tour,
 #landing:has(#homeWork:not([hidden])) .home-tour { display: none; }
 

@@ -124,6 +124,8 @@ def _device_colour(browser, hw):
         return page.evaluate(
             "() => { const e = document.getElementById('heroDeviceChip');"
             " return e ? { colour: getComputedStyle(e).color, cls: e.className,"
+            "   text: e.textContent.trim(),"
+            "   off: document.getElementById('homeDevice').classList.contains('is-off'),"
             "   heading: getComputedStyle(document.querySelector('"
             + BUILD_H + "')).color } : null; }")
     finally:
@@ -140,13 +142,18 @@ def test_a_healthy_device_does_not_shout_in_colour(browser):
     )
 
 
-def test_a_missing_device_is_the_one_that_gets_the_colour(browser):
-    """예전에는 이것이 뒤집혀 있었다 — 정상이 28px 초록, 미검출이 색 없는 기본."""
+def test_a_missing_device_turns_the_widget_off(browser):
+    """없는 장치는 조명이 꺼진다 — 색으로 외치지 않는다 (spec 2026-09-23 §5.5).
+
+    이 테스트의 전 판은 "없는 장치가 색을 갖는다" 였다 (f6b4192: 정상은 조용하고 예외가
+    색을 갖는다). 무대에서도 예외는 드러나지만, 드러내는 수단이 색이 아니라 조명이다 —
+    위젯 전체가 가라앉고 조용한 한 줄만 남는다. 정상과 구분되는 것은 그대로다.
+    """
     got = _device_colour(browser, {"available": False, "count": 0})
+    assert got["off"], "장치가 없는데 위젯이 켜져 있다"
     assert "is-missing" in got["cls"], got["cls"]
-    assert got["colour"] != got["heading"], (
-        "장치가 없는데 아무 표시가 없다 — 정상과 구분되지 않는다"
-    )
+    assert got["text"] == "No DX-M1 connected", got["text"]
+    assert got["colour"] != got["heading"], "없음이 정상과 같은 모습이다"
 
 
 def test_the_agent_settings_do_not_compete_with_the_hero(home):
@@ -262,10 +269,10 @@ def test_device_facts_show_live_values_when_a_device_is_there(browser):
         page.wait_for_timeout(3500)
         page.evaluate(_QUIET)
         page.wait_for_timeout(600)
-        facts = page.evaluate(
-            "() => [...document.querySelectorAll('#homeDevice .ws-facts dt')].map(e => e.textContent.trim())")
-        assert any("emp" in f or "온도" in f or "Cores" in f or "코어" in f for f in facts), (
-            f"장치가 있는데 변하는 값이 하나도 없다: {facts}"
-        )
+        # 변하는 값은 코어 막대 (코어 수만큼) 와 한 줄 (온도 · clock · 전력) 이다 (spec §5.5).
+        cores = page.evaluate("() => document.querySelectorAll('#homeCores .dev-core').length")
+        line = page.inner_text("#homeDeviceLine")
+        assert cores == 3, f"코어 3개인 장치에 막대가 {cores}개다"
+        assert "41°C" in line, f"장치가 있는데 온도가 없다: {line!r}"
     finally:
         page.close(); ctx.close(); server.shutdown()

@@ -44,7 +44,7 @@ def test_regions_appear_in_reading_order():
     ("homeStage", ["homeAskForm", "homeAsk", "homeAskChips", "setupFold", "setupDegraded",
                    "landingPoster", "ecosystemPoster"]),
     ("homeStageWork", ["homeAnswer", "homeWork", "answerClose", "workClose"]),
-    ("homeDevice", ["heroDeviceChip", "heroDeviceTempRow", "heroDeviceCoresRow",
+    ("homeDevice", ["heroDeviceChip", "homeCores", "homeDeviceLine",
                     "studioVersionHub", "hubLauncherPort"]),
     ("homeMeasured", ["measuredCount"]),
     ("homeBar", ["deepxLinks", "studioVersionFooter"]),
