@@ -44,19 +44,28 @@ def test_icon_glass_is_mixed_from_the_module_colour():
     assert not re.search(r"#[0-9a-fA-F]{3,8}\b", _css()), "home-stage.css 에 hex 가 생겼다"
 
 
+# 타일의 모듈 키 → 공용 sprite 의 symbol (아이콘 체계 단계 0: 레일 · 탭과 같은 모양).
+SYMBOL = {"app": "app", "stream": "stream", "zoo": "zoo", "compiler": "compiler", "benchmark": "bench",
+          "planner": "edge", "dx_monitor": "monitor", "agent": "agent"}
+SPRITE = (ROOT / "shared" / "static" / "dx-icons.svg").read_text(encoding="utf-8")
+
+
 @pytest.mark.parametrize("app", APPS)
 def test_each_glyph_is_two_layers_of_glass(app):
-    """가는 한 겹 선 (stroke 1.7) 은 유리 판 위에서 사라졌다. 굵은 선 + 뒤쪽 채움 면."""
+    """가는 한 겹 선 (stroke 1.7) 은 유리 판 위에서 사라졌다. 굵은 선 + 뒤쪽 채움 면.
+    glyph 는 이제 공용 sprite 의 symbol 이다 — 두 층은 그 symbol 이 가진다."""
     g = _glyph(app)
-    assert 'class="g-fill"' in g, f"{app}: 채움 층이 없다"
-    assert 'class="g-line"' in g, f"{app}: 선 층이 없다"
+    assert f'dx-icons.svg#{SYMBOL[app]}"' in g, f"{app}: sprite 를 쓰지 않는다"
+    sym = re.search(r'<symbol id="' + SYMBOL[app] + r'"[^>]*>(.*?)</symbol>', SPRITE, re.S).group(1)
+    assert '<g class="f"' in sym, f"{app}: 채움 층이 없다"
+    assert '<g class="l"' in sym, f"{app}: 선 층이 없다"
 
 
 def test_glyph_line_weight_reads_on_glass():
     css = _css()
     rule = re.search(r"\.stage-deck \.mod-glyph\s*\{([^}]*)\}", css)
     assert rule, "무대의 glyph 규칙이 없다"
-    width = re.search(r"stroke-width:\s*([\d.]+)", rule.group(1))
+    width = re.search(r"--ico-stroke:\s*([\d.]+)", rule.group(1))   # sprite 의 선은 변수로 굵기를 받는다
     assert width and float(width.group(1)) >= 2
 
 

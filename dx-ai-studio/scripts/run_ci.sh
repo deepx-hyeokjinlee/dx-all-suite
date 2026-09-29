@@ -142,6 +142,9 @@ echo "== breakpoint ratchet =="
 echo "== 간격 스케일 ratchet =="
 "$PY" -m scripts.spacing_scale_gate || exit 1
 
+echo "== UI 이모지 ratchet =="
+"$PY" -m scripts.emoji_gate || exit 1
+
 echo "== 글꼴 coverage (한중일 subset) =="
 "$PY" -m scripts.font_coverage_gate || exit 1
 

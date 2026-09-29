@@ -175,9 +175,11 @@ def test_the_orb_and_the_sweep_live_in_the_stage_light():
 
 
 def test_a_running_module_lights_its_glyph_by_opacity():
-    body = _rule(".stage-deck .orbital-card.is-up .mod-glyph .g-fill")
-    assert "opacity: 1" in body
-    assert re.search(r"transition:\s*opacity 400ms", _rule(".stage-deck .mod-glyph .g-fill"))
+    """glyph 가 공용 sprite (<use>) 가 되면서 면의 밝기는 상속 변수 --ico-fill-o 로 준다 — 등록된
+    (@property) 숫자라 400ms 전환이 된다."""
+    assert "--ico-fill-o: 1" in _rule(".stage-deck .orbital-card.is-up .mod-glyph")
+    assert re.search(r"transition:\s*--ico-fill-o 400ms", _rule(".stage-deck .mod-glyph"))
+    assert re.search(r"@property --ico-fill-o\s*\{[^}]*syntax:\s*'<number>'", CSS)
 
 
 def test_the_cursor_light_stays_off_without_gpu_acceleration():

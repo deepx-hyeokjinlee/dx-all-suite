@@ -374,26 +374,21 @@
   background: radial-gradient(closest-side, rgba(255, 255, 255, .7), rgba(255, 255, 255, 0));
   opacity: 0;
 }
-/* glyph 두 겹: 뒤쪽 면 (채움 24%) + 앞쪽 선. 판 위에 뜨도록 모듈 색 그림자. */
+/* glyph 두 겹: 뒤쪽 면 + 앞쪽 선 — 공용 아이콘 sprite (shared/static/dx-icons.svg) 의 symbol 이다
+   (아이콘 체계 단계 0: 레일 · 탭과 같은 모양). <use> 안은 선택자가 닿지 않으므로 모양은 변수로 준다:
+   --ico-stroke 선 굵기, --ico-fill 면의 불투명도, --ico-fill-o 면 전체의 밝기. 판 위에 뜨도록 모듈 색 그림자. */
+@property --ico-fill-o { syntax: '<number>'; inherits: true; initial-value: 1; }
 .stage-deck .mod-glyph {
   width: 56%;
   height: 56%;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  --ico-stroke: 2;
+  /* 안쪽 면: 실행 중이면 켜진다 (spec §7 #7) — .55 × .44 = 예전의 .24. 등록한 변수라 400ms 에 걸쳐 변한다. */
+  --ico-fill: .55;
+  --ico-fill-o: .44;
+  transition: --ico-fill-o 400ms var(--ap-ease);
   filter: drop-shadow(0 1px 1.5px color-mix(in srgb, var(--mod-tint) 55%, black));
 }
-/* 안쪽 면: 실행 중이면 켜진다 (spec §7 #7). 밝기는 opacity 로 — .55 × .44 = 예전의 .24. */
-.stage-deck .mod-glyph .g-fill {
-  fill: currentColor;
-  fill-opacity: .55;
-  opacity: .44;
-  stroke: none;
-  transition: opacity 400ms var(--ap-ease);
-}
-.stage-deck .orbital-card.is-up .mod-glyph .g-fill { opacity: 1; }
+.stage-deck .orbital-card.is-up .mod-glyph { --ico-fill-o: 1; }
 
 /* 꺼졌다고 확인된 모듈만 가라앉힌다 (is-down 은 health 응답이 있어야 붙는다). */
 .stage-deck .orbital-card.is-down .mod-tile { opacity: .42; filter: saturate(.25); }
@@ -459,7 +454,9 @@
 .stage-deck .about-book-card .mod-glyph {
   width: 52%;
   height: 52%;
-  stroke-width: 1.8;
+  /* 은박은 선만 — 면은 표지의 천이 대신한다. */
+  --ico-stroke: 1.8;
+  --ico-fill: 0;
   filter: drop-shadow(0 -1px 0 rgba(0, 0, 0, .55)) drop-shadow(0 1px 0 rgba(255, 255, 255, .22));
 }
 

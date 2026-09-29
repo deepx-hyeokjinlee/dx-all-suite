@@ -247,3 +247,16 @@
 .npu-card{background: var(--surface-raised);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:var(--sp-4);
   position:relative;overflow:hidden;transition:var(--transition);
   box-shadow: var(--surface-raised-shadow);}
+
+/* ─── 아이콘 (spec 2026-09-29 아이콘 체계) ────────────────────────────────
+   shared/static/dx-icons.svg 의 symbol 을 <use> 로 쓴다 (DXIcon helper). 글자 크기를 따르고 (1em),
+   색은 currentColor. 모양은 상속되는 변수로: --ico-fill (면, .24) · --ico-fill-o · --ico-stroke (선, 2). */
+.dx-ico {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  vertical-align: -.125em;
+  overflow: visible;
+}
+.dx-ico--sm { font-size: var(--fs-sm); }
+.dx-ico--lg { width: 1.5em; height: 1.5em; }

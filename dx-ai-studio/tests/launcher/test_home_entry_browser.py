@@ -158,12 +158,13 @@ def test_reduced_motion_keeps_the_icons_still(browser, server):
 def test_a_running_module_lights_its_glyph(browser, server):
     ctx, page = _open(browser, server)
     try:
-        sel = '.orbital-card[data-app="zoo"] .mod-glyph .g-fill'
-        before = float(page.evaluate(f"() => getComputedStyle(document.querySelector('{sel}')).opacity"))
+        sel = '.orbital-card[data-app="zoo"] .mod-glyph'
+        read = f"() => parseFloat(getComputedStyle(document.querySelector('{sel}')).getPropertyValue('--ico-fill-o'))"
+        before = page.evaluate(read)
         assert before < 0.6, f"켜지기 전부터 밝다: {before}"
         page.evaluate("""() => { const c = document.querySelector('.orbital-card[data-app="zoo"]');
           c.classList.remove('is-down'); c.classList.add('is-up'); }""")
         page.wait_for_timeout(600)
-        assert page.evaluate(f"() => getComputedStyle(document.querySelector('{sel}')).opacity") == "1"
+        assert page.evaluate(read) == 1
     finally:
         ctx.close()
