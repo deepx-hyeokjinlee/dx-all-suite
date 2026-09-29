@@ -87,11 +87,15 @@ def test_keyboard_focus_shows_the_description_too(page):
 
 
 def test_only_a_module_that_is_down_is_dimmed(page):
+    # 넣은 health 를 고정한다 — 진짜 /api/health poll 이 _healthStatus 를 덮고, 5초마다 도는
+    # refreshModuleState 가 그 사이에 끼면 넣은 상태가 사라졌다 (CI 부하에서 한 번, 2026-09-29:
+    # 다른 테스트가 띄운 모듈 서버 때문에 진짜 health 가 benchmark 를 alive 로 보고했다).
     page.evaluate("""() => { const L = window.DXLauncher; const h = {};
       document.querySelectorAll('.orbital-card[data-app]').forEach(c => {
         const k = (L._HEALTH_KEY && L._HEALTH_KEY[c.dataset.app]) || c.dataset.app;
         h[k] = { alive: c.dataset.app !== 'benchmark' }; });
-      L._healthStatus = h; L.refreshModuleState(); }""")
+      Object.defineProperty(L, '_healthStatus', { configurable: true, get: () => h, set: () => {} });
+      L.refreshModuleState(); }""")
     page.wait_for_timeout(50)
     down = _opacity(page, '#studioGrid .orbital-card[data-app="benchmark"] .mod-tile')
     up = _opacity(page, '#studioGrid .orbital-card[data-app="app"] .mod-tile')
