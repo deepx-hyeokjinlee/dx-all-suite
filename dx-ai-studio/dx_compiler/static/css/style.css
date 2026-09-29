@@ -567,80 +567,40 @@ body.lang-zh-CN .zh-TW { display: none !important; }
 body.lang-zh-TW .zh-CN { display: none !important; }
 
 /* ─── Setup Panel ─────────────────────────────── */
+/* 공용 단계 목록의 압축형 (.dx-steps--compact, shared/static/dx-components.css) 위에 compiler 만의 것.
+   모두 끝나면 한 줄 ("Setup ready · …") 로 접힌다. */
 
 .setup-panel {
   margin-bottom: 16px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius);
-  overflow: hidden;
 }
+
+/* 첫 상태가 오기 전 — 머리 줄만 (setup_panel.js 가 aria-busy 를 뗀다). */
+.setup-panel[aria-busy="true"] .setup-body,
+.setup-panel[aria-busy="true"] .dx-steps-progress { visibility: hidden; height: 0; overflow: hidden; }
 
 .setup-panel.highlight {
   border-color: var(--accent);
   box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.3);
 }
 
-.setup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background: var(--surface-panel);
-  cursor: pointer;
-}
-
-.setup-header h3 {
-  margin: 0;
-  font-size: var(--fs-md);
-  font-weight: 600;
-}
-
 .setup-toggle {
+  display: inline-grid;
+  place-items: center;
   background: none;
   border: none;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: var(--fs-sm);
   padding: var(--sp-1);
 }
 
-.setup-body {
-  padding: var(--sp-3);
-}
+.setup-toggle .dx-ico { transition: transform .2s; }
+.setup-toggle[aria-expanded="true"] .dx-ico { transform: rotate(180deg); }
 
-.setup-item {
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.setup-item:last-child {
-  border-bottom: none;
-}
-
-.setup-item-header {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-bottom: 4px;
-  font-size: var(--fs-base);
-}
-
-.setup-icon {
-  font-size: var(--fs-md);
-}
-
-.setup-version {
-  font-size: var(--fs-xs);
-  color: var(--text-secondary);
-}
-
-.setup-action-btn {
-  font-size: var(--fs-sm);
-  padding: 4px 8px;
-}
+.setup-action-icon { display: inline-flex; }
 
 .setup-progress {
-  margin-top: 4px;
+  margin-top: var(--sp-2);
 }
 
 .setup-progress .progress-bar {
@@ -659,6 +619,32 @@ body.lang-zh-TW .zh-CN { display: none !important; }
   word-break: break-word;
   line-height: 1.4;
 }
+
+.setup-install-log {
+  margin-top: var(--sp-2);
+  max-height: 220px;
+  overflow: auto;
+  background: var(--surface-page);
+  color: var(--text-secondary);
+  padding: var(--sp-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* SDK 가 없을 때 Compile 옆의 이유 (setup_panel.js _disableCompileForm) */
+.compile-gate-reason {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-sm);
+  color: var(--status-warn);
+}
+
+.compile-gate-reason[hidden] { display: none; }
 
 /* ─── 샘플 모델 선택 드롭다운 ──────────────────── */
 

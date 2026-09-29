@@ -306,6 +306,7 @@
 .dx-step-facts { display: inline-flex; flex-wrap: wrap; gap: var(--sp-1); }
 .dx-step-facts > span { font-size: var(--fs-xs); color: var(--text-secondary); padding: 2px var(--sp-2); border-radius: var(--radius-xs);
   background: color-mix(in srgb, var(--text-primary) 7%, transparent); font-variant-numeric: tabular-nums; }
+.dx-step-facts > span:empty { display: none; }
 .dx-step-state { margin-left: auto; display: inline-flex; align-items: center; gap: var(--sp-1); padding: 2px var(--sp-2);
   border-radius: var(--radius-pill); font-size: var(--fs-xs); font-weight: var(--fw-semibold); white-space: nowrap; }
 .dx-step-state .dx-ico { width: 1.1em; height: 1.1em; }
@@ -347,7 +348,8 @@
 .dx-steps-summary small { color: var(--text-muted); }
 .dx-steps-summary .dx-ico:last-child { margin-left: auto; color: var(--text-muted); }
 .dx-steps--compact.is-complete:not(.is-expanded) .dx-steps-summary { display: flex; }
-.dx-steps--compact.is-complete:not(.is-expanded) > :not(.dx-steps-summary) { display: none; }
+/* !important: 모듈 JS 가 칸을 펴며 인라인 display 를 준다 (compiler setup_panel.js _expand) — 한 줄 접힘이 이긴다. */
+.dx-steps--compact.is-complete:not(.is-expanded) > :not(.dx-steps-summary) { display: none !important; }
 /* 데모만 원할 때의 한 줄 — 단계 목록 위, 조용한 강조 (파란 테두리 · 옅은 판). */
 .dx-steps-quick { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-5);
   padding: var(--sp-3) var(--sp-4); border-radius: var(--radius-xl);

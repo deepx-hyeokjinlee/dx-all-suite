@@ -1029,6 +1029,22 @@ window._DX_I18N_DICT = {
     es: 'Especifique los nodos de entrada/salida en el gráfico visualizado en el Visor izquierdo para definir el rango de compilación. El rango final puede diferir de su selección debido al algoritmo interno de asignación de dispositivo. Actualmente no se admiten rangos múltiples.',
   },
 
+  // Setup 칸 (아이콘 체계 단계 2c) — 모두 끝났을 때의 한 줄 · Compile 이 잠긴 이유.
+  'Setup ready': { ko: '설치 완료', ja: 'セットアップ完了', 'zh-CN': '安装完成', 'zh-TW': '安裝完成', es: 'Instalación lista' },
+  '{n} sample models': {
+    ko: '샘플 모델 {n}개',
+    ja: 'サンプルモデル {n} 件',
+    'zh-CN': '{n} 个示例模型',
+    'zh-TW': '{n} 個範例模型',
+    es: '{n} modelos de ejemplo',
+  },
+  'Install the SDK first': {
+    ko: '먼저 SDK 를 설치하세요',
+    ja: '先に SDK をインストールしてください',
+    'zh-CN': '请先安装 SDK',
+    'zh-TW': '請先安裝 SDK',
+    es: 'Instale primero el SDK',
+  },
   'Setup Status': {
     ko: '설정 상태',
     ja: 'セットアップ状態',

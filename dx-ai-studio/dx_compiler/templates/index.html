@@ -262,6 +262,7 @@
             </details>
             <div class="form-actions">
                 <button type="submit" class="compile-btn" id="compile-main-btn" data-i18n="Compile">Compile</button>
+                <span class="compile-gate-reason" id="compile-gate-reason" role="status" hidden></span>
                 <button type="button" class="summary-btn" id="save-summary-btn" disabled data-i18n="Save Model Summary">Save Model Summary</button>
                 <button type="button" class="summary-btn" id="download-dxnn-btn" disabled data-i18n="Download .dxnn">Download .dxnn</button>
             </div>
@@ -442,9 +443,10 @@
 window.addEventListener('load', function() {
     fetch('/feature-check').then(function(r) { return r.json(); }).then(function(data) {
         if (window.ViewerPanel && ViewerPanel.applyCompilerCapabilities) ViewerPanel.applyCompilerCapabilities(data);
+        // 잠금은 setup_panel.js 한 곳에서 (SDK 없음 · 서버에서 컴파일 불가) — 여기서 버튼을 직접 만지면
+        // 둘 중 늦게 끝난 쪽이 이겨 버튼이 풀리거나 잠긴 채로 남았다.
+        if (window.setupPanel && setupPanel.setFeatureCompile) setupPanel.setFeatureCompile(!!(data && data.compile));
         if (!data || !data.compile) {
-            const btn = document.querySelector('.compile-btn');
-            if (btn) { btn.disabled = true; btn.title = T('Compile unavailable: dx_com not installed on server.'); }
             const warn = document.getElementById('auto-detect-warning-wiz') || document.getElementById('auto-detect-warning');
             if (warn) { warn.style.display = ''; warn.textContent = T('Compile unavailable: dx_com not installed on server.'); }
         }
