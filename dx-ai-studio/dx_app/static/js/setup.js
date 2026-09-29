@@ -27,27 +27,42 @@ function compRenderLogAppend(logEl,text,state){
   logEl.scrollTop=logEl.scrollHeight;
 }
 function setupInit(){setupCheckAll();setupLoadVersions();}
+/* ── 공용 단계 목록과 아이콘 (spec 2026-09-29 아이콘 체계 단계 2a) ──
+   뱃지를 직접 칠하던 자리 (체크 · 경고 이모지 + 완료 · 필요) 는 상태만 알린다. 다음 단계 · 막대 · 접기는 DXSteps 가 한다. */
+function _setupIco(n){return (typeof window.DXIcon==='function')?window.DXIcon(n):'';}
+function _setupStepState(id,state,facts){
+  var root=document.getElementById('setup-steps');
+  if(root&&window.DXSteps&&id)window.DXSteps.set(root,id,state,facts?{facts:facts}:undefined);
+}
+/* 백엔드 detail ("cmake · gcc · ninja") 을 한 줄의 짧은 사실들로. */
+function _setupFacts(detail){
+  if(!detail)return[];
+  return String(detail).split(/\s+·\s+/).filter(Boolean).slice(0,4);
+}
+/* 실행 로그 옆의 상태 — 단계 목록의 상태 표시와 같은 모양 (아이콘 + 말). */
+function _setupRunStatus(el,state,text){
+  var icon={running:'spinner',done:'check',failed:'x',todo:'stop'}[state]||'info';
+  el.className='dx-step-state is-'+state;
+  el.innerHTML=_setupIco(icon)+'<span>'+esc(text)+'</span>';
+}
 async function setupCheckAll(){
   try{
     var r=await api('/api/setup/status');
     ['dx-app-deps','dx-rt-deps','dx-rt-build','dx-driver','dx-app-build','dx-app-setup'].forEach(function(id){
       var s=r[id];if(!s)return;
       var locallyDone=SETUP.completedSteps&&SETUP.completedSteps[id];
-      var badge=$('setup-badge-'+id);
-      if(badge){
-        if(s.ok||locallyDone){badge.className='comp-status-badge cs-ok';badge.textContent='✅ '+_T5('완료','Done','完了','完成','完成');}
-        else{badge.className='comp-status-badge cs-warn';badge.textContent='⚠️ '+_T5('필요','Required','必要','必需','必需');}
-      }
       var det=$('setup-detail-'+id);
-      if(det)det.textContent=(locallyDone&&!s.ok)?_T5('방금 완료됨','Completed just now','完了したばかり','刚刚完成','剛剛完成'):(s.detail||'');
+      /* 사실 (s.detail) 은 줄의 칩으로 보인다 — 아래 줄에는 그 밖의 말 (방금 완료됨) 만. */
+      if(det)det.textContent=(locallyDone&&!s.ok)?_T5('방금 완료됨','Completed just now','完了したばかり','刚刚完成','剛剛完成'):'';
+      /* 뱃지 · 다음 단계 · 막대는 공용 단계 목록이 칠한다 (shared/static/dx-steps.js). 한 줄에는 짧은 사실만. */
+      _setupStepState(id,(s.ok||locallyDone)?'done':'todo',_setupFacts(s.detail));
     });
   }catch(e){console.error('setupCheckAll error:',e);}
 }
 function setupMarkStepDone(stepId){
   if(!stepId)return;
   SETUP.completedSteps[stepId]=true;
-  var badge=$('setup-badge-'+stepId);
-  if(badge){badge.className='comp-status-badge cs-ok';badge.textContent='✅ '+_T5('완료','Done','完了','完成','完成');}
+  _setupStepState(stepId,'done');
   var det=$('setup-detail-'+stepId);
   if(det)det.textContent=_T5('방금 완료됨','Completed just now','完了したばかり','刚刚完成','剛剛完成');
 }
@@ -74,7 +89,7 @@ function setupPromptSudoPassword(authFailed){
     overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:20px';
     var box=document.createElement('div');
     box.style.cssText='width:min(420px,100%);background:var(--surface-panel,var(--control-bg));border:1px solid var(--border-subtle);border-radius:12px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35)';
-    box.innerHTML='<h3 style="margin:0 0 8px">🔒 '+_T5('sudo 인증','sudo Authentication','sudo認証','sudo 认证','sudo 認證')+'</h3>'
+    box.innerHTML='<h3 style="margin:0 0 8px">'+_setupIco('lock')+' '+_T5('sudo 인증','sudo Authentication','sudo認証','sudo 认证','sudo 認證')+'</h3>'
       +(authFailed?('<p class="txt-sm" style="margin:0 0 8px;color:var(--danger,#e5484d)">'+_T5('비밀번호가 올바르지 않습니다. 다시 입력하세요.','Incorrect password. Please try again.','パスワードが正しくありません。もう一度入力してください。','密码不正确，请重新输入。','密碼不正確，請重新輸入。')+'</p>'):'')
       +'<p class="txt-sm txt-dim" style="margin:0 0 12px">'+_T5('이 설치 단계는 관리자 권한이 필요합니다. 비밀번호는 이 실행 요청에만 사용됩니다.','This setup step requires administrator privileges. The password is used only for this run.','この設定ステップには管理者権限が必要です。パスワードはこの実行にのみ使用されます。','此安装步骤需要管理员权限。密码仅用于本次运行。','此安裝步驟需要管理員權限。密碼僅用於本次執行。')+'</p>'
       +'<input id="setup-sudo-password" type="password" style="width:100%;box-sizing:border-box;padding:9px 11px;border-radius:8px;border:1px solid var(--border-subtle);background:var(--surface-page);color:var(--text-primary)" placeholder="sudo password">'
@@ -98,7 +113,8 @@ async function _setupDoRun(stepId,params){
   SETUP._renderedLogText='';
   var logEl=$('setup-log');if(logEl)logEl.textContent=_T5('준비 중…\n','Preparing…\n','準備中…\n','准备中…\n','準備中…\n');
   var rs=$('setup-run-status');
-  if(rs){rs.style.display='';rs.className='comp-status-badge cs-run';rs.textContent='⏳ '+_T5('실행 중…','Running…','実行中…','运行中…','執行中…');}
+  if(rs){rs.style.display='';_setupRunStatus(rs,'running',_T5('실행 중…','Running…','実行中…','运行中…','執行中…'));}
+  _setupStepState(stepId,'running');
   var body=Object.assign({step:stepId},params);
   var r=await postJ('/api/setup/run',body);
   if(r&&r.sudo_auth){
@@ -107,13 +123,15 @@ async function _setupDoRun(stepId,params){
     if(stopBtn)stopBtn.style.display='none';
     if(rs)rs.style.display='none';
     if(logEl)logEl.textContent='';
+    setupCheckAll();
     return{sudo_auth:true};
   }
   if(!r.ok&&!r.started){
     SETUP.running=false;
     if(stopBtn)stopBtn.style.display='none';
     toast(_T6('실행 실패: ','Run failed: ','実行失敗: ','运行失败: ','執行失敗: ','Error al ejecutar: ')+(r.error||''),'err');
-    if(rs){rs.className='comp-status-badge cs-err';rs.textContent='❌ '+_T5('실패','Failed','失敗','失败','失敗');}
+    if(rs)_setupRunStatus(rs,'failed',_T5('실패','Failed','失敗','失败','失敗'));
+    _setupStepState(stepId,'failed');
     return{error:r.error||'failed'};
   }
   if(SETUP.pollTimer)clearInterval(SETUP.pollTimer);
@@ -135,16 +153,17 @@ function setupPollLog(){
       var rs=$('setup-run-status');
       var completedStep=SETUP.activeStep;
       if(r.exit_code===0){
-        toast('✅ '+(SETUP.activeStep||'task')+_T6(' 완료!',' complete!',' 完了!',' 完成!',' 完成!',' ¡completo!'),'ok');
-        if(rs){rs.className='comp-status-badge cs-ok';rs.textContent='✅ '+_T5('완료','Done','完了','完成','完成');}
+        toast((SETUP.activeStep||'task')+_T6(' 완료!',' complete!',' 完了!',' 完成!',' 完成!',' ¡completo!'),'ok');
+        if(rs)_setupRunStatus(rs,'done',_T5('완료','Done','完了','完成','完成'));
         setupMarkStepDone(completedStep);
         SETUP._lastExitCode=0;
       }else if(r.exit_code===130){
-        if(rs){rs.className='comp-status-badge cs-warn';rs.textContent='⏹ '+_T5('중단됨','Stopped','中断','已中断','已中斷');}
+        if(rs)_setupRunStatus(rs,'todo',_T5('중단됨','Stopped','中断','已中断','已中斷'));
         SETUP._lastExitCode=130;
       }else{
-        toast(_T6('❌ 실패 (종료 ','❌ Failed (exit ','❌ 失敗 (終了 ','❌ 失败 (退出 ','❌ 失敗 (結束 ','❌ Error (salida ')+r.exit_code+')','err');
-        if(rs){rs.className='comp-status-badge cs-err';rs.textContent='❌ '+_T5('실패','Failed','失敗','失败','失敗')+' (exit '+r.exit_code+')';}
+        toast(_T6('실패 (종료 ','Failed (exit ','失敗 (終了 ','失败 (退出 ','失敗 (結束 ','Error (salida ')+r.exit_code+')','err');
+        if(rs)_setupRunStatus(rs,'failed',_T5('실패','Failed','失敗','失败','失敗')+' (exit '+r.exit_code+')');
+        _setupStepState(completedStep,'failed');
         SETUP._lastExitCode=r.exit_code;
       }
       if(r.exit_code===0)setupCheckAll().then(function(){setupMarkStepDone(completedStep);});
@@ -210,19 +229,19 @@ function setupHideStdin(){
 }
 
 async function runDiagnostics(){
-  var btn=$('diag-run-btn');btn.disabled=true;btn.textContent=_T5('⏳ 실행 중...','⏳ Running...','⏳ 実行中...','⏳ 运行中...','⏳ 執行中...');
+  var btn=$('diag-run-btn');btn.disabled=true;btn.innerHTML=_setupIco('spinner')+' '+_T5('실행 중...','Running...','実行中...','运行中...','執行中...');
   $('diag-results').innerHTML='<p class="txt-dim">'+_T5('진단 실행 중…','Running diagnostics…','診断実行中…','诊断运行中…','診斷執行中…')+'</p>';
   try{
     var r=await api('/api/setup/diagnostics');
-    btn.disabled=false;btn.textContent=_T5('▶ 진단 실행','▶ Run Diagnostics','▶ 診断実行','▶ 运行诊断','▶ 執行診斷');
+    btn.disabled=false;btn.innerHTML=_setupIco('play')+' '+_T5('진단 실행','Run Diagnostics','診断実行','运行诊断','執行診斷');
     if(r.error){toast(r.error,'err');return;}
     var sum=$('diag-summary');
     sum.style.display='';
     var allOk=r.all_ok;
-    sum.innerHTML='<div class="diag-summary-bar '+(allOk?'diag-pass':'diag-fail')+'">'+(allOk?'✅':'\u26a0\ufe0f')+' <strong>'+r.passed+'/'+r.total+'</strong> '+_T5('검사 통과','checks passed','検査合格','检查通过','檢查通過')+'</div>';
+    sum.innerHTML='<div class="diag-summary-bar '+(allOk?'diag-pass':'diag-fail')+'">'+_setupIco(allOk?'check':'alert')+' <strong>'+r.passed+'/'+r.total+'</strong> '+_T5('검사 통과','checks passed','検査合格','检查通过','檢查通過')+'</div>';
     $('diag-results').innerHTML=(r.checks||[]).map(function(c){
       var cls=c.ok?'diag-card-ok':'diag-card-fail';
-      var icon=c.ok?'✅':'❌';
+      var icon=_setupIco(c.ok?'check':'x');
       var lang=(window.DXI18n&&window.DXI18n.lang)||localStorage.getItem('dx-lang')||'en';
       var langKey=lang.replace('-','');
       var label=typeof c.label==='object'?(c.label[langKey]||c.label.en):c.label;
@@ -231,7 +250,7 @@ async function runDiagnostics(){
       html+='<div class="diag-card-detail">'+esc(c.detail||'')+'</div>';
       if(!c.ok&&c.fix){
         var fixText=typeof c.fix==='object'?(c.fix[langKey]||c.fix.en):c.fix;
-        html+='<div class="diag-card-fix">💡 '+esc(fixText)+'</div>';
+        html+='<div class="diag-card-fix">'+_setupIco('info')+' '+esc(fixText)+'</div>';
       }
       html+='</div>';
       return html;
@@ -239,7 +258,7 @@ async function runDiagnostics(){
     if(!allOk)toast(_T5('일부 검사 실패 — 진단 확인','Some checks failed — see diagnostics','一部の検査が失敗 — 診断を確認','部分检查失败 — 查看诊断','部分檢查失敗 — 查看診斷'),'warn');
     else toast(_T5('모든 진단 통과!','All diagnostics passed!','すべての診断に合格!','所有诊断通过!','所有診斷通過!'),'ok');
   }catch(e){
-    btn.disabled=false;btn.textContent=_T5('▶ 진단 실행','▶ Run Diagnostics','▶ 診断実行','▶ 运行诊断','▶ 執行診斷');
+    btn.disabled=false;btn.innerHTML=_setupIco('play')+' '+_T5('진단 실행','Run Diagnostics','診断実行','运行诊断','執行診斷');
     toast(_T5('진단 오류: ','Diagnostics error: ','診断エラー: ','诊断错误: ','診斷錯誤: ')+e.message,'err');
   }
 }

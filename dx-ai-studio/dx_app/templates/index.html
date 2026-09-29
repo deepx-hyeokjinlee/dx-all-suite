@@ -31,116 +31,117 @@
 <main class="dx-shell-main" id="main-area">
 <!-- ═══ PAGE: Setup & Install ═══ -->
 <div id="page-setup" class="page">
-  <h1>⚙️ <span class="accent" data-i18n="Setup &amp; Install">Setup &amp; Install</span></h1>
-  <p class="txt-dim txt-sm mb16" data-i18n="Install dependencies and build each component from this page. Run top-to-bottom, left-to-right.">Install dependencies and build each component from this page. Run top-to-bottom, left-to-right.</p>
-  <!-- Demo Quick Start (highlighted — minimal chain for the Run Demo page) -->
-  <div class="card card-glow mb16" id="setup-quickstart">
-    <div class="flex between items-c" style="flex-wrap:wrap;gap:12px">
+  <!-- 공용 단계 목록 (shared/static/dx-steps.js · spec 2026-09-29 아이콘 체계 단계 2a). 끝난 단계는 한 줄,
+       다음 단계만 펼친다. 상태는 setup.js 가 DXSteps.set 으로 알린다 — 흐름 (sudo · 로그 · Run All) 은 그대로. -->
+  <section class="dx-steps" data-steps id="setup-steps">
+    <header class="dx-steps-head">
       <div>
-        <h2 style="margin:0 0 4px">🎬 <span data-i18n="Demo Quick Start">Demo Quick Start</span></h2>
-        <p class="txt-dim txt-sm" style="margin:0" data-i18n="Install only what the demo needs, in one go — downloads only the required models and skips steps already done">Install only what the demo needs, in one go — downloads only the required models and skips steps already done</p>
+        <h1><span data-i18n="Setup">Setup</span></h1>
+        <p class="dx-steps-lede" data-i18n="Six steps get DX App running on this PC. What is done stays done.">Six steps get DX App running on this PC. What is done stays done.</p>
       </div>
-      <div class="flex gap8 items-c" style="flex-wrap:wrap">
-        <span id="setup-quickstart-progress" class="txt-dim txt-sm" style="display:none"></span>
-        <button class="btn btn-accent" id="setup-quickstart-btn" onclick="setupDemoQuickStart()">▶ <span data-i18n="Start Demo Setup">Start Demo Setup</span></button>
-        <button class="btn btn-primary" id="setup-try-demo" onclick="nav('rundemo');if(window.rundemoReload)rundemoReload();" style="display:none">▶ <span data-i18n="Try demo">Try demo</span></button>
+      <div class="setup-toolbar dx-steps-run">
+        <span id="setup-run-all-progress" class="txt-dim txt-sm" style="display:none"></span>
+        <button class="btn btn-sm btn-danger" id="setup-stop-btn" onclick="setupStop()" style="display:none"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span></button>
+        <button class="btn btn-primary" id="setup-run-all" onclick="setupRunAll()" data-steps-run><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Set up the rest">Set up the rest</span> <span data-steps-left></span></button>
       </div>
+      <div class="dx-steps-progress"><span class="dx-steps-count" data-steps-count></span><div class="dx-steps-bar"></div></div>
+    </header>
+    <!-- 데모만 원할 때 — Run Demo 에 필요한 것만 한 번에 -->
+    <div class="dx-steps-quick" id="setup-quickstart">
+      <svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#demo"></use></svg>
+      <div class="dx-steps-quick-text">
+        <b data-i18n="Demo Quick Start">Demo Quick Start</b>
+        <p data-i18n="Install only what the demo needs, in one go — downloads only the required models and skips steps already done">Install only what the demo needs, in one go — downloads only the required models and skips steps already done</p>
+      </div>
+      <span id="setup-quickstart-progress" class="txt-dim txt-sm" style="display:none"></span>
+      <button class="btn btn-ghost" id="setup-quickstart-btn" onclick="setupDemoQuickStart()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Start Demo Setup">Start Demo Setup</span></button>
+      <button class="btn btn-primary" id="setup-try-demo" onclick="nav('rundemo');if(window.rundemoReload)rundemoReload();" style="display:none"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Try demo">Try demo</span></button>
     </div>
-  </div>
-  <!-- Run All + Stop -->
-  <div class="setup-toolbar" style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-    <button class="btn btn-accent" id="setup-run-all" onclick="setupRunAll()">
-      ▶ <span data-i18n="Run All">Run All</span>
-    </button>
-    <span id="setup-run-all-progress" class="txt-dim" style="display:none"></span>
-    <button class="btn btn-sm btn-danger" id="setup-stop-btn" onclick="setupStop()" style="display:none">
-      ⏹ Stop
-    </button>
-  </div>
-  <div class="setup-grid">
-    <!-- ① DX-APP Dependencies (build toolchain — needed for all compiles) -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">① 🏗️ <span data-i18n="DX-APP Dependencies">DX-APP Dependencies</span></div>
-          <div class="setup-card-desc"><span data-i18n="Install system packages required for C++ build (cmake, gcc, ninja, OpenCV, …) →">Install system packages required for C++ build (cmake, gcc, ninja, OpenCV, …) →</span><code style="font-size:10px"> install.sh --all</code></div>
+    <ol class="dx-steps-list">
+    <li class="dx-step" data-step="dx-app-deps" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="DX-APP Dependencies">DX-APP Dependencies</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-dx-app-deps"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc"><span data-i18n="Install system packages required for C++ build (cmake, gcc, ninja, OpenCV, …)">Install system packages required for C++ build (cmake, gcc, ninja, OpenCV, …)</span></p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>install.sh --all</code></div>
+          <div class="dx-step-detail" id="setup-detail-dx-app-deps"></div>
+          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-app-deps')"><span data-i18n="Install">Install</span></button></div>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-dx-app-deps">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" style="font-family:var(--mono)" id="setup-detail-dx-app-deps"></div>
-      <button class="btn btn-primary btn-sm" style="align-self:flex-start" onclick="setupRun('dx-app-deps')" data-i18n="Install">Install</button>
-    </div>
-    <!-- ② DX-Runtime Dependencies -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">② 🔧 <span data-i18n="DX-Runtime Dependencies">DX-Runtime Dependencies</span></div>
-          <div class="setup-card-desc"><span data-i18n="Install packages required for NPU runtime (cmake, ONNX Runtime, …) →">Install packages required for NPU runtime (cmake, ONNX Runtime, …) →</span><code style="font-size:10px"> dx_rt/install.sh --all</code></div>
+    </li>
+    <li class="dx-step" data-step="dx-rt-deps" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="DX-Runtime Dependencies">DX-Runtime Dependencies</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-dx-rt-deps"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc"><span data-i18n="Install packages required for NPU runtime (cmake, ONNX Runtime, …)">Install packages required for NPU runtime (cmake, ONNX Runtime, …)</span></p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>dx_rt/install.sh --all</code></div>
+          <div class="dx-step-detail" id="setup-detail-dx-rt-deps"></div>
+          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-rt-deps')"><span data-i18n="Install">Install</span></button></div>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-dx-rt-deps">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" style="font-family:var(--mono)" id="setup-detail-dx-rt-deps"></div>
-      <button class="btn btn-primary btn-sm" style="align-self:flex-start" onclick="setupRun('dx-rt-deps')" data-i18n="Install">Install</button>
-    </div>
-    <!-- ③ DX-Runtime Build (dx_rt + dx_engine venv) — must precede DX-APP Build (links dx_rt) -->
-    <div class="setup-card" id="setup-card-rt-build">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">③ 🐍 <span data-i18n="DX-Runtime Build">DX-Runtime Build</span></div>
-          <div class="setup-card-desc"><span data-i18n="Build the DX-RT runtime and install the dx_engine Python API into venv-dx-runtime →">Build the DX-RT runtime and install the dx_engine Python API into venv-dx-runtime →</span><code style="font-size:10px"> dx-runtime/install.sh --target=dx_rt</code></div>
+    </li>
+    <li class="dx-step" data-step="dx-rt-build" data-state="todo" id="setup-card-rt-build">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="DX-Runtime Build">DX-Runtime Build</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-dx-rt-build"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc"><span data-i18n="Build the DX-RT runtime and install the dx_engine Python API into venv-dx-runtime">Build the DX-RT runtime and install the dx_engine Python API into venv-dx-runtime</span></p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>dx-runtime/install.sh --target=dx_rt</code></div>
+          <div class="dx-step-detail" id="setup-detail-dx-rt-build"></div>
+          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-rt-build')"><span data-i18n="Build">Build</span></button></div>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-dx-rt-build">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" style="font-family:var(--mono)" id="setup-detail-dx-rt-build"></div>
-      <button class="btn btn-primary btn-sm" style="align-self:flex-start" onclick="setupRun('dx-rt-build')" data-i18n="Build">Build</button>
-    </div>
-    <!-- ④ NPU Driver -->
-    <div class="setup-card" id="setup-card-5">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">④ 🔌 <span data-i18n="NPU Linux Driver">NPU Linux Driver</span></div>
-          <div class="setup-card-desc"><span data-i18n="Install DEEPX NPU kernel driver (requires sudo) →">Install DEEPX NPU kernel driver (requires sudo) →</span><code style="font-size:10px"> dx-runtime/install.sh --target=dx_rt_npu_linux_driver</code></div>
+    </li>
+    <li class="dx-step" data-step="dx-driver" data-state="todo" id="setup-card-5">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="NPU Linux Driver">NPU Linux Driver</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-dx-driver"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc"><span data-i18n="Install DEEPX NPU kernel driver (requires sudo)">Install DEEPX NPU kernel driver (requires sudo)</span></p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>dx-runtime/install.sh --target=dx_rt_npu_linux_driver</code></div>
+          <div class="dx-step-detail" id="setup-detail-dx-driver"></div>
+          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-driver')"><span data-i18n="Install">Install</span></button></div>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-dx-driver">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" style="font-family:var(--mono)" id="setup-detail-dx-driver"></div>
-      <button class="btn btn-primary btn-sm" style="align-self:flex-start" onclick="setupRun('dx-driver')" data-i18n="Install">Install</button>
-    </div>
-    <!-- ⑤ DX-APP Build (C++ demos — links dx_rt, so runs after runtime build + driver) -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">⑤ 🔨 <span data-i18n="DX-APP Build">DX-APP Build</span></div>
-          <div class="setup-card-desc"><span data-i18n="Compile C++ demo binaries (cmake) →">Compile C++ demo binaries (cmake) →</span><code style="font-size:10px"> build.sh --type Release</code></div>
+    </li>
+    <li class="dx-step" data-step="dx-app-build" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="DX-APP Build">DX-APP Build</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-dx-app-build"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc"><span data-i18n="Compile C++ demo binaries (cmake)">Compile C++ demo binaries (cmake)</span></p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>build.sh --type Release</code></div>
+          <div class="dx-step-detail" id="setup-detail-dx-app-build"></div>
+          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-app-build')"><span data-i18n="Build">Build</span></button></div>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-dx-app-build">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" style="font-family:var(--mono)" id="setup-detail-dx-app-build"></div>
-      <button class="btn btn-primary btn-sm" style="align-self:flex-start" onclick="setupRun('dx-app-build')" data-i18n="Build">Build</button>
-    </div>
-    <!-- ⑥ Sample Assets (model/video download — independent, last) -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">⑥ 📦 <span data-i18n="Sample Assets Setup">Sample Assets Setup</span></div>
-          <div class="setup-card-desc"><span data-i18n="Download sample models &amp; videos for Run / Benchmark demos →">Download sample models &amp; videos for Run / Benchmark demos →</span><code style="font-size:10px"> setup.sh</code></div>
+    </li>
+    <li class="dx-step" data-step="dx-app-setup" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="Sample Assets Setup">Sample Assets Setup</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-dx-app-setup"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc"><span data-i18n="Download sample models &amp; videos for Run / Benchmark demos">Download sample models &amp; videos for Run / Benchmark demos</span></p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>setup.sh</code></div>
+          <div class="dx-step-detail" id="setup-detail-dx-app-setup"></div>
+          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-app-setup')"><span data-i18n="Setup">Setup</span></button></div>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-dx-app-setup">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" style="font-family:var(--mono)" id="setup-detail-dx-app-setup"></div>
-      <button class="btn btn-primary btn-sm" style="align-self:flex-start" onclick="setupRun('dx-app-setup')" data-i18n="Setup">Setup</button>
-    </div>
-  </div>
+    </li>
+    </ol>
+  </section>
   <!-- Version Info -->
   <div class="card mt16" id="setup-version-card" style="display:none">
-    <div class="card-header"><h2>📋 <span data-i18n="Version Info">Version Info</span></h2></div>
+    <div class="card-header"><h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clipboard"></use></svg> <span data-i18n="Version Info">Version Info</span></h2></div>
     <div class="version-grid" id="setup-version-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;padding:12px"></div>
   </div>
   <!-- Deep Diagnostics -->
   <div class="card mt16">
     <div class="flex between items-c mb8">
-      <h2>🔍 <span data-i18n="Deep Diagnostics">Deep Diagnostics</span></h2>
-      <button class="btn btn-primary btn-sm" id="diag-run-btn" onclick="runDiagnostics()">▶ <span data-i18n="Run Diagnostics">Run Diagnostics</span></button>
+      <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#search"></use></svg> <span data-i18n="Deep Diagnostics">Deep Diagnostics</span></h2>
+      <button class="btn btn-primary btn-sm" id="diag-run-btn" onclick="runDiagnostics()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run Diagnostics">Run Diagnostics</span></button>
     </div>
     <p class="txt-dim txt-sm mb8" data-i18n="Comprehensive system health check: PCIe link, kernel modules, DKMS, services, CLI tools, Python venv, disk, memory, model integrity.">Comprehensive system health check: PCIe link, kernel modules, DKMS, services, CLI tools, Python venv, disk, memory, model integrity.</p>
     <div id="diag-summary" class="mb8" style="display:none"></div>
@@ -150,11 +151,11 @@
   <div class="card">
     <div class="comp-section">
       <div class="flex between items-c" style="margin-bottom:8px">
-        <h3 style="margin:0">📋 <span data-i18n="Execution Log">Execution Log</span></h3>
+        <h3 style="margin:0"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clipboard"></use></svg> <span data-i18n="Execution Log">Execution Log</span></h3>
         <div class="flex gap8 items-c">
           <span class="comp-status-badge" id="setup-run-status" style="display:none"></span>
-          <button class="btn btn-ghost btn-sm" onclick="setupToggleStdin()" id="setup-stdin-toggle-btn">⌨️ <span data-i18n="Manual Input">Manual Input</span></button>
-          <button class="btn btn-ghost btn-sm" onclick="setupCheckAll()">🔄 <span data-i18n="Refresh Status">Refresh Status</span></button>
+          <button class="btn btn-ghost btn-sm" onclick="setupToggleStdin()" id="setup-stdin-toggle-btn"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg> <span data-i18n="Manual Input">Manual Input</span></button>
+          <button class="btn btn-ghost btn-sm" onclick="setupCheckAll()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg> <span data-i18n="Refresh Status">Refresh Status</span></button>
         </div>
       </div>
       <div class="comp-log" id="setup-log" data-i18n="Select an item to run — logs will appear here.">Select an item to run — logs will appear here.</div>
@@ -163,9 +164,9 @@
         <div style="font-size:11px;color:var(--status-warn);margin-bottom:5px" id="setup-stdin-prompt" data-i18n="Type input to send to the process (press Enter)">Type input to send to the process (press Enter)</div>
         <div style="display:flex;gap:6px;align-items:center">
           <input id="setup-stdin-input" type="text" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--border-subtle);background:var(--surface-page);color:var(--text-primary);font-family:var(--mono);font-size:12px" data-i18n-placeholder="Enter value and press Enter" onkeydown="if(event.key==='Enter')setupSendInput()">
-          <button onclick="var i=$('setup-stdin-input');i.type=i.type==='password'?'text':'password'" class="btn btn-ghost btn-sm" title="Show/hide password" data-i18n-title="Show/hide password">👁</button>
+          <button onclick="var i=$('setup-stdin-input');i.type=i.type==='password'?'text':'password'" class="btn btn-ghost btn-sm" title="Show/hide password" data-i18n-title="Show/hide password"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#eye"></use></svg></button>
           <button onclick="setupSendInput()" class="btn btn-primary btn-sm" data-i18n="Send">Send</button>
-          <button onclick="setupHideStdin()" class="btn btn-ghost btn-sm" title="Close" data-i18n-title="Close">✕</button>
+          <button onclick="setupHideStdin()" class="btn btn-ghost btn-sm" title="Close" data-i18n-title="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
         </div>
       </div>
     </div>
@@ -783,6 +784,7 @@
 </div>
 <script src="/static/js/i18n.js?m=dx_app"></script>
 <script src="/static/shared/i18n.js"></script>
+<script src="/static/shared/dx-steps.js"></script>
 <script src="/static/shared/server-error-i18n.js"></script>
 <script src="/static/shared/brand.js"></script>
 <script>
