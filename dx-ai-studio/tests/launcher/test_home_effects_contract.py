@@ -178,3 +178,16 @@ def test_a_running_module_lights_its_glyph_by_opacity():
     body = _rule(".stage-deck .orbital-card.is-up .mod-glyph .g-fill")
     assert "opacity: 1" in body
     assert re.search(r"transition:\s*opacity 400ms", _rule(".stage-deck .mod-glyph .g-fill"))
+
+
+def test_the_cursor_light_stays_off_without_gpu_acceleration():
+    """빛이 유리 (backdrop-filter) 아래를 지나면 유리가 매 frame 다시 흐려진다. GPU 가 없는 기계
+    (소프트웨어 래스터 — headless 도 그렇다) 에서 frame 이 50–85ms 로 멈췄다 (P9 측정: 빛을 끄면 0).
+    GPU 가 있으면 그대로 켠다. localStorage['dx-fx'] = 'full' | 'lite' 로 고를 수 있다."""
+    js = _effects()
+    assert "failIfMajorPerformanceCaveat" in js
+    assert "swiftshader" in js.lower() and "llvmpipe" in js, "ANGLE 위의 SwiftShader 는 caveat 로 걸리지 않는다"
+    assert "'dx-fx'" in js
+    light = js[js.index("function cursorLight()"):]
+    light = light[:light.index("\n  }\n")]
+    assert "lite()" in light, "커서 조명이 가벼운 모드를 보지 않는다"

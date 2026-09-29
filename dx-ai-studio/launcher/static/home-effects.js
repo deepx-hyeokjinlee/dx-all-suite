@@ -94,12 +94,40 @@
     restart();
   }
 
+  /* 효과 등급. 커서 조명은 유리 (입력창 · 막대의 backdrop-filter) 아래를 지나가므로 움직일 때마다
+     유리가 다시 흐려진다 — GPU 는 가볍게 하지만, 소프트웨어 래스터 (가속 없는 PC · 원격 데스크톱 ·
+     headless) 에서는 frame 이 50–85ms 로 멈췄다 (2026-09-29 측정, 빛을 끄면 0). 그런 기계에서는
+     커서 조명만 끈다. failIfMajorPerformanceCaveat 는 WebGL 이 소프트웨어로만 가능할 때 context 를
+     주지 않는다 — 다만 ANGLE 위의 SwiftShader 는 통과시키므로 (headless chrome, 2026-09-29 확인)
+     renderer 이름도 본다. localStorage['dx-fx'] = 'full' | 'lite' 로 직접 고를 수 있다 (테스트 · 설정). */
+  var SOFTWARE_GL = /swiftshader|llvmpipe|softpipe|software|basic render/i;
+  var _lite = null;
+  function lite() {
+    if (_lite !== null) return _lite;
+    var pick = null;
+    try { pick = localStorage.getItem('dx-fx'); } catch (e) { /* noop */ }
+    if (pick === 'full' || pick === 'lite') return (_lite = pick === 'lite');
+    try {
+      var c = document.createElement('canvas');
+      var gl = c.getContext('webgl', { failIfMajorPerformanceCaveat: true });
+      var info = gl && gl.getExtension('WEBGL_debug_renderer_info');
+      var renderer = gl ? String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER)) : '';
+      _lite = !gl || SOFTWARE_GL.test(renderer);
+      var lose = gl && gl.getExtension('WEBGL_lose_context');
+      if (lose) lose.loseContext();   // 재어 봤으면 바로 돌려준다
+    } catch (e) {
+      _lite = true;
+    }
+    return _lite;
+  }
+
   /* #16 커서 조명 — 무대 아래의 빛 (.stage-light > i) 을 커서 자리로 옮긴다. 옮기는 것은
-     transform 하나, 한 frame 에 한 번 (rAF). 첫 움직임에 켜지고 창을 떠나면 꺼진다. */
+     transform 하나, 한 frame 에 한 번 (rAF). 첫 움직임에 켜지고 창을 떠나면 꺼진다. 가벼운 등급
+     (위) 에서는 켜지 않는다. */
   function cursorLight() {
     var wrap = document.querySelector('#landing .stage-light');
     var dot = wrap && wrap.firstElementChild;
-    if (!dot) return;
+    if (!dot || lite()) return;
     var x = 0, y = 0, queued = false, half = 0;
 
     function paint() {

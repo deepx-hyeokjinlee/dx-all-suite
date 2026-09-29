@@ -47,10 +47,12 @@ def browser():
     pw.stop()
 
 
-def _open(browser, port, *, still=False, hw=None, width=1440, height=900):
+def _open(browser, port, *, still=False, hw=None, width=1440, height=900, fx="full"):
+    """fx: 효과 등급. headless 는 GPU 가 없어 기본이 'lite' (커서 조명 꺼짐) 다 — 조명을 보는 테스트는
+    'full' 로 켜고, 예산 테스트는 기본값 (None) 을 본다."""
     ctx = browser.new_context(viewport={"width": width, "height": height},
                               reduced_motion="reduce" if still else "no-preference")
-    ctx.add_init_script(_SEEN)
+    ctx.add_init_script(_SEEN + (f"try{{localStorage.setItem('dx-fx','{fx}');}}catch(e){{}}" if fx else ""))
     page = ctx.new_page()
     page.route("**/dx_monitor/api/hw_stream", lambda route, *_: route.abort())
     page.route("**/dx_monitor/api/hw_status", lambda route, *_: route.fulfill(
@@ -214,6 +216,18 @@ def test_the_light_never_makes_the_page_scroll(browser, server):
         ctx.close()
 
 
+def test_without_gpu_the_light_stays_off(browser, server):
+    """headless chromium 은 소프트웨어 래스터다 — 기본 등급이면 커서 조명이 켜지지 않는다."""
+    ctx, page = _open(browser, server, fx=None)
+    try:
+        page.mouse.move(400, 300)
+        page.mouse.move(420, 320)
+        page.wait_for_timeout(300)
+        assert _light(page)["o"] == 0
+    finally:
+        ctx.close()
+
+
 def test_reduced_motion_keeps_the_light_off(browser, server):
     ctx, page = _open(browser, server, still=True)
     try:
@@ -228,8 +242,9 @@ def test_reduced_motion_keeps_the_light_off(browser, server):
 # ── 예산 ──────────────────────────────────────────────────────────────────
 
 def test_everything_running_at_once_leaves_no_long_frame(browser, server):
-    """spec §10.2: 커서 이동 + placeholder + 위젯이 동시에 돌 때 5초간 긴 frame (>50ms) 0개."""
-    ctx, page = _open(browser, server)
+    """spec §10.2: 커서 이동 + placeholder + 위젯이 동시에 돌 때 5초간 긴 frame (>50ms) 0개.
+    이 기계의 기본 등급으로 잰다 (fx=None) — GPU 가 없으면 커서 조명이 꺼진 채다."""
+    ctx, page = _open(browser, server, fx=None)
     try:
         page.wait_for_timeout(1000)   # 첫 그림이 끝난 뒤부터 잰다
         page.evaluate("""() => { window.__long = [];
