@@ -24,6 +24,13 @@
     if (modal.open && typeof modal.close === 'function') modal.close();
   }
 
+  /* Setup 의 끝난 단계는 한 줄로 접혀 그 안의 버튼이 0 크기다 — 가리키기 전에 연다
+     (공용 단계 목록 shared/static/dx-steps.js, 아이콘 체계 단계 2b). */
+  function _openSetupStep(id) {
+    var root = document.getElementById('setup-steps');
+    if (root && window.DXSteps) window.DXSteps.open(root, id);
+  }
+
   function _scrollToTarget(selector) {
     var el = document.querySelector(selector);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -413,13 +420,13 @@
         { target: '#setup-info-bar', position: 'bottom',
           title: { ko: '시스템 정보', en: 'System Info', ja: 'システム情報', 'zh-CN': '系统信息', 'zh-TW': '系統資訊', es: 'Información del sistema' },
           content: { ko: '<strong>OS, GStreamer 버전, NPU, Python 버전</strong> 등 현재 시스템 정보를 표시합니다.', en: 'Shows current system info: <strong>OS, GStreamer version, NPU, Python version</strong>.', ja: '現在のシステム情報を表示します：<strong>OS、GStreamerバージョン、NPU、Pythonバージョン</strong>。', 'zh-CN': '显示当前系统信息：<strong>OS、GStreamer版本、NPU、Python版本</strong>。', 'zh-TW': '顯示當前系統資訊：<strong>OS、GStreamer版本、NPU、Python版本</strong>。', es: 'Muestra la información actual del sistema: <strong>SO, versión de GStreamer, NPU y versión de Python</strong>.' } },
-        { target: '.setup-grid', position: 'bottom',
+        { target: '#setup-steps .dx-steps-list', position: 'right',
           title: { ko: '설치 카드', en: 'Setup Cards', ja: 'セットアップカード', 'zh-CN': '安装卡片', 'zh-TW': '安裝卡片', es: 'Tarjetas de configuración' },
           content: { ko: '<strong>6개 설치/빌드 카드</strong>를 순서대로 실행합니다. 각 카드의 Install/Build 버튼을 클릭하세요.', en: 'Execute <strong>6 install/build cards</strong> in order. Click Install/Build on each card.', ja: '<strong>6つのインストール/ビルドカード</strong>を順番に実行します。各カードのInstall/Buildボタンをクリックしてください。', 'zh-CN': '按顺序执行<strong>6个安装/构建卡片</strong>。点击每张卡片的Install/Build按钮。', 'zh-TW': '按順序執行<strong>6個安裝/建構卡片</strong>。點擊每張卡片的Install/Build按鈕。', es: 'Ejecute <strong>6 tarjetas de instalación/compilación</strong> en orden. Haga clic en Install/Build en cada tarjeta.' } },
         { target: 'button[onclick*="stream-deps"]', position: 'bottom',
           title: { ko: '빌드 도구 설치', en: 'Install Build Tools', ja: 'ビルドツールのインストール', 'zh-CN': '安装构建工具', 'zh-TW': '安裝建置工具', es: 'Instalar herramientas de compilación' },
           content: { ko: '①번 카드입니다. GStreamer 플러그인 빌드에 필요한 <strong>cmake·meson·GStreamer·OpenCV</strong> 등을 install.sh로 설치합니다. <strong>Build(④)보다 먼저</strong> 실행하세요.', en: 'Card ①. Installs <strong>cmake, meson, GStreamer, OpenCV</strong> and other build dependencies via install.sh. Run this <strong>before Build (④)</strong>.', ja: '①番カードです。GStreamerプラグインのビルドに必要な<strong>cmake・meson・GStreamer・OpenCV</strong>などをinstall.shでインストールします。<strong>Build(④)より前に</strong>実行してください。', 'zh-CN': '①号卡片。通过install.sh安装构建GStreamer插件所需的<strong>cmake、meson、GStreamer、OpenCV</strong>等。请在<strong>Build(④)之前</strong>运行。', 'zh-TW': '①號卡片。透過install.sh安裝建置GStreamer外掛程式所需的<strong>cmake、meson、GStreamer、OpenCV</strong>等。請在<strong>Build(④)之前</strong>執行。', es: 'Tarjeta ①. Instala <strong>cmake, meson, GStreamer, OpenCV</strong> y otras dependencias de compilación mediante install.sh. Ejecútelo <strong>antes de Build (④)</strong>.' },
-          beforeStep: function () { _scrollToTarget('button[onclick*="stream-deps"]'); } },
+          beforeStep: function () { _openSetupStep('stream-deps'); _scrollToTarget('button[onclick*="stream-deps"]'); } },
         { target: '#setup-badge-runtime', position: 'bottom',
           title: { ko: 'Runtime 상태 배지', en: 'Runtime Status Badge', ja: 'ランタイム状態バッジ', 'zh-CN': '运行时状态徽章', 'zh-TW': '執行時期狀態徽章', es: 'Insignia de estado de runtime' },
           content: { ko: '②번 카드의 <strong>설치 상태 배지</strong>입니다. ✅이면 DX-Runtime 종속성 설치가 완료된 것입니다.', en: 'The <strong>install status badge</strong> on card ②. ✅ means DX-Runtime dependencies are installed.', ja: '②番カードの<strong>インストール状態バッジ</strong>です。✅ならDX-Runtime依存関係のインストールが完了しています。', 'zh-CN': '②号卡片的<strong>安装状态徽章</strong>。✅表示DX-Runtime依赖已安装完成。', 'zh-TW': '②號卡片的<strong>安裝狀態徽章</strong>。✅表示DX-Runtime相依性已安裝完成。', es: 'La <strong>insignia de estado de instalación</strong> de la tarjeta ②. ✅ indica que las dependencias DX-Runtime están instaladas.' },
@@ -427,7 +434,7 @@
         { target: 'button[onclick*="runtime-deps"]', position: 'bottom',
           title: { ko: 'Runtime 설치', en: 'Install Runtime', ja: 'ランタイムインストール', 'zh-CN': '安装运行时', 'zh-TW': '安裝執行時期', es: 'Instalar runtime' },
           content: { ko: '<strong>DX-Runtime 종속성</strong> 패키지를 설치합니다. GStreamer 플러그인 실행에 필요한 기본 패키지입니다.', en: 'Install <strong>DX-Runtime dependency</strong> packages required for GStreamer plugin execution.', ja: 'GStreamerプラグイン実行に必要な<strong>DX-Runtime依存関係</strong>パッケージをインストールします。', 'zh-CN': '安装 GStreamer 插件运行所需的 <strong>DX-Runtime 依赖</strong>包。', 'zh-TW': '安裝 GStreamer 外掛程式執行所需的 <strong>DX-Runtime 相依性</strong>套件。', es: 'Instale los paquetes de <strong>dependencias DX-Runtime</strong> necesarios para ejecutar plugins GStreamer.' },
-          beforeStep: function () { _scrollToTarget('button[onclick*="runtime-deps"]'); } },
+          beforeStep: function () { _openSetupStep('runtime-deps'); _scrollToTarget('button[onclick*="runtime-deps"]'); } },
         { target: '#setup-badge-driver', position: 'bottom',
           title: { ko: 'NPU 드라이버 상태', en: 'NPU Driver Status', ja: 'NPUドライバー状態', 'zh-CN': 'NPU驱动状态', 'zh-TW': 'NPU驅動程式狀態', es: 'Estado del controlador NPU' },
           content: { ko: '③번 카드의 <strong>드라이버 설치 상태</strong> 배지입니다. ✅이면 NPU 드라이버가 준비된 것입니다.', en: 'The <strong>driver install status</strong> badge on card ③. ✅ means the NPU driver is ready.', ja: '③番カードの<strong>ドライバーインストール状態</strong>バッジです。✅ならNPUドライバーの準備が完了しています。', 'zh-CN': '③号卡片的<strong>驱动安装状态</strong>徽章。✅表示NPU驱动已就绪。', 'zh-TW': '③號卡片的<strong>驅動程式安裝狀態</strong>徽章。✅表示NPU驅動程式已就緒。', es: 'La insignia de <strong>estado de instalación del controlador</strong> en la tarjeta ③. ✅ indica que el controlador NPU está listo.' },
@@ -435,7 +442,7 @@
         { target: 'button[onclick*="driver"]', position: 'bottom',
           title: { ko: 'NPU 드라이버 설치', en: 'Install NPU Driver', ja: 'NPUドライバーインストール', 'zh-CN': '安装NPU驱动', 'zh-TW': '安裝NPU驅動程式', es: 'Instalar controlador NPU' },
           content: { ko: '리눅스 <strong>NPU 드라이버</strong>를 설치합니다. sudo 비밀번호가 필요할 수 있습니다.', en: 'Install the Linux <strong>NPU driver</strong>. May require a sudo password.', ja: 'Linux <strong>NPUドライバー</strong>をインストールします。sudoパスワードが必要な場合があります。', 'zh-CN': '安装 Linux <strong>NPU 驱动</strong>。可能需要 sudo 密码。', 'zh-TW': '安裝 Linux <strong>NPU 驅動程式</strong>。可能需要 sudo 密碼。', es: 'Instale el <strong>controlador del NPU</strong> en Linux. Puede requerir contraseña sudo.' },
-          beforeStep: function () { _scrollToTarget('button[onclick*="driver"]'); } },
+          beforeStep: function () { _openSetupStep('driver'); _scrollToTarget('button[onclick*="driver"]'); } },
         { target: '#setup-badge-build', position: 'bottom',
           title: { ko: '플러그인 빌드 상태', en: 'Plugin Build Status', ja: 'プラグインビルド状態', 'zh-CN': '插件构建状态', 'zh-TW': '外掛程式建構狀態', es: 'Estado de compilación de plugins' },
           content: { ko: '④번 카드의 <strong>빌드 상태</strong> 배지입니다. ✅이면 GStreamer 플러그인 빌드가 완료된 것입니다.', en: 'The <strong>build status</strong> badge on card ④. ✅ means GStreamer plugins are built.', ja: '④番カードの<strong>ビルド状態</strong>バッジです。✅ならGStreamerプラグインのビルドが完了しています。', 'zh-CN': '④号卡片的<strong>构建状态</strong>徽章。✅表示GStreamer插件已构建完成。', 'zh-TW': '④號卡片的<strong>建構狀態</strong>徽章。✅表示GStreamer外掛程式已建構完成。', es: 'La insignia de <strong>estado de compilación</strong> en la tarjeta ④. ✅ indica que los plugins GStreamer están compilados.' },
@@ -443,11 +450,11 @@
         { target: '#setup-opt-clean', position: 'bottom',
           title: { ko: '빌드 옵션', en: 'Build Options', ja: 'ビルドオプション', 'zh-CN': '构建选项', 'zh-TW': '建構選項', es: 'Opciones de compilación' },
           content: { ko: '<strong>클린 빌드</strong>와 <strong>디버그 모드</strong> 체크박스를 선택할 수 있습니다. 클린 빌드는 이전 빌드를 삭제 후 재빌드, 디버그 모드는 심볼 포함 빌드입니다.', en: 'Select <strong>Clean Build</strong> and <strong>Debug Mode</strong> checkboxes. Clean build removes previous builds; debug mode includes symbols.', ja: '<strong>クリーンビルド</strong>と<strong>デバッグモード</strong>チェックボックスを選択できます。クリーンビルドは以前のビルドを削除後に再ビルド、デバッグモードはシンボルを含むビルドです。', 'zh-CN': '可选择<strong>清理构建</strong>和<strong>调试模式</strong>复选框。清理构建删除之前的构建后重建；调试模式包含符号。', 'zh-TW': '可選擇<strong>清潔建構</strong>和<strong>偵錯模式</strong>核取方塊。清潔建構刪除之前的建構後重建；偵錯模式包含符號。', es: 'Seleccione las casillas <strong>Compilación limpia</strong> y <strong>Modo depuración</strong>. La compilación limpia elimina compilaciones anteriores; el modo depuración incluye símbolos.' },
-          beforeStep: function () { _scrollToTarget('#setup-opt-clean'); } },
+          beforeStep: function () { _openSetupStep('build'); _scrollToTarget('#setup-opt-clean'); } },
         { target: 'button[onclick*="build"]', position: 'bottom',
           title: { ko: '플러그인 빌드', en: 'Build Plugins', ja: 'プラグインビルド', 'zh-CN': '构建插件', 'zh-TW': '建構外掛程式', es: 'Compilar plugins' },
           content: { ko: '<strong>GStreamer 플러그인</strong>을 빌드합니다. 위 옵션을 선택한 뒤 Build 버튼을 클릭하세요.', en: 'Build <strong>GStreamer plugins</strong>. Choose options above, then click Build.', ja: '<strong>GStreamerプラグイン</strong>をビルドします。上のオプションを選択してからBuildボタンをクリックしてください。', 'zh-CN': '构建<strong>GStreamer插件</strong>。选择上方选项后点击Build按钮。', 'zh-TW': '建構<strong>GStreamer外掛程式</strong>。選擇上方選項後點擊Build按鈕。', es: 'Compile <strong>plugins GStreamer</strong>. Elija las opciones de arriba y haga clic en Build.' },
-          beforeStep: function () { _scrollToTarget('button[onclick*="build"]'); } },
+          beforeStep: function () { _openSetupStep('build'); _scrollToTarget('button[onclick*="build"]'); } },
         { target: '#setup-badge-download', position: 'bottom',
           title: { ko: '모델 다운로드 상태', en: 'Model Download Status', ja: 'モデルダウンロード状態', 'zh-CN': '模型下载状态', 'zh-TW': '模型下載狀態', es: 'Estado de descarga de modelos' },
           content: { ko: '⑤번 카드의 <strong>다운로드 상태</strong> 배지입니다. ✅이면 모델과 샘플 비디오가 준비된 것입니다.', en: 'The <strong>download status</strong> badge on card ⑤. ✅ means models and sample videos are ready.', ja: '⑤番カードの<strong>ダウンロード状態</strong>バッジです。✅ならモデルとサンプルビデオの準備が完了しています。', 'zh-CN': '⑤号卡片的<strong>下载状态</strong>徽章。✅表示模型和示例视频已就绪。', 'zh-TW': '⑤號卡片的<strong>下載狀態</strong>徽章。✅表示模型和範例影片已就緒。', es: 'La insignia de <strong>estado de descarga</strong> en la tarjeta ⑤. ✅ indica que modelos y vídeos de muestra están listos.' },
@@ -455,7 +462,7 @@
         { target: 'button[onclick*="download-models"]', position: 'bottom',
           title: { ko: '모델/비디오 다운로드', en: 'Download Models & Videos', ja: 'モデル/ビデオダウンロード', 'zh-CN': '下载模型和视频', 'zh-TW': '下載模型和影片', es: 'Descargar modelos y vídeos' },
           content: { ko: '추론에 필요한 <strong>모델과 샘플 비디오</strong>를 다운로드합니다.', en: 'Download <strong>models and sample videos</strong> required for inference.', ja: '推論に必要な<strong>モデルとサンプルビデオ</strong>をダウンロードします。', 'zh-CN': '下载推理所需的<strong>模型和示例视频</strong>。', 'zh-TW': '下載推論所需的<strong>模型和範例影片</strong>。', es: 'Descargue <strong>modelos y vídeos de muestra</strong> necesarios para la inferencia.' },
-          beforeStep: function () { _scrollToTarget('button[onclick*="download-models"]'); } },
+          beforeStep: function () { _openSetupStep('download-models'); _scrollToTarget('button[onclick*="download-models"]'); } },
         { target: '#setup-badge-webrtc-deps', position: 'bottom',
           title: { ko: 'WebRTC 상태', en: 'WebRTC Status', ja: 'WebRTC状態', 'zh-CN': 'WebRTC状态', 'zh-TW': 'WebRTC狀態', es: 'Estado de WebRTC' },
           content: { ko: '⑤번 카드의 <strong>WebRTC 의존성 상태</strong> 배지입니다. ✅이면 브라우저 시각화 패키지가 준비된 것입니다.', en: 'The <strong>WebRTC dependency status</strong> badge on card ⑤. ✅ means browser visualization packages are ready.', ja: '⑤番カードの<strong>WebRTC依存関係状態</strong>バッジです。✅ならブラウザ可視化パッケージの準備が完了しています。', 'zh-CN': '⑤号卡片的<strong>WebRTC依赖状态</strong>徽章。✅表示浏览器可视化包已就绪。', 'zh-TW': '⑤號卡片的<strong>WebRTC相依性狀態</strong>徽章。✅表示瀏覽器視覺化套件已就緒。', es: 'La insignia de <strong>estado de dependencias WebRTC</strong> en la tarjeta ⑤. ✅ indica que los paquetes de visualización en el navegador están listos.' },
@@ -463,7 +470,7 @@
         { target: 'button[onclick*="webrtc-deps"]', position: 'bottom',
           title: { ko: 'WebRTC 의존성 설치', en: 'Install WebRTC Dependencies', ja: 'WebRTC依存関係インストール', 'zh-CN': '安装WebRTC依赖', 'zh-TW': '安裝WebRTC相依性', es: 'Instalar dependencias WebRTC' },
           content: { ko: '브라우저 시각화에 필요한 <strong>GStreamer WebRTC/ICE 패키지</strong>를 설치합니다.', en: 'Install <strong>GStreamer WebRTC/ICE packages</strong> required for browser visualization.', ja: 'ブラウザ可視化に必要な<strong>GStreamer WebRTC/ICEパッケージ</strong>をインストールします。', 'zh-CN': '安装浏览器可视化所需的 <strong>GStreamer WebRTC/ICE 包</strong>。', 'zh-TW': '安裝瀏覽器視覺化所需的 <strong>GStreamer WebRTC/ICE 套件</strong>。', es: 'Instale los <strong>paquetes GStreamer WebRTC/ICE</strong> necesarios para la visualización en el navegador.' },
-          beforeStep: function () { _scrollToTarget('button[onclick*="webrtc-deps"]'); } },
+          beforeStep: function () { _openSetupStep('webrtc-deps'); _scrollToTarget('button[onclick*="webrtc-deps"]'); } },
         { target: '#setup-env-tbody', position: 'top',
           title: { ko: '환경 점검', en: 'Environment Check', ja: '環境チェック', 'zh-CN': '环境检查', 'zh-TW': '環境檢查', es: 'Comprobación del entorno' },
           content: { ko: '모든 설치가 끝난 뒤 <strong>6개 항목</strong>(NPU, GStreamer, 모델, 비디오, 플러그인, 런타임)의 상태를 확인합니다. 🔄 재점검 버튼으로 최신 상태를 갱신하세요.', en: 'After all installs, check status of <strong>6 items</strong> (NPU, GStreamer, models, videos, plugins, runtime). Click 🔄 to refresh.', ja: 'すべてのインストール後、<strong>6項目</strong>(NPU、GStreamer、モデル、ビデオ、プラグイン、ランタイム)の状態を確認します。🔄 再確認ボタンで最新状態を更新してください。', 'zh-CN': '全部安装完成后，检查<strong>6个项目</strong>（NPU、GStreamer、模型、视频、插件、运行时）的状态。点击🔄刷新。', 'zh-TW': '全部安裝完成後，檢查<strong>6個項目</strong>（NPU、GStreamer、模型、影片、外掛程式、執行時期）的狀態。點擊🔄重新整理。', es: 'Tras todas las instalaciones, compruebe el estado de <strong>6 elementos</strong> (NPU, GStreamer, modelos, vídeos, plugins y runtime). Haga clic en 🔄 para actualizar.' },

@@ -578,4 +578,15 @@ window._DX_I18N_DICT = {
     'zh-TW': '🧰 安裝',
     es: '🧰 Instalar',
   },
+  // Setup 단계 목록 (아이콘 체계 단계 2b) — 버튼 말에서 이모지를 뺐다 (아이콘은 마크업이 그린다).
+  'Set up the rest': { ko: '나머지 설치', ja: '残りをセットアップ', 'zh-CN': '安装其余项', 'zh-TW': '安裝其餘項目', es: 'Instalar el resto' },
+  'Six steps get DX Stream running on this PC. What is done stays done.': {
+    ko: '여섯 단계면 이 PC 에서 DX Stream 이 돌아갑니다. 끝난 단계는 그대로 둡니다.',
+    ja: '6 つのステップでこの PC で DX Stream が動きます。終わったステップはそのままです。',
+    'zh-CN': '六个步骤即可让 DX Stream 在这台电脑上运行。已完成的步骤会保留。',
+    'zh-TW': '六個步驟即可讓 DX Stream 在這台電腦上執行。已完成的步驟會保留。',
+    es: 'Seis pasos para que DX Stream funcione en este PC. Lo que ya está hecho se queda hecho.',
+  },
+  'Clear Log': { ko: '로그 지우기', ja: 'ログクリア', 'zh-CN': '清除日志', 'zh-TW': '清除日誌', es: 'Limpiar registro' },
+  'Re-check Environment': { ko: '환경 재점검', ja: '環境を再確認', 'zh-CN': '重新检查环境', 'zh-TW': '重新檢查環境', es: 'Verificar entorno nuevamente' },
 };

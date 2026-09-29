@@ -67,11 +67,21 @@ tbody tr:hover td{background:var(--surface-hover)}
 .comp-status-badge.cs-run{background:rgba(88,166,255,.12);color:var(--status-info);border:1px solid rgba(88,166,255,.3)}
 
 /* ═══════════════════════════════════════════════════════════════════
-   Setup Grid & Cards
+   Setup — 공용 단계 목록 (shared/static/dx-steps.js) 위에 stream 만의 것
    ═══════════════════════════════════════════════════════════════════ */
-@media(max-width:900px){.setup-grid{grid-template-columns:1fr}}
-
-.setup-card:hover{transform:translateY(-2px);box-shadow:var(--surface-hover-shadow);border-color:var(--border-strong)}
+/* 이 PC 의 사실 한 줄 (OS · GStreamer · NPU 드라이버 · Python) */
+.setup-info-bar{display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-5);margin:0 0 var(--sp-4);font-size:var(--fs-sm)}
+.setup-info-item{display:inline-flex;align-items:baseline;gap:var(--sp-2);min-width:0}
+.setup-info-item span{color:var(--text-muted);font-size:var(--fs-xs)}
+.setup-info-item b{font-weight:var(--fw-medium);color:var(--text-secondary);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.dx-step-opts{display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4);margin-top:var(--sp-2);font-size:var(--fs-sm)}
+.dx-step-opts .setup-option{display:inline-flex;align-items:center;gap:var(--sp-1);cursor:pointer}
+.dx-step-progress{display:flex;align-items:center;gap:var(--sp-2);margin-top:var(--sp-2)}
+.dx-step-progress .progress-fill{height:4px;border-radius:2px;background:var(--accent);transition:width .3s}
+.dx-step-progress .progress-text{font-size:var(--fs-xs);color:var(--text-muted);font-variant-numeric:tabular-nums}
+/* 환경 점검 표의 상태도 단계 목록과 같은 모양 — 색 변수는 .dx-steps 밖이라 여기서 준다. */
+#setup-env-tbody{--step-ok:var(--status-ok);--step-warn:var(--status-warn);--step-err:var(--status-error)}
+#setup-env-tbody .dx-step-state{margin-left:0}
 
 /* ═══════════════════════════════════════════════════════════════════
    Toast Notifications

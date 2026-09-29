@@ -427,227 +427,190 @@
 
 <!-- ═══ PAGE: Setup ═══ -->
 <div class="page" id="page-setup">
-  <h1>⚙️ <span class="accent" data-i18n="Setup &amp; Install">Setup &amp; Install</span></h1>
-  <p class="txt-dim txt-sm mb16" data-i18n="Install dependencies and configure the environment for DX Stream.">Install dependencies and configure the environment for DX Stream.</p>
-
-  <!-- System Info -->
-  <div class="setup-info-bar" id="setup-info-bar">
-    <div class="setup-info-item">
-      <span class="txt-dim txt-xs" data-i18n="OS">OS</span>
-      <span id="setup-os-info">--</span>
+  <!-- 공용 단계 목록 (shared/static/dx-steps.js · spec 2026-09-29 아이콘 체계 단계 2b). 끝난 단계는 한 줄,
+       다음 단계만 펼친다. 상태는 stream-setup.js 가 DXSteps.set 으로 알린다 — 흐름 (sudo · 로그 폴링 · Run All) 은 그대로. -->
+  <section class="dx-steps" data-steps id="setup-steps">
+    <header class="dx-steps-head">
+      <div>
+        <h1><span data-i18n="Setup">Setup</span></h1>
+        <p class="dx-steps-lede" data-i18n="Six steps get DX Stream running on this PC. What is done stays done.">Six steps get DX Stream running on this PC. What is done stays done.</p>
+      </div>
+      <div class="setup-toolbar dx-steps-run">
+        <span id="setup-run-all-progress" class="txt-dim txt-sm" style="display:none"></span>
+        <button class="btn btn-sm btn-danger" id="setup-stop-btn" onclick="DXStream.setupStop()" style="display:none"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span></button>
+        <button class="btn btn-primary" id="setup-run-all" onclick="DXStream.setupRunAll()" data-steps-run><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Set up the rest">Set up the rest</span> <span data-steps-left></span></button>
+      </div>
+      <div class="dx-steps-progress"><span class="dx-steps-count" data-steps-count></span><div class="dx-steps-bar"></div></div>
+    </header>
+    <!-- 이 PC — 한 줄의 사실 -->
+    <div class="setup-info-bar" id="setup-info-bar">
+      <div class="setup-info-item"><span data-i18n="OS">OS</span><b id="setup-os-info">--</b></div>
+      <div class="setup-info-item"><span data-i18n="GStreamer Version">GStreamer Version</span><b id="setup-gst-version">--</b></div>
+      <div class="setup-info-item"><span data-i18n="NPU Driver">NPU Driver</span><b id="setup-npu-driver">--</b></div>
+      <div class="setup-info-item"><span data-i18n="Python">Python</span><b id="setup-python-version">--</b></div>
     </div>
-    <div class="setup-info-item">
-      <span class="txt-dim txt-xs" data-i18n="GStreamer Version">GStreamer Version</span>
-      <span id="setup-gst-version">--</span>
-    </div>
-    <div class="setup-info-item">
-      <span class="txt-dim txt-xs" data-i18n="NPU Driver">NPU Driver</span>
-      <span id="setup-npu-driver">--</span>
-    </div>
-    <div class="setup-info-item">
-      <span class="txt-dim txt-xs" data-i18n="Python">Python</span>
-      <span id="setup-python-version">--</span>
-    </div>
-  </div>
-
-  <div class="setup-toolbar" style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-    <button class="btn btn-accent" id="setup-run-all" onclick="DXStream.setupRunAll()">
-      ▶ <span data-i18n="Run All">Run All</span>
-    </button>
-    <span id="setup-run-all-progress" class="txt-dim" style="display:none"></span>
-    <button class="btn btn-sm btn-danger" id="setup-stop-btn" onclick="DXStream.setupStop()" style="display:none">
-      ⏹ Stop
-    </button>
-  </div>
-
-  <!-- Setup Cards -->
-  <div class="setup-grid">
-    <!-- Build Tools & Libraries (module install.sh) -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">① 🧰 <span data-i18n="Build Tools &amp; Libraries">Build Tools &amp; Libraries</span></div>
-          <div class="setup-card-desc"><span data-i18n="Install cmake, meson, GStreamer, OpenCV and other build dependencies.">Install cmake, meson, GStreamer, OpenCV and other build dependencies.</span> → <code style="font-size:10px">install.sh</code></div>
+    <ol class="dx-steps-list">
+    <li class="dx-step" data-step="stream-deps" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="Build Tools &amp; Libraries">Build Tools &amp; Libraries</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-stream-deps"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc" data-i18n="Install cmake, meson, GStreamer, OpenCV and other build dependencies.">Install cmake, meson, GStreamer, OpenCV and other build dependencies.</p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>install.sh</code></div>
+          <div class="dx-step-detail" id="setup-detail-stream-deps"></div>
+          <div class="dx-step-actions">
+            <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('stream-deps')"><span data-i18n="Install">Install</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('stream-deps')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#trash"></use></svg> <span data-i18n="Clear Log">Clear Log</span></button>
+          </div>
+          <pre class="log-output dx-step-log" id="setup-log-stream-deps" style="display:none"></pre>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-stream-deps">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" id="setup-detail-stream-deps"></div>
-      <pre class="log-output" id="setup-log-stream-deps" style="display:none"></pre>
-      <div class="setup-card-actions">
-        <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('stream-deps')" data-i18n="🧰 Install">🧰 Install
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('stream-deps')" data-i18n="🗑 Clear Log">🗑 Clear Log
-        </button>
-      </div>
-    </div>
-
-    <!-- DX-Runtime Dependencies -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">② 🔧 <span data-i18n="DX-Runtime Dependencies">DX-Runtime Dependencies</span></div>
-          <div class="setup-card-desc" data-i18n="Install NPU runtime packages (dx_rt, dx_engine)">Install NPU runtime packages (dx_rt, dx_engine)</div>
+    </li>
+    <li class="dx-step" data-step="runtime-deps" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="DX-Runtime Dependencies">DX-Runtime Dependencies</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-runtime"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc" data-i18n="Install NPU runtime packages (dx_rt, dx_engine)">Install NPU runtime packages (dx_rt, dx_engine)</p>
+          <div class="dx-step-detail" id="setup-detail-runtime"></div>
+          <div class="dx-step-actions">
+            <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('runtime-deps')"><span data-i18n="Install">Install</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('runtime')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#trash"></use></svg> <span data-i18n="Clear Log">Clear Log</span></button>
+          </div>
+          <pre class="log-output dx-step-log" id="setup-log-runtime" style="display:none"></pre>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-runtime">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" id="setup-detail-runtime"></div>
-      <pre class="log-output" id="setup-log-runtime" style="display:none"></pre>
-      <div class="setup-card-actions">
-        <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('runtime-deps')" data-i18n="🔧 Install">🔧 Install
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('runtime')" data-i18n="🗑 Clear Log">🗑 Clear Log
-        </button>
-      </div>
-    </div>
-
-    <!-- NPU Driver -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">③ 🔌 <span data-i18n="NPU Linux Driver">NPU Linux Driver</span></div>
-          <div class="setup-card-desc" data-i18n="DEEPX NPU kernel driver status">DEEPX NPU kernel driver status</div>
+    </li>
+    <li class="dx-step" data-step="driver" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="NPU Linux Driver">NPU Linux Driver</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-driver"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc" data-i18n="DEEPX NPU kernel driver status">DEEPX NPU kernel driver status</p>
+          <div class="dx-step-detail" id="setup-detail-driver"></div>
+          <div class="dx-step-actions">
+            <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('driver')"><span data-i18n="Install">Install</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('driver')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#trash"></use></svg> <span data-i18n="Clear Log">Clear Log</span></button>
+          </div>
+          <pre class="log-output dx-step-log" id="setup-log-driver" style="display:none"></pre>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-driver">⏳</span>
       </div>
-      <div class="txt-xs txt-dim" id="setup-detail-driver"></div>
-      <pre class="log-output" id="setup-log-driver" style="display:none"></pre>
-      <div class="setup-card-actions">
-        <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('driver')" data-i18n="🔌 Install">🔌 Install
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('driver')" data-i18n="🗑 Clear Log">🗑 Clear Log
-        </button>
-      </div>
-    </div>
-
-    <!-- Build Card -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">④ 🔨 <span data-i18n="GStreamer Plugin Build">GStreamer Plugin Build</span></div>
-          <div class="setup-card-desc"><span data-i18n="Build NPU inference and video processing plugins.">Build NPU inference and video processing plugins.</span> → <code style="font-size:10px">build.sh</code></div>
+    </li>
+    <li class="dx-step" data-step="build" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="GStreamer Plugin Build">GStreamer Plugin Build</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-build"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc" data-i18n="Build NPU inference and video processing plugins.">Build NPU inference and video processing plugins.</p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>build.sh</code></div>
+          <div class="dx-step-opts">
+            <label class="setup-option"><input type="checkbox" id="setup-opt-clean" checked> <span data-i18n="Clean Build">Clean Build</span></label>
+            <label class="setup-option"><input type="checkbox" id="setup-opt-debug"> <span data-i18n="Debug Mode">Debug Mode</span></label>
+          </div>
+          <div class="dx-step-detail" id="setup-detail-build"></div>
+          <div class="dx-step-actions">
+            <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('build')"><span data-i18n="Build">Build</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('build')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#trash"></use></svg> <span data-i18n="Clear Log">Clear Log</span></button>
+          </div>
+          <pre class="log-output dx-step-log" id="setup-log-build" style="display:none"></pre>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-build">⏳</span>
       </div>
-      <div class="setup-card-options">
-        <label class="setup-option">
-          <input type="checkbox" id="setup-opt-clean" checked>
-          <span data-i18n="Clean Build">Clean Build</span>
-        </label>
-        <label class="setup-option">
-          <input type="checkbox" id="setup-opt-debug">
-          <span data-i18n="Debug Mode">Debug Mode</span>
-        </label>
-      </div>
-      <pre class="log-output" id="setup-log-build"></pre>
-      <div class="setup-card-actions">
-        <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('build')" data-i18n="🔨 Build">🔨 Build
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('build')" data-i18n="🗑 Clear Log">🗑 Clear Log
-        </button>
-      </div>
-    </div>
-
-    <!-- Download Card -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">⑤ 📥 <span data-i18n="Model &amp; Video Download">Model &amp; Video Download</span></div>
-          <div class="setup-card-desc"><span data-i18n="Download model files and sample videos for inference.">Download model files and sample videos for inference.</span> → <code style="font-size:10px">setup.sh</code></div>
+    </li>
+    <li class="dx-step" data-step="download-models" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="Model &amp; Video Download">Model &amp; Video Download</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-download"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc" data-i18n="Download model files and sample videos for inference.">Download model files and sample videos for inference.</p>
+          <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>setup.sh</code></div>
+          <p class="dx-step-desc" data-i18n="The dev runtime sets up models and videos together.">The dev runtime sets up models and videos together.</p>
+          <div id="setup-download-progress" class="progress-bar dx-step-progress" style="display:none">
+            <div class="progress-fill" id="setup-download-fill" style="width:0%"></div>
+            <span class="progress-text" id="setup-download-text">0%</span>
+          </div>
+          <div class="dx-step-detail" id="setup-detail-download"></div>
+          <div class="dx-step-actions">
+            <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('download-models')"><span data-i18n="Download">Download</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('download')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#trash"></use></svg> <span data-i18n="Clear Log">Clear Log</span></button>
+          </div>
+          <pre class="log-output dx-step-log" id="setup-log-download" style="display:none"></pre>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-download">⏳</span>
       </div>
-      <div class="setup-card-options">
-        <span class="txt-xs txt-dim" data-i18n="The dev runtime sets up models and videos together.">The dev runtime sets up models and videos together.
-        </span>
-      </div>
-      <div id="setup-download-progress" class="progress-bar" style="display:none">
-        <div class="progress-fill" id="setup-download-fill" style="width:0%;height:4px;background:var(--accent);border-radius:2px;transition:width 0.3s"></div>
-        <span class="progress-text" id="setup-download-text" style="font-size:11px;color:var(--text-muted)">0%</span>
-      </div>
-      <pre class="log-output" id="setup-log-download"></pre>
-      <div class="setup-card-actions">
-        <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('download-models')" data-i18n="📥 Download">📥 Download
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('download')" data-i18n="🗑 Clear Log">🗑 Clear Log
-        </button>
-      </div>
-    </div>
-
-    <!-- WebRTC Dependencies Card -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div>
-          <div class="setup-card-title">⑥ 🌐 <span data-i18n="WebRTC Dependencies">WebRTC Dependencies</span></div>
-          <div class="setup-card-desc" data-i18n="Install GStreamer WebRTC/ICE packages for browser visualization.">Install GStreamer WebRTC/ICE packages for browser visualization.</div>
+    </li>
+    <li class="dx-step" data-step="webrtc-deps" data-state="todo">
+      <span class="dx-step-dot"></span>
+      <div class="dx-step-body">
+        <div class="dx-step-row"><h3 class="dx-step-title"><span data-i18n="WebRTC Dependencies">WebRTC Dependencies</span></h3><span class="dx-step-facts"></span><span class="dx-step-state" id="setup-badge-webrtc-deps"></span></div>
+        <div class="dx-step-more">
+          <p class="dx-step-desc" data-i18n="Install GStreamer WebRTC/ICE packages for browser visualization.">Install GStreamer WebRTC/ICE packages for browser visualization.</p>
+          <div class="dx-step-detail" id="setup-detail-webrtc-deps"></div>
+          <div class="dx-step-actions">
+            <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('webrtc-deps')"><span data-i18n="Install">Install</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('webrtc-deps')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#trash"></use></svg> <span data-i18n="Clear Log">Clear Log</span></button>
+          </div>
+          <pre class="log-output dx-step-log" id="setup-log-webrtc-deps" style="display:none"></pre>
         </div>
-        <span class="comp-status-badge cs-warn" id="setup-badge-webrtc-deps">⏳</span>
       </div>
-      <pre class="log-output" id="setup-log-webrtc-deps"></pre>
-      <div class="setup-card-actions">
-        <button class="btn btn-primary btn-sm" onclick="DXStream.runSetup('webrtc-deps')" data-i18n="🌐 Install">🌐 Install
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.clearLog('webrtc-deps')" data-i18n="🗑 Clear Log">🗑 Clear Log
-        </button>
-      </div>
-    </div>
-
-  </div>
+    </li>
+    </ol>
+  </section>
 
   <!-- Environment Check -->
-  <h2 class="section-title" data-i18n="Environment Check">Environment Check</h2>
-  <div class="tbl-wrap">
-    <table class="tbl" id="setup-env-table">
-      <thead>
-        <tr>
-          <th data-i18n="Item">Item</th>
-          <th data-i18n="Status">Status</th>
-          <th data-i18n="Details">Details</th>
-        </tr>
-      </thead>
-      <tbody id="setup-env-tbody">
+  <div class="card mt16">
+    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
+      <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clipboard"></use></svg> <span data-i18n="Environment Check">Environment Check</span></h2>
+      <button class="btn btn-ghost btn-sm" onclick="DXStream.checkEnvironment()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg> <span data-i18n="Re-check Environment">Re-check Environment</span></button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="setup-env-table">
+        <thead>
+          <tr>
+            <th data-i18n="Item">Item</th>
+            <th data-i18n="Status">Status</th>
+            <th data-i18n="Details">Details</th>
+          </tr>
+        </thead>
+        <tbody id="setup-env-tbody">
         <tr>
           <td>GStreamer</td>
-          <td><span class="comp-status-badge cs-warn" id="env-gst-status">⏳</span></td>
+          <td><span class="dx-step-state is-blocked" id="env-gst-status"></span></td>
           <td id="env-gst-detail">--</td>
         </tr>
         <tr>
           <td>NPU Runtime</td>
-          <td><span class="comp-status-badge cs-warn" id="env-npu-status">⏳</span></td>
+          <td><span class="dx-step-state is-blocked" id="env-npu-status"></span></td>
           <td id="env-npu-detail">--</td>
         </tr>
         <tr>
           <td data-i18n="Custom Plugins">Custom Plugins</td>
-          <td><span class="comp-status-badge cs-warn" id="env-plugin-status">⏳</span></td>
+          <td><span class="dx-step-state is-blocked" id="env-plugin-status"></span></td>
           <td id="env-plugin-detail">--</td>
         </tr>
         <tr>
           <td data-i18n="Model Files">Model Files</td>
-          <td><span class="comp-status-badge cs-warn" id="env-model-status">⏳</span></td>
+          <td><span class="dx-step-state is-blocked" id="env-model-status"></span></td>
           <td id="env-model-detail">--</td>
         </tr>
         <tr>
           <td data-i18n="Sample Videos">Sample Videos</td>
-          <td><span class="comp-status-badge cs-warn" id="env-video-status">⏳</span></td>
+          <td><span class="dx-step-state is-blocked" id="env-video-status"></span></td>
           <td id="env-video-detail">--</td>
         </tr>
         <tr>
           <td>WebRTC</td>
-          <td><span class="comp-status-badge cs-warn" id="env-webrtc-status">⏳</span></td>
+          <td><span class="dx-step-state is-blocked" id="env-webrtc-status"></span></td>
           <td id="env-webrtc-detail">--</td>
         </tr>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <button class="btn btn-ghost btn-sm" onclick="DXStream.checkEnvironment()" style="margin-top:8px" data-i18n="🔍 Re-check Environment">🔍 Re-check Environment
-  </button>
 
   <!-- Deep Diagnostics -->
   <div class="card mt16">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
-      <h2>🔍 <span data-i18n="Deep Diagnostics">Deep Diagnostics</span></h2>
-      <button class="btn btn-sm" id="stream-diag-run-btn" onclick="DXStream.runDiagnostics()">
-        ▶ <span data-i18n="Run">Run</span>
-      </button>
+      <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#search"></use></svg> <span data-i18n="Deep Diagnostics">Deep Diagnostics</span></h2>
+      <button class="btn btn-sm" id="stream-diag-run-btn" onclick="DXStream.runDiagnostics()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run">Run</span></button>
     </div>
     <div id="stream-diag-summary" style="display:none"></div>
     <div id="stream-diag-results" class="diag-grid"></div>
@@ -716,6 +679,7 @@
 <!-- JS Modules -->
 <script src="/static/js/stream-i18n.js?m=dx_stream"></script>
 <script src="/static/shared/i18n.js"></script>
+<script src="/static/shared/dx-steps.js"></script>
 <script src="/static/shared/server-error-i18n.js"></script>
 <script src="/static/js/stream-lang-refresh.js?m=dx_stream"></script>
 <script src="/static/shared/brand.js"></script>
