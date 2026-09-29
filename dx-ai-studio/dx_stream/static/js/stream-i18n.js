@@ -557,19 +557,19 @@ window._DX_I18N_DICT = {
     'zh-TW': '🌐 安裝',
     es: '🌐 Instalar',
   },
-  '🌐 Remote (MJPEG)': {
-    ko: '🌐 원격 (MJPEG)',
-    ja: '🌐 リモート (MJPEG)',
-    'zh-CN': '🌐 远程 (MJPEG)',
-    'zh-TW': '🌐 遠端 (MJPEG)',
-    es: '🌐 Remoto (MJPEG)',
+  'Remote (MJPEG)': {
+    ko: '원격 (MJPEG)',
+    ja: 'リモート (MJPEG)',
+    'zh-CN': '远程 (MJPEG)',
+    'zh-TW': '遠端 (MJPEG)',
+    es: 'Remoto (MJPEG)',
   },
-  '🖥 Local (WebRTC)': {
-    ko: '🖥 로컬 (WebRTC)',
-    ja: '🖥 ローカル (WebRTC)',
-    'zh-CN': '🖥 本地 (WebRTC)',
-    'zh-TW': '🖥 本機 (WebRTC)',
-    es: '🖥 Equipo local (WebRTC)',
+  'Local (WebRTC)': {
+    ko: '로컬 (WebRTC)',
+    ja: 'ローカル (WebRTC)',
+    'zh-CN': '本地 (WebRTC)',
+    'zh-TW': '本機 (WebRTC)',
+    es: 'Equipo local (WebRTC)',
   },
   '🧰 Install': {
     ko: '🧰 설치',
@@ -589,4 +589,8 @@ window._DX_I18N_DICT = {
   },
   'Clear Log': { ko: '로그 지우기', ja: 'ログクリア', 'zh-CN': '清除日志', 'zh-TW': '清除日誌', es: 'Limpiar registro' },
   'Re-check Environment': { ko: '환경 재점검', ja: '環境を再確認', 'zh-CN': '重新检查环境', 'zh-TW': '重新檢查環境', es: 'Verificar entorno nuevamente' },
+  // 데모 카드 상태 (아이콘 체계 단계 4) — Setup 단계 목록과 같은 말.
+  'Ready': { ko: '준비됨', ja: '準備完了', 'zh-CN': '就绪', 'zh-TW': '就緒', es: 'Listo' },
+  'Needs setup': { ko: '설치 필요', ja: 'セットアップが必要', 'zh-CN': '需要安装', 'zh-TW': '需要安裝', es: 'Requiere instalación' },
+  'Set up': { ko: '설치하러 가기', ja: 'セットアップへ', 'zh-CN': '前往安装', 'zh-TW': '前往安裝', es: 'Ir a instalar' },
 };

@@ -18,12 +18,30 @@ var _demoCatI18n = {
     segmentation:     { en: 'Segmentation',     ko: '분할',      es: 'Segmentación', ja: 'セグメンテーション', 'zh-CN': '分割', 'zh-TW': '分割' },
     tracking:         { en: 'Tracking',         ko: '추적',      es: 'Seguimiento', ja: '追跡', 'zh-CN': '追踪', 'zh-TW': '追蹤' },
     multi_stream:     { en: 'Multi-Stream',     ko: '멀티 스트림', es: 'Multi',    ja: 'マルチストリーム', 'zh-CN': '多路流', 'zh-TW': '多路串流' },
+    depth_estimation: { en: 'Depth Estimation', ko: '깊이 추정', es: 'Profundidad', ja: '深度推定', 'zh-CN': '深度估计', 'zh-TW': '深度估計' },
     secondary:        { en: 'Secondary',        ko: '2차 추론',  es: 'Secundario', ja: '二次推論', 'zh-CN': '二次推理', 'zh-TW': '二次推論' }
 };
 function _demoCatLabel(cat) {
     var t = _demoCatI18n[cat];
     if (!t) return cat || '';
     return t[DXStream.S.lang] || t.en || cat || '';
+}
+
+// task 아이콘은 Model Zoo · DX App 과 같은 한 표 (sprite 의 task-<key>, 아이콘 체계 단계 3). stream 만의
+// 묶음 (추적 · 멀티 스트림 · 2차 추론) 은 가까운 공용 아이콘으로.
+var _DEMO_ICON = {
+    segmentation: 'task-instance_segmentation', tracking: 'video', multi_stream: 'dashboard',
+    secondary: 'task-attribute_recognition'
+};
+function _demoIco(name, cls) {
+    return (typeof window.DXIcon === 'function') ? window.DXIcon(name, cls ? { cls: cls } : undefined) : '';
+}
+function _demoTaskIco(cat) {
+    var name = _DEMO_ICON[cat] || (/^[a-z0-9_]+$/.test(cat || '') ? 'task-' + cat : 'models');
+    return _demoIco(name, 'demo-task-ico');
+}
+function _demoStateHtml(cls, icon, label) {
+    return '<span class="dx-step-state ' + cls + '">' + _demoIco(icon) + '<span>' + _escHtml(label) + '</span></span>';
 }
 
 function _demoText(d, field) {
@@ -106,33 +124,33 @@ function _renderDemoCards(demos) {
     grid.innerHTML = demos.map(function (d) {
         var availability = d.availability || {};
         var reason = _demoUnavailableReason(availability) || d.reason || '';
+        // DX App Run Demo 와 같은 틀 (아이콘 체계 단계 4, 사용자 확정 2026-09-29): 머리는 task 한 조각 +
+        // 상태 (Setup 단계 목록과 같은 모양), 제목은 데모, 준비 안 된 카드는 짧게 — 이유 한 줄 + 링크 하나.
+        // Start 와 Setup 링크는 demo-card-go 를 함께 가진다 (튜토리얼이 가리키는 자리).
+        var ready = !!d.available;
+        var running = d.id === runId;
+        var state = ready
+            ? '<span class="demo-state">' + _demoStateHtml('is-done demo-state-ready', 'check', T('Ready'))
+              + _demoStateHtml('is-running demo-state-running', 'spinner', T('Running')) + '</span>'
+            : _demoStateHtml('is-todo', 'alert', T('Needs setup'));
         return `
-        <div class="demo-card${d.id === runId ? ' demo-running' : ''}" data-id="${d.id}" data-category="${_escHtml(d.category)}">
+        <div class="demo-card${running ? ' demo-running' : ''}${ready ? '' : ' is-unready'}" data-id="${d.id}" data-category="${_escHtml(d.category)}">
             <div class="demo-card-header">
-                <span class="demo-card-num">#${d.id}</span>
-                ${d.id === runId ? '<span class="status-pill pill-running">▶</span>' : ''}
-                <span class="status-pill ${d.available ? 'pill-ok' : 'pill-warn'}">${d.available ? '✓' : '⚠'}</span>
+                <span class="demo-task">${_demoTaskIco(d.category)}<span>${_escHtml(_demoCatLabel(d.category))}</span></span>
+                ${state}
             </div>
-            <h3 class="demo-card-title">
-                ${_escHtml(_demoText(d, 'name'))}
-            </h3>
-            <p class="txt-dim txt-sm">
-                ${_escHtml(_demoText(d, 'description'))}
-            </p>
-            <div class="demo-card-meta">
-                <span class="demo-card-model">📦 ${_escHtml(d.model)}</span>
-                <span class="demo-card-cat">${_escHtml(_demoCatLabel(d.category))}</span>
-            </div>
-            ${!d.available && reason ? '<p class="txt-xs txt-warn demo-unavailable-reason">' + _escHtml(reason) + '</p>' : ''}
-            ${d.pipeline_type === 'rtsp' ? '<input class="demo-rtsp-input" id="rtsp-url-' + d.id + '" type="text" placeholder="rtsp://host:port/path" title="RTSP" style="width:100%;box-sizing:border-box;margin:2px 0 6px;padding:6px 8px;border:1px solid var(--border-subtle);border-radius:6px;background:var(--surface-page,var(--control-bg));color:var(--text-primary);font-size:12px"><p class="txt-xs txt-dim" style="margin:0 0 6px" data-i18n="Enter an RTSP URL (blank = demo CCTV)">Enter an RTSP URL (blank = demo CCTV)</p>' : ''}
+            <h3 class="demo-card-title">${_escHtml(_demoText(d, 'name'))}</h3>
+            ${ready ? '<p class="txt-dim txt-sm demo-card-desc">' + _escHtml(_demoText(d, 'description')) + '</p>'
+                + '<div class="demo-card-meta"><span class="demo-card-model">' + _escHtml(d.model) + '</span></div>' : ''}
+            ${!ready && reason ? '<p class="txt-xs demo-unavailable-reason" title="' + _escHtml(reason) + '">' + _escHtml(reason) + '</p>' : ''}
+            ${ready && d.pipeline_type === 'rtsp' ? '<input class="demo-rtsp-input" id="rtsp-url-' + d.id + '" type="text" placeholder="rtsp://host:port/path" title="RTSP" style="width:100%;box-sizing:border-box;margin:2px 0 6px;padding:6px 8px;border:1px solid var(--border-subtle);border-radius:6px;background:var(--surface-page,var(--control-bg));color:var(--text-primary);font-size:12px"><p class="txt-xs txt-dim" style="margin:0 0 6px" data-i18n="Enter an RTSP URL (blank = demo CCTV)">Enter an RTSP URL (blank = demo CCTV)</p>' : ''}
             <div class="demo-card-actions">
-                <button class="btn btn-primary btn-sm" onclick="DXStream._startDemo(${d.id})"
-                    ${!d.available || d.id === runId ? 'disabled' : ''} id="start-demo-${d.id}"
-                    ${d.id === runId ? 'style="display:none"' : ''} data-i18n="Start">Start
+                ${ready ? `<button class="btn btn-primary btn-sm demo-card-go" onclick="DXStream._startDemo(${d.id})"
+                    ${running ? 'disabled style="display:none"' : ''} id="start-demo-${d.id}" data-i18n="Start">Start
                 </button>
                 <button class="btn btn-ghost btn-sm" onclick="DXStream._stopDemo(${d.id})"
-                    ${d.id !== runId ? 'style="display:none"' : ''} id="stop-demo-${d.id}" data-i18n="Stop">Stop
-                </button>
+                    ${running ? '' : 'style="display:none"'} id="stop-demo-${d.id}" data-i18n="Stop">Stop
+                </button>` : `<button type="button" class="demo-setup-link demo-card-go" onclick="DXStream.nav('setup')"><span>${_escHtml(T('Set up'))}</span>${_demoIco('chev')}</button>`}
             </div>
         </div>
     `;
@@ -543,7 +561,7 @@ DXStream._startDemo = async function (id) {
                 var titleEl = DXStream.$('demo-video-title');
                 if (titleEl) titleEl.textContent = '#' + id + ' ' + _demoText(demo, 'name');
                 var modelEl = DXStream.$('demo-model-info');
-                if (modelEl) modelEl.textContent = '📦 ' + (demo.model || '--');
+                if (modelEl) modelEl.innerHTML = _demoIco('models') + ' ' + _escHtml(demo.model || '--');
                 var pipeEl = DXStream.$('demo-pipeline-info');
                 if (pipeEl) pipeEl.textContent = demo.category || '';
             }

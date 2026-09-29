@@ -23,6 +23,7 @@ RUNTIME_SELECTOR_ALLOWLIST = {
     'button[onclick*="download-models"]',
     'button[onclick*="webrtc-deps"]',
     '#demo-grid [id^="start-demo-"]',
+    "#demo-grid .demo-card-go",
     ".download-model-btn",
     ".modal-tab[data-tab=\"metadata\"]",
     "#model-tab-metadata",

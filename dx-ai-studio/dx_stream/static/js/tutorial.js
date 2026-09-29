@@ -252,14 +252,15 @@
               });
             }
           } },
-        { target: '#demo-grid [id^="start-demo-"]', position: 'right',
+        // Start 와 (준비 안 된 카드의) Setup 링크가 같은 자리 — demo-card-go (아이콘 체계 단계 4).
+        { target: '#demo-grid .demo-card-go', position: 'right',
           title: { ko: '데모 시작', en: 'Start Demo', ja: 'デモ開始', 'zh-CN': '启动演示', 'zh-TW': '啟動示範', es: 'Iniciar demo' },
           content: { ko: '▶ 버튼을 클릭하면 파이프라인이 시작됩니다. 실행 중인 카드에는 <strong>초록 테두리 + pulse 애니메이션</strong>이 표시됩니다.', en: 'Click ▶ to start the pipeline. Running cards show a <strong>green border + pulse animation</strong>.', ja: '▶をクリックするとパイプラインが開始します。実行中のカードには<strong>緑枠 + パルスアニメーション</strong>が表示されます。', 'zh-CN': '点击▶启动管道。运行中的卡片显示<strong>绿色边框 + 脉冲动画</strong>。', 'zh-TW': '點擊▶啟動管線。執行中的卡片顯示<strong>綠色邊框 + 脈衝動畫</strong>。', es: 'Haga clic en ▶ para iniciar el pipeline. Las tarjetas en ejecución muestran un <strong>borde verde y animación de pulso</strong>.' },
           beforeStep: function () {
             if (window.DXStream && typeof DXStream._inputModalCancel === 'function') {
               DXStream._inputModalCancel();
             }
-            var btn = document.querySelector('#demo-grid [id^="start-demo-"]:not([disabled])');
+            var btn = document.querySelector('#demo-grid [id^="start-demo-"]:not([disabled])') || document.querySelector('#demo-grid .demo-card-go');
             if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
           } },
         { target: '#demo-video-section', position: 'bottom',

@@ -151,14 +151,14 @@
 
 <!-- ═══ PAGE: Demo ═══ -->
 <div class="page" id="page-demo">
-  <h1>▶️ <span class="accent" data-i18n="Demo Launcher">Demo Launcher</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#demo"></use></svg> <span class="accent" data-i18n="Demo Launcher">Demo Launcher</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Select a demo and view results in real-time.">Select a demo and view results in real-time.</p>
 
   <!-- Playback mode: WebRTC for local/same-LAN (low latency), MJPEG for remote access -->
   <div class="playback-mode-bar" id="playback-mode-bar">
     <span class="txt-xs txt-dim playback-mode-label" data-i18n="Playback">Playback</span>
-    <button class="btn btn-ghost btn-sm active" data-mode="local" onclick="DXStream.setPlaybackMode('local',this)" data-i18n="🖥 Local (WebRTC)">🖥 Local (WebRTC)</button>
-    <button class="btn btn-ghost btn-sm" data-mode="remote" onclick="DXStream.setPlaybackMode('remote',this)" data-i18n="🌐 Remote (MJPEG)">🌐 Remote (MJPEG)</button>
+    <button class="btn btn-ghost btn-sm active" data-mode="local" onclick="DXStream.setPlaybackMode('local',this)"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#monitor"></use></svg> <span data-i18n="Local (WebRTC)">Local (WebRTC)</span></button>
+    <button class="btn btn-ghost btn-sm" data-mode="remote" onclick="DXStream.setPlaybackMode('remote',this)"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#globe"></use></svg> <span data-i18n="Remote (MJPEG)">Remote (MJPEG)</span></button>
     <span class="txt-xs txt-dim playback-mode-hint" id="playback-mode-hint-local" data-i18n="Viewing on the board&#x27;s own PC / same LAN (low latency, no re-encode)">Viewing on the board's own PC / same LAN (low latency, no re-encode)
     </span>
     <span class="txt-xs txt-dim playback-mode-hint" id="playback-mode-hint-remote" style="display:none" data-i18n="Remote access from another PC / SSH tunnel (H264 over HTTP, works anywhere)">Remote access from another PC / SSH tunnel (H264 over HTTP, works anywhere)
@@ -217,8 +217,8 @@
        (SSH tunnel / remote browser). Same DXStream.setPlaybackMode, synced across both bars. -->
   <div class="playback-mode-bar" id="pipeline-playback-mode-bar" style="margin-bottom:10px">
     <span class="txt-dim txt-sm" style="margin-right:8px" data-i18n="Playback:">Playback:</span>
-    <button class="btn btn-ghost btn-sm active" data-mode="local" onclick="DXStream.setPlaybackMode('local',this)" data-i18n="🖥 Local (WebRTC)">🖥 Local (WebRTC)</button>
-    <button class="btn btn-ghost btn-sm" data-mode="remote" onclick="DXStream.setPlaybackMode('remote',this)" data-i18n="🌐 Remote (MJPEG)">🌐 Remote (MJPEG)</button>
+    <button class="btn btn-ghost btn-sm active" data-mode="local" onclick="DXStream.setPlaybackMode('local',this)"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#monitor"></use></svg> <span data-i18n="Local (WebRTC)">Local (WebRTC)</span></button>
+    <button class="btn btn-ghost btn-sm" data-mode="remote" onclick="DXStream.setPlaybackMode('remote',this)"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#globe"></use></svg> <span data-i18n="Remote (MJPEG)">Remote (MJPEG)</span></button>
   </div>
 
   <!-- Pipeline Toolbar -->
