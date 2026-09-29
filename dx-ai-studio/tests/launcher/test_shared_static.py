@@ -291,9 +291,12 @@ def test_launcher_tutorial_mode_defaults_on():
     assert "_stored !== 'off'" in tutorial_js
     assert "_stored === 'on'" not in tutorial_js
     assert "type: _tutorialMode ? 'dx-tutorial-start' : 'dx-tutorial-stop'" in tutorial_js
-    # first step spotlights the Tutorial Mode on/off card so users know where to turn it off
-    assert "#dxt-tutorial-card" in tutorial_js
-    assert tutorial_js.index("target: '#dxt-tutorial-card'") < tutorial_js.index("target: '.top-bar'")
+    # The tour row (Tutorial Mode switch + Replay intro) has its own step that says how to turn
+    # the tours off. It used to be the first step; the stage redesign (spec 2026-09-23 §9) walks
+    # the stage in reading order and puts the tour row after the bar.
+    step = tutorial_js[tutorial_js.index("target: '#homeTour'"):]
+    step = step[:step.index("} }")]
+    assert "Tutorial Mode" in step and "off" in step
 
 
 def test_launcher_index_rewrites_root_assets_with_content_hashes():

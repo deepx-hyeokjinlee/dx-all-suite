@@ -91,9 +91,9 @@
             }
             return;
           }
-          // Launcher, first load with the tutorial on → auto-run the walkthrough so it opens
-          // on the "you can turn this off" toggle step. Afterwards (and for module tutorials)
-          // just open the table of contents.
+          // Launcher, first load with the tutorial on → auto-run the walkthrough. It opens on the
+          // ask box (spec 2026-09-23 §9); the "you can turn this off" switch is its tour-row step.
+          // Afterwards (and for module tutorials) just open the table of contents.
           if (engine.appId === 'launcher' &&
               !localStorage.getItem('dx-tutorial-launcher-autostarted')) {
             try { localStorage.setItem('dx-tutorial-launcher-autostarted', '1'); } catch (e) {}

@@ -160,7 +160,7 @@ def test_the_bar_is_glass():
 
 
 def test_the_tutorial_no_longer_sends_people_to_the_agent_in_the_bar():
-    step = TUTORIAL[TUTORIAL.index("target: '#deepxLinks'"):]
+    step = TUTORIAL[TUTORIAL.index("target: '#homeBar'"):]   # P8: 막대 단계는 막대 전체를 비춘다
     step = step[:step.index("target:", 10)]
     assert "DEEPX Agent" not in step
     assert "DEEPX Developers" in step
