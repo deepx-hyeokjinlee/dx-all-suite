@@ -545,8 +545,10 @@ function updateRunProgress(poll){
   }
 }
 
+/* 결과의 표시는 sprite 아이콘 (아이콘 체계 단계 4) — 문장 앞의 이모지가 아니다. */
+function _resIco(n){return (typeof DXIcon==='function')?DXIcon(n,{cls:'res-mark'}):'';}
 window.renderInferenceError=function(el,msg,hintHtml){
-  el.innerHTML='<p style="color:var(--status-error)">'+T('❌ Error: ')+esc(msg)+(hintHtml||'')+'</p>';
+  el.innerHTML='<p class="res-line" style="color:var(--status-error)">'+_resIco('x')+'<span>'+T('Error: ')+esc(msg)+(hintHtml||'')+'</span></p>';
 };
 
 window.renderInferenceResult=function(el,res){
@@ -575,7 +577,7 @@ window.renderInferenceResult=function(el,res){
     h+='<div class="res-hint" style="background:var(--accent-dim);border:1px solid rgba(41,151,255,.2);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--accent)">'+hintIco+'<span>'+VIS_HINTS[cat]+'</span></div>';
   }
   if(r.result_video_url){h+='<div class="mb8"><video src="'+r.result_video_url+'" controls class="res-img" style="max-width:100%"></video></div>'}
-  else if(r.video_note){h+='<div style="background:rgba(240,180,40,.12);border:1px solid rgba(240,180,40,.35);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#c88a10">⚠️ '+T(r.video_note)+'</div>'}
+  else if(r.video_note){h+='<div style="background:rgba(240,180,40,.12);border:1px solid rgba(240,180,40,.35);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#c88a10" class="res-line">'+_resIco('alert')+'<span>'+T(r.video_note)+'</span></div>'}
   var pairCats=['embedding','reid'];
   // CMP slider applies when input is an image and result_image is present (not pair-compare layouts)
   // "Before" image is either a picked sample (served via /file/) or an uploaded
@@ -599,7 +601,7 @@ window.renderInferenceResult=function(el,res){
   if(r.fps_per_watt)h+='<div class="pcard"><div class="pv" style="color:var(--status-ok)">'+r.fps_per_watt+'</div><div class="pk">FPS/W</div></div>';
   if(r.elapsed_s)h+='<div class="pcard"><div class="pv">'+r.elapsed_s+'s</div><div class="pk">Elapsed</div></div>';
   var exitColor=r.exit_code===0?'var(--status-ok)':'var(--status-error)';
-  var exitIcon=r.exit_code===0?'\u2705':'\u274c';
+  var exitIcon=_resIco(r.exit_code===0?'check':'x');
   h+='<div class="pcard"><div class="pv" style="color:'+exitColor+'">'+exitIcon+'</div><div class="pk">Exit '+r.exit_code+'</div></div>';
   h+='</div>';
   if(r.perf&&r.perf.pipeline&&r.perf.pipeline.length){
@@ -607,15 +609,15 @@ window.renderInferenceResult=function(el,res){
   }
   // Task-tag specific summary (single run)
   if(r.task_tag&&r.task_summary){
-    h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">'+T('📊 Task Summary (')+r.task_tag+')</div>';
+    h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px" class="res-line">'+_resIco('dashboard')+'<span>'+T('Task Summary (')+r.task_tag+')</span></div>';
     h+=renderTaskSummary(r.task_tag,r.task_summary)+'</div>';
   }else if(r.det_summary&&Object.keys(r.det_summary).length){
     h+='<div class="mt8">'+renderDetSummary(r.det_summary)+'</div>';
   }
   if(r.exit_code!==0){
-    h+='<div style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:11px;color:var(--status-error)">'+T('⚠️ Inference exited abnormally (exit code: ')+r.exit_code+T('). Check Full Output for details.')+'</div>';
+    h+='<div style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:8px 12px;margin-top:10px;font-size:11px;color:var(--status-error)" class="res-line">'+_resIco('alert')+'<span>'+T('Inference exited abnormally (exit code: ')+r.exit_code+T('). Check Full Output for details.')+'</span></div>';
   }
-  if(r.output){h+='<details class="mt8"><summary class="clickable txt-dim">'+T('📋 Full Output')+'</summary><div class="code mt8">'+esc(r.output)+'</div></details>'}
+  if(r.output){h+='<details class="mt8"><summary class="clickable txt-dim">'+_resIco('file')+' '+T('Full Output')+'</summary><div class="code mt8">'+esc(r.output)+'</div></details>'}
   el.innerHTML=h;
 };
 

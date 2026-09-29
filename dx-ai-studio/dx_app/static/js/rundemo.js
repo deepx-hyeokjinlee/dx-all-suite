@@ -188,6 +188,7 @@ function rundemoRender(demos, groups) {
   root.innerHTML = html || ('<div class="txt-dim txt-sm" style="padding:20px">'
     + esc(_T6('데모가 없습니다.', 'No demos.', 'デモがありません。', '暂无演示。', '暫無示範。', 'No hay demostraciones.'))
     + '</div>');
+  _rundemoTranslateTasks(root);
   demos.forEach(function (d) { _rundemoUpdateBlockUI(d); });
 }
 if (typeof window !== 'undefined') window.rundemoRender = rundemoRender;
@@ -232,12 +233,18 @@ function _rundemoNotRunnableHtml(d, av) {
         '没有可运行的构建 — 请先完成 DX-APP/DX-Runtime 构建',
         '沒有可執行的建置 — 請先完成 DX-APP/DX-Runtime 建置',
         'Sin build ejecutable — complete primero el build de DX-APP/DX-Runtime');
-  var inner = '<div class="rundemo-notice rd-notice">' + esc(msg) + '</div>'
-    + '<div class="rundemo-actions rd-foot">'
-    + '<button type="button" class="rd-run rd-run-ghost" onclick="nav(\'setup\')">'
-    + esc(_T6('설정으로', 'Go to Setup', 'セットアップへ', '前往设置', '前往設定', 'Ir a Configuración')) + ' &rarr;</button>'
+  // 짧은 카드 (사용자 확정 2026-09-29): 가운데를 비워 두지 않는다 — Setup 단계 목록과 같은 모양의
+  // "Needs setup" 표시와 링크 하나. 이유 (모델 없음 / 빌드 없음) 는 링크 말과 title 에.
+  var link = modelMissing
+    ? _T6('데모 빠른 시작', 'Demo Quick Start', 'デモ クイックスタート', '演示快速开始', '示範快速開始', 'Inicio rápido de la demo')
+    : _T6('빌드하러 가기', 'Build on Setup', 'Setupでビルド', '前往 Setup 构建', '前往 Setup 建置', 'Compilar en Setup');
+  var state = '<span class="dx-step-state is-todo">' + _rundemoIco('alert') + '<span>'
+    + esc(_T6('설치 필요', 'Needs setup', 'セットアップが必要', '需要安装', '需要安裝', 'Requiere instalación')) + '</span></span>';
+  var inner = '<div class="rd-unready">'
+    + '<button type="button" class="rd-setup-link" title="' + esc(msg) + '" onclick="nav(\'setup\')">'
+    + esc(link) + ' ' + _rundemoIco('chev') + '</button>'
     + '</div>';
-  return _rundemoShell(d, { inner: inner });
+  return _rundemoShell(d, { inner: inner, state: state, cls: 'is-unready' });
 }
 
 // Category → hue, drawn from the shared semantic tokens (dx-tokens.css) so the demo page
@@ -251,6 +258,31 @@ var _RUNDEMO_HUE = {
 };
 function _rundemoHue(d) { return _RUNDEMO_HUE[d.group] || 'var(--accent)'; }
 
+function _rundemoIco(name, cls) {
+  return (typeof window.DXIcon === 'function') ? window.DXIcon(name, cls ? { cls: cls } : undefined) : '';
+}
+// task 아이콘은 Model Zoo 와 같은 한 표 (sprite 의 task-<key>, 아이콘 체계 단계 3). 두 task 를 묶은 데모
+// (object_detection_x_semantic_segmentation) 는 앞의 task 로.
+function _rundemoTaskIco(d) {
+  var cat = String((d.run_ref && d.run_ref.category) || d.category || '').split('_x_')[0];
+  return _rundemoIco(/^[a-z0-9_]+$/.test(cat) ? 'task-' + cat : 'models', 'rd-task-ico');
+}
+// 라벨은 "Object Detection   (YOLOv7)" — 앞은 task, 괄호 안은 모델. 카드는 task 를 썸네일 위에 한 번,
+// 제목에는 모델만 쓴다 (사용자 확정 2026-09-29).
+function _rundemoSplitLabel(d) {
+  var m = /^(.*?)\s*\(([^)]*)\)\s*$/.exec(String(d.label || ''));
+  return m ? { task: m[1].trim(), model: m[2].trim() } : { task: d.group || '', model: String(d.label || d.model_name || '') };
+}
+function _rundemoTitle(d) { return _rundemoSplitLabel(d).model; }
+// task 이름은 그린 뒤 data-i18n 을 붙인다 — 언어를 바꾸면 공용 applyLang 이 제자리에서 바꾼다 (카드를 다시
+// 그리면 고른 입력 · 모드와 결과가 사라진다). 마크업 문자열에 data-i18n 을 직접 쓰지 않는 것은 정적 검사
+// (tests/test_i18n_span_gate.py) 가 그 식을 사전 key 로 읽기 때문이다.
+function _rundemoTaskName(d) { return _rundemoSplitLabel(d).task; }
+function _rundemoTranslateTasks(root) {
+  root.querySelectorAll('[data-rd-task]').forEach(function (el) { el.setAttribute('data-i18n', el.getAttribute('data-rd-task')); });
+  if (window.DXI18n && typeof window.DXI18n.applyLang === 'function') window.DXI18n.applyLang(root);
+}
+
 // New demo-card shell (design refactor). Keeps every functional hook intact: the id
 // #rundemo-block-<idx>, the .rundemo-axes chip rows (data-axis/data-val + _rundemoToggle,
 // which _rundemoUpdateBlockUI drives), the Run/Stop actions, and #rundemo-result-<idx>.
@@ -261,12 +293,12 @@ function _rundemoShell(d, opts) {
   var thumb = d.thumbnail
     ? '<img class="rd-thumb" src="' + esc(d.thumbnail) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
     : '';
-  return '<div class="rd-card rundemo-block" id="rundemo-block-' + d.idx + '" data-cat="' + esc(d.group) + '" style="--c:' + hue + '">'
+  return '<div class="rd-card rundemo-block' + (opts.cls ? ' ' + opts.cls : '') + '" id="rundemo-block-' + d.idx + '" data-cat="' + esc(d.group) + '" style="--c:' + hue + '">'
     + '<div class="rd-prev">' + thumb
-    + '<span class="rd-tag">' + esc(d.group) + '</span></div>'
+    + '<span class="rd-task">' + _rundemoTaskIco(d) + '<span data-rd-task="' + esc(_rundemoTaskName(d)) + '">' + esc(_rundemoTaskName(d)) + '</span></span></div>'
     + '<div class="rd-body">'
-    + '<div class="rd-title">' + esc(d.label) + '</div>'
-    + '<div class="rd-model">' + esc(d.model_name) + '</div>'
+    + '<div class="rd-head"><div class="rd-title" title="' + esc(d.model_name) + '">' + esc(_rundemoTitle(d)) + '</div>'
+    + (opts.state || '') + '</div>'
     + (opts.inner || '')
     + '<button type="button" class="rd-result-bar" onclick="_rundemoToggleResult(' + d.idx + ')">'
     + '<span class="rd-chev"></span>'
@@ -507,7 +539,7 @@ function rundemoRunLive(idx, d, body, resultEl) {
       '<img id="rundemo-live-img-' + idx + '" src="/api/live_frame?slot=0&t=' + Date.now() + '" ' +
         'style="width:100%;display:block;border-radius:8px;background:#000" alt="live"/>' +
       '<div id="rundemo-live-perf-' + idx + '" class="rundemo-live-perf txt-xs txt-dim mt8"></div>' +
-      '<button class="btn btn-neutral btn-sm mt8" onclick="rundemoStopLive(' + idx + ')">■ ' +
+      '<button class="btn btn-neutral btn-sm mt8" onclick="rundemoStopLive(' + idx + ')">' + _rundemoIco('stop') + ' ' +
         _T6('중지', 'Stop', '停止', '停止', '停止', 'Detener') + '</button>' +
       '</div>';
     if (RUNDEMO._live && RUNDEMO._live.pollInt) clearInterval(RUNDEMO._live.pollInt);
