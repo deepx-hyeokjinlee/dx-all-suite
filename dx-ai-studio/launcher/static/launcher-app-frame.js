@@ -364,6 +364,87 @@
     if (overlay) overlay.remove();
   }
 
+  /* ── 아이콘에서 열리고 아이콘으로 닫힌다 (spec 2026-09-23 §7 #8, §7.1) ──────────────
+     모듈 색의 빈 판 (.open-veil) 이 출발한 요소의 자리에서 frame 크기로 커진 뒤 걷힌다.
+     닫을 때는 frame 크기에서 그 모듈의 아이콘으로 줄어든다. 움직이는 것은 이 판 하나 —
+     iframe 을 확대하면 모듈 전체를 매 frame 다시 그린다. 출발점이 없거나 (직접 URL · 복원)
+     효과 줄이기면 예전의 fade 로 연다. */
+  var OPEN_MS = 420, CLOSE_MS = 360, VEIL_FADE_MS = 200;
+  var VEIL_EASE = 'cubic-bezier(.2, .8, .2, 1)';
+
+  function _veilStill() {
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return true; }
+  }
+
+  function _tileFor(appKey) {
+    return document.querySelector('#studioGrid .orbital-card[data-app="' + appKey + '"] .mod-tile');
+  }
+
+  /* home 이 아직 보일 때 잰다 — frame 을 보이고 나면 출발점이 사라진다. */
+  function _veilSource(el, appKey) {
+    if (_veilStill() || !el || typeof el.getBoundingClientRect !== 'function') return null;
+    if (typeof document.body.animate !== 'function') return null;
+    var r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    var tile = _tileFor(appKey);
+    var tint = tile ? getComputedStyle(tile).getPropertyValue('--mod-tint').trim() : '';
+    return { rect: r, tint: tint };
+  }
+
+  /* frame 의 자리 (fixed: top bar 아래 전체). frame 이 숨어 있어도 계산할 수 있게 top bar 에서. */
+  function _frameBox() {
+    var bar = document.querySelector('.top-bar');
+    var top = bar ? bar.getBoundingClientRect().bottom : 0;
+    return { left: 0, top: top, width: window.innerWidth, height: window.innerHeight - top };
+  }
+
+  function _toRect(rect, box) {
+    return 'translate(' + (rect.left - box.left) + 'px, ' + (rect.top - box.top) + 'px) ' +
+      'scale(' + (rect.width / box.width) + ', ' + (rect.height / box.height) + ')';
+  }
+
+  function _makeVeil(tint) {
+    var veil = document.createElement('div');
+    veil.className = 'open-veil';
+    veil.setAttribute('aria-hidden', 'true');
+    if (tint) veil.style.setProperty('--veil-tint', tint);
+    document.body.appendChild(veil);
+    return veil;
+  }
+
+  function playOpen(src) {
+    var box = _frameBox();
+    if (!box.width || !box.height) return;
+    var veil = _makeVeil(src.tint);
+    var grow = veil.animate([
+      { transform: _toRect(src.rect, box), opacity: 0 },
+      { opacity: 1, offset: .18 },
+      { transform: 'none', opacity: 1 }
+    ], { duration: OPEN_MS, easing: VEIL_EASE });
+    grow.id = 'open';
+    grow.finished.then(function () {
+      var fade = veil.animate([{ opacity: 1 }, { opacity: 0 }],
+        { duration: VEIL_FADE_MS, easing: 'ease-out', fill: 'forwards' });
+      fade.finished.then(function () { veil.remove(); }, function () { veil.remove(); });
+    }, function () { veil.remove(); });
+  }
+
+  function playClose(appKey) {
+    if (_veilStill() || typeof document.body.animate !== 'function') return;
+    var tile = _tileFor(appKey);
+    var r = tile && tile.getBoundingClientRect();
+    if (!r || !r.width || !r.height) return;
+    var box = _frameBox();
+    var veil = _makeVeil(getComputedStyle(tile).getPropertyValue('--mod-tint').trim());
+    var shrink = veil.animate([
+      { transform: 'none', opacity: 1 },
+      { opacity: 1, offset: .7 },
+      { transform: _toRect(r, box), opacity: 0 }
+    ], { duration: CLOSE_MS, easing: VEIL_EASE, fill: 'forwards' });
+    shrink.id = 'close';
+    shrink.finished.then(function () { veil.remove(); }, function () { veil.remove(); });
+  }
+
   function animateIn(el) {
     if (!el) return;
     el.classList.remove('view-slide-in');
@@ -517,9 +598,11 @@
     }
 
     function _showHome(opts) {
+      var closing = document.body.classList.contains('app-frame-visible') ? ns.currentApp : null;
       ns.currentApp = null;
       if (typeof ns.syncLangFromStorage === 'function') ns.syncLangFromStorage();
       setVisibleView('home');
+      if (closing) playClose(closing);
       _relocateToolbar('#launcherToolbar');
       updateNavTabs();
       _commitHistory(opts && opts.push ? 'push' : 'replace', {}, '/');
@@ -597,6 +680,7 @@
 
     function _showApp(appKey, opts) {
       opts = opts || {};
+      var veilFrom = opts.from ? _veilSource(opts.from, appKey) : null;
       ns.currentApp = appKey;
       clearModuleEntryState();
       var staleOverlay = document.getElementById('loadingOverlay');
@@ -610,6 +694,7 @@
       activateModuleIframe(iframe);
 
       setVisibleView('app');
+      if (veilFrom) playOpen(veilFrom);
       // Return the shared toolbar to the (CSS-hidden) global slot so it isn't stranded inside a
       // now-hidden SDK/About header; the module supplies its own lang+tutorial inside its iframe.
       _relocateToolbar('#launcherToolbar');
@@ -619,11 +704,13 @@
       if (opts.suffix) iframePath += opts.suffix;
       if (opts.query) iframePath += '?' + opts.query;
       else if (opts.rawQuery) iframePath += opts.rawQuery;
+      if (opts.hash) iframePath += opts.hash;   // #demo=N · #ask= — 답에서 여는 길 (P7)
 
       var historyUrl = '/' + appKey;
       if (opts.suffix) historyUrl += '/' + opts.suffix;
       if (opts.query) historyUrl += '?' + opts.query;
       else if (opts.rawQuery) historyUrl += opts.rawQuery;
+      if (opts.hash) historyUrl += opts.hash;
 
       if (!opts.skipHistory && opts.source !== 'popstate') {
         _commitHistory(opts.push ? 'push' : 'replace', { app: appKey }, historyUrl);
@@ -692,7 +779,7 @@
       if (target === 'about') return _showAbout(opts);
       if (target === 'sdk-library') return _showSdk(opts);
       if (target === 'app' && opts.app) {
-        return _showApp(opts.app, { push: true, query: opts.query });
+        return _showApp(opts.app, { push: true, query: opts.query, hash: opts.hash, from: opts.from });
       }
       _showApp(target, { push: true, query: opts.query });
     }
@@ -731,7 +818,12 @@
   function goHome() { LauncherRouter.navigate('home'); }
   function showAboutView() { LauncherRouter.navigate('about'); }
   function showSdkLibrary() { LauncherRouter.navigate('sdk-library'); }
-  function launch(app, query) { LauncherRouter.navigate('app', { app: app, query: query }); }
+  /* launch(app, 'k=v') — 예전 그대로 query. launch(app, { query, hash, from }) — from 은 누른 요소
+     (아이콘 · 경로 카드): 그 자리에서 열린다 (P7). */
+  function launch(app, arg) {
+    var o = (arg && typeof arg === 'object') ? arg : { query: arg };
+    LauncherRouter.navigate('app', { app: app, query: o.query, hash: o.hash, from: o.from });
+  }
 
   /* 탭 라벨은 짧게. 이 스트립은 열한 칸이 1272px 을 요구하는데 473px 만 받고
      있었다 — 절반 넘게가 가로 스크롤 뒤에 숨어, 모듈 목록이면서 모듈을 못 보여
@@ -1370,7 +1462,7 @@
       var card = e.target.closest('.orbital-card[data-app]');
       if (card && card.dataset.app) {
         e.preventDefault();
-        launch(card.dataset.app);
+        launch(card.dataset.app, { from: card });
         return;
       }
       var aboutCard = e.target.closest('.about-book-card');

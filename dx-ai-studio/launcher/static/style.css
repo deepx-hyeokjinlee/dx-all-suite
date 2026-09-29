@@ -563,6 +563,18 @@ body:not(.hw-native-visible) #hw-float {
   position: fixed;
   top: var(--launcher-topbar-h); left: 0; right: 0; bottom: 0;
 }
+/* 모듈이 아이콘 자리에서 열리고 아이콘으로 닫힐 때의 빈 판 (spec 2026-09-23 §7.1).
+   frame 과 같은 자리 · 크기, 모듈 색. launcher-app-frame.js 가 transform · opacity 로만 움직인다. */
+.open-veil {
+  position: fixed;
+  top: var(--launcher-topbar-h); left: 0; right: 0; bottom: 0;
+  z-index: 60;
+  transform-origin: 0 0;
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--veil-tint, var(--accent)) 26%, var(--surface-page));
+  pointer-events: none;
+  will-change: transform, opacity;
+}
 .app-frame iframe,
 .app-iframe-pool iframe.module-iframe {
   width: 100%;

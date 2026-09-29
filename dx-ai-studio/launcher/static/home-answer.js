@@ -147,20 +147,19 @@
   /* home 에서 나가는 길이 둘인데 하나만 파괴적이었다. 모듈 카드는 셸 안에서
      pushState 로 움직여 문서가 그대로인데, 여기는 location.href 로 SPA 를 떠났다 —
      그래서 돌아오면 새 문서였고 쓰던 문장이 사라졌다. 카드와 같은 길을 쓴다.
-     계약: tests/launcher/test_home_draft_browser.py */
-  function _leaveHome(path) {
+     그 다음 판도 새고 있었다: 모듈 이름 (문자열) 을 iframe 을 받는 loadAppIframeIfNeeded 에
+     넘겨 에러가 났고, catch 가 결국 location.href 로 문서를 새로 불렀다. 이제는 아이콘과 똑같이
+     launch 하나 — 누른 카드 자리에서 열리고, #demo=N 같은 hash 는 모듈까지 간다 (P7).
+     location.href 는 셸이 없을 때만.
+     계약: tests/launcher/test_home_draft_browser.py, test_home_open_browser.py */
+  function _leaveHome(path, fromEl) {
     if (!path) return;
     var ns2 = window.DXLauncher;
-    if (ns2 && typeof ns2.loadAppIframeIfNeeded === 'function' &&
-        typeof ns2.appFromPath === 'function') {
-      var key = ns2.appFromPath(path.split('#')[0]);
-      if (key) {
-        try {
-          window.history.pushState(null, '', path);
-          ns2.loadAppIframeIfNeeded(key);
-          return;
-        } catch (e) { /* 셸이 준비되지 않았으면 아래로 */ }
-      }
+    var parts = path.split('#');
+    var key = (ns2 && typeof ns2.appFromPath === 'function') ? ns2.appFromPath(parts[0]) : null;
+    if (key && typeof ns2.launch === 'function') {
+      ns2.launch(key, { from: fromEl || null, hash: parts[1] ? '#' + parts[1] : '' });
+      return;
     }
     window.location.href = path;
   }
@@ -169,7 +168,7 @@
     var path = MODULE_PATH[btn.dataset.module];
     if (!path) return;
     if (btn.dataset.demo !== undefined) path += '#demo=' + btn.dataset.demo;
-    _leaveHome(path);
+    _leaveHome(path, btn);
   }
 
   /* The handoff carries the sentence. Agent Dev's own input already says
@@ -183,7 +182,7 @@
       return;
     }
     /* 작업 뷰를 못 쓰는 상황이면 모듈로 넘긴다 — 문장은 그대로 실어서. */
-    _leaveHome('/agent/#ask=' + encodeURIComponent(text));
+    _leaveHome('/agent/#ask=' + encodeURIComponent(text), $('answerEscalateGo'));
   }
 
   /* 쓰다 만 문장은 작업이다. 모듈에 다녀오거나 새로고침해도 잃지 않게 저장한다 —

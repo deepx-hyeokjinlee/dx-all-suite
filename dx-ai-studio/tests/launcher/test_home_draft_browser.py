@@ -108,6 +108,7 @@ def test_leaving_home_keeps_the_shell(launcher):
     # location.href 로 직접 나가는 자리가 남아 있으면 그쪽으로 새어 나간다.
     body = src[src.index("function _leaveHome"):]
     body = body[: body.index("\n  }")]
-    assert "loadAppIframeIfNeeded" in body or "pushState" in body, (
-        "셸 안 이동을 시도하지 않는다"
-    )
+    # 예전 검사 ("loadAppIframeIfNeeded 나 pushState 가 있다") 는 버그 코드도 통과했다 — 그 줄은
+    # 문자열을 iframe 자리에 넘겨 에러를 냈고 catch 가 location.href 로 새로 불렀다 (P7).
+    assert "ns2.launch(" in body, "모듈 카드와 같은 launch 로 나가지 않는다"
+    assert "loadAppIframeIfNeeded" not in body
