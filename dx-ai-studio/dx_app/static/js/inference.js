@@ -555,22 +555,24 @@ window.renderInferenceResult=function(el,res){
   var isVideo=!!r._isVideo;
   var cat=r._cat||'';
   var VIS_HINTS={
-    classification:T('📊 Classification Result: overlays Top-K predicted classes and probabilities as text on the image.'),
-    attribute_recognition:T('🏷️ Attribute Result: overlays predicted person/face attributes and confidence scores on the image.'),
-    depth_estimation:T('🌈 Depth Result: visualizes depth using JET colormap (red=near, blue=far).'),
-    embedding:T('📐 Embedding Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).'),
-    reid:T('🧍 ReID Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).'),
-    image_denoising:T('🔇 Denoising Result: outputs the denoised image. DnCNN may process in grayscale (Y channel).'),
-    super_resolution:T('🔍 Super Resolution Result: outputs the upscaled image. ESPCN processes the Y channel and restores color.'),
-    image_enhancement:T('✨ Enhancement Result: outputs the image with improved brightness and contrast.'),
-    semantic_segmentation:T('🎨 Semantic Segmentation: alpha-blends per-pixel class labels using Cityscapes colormap onto the original.'),
-    instance_segmentation:T('🎭 Instance Segmentation: draws per-instance color masks + bounding boxes + class labels.'),
-    pose_estimation:T('💃 Pose Estimation: draws skeleton (joint connections) and keypoints. Low-confidence keypoints may be omitted.'),
-    hand_landmark:T('🤚 Hand Landmark: draws 21 hand landmark points and connections.'),
-    face_alignment:T('😊 Face Alignment: draws 3D facial landmark points.')
+    classification:T('Classification Result: overlays Top-K predicted classes and probabilities as text on the image.'),
+    attribute_recognition:T('Attribute Result: overlays predicted person/face attributes and confidence scores on the image.'),
+    depth_estimation:T('Depth Result: visualizes depth using JET colormap (red=near, blue=far).'),
+    embedding:T('Embedding Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).'),
+    reid:T('ReID Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).'),
+    image_denoising:T('Denoising Result: outputs the denoised image. DnCNN may process in grayscale (Y channel).'),
+    super_resolution:T('Super Resolution Result: outputs the upscaled image. ESPCN processes the Y channel and restores color.'),
+    image_enhancement:T('Enhancement Result: outputs the image with improved brightness and contrast.'),
+    semantic_segmentation:T('Semantic Segmentation: alpha-blends per-pixel class labels using Cityscapes colormap onto the original.'),
+    instance_segmentation:T('Instance Segmentation: draws per-instance color masks + bounding boxes + class labels.'),
+    pose_estimation:T('Pose Estimation: draws skeleton (joint connections) and keypoints. Low-confidence keypoints may be omitted.'),
+    hand_landmark:T('Hand Landmark: draws 21 hand landmark points and connections.'),
+    face_alignment:T('Face Alignment: draws 3D facial landmark points.')
   };
   if(VIS_HINTS[cat]){
-    h+='<div style="background:var(--accent-dim);border:1px solid rgba(41,151,255,.2);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--accent)">'+VIS_HINTS[cat]+'</div>';
+    /* task 아이콘은 Model Zoo 와 같은 한 표 (sprite 의 task-<key>, 아이콘 체계 단계 3) — 문장 앞의 이모지가 아니다. */
+    var hintIco=(typeof DXIcon==='function')?DXIcon('task-'+cat,{cls:'res-hint-ico'}):'';
+    h+='<div class="res-hint" style="background:var(--accent-dim);border:1px solid rgba(41,151,255,.2);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--accent)">'+hintIco+'<span>'+VIS_HINTS[cat]+'</span></div>';
   }
   if(r.result_video_url){h+='<div class="mb8"><video src="'+r.result_video_url+'" controls class="res-img" style="max-width:100%"></video></div>'}
   else if(r.video_note){h+='<div style="background:rgba(240,180,40,.12);border:1px solid rgba(240,180,40,.35);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:#c88a10">⚠️ '+T(r.video_note)+'</div>'}

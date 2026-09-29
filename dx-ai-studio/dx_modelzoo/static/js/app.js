@@ -45,6 +45,14 @@ function _escapeAttr(s) {
   return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/* task 아이콘 — sprite 의 task-<key> (dx_modelzoo/core/config.py CATEGORIES 의 icon, 아이콘 체계 단계 3).
+   모르는 이름이면 모델 일반 표시 (models) 로. 옆에 task 이름이 적혀 있으므로 장식이다 (label 없음). */
+function _taskIcon(catInfo, cls) {
+  if (typeof window.DXIcon !== 'function') return '';
+  const name = catInfo && /^task-[a-z0-9_]+$/.test(catInfo.icon || '') ? catInfo.icon : 'models';
+  return window.DXIcon(name, { cls: cls || 'mz-task-ico' });
+}
+
 function _localLabel(obj, prefix) {
   const lang = DXI18n.lang;
   const direct = obj[prefix + '_' + lang] || obj[prefix + '_' + lang.split('-')[0]];

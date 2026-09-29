@@ -661,8 +661,8 @@ const ModelZooVirtualCatalog = {
   renderCardItem(m) {
     const catInfo = _allCategories[m.category] || {};
     const catLabel = _localLabel(catInfo, 'label') || m.category;
-    const icon = _escapeAttr(catInfo.icon || '🤖');
-    const categoryIcon = _escapeAttr(catInfo.icon || '');
+    const icon = _taskIcon(catInfo, 'mz-thumb-ico');
+    const categoryIcon = catInfo.icon ? _taskIcon(catInfo) : '';
     const legacyFps = m.specification?.fps ? `<span class="mz-card-fps">${_escapeAttr(m.specification.fps)} FPS</span>` : '';
     const fps = `<span class="${_escapeAttr(_modelFpsClass(m))}">${_escapeAttr(_modelFpsText(m))}</span>` || legacyFps;
     const resolution = _modelInputResolution(m);
@@ -676,7 +676,7 @@ const ModelZooVirtualCatalog = {
       : '';
     return `
     <div class="mz-card" data-model-id="${_escapeAttr(m.id)}" data-help-id="model-card-${_escapeAttr(m.id)}">
-      <div class="mz-card-thumb">${icon}${thumbImg}</div>
+      <div class="mz-card-thumb${thumbImg ? '' : ' no-thumb'}">${icon}${thumbImg}</div>
       <div class="mz-card-body">
         <div class="mz-card-name" title="${_escapeAttr(m.id)}">${_escapeAttr(m.name)}</div>
         <div class="mz-card-cat">${categoryIcon} ${_escapeAttr(catLabel)}</div>
@@ -696,7 +696,7 @@ const ModelZooVirtualCatalog = {
   renderListRow(m) {
     const catInfo = _allCategories[m.category] || {};
     const catLabel = _localLabel(catInfo, 'label') || m.category;
-    const categoryIcon = _escapeAttr(catInfo.icon || '');
+    const categoryIcon = catInfo.icon ? _taskIcon(catInfo) : '';
     const metric = m.specification?.metric;
     let accuracy = '';
     if (metric) {
@@ -886,7 +886,7 @@ function renderCategoryChips() {
     const catActive = _selectedCategories.includes(id);
     html += `<label class="mz-category-option${catActive ? ' active' : ''}">
       <input type="checkbox" data-cat="${_escapeAttr(id)}" ${catActive ? 'checked' : ''}>
-      <span class="mz-category-label">${_escapeAttr(info.icon || '')} ${_escapeAttr(label)}</span>
+      <span class="mz-category-label">${info.icon ? _taskIcon(info) : ''} ${_escapeAttr(label)}</span>
       <span class="chip-count">${_escapeAttr(count)}</span>
     </label>`;
   }

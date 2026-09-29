@@ -210,6 +210,9 @@ tbody tr:hover td{background:var(--surface-hover)}
 /*═══ Result image ═══*/
 .res-img{max-width:100%;border-radius:var(--radius);border:1px solid var(--border-subtle);cursor:pointer;transition:.15s}
 .res-img:hover{border-color:var(--accent)}
+/* 결과 안내 — task 아이콘 (sprite task-<key>) + 문장 (inference.js VIS_HINTS, 아이콘 체계 단계 3) */
+.res-hint{display:flex;align-items:flex-start;gap:var(--sp-2);line-height:1.5}
+.res-hint-ico{flex:none;width:16px;height:16px;margin-top:1px}
 
 /*═══ Perf grid ═══*/
 .perf-grid{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}

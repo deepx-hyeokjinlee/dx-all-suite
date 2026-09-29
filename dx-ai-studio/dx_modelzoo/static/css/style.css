@@ -44,6 +44,10 @@ body{overflow-x:auto;overflow-y:auto}
   border-bottom:1px solid var(--border-subtle)}
 .mz-card-thumb img{width:100%;height:100%;object-fit:cover}
 .mz-card-thumb.no-thumb{display:flex;align-items:center;justify-content:center;font-size:var(--fs-5xl);background:var(--control-bg)}
+/* 썸네일이 없거나 깨졌을 때만 task 아이콘이 그 자리를 채운다 (catalog.js imageTagWithFallback). */
+.mz-card-thumb > .mz-thumb-ico{display:none}
+.mz-card-thumb.no-thumb > .mz-thumb-ico{display:block;width:56px;height:56px;color:var(--text-muted)}
+.mz-task-ico{width:1.15em;height:1.15em;flex:none}
 /* clear breathing room between the thumbnail and the model name below it */
 .mz-card-body{padding:var(--sp-4);padding-top:var(--sp-5);flex:1;display:flex;flex-direction:column;gap:var(--sp-2)}
 .mz-card-name{font-weight:600;font-size:15px;color:var(--text-primary);

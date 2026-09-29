@@ -400,14 +400,15 @@ body { overflow-x: auto; overflow-y: hidden; }
 }
 .requirements-row-3 .task-btn {
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   text-align: left;
   padding: 8px 8px;
 }
 .requirements-row-3 .task-icon {
   flex: 0 0 auto;
-  margin-top: 2px;
+  width: 22px;
+  height: 22px;
 }
 .requirements-row-3 .task-name,
 .requirements-row-3 .task-desc {
@@ -529,7 +530,8 @@ body { overflow-x: auto; overflow-y: hidden; }
   color: var(--accent-light);
   box-shadow: var(--surface-active-shadow);
 }
-.task-icon { font-size: var(--fs-2xl); line-height: 1; }
+/* task 아이콘 — sprite 의 task-<key> (아이콘 체계 단계 3). 크기는 글자가 아니라 상자로. */
+.task-icon { width: 28px; height: 28px; color: var(--accent); }
 .task-name { font-size: var(--fs-xs); font-weight: 600; }
 .task-desc { display: block; color: var(--text-muted); }
 

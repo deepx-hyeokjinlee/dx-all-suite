@@ -237,7 +237,7 @@ function renderDetail(container, model) {
       <header class="mz-detail-header">
         <div class="mz-detail-hero">
           <h1 class="mz-detail-title">${escapeHtml(model.name)}</h1>
-          <span class="mz-card-cat">${escapeHtml(catInfo.icon || '')} ${escapeHtml(catLabel)}</span>
+          <span class="mz-card-cat">${catInfo.icon ? _taskIcon(catInfo) : ''} ${escapeHtml(catLabel)}</span>
           <p class="mz-detail-summary">${escapeHtml(summary)}</p>
           <div class="mz-detail-hero-badges">
             ${_artifactBadge(model, 'onnx', 'ONNX')}

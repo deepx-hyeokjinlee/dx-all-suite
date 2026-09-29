@@ -4444,45 +4444,45 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '✅ ROI 已选择', 'zh-TW': '✅ ROI 已選擇',
     es: '✅ ROI seleccionado',
   },
-  '✨ Enhancement Result: outputs the image with improved brightness and contrast.': {
-    ko: '✨ Enhancement 결과: 밝기와 대비가 개선된 이미지를 출력합니다.', ja: '✨ Enhancement 結果: 明るさとコントラストが改善された画像を出力します。',
-    'zh-CN': '✨ Enhancement 结果：输出亮度和对比度增强后的图像。', 'zh-TW': '✨ Enhancement 結果：輸出亮度和對比度增強後的影像。',
-    es: '✨ Resultado de mejora: genera la imagen con brillo y contraste mejorados.',
+  'Enhancement Result: outputs the image with improved brightness and contrast.': {
+    ko: 'Enhancement 결과: 밝기와 대비가 개선된 이미지를 출력합니다.', ja: 'Enhancement 結果: 明るさとコントラストが改善された画像を出力します。',
+    'zh-CN': 'Enhancement 结果：输出亮度和对比度增强后的图像。', 'zh-TW': 'Enhancement 結果：輸出亮度和對比度增強後的影像。',
+    es: 'Resultado de mejora: genera la imagen con brillo y contraste mejorados.',
   },
-  '🌈 Depth Result: visualizes depth using JET colormap (red=near, blue=far).': {
-    ko: '🌈 Depth 결과: JET 컬러맵으로 깊이를 시각화합니다 (빨강=가까움, 파랑=멀리).', ja: '🌈 Depth 結果: JET カラーマップで深度を可視化します（赤=近い、青=遠い）。',
-    'zh-CN': '🌈 Depth 结果：使用 JET 色图可视化深度（红色=近，蓝色=远）。', 'zh-TW': '🌈 Depth 結果：使用 JET 色圖視覺化深度（紅色=近，藍色=遠）。',
-    es: '🌈 Resultado de profundidad: visualiza la profundidad usando el mapa de colores JET (rojo=cerca, azul=lejos).',
+  'Depth Result: visualizes depth using JET colormap (red=near, blue=far).': {
+    ko: 'Depth 결과: JET 컬러맵으로 깊이를 시각화합니다 (빨강=가까움, 파랑=멀리).', ja: 'Depth 結果: JET カラーマップで深度を可視化します（赤=近い、青=遠い）。',
+    'zh-CN': 'Depth 结果：使用 JET 色图可视化深度（红色=近，蓝色=远）。', 'zh-TW': 'Depth 結果：使用 JET 色圖視覺化深度（紅色=近，藍色=遠）。',
+    es: 'Resultado de profundidad: visualiza la profundidad usando el mapa de colores JET (rojo=cerca, azul=lejos).',
   },
-  '🎨 Semantic Segmentation: alpha-blends per-pixel class labels using Cityscapes colormap onto the original.': {
-    ko: '🎨 Semantic Segmentation: Cityscapes 컬러맵을 사용하여 픽셀별 클래스 레이블을 원본에 알파 블렌딩합니다.', ja: '🎨 Semantic Segmentation: Cityscapes カラーマップを使用してピクセルごとのクラスラベルを元画像にアルファブレンドします。',
-    'zh-CN': '🎨 Semantic Segmentation：使用 Cityscapes 色图将逐像素类别标签与原图进行 Alpha 混合。', 'zh-TW': '🎨 Semantic Segmentation：使用 Cityscapes 色圖將逐像素類別標籤與原圖進行 Alpha 混合。',
-    es: '🎨 Segmentación semántica: mezcla alfa de etiquetas de clase por píxel usando el mapa de colores Cityscapes sobre la imagen original.',
+  'Semantic Segmentation: alpha-blends per-pixel class labels using Cityscapes colormap onto the original.': {
+    ko: 'Semantic Segmentation: Cityscapes 컬러맵을 사용하여 픽셀별 클래스 레이블을 원본에 알파 블렌딩합니다.', ja: 'Semantic Segmentation: Cityscapes カラーマップを使用してピクセルごとのクラスラベルを元画像にアルファブレンドします。',
+    'zh-CN': 'Semantic Segmentation：使用 Cityscapes 色图将逐像素类别标签与原图进行 Alpha 混合。', 'zh-TW': 'Semantic Segmentation：使用 Cityscapes 色圖將逐像素類別標籤與原圖進行 Alpha 混合。',
+    es: 'Segmentación semántica: mezcla alfa de etiquetas de clase por píxel usando el mapa de colores Cityscapes sobre la imagen original.',
   },
-  '🎭 Instance Segmentation: draws per-instance color masks + bounding boxes + class labels.': {
-    ko: '🎭 Instance Segmentation: 인스턴스별 컬러 마스크 + 바운딩 박스 + 클래스 레이블을 표시합니다.', ja: '🎭 Instance Segmentation: インスタンスごとのカラーマスク＋バウンディングボックス＋クラスラベルを描画します。',
-    'zh-CN': '🎭 Instance Segmentation：绘制逐实例颜色掩码 + 边界框 + 类别标签。', 'zh-TW': '🎭 Instance Segmentation：繪製逐實例顏色遮罩 + 邊界框 + 類別標籤。',
-    es: '🎭 Segmentación de instancias: dibuja máscaras de color por instancia + cuadros delimitadores + etiquetas de clase.',
+  'Instance Segmentation: draws per-instance color masks + bounding boxes + class labels.': {
+    ko: 'Instance Segmentation: 인스턴스별 컬러 마스크 + 바운딩 박스 + 클래스 레이블을 표시합니다.', ja: 'Instance Segmentation: インスタンスごとのカラーマスク＋バウンディングボックス＋クラスラベルを描画します。',
+    'zh-CN': 'Instance Segmentation：绘制逐实例颜色掩码 + 边界框 + 类别标签。', 'zh-TW': 'Instance Segmentation：繪製逐實例顏色遮罩 + 邊界框 + 類別標籤。',
+    es: 'Segmentación de instancias: dibuja máscaras de color por instancia + cuadros delimitadores + etiquetas de clase.',
   },
   '🎯 ROI applied — only the selected region was inferred.': {
     ko: '🎯 ROI 적용됨 — 선택한 영역만 추론되었습니다.', ja: '🎯 ROI 適用済み — 選択された領域のみ推論されました。',
     'zh-CN': '🎯 ROI 已应用 — 仅对选定区域进行了推理。', 'zh-TW': '🎯 ROI 已套用 — 僅對選定區域進行了推論。',
     es: '🎯 ROI aplicado — solo se infirió la región seleccionada.',
   },
-  '💃 Pose Estimation: draws skeleton (joint connections) and keypoints. Low-confidence keypoints may be omitted.': {
-    ko: '💃 Pose Estimation: 스켈레톤(관절 연결)과 키포인트를 표시합니다. 신뢰도가 낮은 키포인트는 생략될 수 있습니다.', ja: '💃 Pose Estimation: スケルトン（関節接続）とキーポイントを描画します。信頼度の低いキーポイントは省略される場合があります。',
-    'zh-CN': '💃 Pose Estimation：绘制骨架（关节连接）和关键点。低置信度关键点可能会被省略。', 'zh-TW': '💃 Pose Estimation：繪製骨架（關節連接）和關鍵點。低信賴度關鍵點可能會被省略。',
-    es: '💃 Estimación de pose: dibuja el esqueleto (conexiones articulares) y puntos clave. Los puntos clave de baja confianza pueden omitirse.',
+  'Pose Estimation: draws skeleton (joint connections) and keypoints. Low-confidence keypoints may be omitted.': {
+    ko: 'Pose Estimation: 스켈레톤(관절 연결)과 키포인트를 표시합니다. 신뢰도가 낮은 키포인트는 생략될 수 있습니다.', ja: 'Pose Estimation: スケルトン（関節接続）とキーポイントを描画します。信頼度の低いキーポイントは省略される場合があります。',
+    'zh-CN': 'Pose Estimation：绘制骨架（关节连接）和关键点。低置信度关键点可能会被省略。', 'zh-TW': 'Pose Estimation：繪製骨架（關節連接）和關鍵點。低信賴度關鍵點可能會被省略。',
+    es: 'Estimación de pose: dibuja el esqueleto (conexiones articulares) y puntos clave. Los puntos clave de baja confianza pueden omitirse.',
   },
-  '📊 Classification Result: overlays Top-K predicted classes and probabilities as text on the image.': {
-    ko: '📊 Classification 결과: Top-K 예측 클래스와 확률을 이미지 위에 텍스트로 표시합니다.', ja: '📊 Classification 結果: Top-K 予測クラスと確率をテキストとして画像上にオーバーレイします。',
-    'zh-CN': '📊 Classification 结果：将 Top-K 预测类别和概率以文本形式叠加在图像上。', 'zh-TW': '📊 Classification 結果：將 Top-K 預測類別和機率以文字形式疊加在影像上。',
-    es: '📊 Resultado de clasificación: superpone las clases predichas Top-K y sus probabilidades como texto en la imagen.',
+  'Classification Result: overlays Top-K predicted classes and probabilities as text on the image.': {
+    ko: 'Classification 결과: Top-K 예측 클래스와 확률을 이미지 위에 텍스트로 표시합니다.', ja: 'Classification 結果: Top-K 予測クラスと確率をテキストとして画像上にオーバーレイします。',
+    'zh-CN': 'Classification 结果：将 Top-K 预测类别和概率以文本形式叠加在图像上。', 'zh-TW': 'Classification 結果：將 Top-K 預測類別和機率以文字形式疊加在影像上。',
+    es: 'Resultado de clasificación: superpone las clases predichas Top-K y sus probabilidades como texto en la imagen.',
   },
-  '🏷️ Attribute Result: overlays predicted person/face attributes and confidence scores on the image.': {
-    ko: '🏷️ Attribute 결과: 예측된 사람/얼굴 속성과 신뢰도 점수를 이미지 위에 텍스트로 표시합니다.', ja: '🏷️ Attribute 結果: 予測された人物/顔属性と信頼度スコアを画像上にテキストでオーバーレイします。',
-    'zh-CN': '🏷️ Attribute 结果：将预测的人物/面部属性和置信度分数以文本形式叠加在图像上。', 'zh-TW': '🏷️ Attribute 結果：將預測的人物/臉部屬性和信賴度分數以文字形式疊加在影像上。',
-    es: '🏷️ Resultado de atributos: superpone los atributos de persona/rostro predichos y sus puntuaciones de confianza como texto en la imagen.',
+  'Attribute Result: overlays predicted person/face attributes and confidence scores on the image.': {
+    ko: 'Attribute 결과: 예측된 사람/얼굴 속성과 신뢰도 점수를 이미지 위에 텍스트로 표시합니다.', ja: 'Attribute 結果: 予測された人物/顔属性と信頼度スコアを画像上にテキストでオーバーレイします。',
+    'zh-CN': 'Attribute 结果：将预测的人物/面部属性和置信度分数以文本形式叠加在图像上。', 'zh-TW': 'Attribute 結果：將預測的人物/臉部屬性和信賴度分數以文字形式疊加在影像上。',
+    es: 'Resultado de atributos: superpone los atributos de persona/rostro predichos y sus puntuaciones de confianza como texto en la imagen.',
   },
   '📊 Task Summary (': {
     ko: '📊 태스크 요약 (', ja: '📊 タスク概要 (',
@@ -4494,40 +4494,40 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '📐 Embedding 结果：以文本形式显示向量维度、前 8 个值和 L2 范数。Embedding 是特征向量，不是视觉检测。', 'zh-TW': '📐 Embedding 結果：以文字形式顯示向量維度、前 8 個值和 L2 範數。Embedding 是特徵向量，不是視覺偵測。',
     es: '📐 Resultado de incrustación: muestra la dimensión del vector, los primeros 8 valores y la norma L2 como texto. Las incrustaciones son vectores de características, no detecciones visuales.',
   },
-  '📐 Embedding Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).': {
-    ko: '📐 Embedding 결과: 기준/현재 이미지를 나란히 표시하고 코사인 유사도(SAME / DIFFERENT)를 보여줍니다.', ja: '📐 Embedding 結果: 参照画像と現在画像を並べて表示し、コサイン類似度（SAME / DIFFERENT）を示します。',
-    'zh-CN': '📐 Embedding 结果：并排显示参考图与当前图，并展示余弦相似度（SAME / DIFFERENT）。', 'zh-TW': '📐 Embedding 結果：並排顯示參考圖與目前圖，並展示餘弦相似度（SAME / DIFFERENT）。',
-    es: '📐 Resultado de embedding: muestra referencia y actual lado a lado con similitud coseno (SAME / DIFFERENT).',
+  'Embedding Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).': {
+    ko: 'Embedding 결과: 기준/현재 이미지를 나란히 표시하고 코사인 유사도(SAME / DIFFERENT)를 보여줍니다.', ja: 'Embedding 結果: 参照画像と現在画像を並べて表示し、コサイン類似度（SAME / DIFFERENT）を示します。',
+    'zh-CN': 'Embedding 结果：并排显示参考图与当前图，并展示余弦相似度（SAME / DIFFERENT）。', 'zh-TW': 'Embedding 結果：並排顯示參考圖與目前圖，並展示餘弦相似度（SAME / DIFFERENT）。',
+    es: 'Resultado de embedding: muestra referencia y actual lado a lado con similitud coseno (SAME / DIFFERENT).',
   },
-  '🧍 ReID Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).': {
-    ko: '🧍 ReID 결과: 기준/현재 이미지를 나란히 표시하고 코사인 유사도(SAME / DIFFERENT)를 보여줍니다.', ja: '🧍 ReID 結果: 参照画像と現在画像を並べて表示し、コサイン類似度（SAME / DIFFERENT）を示します。',
-    'zh-CN': '🧍 ReID 结果：并排显示参考图与当前图，并展示余弦相似度（SAME / DIFFERENT）。', 'zh-TW': '🧍 ReID 結果：並排顯示參考圖與目前圖，並展示餘弦相似度（SAME / DIFFERENT）。',
-    es: '🧍 Resultado ReID: muestra referencia y actual lado a lado con similitud coseno (SAME / DIFFERENT).',
+  'ReID Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).': {
+    ko: 'ReID 결과: 기준/현재 이미지를 나란히 표시하고 코사인 유사도(SAME / DIFFERENT)를 보여줍니다.', ja: 'ReID 結果: 参照画像と現在画像を並べて表示し、コサイン類似度（SAME / DIFFERENT）を示します。',
+    'zh-CN': 'ReID 结果：并排显示参考图与当前图，并展示余弦相似度（SAME / DIFFERENT）。', 'zh-TW': 'ReID 結果：並排顯示參考圖與目前圖，並展示餘弦相似度（SAME / DIFFERENT）。',
+    es: 'Resultado ReID: muestra referencia y actual lado a lado con similitud coseno (SAME / DIFFERENT).',
   },
-  '🔇 Denoising Result: outputs the denoised image. DnCNN may process in grayscale (Y channel).': {
-    ko: '🔇 Denoising 결과: 노이즈가 제거된 이미지를 출력합니다. DnCNN은 그레이스케일(Y 채널)로 처리할 수 있습니다.', ja: '🔇 Denoising 結果: ノイズ除去された画像を出力します。DnCNN はグレースケール（Yチャネル）で処理する場合があります。',
-    'zh-CN': '🔇 Denoising 结果：输出去噪后的图像。DnCNN 可能以灰度（Y 通道）处理。', 'zh-TW': '🔇 Denoising 結果：輸出去噪後的影像。DnCNN 可能以灰階（Y 通道）處理。',
-    es: '🔇 Resultado de eliminación de ruido: genera la imagen sin ruido. DnCNN puede procesar en escala de grises (canal Y).',
+  'Denoising Result: outputs the denoised image. DnCNN may process in grayscale (Y channel).': {
+    ko: 'Denoising 결과: 노이즈가 제거된 이미지를 출력합니다. DnCNN은 그레이스케일(Y 채널)로 처리할 수 있습니다.', ja: 'Denoising 結果: ノイズ除去された画像を出力します。DnCNN はグレースケール（Yチャネル）で処理する場合があります。',
+    'zh-CN': 'Denoising 结果：输出去噪后的图像。DnCNN 可能以灰度（Y 通道）处理。', 'zh-TW': 'Denoising 結果：輸出去噪後的影像。DnCNN 可能以灰階（Y 通道）處理。',
+    es: 'Resultado de eliminación de ruido: genera la imagen sin ruido. DnCNN puede procesar en escala de grises (canal Y).',
   },
-  '🔍 Super Resolution Result: outputs the upscaled image. ESPCN processes the Y channel and restores color.': {
-    ko: '🔍 Super Resolution 결과: 업스케일된 이미지를 출력합니다. ESPCN은 Y 채널을 처리하고 색상을 복원합니다.', ja: '🔍 Super Resolution 結果: アップスケールされた画像を出力します。ESPCN は Y チャネルを処理し、色を復元します。',
-    'zh-CN': '🔍 Super Resolution 结果：输出放大后的图像。ESPCN 处理 Y 通道并恢复色彩。', 'zh-TW': '🔍 Super Resolution 結果：輸出放大後的影像。ESPCN 處理 Y 通道並恢復色彩。',
-    es: '🔍 Resultado de super resolución: genera la imagen escalada. ESPCN procesa el canal Y y restaura el color.',
+  'Super Resolution Result: outputs the upscaled image. ESPCN processes the Y channel and restores color.': {
+    ko: 'Super Resolution 결과: 업스케일된 이미지를 출력합니다. ESPCN은 Y 채널을 처리하고 색상을 복원합니다.', ja: 'Super Resolution 結果: アップスケールされた画像を出力します。ESPCN は Y チャネルを処理し、色を復元します。',
+    'zh-CN': 'Super Resolution 结果：输出放大后的图像。ESPCN 处理 Y 通道并恢复色彩。', 'zh-TW': 'Super Resolution 結果：輸出放大後的影像。ESPCN 處理 Y 通道並恢復色彩。',
+    es: 'Resultado de super resolución: genera la imagen escalada. ESPCN procesa el canal Y y restaura el color.',
   },
   '🖼️ Cropped Input': {
     ko: '🖼️ 크롭된 입력', ja: '🖼️ クロップされた入力',
     'zh-CN': '🖼️ 裁剪后的输入', 'zh-TW': '🖼️ 裁剪後的輸入',
     es: '🖼️ Entrada recortada',
   },
-  '😊 Face Alignment: draws 3D facial landmark points.': {
-    ko: '😊 Face Alignment: 3D 얼굴 랜드마크 포인트를 표시합니다.', ja: '😊 Face Alignment: 3D 顔ランドマークポイントを描画します。',
-    'zh-CN': '😊 Face Alignment：绘制 3D 面部特征点。', 'zh-TW': '😊 Face Alignment：繪製 3D 臉部特徵點。',
-    es: '😊 Alineación facial: dibuja puntos de referencia faciales 3D.',
+  'Face Alignment: draws 3D facial landmark points.': {
+    ko: 'Face Alignment: 3D 얼굴 랜드마크 포인트를 표시합니다.', ja: 'Face Alignment: 3D 顔ランドマークポイントを描画します。',
+    'zh-CN': 'Face Alignment：绘制 3D 面部特征点。', 'zh-TW': 'Face Alignment：繪製 3D 臉部特徵點。',
+    es: 'Alineación facial: dibuja puntos de referencia faciales 3D.',
   },
-  '🤚 Hand Landmark: draws 21 hand landmark points and connections.': {
-    ko: '🤚 Hand Landmark: 21개의 손 랜드마크 포인트와 연결을 표시합니다.', ja: '🤚 Hand Landmark: 21個の手のランドマークポイントと接続を描画します。',
-    'zh-CN': '🤚 Hand Landmark：绘制 21 个手部特征点及其连接。', 'zh-TW': '🤚 Hand Landmark：繪製 21 個手部特徵點及其連接。',
-    es: '🤚 Puntos de referencia de mano: dibuja 21 puntos de referencia y conexiones de la mano.',
+  'Hand Landmark: draws 21 hand landmark points and connections.': {
+    ko: 'Hand Landmark: 21개의 손 랜드마크 포인트와 연결을 표시합니다.', ja: 'Hand Landmark: 21個の手のランドマークポイントと接続を描画します。',
+    'zh-CN': 'Hand Landmark：绘制 21 个手部特征点及其连接。', 'zh-TW': 'Hand Landmark：繪製 21 個手部特徵點及其連接。',
+    es: 'Puntos de referencia de mano: dibuja 21 puntos de referencia y conexiones de la mano.',
   },
 
   ' models': {
