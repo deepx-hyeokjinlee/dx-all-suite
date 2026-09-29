@@ -24,7 +24,7 @@ window._DX_CHAT_I18N = window._DX_CHAT_I18N || {
   'Ask a question...': { ko: '질문을 입력하세요...', ja: '質問を入力...', es: 'Escriba su pregunta...', 'zh-CN': '输入您的问题...', 'zh-TW': '輸入您的問題...' },
   'Custom…': { ko: '직접 입력…', ja: 'カスタム…', es: 'Personalizado…', 'zh-CN': '自定义…', 'zh-TW': '自訂…' },
   '(No response)': { ko: '(응답 없음)', ja: '(応答なし)', es: '(Sin respuesta)', 'zh-CN': '(无响应)', 'zh-TW': '(無回應)' },
-  '⚠️ Connection error: Unable to reach server.': { ko: '⚠️ 연결 오류: 서버에 연결할 수 없습니다.', ja: '⚠️ 接続エラー: サーバーに接続できません。', es: '⚠️ Error de conexión: no se puede acceder al servidor.', 'zh-CN': '⚠️ 连接错误：无法访问服务器。', 'zh-TW': '⚠️ 連線錯誤：無法連線至伺服器。' },
+  'Connection error: Unable to reach server.': { ko: '연결 오류: 서버에 연결할 수 없습니다.', ja: '接続エラー: サーバーに接続できません。', es: 'Error de conexión: no se puede acceder al servidor.', 'zh-CN': '连接错误：无法访问服务器。', 'zh-TW': '連線錯誤：無法連線至伺服器。' },
   'Unable to load settings.': { ko: '설정을 불러올 수 없습니다.', ja: '設定を読み込めません。', es: 'No se pudieron cargar los ajustes.', 'zh-CN': '无法加载设置。', 'zh-TW': '無法載入設定。' },
   'Uses your logged-in coding-agent CLI — pick the agent below.': { ko: '로그인된 코딩 에이전트 CLI를 사용합니다 — 아래에서 에이전트를 선택하세요.', ja: 'ログイン済みコーディングエージェントCLIを使用します — 下でエージェントを選択してください。', es: 'Usa su CLI de agente de codificación con sesión iniciada — elija el agente abajo.', 'zh-CN': '使用已登录的编码智能体 CLI — 请在下方选择智能体。', 'zh-TW': '使用已登入的編碼智能體 CLI — 請在下方選擇智能體。' },
   'Found models: ': { ko: '발견된 모델: ', ja: '検出されたモデル: ', es: 'Modelos encontrados: ', 'zh-CN': '发现的模型：', 'zh-TW': '發現的模型：' },
@@ -42,12 +42,12 @@ window._DX_CHAT_I18N = window._DX_CHAT_I18N || {
   'Connected: ': { ko: '연결 성공: ', ja: '接続成功: ', es: 'Conectado: ', 'zh-CN': '已连接：', 'zh-TW': '已連線：' },
   'Open DEEPX Agent on the web': { ko: '웹에서 DEEPX Agent 열기', ja: 'Web で DEEPX Agent を開く', es: 'Abrir DEEPX Agent en la web', 'zh-CN': '在网页中打开 DEEPX Agent', 'zh-TW': '在網頁中開啟 DEEPX Agent' },
   'DX Assistant': { ko: 'DX 어시스턴트', ja: 'DXアシスタント', es: 'Asistente DX', 'zh-CN': 'DX 助手', 'zh-TW': 'DX 助手' },
-  '⚠️ AI assistant is not configured. Open chat settings to register your API key. Basic guidance is available without AI. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Open settings</button>': {
-    ko: '⚠️ AI 어시스턴트가 설정되지 않았습니다. 채팅 설정에서 API 키를 등록하세요. 기본 안내는 AI 없이도 가능합니다. <button type="button" class="dx-chat-banner-action" data-action="settings-open">설정 열기</button>',
-    ja: '⚠️ AIアシスタントが設定されていません。チャット設定でAPIキーを登録してください。基本ガイドはAIなしでも利用できます。<button type="button" class="dx-chat-banner-action" data-action="settings-open">設定を開く</button>',
-    es: '⚠️ El asistente de IA no está configurado. Abra la configuración del chat para registrar su clave API. La guía básica está disponible sin IA. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Abrir ajustes</button>',
-    'zh-CN': '⚠️ AI 助手未配置。请在聊天设置中注册 API 密钥。基本指南无需 AI 也可使用。<button type="button" class="dx-chat-banner-action" data-action="settings-open">打开设置</button>',
-    'zh-TW': '⚠️ AI 助手未設定。請在聊天設定中註冊 API 金鑰。基本指南無需 AI 也可使用。<button type="button" class="dx-chat-banner-action" data-action="settings-open">開啟設定</button>',
+  'AI assistant is not configured. Open chat settings to register your API key. Basic guidance is available without AI. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Open settings</button>': {
+    ko: 'AI 어시스턴트가 설정되지 않았습니다. 채팅 설정에서 API 키를 등록하세요. 기본 안내는 AI 없이도 가능합니다. <button type="button" class="dx-chat-banner-action" data-action="settings-open">설정 열기</button>',
+    ja: 'AIアシスタントが設定されていません。チャット設定でAPIキーを登録してください。基本ガイドはAIなしでも利用できます。<button type="button" class="dx-chat-banner-action" data-action="settings-open">設定を開く</button>',
+    es: 'El asistente de IA no está configurado. Abra la configuración del chat para registrar su clave API. La guía básica está disponible sin IA. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Abrir ajustes</button>',
+    'zh-CN': 'AI 助手未配置。请在聊天设置中注册 API 密钥。基本指南无需 AI 也可使用。<button type="button" class="dx-chat-banner-action" data-action="settings-open">打开设置</button>',
+    'zh-TW': 'AI 助手未設定。請在聊天設定中註冊 API 金鑰。基本指南無需 AI 也可使用。<button type="button" class="dx-chat-banner-action" data-action="settings-open">開啟設定</button>',
   },
 };
 
@@ -152,6 +152,11 @@ const DXChat = (() => {
       || 'en';
   }
 
+  /* 공용 아이콘 (shared/static/dx-icon.js). 없으면 빈 자리 — 챗이 아이콘 때문에 멈추지 않게. */
+  function _ico(name) {
+    return (window.DXIcon && typeof window.DXIcon === 'function') ? window.DXIcon(name) : '';
+  }
+
   function _t(en, ko) {
     const dict = window._DX_CHAT_I18N || {};
     const entry = dict[en];
@@ -186,7 +191,7 @@ const DXChat = (() => {
     const fab = document.createElement('button');
     fab.className = 'dx-chat-fab';
     fab.setAttribute('aria-label', 'Chat');
-    fab.innerHTML = '💬';
+    fab.innerHTML = _ico('chat');
     fab.addEventListener('click', toggle);
     document.body.appendChild(fab);
     _els.fab = fab;
@@ -200,9 +205,9 @@ const DXChat = (() => {
       /* 웹 챗봇 (DEEPX Agent) 은 launcher 막대에 따로 있던 링크였다. 같은 "물어보기" 이므로
          챗 안에서 연다 — 모든 모듈의 챗에 생긴다 (spec 2026-09-23 §5.7). */
       '    <a class="dx-chat-header-link" href="https://deepx.rapidflare.ai/" target="_blank" rel="noopener noreferrer" title="' + _t('Open DEEPX Agent on the web') + '" aria-label="' + _t('Open DEEPX Agent on the web') + '">DEEPX Agent <span aria-hidden="true">↗</span></a>',
-      '    <button class="dx-chat-header-btn" data-action="settings" title="' + _t('AI settings', 'AI 설정') + '" aria-label="' + _t('AI settings', 'AI 설정') + '">⚙️</button>',
-      '    <button class="dx-chat-header-btn" data-action="clear" title="' + _t('Clear chat', '대화 초기화') + '">🗑️</button>',
-      '    <button class="dx-chat-header-btn" data-action="close" title="' + _t('Close', '닫기') + '">✕</button>',
+      '    <button class="dx-chat-header-btn" data-action="settings" title="' + _t('AI settings', 'AI 설정') + '" aria-label="' + _t('AI settings', 'AI 설정') + '">' + _ico('gear') + '</button>',
+      '    <button class="dx-chat-header-btn" data-action="clear" title="' + _t('Clear chat', '대화 초기화') + '" aria-label="' + _t('Clear chat', '대화 초기화') + '">' + _ico('trash') + '</button>',
+      '    <button class="dx-chat-header-btn" data-action="close" title="' + _t('Close', '닫기') + '" aria-label="' + _t('Close', '닫기') + '">' + _ico('x') + '</button>',
       '  </div>',
       '</div>',
       '<div class="dx-chat-banner" style="display:none"></div>',
@@ -252,7 +257,7 @@ const DXChat = (() => {
       '<div class="dx-chat-suggestions"></div>',
       '<div class="dx-chat-input-area">',
       '  <textarea class="dx-chat-input" placeholder="' + _t('Ask a question...', '질문을 입력하세요...') + '" rows="1"></textarea>',
-      '  <button class="dx-chat-send-btn" aria-label="Send">➤</button>',
+      '  <button class="dx-chat-send-btn" aria-label="Send">' + _ico('send') + '</button>',
       '</div>',
     ].join('\n');
     document.body.appendChild(win);
@@ -344,6 +349,9 @@ const DXChat = (() => {
     _open = !_open;
     _els.win.classList.toggle('open', _open);
     _els.fab.classList.toggle('open', _open);
+    /* 열리면 닫기 표시로 바뀐다 — 예전에는 말풍선 이모지를 45° 돌렸는데, 아이콘을 돌리면 기울어진 말풍선일 뿐이다. */
+    _els.fab.innerHTML = _ico(_open ? 'x' : 'chat');
+    _els.fab.setAttribute('aria-label', _open ? _t('Close', '닫기') : 'Chat');
     if (_open) {
       _els.input.focus();
       _scrollBottom();
@@ -398,7 +406,7 @@ const DXChat = (() => {
 
       if (!resp.ok) {
         const err = await resp.json().catch(() => ({ error: 'Unknown error' }));
-        _finishAI(aiEl, '⚠️ ' + (err.error || 'Error'));
+        _finishAI(aiEl, err.error || 'Error', { error: true });
         return;
       }
 
@@ -446,7 +454,7 @@ const DXChat = (() => {
       _finishAI(aiEl, fullText);
 
     } catch (err) {
-      _finishAI(aiEl, _t('⚠️ Connection error: Unable to reach server.', '⚠️ 연결 오류: 서버에 연결할 수 없습니다.'));
+      _finishAI(aiEl, _t('Connection error: Unable to reach server.', '연결 오류: 서버에 연결할 수 없습니다.'), { error: true });
     }
   }
 
@@ -471,8 +479,13 @@ const DXChat = (() => {
     _scrollBottom();
   }
 
-  function _finishAI(el, text) {
+  function _finishAI(el, text, opts) {
     el.innerHTML = _renderMarkdown(text);
+    /* 오류는 말풍선 색과 경고 아이콘으로 — 예전에는 글 앞의 이모지였다 (spec 2026-09-29 아이콘 체계). */
+    if (opts && opts.error) {
+      el.classList.add('is-error');
+      el.insertAdjacentHTML('afterbegin', _ico('alert') + ' ');
+    }
     _history.push({ role: 'assistant', content: text });
     _scrollBottom();
   }
@@ -541,9 +554,9 @@ const DXChat = (() => {
   function _renderConfigBanner() {
     if (!_els.banner) return;
     if (!_configured) {
-      _els.banner.innerHTML = _t(
-        '⚠️ AI assistant is not configured. Open chat settings to register your API key. Basic guidance is available without AI. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Open settings</button>',
-        '⚠️ AI 어시스턴트가 설정되지 않았습니다. 채팅 설정에서 API 키를 등록하세요. 기본 안내는 AI 없이도 가능합니다. <button type="button" class="dx-chat-banner-action" data-action="settings-open">설정 열기</button>'
+      _els.banner.innerHTML = _ico('alert') + ' ' + _t(
+        'AI assistant is not configured. Open chat settings to register your API key. Basic guidance is available without AI. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Open settings</button>',
+        'AI 어시스턴트가 설정되지 않았습니다. 채팅 설정에서 API 키를 등록하세요. 기본 안내는 AI 없이도 가능합니다. <button type="button" class="dx-chat-banner-action" data-action="settings-open">설정 열기</button>'
       );
       const bannerBtn = _els.banner.querySelector('[data-action="settings-open"]');
       if (bannerBtn) bannerBtn.addEventListener('click', _openSettingsPanel);
@@ -844,7 +857,7 @@ const DXChat = (() => {
           _checkConfig();
           setTimeout(_closeSettingsPanel, 800);
         } else {
-          _showSettingsStatus('❌ ' + (data.error || 'Error'), 'error');
+          _showSettingsStatus((data.error || 'Error'), 'error');
         }
       })
       .catch(() => _showSettingsStatus(_t('Connection failed.', '연결 실패.'), 'error'));
@@ -861,7 +874,7 @@ const DXChat = (() => {
             _t('Knowledge updated (', '지식 갱신됨 (') + data.sources + _t(' sources).', '개 소스).'),
             'success');
         } else {
-          _showSettingsStatus('❌ ' + ((data && data.error) || 'Error'), 'error');
+          _showSettingsStatus(((data && data.error) || 'Error'), 'error');
         }
       })
       .catch(() => _showSettingsStatus(_t('Refresh failed.', '새로고침 실패.'), 'error'));
@@ -881,7 +894,7 @@ const DXChat = (() => {
         if (data.ok) {
           _showSettingsStatus(_t('Connected: ', '연결 성공: ') + (data.response || '').slice(0, 80), 'success');
         } else {
-          _showSettingsStatus('❌ ' + (data.error || 'Failed'), 'error');
+          _showSettingsStatus((data.error || 'Failed'), 'error');
         }
       })
       .catch(() => _showSettingsStatus(_t('Connection failed.', '연결 실패.'), 'error'));
@@ -890,6 +903,7 @@ const DXChat = (() => {
   function _showSettingsStatus(msg, cls) {
     if (!_els.settingsStatus) return;
     _els.settingsStatus.textContent = msg;
+    if (cls === 'error') _els.settingsStatus.insertAdjacentHTML('afterbegin', _ico('alert') + ' ');
     _els.settingsStatus.className = 'dx-chat-settings-status' + (cls ? ' ' + cls : '');
   }
 

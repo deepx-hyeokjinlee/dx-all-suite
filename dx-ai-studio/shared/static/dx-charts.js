@@ -177,6 +177,9 @@ function drawGauge(canvas,pct,color){
   ctx.beginPath();ctx.arc(cx,cy,r,start,angle);ctx.strokeStyle=color||_dxChartCssColor('--app-accent','#22d3ee');ctx.globalAlpha=0.2;ctx.lineWidth=16;ctx.stroke();ctx.globalAlpha=1;
 }
 
+/* 공용 아이콘 (shared/static/dx-icon.js, spec 2026-09-29 아이콘 체계) — 없으면 빈 자리. */
+function _dxcIcon(n){return (typeof window.DXIcon==='function')?window.DXIcon(n):'';}
+
 function renderWaterfall(perf){
   if(!perf||!perf.pipeline||!perf.pipeline.length)return'';
   var total=perf.total_pipeline_ms||perf.pipeline.reduce(function(s,p){return s+p.latency_ms},0);
@@ -193,7 +196,7 @@ function renderWaterfall(perf){
     var bg=wfColors[i%wfColors.length];
     var bot=p.step===perf.bottleneck;
     var pct=total>0?(p.latency_ms/total*100).toFixed(0):'--';
-    h+='<span><span class="wf-dot'+(bot?' wf-bottleneck':'')+'" style="background:'+bg+'"></span>'+p.step+' '+p.latency_ms.toFixed(1)+'ms ('+pct+'%)'+(bot?' <span class="wf-bot-tag">▲ bottleneck</span>':'')+'</span>';
+    h+='<span><span class="wf-dot'+(bot?' wf-bottleneck':'')+'" style="background:'+bg+'"></span>'+p.step+' '+p.latency_ms.toFixed(1)+'ms ('+pct+'%)'+(bot?' <span class="wf-bot-tag">'+_dxcIcon('alert')+' bottleneck</span>':'')+'</span>';
   });
   h+='</div>';return h;
 }
@@ -205,7 +208,7 @@ function renderPerfCards(res){
   if(p.total_frames)h+='<div class="perf-item"><div class="pv">'+p.total_frames+'</div><div class="pl">Frames</div></div>';
   if(p.total_time)h+='<div class="perf-item"><div class="pv">'+p.total_time+'s</div><div class="pl">Total Time</div></div>';
   var exitColor=res.exit_code===0?'var(--status-ok)':'var(--status-error)';
-  var exitIcon=res.exit_code===0?'\u2705':'\u274c';
+  var exitIcon=_dxcIcon(res.exit_code===0?'check':'x');
   h+='<div class="perf-item"><div class="pv" style="color:'+exitColor+'">'+exitIcon+'</div><div class="pl">Exit '+res.exit_code+'</div></div>';
   h+='</div>';
   h+=renderWaterfall(p);

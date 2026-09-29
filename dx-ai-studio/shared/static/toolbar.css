@@ -19,7 +19,7 @@
   flex-wrap: nowrap;
 }
 
-/* ── Single icon button (🎓 ❓ ⚙️ etc.) ── */
+/* ── Single icon button (tutorial · theme · settings — sprite icons) ── */
 .dx-toolbar-btn {
   width: 36px;
   height: 36px;
@@ -110,6 +110,9 @@
 .dx-lang-icon { font-size: var(--fs-md); line-height: 1; }
 .dx-lang-code { font-size: var(--fs-xs); }
 .dx-lang-arrow { font-size: var(--fs-2xs); opacity: 0.6; }
+/* sprite 아이콘 (dx-ico, 1em) 이 글자 줄 가운데에 서게 한다. */
+.dx-lang-icon,
+.dx-lang-arrow { display: inline-flex; align-items: center; }
 
 .dx-lang-menu {
   display: none;

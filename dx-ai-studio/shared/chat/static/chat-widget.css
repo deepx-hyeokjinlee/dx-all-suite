@@ -52,7 +52,7 @@
   transform: scale(1.08);
 }
 .dx-chat-fab.open {
-  transform: rotate(45deg) scale(1.08);
+  transform: scale(1.08);
 }
 
 /* ── Chat Window ────────────────────────────────────── */
@@ -437,3 +437,9 @@
   background: var(--chat-border);
   border-radius: 3px;
 }
+
+/* 오류 말풍선 — 경고 아이콘 + 오류 색 (예전에는 글 앞의 이모지였다). */
+.dx-chat-msg.is-error { color: var(--status-error); }
+.dx-chat-msg.is-error > .dx-ico:first-child,
+.dx-chat-banner > .dx-ico:first-child,
+.dx-chat-settings-status > .dx-ico:first-child { margin-right: var(--sp-1); }

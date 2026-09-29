@@ -77,12 +77,5 @@
   "launcher/static/sdk-library.js": 35,
   "launcher/static/sdk-tutorial.js": 14,
   "launcher/static/style.css": 1,
-  "launcher/static/tutorial.js": 2,
-  "shared/chat/static/chat-widget.js": 25,
-  "shared/hw_widget/widget.html": 10,
-  "shared/static/dx-charts.js": 3,
-  "shared/static/toolbar.css": 3,
-  "shared/static/toolbar.js": 8,
-  "shared/static/tutorial-engine.js": 22,
-  "shared/static/tutorial-init.js": 2
+  "launcher/static/tutorial.js": 2
 }

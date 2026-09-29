@@ -86,13 +86,12 @@ def test_toolbar_builds_a_theme_button():
 
 
 def test_theme_button_glyphs_are_monochrome_not_emoji():
-    """이모지는 OS별 렌더가 달라 36px 버튼에서 크기가 튄다."""
+    """이모지는 OS별 렌더가 달라 36px 버튼에서 크기가 튄다. 반쪽 원 기호 (U+25D2) 도 headless 캡처에서
+    "-" 로 나왔다 — 세 상태는 공용 sprite 의 아이콘 이름이다 (spec 2026-09-29 아이콘 체계 단계 1)."""
     js = read(TOOLBAR_JS)
-    m = re.search(r"THEME_GLYPH = \{([^}]*)\}", js)
-    assert m, "THEME_GLYPH를 못 찾았다"
-    assert not re.search(r"[\U0001F300-\U0001FAFF]", m.group(1)), (
-        f"테마 글리프에 이모지가 있다: {m.group(1)}"
-    )
+    m = re.search(r"THEME_ICON = \{([^}]*)\}", js)
+    assert m, "THEME_ICON 을 못 찾았다"
+    assert re.findall(r"'([a-z]+)'", m.group(1)) == ["moon", "sun", "theme"], m.group(1)
 
 
 @pytest.mark.parametrize("rel", SURFACES)

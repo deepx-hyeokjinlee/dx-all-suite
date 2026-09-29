@@ -195,7 +195,8 @@
 
         var menuBtn = document.createElement('button');
         menuBtn.className = 'btn-small tutorial-menu-btn';
-        menuBtn.innerHTML = '📖 Tutorial ▼';
+        var _ico = function (n) { return (typeof window.DXIcon === 'function') ? window.DXIcon(n) : ''; };
+        menuBtn.innerHTML = _ico('book') + ' Tutorial ' + _ico('chevd');
 
         var menuDropdown = document.createElement('div');
         menuDropdown.className = 'tutorial-menu-dropdown';

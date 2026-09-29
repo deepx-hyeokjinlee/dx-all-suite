@@ -22,7 +22,7 @@ NEW = ["library", "globe", "theme", "graduation", "gear", "check", "alert", "x",
        "trash", "chat", "send", "play", "stop", "refresh", "search", "upload", "image", "video", "camera",
        "file", "clipboard", "copy", "eye", "external"]
 # 선만으로 뜻이 되는 표시 — 면이 있으면 오히려 흐려진다.
-MARKS = {"chev", "chevd", "dots", "check", "x", "external", "send", "refresh", "spinner", "search"}
+MARKS = {"chev", "chevd", "dots", "check", "x", "external", "send", "refresh", "spinner", "search", "circle", "menu"}
 DOCUMENTS = [
     "launcher/static/index.html",
     "dx_app/templates/index.html",

@@ -43,25 +43,25 @@
 </style>
 <div class="hw-float" id="hw-float">
   <div class="hw-float-header" id="hw-float-drag">
-    <span class="hw-float-title">☰ <span data-i18n="NPU Monitor">NPU Monitor</span></span>
-    <button class="hw-float-toggle" onclick="document.getElementById('hw-float').classList.toggle('minimized')">&#9662;</button>
+    <span class="hw-float-title"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#menu"></use></svg> <span data-i18n="NPU Monitor">NPU Monitor</span></span>
+    <button class="hw-float-toggle" aria-label="Minimize" data-i18n-aria-label="Minimize" onclick="document.getElementById('hw-float').classList.toggle('minimized')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chevd"></use></svg></button>
   </div>
   <div class="hw-float-body">
     <div id="hf-npu-selector" class="hw-npu-selector" hidden></div>
     <div id="hf-npu-section" class="hw-float-section">
       <div class="hw-section-title" id="hf-npu-title">NPU</div>
-      <div class="hw-float-row"><span class="hf-k">🌡️ <span data-i18n="Avg Temp">Avg Temp</span></span><span class="hf-v" id="hf-temp">--°C</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#thermometer"></use></svg> <span data-i18n="Avg Temp">Avg Temp</span></span><span class="hf-v" id="hf-temp">--°C</span></div>
       <div id="hf-ctemps"></div>
-      <div class="hw-float-row"><span class="hf-k">⚙️ <span data-i18n="NPU Util">NPU Util</span></span><span class="hf-v" id="hf-util">--%</span></div>
-      <div class="hw-float-row"><span class="hf-k">💾 NPU DRAM</span><span class="hf-v" id="hf-dram">--%</span></div>
-      <div class="hw-float-row"><span class="hf-k">🔄 <span data-i18n="Clock">Clock</span></span><span class="hf-v" id="hf-clock">-- MHz</span></div>
-      <div class="hw-float-row"><span class="hf-k">⚡ <span data-i18n="Voltage">Voltage</span></span><span class="hf-v" id="hf-volt">-- mV</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#bench"></use></svg> <span data-i18n="NPU Util">NPU Util</span></span><span class="hf-v" id="hf-util">--%</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#memory"></use></svg> NPU DRAM</span><span class="hf-v" id="hf-dram">--%</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clock"></use></svg> <span data-i18n="Clock">Clock</span></span><span class="hf-v" id="hf-clock">-- MHz</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#bolt"></use></svg> <span data-i18n="Voltage">Voltage</span></span><span class="hf-v" id="hf-volt">-- mV</span></div>
     </div>
     <div id="hf-system-section" class="hw-float-section">
       <div class="hw-section-title"><span data-i18n="System">System</span></div>
-      <div class="hw-float-row"><span class="hf-k">🖥️ CPU</span><span class="hf-v" id="hf-cpu">--</span></div>
-      <div class="hw-float-row"><span class="hf-k">💾 <span data-i18n="Memory">Memory</span></span><span class="hf-v" id="hf-mem">--%</span></div>
-      <div class="hw-float-row"><span class="hf-k">📀 <span data-i18n="Disk">Disk</span></span><span class="hf-v" id="hf-disk">--%</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#cpu"></use></svg> CPU</span><span class="hf-v" id="hf-cpu">--</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#memory"></use></svg> <span data-i18n="Memory">Memory</span></span><span class="hf-v" id="hf-mem">--%</span></div>
+      <div class="hw-float-row"><span class="hf-k"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#disk"></use></svg> <span data-i18n="Disk">Disk</span></span><span class="hf-v" id="hf-disk">--%</span></div>
     </div>
     <div class="hw-float-status" id="hf-status" style="display:none"><span data-i18n="Connecting...">Connecting...</span></div>
     <div class="hw-spark" id="hf-spark" onclick="_hwSparkNext()">
@@ -364,6 +364,7 @@
 (function () {
   var DICT = {
     'Avg Temp': { ko: '평균 온도', ja: '平均温度', 'zh-CN': '平均温度', 'zh-TW': '平均溫度', es: 'Temp. promedio' },
+    'Minimize': { ko: '접기', ja: '最小化', 'zh-CN': '最小化', 'zh-TW': '最小化', es: 'Minimizar' },
     'Clock': { ko: '클럭', ja: 'クロック', 'zh-CN': '时钟', 'zh-TW': '時脈', es: 'Reloj' },
     'Connecting...': { ko: '연결 중...', ja: '接続中...', 'zh-CN': '连接中...', 'zh-TW': '連線中...', es: 'Conectando...' },
     'Disk': { ko: '디스크', ja: 'ディスク', 'zh-CN': '磁盘', 'zh-TW': '磁碟', es: 'Disco' },
