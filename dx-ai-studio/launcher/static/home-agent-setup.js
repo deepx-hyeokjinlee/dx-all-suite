@@ -33,10 +33,16 @@
     if (on) el.removeAttribute('hidden'); else el.setAttribute('hidden', '');
   }
 
+  function _esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
   function _fill(sel, values, chosen) {
     if (!sel) return;
     sel.innerHTML = values.map(function (v) {
-      return '<option value="' + v + '"' + (v === chosen ? ' selected' : '') + '>' + v + '</option>';
+      return '<option value="' + _esc(v) + '"' + (v === chosen ? ' selected' : '') + '>' + _esc(v) + '</option>';
     }).join('');
   }
 
@@ -85,8 +91,22 @@
       .catch(function () { /* the static list is already on screen */ });
   }
 
+  /* copilot 은 `catalog` 를 준다 — 전체 model 과, 이 계정이 쓸 수 있는지 (요금제 · 회사 정책) 와 요금
+     배수. 전부 보이되 계정 것만 고르게 한다 (사용자 결정 2026-09-30): 못 쓰는 것은 disabled, 쓸 수
+     있는 것은 배수를 붙인다. catalog 가 없으면 (다른 agent · 조회 실패) 목록 전체가 고를 수 있는 것이다. */
   function _paintModels(name, d, fallbackDefault) {
-    _fill($('setupModel'), d.models, d.default_model || fallbackDefault);
+    var sel = $('setupModel');
+    var chosen = d.default_model || fallbackDefault;
+    if (d.catalog && d.catalog.length && sel) {
+      var off = _t('not available on this account');
+      sel.innerHTML = d.catalog.map(function (m) {
+        var label = m.id + (m.enabled ? (m.usage ? ' \u00B7 ' + m.usage : '') : ' \u2014 ' + off);
+        return '<option value="' + _esc(m.id) + '"' + (m.enabled ? '' : ' disabled') +
+          (m.enabled && m.id === chosen ? ' selected' : '') + '>' + _esc(label) + '</option>';
+      }).join('');
+    } else {
+      _fill(sel, d.models, chosen);
+    }
     var note = $('setupModelCount');
     if (note) note.textContent = d.models.length + ' ' + _t('models');
   }
@@ -151,8 +171,18 @@
 
   /* ── load ────────────────────────────────────────────────── */
 
-  function load() {
-    return fetch(API + '/status').then(function (r) { return r.json(); })
+  /* 한 번 묻고 끝내면 안 된다. home 은 launcher 가 module 들을 띄우는 동안 열릴 수 있고, 그때
+     agent dev 는 아직 없어 proxy 가 502 를 준다 — 예전에는 그 한 번으로 form 을 숨긴 채 다시 묻지
+     않아서, 새로고침 시점에 따라 model 선택이 떴다 안 떴다 했다. 준비될 때까지 (최대 ~30s) 다시
+     묻고, studio 가 준비됐다는 신호 (dx-studio-ready) 에도 한 번 더 묻는다. */
+  var _RETRY_MS = [500, 1000, 2000, 4000, 4000, 4000, 4000, 4000, 4000, 4000];
+  var _retry = null;
+
+  function load(attempt) {
+    attempt = attempt || 0;
+    if (_retry) { clearTimeout(_retry); _retry = null; }
+    return fetch(API + '/status')
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (status) {
         if (!status || !status.available) { _degraded(status || {}); return; }
         _agents = status.agents || [];
@@ -165,11 +195,15 @@
         _paintFoldSummary();
       })
       .catch(function () {
-        /* The module is not running. The Build section still explains itself;
-           it just cannot say who would do the building. */
+        /* The module is not running (yet). The Build section still explains itself;
+           it just cannot say who would do the building. 다시 묻는 동안에도 숨겨 둔다 — 값이 빈
+           "Agent ›" 가 떠 있으면 고장 난 control 로 보인다. 받아지면 위의 성공 경로가 보인다. */
         _show($('setupForm'), false);
         _show($('setupFold'), false);
         _show($('setupDegraded'), false);
+        if (attempt < _RETRY_MS.length) {
+          _retry = setTimeout(function () { load(attempt + 1); }, _RETRY_MS[attempt]);
+        }
       });
   }
 
@@ -185,13 +219,28 @@
     out.textContent = parts.join(' \u00B7 ');
   }
 
-  /* What the console posts to /api/agent/run. */
+  /* What the console posts to /api/agent/run. mode 는 Agent Dev 와 같은 두 값 — Interactive (묻고 멈춘다,
+     답장으로 이어진다) 와 Autopilot (묻지 않고 끝까지). */
   function choice() {
     return {
       agent: $('setupAgent') ? $('setupAgent').value : undefined,
       model: $('setupModel') ? $('setupModel').value : undefined,
-      effort: $('setupEffort') ? $('setupEffort').value : undefined
+      effort: $('setupEffort') ? $('setupEffort').value : undefined,
+      mode: $('setupMode') ? $('setupMode').value : 'interactive'
     };
+  }
+
+  var _MODE_KEY = 'dx-home-agent-mode';
+  function _restoreMode() {
+    var sel = $('setupMode');
+    if (!sel) return;
+    try {
+      var saved = localStorage.getItem(_MODE_KEY);
+      if (saved === 'interactive' || saved === 'autopilot') sel.value = saved;
+    } catch (e) { /* storage 없음 — 기본 Interactive */ }
+    sel.addEventListener('change', function () {
+      try { localStorage.setItem(_MODE_KEY, sel.value); } catch (e) {}
+    });
   }
 
   function init() {
@@ -205,7 +254,9 @@
     }
     var model = $('setupModel');
     if (model) model.addEventListener('change', _paintFoldSummary);
+    _restoreMode();
     load();
+    window.addEventListener('dx-studio-ready', function () { if (!_agents.length) load(); });
     if (window.DXI18n && DXI18n.onLangChange) {
       DXI18n.onLangChange(function () { if (_current) _paintAuth(_current); });
     }

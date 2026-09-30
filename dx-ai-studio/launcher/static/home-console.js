@@ -31,6 +31,10 @@
   var _turns = [];           // every turn, so a language change can relabel them
   var _ended = '';           // 'done' | 'stopped' — the badge's resting text
   var _sessionDir = '';
+  /* 한 대화 — Interactive 면 답장이 같은 conversation 으로 이어진다. 닫으면 버린다. */
+  var _conversationId = null;
+  var _mode = 'interactive';
+  var _setup = {};           // 대화를 시작할 때 고른 agent · model · effort (답장도 같은 것으로)
 
   function $(id) { return document.getElementById(id); }
   function _t(key) {
@@ -48,7 +52,7 @@
     if (!host) return null;
     var block = document.createElement('div');
     block.className = 'work-turn';
-    var body = document.createElement('p');
+    var body = document.createElement('div');
     body.className = 'turn-text';
     var summary = document.createElement('p');
     summary.className = 'turn-activity';
@@ -57,18 +61,45 @@
     block.appendChild(summary);
     host.appendChild(block);
     var turn = {
-      block: block, body: body, summary: summary, commands: 0, files: 0, other: 0
+      block: block, body: body, summary: summary, commands: 0, files: 0, other: 0, text: '', paint: 0
     };
     _turns.push(turn);
     return turn;
   }
 
-  function _say(text) {
-    if (!_turn || !_turn.body.textContent) {
-      _turn = _newTurn();
-    }
+  /* 한 턴의 글은 한 덩어리 — Agent Dev (console.js applyAssistantText) 와 같은 규칙으로 합친다: final 은
+     바꾸고, delta 는 잇고, 그 밖에는 더 길면 바꾸고 (누적 snapshot) 짧으면 잇는다. 예전에는 message 마다
+     새 문단을 만들고 textContent 로 넣어서, 조각이 흩어지고 줄바꿈 · 목록 · 제목이 뭉개졌다.
+     그리기는 Agent Dev 와 같은 renderer (shared/static/markdown_render.js) 로, frame 당 한 번. */
+  function _say(text, ev) {
+    if (!text) return;
+    if (!_turn) _turn = _newTurn();
     if (!_turn) return;
-    _turn.body.textContent = text;
+    var turn = _turn;
+    if (ev && ev.final) turn.text = text;
+    else if (ev && ev.delta) turn.text += text;
+    else if (!turn.text || text.length >= turn.text.length) turn.text = text;
+    else turn.text += text;
+    if (turn.paint) return;
+    turn.paint = requestAnimationFrame(function () {
+      turn.paint = 0;
+      _paintTurn(turn);
+    });
+  }
+
+  function _paintTurn(turn) {
+    var R = window.DXMarkdownRender;
+    if (R && R.render) turn.body.innerHTML = R.render(R.repairCodeFences(turn.text), {});
+    else turn.body.textContent = turn.text;
+  }
+
+  function _youSaid(text) {
+    var host = $('workNarration');
+    if (!host) return;
+    var el = document.createElement('p');
+    el.className = 'work-you';
+    el.textContent = text;
+    host.appendChild(el);
   }
 
   /* The adapter formats shell lines as `$ cmd` and file tools as `✓ action: path`.
@@ -126,8 +157,7 @@
     if (!ev || ev.type === 'ping' || ev.hidden) return;
     switch (ev.type) {
       case 'message':
-        _turn = null;              // a new turn starts on the next message
-        _say(ev.text || '');
+        _say(ev.text || '', ev);
         break;
       case 'status':
         if (ev.text) _status(ev.text);
@@ -149,6 +179,7 @@
         break;
       case 'done':
         if (ev.session_dir) _sessionDir = ev.session_dir;
+        if (ev.conversation_id) _conversationId = ev.conversation_id;
         _finish(true);
         break;
       default:
@@ -188,8 +219,13 @@
   /* The last thing on the left is the thing you can execute. "Done" is not a
      result; a session folder with a Run control is. */
   function _finish(ok) {
+    if (!_running && _ended) return;       // done 과 stream 끝이 둘 다 부른다
     _setBusy(false);
+    if (_turn && _turn.paint) { cancelAnimationFrame(_turn.paint); _turn.paint = 0; _paintTurn(_turn); }
+    _turn = null;                          // 다음 답장은 새 턴
     _ended = ok ? 'Completed' : 'Stopped';
+    /* Interactive 면 agent 가 묻고 멈춘 자리다 — 답장 칸을 연다 (같은 대화로 이어 간다). */
+    _showReply(ok && _mode === 'interactive' && !!_conversationId);
     var badge = $('workBadge');
     if (badge) badge.textContent = _t(_ended);
     var foot = $('workArtefact');
@@ -199,6 +235,17 @@
     }
   }
 
+  function _showReply(on) {
+    var box = $('workReply');
+    if (!box) return;
+    _show(box, on);
+    if (on) {
+      var input = $('workReplyInput');
+      if (input) { input.value = ''; try { input.focus({ preventScroll: true }); } catch (e) {} }
+    }
+  }
+
+  /* 새 대화. 설정 (agent · model · effort · mode) 은 여기서 한 번 읽고, 답장도 같은 것으로 간다. */
   function start(prompt) {
     if (_running || !prompt) return;
     var view = $('homeWork');
@@ -209,14 +256,29 @@
     $('workNarration').innerHTML = '';
     $('workTerminalOut').innerHTML = '';
     _show($('workArtefact'), false);
-    _turn = null;
+    _showReply(false);
     _turns = [];
-    _ended = '';
     _sessionDir = '';
     _follow = true;
-    _setBusy(true);
+    _conversationId = null;
+    _setup = (ns.agentChoice && ns.agentChoice()) || {};
+    _mode = _setup.mode === 'autopilot' ? 'autopilot' : 'interactive';
+    _run(prompt);
+  }
 
-    var setup = (ns.agentChoice && ns.agentChoice()) || {};
+  /* 같은 대화로 한 턴 더 — Interactive 에서 agent 가 묻고 멈춘 뒤. */
+  function reply(text) {
+    text = String(text || '').trim();
+    if (_running || !text || !_conversationId) return;
+    _showReply(false);
+    _youSaid(text);
+    _run(text);
+  }
+
+  function _run(prompt) {
+    _turn = null;
+    _ended = '';
+    _setBusy(true);
     fetch('/agent/api/agent/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -228,9 +290,13 @@
            the console header that were never populated: the loader asked
            /api/agent/models for a key (`agents`) that endpoint does not
            return, so all three posted empty. */
-        agent: setup.agent,
-        model: setup.model,
-        effort: setup.effort
+        agent: _setup.agent,
+        model: _setup.model,
+        effort: _setup.effort,
+        /* mode 를 보내지 않으면 server 는 interactive 로 돌리는데, 예전 home 에는 답할 곳이 없어서
+           agent 가 "진행할까요?" 하고 멈추면 거기서 끝이었다. */
+        mode: _mode,
+        conversation_id: _conversationId || undefined
       })
     }).then(function (resp) {
       if (!resp.ok || !resp.body) {
@@ -289,6 +355,12 @@
         _show(view, true);
         $('workNarration').innerHTML = '';
         $('workTerminalOut').innerHTML = '';
+        /* 무엇을 이어받는지 — status 가 도는 실행의 요청 · 대화 · mode 를 준다 */
+        if (st.run_prompt) $('workAsk').textContent = st.run_prompt;
+        _conversationId = st.run_conversation_id || null;
+        _mode = st.run_mode === 'autopilot' ? 'autopilot' : 'interactive';
+        _setup = (ns.agentChoice && ns.agentChoice()) || {};
+        _showReply(false);
         _turn = null; _turns = []; _ended = ''; _follow = true;
         _setBusy(true);
         return fetch('/agent/api/agent/run/events?from=0').then(function (resp) {
@@ -340,6 +412,23 @@
     }
     var stopBtn = $('workStop');
     if (stopBtn) stopBtn.addEventListener('click', stop);
+    var replyBox = $('workReply');
+    if (replyBox) {
+      replyBox.addEventListener('submit', function (e) {
+        e.preventDefault();
+        reply(($('workReplyInput') || {}).value);
+      });
+      var replyInput = $('workReplyInput');
+      if (replyInput) {
+        /* Enter 로 보내고 Shift+Enter 는 줄바꿈 (한글 조합 중에는 보내지 않는다) */
+        replyInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+            e.preventDefault();
+            reply(replyInput.value);
+          }
+        });
+      }
+    }
     var closeBtn = $('workClose');
     if (closeBtn) closeBtn.addEventListener('click', closeHomeWork);
     var openModule = $('workOpenModule');
@@ -376,12 +465,15 @@
     var view = $('homeWork');
     if (!view || view.hidden) return false;
     _show(view, false);
+    _conversationId = null;      // 닫으면 대화를 버린다 — 다음 시작은 새 대화
+    _showReply(false);
     return true;
   }
 
   ns.closeHomeWork = closeHomeWork;
   ns._homeWorkSetBusy = _setBusy;   // test_home_stage_browser.py 가 도는 상태를 만든다
   ns.homeAgentStart = start;
+  ns.homeAgentReply = reply;
   ns.initHomeConsole = init;
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

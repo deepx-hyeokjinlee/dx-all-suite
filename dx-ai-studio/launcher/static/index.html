@@ -152,6 +152,13 @@
             <span data-i18n="Effort">Effort</span>
             <select class="setup-select" id="setupEffort"></select>
           </label>
+          <label class="setup-field">
+            <span data-i18n="Mode">Mode</span>
+            <select class="setup-select" id="setupMode">
+              <option value="interactive" data-i18n="Interactive">Interactive</option>
+              <option value="autopilot" data-i18n="Autopilot (no questions)">Autopilot (no questions)</option>
+            </select>
+          </label>
           <span class="setup-auth" id="setupAuth"></span>
           <span class="setup-hint" id="setupHint" hidden><span data-i18n="Sign in with">Sign in with</span> <code></code></span>
         </div>
@@ -229,6 +236,13 @@
               <p class="work-ask" id="workAsk"></p>
               <div id="workNarration"></div>
               <p class="work-status" id="workStatus"></p>
+              <!-- Interactive: agent 가 묻고 멈추면 여기서 답한다 — 같은 대화로 이어진다 -->
+              <form class="work-reply" id="workReply" hidden>
+                <textarea class="work-reply-input" id="workReplyInput" rows="2"
+                          placeholder="Reply to the agent…" data-i18n-placeholder="Reply to the agent…"
+                          aria-label="Reply to the agent" data-i18n-aria-label="Reply to the agent"></textarea>
+                <button type="submit" class="ask-go" id="workReplySend" data-i18n="Send">Send</button>
+              </form>
               <div class="work-artefact" id="workArtefact" hidden>
                 <span class="art-kind" data-i18n="session">session</span>
                 <code id="workSessionPath"></code>
@@ -588,6 +602,13 @@
     'Or open a tool directly.': { ko:'또는 도구를 바로 엽니다.', ja:'または、ツールを直接開きます。', es:'O abra una herramienta directamente.', 'zh-CN':'或者直接打开工具。', 'zh-TW':'或者直接開啟工具。' },
     'Agent': { ko:'에이전트', ja:'エージェント', es:'Agente', 'zh-CN':'智能体', 'zh-TW':'代理' },
     'Model': { ko:'모델', ja:'モデル', es:'Modelo', 'zh-CN':'模型', 'zh-TW':'模型' },
+    'Mode': { ko:'모드', ja:'モード', es:'Modo', 'zh-CN':'模式', 'zh-TW':'模式' },
+    'Interactive': { ko:'대화형', ja:'対話型', es:'Interactivo', 'zh-CN':'交互式', 'zh-TW':'互動式' },
+    'Autopilot (no questions)': { ko:'자동(질문 없음)', ja:'Autopilot（質問なし）', es:'Autopilot (sin preguntas)', 'zh-CN':'Autopilot（无提问）', 'zh-TW':'Autopilot（無提問）' },
+    'Send': { ko:'전송', ja:'送信', es:'Enviar', 'zh-CN':'发送', 'zh-TW':'傳送' },
+    'Reply to the agent…': { ko:'에이전트에게 답장…', ja:'エージェントに返信…', es:'Responder al agente…', 'zh-CN':'回复智能体…', 'zh-TW':'回覆代理程式…' },
+    'Reply to the agent': { ko:'에이전트에게 답장', ja:'エージェントに返信', es:'Responder al agente', 'zh-CN':'回复智能体', 'zh-TW':'回覆代理程式' },
+    'not available on this account': { ko:'이 계정에서 사용 불가', ja:'このアカウントでは使用不可', es:'no disponible en esta cuenta', 'zh-CN':'此账号不可用', 'zh-TW':'此帳號無法使用' },
     'Effort': { ko:'사고 강도', ja:'推論の強さ', es:'Esfuerzo', 'zh-CN':'思考强度', 'zh-TW':'思考強度' },
     'signed in': { ko:'로그인됨', ja:'ログイン済み', es:'sesión iniciada', 'zh-CN':'已登录', 'zh-TW':'已登入' },
     'not signed in': { ko:'로그인 안 됨', ja:'未ログイン', es:'sin sesión', 'zh-CN':'未登录', 'zh-TW':'未登入' },
@@ -1533,6 +1554,7 @@
   <script src="/home-prompts.js"></script>
   <script src="/home-answer.js"></script>
   <script src="/home-agent-setup.js"></script>
+  <script src="/static/shared/markdown_render.js"></script>
   <script src="/home-console.js"></script>
   <script src="/home-sections.js"></script>
   <script src="/home-widgets.js"></script>

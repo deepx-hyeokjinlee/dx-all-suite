@@ -147,6 +147,13 @@ window._DX_I18N_DICT = {
     'zh-TW': '代理程式執行中…',
     es: 'Agente en ejecución…',
   },
+  'Resumed run': {
+    ko: '이어받은 실행',
+    ja: '引き継いだ実行',
+    'zh-CN': '接续的运行',
+    'zh-TW': '接續的執行',
+    es: 'Ejecución retomada',
+  },
   'Interactive': {
     ko: '대화형',
     ja: '対話型',

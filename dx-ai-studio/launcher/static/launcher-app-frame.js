@@ -183,6 +183,8 @@
 
       function openShell(data) {
         ns._studioReadyResolved = true;
+        /* home 의 agent 설정처럼 module 에 기대는 것들이 다시 물을 때 (home-agent-setup.js) */
+        try { window.dispatchEvent(new Event('dx-studio-ready')); } catch (e) {}
         if (showBootGate) hideStudioBootGate();
         if (!ns._launcherCoreStarted) ns._initLauncherCore();
         startSharedHwStream();   // one hw_stream for the whole session (see def)

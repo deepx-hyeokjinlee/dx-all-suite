@@ -2123,7 +2123,69 @@ body {
   color: var(--text-primary);
 }
 .work-turn { margin-bottom: var(--sp-3); }
-.turn-text { margin: 0; font-size: var(--fs-sm); color: var(--text-primary); line-height: 1.6; }
+.turn-text { margin: 0; font-size: var(--fs-sm); color: var(--text-primary); line-height: 1.6; overflow-wrap: anywhere; }
+/* 답글은 Agent Dev 와 같은 renderer (shared/static/markdown_render.js) 로 그린다 — 줄바꿈 · 목록 ·
+   제목 · 코드가 뭉개지던 자리. 좁은 왼쪽 칸이라 크기는 한 단씩 낮춘다. */
+.turn-text :is(.md-h2, .md-h3, .md-h4, .md-h5) {
+  margin: var(--sp-3) 0 var(--sp-1);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  line-height: 1.35;
+}
+.turn-text :is(.md-h4, .md-h5) { font-size: var(--fs-sm); }
+.turn-text > :first-child { margin-top: 0; }
+.turn-text .md-list { margin: var(--sp-1) 0; padding-left: var(--sp-5); }
+.turn-text .md-list li + li { margin-top: var(--sp-1); }
+.turn-text .md-hr { border: 0; border-top: 1px solid var(--border-subtle); margin: var(--sp-3) 0; }
+.turn-text .md-link { color: var(--accent); }
+.turn-text .md-inline-code {
+  font-family: var(--mono);
+  font-size: .92em;
+  padding: 0 var(--sp-1);
+  border-radius: var(--radius-xs);
+  background: var(--surface-sunken);
+}
+.turn-text pre {
+  margin: var(--sp-2) 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  font-family: var(--mono);
+  font-size: var(--fs-2xs);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.turn-text .md-table-wrap { overflow-x: auto; margin: var(--sp-2) 0; }
+.turn-text .md-table { border-collapse: collapse; font-size: var(--fs-xs); }
+.turn-text .md-table :is(th, td) { border: 1px solid var(--border-subtle); padding: var(--sp-1) var(--sp-2); text-align: left; }
+/* 사용자가 보낸 답장 — 요청 (.work-ask) 과 같은 말풍선, 오른쪽으로 */
+.work-you {
+  margin: 0 0 var(--sp-3) auto;
+  max-width: 85%;
+  width: fit-content;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+.work-reply { display: flex; gap: var(--sp-2); align-items: flex-end; margin-top: var(--sp-3); }
+.work-reply[hidden] { display: none; }
+.work-reply-input {
+  flex: 1;
+  min-width: 0;
+  resize: vertical;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--fs-sm);
+}
+.work-reply-input:focus { outline: none; border-color: var(--accent); }
 .turn-activity { margin: 4px 0 0; font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-faint); }
 .turn-error { margin: var(--sp-2) 0 0; font-size: var(--fs-sm); color: var(--status-error); }
 .work-status { margin: var(--sp-2) 0 0; font-family: var(--mono); font-size: var(--fs-2xs); color: var(--text-muted); }
@@ -2169,7 +2231,9 @@ body {
   font-size: var(--fs-2xs);
   line-height: 1.7;
   color: var(--text-secondary);
-  white-space: pre;
+  /* 긴 command 는 접는다 — pre 이면 칸 밖으로 숨었다 */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .term-line.is-cmd { color: var(--accent); font-weight: 600; }
 .term-line.is-err { color: var(--status-error); }
