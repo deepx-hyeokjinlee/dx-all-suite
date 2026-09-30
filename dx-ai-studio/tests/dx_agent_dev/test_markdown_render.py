@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-JS = ROOT / "dx_agent_dev" / "static" / "js" / "markdown_render.js"
+JS = ROOT / "shared" / "static" / "markdown_render.js"   # home 과 Agent Dev 가 같은 파일을 쓴다
 
 NODE_TEST = r"""
 const fs = require('fs');

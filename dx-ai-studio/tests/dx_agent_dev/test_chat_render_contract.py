@@ -39,7 +39,7 @@ def test_table_wrap_scrolls():
 @pytest.mark.skipif(not shutil.which("node"), reason="node not available")
 def test_markdown_render_completeness():
     """Lock the verified-good renderer: unclosed fences repaired, tables wrapped, no raw fence."""
-    js = AD / "static" / "js" / "markdown_render.js"
+    js = AD.parent / "shared" / "static" / "markdown_render.js"
     script = (
         "const fs=require('fs'),vm=require('vm');"
         "const g={};const ctx=vm.createContext({window:g,globalThis:g,console});"

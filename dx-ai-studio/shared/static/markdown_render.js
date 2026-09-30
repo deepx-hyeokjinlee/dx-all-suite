@@ -1,6 +1,7 @@
 /**
  * DX Agent Dev — assistant markdown → HTML (GFM-lite + Mermaid + spec mode)
- * Used by console.js; exported as window.DXMarkdownRender for tests.
+ * Used by the Agent Dev console (console.js) and the launcher home's working view (home-console.js)
+ * — one renderer so an answer reads the same in both. Exported as window.DXMarkdownRender.
  */
 (function (global) {
   'use strict';
@@ -144,7 +145,10 @@
 
     html = html.replace(/`([^`\n]+)`/g, '<code class="md-inline-code">$1</code>');
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_, label, url) {
-      var safeUrl = escapeHtml(url).replace(/"/g, '&quot;');
+      /* agent 가 쓴 글이다 — javascript: 같은 scheme 은 link 로 만들지 않는다 (http · https · 상대 경로만). */
+      var raw = String(url).trim();
+      if (/^[a-z][a-z0-9+.-]*:/i.test(raw) && !/^https?:/i.test(raw)) return label;
+      var safeUrl = escapeHtml(raw).replace(/"/g, '&quot;');
       return '<a class="md-link" href="' + safeUrl + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
     });
 
