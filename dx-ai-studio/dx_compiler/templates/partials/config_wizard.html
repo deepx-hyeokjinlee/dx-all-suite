@@ -2,7 +2,7 @@
   <div class="wizard-card">
     <div class="wizard-header">
       <h3 data-i18n="Config Builder">Config Builder</h3>
-      <button type="button" class="wizard-close" onclick="closeWizard()">✕</button>
+      <button type="button" class="wizard-close" onclick="closeWizard()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
     </div>
     <div class="wizard-steps-indicator">
       <span class="step-dot active" data-step="1">1</span>
@@ -20,7 +20,7 @@
       </div>
       <!-- Inline warning (shown when auto-detect fails or ONNX not found) -->
       <div id="auto-detect-warning-wiz" class="alert-warning" style="display:none;" aria-live="polite"></div>
-      <button type="button" class="btn btn-neutral" id="btn-auto-detect" data-i18n="🔍 Auto Detect from Model">🔍 Auto Detect from Model</button>
+      <button type="button" class="btn btn-neutral" id="btn-auto-detect"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#search"></use></svg> <span data-i18n="Auto Detect from Model">Auto Detect from Model</span></button>
       <div id="input-shapes-list"></div>
       <!-- 차원 경고. calibration 경고(wiz-calib-warning)와 같은 모양으로 둔다 —
            경고를 그리는 방식이 둘로 갈리면 하나는 반드시 낡는다. (SR-758) -->

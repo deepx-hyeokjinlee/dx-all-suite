@@ -110,7 +110,7 @@
         else if (isGraphInput) html += '<span class="tensor-kind-badge input-badge">IN</span>';
         else html += '<span class="tensor-kind-badge tensor-badge">T</span>';
         html += '<span class="tensor-name">' + escapeHtml(name) + '</span>';
-        if (clickAttr) html += '<span style="color:#94a3b8;font-size:10px;flex-shrink:0">\u2139</span>';
+        if (clickAttr) html += '<span style="color:#94a3b8;flex-shrink:0;display:inline-flex">' + ((typeof DXIcon === 'function') ? DXIcon('info') : '') + '</span>';
         html += '</div>';
 
         if (info && ((info.shape && info.shape.length > 0) || info.dtype)) {

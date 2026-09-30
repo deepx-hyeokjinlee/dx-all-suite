@@ -80,7 +80,7 @@ function _srvErr(msg) {
         document.getElementById('wiz-prev').style.display = step > 1 ? '' : 'none';
         const nextBtn = document.getElementById('wiz-next');
         if (step === totalSteps) {
-            nextBtn.textContent = T('✅ Use This Config');
+            DXIcon.label(nextBtn, 'check', T('Use This Config'));
             updateJsonPreview();
         } else {
             nextBtn.textContent = T('Next →');
@@ -112,7 +112,7 @@ function _srvErr(msg) {
             .then(r => r.json())
             .then(data => {
                 btn.disabled = false;
-                btn.textContent = T('🔍 Auto Detect from Model');
+                DXIcon.label(btn, 'search', T('Auto Detect from Model'));
                 if (data.error) {
                     if (wizWarn) { wizWarn.style.display = ''; wizWarn.textContent = T('Auto-detect skipped:') + ' ' + _srvErr(data.error); }
                     return;
@@ -164,7 +164,7 @@ function _srvErr(msg) {
             })
             .catch(err => {
                 btn.disabled = false;
-                btn.textContent = T('🔍 Auto Detect from Model');
+                DXIcon.label(btn, 'search', T('Auto Detect from Model'));
                 if (wizWarn) { wizWarn.style.display = ''; wizWarn.textContent = T('Auto-detect failed:') + ' ' + (err.message || String(err)); }
             });
     }
@@ -302,7 +302,7 @@ function _srvErr(msg) {
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'btn-remove';
-        removeBtn.textContent = '✕';
+        removeBtn.innerHTML = ((typeof DXIcon === 'function') ? DXIcon('x') : ''); removeBtn.setAttribute('aria-label', T('Remove'));
         removeBtn.addEventListener('click', function() { row.remove(); });
 
         row.appendChild(nameInput);
@@ -361,7 +361,7 @@ function _srvErr(msg) {
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'btn-remove';
-        removeBtn.textContent = '✕';
+        removeBtn.innerHTML = ((typeof DXIcon === 'function') ? DXIcon('x') : ''); removeBtn.setAttribute('aria-label', T('Remove'));
         removeBtn.addEventListener('click', function() { item.remove(); });
         header.appendChild(title);
         header.appendChild(removeBtn);
@@ -533,7 +533,7 @@ function _srvErr(msg) {
         .then(r => r.json())
         .then(data => {
             nextBtn.disabled = false;
-            nextBtn.textContent = T('✅ Use This Config');
+            DXIcon.label(nextBtn, 'check', T('Use This Config'));
             if (data.error) {
                 alert(T('Config generation failed: ') + _srvErr(data.error));
                 return;
@@ -545,7 +545,7 @@ function _srvErr(msg) {
         })
         .catch(err => {
             nextBtn.disabled = false;
-            nextBtn.textContent = T('✅ Use This Config');
+            DXIcon.label(nextBtn, 'check', T('Use This Config'));
             alert(T('Config generation failed: ') + err.message);
         });
     }

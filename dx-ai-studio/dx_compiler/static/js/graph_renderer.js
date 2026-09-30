@@ -1411,7 +1411,7 @@
                     class: 'subgraph-label',
                     'pointer-events': 'none',
                 });
-                label.textContent = '\u25B6 ' + sg.id + (sg.device ? ' (' + sg.device + ')' : '') + ' \u2014 ' + nodeCount + ' nodes';
+                label.textContent = '+ ' + sg.id + (sg.device ? ' (' + sg.device + ')' : '') + ' \u2014 ' + nodeCount + ' nodes';
                 label.setAttribute('data-subgraph-id', sg.id);
                 bgLayer.appendChild(label);
             } else {
@@ -1424,7 +1424,7 @@
                     class: 'subgraph-label subgraph-toggle',
                     cursor: 'pointer',
                 });
-                toggle.textContent = '\u25BC ' + sg.id + (sg.device ? ' (' + sg.device + ')' : '');
+                toggle.textContent = '\u2212 ' + sg.id + (sg.device ? ' (' + sg.device + ')' : '');
                 toggle.setAttribute('data-subgraph-id', sg.id);
                 bgLayer.appendChild(toggle);
             }

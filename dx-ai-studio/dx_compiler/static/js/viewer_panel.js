@@ -60,7 +60,7 @@ function _srvErr(msg) {
         if (!empty) return;
         empty.style.display = '';
         empty.innerHTML =
-            '<span class="viewer-empty-icon">⏳</span>' +
+            '<span class="viewer-empty-icon">' + ((typeof DXIcon === 'function') ? DXIcon('spinner') : '') + '</span>' +
             '<span>' + tr('Waiting for {phase} model...').replace('{phase}', phaseLabel(phase)) + '</span>';
     }
 
@@ -69,7 +69,7 @@ function _srvErr(msg) {
         if (!empty) return;
         empty.style.display = '';
         empty.innerHTML =
-            '<span class="viewer-empty-icon">⬡</span>' +
+            '<span class="viewer-empty-icon">' + ((typeof DXIcon === 'function') ? DXIcon('models') : '') + '</span>' +
             '<span>' + tr('Load a model to visualize') + '</span>';
     }
 
@@ -90,7 +90,7 @@ function _srvErr(msg) {
         if (!text) return renderDefaultEmpty();
         empty.style.display = '';
         empty.innerHTML =
-            '<span class="viewer-empty-icon">⬇️</span>' +
+            '<span class="viewer-empty-icon">' + ((typeof DXIcon === 'function') ? DXIcon('download') : '') + '</span>' +
             '<span>' + tr(text) + '</span>';
     }
 
@@ -816,9 +816,9 @@ function _srvErr(msg) {
             toolbar.id = 'ns-toolbar';
             toolbar.innerHTML =
                 '<button id="ns-input-btn" class="ns-toolbar-btn ns-toolbar-input active">' +
-                '● ' + tr('Set Input Nodes') + '</button>' +
+                '<span class="ns-dot"></span>' + tr('Set Input Nodes') + '</button>' +
                 '<button id="ns-output-btn" class="ns-toolbar-btn ns-toolbar-output">' +
-                '● ' + tr('Set Output Nodes') + '</button>';
+                '<span class="ns-dot"></span>' + tr('Set Output Nodes') + '</button>';
             canvasWrap.appendChild(toolbar);
 
             document.getElementById('ns-input-btn').addEventListener('click', function() {
@@ -854,7 +854,7 @@ function _srvErr(msg) {
                 '    ' + tr('Calculate Range') + '</button>' +
                 '  <div id="ns-range-info" class="ns-range-info"></div>' +
                 '  <button id="ns-resume-btn" class="ns-action-btn ns-resume-btn">' +
-                '    ' + tr('▶ Resume Compilation') + '</button>' +
+                '    ' + ((typeof DXIcon === 'function') ? DXIcon('play') : '') + ' ' + tr('Resume Compilation') + '</button>' +
                 '</div>';
             sidebar.appendChild(panel);
 
@@ -1050,7 +1050,7 @@ function _srvErr(msg) {
         })
         .catch(function(err) {
             console.error('Resume failed:', err);
-            if (btn) { btn.textContent = tr('▶ Resume Compilation'); btn.disabled = false; }
+            if (btn) { DXIcon.label(btn, 'play', tr('Resume Compilation')); btn.disabled = false; }
         });
     }
 
@@ -1421,7 +1421,7 @@ function _srvErr(msg) {
             var catHeader = document.createElement('div');
             catHeader.className = 'explorer-category-header';
             catHeader.innerHTML =
-                '<span class="cat-chevron">▶</span>' +
+                '<span class="cat-chevron">' + ((typeof DXIcon === 'function') ? DXIcon('chev') : '') + '</span>' +
                 '<span class="cat-dot" style="background:' + cfg.color + '"></span>' +
                 '<span class="cat-label">' + tr(cfg.label) + '</span>' +
                 '<span class="cat-count">' + catTotal + '</span>';
@@ -1448,7 +1448,7 @@ function _srvErr(msg) {
                 var opHeader = document.createElement('div');
                 opHeader.className = 'explorer-optype-header';
                 opHeader.innerHTML =
-                    '<span class="op-chevron">▶</span>' +
+                    '<span class="op-chevron">' + ((typeof DXIcon === 'function') ? DXIcon('chev') : '') + '</span>' +
                     '<span class="op-label">' + opKey + '</span>' +
                     '<span class="op-count">' + opNodes.length + '</span>';
 

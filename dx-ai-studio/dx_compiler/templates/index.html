@@ -21,7 +21,7 @@
         <div id="explorer-panel" class="explorer-panel">
             <div class="explorer-header">
                 <span data-i18n="Explorer">Explorer</span>
-                <button id="explorer-close" class="explorer-close">✕</button>
+                <button id="explorer-close" class="explorer-close" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
             </div>
             <div id="explorer-content" class="explorer-content">
                 <div class="explorer-placeholder" data-i18n="Load a model to explore nodes">Load a model to explore nodes</div>
@@ -31,7 +31,7 @@
         <!-- Center: Graph canvas -->
         <div class="viewer-canvas-wrap" id="viewer-canvas-wrap">
             <div class="viewer-empty" id="viewer-empty">
-                <span class="viewer-empty-icon">⬡</span>
+                <span class="viewer-empty-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg></span>
                 <span data-i18n="Load a model to visualize">Load a model to visualize</span>
             </div>
             <svg id="viewer-svg" xmlns="http://www.w3.org/2000/svg">
@@ -131,7 +131,7 @@
                 </div>
                 <input type="text" id="model_path" name="model_path" required data-i18n-placeholder="/path/to/model.onnx">
                 <div class="sample-select-container" id="sample-select-container" style="display:none;">
-                    <button class="sample-select-btn" id="sample-select-btn" title="Select Sample Model" data-i18n-title="Select Sample Model">📦</button>
+                    <button class="sample-select-btn" id="sample-select-btn" title="Select Sample Model" data-i18n-title="Select Sample Model" aria-label="Select Sample Model" data-i18n-aria-label="Select Sample Model"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg></button>
                     <div class="sample-dropdown" id="sample-dropdown"></div>
                 </div>
             </div>
@@ -153,14 +153,14 @@
                 </div>
                 <div class="path-input-row" id="config_path_row">
                     <input type="text" id="config_path" name="config_path" required data-i18n-placeholder="/path/to/config.json">
-                    <button type="button" class="btn-browse" data-target="config_path" data-ext=".json" data-i18n-title="Browse file" title="Browse file" aria-label="Browse file">📁</button>
+                    <button type="button" class="btn-browse" data-target="config_path" data-ext=".json" data-i18n-title="Browse file" title="Browse file" aria-label="Browse file"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#file"></use></svg></button>
                 </div>
             </div>
             <div class="form-group">
                 <label for="output_dir" data-i18n="Output Directory *">Output Directory *</label>
                 <div class="path-input-row" id="output_dir_row">
                     <input type="text" id="output_dir" name="output_dir" required data-i18n-placeholder="/path/to/output">
-                    <button type="button" class="btn-browse" data-target="output_dir" data-i18n-title="Browse folder" title="Browse folder" aria-label="Browse folder">📁</button>
+                    <button type="button" class="btn-browse" data-target="output_dir" data-i18n-title="Browse folder" title="Browse folder" aria-label="Browse folder"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#folder"></use></svg></button>
                 </div>
             </div>
             <div class="form-group">
@@ -296,8 +296,8 @@
         <p class="agentic-hint" data-i18n="If no ONNX, the agent downloads, converts, configures, compiles and verifies automatically.">If no ONNX, the agent downloads, converts, configures, compiles and verifies automatically.</p>
         <!-- two action buttons — always side by side -->
         <div class="agentic-buttons">
-            <button type="button" class="compile-btn" id="auto-compile-noninteractive">⚡ <span data-i18n="Auto Compile (no interaction)">Auto Compile (no interaction)</span></button>
-            <button type="button" class="compile-btn btn-outline" id="auto-compile-interactive">💬 <span data-i18n="Auto Compile (interactive)">Auto Compile (interactive)</span></button>
+            <button type="button" class="compile-btn" id="auto-compile-noninteractive"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#bolt"></use></svg> <span data-i18n="Auto Compile (no interaction)">Auto Compile (no interaction)</span></button>
+            <button type="button" class="compile-btn btn-outline" id="auto-compile-interactive"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chat"></use></svg> <span data-i18n="Auto Compile (interactive)">Auto Compile (interactive)</span></button>
         </div>
     </div>
 
@@ -306,7 +306,7 @@
         <div class="log-header">
             <h3 data-i18n="Compiler Log">Compiler Log</h3>
             <div class="log-actions">
-                <button class="log-btn" id="log-toggle" title="Collapse" data-i18n-title="Collapse">▼</button>
+                <button class="log-btn" id="log-toggle" title="Collapse" data-i18n-title="Collapse" aria-expanded="true"><svg class="dx-ico dx-ico--fold" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chevd"></use></svg></button>
             </div>
         </div>
         <pre class="log-content" id="log-content"></pre>
@@ -314,7 +314,7 @@
              dx_agent_dev console prompt: type an answer here and it is sent to the SAME agent
              conversation. Shown only during/after an interactive agentic run. -->
         <div id="agentic-chat-row" class="agentic-chat-row" style="display:none">
-            <span class="agentic-chat-icon" aria-hidden="true">💬</span>
+            <span class="agentic-chat-icon" aria-hidden="true"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chat"></use></svg></span>
             <input type="text" id="agentic-chat-input"
                    data-i18n-placeholder="Type your answer to the agent, then press Enter…"
                    placeholder="Type your answer to the agent, then press Enter…">
@@ -326,7 +326,7 @@
     <section class="resume-card collapsed" id="resume-card">
         <button type="button" class="resume-card-header" id="resume-card-header" aria-expanded="false">
             <span class="rch-title"><span data-i18n="Resume from QXNN">Resume from QXNN</span> <span class="rc-badge">RE-QUANTIZE</span></span>
-            <span class="rch-chev">▾</span>
+            <span class="rch-chev"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chevd"></use></svg></span>
         </button>
         <div class="resume-card-body" id="resume-card-body">
             <p class="resume-subtitle" data-i18n-html="Re-quantize from an existing &lt;code&gt;.qxnn&lt;/code&gt; artifact to produce a new &lt;code&gt;.dxnn&lt;/code&gt;. Usable any time, with or without a prior compile job.">Re-quantize from an existing <code>.qxnn</code> artifact to produce a new <code>.dxnn</code>. Usable any time, with or without a prior compile job.</p>
@@ -339,7 +339,7 @@
                     <label for="resume_output_dir" data-i18n="Output Directory *">Output Directory *</label>
                     <div class="path-input-row">
                         <input type="text" id="resume_output_dir" name="output_dir" required data-i18n-placeholder="/path/to/output">
-                        <button type="button" class="btn-browse" data-target="resume_output_dir" data-i18n-title="Browse folder" title="Browse folder" aria-label="Browse folder">📁</button>
+                        <button type="button" class="btn-browse" data-target="resume_output_dir" data-i18n-title="Browse folder" title="Browse folder" aria-label="Browse folder"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#folder"></use></svg></button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -408,7 +408,7 @@
                 <div class="log-header">
                     <h3 data-i18n="Compiler Log">Compiler Log</h3>
                     <div class="log-actions">
-                        <button class="log-btn" id="resume-log-toggle" title="Collapse" data-i18n-title="Collapse">▼</button>
+                        <button class="log-btn" id="resume-log-toggle" title="Collapse" data-i18n-title="Collapse" aria-expanded="true"><svg class="dx-ico dx-ico--fold" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chevd"></use></svg></button>
                     </div>
                 </div>
                 <pre class="log-content" id="resume-log-content"></pre>
@@ -423,7 +423,7 @@
         <div class="fp-head">
             <h3 id="fp-title" data-i18n="Select folder">Select folder</h3>
             <h3 id="fp-title-file" hidden data-i18n="Select file">Select file</h3>
-            <button type="button" class="fp-close" id="fp-close" aria-label="Close" data-i18n-aria-label="Close">✕</button>
+            <button type="button" class="fp-close" id="fp-close" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
         </div>
         <div class="fp-path"><code id="fp-current">—</code></div>
         <ul class="fp-list" id="fp-list"></ul>
@@ -612,7 +612,7 @@ document.getElementById('compile-form').addEventListener('submit', async functio
                 bar.style.width = '100%';
                 bar.textContent = '100%';
                 bar.classList.add('done');
-                container.querySelector('h3').textContent = T('✅ Compilation Complete');
+                DXIcon.label(container.querySelector('h3'), 'check', T('Compilation Complete'));
                 phaseIndicator.classList.add('phase-done');
                 phaseValue.textContent = T('Done');
                 var subEl = document.getElementById('sub-progress');
@@ -652,7 +652,7 @@ document.getElementById('compile-form').addEventListener('submit', async functio
                 try {
                     const data = JSON.parse(e.data);
                     bar.classList.add('error');
-                    container.querySelector('h3').textContent = T('❌ Compilation Failed');
+                    DXIcon.label(container.querySelector('h3'), 'x', T('Compilation Failed'));
                     phaseIndicator.classList.add('phase-error');
                     phaseValue.textContent = T('Error');
                     container.insertAdjacentHTML('beforeend',
@@ -670,7 +670,7 @@ document.getElementById('compile-form').addEventListener('submit', async functio
         })
         .catch(err => {
             document.getElementById('result').innerHTML =
-                '<div class="result error"><p>❌ ' + T('Request failed:') + ' ' + err.message + '</p></div>';
+                '<div class="result error"><p>' + DXIcon('x') + ' ' + T('Request failed:') + ' ' + err.message + '</p></div>';
             btn.disabled = false;
             btn.textContent = T('Compile');
         });
@@ -824,15 +824,15 @@ document.querySelectorAll('.dropzone').forEach(zone => {
                 if (data.path) {
                     input.value = data.path;
                     zone.classList.add('uploaded');
-                    fileLabel.textContent = '✅ ' + data.filename + ' → ' + data.path;
+                    DXIcon.label(fileLabel, 'check', data.filename + ' → ' + data.path);
                     _maybeLoadViewerInput(targetId, data.path);   // auto-render graph on model upload
                 } else {
-                    fileLabel.textContent = '❌ ' + T('Upload failed:') + ' ' + (data.error || 'Unknown error');
+                    DXIcon.label(fileLabel, 'x', T('Upload failed:') + ' ' + (data.error || 'Unknown error'));
                 }
             })
             .catch(err => {
                 zone.classList.remove('uploading');
-                fileLabel.textContent = '❌ ' + T('Upload failed:') + ' ' + err.message;
+                DXIcon.label(fileLabel, 'x', T('Upload failed:') + ' ' + err.message);
             });
     });
 
@@ -907,14 +907,14 @@ document.getElementById('config_build_toggle').addEventListener('change', functi
 document.getElementById('log-toggle').addEventListener('click', function() {
     const panel = document.getElementById('log-panel');
     panel.classList.toggle('collapsed');
-    this.textContent = panel.classList.contains('collapsed') ? '▶' : '▼';
+    this.setAttribute('aria-expanded', panel.classList.contains('collapsed') ? 'false' : 'true');
 });
 
 // Resume log panel toggle
 document.getElementById('resume-log-toggle').addEventListener('click', function() {
     const panel = document.getElementById('resume-log-panel');
     panel.classList.toggle('collapsed');
-    this.textContent = panel.classList.contains('collapsed') ? '▶' : '▼';
+    this.setAttribute('aria-expanded', panel.classList.contains('collapsed') ? 'false' : 'true');
 });
 
 // Resume from QXNN card toggle
@@ -1021,7 +1021,7 @@ function trackResumeProgress(container) {
         bar.classList.add('done');
         var subDone = document.getElementById('sub-progress');
         if (subDone) subDone.style.display = 'none';
-        container.querySelector('h3').textContent = T('✅ Re-quantization Complete');
+        DXIcon.label(container.querySelector('h3'), 'check', T('Re-quantization Complete'));
         phaseIndicator.classList.add('phase-done');
         phaseValue.textContent = T('Done');
         // Resume runs dx_com without the phase-event stream, so the left viewer has no graph
@@ -1057,7 +1057,7 @@ function trackResumeProgress(container) {
         try {
             var data = JSON.parse(e.data);
             bar.classList.add('error');
-            container.querySelector('h3').textContent = T('❌ Re-quantization Failed');
+            DXIcon.label(container.querySelector('h3'), 'x', T('Re-quantization Failed'));
             phaseIndicator.classList.add('phase-error');
             phaseValue.textContent = T('Error');
             container.insertAdjacentHTML('beforeend',
@@ -1114,13 +1114,13 @@ document.getElementById('resume-form').addEventListener('submit', function(e) {
             var container = resultEl.querySelector('.progress-container');
             if (container) {
                 var h3 = container.querySelector('h3');
-                if (h3) h3.textContent = '⚙️ ' + T('Re-quantizing...');
+                if (h3) DXIcon.label(h3, 'spinner', T('Re-quantizing...'), { cls: 'dx-ico--spin' });
                 trackResumeProgress(container);
             }
         })
         .catch(function(err) {
             document.getElementById('resume-result').innerHTML =
-                '<div class="result error"><p>❌ ' + T('Request failed:') + ' ' + err.message + '</p></div>';
+                '<div class="result error"><p>' + DXIcon('x') + ' ' + T('Request failed:') + ' ' + err.message + '</p></div>';
             btn.disabled = false;
             btn.textContent = T('Resume');
         });
@@ -1168,12 +1168,12 @@ document.addEventListener('DOMContentLoaded', refreshCompilerStaticOptions);
                 curEl.textContent = d.path;
                 var base = d.path.replace(/\/+$/, '');
                 var html = '';
-                if (d.parent) html += '<li class="fp-item fp-up" data-path="' + esc(d.parent) + '">⬆ ..</li>';
+                if (d.parent) html += '<li class="fp-item fp-up" data-path="' + esc(d.parent) + '">' + DXIcon('upload') + ' ..</li>';
                 (d.dirs || []).forEach(function (name) {
-                    html += '<li class="fp-item" data-path="' + esc(base + '/' + name) + '">📁 ' + esc(name) + '</li>';
+                    html += '<li class="fp-item" data-path="' + esc(base + '/' + name) + '">' + DXIcon('folder') + ' ' + esc(name) + '</li>';
                 });
                 (d.files || []).forEach(function (name) {
-                    html += '<li class="fp-item fp-file" data-file="' + esc(base + '/' + name) + '">📄 ' + esc(name) + '</li>';
+                    html += '<li class="fp-item fp-file" data-file="' + esc(base + '/' + name) + '">' + DXIcon('file') + ' ' + esc(name) + '</li>';
                 });
                 var empty = !(d.dirs || []).length && !(d.files || []).length && !d.parent;
                 if (empty) html += '<li class="fp-empty">' + T(fileExt ? 'No files' : 'No subfolders') + '</li>';

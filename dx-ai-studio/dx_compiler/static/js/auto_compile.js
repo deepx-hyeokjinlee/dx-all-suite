@@ -286,7 +286,7 @@
         break;
 
       case 'command':
-        // Compact tool/shell activity (→ Read: SKILL.md, ✓ Bash: …) formatted server-side.
+        // Compact tool/shell activity (→ Read: SKILL.md, check-mark Bash: …) formatted server-side.
         if (data.text) appendLog(data.text);
         break;
 

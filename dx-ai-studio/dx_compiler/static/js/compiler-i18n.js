@@ -484,19 +484,19 @@ window._DX_I18N_DICT = {
     'zh-TW': '下載 .dxnn',
     es: 'Descargar .dxnn',
   },
-  '✅ Re-quantization Complete': {
-    ko: '✅ 재양자화 완료',
-    ja: '✅ 再量子化完了',
-    'zh-CN': '✅ 重新量化完成',
-    'zh-TW': '✅ 重新量化完成',
-    es: '✅ Recuantización completada',
+  'Re-quantization Complete': {
+    ko: '재양자화 완료',
+    ja: '再量子化完了',
+    'zh-CN': '重新量化完成',
+    'zh-TW': '重新量化完成',
+    es: 'Recuantización completada',
   },
-  '❌ Re-quantization Failed': {
-    ko: '❌ 재양자화 실패',
-    ja: '❌ 再量子化失敗',
-    'zh-CN': '❌ 重新量化失败',
-    'zh-TW': '❌ 重新量化失敗',
-    es: '❌ Error en la recuantización',
+  'Re-quantization Failed': {
+    ko: '재양자화 실패',
+    ja: '再量子化失敗',
+    'zh-CN': '重新量化失败',
+    'zh-TW': '重新量化失敗',
+    es: 'Error en la recuantización',
   },
   'Quantization Diagnosis': {
     ko: '양자화 진단',
@@ -825,21 +825,21 @@ window._DX_I18N_DICT = {
     'zh-TW': '計算範圍',
     es: 'Calcular rango',
   },
-  '▶ Resume Compilation': {
-    ko: '▶ 컴파일 재개',
-    ja: '▶ コンパイルを再開',
-    'zh-CN': '▶ 恢复编译',
-    'zh-TW': '▶ 恢復編譯',
-    es: '▶ Reanudar compilación',
+  'Resume Compilation': {
+    ko: '컴파일 재개',
+    ja: 'コンパイルを再開',
+    'zh-CN': '恢复编译',
+    'zh-TW': '恢復編譯',
+    es: 'Reanudar compilación',
   },
 
   // Dynamic JS strings (config_wizard.js)
-  '✅ Use This Config': {
-    ko: '✅ 이 설정 사용',
-    ja: '✅ この設定を使用',
-    'zh-CN': '✅ 使用此配置',
-    'zh-TW': '✅ 使用此設定',
-    es: '✅ Usar esta configuración',
+  'Use This Config': {
+    ko: '이 설정 사용',
+    ja: 'この設定を使用',
+    'zh-CN': '使用此配置',
+    'zh-TW': '使用此設定',
+    es: 'Usar esta configuración',
   },
   'Next →': {
     ko: '다음 →',
@@ -862,12 +862,12 @@ window._DX_I18N_DICT = {
     'zh-TW': '偵測中...',
     es: 'Detectando...',
   },
-  '🔍 Auto Detect from Model': {
-    ko: '🔍 모델에서 자동 감지',
-    ja: '🔍 モデルから自動検出',
-    'zh-CN': '🔍 从模型自动检测',
-    'zh-TW': '🔍 從模型自動偵測',
-    es: '🔍 Detección automática desde el modelo',
+  'Auto Detect from Model': {
+    ko: '모델에서 자동 감지',
+    ja: 'モデルから自動検出',
+    'zh-CN': '从模型自动检测',
+    'zh-TW': '從模型自動偵測',
+    es: 'Detección automática desde el modelo',
   },
   'No parameters': {
     ko: '파라미터 없음',
@@ -950,12 +950,12 @@ window._DX_I18N_DICT = {
   },
 
   // Dynamic JS strings (index.html inline scripts)
-  '✅ Compilation Complete': {
-    ko: '✅ 컴파일 완료',
-    ja: '✅ コンパイル完了',
-    'zh-CN': '✅ 编译完成',
-    'zh-TW': '✅ 編譯完成',
-    es: '✅ Compilación completa',
+  'Compilation Complete': {
+    ko: '컴파일 완료',
+    ja: 'コンパイル完了',
+    'zh-CN': '编译完成',
+    'zh-TW': '編譯完成',
+    es: 'Compilación completa',
   },
   'Done': {
     ko: '완료',
@@ -971,12 +971,12 @@ window._DX_I18N_DICT = {
     'zh-TW': '編譯已成功完成。',
     es: 'Compilación finalizada exitosamente.',
   },
-  '❌ Compilation Failed': {
-    ko: '❌ 컴파일 실패',
-    ja: '❌ コンパイル失敗',
-    'zh-CN': '❌ 编译失败',
-    'zh-TW': '❌ 編譯失敗',
-    es: '❌ Compilación fallida',
+  'Compilation Failed': {
+    ko: '컴파일 실패',
+    ja: 'コンパイル失敗',
+    'zh-CN': '编译失败',
+    'zh-TW': '編譯失敗',
+    es: 'Compilación fallida',
   },
   'Error': {
     ko: '오류',
@@ -1523,6 +1523,9 @@ window._DX_I18N_DICT = {
     'zh-CN': '选择此文件夹',
     'zh-TW': '選擇此資料夾',
     es: 'Elegir esta carpeta',
+  },
+  'Remove': {
+    ko: '제거', ja: '削除', 'zh-CN': '移除', 'zh-TW': '移除', es: 'Eliminar',
   },
 };
 
