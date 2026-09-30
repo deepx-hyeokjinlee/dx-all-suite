@@ -101,6 +101,10 @@ def local_runtime_adapter(suite_root) -> AdapterResult:
 
     cpp_example_root = suite_root / "dx-runtime" / "dx_app" / "src" / "cpp_example"
     py_example_root = suite_root / "dx-runtime" / "dx_app" / "src" / "python_example"
+    # per-model layout (teammate 8d0b748): 예제는 <task>/<family>/<stem>/ — resolver 가 찾는다
+    from shared import dx_app_layout as _layout
+    app_root = suite_root / "dx-runtime" / "dx_app"
+    per_model = _layout.detect(app_root) == _layout.PER_MODEL
 
     for reg in registry:
         model_name = reg.get("model_name", "")
@@ -138,13 +142,24 @@ def local_runtime_adapter(suite_root) -> AdapterResult:
             entry["artifacts.qlite_json.remote_url"] = json_url
 
         if dxnn_file:
+            # dx_app 의 model 은 assets/models 에 (예전에는 models/ 로 적어 local_exists 가 늘 False 였다), 없으면
+            # suite 의 workspace/res/models 에도 — dx_app run_demo.sh 와 같은 순서 (spec 2026-10-01 결정 7 · 12).
             dxnn_rel = str(dxnn_file).lstrip("/\\")
-            local_rel_path = Path("models") / dxnn_rel
-            local_path = suite_root / "dx-runtime" / "dx_app" / local_rel_path
+            local_rel_path = Path("assets") / "models" / dxnn_rel
             entry["artifacts.qlite_dxnn.local_path"] = local_rel_path.as_posix()
-            entry["artifacts.qlite_dxnn.local_exists"] = local_path.exists()
+            entry["artifacts.qlite_dxnn.local_exists"] = _layout.find_model(
+                local_rel_path.as_posix(), app_root, suite_root) is not None
 
-        example_dir = _task_to_example_dir(task)
+        if per_model and reg.get("variant"):
+            ex = _layout.find(app_root, reg.get("task", ""), reg["variant"])
+            if ex is not None:
+                if ex.cpp_dir is not None:
+                    entry["demo.cpp_example"] = ex.cpp_dir.relative_to(app_root).as_posix() + "/"
+                if ex.py_dir is not None:
+                    entry["demo.python_example"] = ex.py_dir.relative_to(app_root).as_posix() + "/"
+            example_dir = None
+        else:
+            example_dir = _task_to_example_dir(task)
         if example_dir:
             cpp_ex = _find_example_dir(cpp_example_root, example_dir, model_name)
             if cpp_ex:

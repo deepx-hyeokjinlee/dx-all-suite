@@ -69,3 +69,21 @@ class TestStudioIdMap(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_unmapped_publish_models_are_one_row_each_with_a_task_key():
+    """publish page 는 model 마다 두 key (이름 · .dxnn stem) 로 온다. studio catalog 에 없는 새 model 이 두 줄로 남고
+    task 가 page 글자 ("Anomaly Detection") 로 남던 것 (spec 2026-10-01 dx_app per-model layout 결정 8)."""
+    from dx_modelzoo.metadata.studio_id_map import remap_public_models
+
+    url = "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/patchcore_224x224.dxnn"
+    fields = {"display.task": "Anomaly Detection", "display.name": "PatchCore",
+              "artifacts.qlite_dxnn.remote_url": url}
+    cls = {"display.task": "Image Classification", "display.name": "VitB",
+           "artifacts.qlite_dxnn.remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/vit-b-p16_384x384.dxnn"}
+    index = {"studio_ids": set(), "by_key": {}, "by_signature": {}}
+    out, _ = remap_public_models({"patchcore": dict(fields), "patchcore_224x224": dict(fields),
+                                  "vitbasep16": dict(cls), "vit_b_p16_384x384": dict(cls)}, index)
+    assert sorted(out) == ["patchcore_224x224", "vit_b_p16_384x384"], sorted(out)
+    assert out["patchcore_224x224"]["display.task"] == "anomaly_detection"
+    assert out["vit_b_p16_384x384"]["display.task"] == "classification", "옛 key 가 있는 task 는 기존 무리와 같이"

@@ -205,8 +205,31 @@ def resolve_studio_id(public_key: str, fields: dict, index: dict) -> str | None:
     return None
 
 
+# publish page 의 task 글자 → task key. 옛 key 가 있는 task 는 옛 key 로 (studio catalog 의 기존 무리와 같이),
+# 새 task (anomaly_detection …) 는 새 key (shared/tasks.py, spec 2026-10-01 dx_app per-model layout 결정 8).
+_PAGE_TASK_OVERRIDES = {"face_landmark_detection": "face_landmark", "face_attribute_recognition": "face_attribute"}
+
+
+def page_task_key(label: str) -> str:
+    from shared.tasks import legacy
+    key = re.sub(r"[^a-z0-9]+", "_", str(label or "").lower().replace("-", "")).strip("_")
+    return legacy(_PAGE_TASK_OVERRIDES.get(key, key)) if key else ""
+
+
+def _artifact_stem_key(fields: dict):
+    for url_field in _ARTIFACT_URL_FIELDS:
+        url = fields.get(url_field)
+        if url and url not in ("-", ""):
+            stem = url.rstrip("/").split("/")[-1]
+            return canonical_model_id(Path(stem).stem if "." in stem else stem)
+    return None
+
+
 def remap_public_models(public_models: dict, index: dict) -> tuple[dict, list[str]]:
-    """Re-key public adapter output from artifact ids to studio catalog ids."""
+    """Re-key public adapter output from artifact ids to studio catalog ids.
+
+    studio catalog 에 없는 model 은 artifact 의 .dxnn stem 을 key 로 — page 가 한 model 을 이름 · stem 두 key 로
+    주므로 그대로 두면 두 줄이 된다. 그 task 도 page 글자 대신 key 로."""
     remapped: dict[str, dict] = {}
     warnings: list[str] = []
 
@@ -215,6 +238,9 @@ def remap_public_models(public_models: dict, index: dict) -> tuple[dict, list[st
         target = studio_id or pub_key
         if studio_id is None and pub_key not in index["studio_ids"]:
             warnings.append(f"unmapped public model key: {pub_key!r} ({fields.get('display.class_name', '')})")
+            target = _artifact_stem_key(fields) or pub_key
+            if fields.get("display.task"):
+                fields = dict(fields, **{"display.task": page_task_key(fields["display.task"])})
         if target in remapped:
             remapped[target].update(fields)
         else:

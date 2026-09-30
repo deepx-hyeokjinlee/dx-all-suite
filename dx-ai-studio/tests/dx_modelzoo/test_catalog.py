@@ -262,3 +262,18 @@ class TestCatalogQueryPagination:
         assert result["pages"] == 2
         assert [m["id"] for m in result["models"]] == ["b"]
         assert result["has_next"] is True
+
+
+def test_a_v9_only_model_says_which_dx_rt_it_needs(monkeypatch):
+    """Model Zoo 2_5_0 만 있는 model 은 container v9 — DX-RT 3.4.2 에서는 받아도 돌지 않는다
+    (spec 2026-10-01 dx_app per-model layout 결정 5)."""
+    from dx_modelzoo.core.catalog import _enrich_model_entry
+    from shared import dxrt
+
+    new = {"artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/patchcore_224x224.dxnn"}}}
+    old = {"artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_4_0/yolo26-n_640x640.dxnn"}}}
+    monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 4, 2))
+    assert _enrich_model_entry({}, new)["requires_dxrt"] == "3.5.0"
+    assert "requires_dxrt" not in _enrich_model_entry({}, old)
+    monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 5, 0))
+    assert "requires_dxrt" not in _enrich_model_entry({}, new)

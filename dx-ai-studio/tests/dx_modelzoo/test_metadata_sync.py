@@ -163,12 +163,15 @@ def test_local_runtime_adapter_reads_registry_manifest_and_examples(tmp_path):
 
 
 def test_local_runtime_adapter_stores_relative_local_artifact_path(tmp_path):
-    """로컬 artifact 경로는 artifact resolver가 수용하는 DX_APP_ROOT 상대 경로여야 한다."""
+    """로컬 artifact 경로는 artifact resolver가 수용하는 DX_APP_ROOT 상대 경로여야 한다.
+
+    dx_app 의 model 자리는 ``assets/models`` 다 — 예전에는 ``models/`` 로 적어 local_exists 가 늘 False 였다
+    (spec 2026-10-01 dx_app per-model layout 결정 12)."""
     suite_root = tmp_path
     dx_app = suite_root / "dx-runtime" / "dx_app"
     (dx_app / "config").mkdir(parents=True)
     (dx_app / "scripts").mkdir()
-    (dx_app / "models").mkdir()
+    (dx_app / "assets" / "models").mkdir(parents=True)
 
     (dx_app / "config" / "model_registry.json").write_text(json.dumps([{
         "model_name": "AlexNet",
@@ -179,13 +182,13 @@ def test_local_runtime_adapter_stores_relative_local_artifact_path(tmp_path):
         "input_height": 224,
     }]), encoding="utf-8")
     (dx_app / "scripts" / "modelzoo_manifest.json").write_text("[]", encoding="utf-8")
-    (dx_app / "models" / "AlexNet.dxnn").write_text("dxnn", encoding="utf-8")
+    (dx_app / "assets" / "models" / "AlexNet.dxnn").write_text("dxnn", encoding="utf-8")
 
     result = local_runtime_adapter(suite_root)
 
     assert result["ok"] is True
     alexnet = result["models"]["alexnet"]
-    assert alexnet["artifacts.qlite_dxnn.local_path"] == "models/AlexNet.dxnn"
+    assert alexnet["artifacts.qlite_dxnn.local_path"] == "assets/models/AlexNet.dxnn"
     assert alexnet["artifacts.qlite_dxnn.local_exists"] is True
 
 

@@ -412,6 +412,16 @@ def _enrich_model_entry(base, enriched, metadata_source=None):
                 if k not in base["demo"] or not base["demo"][k]:
                     base["demo"][k] = v
 
+    # Model Zoo 2_5_0 만 있는 model 은 container v9 — 이 PC 의 DX-RT 가 못 읽으면 필요한 판을 단다
+    # (spec 2026-10-01 dx_app per-model layout 결정 5). 2_4_0 이 있는 model 의 URL 은 local manifest 의 2_4_0 이다.
+    from shared import dxrt as _dxrt
+    qlite_url = ((base.get("artifacts") or {}).get("qlite_dxnn") or {}).get("remote_url") or ""
+    need = _dxrt.needs_for(9) if _dxrt.is_v9_only(qlite_url) else None
+    if need:
+        base["requires_dxrt"] = need
+    else:
+        base.pop("requires_dxrt", None)
+
     return base
 
 

@@ -224,6 +224,15 @@ function _artifactBadges(m) {
   return badges.join(' ');
 }
 
+// 이 PC 의 DX-RT 가 못 읽는 model (Model Zoo 2_5_0 = .dxnn container v9) — 받아도 실행되지 않는다
+// (spec 2026-10-01 dx_app per-model layout 결정 5).
+function _dxrtBadge(m) {
+  if (!m.requires_dxrt) return '';
+  const label = T('Needs DX-RT') + ' ' + m.requires_dxrt;
+  const title = T('This model is .dxnn container v9 — the installed DX-RT reads up to v8.');
+  return `<span class="mz-license-badge restricted mz-dxrt-badge" title="${_escapeAttr(title)}">${_mzIco('alert')} ${_escapeAttr(label)}</span>`;
+}
+
 function _licenseBadge(m) {
   const cu = m.legal && m.legal.commercial_use;
   if (cu !== 'non-commercial' && cu !== 'restricted') return '';
@@ -680,7 +689,7 @@ const ModelZooVirtualCatalog = {
       <div class="mz-card-body">
         <div class="mz-card-name" title="${_escapeAttr(m.id)}">${_escapeAttr(m.name)}</div>
         <div class="mz-card-cat">${categoryIcon} ${_escapeAttr(catLabel)}</div>
-        ${_licenseBadge(m)}
+        ${_licenseBadge(m)}${_dxrtBadge(m)}
         ${summary ? `<div class="mz-card-summary">${_escapeAttr(summary)}</div>` : ''}
         <div class="mz-card-meta">
           ${fps}
@@ -725,7 +734,7 @@ const ModelZooVirtualCatalog = {
       <td>${_escapeAttr(fpsText)}</td>
       <td>${fpsw ? _escapeAttr(fpsw) : _missingLabel('Not provided by source')}</td>
       <td>${resolution ? _escapeAttr(resolution) : _missingLabel('Not provided by source')}</td>
-      <td>${statusBadges}${_licenseBadge(m)}</td>
+      <td>${statusBadges}${_licenseBadge(m)}${_dxrtBadge(m)}</td>
     </tr>`;
   },
 
