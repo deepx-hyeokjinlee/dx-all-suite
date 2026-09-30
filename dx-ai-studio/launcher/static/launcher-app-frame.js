@@ -4,6 +4,10 @@
 
   var BOOT_GATE_POLL_MS = 250;
   var BOOT_GATE_MAX_WAIT_MS = 120000;
+  // Home 은 font · 아이콘 sprite 가 도착한 뒤에 연다 — 외부 <use> 는 sprite 전까지 빈칸이라, 먼저 열면
+  // 아이콘이 나중에 튀어나온다 (port-forward tunnel 너머에서 보였다). 무엇이 막혀도 문서 시작부터
+  // 이 시간이면 연다. spec: docs/superpowers/specs/2026-09-30-studio-boot-assets-design.md
+  var BOOT_ASSET_MAX_WAIT_MS = 3000;
   var _pendingRouteRestore = null;
   var _shellRevealInFlight = false;
 
@@ -136,6 +140,20 @@
     });
   }
 
+  function bootAssetsReady() {
+    var waits = [];
+    try {
+      if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
+    } catch (e) {}
+    if (window.DXIcon && typeof window.DXIcon.load === 'function') waits.push(window.DXIcon.load());
+    var elapsed = (window.performance && performance.now) ? performance.now() : 0;
+    var left = Math.max(0, BOOT_ASSET_MAX_WAIT_MS - elapsed);
+    return Promise.race([
+      Promise.all(waits).catch(function() {}),
+      new Promise(function(resolve) { setTimeout(resolve, left); }),
+    ]);
+  }
+
   function ensureStudioReady(options) {
     options = options || {};
     if (ns._studioReadyResolved) {
@@ -157,8 +175,13 @@
 
     ns._studioReadyPromise = new Promise(function(resolve) {
       var startedAt = Date.now();
+      var assets = bootAssetsReady();
 
       function finish(data) {
+        assets.then(function() { openShell(data); });
+      }
+
+      function openShell(data) {
         ns._studioReadyResolved = true;
         if (showBootGate) hideStudioBootGate();
         if (!ns._launcherCoreStarted) ns._initLauncherCore();
