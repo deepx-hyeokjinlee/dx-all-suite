@@ -26,11 +26,12 @@ RUNTIME_SELECTOR_ALLOWLIST = {
     "#dxt-mock-toast",
     "#gallery-lightbox",
     ".dxt-tutorial-pin",
-    # Run Demo (Task 11) — rendered by rundemo.js at runtime, not present in
+    # Run Demo (Task 11) — rendered by rundemo.js / dx-demo-stage.js at runtime, not present in
     # the static index.html template.
-    ".rundemo-group",
-    "#rundemo-block-0",
-    '#rundemo-block-0 button[onclick*="rundemoRun"]',
+    "#rundemo-root .dds-filter",
+    "#rundemo-root .dds-stage",
+    '#rundemo-root .dds-stage [data-axis-row="post"]',
+    "#rundemo-root .dds-stage .dds-run",
 }
 
 EXPECTED_SECTION_IDS = [

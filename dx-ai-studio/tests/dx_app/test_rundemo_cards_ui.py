@@ -1,11 +1,9 @@
-"""dx_app Run Demo 카드 (spec 2026-09-29 아이콘 체계 단계 4, 사용자 확정 2026-09-29).
+"""dx_app Run Demo — 공통 결과 무대 위에 (spec 2026-10-01 demo stage).
 
-예전 카드는 같은 말을 세 번 했다 — 섹션 제목 DETECTION, 썸네일 위 DETECTION 태그, 제목
-"Object Detection (YOLOv7)", 그리고 고정폭 글씨의 yolov7. 모델이 없는 카드도 돌아가는 카드와 같은
-높이로 가운데가 비어 있었다. 이제:
-- 썸네일 위에 task 아이콘 + task 이름 한 조각, 제목은 모델 이름 (YOLOv7), 왼쪽 색 띠 없음.
-- 준비 안 된 카드는 짧게: 흐린 썸네일 · "Needs setup" 표시 (Setup 단계 목록과 같은 모양) · 링크 하나.
-- 결과의 ✅ ❌ ⚠️ 📊 📋 → 아이콘.
+예전에는 card 마다 옵션 · Run · 결과가 들어 있어 결과를 그리면 card 가 858px 로 늘어났다
+(``.rd-card`` · ``.rundemo-result`` · 결과를 좁은 card 안에 가두는 inline style). 이제 Run Demo 는
+공통 component (``shared/static/dx-demo-stage.{js,css}``) 에 올라가고, 자기 옵션 · 실행 · 결과만 채운다.
+화면에서의 약속은 test_rundemo_cards_browser.py.
 """
 from __future__ import annotations
 
@@ -20,36 +18,27 @@ HTML = (ROOT / "dx_app" / "templates" / "index.html").read_text(encoding="utf-8"
 gate = importlib.import_module("scripts.emoji_gate")
 
 
-def _fn(src: str, head: str) -> str:
-    body = src[src.index(head):]
-    return body[:body.index("\n}\n")]
+def test_run_demo_sits_on_the_shared_stage():
+    assert "DXDemoStage.mount(" in JS
+    assert HTML.index("/static/shared/dx-demo-stage.js") < HTML.index("/static/js/rundemo.js")
+    assert "/static/shared/dx-demo-stage.css" in HTML
 
 
-def test_the_head_says_the_task_once_and_titles_the_model():
-    shell = _fn(JS, "function _rundemoShell(")
-    assert "rd-task" in shell and "_rundemoTaskIco(d)" in shell
-    assert "rd-tag" not in shell and "rd-model" not in shell
-    assert "_rundemoTitle(d)" in shell
+def test_the_old_in_card_result_is_gone():
+    for old in (".rd-card", ".rundemo-result", ".rundemo-grid", ".rd-controls"):
+        assert old not in CSS, old
+    for old in ("rundemo-result-", "rundemo-block-", "_rundemoInjectStyle", "rundemoRunLive"):
+        assert old not in JS, old
 
 
-def test_not_ready_cards_are_short_with_one_link():
-    body = _fn(JS, "function _rundemoNotRunnableHtml(")
-    assert "dx-step-state is-todo" in body
-    assert "rd-setup-link" in body and "nav('setup')" in body.replace("\\'", "'")
-    assert "rd-run-ghost" not in body
-    assert "is-unready" in JS
-    assert ".rd-card.is-unready" in CSS
+def test_the_postprocess_toggle_reaches_the_body():
+    """sel.post 는 boolean 이고 rundemoBody 는 'on' 을 본다 — 예전에는 C++ 후처리가 늘 빠졌다."""
+    run = JS[JS.index("function rundemoRun("):]
+    run = run[:run.index("\n}\n")]
+    assert "post: sel.post ? 'on' : 'off'" in run
 
 
-def test_cards_no_longer_carry_a_colour_stripe_or_equal_height():
-    card = CSS[CSS.index(".rd-card{"):]
-    card = card[:card.index("}")]
-    assert "border-left:3px" not in card
-    grid = CSS[CSS.index(".rundemo-grid{"):]
-    assert "align-items:start" in grid[:grid.index("}")]
-
-
-def test_no_emoji_in_the_cards_or_the_result():
+def test_no_emoji_in_the_demo_page_or_the_result():
     assert gate.count(JS) == 0, sorted({c for c in JS if gate.count(c)})
     result = INF[INF.index("window.renderInferenceError="):INF.index("function previewImg(")]
     assert gate.count(result) == 0, sorted({c for c in result if gate.count(c)})

@@ -78,15 +78,20 @@ def parse_run_demo(run_demo_path: Path) -> list[dict]:
         return []
 
 
+def _dx_app_root():
+    """dx-runtime/dx_app — run_demo.sh lives here and its sample media paths are relative to it."""
+    try:
+        from dx_app.core.config import DX_RT_ROOT
+    except Exception:
+        from config import DX_RT_ROOT  # dx_app/core on sys.path (studio runtime)
+    return DX_RT_ROOT.parent / "dx_app"
+
+
 def list_demos() -> dict:
     """Public entry: parse the real run_demo.sh (path from config) → grouped payload.
     {"demos": [], "groups": [], "ok": False} on any failure (import, path, or parse)."""
     try:
-        try:
-            from dx_app.core.config import DX_RT_ROOT
-        except Exception:
-            from config import DX_RT_ROOT  # dx_app/core on sys.path (studio runtime)
-        path = DX_RT_ROOT.parent / "dx_app" / "run_demo.sh"
+        path = _dx_app_root() / "run_demo.sh"
         demos = parse_run_demo(path)
         groups = list(dict.fromkeys(d["group"] for d in demos))
         return {"demos": demos, "groups": groups, "ok": bool(demos)}
@@ -124,7 +129,20 @@ def build_demos_payload() -> dict:
                         "model_file": m.get("model_file") or d["model"]}
         thumb = _resolve_thumb(d["model_name"], d["run_ref"]["model_name"], d.get("model"))
         d["thumbnail"] = ("/api/demo-thumb?f=" + thumb) if thumb else None
+        d["media"] = {"video": _media_exists(d.get("default_video")), "image": _media_exists(d.get("default_image"))}
     return base
+
+
+def _media_exists(rel) -> bool:
+    """Is a demo's sample file on disk? Unknown root → True (never hide an input we can't check).
+    The Run Demo stage defaults away from, and disables, a sample that isn't downloaded."""
+    if not rel:
+        return False
+    try:
+        p = Path(rel)
+        return (p if p.is_absolute() else _dx_app_root() / p).is_file()
+    except Exception:
+        return True
 
 
 # ── Model preview thumbnails (dx_modelzoo/data/thumbnails/*.jpg) ─────────────────────
