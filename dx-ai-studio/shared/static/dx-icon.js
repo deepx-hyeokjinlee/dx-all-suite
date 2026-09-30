@@ -63,5 +63,70 @@
     return el;
   };
 
+  /* canvas 에 그리기 — <use> 가 닿지 않는 자리 (파이프라인 노드 등, 아이콘 체계 단계 5).
+     sprite 를 한 번 읽어 symbol 마다 Path2D 로 바꿔 둔다. 아직 못 읽었으면 false 를 돌려주고 읽기를
+     시작한다 — 다 읽으면 window 에 'dx-icons-ready' 를 보낸다 (그리는 쪽이 다시 그린다).
+       DXIcon.draw(ctx, 'play', x, y, 16, color)  // x, y 는 왼쪽 위, color 는 CSS 색 */
+  var _shapes = null, _loading = null;
+  function _toPath(node) {
+    var tag = node.tagName.toLowerCase(), p = new Path2D();
+    if (tag === 'path') p = new Path2D(node.getAttribute('d') || '');
+    else if (tag === 'circle') {
+      var cx = +node.getAttribute('cx'), cy = +node.getAttribute('cy'), r = +node.getAttribute('r');
+      p.arc(cx, cy, r, 0, Math.PI * 2);
+    } else if (tag === 'rect') {
+      var x = +node.getAttribute('x'), y = +node.getAttribute('y'), w = +node.getAttribute('width'),
+          h = +node.getAttribute('height'), rx = +(node.getAttribute('rx') || 0);
+      if (p.roundRect) p.roundRect(x, y, w, h, rx); else p.rect(x, y, w, h);
+    } else return null;
+    var t = node.getAttribute('transform');
+    if (t && typeof DOMMatrix === 'function') {
+      var out = new Path2D();
+      out.addPath(p, new DOMMatrix(t.replace(/scale\(([^)]+)\)/, function (m, a) { return 'scale(' + a.trim().replace(/\s+/g, ',') + ')'; })
+        .replace(/translate\(([^)]+)\)/, function (m, a) { return 'translate(' + a.trim().replace(/\s+/g, 'px,') + 'px)'; })));
+      return out;
+    }
+    return p;
+  }
+  DXIcon.load = function () {
+    if (_loading) return _loading;
+    _loading = fetch(SPRITE.slice(0, -1)).then(function (r) { return r.text(); }).then(function (text) {
+      var doc = new DOMParser().parseFromString(text, 'image/svg+xml'), map = {};
+      Array.prototype.forEach.call(doc.querySelectorAll('symbol'), function (sym) {
+        var one = { fill: [], line: [] };
+        ['f', 'l'].forEach(function (cls) {
+          var g = sym.querySelector('g.' + cls);
+          if (!g) return;
+          Array.prototype.forEach.call(g.children, function (n) {
+            var path = _toPath(n);
+            if (path) one[cls === 'f' ? 'fill' : 'line'].push(path);
+          });
+        });
+        map[sym.id] = one;
+      });
+      _shapes = map;
+      try { window.dispatchEvent(new Event('dx-icons-ready')); } catch (e) {}
+      return map;
+    }).catch(function () { _loading = null; return null; });
+    return _loading;
+  };
+  DXIcon.draw = function (ctx, name, x, y, size, color) {
+    if (!_shapes) { DXIcon.load(); return false; }
+    var shape = _shapes[name];
+    if (!shape) return false;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(size / 24, size / 24);
+    ctx.fillStyle = color; ctx.strokeStyle = color;
+    var a = ctx.globalAlpha;
+    ctx.globalAlpha = a * 0.24;
+    shape.fill.forEach(function (p) { ctx.fill(p); });
+    ctx.globalAlpha = a;
+    ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    shape.line.forEach(function (p) { ctx.stroke(p); });
+    ctx.restore();
+    return true;
+  };
+
   window.DXIcon = DXIcon;
 })();
