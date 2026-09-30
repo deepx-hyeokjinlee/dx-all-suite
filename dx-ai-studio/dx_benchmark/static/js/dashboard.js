@@ -116,7 +116,9 @@ function _appendEdgeGuideLink(parentEl, overrides) {
   var el = document.createElement('a');
   el.className = 'edgeguide-link';
   el.href = _edgeGuideUrl(overrides);
-  el.textContent = '💰 ' + _t('Find optimal product in EdgeGuide →');
+  // EdgeGuide 의 나침반 아이콘 (sprite edge — 레일의 그 모듈 표시, 아이콘 체계 단계 5).
+  el.innerHTML = ((typeof DXIcon === 'function') ? DXIcon('edge') : '');
+  el.appendChild(document.createTextNode(' ' + _t('Find optimal product in EdgeGuide →')));
   el.addEventListener('click', function(e) {
     e.preventDefault();
     _navigateToEdgeGuide(overrides);

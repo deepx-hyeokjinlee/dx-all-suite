@@ -971,7 +971,10 @@ body.lang-zh-TW .zh-CN { display: none; }
 }
 .hw-card:hover,
 .hw-card.active { border-color: var(--border-strong); transform: translateY(-2px); box-shadow: var(--shadow); }
-.hw-card-icon { font-size: 28px; margin-bottom: var(--sp-2); }
+.hw-card-icon { margin-bottom: var(--sp-2); color: var(--accent); }
+.hw-card-icon .dx-ico { width: 28px; height: 28px; }
+.badge-ok .dx-ico { width: 13px; height: 13px; vertical-align: -2px; }
+.edgeguide-link .dx-ico { width: 16px; height: 16px; vertical-align: -3px; }
 .hw-card-name { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
 .hw-card-runs { font-size: var(--fs-sm); color: var(--text-muted); }
 
