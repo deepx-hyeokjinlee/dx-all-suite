@@ -9,7 +9,7 @@
   let _engine = null;
 // Launcher 자체 화면을 위한 튜토리얼 섹션이다. iframe 모듈 튜토리얼은 각 모듈이 소유한다.
   const sections = [
-    { id: 'home', icon: '🏠',
+    { id: 'home', icon: 'home',
       title: { en: 'Launcher Home', ko: '런처 홈', ja: 'ランチャーホーム', 'zh-CN': '启动器主页', 'zh-TW': '啟動器首頁', es: 'Inicio del iniciador' },
       description: { en: 'Open DX modules and shared resources from the launcher shell.', ko: '런처 셸에서 DX 모듈과 공유 리소스를 엽니다.', ja: 'ランチャーシェルからDXモジュールと共有リソースを開きます。', 'zh-CN': '从启动器外壳打开DX模块和共享资源。', 'zh-TW': '從啟動器殼層開啟DX模組和共用資源。', es: 'Abra módulos DX y recursos compartidos desde el shell del iniciador.' },
       beforeStart: function () {
@@ -139,7 +139,7 @@
     card.id = 'dxt-tutorial-card';
     card.onclick = toggleTutorialMode;
     card.innerHTML = `
-      <span class="dxt-lc-icon">🎓</span>
+      <span class="dxt-lc-icon">${(typeof DXIcon === 'function') ? DXIcon('graduation') : ''}</span>
       <div class="dxt-lc-text">
         <div class="dxt-lc-title">
           <span data-i18n="Tutorial Mode">Tutorial Mode</span>

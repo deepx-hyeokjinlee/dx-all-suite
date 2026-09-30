@@ -110,7 +110,7 @@
          spec 2026-09-23 §5.1: 메뉴에 숨기지 않고 보이는 자리. -->
     <div class="home-tour" id="homeTour">
       <button class="replay-btn" id="replayBtn" onclick="replaySplash()" data-i18n-title="Replay intro animation" style="display:none;">
-        <span class="replay-btn-icon">▶</span>
+        <span class="replay-btn-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg></span>
         <span data-i18n="Replay Intro">Replay Intro</span>
       </button>
     </div>
@@ -189,7 +189,7 @@
 
           <!-- Matched: the agent steps back to one line -->
           <p class="answer-escalate" id="answerEscalate" hidden>
-            <span class="esc-icon" aria-hidden="true">✦</span>
+            <span class="esc-icon" aria-hidden="true"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#agent"></use></svg></span>
             <span data-i18n="Not what you meant?">Not what you meant?</span>
             <button type="button" class="esc-go" id="answerEscalateGo" data-i18n="Build it with the agent">Build it with the agent</button>
           </p>
@@ -399,7 +399,7 @@
   <!-- ── Platform Info Overlay ── -->
   <div class="platform-info-overlay" id="platformInfoOverlay">
     <div class="platform-info-panel">
-      <button class="platform-info-close" onclick="closePlatformInfo()">✕</button>
+      <button class="platform-info-close" onclick="closePlatformInfo()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
       <div class="platform-info-left">
         <img src="/static/img/about/marketing/intelligented.png" alt="DEEPX AI Studio" loading="lazy">
         <img src="/static/img/about/marketing/ces.jpg" alt="DEEPX CES showcase" class="pi-product-img" loading="lazy">
@@ -408,32 +408,32 @@
         <img src="/static/img/about/marketing/dxnn-sdk-fullstack-architecture-diagram.png" alt="DXNN SDK Full Stack Architecture" class="pi-product-img" loading="lazy">
       </div>
       <div class="platform-info-right">
-        <h2>🚀 DX AI Studio</h2>
+        <h2>DX AI Studio</h2>
         <p class="platform-tagline" data-i18n="All-in-One Edge AI Development Platform">All-in-One Edge AI Development Platform</p>
         <p class="platform-desc" data-i18n="DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.">DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.</p>
         <div class="platform-modules">
-          <div class="pm-item" data-help-id="pm-dx-app" tabindex="0" role="button"><span class="pm-icon">🖥️</span><span class="pm-name">DX App</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Real-time Inference Engine&lt;/strong&gt;&lt;br&gt;• Run 340+ pre-compiled AI models instantly&lt;br&gt;• Auto-generate C++/Python inference code templates&lt;br&gt;• FPS, latency, memory real-time dashboard"><strong>NPU Real-time Inference Engine</strong><br>• Run 340+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard</span></div>
-          <div class="pm-item" data-help-id="pm-dx-stream"><span class="pm-icon">🎬</span><span class="pm-name">DX Stream</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Vision AI Streaming Pipeline&lt;/strong&gt;&lt;br&gt;• 13 custom GStreamer-based plugins&lt;br&gt;• Real-time RTSP/USB/IP camera connection&lt;br&gt;• Multi-channel simultaneous AI processing"><strong>Vision AI Streaming Pipeline</strong><br>• 13 custom GStreamer-based plugins<br>• Real-time RTSP/USB/IP camera connection<br>• Multi-channel simultaneous AI processing</span></div>
-          <div class="pm-item" data-help-id="pm-model-zoo"><span class="pm-icon">🧬</span><span class="pm-name">Model Zoo</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;340 AI Model Catalog&lt;/strong&gt;&lt;br&gt;• YOLO, ResNet, EfficientNet .dxnn models&lt;br&gt;• Model performance comparison &amp; compatibility info&lt;br&gt;• One-click download &amp; Edge device deployment"><strong>340 AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment</span></div>
-          <div class="pm-item" data-help-id="pm-compiler"><span class="pm-icon">⚙️</span><span class="pm-name">Compiler</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;ONNX → .dxnn Compiler GUI&lt;/strong&gt;&lt;br&gt;• INT8 intelligent quantization for optimal performance&lt;br&gt;• DX-TRON computational graph visualization&lt;br&gt;• Batch compilation &amp; profiling support"><strong>ONNX → .dxnn Compiler GUI</strong><br>• INT8 intelligent quantization for optimal performance<br>• DX-TRON computational graph visualization<br>• Batch compilation & profiling support</span></div>
-          <div class="pm-item" data-help-id="pm-edgeguide"><span class="pm-icon">💰</span><span class="pm-name">EdgeGuide</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Configuration &amp; TCO Analysis&lt;/strong&gt;&lt;br&gt;• Workload-based optimal NPU chip recommendation&lt;br&gt;• Total Cost of Ownership (TCO) comparison report&lt;br&gt;• DX-M1 vs DX-H1 Quattro performance comparison"><strong>NPU Configuration & TCO Analysis</strong><br>• Workload-based optimal NPU chip recommendation<br>• Total Cost of Ownership (TCO) comparison report<br>• DX-M1 vs DX-H1 Quattro performance comparison</span></div>
-          <div class="pm-item" data-help-id="pm-benchmark"><span class="pm-icon">📊</span><span class="pm-name">Benchmark</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;HW Performance Cross Benchmark&lt;/strong&gt;&lt;br&gt;• 6 boards × YOLO series automated testing&lt;br&gt;• FPS, latency, power consumption precision measurement&lt;br&gt;• Markdown auto-report &amp; chart generation"><strong>HW Performance Cross Benchmark</strong><br>• 6 boards × YOLO series automated testing<br>• FPS, latency, power consumption precision measurement<br>• Markdown auto-report & chart generation</span></div>
-          <div class="pm-item" data-help-id="pm-monitor"><span class="pm-icon">📡</span><span class="pm-name">Monitor</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Hardware Real-time Monitoring&lt;/strong&gt;&lt;br&gt;• NPU temperature, voltage, clock real-time charts&lt;br&gt;• CPU/memory/disk system gauges&lt;br&gt;• 5min~1hr history trend analysis"><strong>NPU Hardware Real-time Monitoring</strong><br>• NPU temperature, voltage, clock real-time charts<br>• CPU/memory/disk system gauges<br>• 5min~1hr history trend analysis</span></div>
-          <div class="pm-item" data-help-id="pm-agent-dev"><span class="pm-icon">🤖</span><span class="pm-name">Agent Dev</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Natural-Language NPU App Builder&lt;/strong&gt;&lt;br&gt;• One-line commands auto-generate pipelines &amp; apps&lt;br&gt;• Interactive console · real-time build logs&lt;br&gt;• Offline showcase gallery"><strong>Natural-Language NPU App Builder</strong><br>• One-line commands auto-generate pipelines & apps<br>• Interactive console · real-time build logs<br>• Offline showcase gallery</span></div>
-          <div class="pm-item" data-help-id="pm-sdk-library"><span class="pm-icon">📚</span><span class="pm-name">SDK Library</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DXNN SDK Tech Library&lt;/strong&gt;&lt;br&gt;• 120 official SDK documents curated&lt;br&gt;• 4-shelf classification (Runtime/Compiler/Zoo/Suite)&lt;br&gt;• Real-time search &amp; book-style viewer"><strong>DXNN SDK Tech Library</strong><br>• 120 official SDK documents curated<br>• 4-shelf classification (Runtime/Compiler/Zoo/Suite)<br>• Real-time search & book-style viewer</span></div>
-          <div class="pm-item" data-help-id="pm-about-deepx"><span class="pm-icon">🔬</span><span class="pm-name">About DEEPX</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DEEPX Interactive Encyclopedia&lt;/strong&gt;&lt;br&gt;• DX-M1/DX-M2 chip die hotspot exploration&lt;br&gt;• Click to explore tech, product, vision stories&lt;br&gt;• High-res chip die photos &amp; technical descriptions"><strong>DEEPX Interactive Encyclopedia</strong><br>• DX-M1/DX-M2 chip die hotspot exploration<br>• Click to explore tech, product, vision stories<br>• High-res chip die photos & technical descriptions</span></div>
+          <div class="pm-item" data-help-id="pm-dx-app" tabindex="0" role="button"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#app"></use></svg></span><span class="pm-name">DX App</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Real-time Inference Engine&lt;/strong&gt;&lt;br&gt;• Run 340+ pre-compiled AI models instantly&lt;br&gt;• Auto-generate C++/Python inference code templates&lt;br&gt;• FPS, latency, memory real-time dashboard"><strong>NPU Real-time Inference Engine</strong><br>• Run 340+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard</span></div>
+          <div class="pm-item" data-help-id="pm-dx-stream"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stream"></use></svg></span><span class="pm-name">DX Stream</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Vision AI Streaming Pipeline&lt;/strong&gt;&lt;br&gt;• 13 custom GStreamer-based plugins&lt;br&gt;• Real-time RTSP/USB/IP camera connection&lt;br&gt;• Multi-channel simultaneous AI processing"><strong>Vision AI Streaming Pipeline</strong><br>• 13 custom GStreamer-based plugins<br>• Real-time RTSP/USB/IP camera connection<br>• Multi-channel simultaneous AI processing</span></div>
+          <div class="pm-item" data-help-id="pm-model-zoo"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#zoo"></use></svg></span><span class="pm-name">Model Zoo</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;340 AI Model Catalog&lt;/strong&gt;&lt;br&gt;• YOLO, ResNet, EfficientNet .dxnn models&lt;br&gt;• Model performance comparison &amp; compatibility info&lt;br&gt;• One-click download &amp; Edge device deployment"><strong>340 AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment</span></div>
+          <div class="pm-item" data-help-id="pm-compiler"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#compiler"></use></svg></span><span class="pm-name">Compiler</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;ONNX → .dxnn Compiler GUI&lt;/strong&gt;&lt;br&gt;• INT8 intelligent quantization for optimal performance&lt;br&gt;• DX-TRON computational graph visualization&lt;br&gt;• Batch compilation &amp; profiling support"><strong>ONNX → .dxnn Compiler GUI</strong><br>• INT8 intelligent quantization for optimal performance<br>• DX-TRON computational graph visualization<br>• Batch compilation & profiling support</span></div>
+          <div class="pm-item" data-help-id="pm-edgeguide"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#edge"></use></svg></span><span class="pm-name">EdgeGuide</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Configuration &amp; TCO Analysis&lt;/strong&gt;&lt;br&gt;• Workload-based optimal NPU chip recommendation&lt;br&gt;• Total Cost of Ownership (TCO) comparison report&lt;br&gt;• DX-M1 vs DX-H1 Quattro performance comparison"><strong>NPU Configuration & TCO Analysis</strong><br>• Workload-based optimal NPU chip recommendation<br>• Total Cost of Ownership (TCO) comparison report<br>• DX-M1 vs DX-H1 Quattro performance comparison</span></div>
+          <div class="pm-item" data-help-id="pm-benchmark"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#bench"></use></svg></span><span class="pm-name">Benchmark</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;HW Performance Cross Benchmark&lt;/strong&gt;&lt;br&gt;• 6 boards × YOLO series automated testing&lt;br&gt;• FPS, latency, power consumption precision measurement&lt;br&gt;• Markdown auto-report &amp; chart generation"><strong>HW Performance Cross Benchmark</strong><br>• 6 boards × YOLO series automated testing<br>• FPS, latency, power consumption precision measurement<br>• Markdown auto-report & chart generation</span></div>
+          <div class="pm-item" data-help-id="pm-monitor"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#monitor"></use></svg></span><span class="pm-name">Monitor</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Hardware Real-time Monitoring&lt;/strong&gt;&lt;br&gt;• NPU temperature, voltage, clock real-time charts&lt;br&gt;• CPU/memory/disk system gauges&lt;br&gt;• 5min~1hr history trend analysis"><strong>NPU Hardware Real-time Monitoring</strong><br>• NPU temperature, voltage, clock real-time charts<br>• CPU/memory/disk system gauges<br>• 5min~1hr history trend analysis</span></div>
+          <div class="pm-item" data-help-id="pm-agent-dev"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#agent"></use></svg></span><span class="pm-name">Agent Dev</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Natural-Language NPU App Builder&lt;/strong&gt;&lt;br&gt;• One-line commands auto-generate pipelines &amp; apps&lt;br&gt;• Interactive console · real-time build logs&lt;br&gt;• Offline showcase gallery"><strong>Natural-Language NPU App Builder</strong><br>• One-line commands auto-generate pipelines & apps<br>• Interactive console · real-time build logs<br>• Offline showcase gallery</span></div>
+          <div class="pm-item" data-help-id="pm-sdk-library"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#library"></use></svg></span><span class="pm-name">SDK Library</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DXNN SDK Tech Library&lt;/strong&gt;&lt;br&gt;• 120 official SDK documents curated&lt;br&gt;• 4-shelf classification (Runtime/Compiler/Zoo/Suite)&lt;br&gt;• Real-time search &amp; book-style viewer"><strong>DXNN SDK Tech Library</strong><br>• 120 official SDK documents curated<br>• 4-shelf classification (Runtime/Compiler/Zoo/Suite)<br>• Real-time search & book-style viewer</span></div>
+          <div class="pm-item" data-help-id="pm-about-deepx"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#book"></use></svg></span><span class="pm-name">About DEEPX</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DEEPX Interactive Encyclopedia&lt;/strong&gt;&lt;br&gt;• DX-M1/DX-M2 chip die hotspot exploration&lt;br&gt;• Click to explore tech, product, vision stories&lt;br&gt;• High-res chip die photos &amp; technical descriptions"><strong>DEEPX Interactive Encyclopedia</strong><br>• DX-M1/DX-M2 chip die hotspot exploration<br>• Click to explore tech, product, vision stories<br>• High-res chip die photos & technical descriptions</span></div>
         </div>
         <div class="platform-values">
-          <span class="pv-badge" data-i18n="🚀 Zero-Code Deploy">🚀 Zero-Code Deploy</span>
-          <span class="pv-badge" data-i18n="📦 End-to-End Solution">📦 End-to-End Solution</span>
-          <span class="pv-badge">⚡ 25~100+ TOPS</span>
-          <span class="pv-badge" data-i18n="🧠 On-Device AI">🧠 On-Device AI</span>
-          <span class="pv-badge" data-i18n="🔧 ONNX→DXNN Compile">🔧 ONNX→DXNN Compile</span>
-          <span class="pv-badge" data-i18n="🎛️ Simulation Ready">🎛️ Simulation Ready</span>
-          <span class="pv-badge" data-i18n="📊 Real-Time Monitor">📊 Real-Time Monitor</span>
+          <span class="pv-badge"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#run"></use></svg> <span data-i18n="Zero-Code Deploy">Zero-Code Deploy</span></span>
+          <span class="pv-badge"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span data-i18n="End-to-End Solution">End-to-End Solution</span></span>
+          <span class="pv-badge"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#bolt"></use></svg> 25~100+ TOPS</span>
+          <span class="pv-badge"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#cpu"></use></svg> <span data-i18n="On-Device AI">On-Device AI</span></span>
+          <span class="pv-badge"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#compiler"></use></svg> <span data-i18n="ONNX→DXNN Compile">ONNX→DXNN Compile</span></span>
+          <span class="pv-badge"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#setup"></use></svg> <span data-i18n="Simulation Ready">Simulation Ready</span></span>
+          <span class="pv-badge"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#monitor"></use></svg> <span data-i18n="Real-Time Monitor">Real-Time Monitor</span></span>
         </div>
         <div class="platform-usecases">
-          <h4 class="pu-title" data-i18n="🎯 Use Cases">🎯 Use Cases</h4>
+          <h4 class="pu-title" data-i18n="Use Cases">Use Cases</h4>
           <div class="pu-tags">
             <span data-i18n="Smart Factory">Smart Factory</span><span data-i18n="Security·CCTV">Security·CCTV</span><span data-i18n="Autonomous Driving">Autonomous Driving</span><span data-i18n="Smart City">Smart City</span><span data-i18n="Medical Imaging">Medical Imaging</span><span data-i18n="Logistics·Robotics">Logistics·Robotics</span><span data-i18n="Retail">Retail</span><span data-i18n="Defense">Defense</span>
           </div>
@@ -452,7 +452,7 @@
   <!-- ── Physical AI Ecosystem Overlay (opened from the left landing poster) ── -->
   <div class="platform-info-overlay eco-overlay" id="ecosystemOverlay">
     <div class="platform-info-panel eco-panel">
-      <button class="platform-info-close" onclick="closeEcosystemInfo()">✕</button>
+      <button class="platform-info-close" onclick="closeEcosystemInfo()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
 
       <div class="eco-hero">
         <img src="/static/img/about/marketing/deepx-physical-ai.webp" alt="DEEPX Connects the Physical AI Ecosystem" loading="lazy">
@@ -460,22 +460,22 @@
 
       <div class="eco-right">
       <div class="eco-head">
-        <h2>🌐 <span data-i18n="DEEPX Connects the Physical AI Ecosystem">DEEPX Connects the Physical AI Ecosystem</span></h2>
+        <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#globe"></use></svg> <span data-i18n="DEEPX Connects the Physical AI Ecosystem">DEEPX Connects the Physical AI Ecosystem</span></h2>
         <p class="eco-sub" data-i18n="An open, scalable edge-AI platform">An open, scalable edge-AI platform</p>
         <p class="eco-intro" data-i18n="An ultra-low-power NPU linking the software and hardware ecosystems into one.">An ultra-low-power NPU linking the software and hardware ecosystems into one.</p>
       </div>
 
       <div class="eco-pillars">
         <section class="eco-pillar">
-          <h3 class="eco-pillar-title" data-i18n-html="① AI Model Ecosystem &lt;em&gt;(Software)&lt;/em&gt;">① AI Model Ecosystem <em>(Software)</em></h3>
+          <h3 class="eco-pillar-title" data-i18n-html="1. AI Model Ecosystem &lt;em&gt;(Software)&lt;/em&gt;">1. AI Model Ecosystem <em>(Software)</em></h3>
 
           <div class="eco-partner">
             <div class="eco-partner-name">Ultralytics — YOLO</div>
             <p class="eco-partner-desc" data-i18n-html="Vision-AI leader — deploy &lt;em class=&quot;hl&quot;&gt;YOLO&lt;/em&gt; to DEEPX NPUs with &lt;em class=&quot;hl&quot;&gt;one command&lt;/em&gt;.">Vision-AI leader — deploy <em class="hl">YOLO</em> to DEEPX NPUs with <em class="hl">one command</em>.</p>
             <div class="eco-links">
-              <a class="eco-link" href="https://www.ultralytics.com/blog/ultralytics-yolo-partners-with-deepx-edge-ai-inference-for-physical-ai" target="_blank" rel="noopener noreferrer">🔗 <span data-i18n="Official site">Official site</span></a>
-              <a class="eco-link" href="https://docs.ultralytics.com/integrations/deepx" target="_blank" rel="noopener noreferrer">📄 Docs</a>
-              <a class="eco-link" href="https://github.com/ultralytics/ultralytics" target="_blank" rel="noopener noreferrer">💻 GitHub</a>
+              <a class="eco-link" href="https://www.ultralytics.com/blog/ultralytics-yolo-partners-with-deepx-edge-ai-inference-for-physical-ai" target="_blank" rel="noopener noreferrer"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#external"></use></svg> <span data-i18n="Official site">Official site</span></a>
+              <a class="eco-link" href="https://docs.ultralytics.com/integrations/deepx" target="_blank" rel="noopener noreferrer"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#file"></use></svg> Docs</a>
+              <a class="eco-link" href="https://github.com/ultralytics/ultralytics" target="_blank" rel="noopener noreferrer"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg> GitHub</a>
             </div>
           </div>
 
@@ -486,12 +486,12 @@
         </section>
 
         <section class="eco-pillar eco-pillar--npu">
-          <h3 class="eco-pillar-title" data-i18n-html="② DEEPX NPU &lt;em&gt;(Core)&lt;/em&gt;">② DEEPX NPU <em>(Core)</em></h3>
+          <h3 class="eco-pillar-title" data-i18n-html="2. DEEPX NPU &lt;em&gt;(Core)&lt;/em&gt;">2. DEEPX NPU <em>(Core)</em></h3>
           <p class="eco-partner-desc" data-i18n-html="&lt;em class=&quot;hl&quot;&gt;5W&lt;/em&gt;, edge-optimized; SDK, compiler and tools bridge models to hardware."><em class="hl">5W</em>, edge-optimized; SDK, compiler and tools bridge models to hardware.</p>
         </section>
 
         <section class="eco-pillar">
-          <h3 class="eco-pillar-title" data-i18n-html="③ Developer Hardware Ecosystem &lt;em&gt;(Hardware)&lt;/em&gt;">③ Developer Hardware Ecosystem <em>(Hardware)</em></h3>
+          <h3 class="eco-pillar-title" data-i18n-html="3. Developer Hardware Ecosystem &lt;em&gt;(Hardware)&lt;/em&gt;">3. Developer Hardware Ecosystem <em>(Hardware)</em></h3>
           <div class="eco-partner">
             <div class="eco-partner-name">Raspberry Pi + DEEPX AI HAT</div>
             <p class="eco-partner-desc" data-i18n-html="&lt;em class=&quot;hl&quot;&gt;73M+&lt;/em&gt; sold — the DEEPX AI HAT brings up to &lt;em class=&quot;hl&quot;&gt;25 TOPS&lt;/em&gt; to Raspberry Pi 5."><em class="hl">73M+</em> sold — the DEEPX AI HAT brings up to <em class="hl">25 TOPS</em> to Raspberry Pi 5.</p>
@@ -500,7 +500,7 @@
       </div>
 
       <div class="eco-apps">
-        <h4 class="eco-apps-title" data-i18n="🎯 Physical AI Applications">🎯 Physical AI Applications</h4>
+        <h4 class="eco-apps-title" data-i18n="Physical AI Applications">Physical AI Applications</h4>
         <div class="eco-app-tags">
           <span data-i18n="Smart Cameras">Smart Cameras</span><span data-i18n="Robotics">Robotics</span><span data-i18n="Smart Manufacturing">Smart Manufacturing</span><span data-i18n="Smart Cities">Smart Cities</span><span data-i18n="Drones &amp; Logistics">Drones &amp; Logistics</span><span data-i18n="Healthcare">Healthcare</span>
         </div>
@@ -548,7 +548,7 @@
             <input type="text" id="sdkViewerSearch" data-i18n-placeholder="Ctrl+F" autocomplete="off">
             <span class="sdk-viewer-search-info" id="sdkViewerSearchInfo"></span>
           </div>
-          <button class="sdk-viewer-close" data-i18n-title="Close">✕</button>
+          <button class="sdk-viewer-close" data-i18n-title="Close" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
         </div>
         <div class="sdk-viewer-body" id="sdkViewerBody"></div>
       </div>
@@ -1288,82 +1288,82 @@
     'zh-TW': 'YOLO · ResNet · EfficientNet 等',
     es: 'YOLO · ResNet · EfficientNet, etc.',
   },
-  '① AI Model Ecosystem <em>(Software)</em>': {
-    ko: '① AI 모델 생태계 <em>(소프트웨어)</em>',
-    ja: '① AIモデルエコシステム <em>(ソフトウェア)</em>',
-    'zh-CN': '① AI 模型生态系统 <em>(软件)</em>',
-    'zh-TW': '① AI 模型生態系統 <em>(軟體)</em>',
-    es: '① Ecosistema de modelos de IA <em>(Software)</em>',
+  '1. AI Model Ecosystem <em>(Software)</em>': {
+    ko: '1. AI 모델 생태계 <em>(소프트웨어)</em>',
+    ja: '1. AIモデルエコシステム <em>(ソフトウェア)</em>',
+    'zh-CN': '1. AI 模型生态系统 <em>(软件)</em>',
+    'zh-TW': '1. AI 模型生態系統 <em>(軟體)</em>',
+    es: '1. Ecosistema de modelos de IA <em>(Software)</em>',
   },
-  '② DEEPX NPU <em>(Core)</em>': {
-    ko: '② DEEPX NPU <em>(중심)</em>',
-    ja: '② DEEPX NPU <em>(中核)</em>',
-    'zh-CN': '② DEEPX NPU <em>(核心)</em>',
-    'zh-TW': '② DEEPX NPU <em>(核心)</em>',
-    es: '② DEEPX NPU <em>(Núcleo)</em>',
+  '2. DEEPX NPU <em>(Core)</em>': {
+    ko: '2. DEEPX NPU <em>(중심)</em>',
+    ja: '2. DEEPX NPU <em>(中核)</em>',
+    'zh-CN': '2. DEEPX NPU <em>(核心)</em>',
+    'zh-TW': '2. DEEPX NPU <em>(核心)</em>',
+    es: '2. DEEPX NPU <em>(Núcleo)</em>',
   },
-  '③ Developer Hardware Ecosystem <em>(Hardware)</em>': {
-    ko: '③ 개발자 하드웨어 생태계 <em>(하드웨어)</em>',
-    ja: '③ 開発者ハードウェアエコシステム <em>(ハードウェア)</em>',
-    'zh-CN': '③ 开发者硬件生态系统 <em>(硬件)</em>',
-    'zh-TW': '③ 開發者硬體生態系統 <em>(硬體)</em>',
-    es: '③ Ecosistema de hardware para desarrolladores <em>(Hardware)</em>',
+  '3. Developer Hardware Ecosystem <em>(Hardware)</em>': {
+    ko: '3. 개발자 하드웨어 생태계 <em>(하드웨어)</em>',
+    ja: '3. 開発者ハードウェアエコシステム <em>(ハードウェア)</em>',
+    'zh-CN': '3. 开发者硬件生态系统 <em>(硬件)</em>',
+    'zh-TW': '3. 開發者硬體生態系統 <em>(硬體)</em>',
+    es: '3. Ecosistema de hardware para desarrolladores <em>(Hardware)</em>',
   },
-  '🎛️ Simulation Ready': {
-    ko: '🎛️ 시뮬레이션 준비',
-    ja: '🎛️ シミュレーション対応',
-    'zh-CN': '🎛️ 仿真就绪',
-    'zh-TW': '🎛️ 模擬就緒',
-    es: '🎛️ Listo para simulación',
+  'Simulation Ready': {
+    ko: '시뮬레이션 준비',
+    ja: 'シミュレーション対応',
+    'zh-CN': '仿真就绪',
+    'zh-TW': '模擬就緒',
+    es: 'Listo para simulación',
   },
-  '🎯 Physical AI Applications': {
-    ko: '🎯 Physical AI 응용 분야',
-    ja: '🎯 Physical AI 応用分野',
-    'zh-CN': '🎯 Physical AI 应用领域',
-    'zh-TW': '🎯 Physical AI 應用領域',
-    es: '🎯 Aplicaciones de IA física',
+  'Physical AI Applications': {
+    ko: 'Physical AI 응용 분야',
+    ja: 'Physical AI 応用分野',
+    'zh-CN': 'Physical AI 应用领域',
+    'zh-TW': 'Physical AI 應用領域',
+    es: 'Aplicaciones de IA física',
   },
-  '🎯 Use Cases': {
-    ko: '🎯 적용 분야',
-    ja: '🎯 適用分野',
-    'zh-CN': '🎯 应用领域',
-    'zh-TW': '🎯 應用領域',
-    es: '🎯 Casos de uso',
+  'Use Cases': {
+    ko: '적용 분야',
+    ja: '適用分野',
+    'zh-CN': '应用领域',
+    'zh-TW': '應用領域',
+    es: 'Casos de uso',
   },
-  '📊 Real-Time Monitor': {
-    ko: '📊 실시간 모니터링',
-    ja: '📊 リアルタイムモニター',
-    'zh-CN': '📊 实时监控',
-    'zh-TW': '📊 即時監控',
-    es: '📊 Monitor en tiempo real',
+  'Real-Time Monitor': {
+    ko: '실시간 모니터링',
+    ja: 'リアルタイムモニター',
+    'zh-CN': '实时监控',
+    'zh-TW': '即時監控',
+    es: 'Monitor en tiempo real',
   },
-  '📦 End-to-End Solution': {
-    ko: '📦 엔드투엔드 솔루션',
-    ja: '📦 エンドツーエンドソリューション',
-    'zh-CN': '📦 端到端解决方案',
-    'zh-TW': '📦 端到端解決方案',
-    es: '📦 Solución de extremo a extremo',
+  'End-to-End Solution': {
+    ko: '엔드투엔드 솔루션',
+    ja: 'エンドツーエンドソリューション',
+    'zh-CN': '端到端解决方案',
+    'zh-TW': '端到端解決方案',
+    es: 'Solución de extremo a extremo',
   },
-  '🔧 ONNX→DXNN Compile': {
-    ko: '🔧 ONNX→DXNN 컴파일',
-    ja: '🔧 ONNX→DXNNコンパイル',
-    'zh-CN': '🔧 ONNX→DXNN编译',
-    'zh-TW': '🔧 ONNX→DXNN編譯',
-    es: '🔧 Compilación ONNX→DXNN',
+  'ONNX→DXNN Compile': {
+    ko: 'ONNX→DXNN 컴파일',
+    ja: 'ONNX→DXNNコンパイル',
+    'zh-CN': 'ONNX→DXNN编译',
+    'zh-TW': 'ONNX→DXNN編譯',
+    es: 'Compilación ONNX→DXNN',
   },
-  '🚀 Zero-Code Deploy': {
-    ko: '🚀 제로코드 배포',
-    ja: '🚀 ゼロコードデプロイ',
-    'zh-CN': '🚀 零代码部署',
-    'zh-TW': '🚀 零程式碼部署',
-    es: '🚀 Implementación sin código',
+  'Zero-Code Deploy': {
+    ko: '제로코드 배포',
+    ja: 'ゼロコードデプロイ',
+    'zh-CN': '零代码部署',
+    'zh-TW': '零程式碼部署',
+    es: 'Implementación sin código',
   },
-  '🧠 On-Device AI': {
-    ko: '🧠 온디바이스 AI',
-    ja: '🧠 オンデバイスAI',
-    'zh-CN': '🧠 端侧AI',
-    'zh-TW': '🧠 端側AI',
-    es: '🧠 IA en el dispositivo',
+  'On-Device AI': {
+    ko: '온디바이스 AI',
+    ja: 'オンデバイスAI',
+    'zh-CN': '端侧AI',
+    'zh-TW': '端側AI',
+    es: 'IA en el dispositivo',
   },
   // ── 마크업 lang-span 에서 옮겨온 항목 ──
   // ── 유리 막대 (P5) ──

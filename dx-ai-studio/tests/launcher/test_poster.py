@@ -227,16 +227,18 @@ def test_platform_value_badges_cover_core_studio_capabilities():
     values = _platform_values(html)
 
     assert values.count('class="pv-badge"') == 7
+    # 배지의 표시는 sprite 아이콘 + 글자 (아이콘 체계 단계 5 — 예전엔 글자 앞의 이모지).
     for label in [
-        "🚀 Zero-Code Deploy",
-        "📦 End-to-End Solution",
-        "⚡ 25~100+ TOPS",
-        "🧠 On-Device AI",
-        "🔧 ONNX→DXNN Compile",
-        "🎛️ Simulation Ready",
-        "📊 Real-Time Monitor",
+        "Zero-Code Deploy",
+        "End-to-End Solution",
+        "25~100+ TOPS",
+        "On-Device AI",
+        "ONNX→DXNN Compile",
+        "Simulation Ready",
+        "Real-Time Monitor",
     ]:
         assert label in values
+    assert values.count('dx-icons.svg#') >= 7
     assert "🌐 Multi-App Studio" not in values
 
 

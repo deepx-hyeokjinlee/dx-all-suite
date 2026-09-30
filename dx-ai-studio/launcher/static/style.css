@@ -1306,7 +1306,7 @@ body {
 .buy-topbar-btn:hover { background: var(--ap-blue-hi); }
 
 /* ── the command line ── */
-/* The biggest thing on the first screen used to be a 14px "✦". Nothing else
+/* The biggest thing on the first screen used to be a 14px sparkle glyph. Nothing else
    reached past 13px either, so the eye had nowhere to land and the page read
    as a settings panel. The command line is what this app is for; it gets the
    size to say so. */

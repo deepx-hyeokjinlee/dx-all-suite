@@ -2,6 +2,13 @@
 (function () {
   'use strict';
 
+  // 서랍 · 칸 · 파일 아이콘은 sprite 이름 (sdk-library-data.json, 아이콘 체계 단계 5). 옛 글자 icon 은 그대로.
+  function _sdkIco(name) {
+    if (/^[a-z0-9_-]+$/.test(name || '') && typeof window.DXIcon === 'function') return window.DXIcon(name);
+    return escHtmlSafe(name || '');
+  }
+  function escHtmlSafe(v) { return String(v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
   function _sdkDebugLog() { if (window.DX_DEBUG_SDK === true) console.log.apply(console, arguments); }
 
   function _t(en, ko, ja, zhCN, zhTW, es) {
@@ -188,16 +195,16 @@
       </div>
       <div class="sdk-topbar-center">
         <div class="sdk-topbar-search">
-          <span class="sdk-topbar-search-icon">🔍</span>
+          <span class="sdk-topbar-search-icon">${_sdkIco('search')}</span>
           <input type="text" id="sdkLibSearch" placeholder="${_t('Search documents…', '문서 검색…', 'ドキュメント検색…', '搜索文档…', '搜尋文件…', 'Buscar documentos…')}" autocomplete="off">
         </div>
       </div>
       <div class="sdk-topbar-right">
         <div class="sdk-topbar-toggle">
-          <button class="sdk-toggle-btn ${_viewMode === 'list' ? 'active' : ''}" data-mode="list" title="${_t('List View', '목록 보기', 'リストビュー', '列表视图', '列表檢視', 'Vista de lista')}">📋 ${_t('List', '목록', 'リスト', '列表', '列表', 'Lista')}</button>
-          <button class="sdk-toggle-btn ${_viewMode === 'cabinet' ? 'active' : ''}" data-mode="cabinet" title="${_t('Cabinet View', '캐비닛 보기', 'キャビネットビュー', '文件柜视图', '文件櫃檢視', 'Vista de archivador')}">🗄️ ${_t('Cabinet', '캐비닛', 'キャビネット', '文件柜', '文件櫃', 'Archivador')}</button>
+          <button class="sdk-toggle-btn ${_viewMode === 'list' ? 'active' : ''}" data-mode="list" title="${_t('List View', '목록 보기', 'リストビュー', '列表视图', '列表檢視', 'Vista de lista')}">${_sdkIco('menu')} ${_t('List', '목록', 'リスト', '列表', '列表', 'Lista')}</button>
+          <button class="sdk-toggle-btn ${_viewMode === 'cabinet' ? 'active' : ''}" data-mode="cabinet" title="${_t('Cabinet View', '캐비닛 보기', 'キャビネットビュー', '文件柜视图', '文件櫃檢視', 'Vista de archivador')}">${_sdkIco('folder')} ${_t('Cabinet', '캐비닛', 'キャビネット', '文件柜', '文件櫃', 'Archivador')}</button>
         </div>
-        <button class="sdk-topbar-btn" id="sdkArchBtn" title="${_t('Architecture', '아키텍처', 'アーキテクチャ', '架构', '架構', 'Arquitectura')}">🏗️</button>
+        <button class="sdk-topbar-btn" id="sdkArchBtn" title="${_t('Architecture', '아키텍처', 'アーキテクチャ', '架构', '架構', 'Arquitectura')}">${_sdkIco('dashboard')}</button>
       </div>`;
     header.querySelectorAll('.sdk-toggle-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -332,7 +339,7 @@
       groupHead.dataset.helpId = 'sidebar-group-' + drawer.id;
       const totalFiles = drawer.sections.reduce((s, sec) => s + sec.files.length, 0);
       groupHead.innerHTML = `
-        <span class="sdk-sidebar-icon">${drawer.icon}</span>
+        <span class="sdk-sidebar-icon">${_sdkIco(drawer.icon)}</span>
         <span class="sdk-sidebar-label">${escHtml(labelText(drawer.label))}</span>
         <span class="sdk-sidebar-count">${totalFiles}</span>`;
       if (isFlatDrawer) {
@@ -358,7 +365,7 @@
           secItem.dataset.sectionId = section.id;
           secItem.dataset.drawerId = drawer.id;
           secItem.innerHTML = `
-            <span class="sdk-sidebar-sec-icon">${section.icon}</span>
+            <span class="sdk-sidebar-sec-icon">${_sdkIco(section.icon)}</span>
             <span class="sdk-sidebar-sec-label">${escHtml(labelText(section.label))}</span>
             <span class="sdk-sidebar-sec-count">${section.files.length}</span>`;
           secItem.addEventListener('click', (e) => {
@@ -387,7 +394,7 @@
 
     content.innerHTML = `
       <div class="sdk-list-content-header">
-        <span class="sdk-list-breadcrumb">${drawer.icon} ${escHtml(labelText(drawer.label))} › ${escHtml(labelText(section.label))}</span>
+        <span class="sdk-list-breadcrumb">${_sdkIco(drawer.icon)} ${escHtml(labelText(drawer.label))} › ${escHtml(labelText(section.label))}</span>
         <span class="sdk-list-file-count">${section.files.length}${_t(' files', '개 파일', ' ファイル', ' 个文件', ' 個檔案', ' archivos')}</span>
       </div>
       <div class="sdk-list-files-grid"></div>`;
@@ -411,7 +418,7 @@
     face.innerHTML = `
       <div class="drawer-stripe"></div>
       <div class="drawer-label-plate">
-        <span class="drawer-label-icon">${drawer.icon}</span>
+        <span class="drawer-label-icon">${_sdkIco(drawer.icon)}</span>
         <span class="drawer-label-text">${escHtml(labelText(drawer.label))}</span>
       </div>
       <span class="drawer-label-count">${totalFiles}${_t(' files', '개 파일', ' ファイル', ' 个文件', ' 個檔案', ' archivos')}</span>
@@ -431,7 +438,7 @@
         const secHeader = document.createElement('div');
         secHeader.className = 'drawer-section-header';
         secHeader.innerHTML = `
-          <span class="section-icon">${section.icon}</span>
+          <span class="section-icon">${_sdkIco(section.icon)}</span>
           <span class="section-label">${escHtml(labelText(section.label))}</span>
           <span class="section-count">${section.files.length}</span>`;
         secEl.appendChild(secHeader);
@@ -470,7 +477,7 @@
     const colorClass = isPdf ? 'pdf' : (drawerColor || 'green');
 
     card.innerHTML = `
-      <div class="file-card-icon ${colorClass}">${isPdf ? '📄' : '📝'}</div>
+      <div class="file-card-icon ${colorClass}">${_sdkIco(isPdf ? 'file' : 'book')}</div>
       <div class="file-card-info">
         <div class="file-card-title">${escHtml(file.title)}</div>
         <div class="file-card-meta">
@@ -790,12 +797,13 @@
     const admRe = /^(!!!|\?\?\?\+?)\s+([\w-]+)(?:\s+"([^"]*)")?\s*$/;
     const tabRe = /^===\+?\s+"([^"]*)"\s*$/;
     const indentedRe = /^( {4}|\t)/;
+    // 알림 상자 (!!! note …) 의 표시 — sprite 이름 (아이콘 체계 단계 5)
     const ADM_ICONS = {
-      note:'📝', abstract:'📄', summary:'📄', tldr:'📄', info:'ℹ️', todo:'☑️',
-      tip:'💡', hint:'💡', important:'❗', success:'✅', check:'✅', done:'✅',
-      question:'❓', help:'❓', faq:'❓', warning:'⚠️', caution:'⚠️', attention:'⚠️',
-      failure:'❌', fail:'❌', missing:'❌', danger:'🛑', error:'🛑', bug:'🐛',
-      example:'📋', quote:'❝', cite:'❝',
+      note:'file', abstract:'clipboard', summary:'clipboard', tldr:'clipboard', info:'info', todo:'check',
+      tip:'info', hint:'info', important:'alert', success:'check', check:'check', done:'check',
+      question:'info', help:'info', faq:'info', warning:'alert', caution:'alert', attention:'alert',
+      failure:'x', fail:'x', missing:'x', danger:'alert', error:'x', bug:'alert',
+      example:'clipboard', quote:'chat', cite:'chat',
     };
     const isSpecial = (l) => headRe.test(l) || hrRe.test(l) || listRe.test(l) || bqRe.test(l) || htmlRe.test(l) || cbRe.test(l) || rowRe.test(l) || admRe.test(l) || tabRe.test(l);
 
@@ -821,7 +829,7 @@
           const title = (m[3] != null && m[3] !== '') ? m[3] : (m[2].charAt(0).toUpperCase() + m[2].slice(1));
           let inner; [inner, i] = takeIndentedBody(lines, i + 1);
           const body = renderBlocks(inner);
-          const icon = ADM_ICONS[type] || '📌';
+          const icon = _sdkIco(ADM_ICONS[type] || 'info');
           const titleHtml = `<span class="sdk-adm-icon">${icon}</span>${inline(title)}`;
           if (collapsible) {
             const open = m[1] === '???+' ? ' open' : '';
@@ -1118,7 +1126,7 @@
     const titleEl = viewer.querySelector('.sdk-viewer-title');
     const pathEl = viewer.querySelector('.sdk-viewer-path');
     const body = document.getElementById('sdkViewerBody');
-    if (titleEl) titleEl.textContent = '📖 ' + book.title;
+    if (titleEl) DXIcon.label(titleEl, 'book', book.title);
     if (pathEl) pathEl.textContent = book.path;
     if (body) body.innerHTML = '<p class="sdk-viewer-loading">' + _t('Loading…', '로딩 중…', '読み込み中…', '加载中…', '載入中…', 'Cargando…') + '</p>';
 

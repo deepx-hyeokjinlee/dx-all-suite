@@ -10,7 +10,7 @@
         "zh-TW": "產品手冊與簡報",
         "es": "Folletos y resúmenes"
       },
-      "icon": "📑",
+      "icon": "book",
       "color": "gold",
       "sections": [
         {
@@ -23,7 +23,7 @@
             "zh-TW": "產品手冊",
             "es": "Folletos de productos"
           },
-          "icon": "📑",
+          "icon": "book",
           "files": [
             {
               "path": "pdfs/DEEPX-AI-Accelerator-Products-Brochure.pdf",
@@ -67,7 +67,7 @@
             "zh-TW": "晶片與模組簡報",
             "es": "Resúmenes de chips y módulos"
           },
-          "icon": "🔖",
+          "icon": "file",
           "files": [
             {
               "path": "pdfs/DEEPX-DX-M1-Chip-Brief.pdf",
@@ -137,7 +137,7 @@
         "zh-TW": "DX All Suite",
         "es": "DX All Suite"
       },
-      "icon": "📁",
+      "icon": "folder",
       "color": "red",
       "sections": [
         {
@@ -150,7 +150,7 @@
             "zh-TW": "文件",
             "es": "Documentación"
           },
-          "icon": "📄",
+          "icon": "file",
           "files": [
             {
               "path": "docs/source/index.md",
@@ -219,7 +219,7 @@
             "zh-TW": "Agent Dev",
             "es": "Agent Dev"
           },
-          "icon": "🤖",
+          "icon": "agent",
           "files": [
             {
               "path": "docs/source/00_Agent_Driven_Development.md",
@@ -348,7 +348,7 @@
             "zh-TW": "頂層",
             "es": "Nivel superior"
           },
-          "icon": "📌",
+          "icon": "clipboard",
           "files": [
             {
               "path": "README.md",
@@ -374,7 +374,7 @@
         "zh-TW": "DX AI Studio",
         "es": "DX AI Studio"
       },
-      "icon": "🎛️",
+      "icon": "setup",
       "color": "blue",
       "sections": [
         {
@@ -387,7 +387,7 @@
             "zh-TW": "使用手冊",
             "es": "Manual del usuario"
           },
-          "icon": "📖",
+          "icon": "book",
           "files": [
             {
               "path": "dx-ai-studio/docs/source/01_Installation_and_Launch.md",
@@ -468,7 +468,7 @@
         "zh-TW": "DX Compiler",
         "es": "DX Compiler"
       },
-      "icon": "⚙️",
+      "icon": "compiler",
       "color": "green",
       "sections": [
         {
@@ -481,7 +481,7 @@
             "zh-TW": "DX Compiler",
             "es": "DX Compiler"
           },
-          "icon": "🔨",
+          "icon": "compiler",
           "files": [
             {
               "path": "dx-compiler/source/docs/01_DXNN_Compiler_Overview.md",
@@ -601,7 +601,7 @@
         "zh-TW": "DX Model Zoo",
         "es": "DX Model Zoo"
       },
-      "icon": "🧬",
+      "icon": "zoo",
       "color": "blue",
       "sections": [
         {
@@ -614,7 +614,7 @@
             "zh-TW": "DX Model Zoo",
             "es": "DX Model Zoo"
           },
-          "icon": "🦁",
+          "icon": "zoo",
           "files": [
             {
               "path": "dx-modelzoo/README.md",
@@ -742,7 +742,7 @@
         "zh-TW": "DX 執行環境",
         "es": "DX Runtime"
       },
-      "icon": "⚡",
+      "icon": "bolt",
       "color": "amber",
       "sections": [
         {
@@ -755,7 +755,7 @@
             "zh-TW": "DX 執行環境",
             "es": "DX Runtime"
           },
-          "icon": "🔄",
+          "icon": "cpu",
           "files": [
             {
               "path": "dx-runtime/dx_rt/docs/source/docs/01_DXNN_Runtime_Overview.md",
@@ -889,7 +889,7 @@
             "zh-TW": "DX App",
             "es": "DX App"
           },
-          "icon": "📱",
+          "icon": "app",
           "files": [
             {
               "path": "dx-runtime/dx_app/docs/source/docs/04_DX-APP_CPP_Example_Test.md",
@@ -999,7 +999,7 @@
             "zh-TW": "DX Stream",
             "es": "DX Stream"
           },
-          "icon": "📡",
+          "icon": "stream",
           "files": [
             {
               "path": "dx-runtime/dx_stream/docs/source/docs/01_DXNN_Streamer_Overview.md",
@@ -1208,7 +1208,7 @@
             "zh-TW": "DX 韌體",
             "es": "DX Firmware"
           },
-          "icon": "⚙️",
+          "icon": "memory",
           "files": [
             {
               "path": "dx-runtime/dx_fw/RELEASE_NOTES.md",
@@ -1227,7 +1227,7 @@
             "zh-TW": "NPU Linux驅動程式",
             "es": "Controlador NPU Linux"
           },
-          "icon": "🖥️",
+          "icon": "monitor",
           "files": [
             {
               "path": "dx-runtime/dx_rt_npu_linux_driver/README.md",

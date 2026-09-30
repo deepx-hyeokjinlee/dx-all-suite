@@ -281,7 +281,7 @@
     }
   }
 
-  /* 답을 닫고 무대를 되돌린다 (✕ · Esc). 닫혀 있으면 아무것도 하지 않는다. */
+  /* 답을 닫고 무대를 되돌린다 (닫기 버튼 · Esc). 닫혀 있으면 아무것도 하지 않는다. */
   function closeHomeAnswer() {
     var panel = $('homeAnswer');
     if (!panel || panel.hidden) return false;

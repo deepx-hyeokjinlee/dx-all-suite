@@ -974,7 +974,7 @@ mark.sdk-search-hit.current {
 }
 details.sdk-adm > summary.sdk-adm-title { cursor: pointer; list-style: none; }
 details.sdk-adm > summary.sdk-adm-title::-webkit-details-marker { display: none; }
-details.sdk-adm > summary.sdk-adm-title::after { content: '▸'; margin-left: auto; transition: transform .15s var(--ease); }
+details.sdk-adm > summary.sdk-adm-title::after { content: '›'; margin-left: auto; transition: transform .15s var(--ease); }
 details.sdk-adm[open] > summary.sdk-adm-title::after { transform: rotate(90deg); }
 .sdk-adm-icon { font-size: 14px; line-height: 1; }
 .sdk-adm-body { padding: 4px 14px 10px; }
