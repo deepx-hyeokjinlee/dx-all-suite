@@ -19,8 +19,11 @@ def test_all_models_have_complete_legal_block():
     # source_url + copyright are mechanically derivable for every model: the source
     # comes from the studio's curated catalog or the staging dx-modelzoo model YAML
     # `reference` field, and copyright is derived from the repo owner.
+    # publish page 에만 있는 model (publish_only) 중 page 가 출처를 "No Reference" 로 적은 것은 비워 둔다 — 지어내지
+    # 않는다 (spec 2026-10-01 dx_app per-model layout 결정 8).
     for key in ("source_url", "copyright"):
-        missing = [m["id"] for m in ms if not (m.get("legal") or {}).get(key)]
+        missing = [m["id"] for m in ms if not (m.get("legal") or {}).get(key)
+                   and not (m.get("publish_only") and not (m.get("legal") or {}).get("source_url"))]
         assert not missing, f"{key} missing for: {missing[:10]}"
     # License is filled wherever the upstream license is known (curated, or mapped from
     # the source repo). It must always come paired with its canonical license_text — we

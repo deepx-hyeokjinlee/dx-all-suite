@@ -277,3 +277,24 @@ def test_a_v9_only_model_says_which_dx_rt_it_needs(monkeypatch):
     assert "requires_dxrt" not in _enrich_model_entry({}, old)
     monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 5, 0))
     assert "requires_dxrt" not in _enrich_model_entry({}, new)
+
+
+def test_models_only_on_the_publish_page_are_listed(monkeypatch):
+    """curated catalog 에 없는 새 model (publish page · generated catalog 에만) 도 목록에 든다 — 예전에는 보강만
+    되고 목록에 들지 않았다 (spec 2026-10-01 dx_app per-model layout 결정 8)."""
+    from dx_modelzoo.core import catalog
+    from shared import dxrt
+
+    monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 4, 2))
+    monkeypatch.setattr(catalog, "load_generated_catalog", lambda: {"schema_version": "2.0", "models": [
+        {"id": "patchcore_224x224", "display": {"name": "PatchCore", "task": "anomaly_detection"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/patchcore_224x224.dxnn"}},
+         "legal": {"source_url": "No Reference"}},
+        {"id": "mystery_x", "display": {"name": "X", "task": "Not A Task"}}]})
+    models = {m["id"]: m for m in catalog.reload_catalog()["models"]}
+    pc = models["patchcore_224x224"]
+    assert pc["category"] == "anomaly_detection" and pc["publish_only"] is True
+    assert pc["model_file"] == "assets/models/patchcore_224x224.dxnn"
+    assert pc["requires_dxrt"] == "3.5.0"
+    assert pc["legal"]["source_url"] == "", "page 의 'No Reference' 를 출처처럼 두지 않는다"
+    assert "mystery_x" not in models, "모르는 task 는 목록에 넣지 않는다"

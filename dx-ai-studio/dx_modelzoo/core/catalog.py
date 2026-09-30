@@ -83,7 +83,12 @@ _COPYRIGHT_HOST = {
     "pytorch.org": "PyTorch (Torch Contributors)", "cv.gluon.ai": "GluonCV",
     "www.tensorflow.org": "Google", "tensorflow.org": "Google", "ai.google.dev": "Google",
     "google.github.io": "Google",
+    "paddle-imagenet-models-name.bj.bcebos.com": "PaddlePaddle (Baidu)",
+    "docs.ultralytics.com": "Ultralytics",
 }
+
+
+_LICENSE_ALIASES = {"Apache 2.0": "Apache-2.0", "Apache License 2.0": "Apache-2.0", "MIT License": "MIT"}
 
 
 def _enrich_legal(model):
@@ -103,6 +108,9 @@ def _enrich_legal(model):
             host = re.search(r"https?://([^/]+)", url)
             if host and host.group(1).lower() in _COPYRIGHT_HOST:
                 lg["copyright"] = _COPYRIGHT_HOST[host.group(1).lower()]
+    # publish page 는 같은 license 를 다른 글자로 적기도 한다 ("Apache 2.0") — SPDX id 로
+    if lg.get("license") in _LICENSE_ALIASES:
+        lg["license"] = _LICENSE_ALIASES[lg["license"]]
     if not lg.get("license_text") and lg.get("license"):
         ref = _LICENSE_TEXT_REF.get(lg["license"])
         if ref:
@@ -651,10 +659,15 @@ def reload_catalog():
     if generated is not None:
         gen_map = {m["id"]: m for m in generated.get("models", [])}
         metadata_source = _metadata_source_from_generated(generated)
+        used = set()
         for model in merged:
             enriched = _match_generated(model["id"], gen_map)
             if enriched:
+                used.add(enriched.get("id"))
                 _enrich_model_entry(model, enriched, metadata_source=metadata_source)
+        # publish page 에만 있는 model (dx_app per-model layout 과 함께 온 새 model, spec 2026-10-01 결정 8) 도 목록에 —
+        # 예전에는 curated catalog 에 없는 model 은 보강만 되고 목록에 들지 않았다. 아는 task 인 것만.
+        merged.extend(_generated_only_models(generated, used, metadata_source))
         # 기본 processor/specification 보장 (생성된 카탈로그에 없는 모델용)
         for model in merged:
             model.setdefault("processor", {"supported_devices": [], "status": "metadata_pending"})
@@ -689,6 +702,29 @@ def reload_catalog():
     print(f"[{__name__}] Loaded {len(merged)} models, {len(CATEGORIES)} categories"
           + (", enriched from generated catalog" if generated else ""))
     return next_cache
+
+
+def _generated_only_models(generated, used_ids, metadata_source):
+    """generated catalog 에만 있는 model → 목록 항목 (curated 항목과 같은 모양)."""
+    out = []
+    for gm in generated.get("models", []):
+        mid = gm.get("id")
+        task = (gm.get("display") or {}).get("task") or ""
+        if not mid or mid in used_ids or task not in CATEGORIES:
+            continue
+        url = ((gm.get("artifacts") or {}).get("qlite_dxnn") or {}).get("remote_url") or ""
+        fname = url.rstrip("/").rsplit("/", 1)[-1] if url.endswith(".dxnn") else f"{mid}.dxnn"
+        entry = merge_conf_and_catalog([{"id": mid, "name": (gm.get("display") or {}).get("name") or mid,
+                                         "category": task, "model_file": f"assets/models/{fname}"}],
+                                       {"models": []})[0]
+        _enrich_model_entry(entry, gm, metadata_source=metadata_source)
+        # page 가 출처를 "No Reference" 로 적은 model — 지어내지 않고 비워 둔다 (화면은 'Not provided by source')
+        lg = entry.get("legal") or {}
+        if str(lg.get("source_url") or "").strip().lower() in ("no reference", "-"):
+            lg["source_url"] = ""
+        entry["publish_only"] = True     # 지금의 dx_app 에는 예제가 없다 — per-model layout 과 함께 온다
+        out.append(entry)
+    return out
 
 
 def apply_generated_catalog(generated_catalog):
