@@ -27,6 +27,9 @@ MIGRATED = [
     "dx_compiler/static/js/tutorial.js",
     "dx_modelzoo/static/js/tutorial.js",
     "dx_monitor/static/js/tutorial.js",
+    "dx_stream/static/js/tutorial.js",
+    "launcher/static/tutorial.js",
+    "launcher/static/sdk-tutorial.js",
 ]
 
 

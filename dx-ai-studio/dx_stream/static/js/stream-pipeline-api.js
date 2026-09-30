@@ -276,7 +276,7 @@ DXStream.pipelineRun = async function () {
 
     // 파이프라인 상태 배지 즉시 갱신
     var badge = DXStream.$('pipeline-status');
-    if (badge) { badge.textContent = '▶ ' + T('Running'); badge.className = 'status-pill pill-running'; }
+    if (badge) { DXIcon.label(badge, 'play', T('Running')); badge.className = 'status-pill pill-running'; }
 
     // MJPEG/WebRTC/fMP4 자동 연결 (output_mode에 따라)
     if (resp.output_mode === 'mjpeg' || resp.output_mode === 'webrtc' || resp.output_mode === 'fmp4') {
@@ -363,7 +363,7 @@ DXStream.exportPipeline = function () {
 
 DXStream.savePipelineToServer = async function () {
     var name = await DXStream.inputModal(
-        T('💾 파이프라인 저장'),
+        T('파이프라인 저장'),
         { placeholder: T('파이프라인 이름') }
     );
     if (!name) return;
@@ -382,7 +382,7 @@ DXStream.loadPipelineFromServer = async function () {
         return;
     }
     var name = await DXStream.inputModal(
-        T('📂 파이프라인 로드'),
+        T('파이프라인 로드'),
         { description: list.join(', '),
           placeholder: T('파이프라인 이름 입력') }
     );
@@ -416,7 +416,7 @@ DXStream.deletePipelineFromServer = async function () {
         return;
     }
     var name = await DXStream.inputModal(
-        T('🗑️ 파이프라인 삭제'),
+        T('파이프라인 삭제'),
         { description: list.join(', '),
           placeholder: T('삭제할 파이프라인 이름') }
     );

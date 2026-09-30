@@ -783,10 +783,13 @@
   position: relative;
 }
 .palette-item.connectable::after {
-  content: '⭐';
+  /* 이을 수 있는 요소 — 초록 점 (별 이모지 대신, 아이콘 체계 단계 5) */
+  content: '';
   position: absolute;
-  top: 2px;
-  right: 4px;
-  font-size: var(--fs-2xs);
-  line-height: 1;
+  top: 5px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-ok);
 }

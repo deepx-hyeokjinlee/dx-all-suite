@@ -33,40 +33,40 @@
 
 <!-- ═══ PAGE: Dashboard ═══ -->
 <div class="page active" id="page-dashboard">
-  <h1>📊 <span class="accent" data-i18n="Dashboard">Dashboard</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dashboard"></use></svg> <span class="accent" data-i18n="Dashboard">Dashboard</span></h1>
 
   <!-- Stats row: 4 columns (DX App grid4 pattern) -->
   <div class="stat-grid" id="dash-stats">
     <div class="stat" id="stat-npu">
-      <div class="stat-icon">🔲</div>
+      <div class="stat-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#cpu"></use></svg></div>
       <div class="stat-info">
         <div class="stat-label" data-i18n="NPU Device">NPU Device</div>
         <div class="stat-value" id="stat-npu-value">--</div>
       </div>
     </div>
     <div class="stat" id="stat-gstreamer">
-      <div class="stat-icon">🎞️</div>
+      <div class="stat-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stream"></use></svg></div>
       <div class="stat-info">
         <div class="stat-label">GStreamer</div>
         <div class="stat-value" id="stat-gstreamer-value">--</div>
       </div>
     </div>
     <div class="stat" id="stat-models">
-      <div class="stat-icon">📦</div>
+      <div class="stat-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg></div>
       <div class="stat-info">
         <div class="stat-label" data-i18n="Models">Models</div>
         <div class="stat-value" id="stat-models-value">-- / --</div>
       </div>
     </div>
     <div class="stat" id="stat-videos">
-      <div class="stat-icon">🎥</div>
+      <div class="stat-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#video"></use></svg></div>
       <div class="stat-info">
         <div class="stat-label" data-i18n="Sample Videos">Sample Videos</div>
         <div class="stat-value" id="stat-videos-value">--</div>
       </div>
     </div>
     <div class="stat" id="stat-build">
-      <div class="stat-icon">🔨</div>
+      <div class="stat-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#wrench"></use></svg></div>
       <div class="stat-info">
         <div class="stat-label" data-i18n="Plugin Build">Plugin Build</div>
         <div class="stat-value" id="stat-build-value">--</div>
@@ -88,21 +88,21 @@
       <div class="card-header"><h2 style="margin:0" data-i18n="Quick Launch">Quick Launch</h2></div>
       <div class="grid3" id="quick-launch-grid" style="gap:10px">
         <div class="card quick-card" style="margin:0;padding:14px" onclick="DXStream.quickLaunchDemo(0)">
-          <div class="card-icon" style="font-size:20px">🚗</div>
+          <div class="card-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#task-object_detection"></use></svg></div>
           <div class="card-body">
             <div class="card-title" style="font-size:13px" data-i18n="Object Detection">Object Detection</div>
             <div class="card-desc txt-dim" style="font-size:10px">YOLOv26n</div>
           </div>
         </div>
         <div class="card quick-card" style="margin:0;padding:14px" onclick="DXStream.quickLaunchDemo(4)">
-          <div class="card-icon" style="font-size:20px">🏃</div>
+          <div class="card-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#task-pose_estimation"></use></svg></div>
           <div class="card-body">
             <div class="card-title" style="font-size:13px" data-i18n="Pose Estimation">Pose Estimation</div>
             <div class="card-desc txt-dim" style="font-size:10px">YOLOv26n</div>
           </div>
         </div>
         <div class="card quick-card" style="margin:0;padding:14px" onclick="DXStream.quickLaunchDemo(6)">
-          <div class="card-icon" style="font-size:20px">🖼️</div>
+          <div class="card-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#task-instance_segmentation"></use></svg></div>
           <div class="card-body">
             <div class="card-title" style="font-size:13px" data-i18n="Segmentation">Segmentation</div>
             <div class="card-desc txt-dim" style="font-size:10px">YOLOv26n_Seg</div>
@@ -185,9 +185,9 @@
     <div class="video-header">
       <h2 class="section-title" id="demo-video-title">--</h2>
       <div class="video-controls">
-        <button class="btn btn-ghost btn-sm" id="btn-demo-stop" onclick="DXStream.stopDemo()" data-i18n="⏹ Stop">⏹ Stop
+        <button class="btn btn-ghost btn-sm" id="btn-demo-stop" onclick="DXStream.stopDemo()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span>
         </button>
-        <button class="btn btn-ghost btn-sm" id="btn-demo-fullscreen" onclick="DXStream.toggleFullscreen()" data-i18n="⛶ Fullscreen">⛶ Fullscreen
+        <button class="btn btn-ghost btn-sm" id="btn-demo-fullscreen" onclick="DXStream.toggleFullscreen()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#external"></use></svg> <span data-i18n="Fullscreen">Fullscreen</span>
         </button>
       </div>
     </div>
@@ -196,7 +196,7 @@
       <div id="webrtc-stats-overlay"></div>
     </div>
     <p class="demo-perf-note txt-xs txt-dim" style="margin:8px 2px 0;line-height:1.55">
-      <span data-i18n="⚠ Browser streaming (WebRTC/MJPEG) adds encoding overhead, so on-screen speed can differ from real performance. For true numbers, run in a terminal:">⚠ Browser streaming (WebRTC/MJPEG) adds encoding overhead, so on-screen speed can differ from real performance. For true numbers, run in a terminal:</span>
+      <svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#alert"></use></svg> <span data-i18n="Browser streaming (WebRTC/MJPEG) adds encoding overhead, so on-screen speed can differ from real performance. For true numbers, run in a terminal:">Browser streaming (WebRTC/MJPEG) adds encoding overhead, so on-screen speed can differ from real performance. For true numbers, run in a terminal:</span>
       <br><code id="demo-perf-cmd" style="font-size:11px;user-select:all;word-break:break-all">bash dx_stream/pipelines/&lt;run_*.sh&gt;</code>
     </p>
     <div class="video-info-bar">
@@ -210,7 +210,7 @@
 
 <!-- ═══ PAGE: Pipeline Builder ═══ -->
 <div class="page" id="page-pipeline">
-  <h1>🔧 <span class="accent" data-i18n="Pipeline Builder">Pipeline Builder</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stream"></use></svg> <span class="accent" data-i18n="Pipeline Builder">Pipeline Builder</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Drag and drop GStreamer elements to build your pipeline.">Drag and drop GStreamer elements to build your pipeline.</p>
 
   <!-- Playback mode (shared with the Demo page): Local=WebRTC (same PC/LAN), Remote=MJPEG
@@ -223,16 +223,16 @@
 
   <!-- Pipeline Toolbar -->
   <div class="pipeline-actions">
-    <button class="btn btn-primary btn-sm" id="btn-pipeline-run" onclick="DXStream.runPipeline()" data-i18n="▶ Run">▶ Run
+    <button class="btn btn-primary btn-sm" id="btn-pipeline-run" onclick="DXStream.runPipeline()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run">Run</span>
     </button>
-    <button class="btn btn-ghost btn-sm" id="btn-pipeline-stop" onclick="DXStream.stopPipeline()" disabled data-i18n="⏹ Stop">⏹ Stop
+    <button class="btn btn-ghost btn-sm" id="btn-pipeline-stop" onclick="DXStream.stopPipeline()" disabled ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span>
     </button>
-    <button class="btn btn-ghost btn-sm" onclick="DXStream.exportPipeline()" data-i18n="📋 Export">📋 Export
+    <button class="btn btn-ghost btn-sm" onclick="DXStream.exportPipeline()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#upload"></use></svg> <span data-i18n="Export">Export</span>
     </button>
-    <button class="btn btn-ghost btn-sm" onclick="DXStream.importPipeline()" data-i18n="📂 Import">📂 Import
+    <button class="btn btn-ghost btn-sm" onclick="DXStream.importPipeline()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#download"></use></svg> <span data-i18n="Import">Import</span>
     </button>
     <select class="btn btn-ghost btn-sm" id="preset-select" onchange="if(this.value) DXStream.loadPreset(parseInt(this.value)); this.value='';" style="max-width:160px">
-      <option value="" data-i18n="📋 Preset">📋 Preset</option>
+      <option value="" data-i18n="Preset">Preset</option>
       <option value="0" data-i18n="Demo 0 — Object Detection">Demo 0 — Object Detection</option>
       <option value="1" data-i18n="Demo 1 — OD (PPU)">Demo 1 — OD (PPU)</option>
       <option value="2" data-i18n="Demo 2 — Face Detection">Demo 2 — Face Detection</option>
@@ -260,10 +260,10 @@
     <!-- Center: Canvas -->
     <div class="canvas-container">
       <div class="canvas-toolbar" id="canvas-toolbar">
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.pipelineZoomIn()" title="Zoom In" data-i18n-title="Zoom In" data-i18n-title="Zoom In">➕</button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.pipelineZoomOut()" title="Zoom Out" data-i18n-title="Zoom Out" data-i18n-title="Zoom Out">➖</button>
+        <button class="btn btn-ghost btn-sm" onclick="DXStream.pipelineZoomIn()" title="Zoom In" data-i18n-title="Zoom In" aria-label="Zoom In" data-i18n-aria-label="Zoom In"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#plus"></use></svg></button>
+        <button class="btn btn-ghost btn-sm" onclick="DXStream.pipelineZoomOut()" title="Zoom Out" data-i18n-title="Zoom Out" aria-label="Zoom Out" data-i18n-aria-label="Zoom Out"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#minus"></use></svg></button>
         <button class="btn btn-ghost btn-sm" onclick="DXStream.pipelineFitView()" title="Fit View" data-i18n-title="Fit View" data-i18n-title="Fit View">⊞</button>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.pipelineReset()" title="Reset" data-i18n-title="Reset" data-i18n-title="Reset">🔄</button>
+        <button class="btn btn-ghost btn-sm" onclick="DXStream.pipelineReset()" title="Reset" data-i18n-title="Reset" aria-label="Reset" data-i18n-aria-label="Reset"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg></button>
       </div>
       <canvas class="pipeline-canvas" id="pipeline-canvas"></canvas>
       <div class="canvas-minimap" id="canvas-minimap"></div>
@@ -283,7 +283,7 @@
       <h2 class="section-title" id="pipeline-video-title" data-i18n="Custom Pipeline">Custom Pipeline
       </h2>
       <div class="video-controls">
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.stopPipeline()" data-i18n="⏹ Stop">⏹ Stop
+        <button class="btn btn-ghost btn-sm" onclick="DXStream.stopPipeline()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span>
         </button>
       </div>
     </div>
@@ -301,7 +301,7 @@
 
 <!-- ═══ PAGE: Models ═══ -->
 <div class="page" id="page-models">
-  <h1>📦 <span class="accent" data-i18n="Model Catalog">Model Catalog</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span class="accent" data-i18n="Model Catalog">Model Catalog</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Browse available models and download them.">Browse available models and download them.</p>
 
   <!-- Category Filter -->
@@ -325,7 +325,7 @@
     <div class="modal">
       <div class="modal-header">
         <h2 id="model-detail-title">--</h2>
-        <button class="btn btn-ghost btn-sm" onclick="DXStream.closeModelDetail()">✕</button>
+        <button class="btn btn-ghost btn-sm" onclick="DXStream.closeModelDetail()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
       </div>
       <div class="modal-body" id="model-detail-body">
         <div class="modal-tabs" id="model-detail-tabs">
@@ -360,14 +360,14 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary btn-sm" id="model-detail-download-btn" onclick="DXStream.downloadModel()" data-i18n="📥 Download">📥 Download
+        <button class="btn btn-primary btn-sm" id="model-detail-download-btn" onclick="DXStream.downloadModel()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#download"></use></svg> <span data-i18n="Download">Download</span>
         </button>
       </div>
     </div>
   </dialog>
 </div>
 <div class="page" id="page-elements">
-  <h1>🧩 <span class="accent" data-i18n="Element Reference">Element Reference</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#puzzle"></use></svg> <span class="accent" data-i18n="Element Reference">Element Reference</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Browse DX Stream GStreamer element roles and properties.">Browse DX Stream GStreamer element roles and properties.</p>
 
   <!-- Element Search -->
@@ -394,7 +394,7 @@
   <div class="element-detail-card" id="element-detail" style="display:none">
     <div class="element-detail-header">
       <h3 id="element-detail-name">--</h3>
-      <button class="btn btn-ghost btn-sm" onclick="DXStream.closeElementDetail()">✕</button>
+      <button class="btn btn-ghost btn-sm" onclick="DXStream.closeElementDetail()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
     </div>
     <div class="element-detail-body">
       <div class="element-detail-section">
@@ -619,7 +619,7 @@
 
 <!-- ═══ PAGE: Custom Library ═══ -->
 <div class="page" id="page-custom">
-  <h1>🔩 <span class="accent" data-i18n="Custom Postprocess Libraries">Custom Postprocess Libraries</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#wrench"></use></svg> <span class="accent" data-i18n="Custom Postprocess Libraries">Custom Postprocess Libraries</span></h1>
   <div class="grid2 mt16">
     <div>
       <h4 data-i18n="Existing Libraries">Existing Libraries</h4>
@@ -653,13 +653,13 @@
 
 <!-- ═══ PAGE: Reference Docs v2.0 ═══ -->
 <div class="page" id="page-reference">
-  <h1>📖 <span class="accent" data-i18n="Reference">Reference</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#book"></use></svg> <span class="accent" data-i18n="Reference">Reference</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Detailed guides, parameters, workflows, and tips for each DX Stream feature — all in one place.">Detailed guides, parameters, workflows, and tips for each DX Stream feature — all in one place.</p>
   <div class="ref-layout" id="ref-layout">
     <div class="ref-toolbar card">
       <div class="ref-search-bar">
         <div class="ref-search-wrap">
-          <span class="ref-search-icon">🔍</span>
+          <span class="ref-search-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#search"></use></svg></span>
           <input class="ref-search" id="ref-search" type="text" data-i18n-placeholder="Search documentation...">
         </div>
       </div>
@@ -716,7 +716,7 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
   <div class="modal" style="max-width:380px">
     <div class="modal-header">
       <h3 id="dx-input-modal-title">--</h3>
-      <button class="modal-x" onclick="DXStream._inputModalCancel()">✕</button>
+      <button class="modal-x" onclick="DXStream._inputModalCancel()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
     </div>
     <div class="modal-body">
       <p id="dx-input-modal-desc" style="margin-bottom:12px"></p>

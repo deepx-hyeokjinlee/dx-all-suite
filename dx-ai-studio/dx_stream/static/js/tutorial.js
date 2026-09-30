@@ -111,7 +111,7 @@
     mockBtn.id = 'dxt-stream-mock-download-btn';
     mockBtn.className = 'btn btn-sm btn-accent download-model-btn';
     mockBtn.type = 'button';
-    mockBtn.textContent = '⬇️ Download';
+    DXIcon.label(mockBtn, 'download', 'Download');
     mockBtn.addEventListener('click', function (e) { e.stopPropagation(); });
     var badge = card.querySelector('.card-badge');
     if (badge) badge.replaceWith(mockBtn);
@@ -193,17 +193,17 @@
 
   var sections = [
 
-    { id: 'dashboard', icon: '📊',
-      title: { ko: '📊 대시보드', en: '📊 Dashboard', ja: '📊 ダッシュボード', 'zh-CN': '📊 仪表板', 'zh-TW': '📊 儀表板', es: '📊 Panel de control' },
+    { id: 'dashboard', icon: 'dashboard',
+      title: { ko: '대시보드', en: 'Dashboard', ja: 'ダッシュボード', 'zh-CN': '仪表板', 'zh-TW': '儀表板', es: 'Panel de control' },
       description: { ko: '시스템 상태 및 성능 모니터링', en: 'System status and performance monitoring', ja: 'システム状態とパフォーマンス監視', 'zh-CN': '系统状态和性能监控', 'zh-TW': '系統狀態和效能監控', es: 'Estado del sistema y monitorización del rendimiento' },
       beforeStart: function () { goPage('dashboard'); },
       steps: [
         { target: '#dash-stats', position: 'bottom',
           title: { ko: '시스템 상태 카드', en: 'Status Cards', ja: 'システム状態カード', 'zh-CN': '系统状态卡片', 'zh-TW': '系統狀態卡片', es: 'Tarjetas de estado' },
-          content: { ko: '<strong>NPU, GStreamer, 모델, 비디오, 빌드</strong> 5개 상태를 카드로 한눈에 확인합니다. ✅=정상, ⚠️=경고.', en: 'View <strong>NPU, GStreamer, Models, Videos, Build</strong> status at a glance. ✅=OK, ⚠️=warning.', ja: '<strong>NPU, GStreamer, モデル, ビデオ, ビルド</strong>の5つの状態をカードで一目で確認できます。✅=正常, ⚠️=警告。', 'zh-CN': '一目了然地查看<strong>NPU、GStreamer、模型、视频、构建</strong>5个状态卡片。✅=正常, ⚠️=警告。', 'zh-TW': '一目了然地查看<strong>NPU, GStreamer, 模型, 影片, 建構</strong>5個狀態卡片。✅=正常, ⚠️=警告。', es: 'Consulte de un vistazo el estado de <strong>NPU, GStreamer, modelos, vídeos y compilación</strong>. ✅=OK, ⚠️=advertencia.' } },
+          content: { ko: '<strong>NPU, GStreamer, 모델, 비디오, 빌드</strong> 5개 상태를 카드로 한눈에 확인합니다. {{i:check}}=정상, {{i:alert}}=경고.', en: 'View <strong>NPU, GStreamer, Models, Videos, Build</strong> status at a glance. {{i:check}}=OK, {{i:alert}}=warning.', ja: '<strong>NPU, GStreamer, モデル, ビデオ, ビルド</strong>の5つの状態をカードで一目で確認できます。{{i:check}}=正常, {{i:alert}}=警告。', 'zh-CN': '一目了然地查看<strong>NPU、GStreamer、模型、视频、构建</strong>5个状态卡片。{{i:check}}=正常, {{i:alert}}=警告。', 'zh-TW': '一目了然地查看<strong>NPU, GStreamer, 模型, 影片, 建構</strong>5個狀態卡片。{{i:check}}=正常, {{i:alert}}=警告。', es: 'Consulte de un vistazo el estado de <strong>NPU, GStreamer, modelos, vídeos y compilación</strong>. {{i:check}}=OK, {{i:alert}}=advertencia.' } },
         { target: '#stat-npu', position: 'bottom',
           title: { ko: 'NPU 상태', en: 'NPU Status', ja: 'NPU状態', 'zh-CN': 'NPU状态', 'zh-TW': 'NPU狀態', es: 'Estado del NPU' },
-          content: { ko: 'DeepX NPU 디바이스의 <strong>감지 상태</strong>입니다. ✅이면 정상 동작, ⚠️이면 드라이버 설치가 필요합니다.', en: 'DeepX NPU <strong>detection status</strong>. ✅ = working, ⚠️ = driver installation needed.', ja: 'DeepX NPUデバイスの<strong>検出状態</strong>です。✅=正常動作、⚠️=ドライバーのインストールが必要です。', 'zh-CN': 'DeepX NPU设备的<strong>检测状态</strong>。✅=正常运行，⚠️=需要安装驱动程序。', 'zh-TW': 'DeepX NPU設備的<strong>偵測狀態</strong>。✅=正常運作，⚠️=需要安裝驅動程式。', es: '<strong>Estado de detección</strong> del NPU DeepX. ✅ = operativo, ⚠️ = requiere instalación del controlador.' } },
+          content: { ko: 'DeepX NPU 디바이스의 <strong>감지 상태</strong>입니다. {{i:check}}이면 정상 동작, {{i:alert}}이면 드라이버 설치가 필요합니다.', en: 'DeepX NPU <strong>detection status</strong>. {{i:check}} = working, {{i:alert}} = driver installation needed.', ja: 'DeepX NPUデバイスの<strong>検出状態</strong>です。{{i:check}}=正常動作、{{i:alert}}=ドライバーのインストールが必要です。', 'zh-CN': 'DeepX NPU设备的<strong>检测状态</strong>。{{i:check}}=正常运行，{{i:alert}}=需要安装驱动程序。', 'zh-TW': 'DeepX NPU設備的<strong>偵測狀態</strong>。{{i:check}}=正常運作，{{i:alert}}=需要安裝驅動程式。', es: '<strong>Estado de detección</strong> del NPU DeepX. {{i:check}} = operativo, {{i:alert}} = requiere instalación del controlador.' } },
         { target: '#pipeline-overview', position: 'bottom',
           title: { ko: '파이프라인 개요', en: 'Pipeline Overview', ja: 'パイプライン概要', 'zh-CN': '管道概览', 'zh-TW': '管線概覽', es: 'Resumen del pipeline' },
           content: { ko: '현재 <strong>실행 중인 파이프라인</strong>의 정보(모델명, 해상도, 상태)를 표시합니다.', en: 'Shows information about the <strong>currently running pipeline</strong> (model, resolution, status).', ja: '現在<strong>実行中のパイプライン</strong>の情報(モデル名、解像度、状態)を表示します。', 'zh-CN': '显示当前<strong>运行中管道</strong>的信息（模型名称、分辨率、状态）。', 'zh-TW': '顯示當前<strong>執行中管線</strong>的資訊（模型名稱、解析度、狀態）。', es: 'Muestra información del <strong>pipeline en ejecución</strong> (modelo, resolución, estado).' } },
@@ -226,8 +226,8 @@
       ]
     },
 
-    { id: 'demo', icon: '🎬',
-      title: { ko: '🎬 데모 런처', en: '🎬 Demo Launcher', ja: '🎬 デモランチャー', 'zh-CN': '🎬 演示启动器', 'zh-TW': '🎬 示範啟動器', es: '🎬 Lanzador de demos' },
+    { id: 'demo', icon: 'demo',
+      title: { ko: '데모 런처', en: 'Demo Launcher', ja: 'デモランチャー', 'zh-CN': '演示启动器', 'zh-TW': '示範啟動器', es: 'Lanzador de demos' },
       description: { ko: 'AI 데모 실행 및 실시간 영상', en: 'Run AI demos and view real-time video', ja: 'AIデモの実行とリアルタイム映像', 'zh-CN': '运行AI演示并查看实时视频', 'zh-TW': '執行AI示範並查看即時影像', es: 'Ejecute demos de IA y vea vídeo en tiempo real' },
       beforeStart: function () { goPage('demo'); },
       steps: [
@@ -239,7 +239,7 @@
           content: { ko: '<strong>감지, 얼굴, 분할, 포즈, 추적, 멀티 스트림, 2차 추론</strong> 카테고리별로 데모를 필터링합니다.', en: 'Filter demos by <strong>detection, face, segmentation, pose, tracking, multi-stream, secondary</strong>.', ja: '<strong>検出、顔、セグメンテーション、ポーズ、追跡、マルチストリーム、2次推論</strong>カテゴリ別にデモをフィルタリングします。', 'zh-CN': '按<strong>检测、人脸、分割、姿态、跟踪、多路流、二次推理</strong>类别筛选演示。', 'zh-TW': '依<strong>偵測、人臉、分割、姿態、追蹤、多路串流、二次推論</strong>類別篩選示範。', es: 'Filtre demos por <strong>detección, rostro, segmentación, pose, seguimiento, multistream y secundaria</strong>.' } },
         { target: '#demo-grid', position: 'bottom',
           title: { ko: '데모 카드', en: 'Demo Cards', ja: 'デモカード', 'zh-CN': '演示卡片', 'zh-TW': '示範卡片', es: 'Tarjetas de demo' },
-          content: { ko: '각 카드에 <strong>모델명, 카테고리, 실행 상태 배지</strong>가 표시됩니다. ▶ 버튼으로 데모를 시작합니다. <strong>다중 객체 추적, 멀티 스트림 RTSP, 2차 추론</strong> 데모가 포함됩니다.', en: 'Each card shows <strong>model name, category, status badge</strong>. Click ▶ to start. Includes <strong>Multi-Object Tracking, Multi-Stream RTSP, Secondary Inference</strong>.', ja: '各カードに<strong>モデル名、カテゴリ、実行状態バッジ</strong>が表示されます。▶ボタンでデモを開始します。<strong>複数物体追跡、マルチストリームRTSP、2次推論</strong>を含みます。', 'zh-CN': '每张卡片显示<strong>模型名称、类别、运行状态徽章</strong>。点击▶启动演示。包含<strong>多目标跟踪、多路流RTSP、二次推理</strong>。', 'zh-TW': '每張卡片顯示<strong>模型名稱、類別、執行狀態徽章</strong>。點擊▶啟動示範。包含<strong>多物件追蹤、多路串流RTSP、二次推論</strong>。', es: 'Cada tarjeta muestra <strong>nombre del modelo, categoría e insignia de estado</strong>. Haga clic en ▶ para iniciar. Incluye <strong>seguimiento multiobjeto, RTSP multistream e inferencia secundaria</strong>.' } },
+          content: { ko: '각 카드에 <strong>모델명, 카테고리, 실행 상태 배지</strong>가 표시됩니다. {{i:play}} 버튼으로 데모를 시작합니다. <strong>다중 객체 추적, 멀티 스트림 RTSP, 2차 추론</strong> 데모가 포함됩니다.', en: 'Each card shows <strong>model name, category, status badge</strong>. Click {{i:play}} to start. Includes <strong>Multi-Object Tracking, Multi-Stream RTSP, Secondary Inference</strong>.', ja: '各カードに<strong>モデル名、カテゴリ、実行状態バッジ</strong>が表示されます。{{i:play}}ボタンでデモを開始します。<strong>複数物体追跡、マルチストリームRTSP、2次推論</strong>を含みます。', 'zh-CN': '每张卡片显示<strong>模型名称、类别、运行状态徽章</strong>。点击{{i:play}}启动演示。包含<strong>多目标跟踪、多路流RTSP、二次推理</strong>。', 'zh-TW': '每張卡片顯示<strong>模型名稱、類別、執行狀態徽章</strong>。點擊{{i:play}}啟動示範。包含<strong>多物件追蹤、多路串流RTSP、二次推論</strong>。', es: 'Cada tarjeta muestra <strong>nombre del modelo, categoría e insignia de estado</strong>. Haga clic en {{i:play}} para iniciar. Incluye <strong>seguimiento multiobjeto, RTSP multistream e inferencia secundaria</strong>.' } },
         { target: '#dx-input-modal', position: 'bottom',
           title: { ko: '입력 소스 모달', en: 'Input Source Modal', ja: '入力ソースモーダル', 'zh-CN': '输入源模态框', 'zh-TW': '輸入來源對話框', es: 'Modal de fuente de entrada' },
           content: { ko: '카메라·RTSP URL·파일 경로·sudo 비밀번호 등을 묻는 <strong>접근 가능한 입력 dialog</strong>입니다. 브라우저 <code>prompt()</code> 대신 사용하며, 데모·파이프라인·Setup에서 나타납니다.', en: 'An <strong>accessible input dialog</strong> for camera names, RTSP URLs, file paths, sudo passwords, and more — used instead of browser <code>prompt()</code> in demos, the pipeline builder, and Setup.', ja: 'カメラ名・RTSP URL・ファイルパス・sudoパスワードなどを尋ねる<strong>アクセシブルな入力ダイアログ</strong>です。ブラウザの<code>prompt()</code>の代わりにデモ・パイプライン・Setupで表示されます。', 'zh-CN': '用于询问摄像头名称、RTSP URL、文件路径、sudo 密码等的<strong>无障碍输入对话框</strong>，在演示、管道构建器和 Setup 中替代浏览器 <code>prompt()</code>。', 'zh-TW': '用於詢問攝影機名稱、RTSP URL、檔案路徑、sudo 密碼等的<strong>無障礙輸入對話框</strong>，在示範、管線建構器和 Setup 中替代瀏覽器 <code>prompt()</code>。', es: 'Un <strong>diálogo de entrada accesible</strong> para nombres de cámara, URL RTSP, rutas de archivo, contraseñas sudo y más; sustituye a <code>prompt()</code> del navegador en demos, el constructor de pipelines y Setup.' },
@@ -255,7 +255,7 @@
         // Start 와 (준비 안 된 카드의) Setup 링크가 같은 자리 — demo-card-go (아이콘 체계 단계 4).
         { target: '#demo-grid .demo-card-go', position: 'right',
           title: { ko: '데모 시작', en: 'Start Demo', ja: 'デモ開始', 'zh-CN': '启动演示', 'zh-TW': '啟動示範', es: 'Iniciar demo' },
-          content: { ko: '▶ 버튼을 클릭하면 파이프라인이 시작됩니다. 실행 중인 카드에는 <strong>초록 테두리 + pulse 애니메이션</strong>이 표시됩니다.', en: 'Click ▶ to start the pipeline. Running cards show a <strong>green border + pulse animation</strong>.', ja: '▶をクリックするとパイプラインが開始します。実行中のカードには<strong>緑枠 + パルスアニメーション</strong>が表示されます。', 'zh-CN': '点击▶启动管道。运行中的卡片显示<strong>绿色边框 + 脉冲动画</strong>。', 'zh-TW': '點擊▶啟動管線。執行中的卡片顯示<strong>綠色邊框 + 脈衝動畫</strong>。', es: 'Haga clic en ▶ para iniciar el pipeline. Las tarjetas en ejecución muestran un <strong>borde verde y animación de pulso</strong>.' },
+          content: { ko: '{{i:play}} 버튼을 클릭하면 파이프라인이 시작됩니다. 실행 중인 카드에는 <strong>초록 테두리 + pulse 애니메이션</strong>이 표시됩니다.', en: 'Click {{i:play}} to start the pipeline. Running cards show a <strong>green border + pulse animation</strong>.', ja: '{{i:play}}をクリックするとパイプラインが開始します。実行中のカードには<strong>緑枠 + パルスアニメーション</strong>が表示されます。', 'zh-CN': '点击{{i:play}}启动管道。运行中的卡片显示<strong>绿色边框 + 脉冲动画</strong>。', 'zh-TW': '點擊{{i:play}}啟動管線。執行中的卡片顯示<strong>綠色邊框 + 脈衝動畫</strong>。', es: 'Haga clic en {{i:play}} para iniciar el pipeline. Las tarjetas en ejecución muestran un <strong>borde verde y animación de pulso</strong>.' },
           beforeStep: function () {
             if (window.DXStream && typeof DXStream._inputModalCancel === 'function') {
               DXStream._inputModalCancel();
@@ -277,7 +277,7 @@
           beforeStep: function () { _mockDemoVideoPreview(); } },
         { target: '#btn-demo-stop', position: 'left',
           title: { ko: '데모 중지', en: 'Stop Demo', ja: 'デモ停止', 'zh-CN': '停止演示', 'zh-TW': '停止示範', es: 'Detener demo' },
-          content: { ko: '⏹ 버튼을 클릭하면 실행 중인 <strong>데모를 중지</strong>합니다. 파이프라인이 종료되고 비디오 섹션이 닫힙니다.', en: 'Click ⏹ to <strong>stop the running demo</strong>. The pipeline stops and the video section closes.', ja: '⏹をクリックすると実行中の<strong>デモを停止</strong>します。パイプラインが終了しビデオセクションが閉じます。', 'zh-CN': '点击⏹<strong>停止运行中的演示</strong>。管道停止，视频区域关闭。', 'zh-TW': '點擊⏹<strong>停止執行中的示範</strong>。管線停止，影片區域關閉。', es: 'Haga clic en ⏹ para <strong>detener la demo en ejecución</strong>. El pipeline se detiene y se cierra la sección de vídeo.' },
+          content: { ko: '{{i:stop}} 버튼을 클릭하면 실행 중인 <strong>데모를 중지</strong>합니다. 파이프라인이 종료되고 비디오 섹션이 닫힙니다.', en: 'Click {{i:stop}} to <strong>stop the running demo</strong>. The pipeline stops and the video section closes.', ja: '{{i:stop}}をクリックすると実行中の<strong>デモを停止</strong>します。パイプラインが終了しビデオセクションが閉じます。', 'zh-CN': '点击{{i:stop}}<strong>停止运行中的演示</strong>。管道停止，视频区域关闭。', 'zh-TW': '點擊{{i:stop}}<strong>停止執行中的示範</strong>。管線停止，影片區域關閉。', es: 'Haga clic en {{i:stop}} para <strong>detener la demo en ejecución</strong>. El pipeline se detiene y se cierra la sección de vídeo.' },
           beforeStep: function () { _mockDemoVideoPreview(); } },
         { target: '#demo-pipeline-info', position: 'top',
           title: { ko: '파이프라인 정보', en: 'Pipeline Info', ja: 'パイプライン情報', 'zh-CN': '管道信息', 'zh-TW': '管線資訊', es: 'Información del pipeline' },
@@ -291,8 +291,8 @@
       ]
     },
 
-    { id: 'pipeline', icon: '🔧',
-      title: { ko: '🔧 파이프라인 빌더', en: '🔧 Pipeline Builder', ja: '🔧 パイプラインビルダー', 'zh-CN': '🔧 管道构建器', 'zh-TW': '🔧 管線建構器', es: '🔧 Constructor de pipelines' },
+    { id: 'pipeline', icon: 'wrench',
+      title: { ko: '파이프라인 빌더', en: 'Pipeline Builder', ja: 'パイプラインビルダー', 'zh-CN': '管道构建器', 'zh-TW': '管線建構器', es: 'Constructor de pipelines' },
       description: { ko: 'GStreamer 파이프라인 시각적 구성', en: 'Visual GStreamer pipeline builder', ja: 'GStreamerパイプラインのビジュアル構成', 'zh-CN': '可视化GStreamer管道构建', 'zh-TW': '視覺化GStreamer管線建構', es: 'Constructor visual de pipelines GStreamer' },
       beforeStart: function () { goPage('pipeline'); },
       steps: [
@@ -301,7 +301,7 @@
           content: { ko: '<strong>실행, 중지, 내보내기, 가져오기, 프리셋</strong> 버튼이 있습니다.', en: 'Contains <strong>run, stop, export, import, preset</strong> buttons.', ja: '<strong>実行、停止、エクスポート、インポート、プリセット</strong>ボタンがあります。', 'zh-CN': '包含<strong>运行、停止、导出、导入、预设</strong>按钮。', 'zh-TW': '包含<strong>執行、停止、匯出、匯入、預設</strong>按鈕。', es: 'Contiene botones de <strong>ejecutar, detener, exportar, importar y preset</strong>.' } },
         { target: '#btn-pipeline-run', position: 'bottom',
           title: { ko: '실행/중지 버튼', en: 'Run/Stop Buttons', ja: '実行/停止ボタン', 'zh-CN': '运行/停止按钮', 'zh-TW': '執行/停止按鈕', es: 'Botones ejecutar/detener' },
-          content: { ko: '<strong>▶ 실행</strong> 버튼으로 파이프라인을 시작하고 <strong>⏹ 중지</strong> 버튼으로 종료합니다. 실행 중에는 상단 바의 상태 배지가 🟢으로 변경됩니다.', en: 'Start the pipeline with <strong>▶ Run</strong> and stop it with <strong>⏹ Stop</strong>. The status badge in the top bar turns 🟢 when running.', ja: '<strong>▶ 実行</strong>ボタンでパイプラインを開始し、<strong>⏹ 停止</strong>ボタンで終了します。実行中はトップバーの状態バッジが🟢に変わります。', 'zh-CN': '使用<strong>▶ 运行</strong>启动管道，使用<strong>⏹ 停止</strong>结束。运行时顶部栏状态徽章变为🟢。', 'zh-TW': '使用<strong>▶ 執行</strong>啟動管線，使用<strong>⏹ 停止</strong>結束。執行中頂部欄狀態徽章變為🟢。', es: 'Inicie el pipeline con <strong>▶ Ejecutar</strong> y deténgalo con <strong>⏹ Detener</strong>. La insignia de estado en la barra superior cambia a 🟢 durante la ejecución.' } },
+          content: { ko: '<strong>{{i:play}} 실행</strong> 버튼으로 파이프라인을 시작하고 <strong>{{i:stop}} 중지</strong> 버튼으로 종료합니다. 실행 중에는 상단 바의 상태 배지가 초록 <strong>Running</strong> 으로 바뀝니다.', en: 'Start the pipeline with <strong>{{i:play}} Run</strong> and stop it with <strong>{{i:stop}} Stop</strong>. While running, the status badge in the top bar turns green (<strong>Running</strong>).', ja: '<strong>{{i:play}} 実行</strong>ボタンでパイプラインを開始し、<strong>{{i:stop}} 停止</strong>ボタンで終了します。実行中はトップバーの状態バッジが緑の<strong>Running</strong>に変わります。', 'zh-CN': '使用<strong>{{i:play}} 运行</strong>启动管道，使用<strong>{{i:stop}} 停止</strong>结束。运行时顶部栏状态徽章变为绿色的<strong>Running</strong>。', 'zh-TW': '使用<strong>{{i:play}} 執行</strong>啟動管線，使用<strong>{{i:stop}} 停止</strong>結束。執行中頂部欄狀態徽章變為綠色的<strong>Running</strong>。', es: 'Inicie el pipeline con <strong>{{i:play}} Ejecutar</strong> y deténgalo con <strong>{{i:stop}} Detener</strong>. Durante la ejecución, la insignia de estado de la barra superior se vuelve verde (<strong>Running</strong>).' } },
         { target: '#preset-select', position: 'bottom',
           title: { ko: '프리셋', en: 'Presets', ja: 'プリセット', 'zh-CN': '预设', 'zh-TW': '預設', es: 'Preajustes' },
           content: { ko: '<strong>11개 데모 프리셋</strong>(0~10번)을 선택하면 미리 구성된 파이프라인이 로드됩니다. 다중 객체 추적(7), 멀티 스트림(8~9), 2차 추론(10)을 포함합니다.', en: 'Select from <strong>11 demo presets</strong> (0–10) to load pre-configured pipelines. Includes Multi-Object Tracking(7), Multi-Stream(8–9), Secondary Inference(10).', ja: '<strong>11個のデモプリセット</strong>(0〜10番)を選択すると、事前設定されたパイプラインが読み込まれます。複数物体追跡(7)、マルチストリーム(8〜9)、2次推論(10)を含みます。', 'zh-CN': '选择<strong>11个演示预设</strong>(0-10)加载预配置管道。包含多目标跟踪(7)、多路流(8-9)、二次推理(10)。', 'zh-TW': '選擇<strong>11個示範預設</strong>(0-10)載入預設管線。包含多物件追蹤(7)、多路串流(8-9)、二次推論(10)。', es: 'Seleccione entre <strong>11 presets de demo</strong> (0–10) para cargar pipelines preconfigurados. Incluye seguimiento multiobjeto (7), multistream (8–9) e inferencia secundaria (10).' } },
@@ -325,7 +325,7 @@
           content: { ko: '노드를 <strong>드래그하여 배치</strong>하고, 포트 사이를 연결하여 엣지를 만듭니다. 마우스 휠로 줌, 빈 영역 드래그로 이동합니다.', en: '<strong>Drag nodes</strong> to place them, connect ports to create edges. Mouse wheel to zoom, drag empty area to pan.', ja: 'ノードを<strong>ドラッグして配置</strong>し、ポート間を接続してエッジを作成します。マウスホイールでズーム、空白エリアドラッグで移動します。', 'zh-CN': '<strong>拖拽节点</strong>放置，连接端口创建边。鼠标滚轮缩放，拖拽空白区域平移。', 'zh-TW': '<strong>拖曳節點</strong>放置，連接連接埠建立邊。滑鼠滾輪縮放，拖曳空白區域平移。', es: '<strong>Arrastre nodos</strong> para colocarlos y conecte puertos para crear aristas. Rueda del ratón para zoom; arrastre el área vacía para desplazarse.' } },
         { target: '#canvas-toolbar', position: 'bottom',
           title: { ko: '캔버스 도구', en: 'Canvas Tools', ja: 'キャンバスツール', 'zh-CN': '画布工具', 'zh-TW': '畫布工具', es: 'Herramientas del lienzo' },
-          content: { ko: '<strong>확대(+), 축소(-), 전체보기(⊞), 초기화(🗑)</strong> 버튼으로 뷰를 조절합니다.', en: 'Adjust view with <strong>zoom in(+), zoom out(-), fit all(⊞), clear(🗑)</strong> buttons.', ja: '<strong>拡大(+)、縮小(-)、全体表示(⊞)、クリア(🗑)</strong>ボタンでビューを調整します。', 'zh-CN': '使用<strong>放大(+)、缩小(-)、全屏显示(⊞)、清除(🗑)</strong>按钮调整视图。', 'zh-TW': '使用<strong>放大(+)、縮小(-)、全體顯示(⊞)、清除(🗑)</strong>按鈕調整視圖。', es: 'Ajuste la vista con los botones <strong>acercar (+), alejar (-), ajustar todo (⊞) y borrar (🗑)</strong>.' } },
+          content: { ko: '<strong>확대(+), 축소(-), 전체보기(⊞), 초기화({{i:trash}})</strong> 버튼으로 뷰를 조절합니다.', en: 'Adjust view with <strong>zoom in(+), zoom out(-), fit all(⊞), clear({{i:trash}})</strong> buttons.', ja: '<strong>拡大(+)、縮小(-)、全体表示(⊞)、クリア({{i:trash}})</strong>ボタンでビューを調整します。', 'zh-CN': '使用<strong>放大(+)、缩小(-)、全屏显示(⊞)、清除({{i:trash}})</strong>按钮调整视图。', 'zh-TW': '使用<strong>放大(+)、縮小(-)、全體顯示(⊞)、清除({{i:trash}})</strong>按鈕調整視圖。', es: 'Ajuste la vista con los botones <strong>acercar (+), alejar (-), ajustar todo (⊞) y borrar ({{i:trash}})</strong>.' } },
         { target: '#canvas-minimap', position: 'left',
           title: { ko: '미니맵', en: 'Minimap', ja: 'ミニマップ', 'zh-CN': '小地图', 'zh-TW': '小地圖', es: 'Minimapa' },
           content: { ko: '전체 캔버스의 <strong>축소 뷰</strong>와 현재 뷰포트 위치를 보여줍니다. 클릭으로 빠르게 이동할 수 있습니다.', en: 'Shows a <strong>zoomed-out view</strong> of the entire canvas and current viewport. Click to navigate quickly.', ja: 'キャンバス全体の<strong>縮小ビュー</strong>と現在のビューポート位置を表示します。クリックで素早く移動できます。', 'zh-CN': '显示整个画布的<strong>缩小视图</strong>和当前视口位置。点击可快速导航。', 'zh-TW': '顯示整個畫布的<strong>縮小視圖</strong>和當前視口位置。點擊可快速導航。', es: 'Muestra una <strong>vista alejada</strong> de todo el lienzo y la ventana visible actual. Haga clic para navegar rápidamente.' } },
@@ -342,8 +342,8 @@
       ]
     },
 
-    { id: 'models', icon: '📦',
-      title: { ko: '📦 모델 카탈로그', en: '📦 Model Catalog', ja: '📦 モデルカタログ', 'zh-CN': '📦 模型目录', 'zh-TW': '📦 模型目錄', es: '📦 Catálogo de modelos' },
+    { id: 'models', icon: 'models',
+      title: { ko: '모델 카탈로그', en: 'Model Catalog', ja: 'モデルカタログ', 'zh-CN': '模型目录', 'zh-TW': '模型目錄', es: 'Catálogo de modelos' },
       description: { ko: '설치된 모델 검색 및 상세 보기', en: 'Search installed models and view details', ja: 'インストール済みモデルの検索と詳細表示', 'zh-CN': '搜索已安装的模型并查看详情', 'zh-TW': '搜尋已安裝的模型並查看詳細資訊', es: 'Busque modelos instalados y consulte detalles' },
       beforeStart: function () { goPage('models'); },
       steps: [
@@ -377,19 +377,19 @@
           } },
         { target: '#model-detail-download-btn', position: 'top',
           title: { ko: '모델 다운로드', en: 'Download Model', ja: 'モデルダウンロード', 'zh-CN': '下载模型', 'zh-TW': '下載模型', es: 'Descargar modelo' },
-          content: { ko: '상세 모달에서 선택한 모델 파일을 <strong>다운로드</strong>합니다. 이미 설치된 모델은 ✅로 표시됩니다.', en: '<strong>Download</strong> the selected model file from the detail modal. Already installed models show ✅.', ja: '詳細モーダルから選択したモデルファイルを<strong>ダウンロード</strong>します。インストール済みモデルは✅で表示されます。', 'zh-CN': '从详情弹窗<strong>下载</strong>所选模型文件。已安装的模型显示✅。', 'zh-TW': '從詳情彈窗<strong>下載</strong>所選模型檔案。已安裝的模型顯示✅。', es: '<strong>Descargue</strong> el archivo del modelo seleccionado desde el modal de detalle. Los modelos ya instalados muestran ✅.' },
+          content: { ko: '상세 모달에서 선택한 모델 파일을 <strong>다운로드</strong>합니다. 이미 설치된 모델은 {{i:check}}로 표시됩니다.', en: '<strong>Download</strong> the selected model file from the detail modal. Already installed models show {{i:check}}.', ja: '詳細モーダルから選択したモデルファイルを<strong>ダウンロード</strong>します。インストール済みモデルは{{i:check}}で表示されます。', 'zh-CN': '从详情弹窗<strong>下载</strong>所选模型文件。已安装的模型显示{{i:check}}。', 'zh-TW': '從詳情彈窗<strong>下載</strong>所選模型檔案。已安裝的模型顯示{{i:check}}。', es: '<strong>Descargue</strong> el archivo del modelo seleccionado desde el modal de detalle. Los modelos ya instalados muestran {{i:check}}.' },
           beforeStep: function () { openModelDetailModal(); },
           afterStep: function () { closeModelDetailModal(); } },
         { target: '#dxt-stream-mock-download-btn', position: 'top',
           title: { ko: '개별 모델 다운로드', en: 'Individual Download', ja: '個別ダウンロード', 'zh-CN': '单个下载', 'zh-TW': '個別下載', es: 'Descarga individual' },
-          content: { ko: '모델 카드마다 <strong>⬇️ 다운로드</strong> 버튼이 있습니다. 원하는 모델만 선택적으로 설치할 수 있습니다. 다운로드 중에는 ⏳ 표시, 완료 후 ✅ 배지로 전환됩니다.', en: 'Each model card has an <strong>⬇️ Download</strong> button. Install only the models you need. Shows ⏳ while downloading, then ✅ badge on completion.', ja: '各モデルカードに<strong>⬇️ ダウンロード</strong>ボタンがあります。必要なモデルのみ選択的にインストールできます。ダウンロード中は⏳表示、完了後✅バッジに変わります。', 'zh-CN': '每张模型卡片有<strong>⬇️ Download</strong>按钮。只安装所需的模型。下载中显示⏳，完成后显示✅徽章。', 'zh-TW': '每張模型卡片有<strong>⬇️ 下載</strong>按鈕。只安裝所需的模型。下載中顯示⏳，完成後顯示✅徽章。', es: 'Cada tarjeta de modelo tiene un botón <strong>⬇️ Descargar</strong>. Instale solo los modelos que necesite. Muestra ⏳ durante la descarga y ✅ al completarse.' },
+          content: { ko: '모델 카드마다 <strong>{{i:download}} 다운로드</strong> 버튼이 있습니다. 원하는 모델만 선택적으로 설치할 수 있습니다. 다운로드 중에는 {{i:spinner}} 표시, 완료 후 {{i:check}} 배지로 전환됩니다.', en: 'Each model card has an <strong>{{i:download}} Download</strong> button. Install only the models you need. Shows {{i:spinner}} while downloading, then {{i:check}} badge on completion.', ja: '各モデルカードに<strong>{{i:download}} ダウンロード</strong>ボタンがあります。必要なモデルのみ選択的にインストールできます。ダウンロード中は{{i:spinner}}表示、完了後{{i:check}}バッジに変わります。', 'zh-CN': '每张模型卡片有<strong>{{i:download}} Download</strong>按钮。只安装所需的模型。下载中显示{{i:spinner}}，完成后显示{{i:check}}徽章。', 'zh-TW': '每張模型卡片有<strong>{{i:download}} 下載</strong>按鈕。只安裝所需的模型。下載中顯示{{i:spinner}}，完成後顯示{{i:check}}徽章。', es: 'Cada tarjeta de modelo tiene un botón <strong>{{i:download}} Descargar</strong>. Instale solo los modelos que necesite. Muestra {{i:spinner}} durante la descarga y {{i:check}} al completarse.' },
           beforeStep: function () { _prepModelsGridDownloadDemo(); },
           afterStep: function () { _clearModelsGridDownloadDemo(); } },
       ]
     },
 
-    { id: 'elements', icon: '🧩',
-      title: { ko: '🧩 요소 레퍼런스', en: '🧩 Element Reference', ja: '🧩 エレメントリファレンス', 'zh-CN': '🧩 元素参考', 'zh-TW': '🧩 元素參考', es: '🧩 Referencia de elementos' },
+    { id: 'elements', icon: 'puzzle',
+      title: { ko: '요소 레퍼런스', en: 'Element Reference', ja: 'エレメントリファレンス', 'zh-CN': '元素参考', 'zh-TW': '元素參考', es: 'Referencia de elementos' },
       description: { ko: 'GStreamer 요소 검색 및 상세', en: 'Search and view GStreamer elements', ja: 'GStreamerエレメントの検索と表示', 'zh-CN': '搜索并查看GStreamer元素', 'zh-TW': '搜尋並查看GStreamer元素', es: 'Busque y consulte elementos GStreamer' },
       beforeStart: function () { goPage('elements'); },
       steps: [
@@ -413,8 +413,8 @@
       ]
     },
 
-    { id: 'setup', icon: '⚙️',
-      title: { ko: '⚙️ 설정 & 설치', en: '⚙️ Setup & Install', ja: '⚙️ 設定 & インストール', 'zh-CN': '⚙️ 设置 & 安装', 'zh-TW': '⚙️ 設定 & 安裝', es: '⚙️ Configuración e instalación' },
+    { id: 'setup', icon: 'gear',
+      title: { ko: '설정 & 설치', en: 'Setup & Install', ja: '設定 & インストール', 'zh-CN': '设置 & 安装', 'zh-TW': '設定 & 安裝', es: 'Configuración e instalación' },
       description: { ko: '시스템 설정 및 종속성 설치', en: 'System setup and dependency installation', ja: 'システム設定と依存関係のインストール', 'zh-CN': '系统设置和依赖安装', 'zh-TW': '系統設定和相依性安裝', es: 'Configuración del sistema e instalación de dependencias' },
       beforeStart: function () { goPage('setup'); },
       steps: [
@@ -426,11 +426,11 @@
           content: { ko: '<strong>6개 설치/빌드 카드</strong>를 순서대로 실행합니다. 각 카드의 Install/Build 버튼을 클릭하세요.', en: 'Execute <strong>6 install/build cards</strong> in order. Click Install/Build on each card.', ja: '<strong>6つのインストール/ビルドカード</strong>を順番に実行します。各カードのInstall/Buildボタンをクリックしてください。', 'zh-CN': '按顺序执行<strong>6个安装/构建卡片</strong>。点击每张卡片的Install/Build按钮。', 'zh-TW': '按順序執行<strong>6個安裝/建構卡片</strong>。點擊每張卡片的Install/Build按鈕。', es: 'Ejecute <strong>6 tarjetas de instalación/compilación</strong> en orden. Haga clic en Install/Build en cada tarjeta.' } },
         { target: 'button[onclick*="stream-deps"]', position: 'bottom',
           title: { ko: '빌드 도구 설치', en: 'Install Build Tools', ja: 'ビルドツールのインストール', 'zh-CN': '安装构建工具', 'zh-TW': '安裝建置工具', es: 'Instalar herramientas de compilación' },
-          content: { ko: '①번 카드입니다. GStreamer 플러그인 빌드에 필요한 <strong>cmake·meson·GStreamer·OpenCV</strong> 등을 install.sh로 설치합니다. <strong>Build(④)보다 먼저</strong> 실행하세요.', en: 'Card ①. Installs <strong>cmake, meson, GStreamer, OpenCV</strong> and other build dependencies via install.sh. Run this <strong>before Build (④)</strong>.', ja: '①番カードです。GStreamerプラグインのビルドに必要な<strong>cmake・meson・GStreamer・OpenCV</strong>などをinstall.shでインストールします。<strong>Build(④)より前に</strong>実行してください。', 'zh-CN': '①号卡片。通过install.sh安装构建GStreamer插件所需的<strong>cmake、meson、GStreamer、OpenCV</strong>等。请在<strong>Build(④)之前</strong>运行。', 'zh-TW': '①號卡片。透過install.sh安裝建置GStreamer外掛程式所需的<strong>cmake、meson、GStreamer、OpenCV</strong>等。請在<strong>Build(④)之前</strong>執行。', es: 'Tarjeta ①. Instala <strong>cmake, meson, GStreamer, OpenCV</strong> y otras dependencias de compilación mediante install.sh. Ejecútelo <strong>antes de Build (④)</strong>.' },
+          content: { ko: '1번 카드입니다. GStreamer 플러그인 빌드에 필요한 <strong>cmake·meson·GStreamer·OpenCV</strong> 등을 install.sh로 설치합니다. <strong>Build(4)보다 먼저</strong> 실행하세요.', en: 'Card 1. Installs <strong>cmake, meson, GStreamer, OpenCV</strong> and other build dependencies via install.sh. Run this <strong>before Build (4)</strong>.', ja: '1番カードです。GStreamerプラグインのビルドに必要な<strong>cmake・meson・GStreamer・OpenCV</strong>などをinstall.shでインストールします。<strong>Build(4)より前に</strong>実行してください。', 'zh-CN': '1号卡片。通过install.sh安装构建GStreamer插件所需的<strong>cmake、meson、GStreamer、OpenCV</strong>等。请在<strong>Build(4)之前</strong>运行。', 'zh-TW': '1號卡片。透過install.sh安裝建置GStreamer外掛程式所需的<strong>cmake、meson、GStreamer、OpenCV</strong>等。請在<strong>Build(4)之前</strong>執行。', es: 'Tarjeta 1. Instala <strong>cmake, meson, GStreamer, OpenCV</strong> y otras dependencias de compilación mediante install.sh. Ejecútelo <strong>antes de Build (4)</strong>.' },
           beforeStep: function () { _openSetupStep('stream-deps'); _scrollToTarget('button[onclick*="stream-deps"]'); } },
         { target: '#setup-badge-runtime', position: 'bottom',
           title: { ko: 'Runtime 상태 배지', en: 'Runtime Status Badge', ja: 'ランタイム状態バッジ', 'zh-CN': '运行时状态徽章', 'zh-TW': '執行時期狀態徽章', es: 'Insignia de estado de runtime' },
-          content: { ko: '②번 카드의 <strong>설치 상태 배지</strong>입니다. ✅이면 DX-Runtime 종속성 설치가 완료된 것입니다.', en: 'The <strong>install status badge</strong> on card ②. ✅ means DX-Runtime dependencies are installed.', ja: '②番カードの<strong>インストール状態バッジ</strong>です。✅ならDX-Runtime依存関係のインストールが完了しています。', 'zh-CN': '②号卡片的<strong>安装状态徽章</strong>。✅表示DX-Runtime依赖已安装完成。', 'zh-TW': '②號卡片的<strong>安裝狀態徽章</strong>。✅表示DX-Runtime相依性已安裝完成。', es: 'La <strong>insignia de estado de instalación</strong> de la tarjeta ②. ✅ indica que las dependencias DX-Runtime están instaladas.' },
+          content: { ko: '2번 카드의 <strong>설치 상태 배지</strong>입니다. {{i:check}}이면 DX-Runtime 종속성 설치가 완료된 것입니다.', en: 'The <strong>install status badge</strong> on card 2. {{i:check}} means DX-Runtime dependencies are installed.', ja: '2番カードの<strong>インストール状態バッジ</strong>です。{{i:check}}ならDX-Runtime依存関係のインストールが完了しています。', 'zh-CN': '2号卡片的<strong>安装状态徽章</strong>。{{i:check}}表示DX-Runtime依赖已安装完成。', 'zh-TW': '2號卡片的<strong>安裝狀態徽章</strong>。{{i:check}}表示DX-Runtime相依性已安裝完成。', es: 'La <strong>insignia de estado de instalación</strong> de la tarjeta 2. {{i:check}} indica que las dependencias DX-Runtime están instaladas.' },
           beforeStep: function () { _scrollToTarget('#setup-badge-runtime'); } },
         { target: 'button[onclick*="runtime-deps"]', position: 'bottom',
           title: { ko: 'Runtime 설치', en: 'Install Runtime', ja: 'ランタイムインストール', 'zh-CN': '安装运行时', 'zh-TW': '安裝執行時期', es: 'Instalar runtime' },
@@ -438,7 +438,7 @@
           beforeStep: function () { _openSetupStep('runtime-deps'); _scrollToTarget('button[onclick*="runtime-deps"]'); } },
         { target: '#setup-badge-driver', position: 'bottom',
           title: { ko: 'NPU 드라이버 상태', en: 'NPU Driver Status', ja: 'NPUドライバー状態', 'zh-CN': 'NPU驱动状态', 'zh-TW': 'NPU驅動程式狀態', es: 'Estado del controlador NPU' },
-          content: { ko: '③번 카드의 <strong>드라이버 설치 상태</strong> 배지입니다. ✅이면 NPU 드라이버가 준비된 것입니다.', en: 'The <strong>driver install status</strong> badge on card ③. ✅ means the NPU driver is ready.', ja: '③番カードの<strong>ドライバーインストール状態</strong>バッジです。✅ならNPUドライバーの準備が完了しています。', 'zh-CN': '③号卡片的<strong>驱动安装状态</strong>徽章。✅表示NPU驱动已就绪。', 'zh-TW': '③號卡片的<strong>驅動程式安裝狀態</strong>徽章。✅表示NPU驅動程式已就緒。', es: 'La insignia de <strong>estado de instalación del controlador</strong> en la tarjeta ③. ✅ indica que el controlador NPU está listo.' },
+          content: { ko: '3번 카드의 <strong>드라이버 설치 상태</strong> 배지입니다. {{i:check}}이면 NPU 드라이버가 준비된 것입니다.', en: 'The <strong>driver install status</strong> badge on card 3. {{i:check}} means the NPU driver is ready.', ja: '3番カードの<strong>ドライバーインストール状態</strong>バッジです。{{i:check}}ならNPUドライバーの準備が完了しています。', 'zh-CN': '3号卡片的<strong>驱动安装状态</strong>徽章。{{i:check}}表示NPU驱动已就绪。', 'zh-TW': '3號卡片的<strong>驅動程式安裝狀態</strong>徽章。{{i:check}}表示NPU驅動程式已就緒。', es: 'La insignia de <strong>estado de instalación del controlador</strong> en la tarjeta 3. {{i:check}} indica que el controlador NPU está listo.' },
           beforeStep: function () { _scrollToTarget('#setup-badge-driver'); } },
         { target: 'button[onclick*="driver"]', position: 'bottom',
           title: { ko: 'NPU 드라이버 설치', en: 'Install NPU Driver', ja: 'NPUドライバーインストール', 'zh-CN': '安装NPU驱动', 'zh-TW': '安裝NPU驅動程式', es: 'Instalar controlador NPU' },
@@ -446,7 +446,7 @@
           beforeStep: function () { _openSetupStep('driver'); _scrollToTarget('button[onclick*="driver"]'); } },
         { target: '#setup-badge-build', position: 'bottom',
           title: { ko: '플러그인 빌드 상태', en: 'Plugin Build Status', ja: 'プラグインビルド状態', 'zh-CN': '插件构建状态', 'zh-TW': '外掛程式建構狀態', es: 'Estado de compilación de plugins' },
-          content: { ko: '④번 카드의 <strong>빌드 상태</strong> 배지입니다. ✅이면 GStreamer 플러그인 빌드가 완료된 것입니다.', en: 'The <strong>build status</strong> badge on card ④. ✅ means GStreamer plugins are built.', ja: '④番カードの<strong>ビルド状態</strong>バッジです。✅ならGStreamerプラグインのビルドが完了しています。', 'zh-CN': '④号卡片的<strong>构建状态</strong>徽章。✅表示GStreamer插件已构建完成。', 'zh-TW': '④號卡片的<strong>建構狀態</strong>徽章。✅表示GStreamer外掛程式已建構完成。', es: 'La insignia de <strong>estado de compilación</strong> en la tarjeta ④. ✅ indica que los plugins GStreamer están compilados.' },
+          content: { ko: '4번 카드의 <strong>빌드 상태</strong> 배지입니다. {{i:check}}이면 GStreamer 플러그인 빌드가 완료된 것입니다.', en: 'The <strong>build status</strong> badge on card 4. {{i:check}} means GStreamer plugins are built.', ja: '4番カードの<strong>ビルド状態</strong>バッジです。{{i:check}}ならGStreamerプラグインのビルドが完了しています。', 'zh-CN': '4号卡片的<strong>构建状态</strong>徽章。{{i:check}}表示GStreamer插件已构建完成。', 'zh-TW': '4號卡片的<strong>建構狀態</strong>徽章。{{i:check}}表示GStreamer外掛程式已建構完成。', es: 'La insignia de <strong>estado de compilación</strong> en la tarjeta 4. {{i:check}} indica que los plugins GStreamer están compilados.' },
           beforeStep: function () { _scrollToTarget('#setup-badge-build'); } },
         { target: '#setup-opt-clean', position: 'bottom',
           title: { ko: '빌드 옵션', en: 'Build Options', ja: 'ビルドオプション', 'zh-CN': '构建选项', 'zh-TW': '建構選項', es: 'Opciones de compilación' },
@@ -458,7 +458,7 @@
           beforeStep: function () { _openSetupStep('build'); _scrollToTarget('button[onclick*="build"]'); } },
         { target: '#setup-badge-download', position: 'bottom',
           title: { ko: '모델 다운로드 상태', en: 'Model Download Status', ja: 'モデルダウンロード状態', 'zh-CN': '模型下载状态', 'zh-TW': '模型下載狀態', es: 'Estado de descarga de modelos' },
-          content: { ko: '⑤번 카드의 <strong>다운로드 상태</strong> 배지입니다. ✅이면 모델과 샘플 비디오가 준비된 것입니다.', en: 'The <strong>download status</strong> badge on card ⑤. ✅ means models and sample videos are ready.', ja: '⑤番カードの<strong>ダウンロード状態</strong>バッジです。✅ならモデルとサンプルビデオの準備が完了しています。', 'zh-CN': '⑤号卡片的<strong>下载状态</strong>徽章。✅表示模型和示例视频已就绪。', 'zh-TW': '⑤號卡片的<strong>下載狀態</strong>徽章。✅表示模型和範例影片已就緒。', es: 'La insignia de <strong>estado de descarga</strong> en la tarjeta ⑤. ✅ indica que modelos y vídeos de muestra están listos.' },
+          content: { ko: '5번 카드의 <strong>다운로드 상태</strong> 배지입니다. {{i:check}}이면 모델과 샘플 비디오가 준비된 것입니다.', en: 'The <strong>download status</strong> badge on card 5. {{i:check}} means models and sample videos are ready.', ja: '5番カードの<strong>ダウンロード状態</strong>バッジです。{{i:check}}ならモデルとサンプルビデオの準備が完了しています。', 'zh-CN': '5号卡片的<strong>下载状态</strong>徽章。{{i:check}}表示模型和示例视频已就绪。', 'zh-TW': '5號卡片的<strong>下載狀態</strong>徽章。{{i:check}}表示模型和範例影片已就緒。', es: 'La insignia de <strong>estado de descarga</strong> en la tarjeta 5. {{i:check}} indica que modelos y vídeos de muestra están listos.' },
           beforeStep: function () { _scrollToTarget('#setup-badge-download'); } },
         { target: 'button[onclick*="download-models"]', position: 'bottom',
           title: { ko: '모델/비디오 다운로드', en: 'Download Models & Videos', ja: 'モデル/ビデオダウンロード', 'zh-CN': '下载模型和视频', 'zh-TW': '下載模型和影片', es: 'Descargar modelos y vídeos' },
@@ -466,7 +466,7 @@
           beforeStep: function () { _openSetupStep('download-models'); _scrollToTarget('button[onclick*="download-models"]'); } },
         { target: '#setup-badge-webrtc-deps', position: 'bottom',
           title: { ko: 'WebRTC 상태', en: 'WebRTC Status', ja: 'WebRTC状態', 'zh-CN': 'WebRTC状态', 'zh-TW': 'WebRTC狀態', es: 'Estado de WebRTC' },
-          content: { ko: '⑤번 카드의 <strong>WebRTC 의존성 상태</strong> 배지입니다. ✅이면 브라우저 시각화 패키지가 준비된 것입니다.', en: 'The <strong>WebRTC dependency status</strong> badge on card ⑤. ✅ means browser visualization packages are ready.', ja: '⑤番カードの<strong>WebRTC依存関係状態</strong>バッジです。✅ならブラウザ可視化パッケージの準備が完了しています。', 'zh-CN': '⑤号卡片的<strong>WebRTC依赖状态</strong>徽章。✅表示浏览器可视化包已就绪。', 'zh-TW': '⑤號卡片的<strong>WebRTC相依性狀態</strong>徽章。✅表示瀏覽器視覺化套件已就緒。', es: 'La insignia de <strong>estado de dependencias WebRTC</strong> en la tarjeta ⑤. ✅ indica que los paquetes de visualización en el navegador están listos.' },
+          content: { ko: '5번 카드의 <strong>WebRTC 의존성 상태</strong> 배지입니다. {{i:check}}이면 브라우저 시각화 패키지가 준비된 것입니다.', en: 'The <strong>WebRTC dependency status</strong> badge on card 5. {{i:check}} means browser visualization packages are ready.', ja: '5番カードの<strong>WebRTC依存関係状態</strong>バッジです。{{i:check}}ならブラウザ可視化パッケージの準備が完了しています。', 'zh-CN': '5号卡片的<strong>WebRTC依赖状态</strong>徽章。{{i:check}}表示浏览器可视化包已就绪。', 'zh-TW': '5號卡片的<strong>WebRTC相依性狀態</strong>徽章。{{i:check}}表示瀏覽器視覺化套件已就緒。', es: 'La insignia de <strong>estado de dependencias WebRTC</strong> en la tarjeta 5. {{i:check}} indica que los paquetes de visualización en el navegador están listos.' },
           beforeStep: function () { _scrollToTarget('#setup-badge-webrtc-deps'); } },
         { target: 'button[onclick*="webrtc-deps"]', position: 'bottom',
           title: { ko: 'WebRTC 의존성 설치', en: 'Install WebRTC Dependencies', ja: 'WebRTC依存関係インストール', 'zh-CN': '安装WebRTC依赖', 'zh-TW': '安裝WebRTC相依性', es: 'Instalar dependencias WebRTC' },
@@ -474,13 +474,13 @@
           beforeStep: function () { _openSetupStep('webrtc-deps'); _scrollToTarget('button[onclick*="webrtc-deps"]'); } },
         { target: '#setup-env-tbody', position: 'top',
           title: { ko: '환경 점검', en: 'Environment Check', ja: '環境チェック', 'zh-CN': '环境检查', 'zh-TW': '環境檢查', es: 'Comprobación del entorno' },
-          content: { ko: '모든 설치가 끝난 뒤 <strong>6개 항목</strong>(NPU, GStreamer, 모델, 비디오, 플러그인, 런타임)의 상태를 확인합니다. 🔄 재점검 버튼으로 최신 상태를 갱신하세요.', en: 'After all installs, check status of <strong>6 items</strong> (NPU, GStreamer, models, videos, plugins, runtime). Click 🔄 to refresh.', ja: 'すべてのインストール後、<strong>6項目</strong>(NPU、GStreamer、モデル、ビデオ、プラグイン、ランタイム)の状態を確認します。🔄 再確認ボタンで最新状態を更新してください。', 'zh-CN': '全部安装完成后，检查<strong>6个项目</strong>（NPU、GStreamer、模型、视频、插件、运行时）的状态。点击🔄刷新。', 'zh-TW': '全部安裝完成後，檢查<strong>6個項目</strong>（NPU、GStreamer、模型、影片、外掛程式、執行時期）的狀態。點擊🔄重新整理。', es: 'Tras todas las instalaciones, compruebe el estado de <strong>6 elementos</strong> (NPU, GStreamer, modelos, vídeos, plugins y runtime). Haga clic en 🔄 para actualizar.' },
+          content: { ko: '모든 설치가 끝난 뒤 <strong>6개 항목</strong>(NPU, GStreamer, 모델, 비디오, 플러그인, 런타임)의 상태를 확인합니다. {{i:refresh}} 재점검 버튼으로 최신 상태를 갱신하세요.', en: 'After all installs, check status of <strong>6 items</strong> (NPU, GStreamer, models, videos, plugins, runtime). Click {{i:refresh}} to refresh.', ja: 'すべてのインストール後、<strong>6項目</strong>(NPU、GStreamer、モデル、ビデオ、プラグイン、ランタイム)の状態を確認します。{{i:refresh}} 再確認ボタンで最新状態を更新してください。', 'zh-CN': '全部安装完成后，检查<strong>6个项目</strong>（NPU、GStreamer、模型、视频、插件、运行时）的状态。点击{{i:refresh}}刷新。', 'zh-TW': '全部安裝完成後，檢查<strong>6個項目</strong>（NPU、GStreamer、模型、影片、外掛程式、執行時期）的狀態。點擊{{i:refresh}}重新整理。', es: 'Tras todas las instalaciones, compruebe el estado de <strong>6 elementos</strong> (NPU, GStreamer, modelos, vídeos, plugins y runtime). Haga clic en {{i:refresh}} para actualizar.' },
           beforeStep: function () { _scrollToTarget('#setup-env-tbody'); } },
       ]
     },
 
-    { id: 'custom', icon: '🔩',
-      title: { ko: '🔩 커스텀 라이브러리', en: '🔩 Custom Library', ja: '🔩 カスタムライブラリ', 'zh-CN': '🔩 自定义库', 'zh-TW': '🔩 自訂函式庫', es: '🔩 Biblioteca personalizada' },
+    { id: 'custom', icon: 'puzzle',
+      title: { ko: '커스텀 라이브러리', en: 'Custom Library', ja: 'カスタムライブラリ', 'zh-CN': '自定义库', 'zh-TW': '自訂函式庫', es: 'Biblioteca personalizada' },
       description: { ko: '커스텀 후처리 .so 빌드 및 관리', en: 'Build and manage custom postprocess .so files', ja: 'カスタム後処理.soのビルドと管理', 'zh-CN': '构建和管理自定义后处理.so文件', 'zh-TW': '建構和管理自訂後處理.so檔案', es: 'Compile y gestione archivos .so de postprocesado personalizados' },
       beforeStart: function () { goPage('custom'); },
       steps: [
@@ -498,7 +498,7 @@
           content: { ko: '파일 선택 후 <strong>업로드 버튼</strong>을 클릭하면 소스 파일이 서버로 전송되고 자동 빌드가 시작됩니다.', en: 'After selecting files, click <strong>Upload</strong> to send source files to the server and start the build automatically.', ja: 'ファイル選択後、<strong>アップロードボタン</strong>をクリックするとソースファイルがサーバーに送信され、自動ビルドが開始します。', 'zh-CN': '选择文件后，点击<strong>上传按钮</strong>将源文件发送到服务器并自动开始构建。', 'zh-TW': '選擇檔案後，點擊<strong>上傳按鈕</strong>將原始碼傳送到伺服器並自動開始建構。', es: 'Tras seleccionar los archivos, haga clic en <strong>Subir</strong> para enviar los fuentes al servidor e iniciar la compilación automáticamente.' } },
         { target: '#custom-build-log-card', position: 'top',
           title: { ko: '빌드 로그', en: 'Build Log', ja: 'ビルドログ', 'zh-CN': '构建日志', 'zh-TW': '建構日誌', es: 'Registro de compilación' },
-          content: { ko: '업로드 후 <strong>빌드 버튼</strong>을 누르면 meson setup → compile → install 과정이 실시간으로 스트리밍됩니다. ✅ 완료 시 데모 실행 시 선택 가능해집니다.', en: 'After upload, click <strong>Build</strong> to stream meson setup → compile → install in real-time. On ✅ completion, the .so becomes selectable in demos.', ja: 'アップロード後、<strong>ビルドボタン</strong>を押すとmeson setup → compile → installの過程がリアルタイムでストリーミングされます。✅ 完了後、デモ実行時に選択可能になります。', 'zh-CN': '上传后，点击<strong>构建按钮</strong>实时流式传输meson setup → compile → install过程。✅完成后，可在演示中选择.so。', 'zh-TW': '上傳後，點擊<strong>建構按鈕</strong>即時串流meson setup → compile → install過程。✅完成後，可在示範中選擇.so。', es: 'Tras la subida, haga clic en <strong>Compilar</strong> para transmitir en tiempo real meson setup → compile → install. Al completarse (✅), el .so queda disponible en las demos.' },
+          content: { ko: '업로드 후 <strong>빌드 버튼</strong>을 누르면 meson setup → compile → install 과정이 실시간으로 스트리밍됩니다. {{i:check}} 완료 시 데모 실행 시 선택 가능해집니다.', en: 'After upload, click <strong>Build</strong> to stream meson setup → compile → install in real-time. On {{i:check}} completion, the .so becomes selectable in demos.', ja: 'アップロード後、<strong>ビルドボタン</strong>を押すとmeson setup → compile → installの過程がリアルタイムでストリーミングされます。{{i:check}} 完了後、デモ実行時に選択可能になります。', 'zh-CN': '上传后，点击<strong>构建按钮</strong>实时流式传输meson setup → compile → install过程。{{i:check}}完成后，可在演示中选择.so。', 'zh-TW': '上傳後，點擊<strong>建構按鈕</strong>即時串流meson setup → compile → install過程。{{i:check}}完成後，可在示範中選擇.so。', es: 'Tras la subida, haga clic en <strong>Compilar</strong> para transmitir en tiempo real meson setup → compile → install. Al completarse ({{i:check}}), el .so queda disponible en las demos.' },
           beforeStep: function () {
             var el = document.getElementById('custom-build-log-card');
             if (el) el.style.display = 'block';
@@ -506,8 +506,8 @@
       ]
     },
 
-    { id: 'global', icon: '🌐',
-      title: { ko: '🌐 전역 기능', en: '🌐 Global Features', ja: '🌐 グローバル機能', 'zh-CN': '🌐 全局功能', 'zh-TW': '🌐 全域功能', es: '🌐 Funciones globales' },
+    { id: 'global', icon: 'globe',
+      title: { ko: '전역 기능', en: 'Global Features', ja: 'グローバル機能', 'zh-CN': '全局功能', 'zh-TW': '全域功能', es: 'Funciones globales' },
       description: { ko: '사이드바, 상단 바, 공유 툴바, 토스트 알림', en: 'Sidebar, top bar, shared toolbar, toast notifications', ja: 'サイドバー、トップバー、共通ツールバー、トースト通知', 'zh-CN': '侧边栏、顶部栏、共享工具栏、Toast通知', 'zh-TW': '側邊欄、頂部欄、共用工具列、Toast通知', es: 'Barra lateral, barra superior, barra compartida y notificaciones toast' },
       beforeStart: function () { goPage('dashboard'); },
       steps: [
@@ -522,10 +522,10 @@
           content: { ko: '현재 <strong>페이지 제목</strong>과 <strong>파이프라인 실행 상태 배지</strong>가 표시됩니다.', en: 'Shows the current <strong>page title</strong> and <strong>pipeline status badge</strong>.', ja: '現在の<strong>ページタイトル</strong>と<strong>パイプライン実行状態バッジ</strong>が表示されます。', 'zh-CN': '显示当前<strong>页面标题</strong>和<strong>管道运行状态徽章</strong>。', 'zh-TW': '顯示當前<strong>頁面標題</strong>和<strong>管線執行狀態徽章</strong>。', es: 'Muestra el <strong>título de la página</strong> actual y la <strong>insignia de estado del pipeline</strong>.' } },
         { target: '#pipeline-status', position: 'bottom',
           title: { ko: '파이프라인 상태', en: 'Pipeline Status', ja: 'パイプライン状態', 'zh-CN': '管道状态', 'zh-TW': '管線狀態', es: 'Estado del pipeline' },
-          content: { ko: '🟡 <strong>대기 중</strong> / 🟢 <strong>실행 중</strong> 상태를 표시합니다. 파이프라인 실행/중지 시 자동 업데이트됩니다.', en: '🟡 <strong>Idle</strong> / 🟢 <strong>Running</strong> status. Auto-updates when pipeline starts/stops.', ja: '🟡 <strong>アイドル</strong> / 🟢 <strong>実行中</strong> 状態を表示します。パイプライン開始/停止時に自動更新されます。', 'zh-CN': '🟡 <strong>空闲</strong> / 🟢 <strong>运行中</strong> 状态。管道启动/停止时自动更新。', 'zh-TW': '🟡 <strong>閒置</strong> / 🟢 <strong>執行中</strong> 狀態。管線啟動/停止時自動更新。', es: 'Estado 🟡 <strong>Inactivo</strong> / 🟢 <strong>En ejecución</strong>. Se actualiza automáticamente al iniciar/detener el pipeline.' } },
+          content: { ko: '<strong>대기 중</strong> / <strong>실행 중</strong> 상태를 표시합니다. 파이프라인 실행/중지 시 자동 업데이트됩니다.', en: '<strong>Idle</strong> / <strong>Running</strong> status. Auto-updates when pipeline starts/stops.', ja: '<strong>アイドル</strong> / <strong>実行中</strong> 状態を表示します。パイプライン開始/停止時に自動更新されます。', 'zh-CN': '<strong>空闲</strong> / <strong>运行中</strong> 状态。管道启动/停止时自动更新。', 'zh-TW': '<strong>閒置</strong> / <strong>執行中</strong> 狀態。管線啟動/停止時自動更新。', es: 'Estado <strong>Inactivo</strong> / <strong>En ejecución</strong>. Se actualiza automáticamente al iniciar/detener el pipeline.' } },
         { target: '#dxToolbar', position: 'bottom',
           title: { ko: '공유 툴바', en: 'Shared Toolbar', ja: '共通ツールバー', 'zh-CN': '共享工具栏', 'zh-TW': '共用工具列', es: 'Barra de herramientas compartida' },
-          content: { ko: '상단 우측의 <strong>🌏 언어</strong>, <strong>🎓 튜토리얼</strong> 버튼이 모든 페이지에서 동일하게 동작합니다. 언어 메뉴는 튜토리얼 단계마다 자동으로 닫힙니다.', en: 'The <strong>🌏 language</strong> and <strong>🎓 tutorial</strong> buttons in the top-right work the same on every page. The language menu closes automatically during tutorial steps.', ja: '右上の<strong>🌏言語</strong>、<strong>🎓チュートリアル</strong>ボタンは全ページで同じように動作します。言語メニューはチュートリアル中に自動的に閉じます。', 'zh-CN': '右上角的<strong>🌏语言</strong>和<strong>🎓教程</strong>按钮在所有页面中行为一致。教程步骤中语言菜单会自动关闭。', 'zh-TW': '右上角的<strong>🌏語言</strong>和<strong>🎓教學</strong>按鈕在所有頁面中行為一致。教學步驟中語言選單會自動關閉。', es: 'Los botones <strong>🌏 idioma</strong> y <strong>🎓 tutorial</strong> arriba a la derecha funcionan igual en todas las páginas. El menú de idioma se cierra automáticamente durante el tutorial.' },
+          content: { ko: '상단 우측의 <strong>{{i:globe}} 언어</strong>, <strong>{{i:graduation}} 튜토리얼</strong> 버튼이 모든 페이지에서 동일하게 동작합니다. 언어 메뉴는 튜토리얼 단계마다 자동으로 닫힙니다.', en: 'The <strong>{{i:globe}} language</strong> and <strong>{{i:graduation}} tutorial</strong> buttons in the top-right work the same on every page. The language menu closes automatically during tutorial steps.', ja: '右上の<strong>{{i:globe}}言語</strong>、<strong>{{i:graduation}}チュートリアル</strong>ボタンは全ページで同じように動作します。言語メニューはチュートリアル中に自動的に閉じます。', 'zh-CN': '右上角的<strong>{{i:globe}}语言</strong>和<strong>{{i:graduation}}教程</strong>按钮在所有页面中行为一致。教程步骤中语言菜单会自动关闭。', 'zh-TW': '右上角的<strong>{{i:globe}}語言</strong>和<strong>{{i:graduation}}教學</strong>按鈕在所有頁面中行為一致。教學步驟中語言選單會自動關閉。', es: 'Los botones <strong>{{i:globe}} idioma</strong> y <strong>{{i:graduation}} tutorial</strong> arriba a la derecha funcionan igual en todas las páginas. El menú de idioma se cierra automáticamente durante el tutorial.' },
           beforeStep: function () {
             var el = document.getElementById('dxToolbar') || document.getElementById('langToggle');
             if (el) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
@@ -554,7 +554,7 @@
       if (!engine) return;
       var sec = engine.sections.find(function (s) { return s.id === sectionId; });
       if (sec && window.DXStream && typeof DXStream.toast === 'function') {
-        DXStream.toast('✅ "' + engine._t(sec.title) + '" ' + engine._tl('tutorial complete!'), 'success');
+        DXStream.toast('"' + engine._t(sec.title) + '" ' + engine._tl('tutorial complete!'), 'success');
       }
     },
     patchNav: function () {}

@@ -80,12 +80,12 @@ function _renderModelCards(models) {
             '<span class="en">' + DXStream.escHtml(m.description_en || '') + '</span>' +
             '</p>' +
             '<div class="demo-card-meta">' +
-            '<span>📁 ' + DXStream.escHtml(m.file || '--') + '</span>' +
+            '<span>' + ((typeof DXIcon === 'function') ? DXIcon('file') : '') + ' ' + DXStream.escHtml(m.file || '--') + '</span>' +
             '<span class="demo-card-cat">' + DXStream.escHtml((m.category || '').replace(/_/g, ' ')) + '</span>' +
             '</div>' +
             (m.installed
-                ? '<span class="card-badge" style="background:var(--surface-raised);color:var(--status-ok)">✅ ' + T('Installed') + '</span>'
-                : '<button class="btn btn-sm btn-accent download-model-btn" data-model="' + DXStream.escHtml(m.file) + '" onclick="event.stopPropagation()">⬇️ ' + T('Download') + '</button>') +
+                ? '<span class="card-badge" style="background:var(--surface-raised);color:var(--status-ok)">' + ((typeof DXIcon === 'function') ? DXIcon('check') : '') + ' ' + T('Installed') + '</span>'
+                : '<button class="btn btn-sm btn-accent download-model-btn" data-model="' + DXStream.escHtml(m.file) + '" onclick="event.stopPropagation()">' + ((typeof DXIcon === 'function') ? DXIcon('download') : '') + ' ' + T('Download') + '</button>') +
             '</div>';
     }).join('');
 }
@@ -132,7 +132,7 @@ document.addEventListener('click', function(e) {
     if (!btn) return;
     var model = btn.dataset.model;
     btn.disabled = true;
-    btn.textContent = '⏳ ' + T('Downloading...');
+    DXIcon.label(btn, 'spinner', T('Downloading...'), { cls: 'dx-ico--spin' });
     fetch('/api/setup/download-model', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -152,7 +152,7 @@ document.addEventListener('click', function(e) {
         }
     }).catch(function() {
         btn.disabled = false;
-        btn.textContent = '⬇️ ' + T('Download');
+        DXIcon.label(btn, 'download', T('Download'));
     });
 });
 
@@ -183,7 +183,7 @@ DXStream.showModelDetail = function (name) {
 
     var statusEl = DXStream.$('model-detail-status');
     if (statusEl) {
-        statusEl.textContent = model.installed ? '✅ ' + T('OK') : '⚠️ ' + T('Not installed');
+        DXIcon.label(statusEl, model.installed ? 'check' : 'alert', model.installed ? T('OK') : T('Not installed'));
     }
 
     var infoEl = DXStream.$('model-detail-info');

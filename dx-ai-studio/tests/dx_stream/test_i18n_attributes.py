@@ -14,7 +14,7 @@ SHARED = ROOT / "shared"
 SUPPORTED_LANG_TOKENS = ("ko:", "ja:", "'zh-CN':", "'zh-TW':")
 
 PRESET_OPTION_KEYS = (
-    "📋 Preset",
+    "Preset",
     "Demo 0 — Object Detection",
     "Demo 1 — OD (PPU)",
     "Demo 2 — Face Detection",

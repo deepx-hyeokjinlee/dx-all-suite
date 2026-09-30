@@ -54,12 +54,21 @@ function _updatePipelineBadge(data) {
     var badge = DXStream.$('pipeline-status');
     if (!badge) return;
     if (data && data.running) {
-        _setTextIfChanged(badge, '▶ ' + T('Running'));
+        _setLabelIfChanged(badge, 'play', T('Running'));
         _setClassIfChanged(badge, 'status-pill pill-running');
     } else {
         _setTextIfChanged(badge, T('Idle'));
         _setClassIfChanged(badge, 'status-pill pill-idle');
     }
+}
+
+// 아이콘 + 글자를 바뀔 때만 다시 쓴다 (폴링마다 DOM 을 갈지 않는다, 아이콘 체계 단계 5).
+function _setLabelIfChanged(el, icon, text) {
+    var key = icon + '|' + text;
+    if (el.dataset.dxLabel === key) return;
+    el.dataset.dxLabel = key;
+    if (typeof DXIcon === 'function' && DXIcon.label) DXIcon.label(el, icon, text);
+    else el.textContent = text;
 }
 
 function _setTextIfChanged(el, text) {
@@ -78,7 +87,7 @@ function _updateStat(id, ok, text) {
     var val = el.querySelector('.stat-value');
     if (val) _setTextIfChanged(val, text);
     var icon = el.querySelector('.stat-icon');
-    if (icon) _setTextIfChanged(icon, ok ? '✅' : '⚠️');
+    if (icon) _setLabelIfChanged(icon, ok ? 'check' : 'alert', '');
 }
 
 if (typeof document !== 'undefined') {

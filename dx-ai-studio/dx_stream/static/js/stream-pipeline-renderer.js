@@ -31,7 +31,7 @@ function _renderPalette(grouped) {
         var icon = _catIcon(cat);
         return '<div class="palette-group" style="--cat-color:' + color + '">' +
             '<div class="palette-group-title">' +
-                '<span class="palette-cat-icon">' + icon + '</span>' +
+                '<span class="palette-cat-icon">' + ((typeof DXIcon === 'function') ? DXIcon(icon) : '') + '</span>' +
                 '<span>' + _catLabel(cat) + '</span>' +
                 '<span class="palette-cat-count">' + items.length + '</span>' +
             '</div>' +
@@ -578,6 +578,9 @@ function _canvasWheel(e) {
     _scheduleCanvasRefresh();
 }
 
+// sprite 를 다 읽으면 (DXIcon.draw 첫 호출이 읽기를 시작한다) 캔버스를 다시 그려 아이콘을 채운다.
+if (typeof window !== 'undefined') window.addEventListener('dx-icons-ready', function () { try { _refreshCanvas(); } catch (e) {} });
+
 function _refreshCanvas() {
     var canvas = DXStream.$('pipeline-canvas');
     if (!canvas) return;
@@ -713,11 +716,8 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.restore();
 
-    ctx.fillStyle = color;
-    ctx.font = '13px sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(icon, x + 10, y + _NODE_H / 2);
+    // 분류 아이콘 — sprite 를 캔버스에 (DXIcon.draw). 아직 못 읽었으면 다 읽은 뒤 다시 그린다.
+    if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, icon, x + 8, y + _NODE_H / 2 - 7, 14, color);
 
     ctx.fillStyle = '#f5f5f7';
     ctx.font = 'bold 11px sans-serif';
@@ -759,10 +759,8 @@ function _drawNode(ctx, node, selected, connStatus) {
     // 차단 표시 (block 상태)
     if (connStatus === 'block') {
         ctx.globalAlpha = 1;
-        ctx.font = '18px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('🚫', x + _NODE_W / 2, y + _NODE_H / 2);
+        // 연결할 수 없는 노드 — x 아이콘 (sprite)
+        if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, 'x', x + _NODE_W / 2 - 10, y + _NODE_H / 2 - 10, 20, _cv('--status-error'));
     }
 
     // 외부 restore — globalAlpha 복원
@@ -814,10 +812,8 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
     if (warnEdge) {
         var mx = (x1 + x2) / 2;
         var my = (y1 + y2) / 2;
-        ctx.font = '14px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('⚠️', mx, my - 10);
+        // 경고 연결 — alert 아이콘 (sprite)
+        if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, 'alert', mx - 8, my - 18, 16, _cv('--status-warn'));
     }
 }
 function _roundRect(ctx, x, y, w, h, r) {

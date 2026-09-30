@@ -15,41 +15,41 @@ function _T5(en, ko, ja, zhCN, zhTW) {
 
 function buildRefCategories() {
   return [
-    { id:'getting-started', icon:'🚀', title:_T5('Getting Started','시작하기','はじめに','入门指南','入門指南'), desc:_T5('Setup, dashboard, and first demo flow','설정, 대시보드, 첫 데모 실행 흐름','セットアップ、ダッシュボード、初回デモの流れ','设置、仪表盘和首次演示流程','設定、儀表板與首次示範流程') },
-    { id:'demo-streaming', icon:'▶️', title:_T5('Demo & Streaming','데모 & 스트리밍','デモ & ストリーミング','演示与流媒体','示範與串流'), desc:_T5('Preset demos, MJPEG/WebRTC','프리셋 데모, MJPEG/WebRTC','プリセットデモ、MJPEG/WebRTC','预设演示、MJPEG/WebRTC','預設示範、MJPEG/WebRTC') },
-    { id:'pipeline', icon:'🔧', title:_T5('Pipeline','파이프라인','パイプライン','管道','管線'), desc:_T5('Pipeline builder, validation, presets, and export','파이프라인 빌더, 검증, 프리셋, 내보내기','パイプラインビルダー、検証、プリセット、エクスポート','管道构建器、验证、预设和导出','管線建置器、驗證、預設與匯出') },
-    { id:'models-elements', icon:'📦', title:_T5('Models & Elements','모델 & 요소','モデル & エレメント','模型与元素','模型與元素'), desc:_T5('Model catalog, GStreamer elements, and custom libraries','모델 카탈로그, GStreamer 요소, 커스텀 라이브러리','モデルカタログ、GStreamerエレメント、カスタムライブラリ','模型目录、GStreamer 元素和自定义库','模型目錄、GStreamer 元素與自訂函式庫') },
-    { id:'system', icon:'⚡', title:_T5('System','시스템','システム','系统','系統'), desc:_T5('Monitoring, APIs, keyboard shortcuts, and troubleshooting','모니터링, API, 단축키, 문제 해결','モニタリング、API、ショートカット、トラブルシューティング','监控、API、快捷键和故障排除','監控、API、快捷鍵與疑難排解') }
+    { id:'getting-started', icon:'run', title:_T5('Getting Started','시작하기','はじめに','入门指南','入門指南'), desc:_T5('Setup, dashboard, and first demo flow','설정, 대시보드, 첫 데모 실행 흐름','セットアップ、ダッシュボード、初回デモの流れ','设置、仪表盘和首次演示流程','設定、儀表板與首次示範流程') },
+    { id:'demo-streaming', icon:'play', title:_T5('Demo & Streaming','데모 & 스트리밍','デモ & ストリーミング','演示与流媒体','示範與串流'), desc:_T5('Preset demos, MJPEG/WebRTC','프리셋 데모, MJPEG/WebRTC','プリセットデモ、MJPEG/WebRTC','预设演示、MJPEG/WebRTC','預設示範、MJPEG/WebRTC') },
+    { id:'pipeline', icon:'wrench', title:_T5('Pipeline','파이프라인','パイプライン','管道','管線'), desc:_T5('Pipeline builder, validation, presets, and export','파이프라인 빌더, 검증, 프리셋, 내보내기','パイプラインビルダー、検証、プリセット、エクスポート','管道构建器、验证、预设和导出','管線建置器、驗證、預設與匯出') },
+    { id:'models-elements', icon:'models', title:_T5('Models & Elements','모델 & 요소','モデル & エレメント','模型与元素','模型與元素'), desc:_T5('Model catalog, GStreamer elements, and custom libraries','모델 카탈로그, GStreamer 요소, 커스텀 라이브러리','モデルカタログ、GStreamerエレメント、カスタムライブラリ','模型目录、GStreamer 元素和自定义库','模型目錄、GStreamer 元素與自訂函式庫') },
+    { id:'system', icon:'bolt', title:_T5('System','시스템','システム','系统','系統'), desc:_T5('Monitoring, APIs, keyboard shortcuts, and troubleshooting','모니터링, API, 단축키, 문제 해결','モニタリング、API、ショートカット、トラブルシューティング','监控、API、快捷键和故障排除','監控、API、快捷鍵與疑難排解') }
   ];
 }
 
 function buildRefTopics() { return [
   {
-    id:'quick-start', cat:'getting-started', icon:'🏁',
+    id:'quick-start', cat:'getting-started', icon:'run',
     name: _T5('Quick Start','빠른 시작','クイックスタート','快速开始','快速開始'),
     desc: _T5('Learn the basic workflow of DX Stream','DX Stream의 기본 사용 흐름을 알아봅니다','DX Streamの基本的なワークフローを学びます','了解DX Stream的基本工作流程','了解DX Stream的基本工作流程'),
     tabs: { overview: _T5(
-      '<p>Recommended steps when using DX Stream for the first time:</p><ol><li>Check prerequisites on the <b>Setup</b> page (NPU device, GStreamer, Models)</li><li>Confirm system status on the <b>Dashboard</b></li><li>Run your first AI inference demo in the <b>Demo Launcher</b></li><li>Build custom pipelines in the <b>Pipeline Builder</b></li><li>Browse available AI models in the <b>Model Catalog</b></li></ol><div class="ref-box tip">💡 Complete all 6 steps on the Setup page before running demos for the best experience.</div>',
-      '<p>DX Stream을 처음 사용할 때 권장하는 순서입니다:</p><ol><li><b>설정 페이지</b>에서 사전 요구사항 확인 (NPU 장치, GStreamer, 모델)</li><li><b>대시보드</b>에서 시스템 상태 확인</li><li><b>데모 실행기</b>에서 첫 번째 AI 추론 데모 실행</li><li><b>파이프라인 빌더</b>에서 커스텀 파이프라인 구성</li><li><b>모델 카탈로그</b>에서 사용 가능한 AI 모델 확인</li></ol><div class="ref-box tip">💡 설정 페이지의 6단계를 모두 완료한 후 데모를 실행하면 가장 좋습니다.</div>',
-      '<p>DX Streamを初めて使用する際の推奨手順：</p><ol><li><b>セットアップ</b>ページで前提条件を確認（NPUデバイス、GStreamer、モデル）</li><li><b>ダッシュボード</b>でシステム状態を確認</li><li><b>デモランチャー</b>で最初のAI推論デモを実行</li><li><b>パイプラインビルダー</b>でカスタムパイプラインを構築</li><li><b>モデルカタログ</b>で利用可能なAIモデルを確認</li></ol><div class="ref-box tip">💡 デモを実行する前にセットアップページの6つのステップをすべて完了することをお勧めします。</div>',
-      '<p>首次使用DX Stream时的推荐步骤：</p><ol><li>在<b>设置</b>页面检查前提条件（NPU设备、GStreamer、模型）</li><li>在<b>仪表盘</b>确认系统状态</li><li>在<b>演示启动器</b>中运行首个AI推理演示</li><li>在<b>管道构建器</b>中构建自定义管道</li><li>在<b>模型目录</b>中浏览可用的AI模型</li></ol><div class="ref-box tip">💡 在运行演示之前完成设置页面的所有6个步骤可获得最佳体验。</div>',
-      '<p>首次使用DX Stream時的建議步驟：</p><ol><li>在<b>設定</b>頁面檢查前提條件（NPU裝置、GStreamer、模型）</li><li>在<b>儀表板</b>確認系統狀態</li><li>在<b>示範啟動器</b>中執行首個AI推論示範</li><li>在<b>管線建置器</b>中建置自訂管線</li><li>在<b>模型目錄</b>中瀏覽可用的AI模型</li></ol><div class="ref-box tip">💡 在執行示範之前完成設定頁面的所有6個步驟可獲得最佳體驗。</div>'
+      '<p>Recommended steps when using DX Stream for the first time:</p><ol><li>Check prerequisites on the <b>Setup</b> page (NPU device, GStreamer, Models)</li><li>Confirm system status on the <b>Dashboard</b></li><li>Run your first AI inference demo in the <b>Demo Launcher</b></li><li>Build custom pipelines in the <b>Pipeline Builder</b></li><li>Browse available AI models in the <b>Model Catalog</b></li></ol><div class="ref-box tip">' + DXIcon('info') + ' Complete all 6 steps on the Setup page before running demos for the best experience.</div>',
+      '<p>DX Stream을 처음 사용할 때 권장하는 순서입니다:</p><ol><li><b>설정 페이지</b>에서 사전 요구사항 확인 (NPU 장치, GStreamer, 모델)</li><li><b>대시보드</b>에서 시스템 상태 확인</li><li><b>데모 실행기</b>에서 첫 번째 AI 추론 데모 실행</li><li><b>파이프라인 빌더</b>에서 커스텀 파이프라인 구성</li><li><b>모델 카탈로그</b>에서 사용 가능한 AI 모델 확인</li></ol><div class="ref-box tip">' + DXIcon('info') + ' 설정 페이지의 6단계를 모두 완료한 후 데모를 실행하면 가장 좋습니다.</div>',
+      '<p>DX Streamを初めて使用する際の推奨手順：</p><ol><li><b>セットアップ</b>ページで前提条件を確認（NPUデバイス、GStreamer、モデル）</li><li><b>ダッシュボード</b>でシステム状態を確認</li><li><b>デモランチャー</b>で最初のAI推論デモを実行</li><li><b>パイプラインビルダー</b>でカスタムパイプラインを構築</li><li><b>モデルカタログ</b>で利用可能なAIモデルを確認</li></ol><div class="ref-box tip">' + DXIcon('info') + ' デモを実行する前にセットアップページの6つのステップをすべて完了することをお勧めします。</div>',
+      '<p>首次使用DX Stream时的推荐步骤：</p><ol><li>在<b>设置</b>页面检查前提条件（NPU设备、GStreamer、模型）</li><li>在<b>仪表盘</b>确认系统状态</li><li>在<b>演示启动器</b>中运行首个AI推理演示</li><li>在<b>管道构建器</b>中构建自定义管道</li><li>在<b>模型目录</b>中浏览可用的AI模型</li></ol><div class="ref-box tip">' + DXIcon('info') + ' 在运行演示之前完成设置页面的所有6个步骤可获得最佳体验。</div>',
+      '<p>首次使用DX Stream時的建議步驟：</p><ol><li>在<b>設定</b>頁面檢查前提條件（NPU裝置、GStreamer、模型）</li><li>在<b>儀表板</b>確認系統狀態</li><li>在<b>示範啟動器</b>中執行首個AI推論示範</li><li>在<b>管線建置器</b>中建置自訂管線</li><li>在<b>模型目錄</b>中瀏覽可用的AI模型</li></ol><div class="ref-box tip">' + DXIcon('info') + ' 在執行示範之前完成設定頁面的所有6個步驟可獲得最佳體驗。</div>'
     ) }
   },
   {
-    id:'setup-install', cat:'getting-started', icon:'⚙️',
+    id:'setup-install', cat:'getting-started', icon:'gear',
     name: _T5('Setup & Install','설치 및 설정','セットアップとインストール','安装与设置','安裝與設定'),
     desc: _T5('7-step installation and environment check','6단계 설치 과정과 환경 점검','7ステップのインストールと環境チェック','7步安装和环境检查','7步安裝與環境檢查'),
     tabs: { overview: _T5(
-      '<p>Complete the 6 steps in order on the Setup page:</p><table><thead><tr><th>Step</th><th>Description</th><th>Required</th></tr></thead><tbody><tr><td>1</td><td><b>Build Tools & Libraries</b> — cmake, meson, GStreamer, OpenCV</td><td>✅</td></tr><tr><td>2</td><td><b>Runtime SDK</b> — Install DEEPX SDK</td><td>✅</td></tr><tr><td>3</td><td><b>Driver</b> — DX NPU kernel driver</td><td>✅</td></tr><tr><td>4</td><td><b>Build Plugins</b> — Compile GStreamer DX elements</td><td>✅</td></tr><tr><td>5</td><td><b>Download AI Models</b> — Choose from 16 models</td><td>✅</td></tr><tr><td>6</td><td><b>WebRTC Support</b> — Low-latency streaming (gstreamer1.0-nice)</td><td>Optional</td></tr></tbody></table><p>Each step has an install button with real-time progress polling. Environment Check and Deep Diagnostics show NPU, GStreamer, and model status at a glance.</p>',
-      '<p>설정 페이지에서 6단계를 순서대로 진행합니다:</p><table><thead><tr><th>단계</th><th>내용</th><th>필수</th></tr></thead><tbody><tr><td>1</td><td><b>빌드 도구 & 라이브러리</b> — cmake, meson, GStreamer, OpenCV</td><td>✅</td></tr><tr><td>2</td><td><b>런타임 SDK</b> — DEEPX SDK 설치</td><td>✅</td></tr><tr><td>3</td><td><b>드라이버</b> — DX NPU 커널 드라이버</td><td>✅</td></tr><tr><td>4</td><td><b>플러그인 빌드</b> — GStreamer DX 요소 컴파일</td><td>✅</td></tr><tr><td>5</td><td><b>AI 모델 다운로드</b> — 16개 모델 중 선택</td><td>✅</td></tr><tr><td>6</td><td><b>WebRTC 지원</b> — 저지연 스트리밍 (gstreamer1.0-nice)</td><td>선택</td></tr></tbody></table><p>각 단계는 설치 버튼이 있으며, 진행률을 실시간 폴링합니다.</p>',
-      '<p>セットアップページで6つのステップを順番に進めます：</p><table><thead><tr><th>ステップ</th><th>内容</th><th>必須</th></tr></thead><tbody><tr><td>1</td><td><b>ビルドツール & ライブラリ</b> — cmake, meson, GStreamer, OpenCV</td><td>✅</td></tr><tr><td>2</td><td><b>ランタイムSDK</b> — DEEPX SDKのインストール</td><td>✅</td></tr><tr><td>3</td><td><b>ドライバー</b> — DX NPUカーネルドライバー</td><td>✅</td></tr><tr><td>4</td><td><b>プラグインビルド</b> — GStreamer DXエレメントのコンパイル</td><td>✅</td></tr><tr><td>5</td><td><b>AIモデルダウンロード</b> — 16モデルから選択</td><td>✅</td></tr><tr><td>6</td><td><b>WebRTCサポート</b> — 低遅延ストリーミング</td><td>任意</td></tr></tbody></table>',
-      '<p>在设置页面按顺序完成6个步骤：</p><table><thead><tr><th>步骤</th><th>说明</th><th>必需</th></tr></thead><tbody><tr><td>1</td><td><b>构建工具和库</b> — cmake、meson、GStreamer、OpenCV</td><td>✅</td></tr><tr><td>2</td><td><b>运行时SDK</b> — 安装DEEPX SDK</td><td>✅</td></tr><tr><td>3</td><td><b>驱动程序</b> — DX NPU内核驱动</td><td>✅</td></tr><tr><td>4</td><td><b>构建插件</b> — 编译GStreamer DX元素</td><td>✅</td></tr><tr><td>5</td><td><b>下载AI模型</b> — 从16个模型中选择</td><td>✅</td></tr><tr><td>6</td><td><b>WebRTC支持</b> — 低延迟流媒体</td><td>可选</td></tr></tbody></table>',
-      '<p>在設定頁面按順序完成6個步驟：</p><table><thead><tr><th>步驟</th><th>說明</th><th>必需</th></tr></thead><tbody><tr><td>1</td><td><b>建置工具與函式庫</b> — cmake、meson、GStreamer、OpenCV</td><td>✅</td></tr><tr><td>2</td><td><b>執行時SDK</b> — 安裝DEEPX SDK</td><td>✅</td></tr><tr><td>3</td><td><b>驅動程式</b> — DX NPU核心驅動</td><td>✅</td></tr><tr><td>4</td><td><b>建置外掛</b> — 編譯GStreamer DX元素</td><td>✅</td></tr><tr><td>5</td><td><b>下載AI模型</b> — 從16個模型中選擇</td><td>✅</td></tr><tr><td>6</td><td><b>WebRTC支援</b> — 低延遲串流</td><td>可選</td></tr></tbody></table>'
+      '<p>Complete the 6 steps in order on the Setup page:</p><table><thead><tr><th>Step</th><th>Description</th><th>Required</th></tr></thead><tbody><tr><td>1</td><td><b>Build Tools & Libraries</b> — cmake, meson, GStreamer, OpenCV</td><td>' + DXIcon('check') + '</td></tr><tr><td>2</td><td><b>Runtime SDK</b> — Install DEEPX SDK</td><td>' + DXIcon('check') + '</td></tr><tr><td>3</td><td><b>Driver</b> — DX NPU kernel driver</td><td>' + DXIcon('check') + '</td></tr><tr><td>4</td><td><b>Build Plugins</b> — Compile GStreamer DX elements</td><td>' + DXIcon('check') + '</td></tr><tr><td>5</td><td><b>Download AI Models</b> — Choose from 16 models</td><td>' + DXIcon('check') + '</td></tr><tr><td>6</td><td><b>WebRTC Support</b> — Low-latency streaming (gstreamer1.0-nice)</td><td>Optional</td></tr></tbody></table><p>Each step has an install button with real-time progress polling. Environment Check and Deep Diagnostics show NPU, GStreamer, and model status at a glance.</p>',
+      '<p>설정 페이지에서 6단계를 순서대로 진행합니다:</p><table><thead><tr><th>단계</th><th>내용</th><th>필수</th></tr></thead><tbody><tr><td>1</td><td><b>빌드 도구 & 라이브러리</b> — cmake, meson, GStreamer, OpenCV</td><td>' + DXIcon('check') + '</td></tr><tr><td>2</td><td><b>런타임 SDK</b> — DEEPX SDK 설치</td><td>' + DXIcon('check') + '</td></tr><tr><td>3</td><td><b>드라이버</b> — DX NPU 커널 드라이버</td><td>' + DXIcon('check') + '</td></tr><tr><td>4</td><td><b>플러그인 빌드</b> — GStreamer DX 요소 컴파일</td><td>' + DXIcon('check') + '</td></tr><tr><td>5</td><td><b>AI 모델 다운로드</b> — 16개 모델 중 선택</td><td>' + DXIcon('check') + '</td></tr><tr><td>6</td><td><b>WebRTC 지원</b> — 저지연 스트리밍 (gstreamer1.0-nice)</td><td>선택</td></tr></tbody></table><p>각 단계는 설치 버튼이 있으며, 진행률을 실시간 폴링합니다.</p>',
+      '<p>セットアップページで6つのステップを順番に進めます：</p><table><thead><tr><th>ステップ</th><th>内容</th><th>必須</th></tr></thead><tbody><tr><td>1</td><td><b>ビルドツール & ライブラリ</b> — cmake, meson, GStreamer, OpenCV</td><td>' + DXIcon('check') + '</td></tr><tr><td>2</td><td><b>ランタイムSDK</b> — DEEPX SDKのインストール</td><td>' + DXIcon('check') + '</td></tr><tr><td>3</td><td><b>ドライバー</b> — DX NPUカーネルドライバー</td><td>' + DXIcon('check') + '</td></tr><tr><td>4</td><td><b>プラグインビルド</b> — GStreamer DXエレメントのコンパイル</td><td>' + DXIcon('check') + '</td></tr><tr><td>5</td><td><b>AIモデルダウンロード</b> — 16モデルから選択</td><td>' + DXIcon('check') + '</td></tr><tr><td>6</td><td><b>WebRTCサポート</b> — 低遅延ストリーミング</td><td>任意</td></tr></tbody></table>',
+      '<p>在设置页面按顺序完成6个步骤：</p><table><thead><tr><th>步骤</th><th>说明</th><th>必需</th></tr></thead><tbody><tr><td>1</td><td><b>构建工具和库</b> — cmake、meson、GStreamer、OpenCV</td><td>' + DXIcon('check') + '</td></tr><tr><td>2</td><td><b>运行时SDK</b> — 安装DEEPX SDK</td><td>' + DXIcon('check') + '</td></tr><tr><td>3</td><td><b>驱动程序</b> — DX NPU内核驱动</td><td>' + DXIcon('check') + '</td></tr><tr><td>4</td><td><b>构建插件</b> — 编译GStreamer DX元素</td><td>' + DXIcon('check') + '</td></tr><tr><td>5</td><td><b>下载AI模型</b> — 从16个模型中选择</td><td>' + DXIcon('check') + '</td></tr><tr><td>6</td><td><b>WebRTC支持</b> — 低延迟流媒体</td><td>可选</td></tr></tbody></table>',
+      '<p>在設定頁面按順序完成6個步驟：</p><table><thead><tr><th>步驟</th><th>說明</th><th>必需</th></tr></thead><tbody><tr><td>1</td><td><b>建置工具與函式庫</b> — cmake、meson、GStreamer、OpenCV</td><td>' + DXIcon('check') + '</td></tr><tr><td>2</td><td><b>執行時SDK</b> — 安裝DEEPX SDK</td><td>' + DXIcon('check') + '</td></tr><tr><td>3</td><td><b>驅動程式</b> — DX NPU核心驅動</td><td>' + DXIcon('check') + '</td></tr><tr><td>4</td><td><b>建置外掛</b> — 編譯GStreamer DX元素</td><td>' + DXIcon('check') + '</td></tr><tr><td>5</td><td><b>下載AI模型</b> — 從16個模型中選擇</td><td>' + DXIcon('check') + '</td></tr><tr><td>6</td><td><b>WebRTC支援</b> — 低延遲串流</td><td>可選</td></tr></tbody></table>'
     ) }
   },
   {
-    id:'dashboard-overview', cat:'getting-started', icon:'📊',
+    id:'dashboard-overview', cat:'getting-started', icon:'dashboard',
     name: _T5('Dashboard Overview','대시보드 개요','ダッシュボード概要','仪表盘概述','儀表板概述'),
     desc: _T5('System status, metrics, quick launch','시스템 상태, 성능 지표, 빠른 실행','システム状態、メトリクス、クイック起動','系统状态、指标、快速启动','系統狀態、指標、快速啟動'),
     tabs: { overview: _T5(
@@ -61,31 +61,31 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'demo-launcher', cat:'demo-streaming', icon:'🎬',
+    id:'demo-launcher', cat:'demo-streaming', icon:'demo',
     name: _T5('Demo Launcher','데모 실행기','デモランチャー','演示启动器','示範啟動器'),
     desc: _T5('Run 11 preset demos and view results','11개 프리셋 데모 실행 및 결과 확인','11個のプリセットデモを実行し結果を確認','运行11个预设演示并查看结果','執行11個預設示範並查看結果'),
     tabs: { overview: _T5(
-      '<p>Run 11 preset AI inference demos:</p><ul><li>Category filter bar for quick type selection</li><li>Click demo card → auto-build pipeline → start video streaming</li><li>Choose MJPEG (default) or WebRTC output mode</li><li>Real-time FPS and latency overlay on video</li><li>Stop button to terminate pipeline</li><li>Fullscreen mode supported</li></ul><div class="ref-box tip">💡 The required model must be installed before running a demo. Download from Model Catalog.</div>',
-      '<p>11개의 프리셋 AI 추론 데모를 실행할 수 있습니다:</p><ul><li>카테고리 필터 바로 빠르게 원하는 유형 찾기</li><li>데모 카드 클릭 → 파이프라인 자동 빌드 → 비디오 스트리밍 시작</li><li>MJPEG(기본) 또는 WebRTC 출력 모드 선택</li><li>실시간 FPS, 지연 시간 오버레이 표시</li><li>중지 버튼으로 파이프라인 종료</li><li>전체화면 모드 지원</li></ul><div class="ref-box tip">💡 데모를 실행하려면 해당 모델이 먼저 설치되어 있어야 합니다.</div>',
-      '<p>11個のプリセットAI推論デモを実行できます：</p><ul><li>カテゴリフィルターバーで素早くタイプを選択</li><li>デモカードをクリック → パイプライン自動構築 → ストリーミング開始</li><li>MJPEG（デフォルト）またはWebRTC出力モード選択</li><li>リアルタイムFPSとレイテンシのオーバーレイ表示</li><li>停止ボタンでパイプライン終了</li></ul><div class="ref-box tip">💡 デモを実行するには対応するモデルが事前にインストールされている必要があります。</div>',
-      '<p>可运行11个预设AI推理演示：</p><ul><li>类别过滤栏快速选择类型</li><li>点击卡片 → 自动构建管道 → 开始视频流</li><li>选择MJPEG或WebRTC输出模式</li><li>实时FPS和延迟叠加显示</li><li>停止按钮终止管道</li></ul><div class="ref-box tip">💡 运行演示前需先安装相应模型。</div>',
-      '<p>可執行11個預設AI推論示範：</p><ul><li>類別篩選列快速選擇類型</li><li>點擊卡片 → 自動建置管線 → 開始視訊串流</li><li>選擇MJPEG或WebRTC輸出模式</li><li>即時FPS和延遲疊加顯示</li><li>停止按鈕終止管線</li></ul><div class="ref-box tip">💡 執行示範前需先安裝相應模型。</div>'
+      '<p>Run 11 preset AI inference demos:</p><ul><li>Category filter bar for quick type selection</li><li>Click demo card → auto-build pipeline → start video streaming</li><li>Choose MJPEG (default) or WebRTC output mode</li><li>Real-time FPS and latency overlay on video</li><li>Stop button to terminate pipeline</li><li>Fullscreen mode supported</li></ul><div class="ref-box tip">' + DXIcon('info') + ' The required model must be installed before running a demo. Download from Model Catalog.</div>',
+      '<p>11개의 프리셋 AI 추론 데모를 실행할 수 있습니다:</p><ul><li>카테고리 필터 바로 빠르게 원하는 유형 찾기</li><li>데모 카드 클릭 → 파이프라인 자동 빌드 → 비디오 스트리밍 시작</li><li>MJPEG(기본) 또는 WebRTC 출력 모드 선택</li><li>실시간 FPS, 지연 시간 오버레이 표시</li><li>중지 버튼으로 파이프라인 종료</li><li>전체화면 모드 지원</li></ul><div class="ref-box tip">' + DXIcon('info') + ' 데모를 실행하려면 해당 모델이 먼저 설치되어 있어야 합니다.</div>',
+      '<p>11個のプリセットAI推論デモを実行できます：</p><ul><li>カテゴリフィルターバーで素早くタイプを選択</li><li>デモカードをクリック → パイプライン自動構築 → ストリーミング開始</li><li>MJPEG（デフォルト）またはWebRTC出力モード選択</li><li>リアルタイムFPSとレイテンシのオーバーレイ表示</li><li>停止ボタンでパイプライン終了</li></ul><div class="ref-box tip">' + DXIcon('info') + ' デモを実行するには対応するモデルが事前にインストールされている必要があります。</div>',
+      '<p>可运行11个预设AI推理演示：</p><ul><li>类别过滤栏快速选择类型</li><li>点击卡片 → 自动构建管道 → 开始视频流</li><li>选择MJPEG或WebRTC输出模式</li><li>实时FPS和延迟叠加显示</li><li>停止按钮终止管道</li></ul><div class="ref-box tip">' + DXIcon('info') + ' 运行演示前需先安装相应模型。</div>',
+      '<p>可執行11個預設AI推論示範：</p><ul><li>類別篩選列快速選擇類型</li><li>點擊卡片 → 自動建置管線 → 開始視訊串流</li><li>選擇MJPEG或WebRTC輸出模式</li><li>即時FPS和延遲疊加顯示</li><li>停止按鈕終止管線</li></ul><div class="ref-box tip">' + DXIcon('info') + ' 執行示範前需先安裝相應模型。</div>'
     ) }
   },
   {
-    id:'streaming-modes', cat:'demo-streaming', icon:'📡',
+    id:'streaming-modes', cat:'demo-streaming', icon:'stream',
     name: _T5('MJPEG / WebRTC Streaming','MJPEG / WebRTC 스트리밍','MJPEG / WebRTCストリーミング','MJPEG / WebRTC流媒体','MJPEG / WebRTC串流'),
     desc: _T5('Compare two video output modes','두 가지 비디오 출력 모드 비교','2つのビデオ出力モードの比較','两种视频输出模式比较','兩種視訊輸出模式比較'),
     tabs: { overview: _T5(
-      '<table><thead><tr><th>Feature</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>Default</td><td>✅ Default</td><td>Manual switch</td></tr><tr><td>Transport</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection (SDP/ICE)</td></tr><tr><td>Latency</td><td>High (200–500ms)</td><td>Low (&lt;100ms)</td></tr><tr><td>Compatibility</td><td>All browsers</td><td>Requires <code>gstreamer1.0-nice</code></td></tr></tbody></table><div class="ref-box tip">💡 Use MJPEG for reliability, WebRTC for low latency.</div>',
-      '<table><thead><tr><th>항목</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>기본 모드</td><td>✅ 기본값</td><td>수동 전환</td></tr><tr><td>전송 방식</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>지연 시간</td><td>높음 (200–500ms)</td><td>낮음 (&lt;100ms)</td></tr><tr><td>호환성</td><td>모든 브라우저</td><td><code>gstreamer1.0-nice</code> 필요</td></tr></tbody></table><div class="ref-box tip">💡 안정성이 중요하면 MJPEG, 지연 시간이 중요하면 WebRTC를 사용하세요.</div>',
-      '<table><thead><tr><th>項目</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>デフォルト</td><td>✅</td><td>手動切替</td></tr><tr><td>転送方式</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>レイテンシ</td><td>高い</td><td>低い</td></tr><tr><td>互換性</td><td>全ブラウザ</td><td><code>gstreamer1.0-nice</code>が必要</td></tr></tbody></table><div class="ref-box tip">💡 安定性ならMJPEG、低遅延ならWebRTC。</div>',
-      '<table><thead><tr><th>项目</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>默认</td><td>✅</td><td>手动切换</td></tr><tr><td>传输</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>延迟</td><td>高</td><td>低</td></tr><tr><td>兼容性</td><td>所有浏览器</td><td>需要<code>gstreamer1.0-nice</code></td></tr></tbody></table><div class="ref-box tip">💡 注重稳定性用MJPEG，注重低延迟用WebRTC。</div>',
-      '<table><thead><tr><th>項目</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>預設</td><td>✅</td><td>手動切換</td></tr><tr><td>傳輸</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>延遲</td><td>高</td><td>低</td></tr><tr><td>相容性</td><td>所有瀏覽器</td><td>需要<code>gstreamer1.0-nice</code></td></tr></tbody></table><div class="ref-box tip">💡 注重穩定性用MJPEG，注重低延遲用WebRTC。</div>'
+      '<table><thead><tr><th>Feature</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>Default</td><td>' + DXIcon('check') + ' Default</td><td>Manual switch</td></tr><tr><td>Transport</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection (SDP/ICE)</td></tr><tr><td>Latency</td><td>High (200–500ms)</td><td>Low (&lt;100ms)</td></tr><tr><td>Compatibility</td><td>All browsers</td><td>Requires <code>gstreamer1.0-nice</code></td></tr></tbody></table><div class="ref-box tip">' + DXIcon('info') + ' Use MJPEG for reliability, WebRTC for low latency.</div>',
+      '<table><thead><tr><th>항목</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>기본 모드</td><td>' + DXIcon('check') + ' 기본값</td><td>수동 전환</td></tr><tr><td>전송 방식</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>지연 시간</td><td>높음 (200–500ms)</td><td>낮음 (&lt;100ms)</td></tr><tr><td>호환성</td><td>모든 브라우저</td><td><code>gstreamer1.0-nice</code> 필요</td></tr></tbody></table><div class="ref-box tip">' + DXIcon('info') + ' 안정성이 중요하면 MJPEG, 지연 시간이 중요하면 WebRTC를 사용하세요.</div>',
+      '<table><thead><tr><th>項目</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>デフォルト</td><td>' + DXIcon('check') + '</td><td>手動切替</td></tr><tr><td>転送方式</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>レイテンシ</td><td>高い</td><td>低い</td></tr><tr><td>互換性</td><td>全ブラウザ</td><td><code>gstreamer1.0-nice</code>が必要</td></tr></tbody></table><div class="ref-box tip">' + DXIcon('info') + ' 安定性ならMJPEG、低遅延ならWebRTC。</div>',
+      '<table><thead><tr><th>项目</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>默认</td><td>' + DXIcon('check') + '</td><td>手动切换</td></tr><tr><td>传输</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>延迟</td><td>高</td><td>低</td></tr><tr><td>兼容性</td><td>所有浏览器</td><td>需要<code>gstreamer1.0-nice</code></td></tr></tbody></table><div class="ref-box tip">' + DXIcon('info') + ' 注重稳定性用MJPEG，注重低延迟用WebRTC。</div>',
+      '<table><thead><tr><th>項目</th><th>MJPEG</th><th>WebRTC</th></tr></thead><tbody><tr><td>預設</td><td>' + DXIcon('check') + '</td><td>手動切換</td></tr><tr><td>傳輸</td><td><code>multipart/x-mixed-replace</code></td><td>RTCPeerConnection</td></tr><tr><td>延遲</td><td>高</td><td>低</td></tr><tr><td>相容性</td><td>所有瀏覽器</td><td>需要<code>gstreamer1.0-nice</code></td></tr></tbody></table><div class="ref-box tip">' + DXIcon('info') + ' 注重穩定性用MJPEG，注重低延遲用WebRTC。</div>'
     ) }
   },
   {
-    id:'demo-catalog', cat:'demo-streaming', icon:'📋',
+    id:'demo-catalog', cat:'demo-streaming', icon:'clipboard',
     name: _T5('Demo Catalog','데모 카탈로그','デモカタログ','演示目录','示範目錄'),
     desc: _T5('Detailed description of 11 demo scenarios','11개 데모 시나리오 상세 설명','11個のデモシナリオの詳細説明','11个演示场景详细说明','11個示範場景詳細說明'),
     tabs: { overview: _T5(
@@ -97,7 +97,7 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'visual-editor', cat:'pipeline', icon:'🎨',
+    id:'visual-editor', cat:'pipeline', icon:'theme',
     name: _T5('Visual Editor','비주얼 에디터','ビジュアルエディタ','可视化编辑器','視覺化編輯器'),
     desc: _T5('Canvas-based pipeline node editor','캔버스 기반 파이프라인 노드 에디터','キャンバスベースのパイプラインノードエディタ','基于画布的管道节点编辑器','基於畫布的管線節點編輯器'),
     tabs: { overview: _T5(
@@ -109,7 +109,7 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'connection-rules', cat:'pipeline', icon:'🔗',
+    id:'connection-rules', cat:'pipeline', icon:'external',
     name: _T5('Connection Rules','연결 규칙','接続ルール','连接规则','連接規則'),
     desc: _T5('Pad compatibility, validation, auto-insert','패드 호환성, 검증, 자동 삽입','パッド互換性、検証、自動挿入','焊盘兼容性、验证、自动插入','接墊相容性、驗證、自動插入'),
     tabs: { overview: _T5(
@@ -121,7 +121,7 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'preset-export', cat:'pipeline', icon:'💾',
+    id:'preset-export', cat:'pipeline', icon:'download',
     name: _T5('Preset & Export','프리셋 & 내보내기','プリセット & エクスポート','预设与导出','預設與匯出'),
     desc: _T5('Save, load, GStreamer command preview','파이프라인 저장, 불러오기, GStreamer 명령 미리보기','パイプラインの保存・読込・コマンドプレビュー','管道保存、加载、命令预览','管線儲存、載入、命令預覽'),
     tabs: { overview: _T5(
@@ -133,7 +133,7 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'model-catalog', cat:'models-elements', icon:'🧠',
+    id:'model-catalog', cat:'models-elements', icon:'models',
     name: _T5('Model Catalog','모델 카탈로그','モデルカタログ','模型目录','模型目錄'),
     desc: _T5('Search, download, and inspect 16 AI models','16개 AI 모델 검색, 다운로드, 메타데이터 확인','16個のAIモデル検索・ダウンロード・メタデータ確認','搜索、下载和查看16个AI模型','搜尋、下載和查看16個AI模型'),
     tabs: { overview: _T5(
@@ -145,31 +145,31 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'element-reference', cat:'models-elements', icon:'🧩',
+    id:'element-reference', cat:'models-elements', icon:'puzzle',
     name: _T5('Element Reference','요소 레퍼런스','エレメントリファレンス','元素参考','元素參考'),
     desc: _T5('Properties, pads, and examples for 26 elements','26개 GStreamer 요소 속성, 패드, 예제','26個のエレメントの属性・パッド・例','26个元素的属性、焊盘和示例','26個元素的屬性、接墊與範例'),
     tabs: { overview: _T5(
-      '<p>13 DEEPX custom + 13 standard GStreamer elements:</p><ul><li><b>10 categories</b> — Preprocess, Inference, Postprocess, Visualization, Tracking, Messaging, Source, Output, Utility</li><li><b>Element cards</b> — name, category badge, bilingual description, property count</li><li><b>Detail panel</b> — long description, key features, pipeline hint, example config</li><li><b>Properties table</b> — name, type, default, description</li></ul><div class="ref-box tip">💡 Key rules: DxPreprocess/DxInfer must match <code>preprocess-id</code>; DxInfer/DxPostprocess must match <code>inference-id</code></div>',
-      '<p>13개 DEEPX 커스텀 + 13개 표준 GStreamer 요소:</p><ul><li><b>10개 카테고리</b></li><li><b>요소 카드</b> — 이름, 카테고리 배지, 설명, 속성 수</li><li><b>상세 패널</b> — 긴 설명, 주요 기능, 파이프라인 힌트, 예제</li><li><b>속성 테이블</b> — 이름, 타입, 기본값, 설명</li></ul><div class="ref-box tip">💡 DxPreprocess/DxInfer는 <code>preprocess-id</code> 일치 필수</div>',
-      '<p>13個のDEEPXカスタム + 13個の標準GStreamerエレメント：</p><ul><li><b>10カテゴリ</b></li><li><b>エレメントカード</b></li><li><b>詳細パネル</b></li><li><b>プロパティテーブル</b></li></ul><div class="ref-box tip">💡 DxPreprocess/DxInferは<code>preprocess-id</code>一致必須</div>',
-      '<p>13个DEEPX自定义 + 13个标准GStreamer元素：</p><ul><li><b>10个类别</b></li><li><b>元素卡片</b></li><li><b>详细面板</b></li><li><b>属性表</b></li></ul><div class="ref-box tip">💡 DxPreprocess/DxInfer的<code>preprocess-id</code>必须匹配</div>',
-      '<p>13個DEEPX自訂 + 13個標準GStreamer元素：</p><ul><li><b>10個類別</b></li><li><b>元素卡片</b></li><li><b>詳細面板</b></li><li><b>屬性表</b></li></ul><div class="ref-box tip">💡 DxPreprocess/DxInfer的<code>preprocess-id</code>必須匹配</div>'
+      '<p>13 DEEPX custom + 13 standard GStreamer elements:</p><ul><li><b>10 categories</b> — Preprocess, Inference, Postprocess, Visualization, Tracking, Messaging, Source, Output, Utility</li><li><b>Element cards</b> — name, category badge, bilingual description, property count</li><li><b>Detail panel</b> — long description, key features, pipeline hint, example config</li><li><b>Properties table</b> — name, type, default, description</li></ul><div class="ref-box tip">' + DXIcon('info') + ' Key rules: DxPreprocess/DxInfer must match <code>preprocess-id</code>; DxInfer/DxPostprocess must match <code>inference-id</code></div>',
+      '<p>13개 DEEPX 커스텀 + 13개 표준 GStreamer 요소:</p><ul><li><b>10개 카테고리</b></li><li><b>요소 카드</b> — 이름, 카테고리 배지, 설명, 속성 수</li><li><b>상세 패널</b> — 긴 설명, 주요 기능, 파이프라인 힌트, 예제</li><li><b>속성 테이블</b> — 이름, 타입, 기본값, 설명</li></ul><div class="ref-box tip">' + DXIcon('info') + ' DxPreprocess/DxInfer는 <code>preprocess-id</code> 일치 필수</div>',
+      '<p>13個のDEEPXカスタム + 13個の標準GStreamerエレメント：</p><ul><li><b>10カテゴリ</b></li><li><b>エレメントカード</b></li><li><b>詳細パネル</b></li><li><b>プロパティテーブル</b></li></ul><div class="ref-box tip">' + DXIcon('info') + ' DxPreprocess/DxInferは<code>preprocess-id</code>一致必須</div>',
+      '<p>13个DEEPX自定义 + 13个标准GStreamer元素：</p><ul><li><b>10个类别</b></li><li><b>元素卡片</b></li><li><b>详细面板</b></li><li><b>属性表</b></li></ul><div class="ref-box tip">' + DXIcon('info') + ' DxPreprocess/DxInfer的<code>preprocess-id</code>必须匹配</div>',
+      '<p>13個DEEPX自訂 + 13個標準GStreamer元素：</p><ul><li><b>10個類別</b></li><li><b>元素卡片</b></li><li><b>詳細面板</b></li><li><b>屬性表</b></li></ul><div class="ref-box tip">' + DXIcon('info') + ' DxPreprocess/DxInfer的<code>preprocess-id</code>必須匹配</div>'
     ) }
   },
   {
-    id:'custom-library', cat:'models-elements', icon:'🔩',
+    id:'custom-library', cat:'models-elements', icon:'puzzle',
     name: _T5('Custom Library','커스텀 라이브러리','カスタムライブラリ','自定义库','自訂函式庫'),
     desc: _T5('Upload C source, meson build, .so install','C 소스 업로드, meson 빌드, .so 설치','Cソースアップロード、mesonビルド、.soインストール','C源码上传、meson构建、.so安装','C原始碼上傳、meson建置、.so安裝'),
     tabs: { overview: _T5(
-      '<p>Manage C libraries for custom post-processing logic:</p><ul><li><b>Upload</b> — C source files + <code>meson.build</code></li><li><b>Build process</b> — meson setup → meson compile → sudo meson install</li><li><b>Install path</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>Pipeline Builder integration</b> — built <code>.so</code> auto-appears in DxPostprocess dropdown</li><li><b>Real-time build log</b> — 1-second polling interval</li></ul><div class="ref-box tip">💡 The <code>.so</code> must export a C function matching <code>function-name</code> (default: <code>PostProcess</code>).</div>',
-      '<p>커스텀 후처리 로직을 위한 C 라이브러리 관리:</p><ul><li><b>업로드</b> — C 소스 파일 + <code>meson.build</code></li><li><b>빌드 프로세스</b> — meson setup → meson compile → sudo meson install</li><li><b>설치 경로</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>파이프라인 빌더 연동</b> — 빌드된 <code>.so</code>가 드롭다운에 자동 표시</li><li><b>실시간 빌드 로그</b> — 1초 간격 폴링</li></ul><div class="ref-box tip">💡 <code>.so</code> 파일은 <code>function-name</code>과 일치하는 C 함수를 export해야 합니다.</div>',
-      '<p>カスタム後処理ロジック用のCライブラリ管理：</p><ul><li><b>アップロード</b> — Cソースファイル + <code>meson.build</code></li><li><b>ビルドプロセス</b> — meson setup → compile → install</li><li><b>インストールパス</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>パイプラインビルダー連携</b> — <code>.so</code>が自動表示</li></ul><div class="ref-box tip">💡 <code>.so</code>は<code>function-name</code>と一致するC関数をエクスポートする必要があります。</div>',
-      '<p>管理自定义后处理逻辑的C库：</p><ul><li><b>上传</b> — C源文件 + <code>meson.build</code></li><li><b>构建过程</b> — meson setup → compile → install</li><li><b>安装路径</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>管道构建器集成</b> — <code>.so</code>自动出现</li></ul><div class="ref-box tip">💡 <code>.so</code>必须导出与<code>function-name</code>匹配的C函数。</div>',
-      '<p>管理自訂後處理邏輯的C函式庫：</p><ul><li><b>上傳</b> — C原始碼檔案 + <code>meson.build</code></li><li><b>建置過程</b> — meson setup → compile → install</li><li><b>安裝路徑</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>管線建置器整合</b> — <code>.so</code>自動出現</li></ul><div class="ref-box tip">💡 <code>.so</code>必須匯出與<code>function-name</code>匹配的C函式。</div>'
+      '<p>Manage C libraries for custom post-processing logic:</p><ul><li><b>Upload</b> — C source files + <code>meson.build</code></li><li><b>Build process</b> — meson setup → meson compile → sudo meson install</li><li><b>Install path</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>Pipeline Builder integration</b> — built <code>.so</code> auto-appears in DxPostprocess dropdown</li><li><b>Real-time build log</b> — 1-second polling interval</li></ul><div class="ref-box tip">' + DXIcon('info') + ' The <code>.so</code> must export a C function matching <code>function-name</code> (default: <code>PostProcess</code>).</div>',
+      '<p>커스텀 후처리 로직을 위한 C 라이브러리 관리:</p><ul><li><b>업로드</b> — C 소스 파일 + <code>meson.build</code></li><li><b>빌드 프로세스</b> — meson setup → meson compile → sudo meson install</li><li><b>설치 경로</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>파이프라인 빌더 연동</b> — 빌드된 <code>.so</code>가 드롭다운에 자동 표시</li><li><b>실시간 빌드 로그</b> — 1초 간격 폴링</li></ul><div class="ref-box tip">' + DXIcon('info') + ' <code>.so</code> 파일은 <code>function-name</code>과 일치하는 C 함수를 export해야 합니다.</div>',
+      '<p>カスタム後処理ロジック用のCライブラリ管理：</p><ul><li><b>アップロード</b> — Cソースファイル + <code>meson.build</code></li><li><b>ビルドプロセス</b> — meson setup → compile → install</li><li><b>インストールパス</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>パイプラインビルダー連携</b> — <code>.so</code>が自動表示</li></ul><div class="ref-box tip">' + DXIcon('info') + ' <code>.so</code>は<code>function-name</code>と一致するC関数をエクスポートする必要があります。</div>',
+      '<p>管理自定义后处理逻辑的C库：</p><ul><li><b>上传</b> — C源文件 + <code>meson.build</code></li><li><b>构建过程</b> — meson setup → compile → install</li><li><b>安装路径</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>管道构建器集成</b> — <code>.so</code>自动出现</li></ul><div class="ref-box tip">' + DXIcon('info') + ' <code>.so</code>必须导出与<code>function-name</code>匹配的C函数。</div>',
+      '<p>管理自訂後處理邏輯的C函式庫：</p><ul><li><b>上傳</b> — C原始碼檔案 + <code>meson.build</code></li><li><b>建置過程</b> — meson setup → compile → install</li><li><b>安裝路徑</b> — <code>/usr/local/share/gstdxstream/lib/</code></li><li><b>管線建置器整合</b> — <code>.so</code>自動出現</li></ul><div class="ref-box tip">' + DXIcon('info') + ' <code>.so</code>必須匯出與<code>function-name</code>匹配的C函式。</div>'
     ) }
   },
   {
-    id:'keyboard-shortcuts', cat:'system', icon:'⌨️',
+    id:'keyboard-shortcuts', cat:'system', icon:'dev',
     name: _T5('Keyboard Shortcuts','키보드 단축키','キーボードショートカット','键盘快捷键','鍵盤快捷鍵'),
     desc: _T5('Pipeline Builder and general shortcuts','파이프라인 빌더 및 일반 단축키','パイプラインビルダーと一般ショートカット','管道构建器和通用快捷键','管線建置器與一般快捷鍵'),
     tabs: { overview: _T5(
@@ -181,7 +181,7 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'api-endpoints', cat:'system', icon:'🌐',
+    id:'api-endpoints', cat:'system', icon:'globe',
     name: _T5('API Endpoints','API 엔드포인트','APIエンドポイント','API端点','API端點'),
     desc: _T5('Complete REST API list and usage','REST API 전체 목록 및 사용법','REST API全リストと使い方','REST API完整列表和用法','REST API完整列表與用法'),
     tabs: { overview: _T5(
@@ -193,7 +193,7 @@ function buildRefTopics() { return [
     ) }
   },
   {
-    id:'theme-language', cat:'system', icon:'🎨',
+    id:'theme-language', cat:'system', icon:'theme',
     name: _T5('Theme & Language','테마 & 언어','テーマ & 言語','主题与语言','主題與語言'),
     desc: _T5('Dark/light theme, 5 language switching','다크/라이트 테마, 5개 국어 전환','ダーク/ライトテーマ、5言語切替','深色/浅色主题、5种语言','深色/淺色主題、5種語言'),
     tabs: { overview: _T5(
@@ -260,7 +260,7 @@ function renderRefContent(filter, search) {
       card.className = 'ref-topic-card';
       card.setAttribute('data-ref-id', topic.id);
       card.setAttribute('data-ref-cat', topic.cat);
-      card.innerHTML = '<span class="ref-section-icon">' + topic.icon + '</span>'
+      card.innerHTML = '<span class="ref-section-icon">' + _refIco(topic.icon) + '</span>'
         + '<span class="ref-section-info">'
         + '<span class="ref-section-name">' + topic.name + '</span>'
         + '<span class="ref-section-desc">' + topic.desc + '</span>'
@@ -271,17 +271,22 @@ function renderRefContent(filter, search) {
   });
 }
 
+// 구역 · 주제 아이콘은 sprite 이름 (아이콘 체계 단계 5). 옛 글자 icon 은 그대로.
+function _refIco(name) {
+  return (/^[a-z0-9_-]+$/.test(name || '') && typeof DXIcon === 'function') ? DXIcon(name) : (name || '');
+}
+
 function buildDetailHtml(topic) {
   var tabKeys = Object.keys(topic.tabs);
   var tabLabels = {
-    overview: '📋 ' + _T5('Overview','개요','概要','概述','概述'),
-    params: '⚙️ ' + _T5('Parameters','파라미터','パラメータ','参数','參數'),
-    workflow: '🔄 ' + _T5('Workflow','워크플로우','ワークフロー','工作流','工作流程'),
-    tips: '💡 ' + _T5('Tips','팁','ヒント','提示','提示')
+    overview: ((typeof DXIcon === 'function') ? DXIcon('clipboard') : '') + ' ' + _T5('Overview','개요','概要','概述','概述'),
+    params: ((typeof DXIcon === 'function') ? DXIcon('gear') : '') + ' ' + _T5('Parameters','파라미터','パラメータ','参数','參數'),
+    workflow: ((typeof DXIcon === 'function') ? DXIcon('refresh') : '') + ' ' + _T5('Workflow','워크플로우','ワークフロー','工作流','工作流程'),
+    tips: ((typeof DXIcon === 'function') ? DXIcon('info') : '') + ' ' + _T5('Tips','팁','ヒント','提示','提示')
   };
   var html = '<div class="ref-detail-hd"><div><div class="ref-detail-kicker">'
     + _T5('Reference','레퍼런스','リファレンス','参考','參考') + '</div><h2>'
-    + topic.icon + ' ' + topic.name + '</h2><p>' + topic.desc + '</p></div></div>';
+    + _refIco(topic.icon) + ' ' + topic.name + '</h2><p>' + topic.desc + '</p></div></div>';
   html += '<div class="ref-tabs">';
   tabKeys.forEach(function(key, i) {
     html += '<div class="ref-tab' + (i === 0 ? ' active' : '') + '" data-tab="' + key + '" tabindex="0">'
@@ -321,7 +326,7 @@ function showDetail(topicId, cardEl) {
 
   var closeBtn = document.createElement('button');
   closeBtn.className = 'ref-expand-close';
-  closeBtn.textContent = '✕';
+  closeBtn.innerHTML = ((typeof DXIcon === 'function') ? DXIcon('x') : ''); closeBtn.setAttribute('aria-label', 'Close');
   expand.appendChild(closeBtn);
 
   var inner = document.createElement('div');
