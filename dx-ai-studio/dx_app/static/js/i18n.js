@@ -1359,165 +1359,15 @@ window._DX_I18N_DICT = {
   },
 
   /* ==== Buttons with emoji ==== */
-  '▶ Run Inference': {
-    ko: '▶ 추론 실행', ja: '▶ 推論実行',
-    'zh-CN': '▶ 运行推理', 'zh-TW': '▶ 執行推論',
-    es: '▶ Ejecutar inferencia',
-  },
-  '⏹ Stop': {
-    ko: '⏹ 중지', ja: '⏹ 停止',
-    'zh-CN': '⏹ 停止', 'zh-TW': '⏹ 停止',
-    es: '⏹ Detener',
-  },
-  '🎯 ROI': {
-    ko: '🎯 ROI', ja: '🎯 ROI',
-    'zh-CN': '🎯 ROI', 'zh-TW': '🎯 ROI',
-    es: '🎯 ROI',
-  },
-  '☑ Select All': {
-    ko: '☑ 전체 선택', ja: '☑ すべて選択',
-    'zh-CN': '☑ 全选', 'zh-TW': '☑ 全選',
-    es: '☑ Seleccionar todo',
-  },
-  '☐ Deselect': {
-    ko: '☐ 선택 해제', ja: '☐ 選択解除',
-    'zh-CN': '☐ 取消选择', 'zh-TW': '☐ 取消選擇',
-    es: '☐ Deseleccionar',
-  },
-  '▶ Run All': {
-    ko: '▶ 전체 실행', ja: '▶ すべて実行',
-    'zh-CN': '▶ 全部运行', 'zh-TW': '▶ 全部執行',
-    es: '▶ Ejecutar todo',
-  },
-  '➕ Add Step': {
-    ko: '➕ 단계 추가', ja: '➕ ステップ追加',
-    'zh-CN': '➕ 添加步骤', 'zh-TW': '➕ 新增步驟',
-    es: '➕ Agregar paso',
-  },
-  '▶ Start Compile': {
-    ko: '▶ 컴파일 시작', ja: '▶ コンパイル開始',
-    'zh-CN': '▶ 启动编译', 'zh-TW': '▶ 啟動編譯',
-    es: '▶ Iniciar compilación',
-  },
-  '📋 Export JSON': {
-    ko: '📋 JSON 내보내기', ja: '📋 JSON エクスポート',
-    'zh-CN': '📋 导出 JSON', 'zh-TW': '📋 匯出 JSON',
-    es: '📋 Exportar JSON',
-  },
-  '📋 Execution Log': {
-    ko: '📋 실행 로그', ja: '📋 実行ログ',
-    'zh-CN': '📋 执行日志', 'zh-TW': '📋 執行日誌',
-    es: '📋 Registro de ejecución',
-  },
-  '🔄 Refresh Status': {
-    ko: '🔄 상태 새로고침', ja: '🔄 ステータス更新',
-    'zh-CN': '🔄 刷新状态', 'zh-TW': '🔄 重新整理狀態',
-    es: '🔄 Actualizar estado',
-  },
-  '⌨️ Manual Input': {
-    ko: '⌨️ 수동 입력', ja: '⌨️ 手動入力',
-    'zh-CN': '⌨️ 手动输入', 'zh-TW': '⌨️ 手動輸入',
-    es: '⌨️ Entrada manual',
-  },
-  '📥 Export Report': {
-    ko: '📥 보고서 내보내기', ja: '📥 レポートエクスポート',
-    'zh-CN': '📥 导出报告', 'zh-TW': '📥 匯出報告',
-    es: '📥 Exportar informe',
-  },
-  '📂 Local File': {
-    ko: '📂 로컬 파일', ja: '📂 ローカルファイル',
-    'zh-CN': '📂 本地文件', 'zh-TW': '📂 本機檔案',
-    es: '📂 Archivo local',
-  },
-  '🗂 Browse Server': {
-    ko: '🗂 서버 찾아보기', ja: '🗂 サーバーを参照',
-    'zh-CN': '🗂 浏览服务器', 'zh-TW': '🗂 瀏覽伺服器',
-    es: '🗂 Explorar servidor',
-  },
-  '🔍 Inspect': {
-    ko: '🔍 검사', ja: '🔍 検査',
-    'zh-CN': '🔍 检查', 'zh-TW': '🔍 檢查',
-    es: '🔍 Inspeccionar',
-  },
-  '📷 Single': {
-    ko: '📷 단일', ja: '📷 シングル',
-    'zh-CN': '📷 单次', 'zh-TW': '📷 單次',
-    es: '📷 Individual',
-  },
-  '🔄 Continuous': {
-    ko: '🔄 연속', ja: '🔄 連続',
-    'zh-CN': '🔄 连续', 'zh-TW': '🔄 連續',
-    es: '🔄 Continuo',
-  },
-  '▶ Start Continuous': {
-    ko: '▶ 연속 시작', ja: '▶ 連続開始',
-    'zh-CN': '▶ 启动连续', 'zh-TW': '▶ 啟動連續',
-    es: '▶ Iniciar continuo',
-  },
   '＋ Add Model': {
     ko: '＋ 모델 추가', ja: '＋ モデル追加',
     'zh-CN': '＋ 添加模型', 'zh-TW': '＋ 新增模型',
     es: '＋ Agregar modelo',
   },
-  '🔓 Authenticate': {
-    ko: '🔓 인증', ja: '🔓 認証',
-    'zh-CN': '🔓 认证', 'zh-TW': '🔓 驗證',
-    es: '🔓 Autenticar',
-  },
-  '➕ Add Model': {
-    ko: '➕ 모델 추가', ja: '➕ モデル追加',
-    'zh-CN': '➕ 添加模型', 'zh-TW': '➕ 新增模型',
-    es: '➕ Agregar modelo',
-  },
-  '🗑️ Delete Model': {
-    ko: '🗑️ 모델 삭제', ja: '🗑️ モデル削除',
-    'zh-CN': '🗑️ 删除模型', 'zh-TW': '🗑️ 刪除模型',
-    es: '🗑️ Eliminar modelo',
-  },
-  '🦴 Create Skeleton': {
-    ko: '🦴 스켈레톤 생성', ja: '🦴 スケルトン作成',
-    'zh-CN': '🦴 创建骨架', 'zh-TW': '🦴 建立骨架',
-    es: '🦴 Crear esqueleto',
-  },
-  '📝 Commit': {
-    ko: '📝 커밋', ja: '📝 コミット',
-    'zh-CN': '📝 提交', 'zh-TW': '📝 提交',
-    es: '📝 Confirmar',
-  },
-  '📦 Extract Package': {
-    ko: '📦 패키지 추출', ja: '📦 パッケージ抽出',
-    'zh-CN': '📦 提取包', 'zh-TW': '📦 提取套件',
-    es: '📦 Extraer paquete',
-  },
-  '✕ Clear': {
-    ko: '✕ 지우기', ja: '✕ クリア',
-    'zh-CN': '✕ 清除', 'zh-TW': '✕ 清除',
-    es: '✕ Limpiar',
-  },
-  '✓ Apply ROI': {
-    ko: '✓ ROI 적용', ja: '✓ ROIを適用',
-    'zh-CN': '✓ 应用 ROI', 'zh-TW': '✓ 套用 ROI',
-    es: '✓ Aplicar ROI',
-  },
-  '✅ Select': {
-    ko: '✅ 선택', ja: '✅ 選択',
-    'zh-CN': '✅ 选择', 'zh-TW': '✅ 選擇',
-    es: '✅ Seleccionar',
-  },
-  '📦 Deploy?': {
-    ko: '📦 배포?', ja: '📦 デプロイしますか?',
-    'zh-CN': '📦 部署？', 'zh-TW': '📦 部署？',
-    es: '📦 ¿Desplegar?',
-  },
   '↩ Reconfigure': {
     ko: '↩ 재구성', ja: '↩ 再設定',
     'zh-CN': '↩ 重新配置', 'zh-TW': '↩ 重新設定',
     es: '↩ Reconfigurar',
-  },
-  '✅ Confirm Deploy': {
-    ko: '✅ 배포 확인', ja: '✅ デプロイ確認',
-    'zh-CN': '✅ 确认部署', 'zh-TW': '✅ 確認部署',
-    es: '✅ Confirmar despliegue',
   },
   '+ Add Task': {
     ko: '+ 작업 추가', ja: '+ タスク追加',
@@ -1526,127 +1376,11 @@ window._DX_I18N_DICT = {
   },
 
   /* ==== Setup titles with emoji ==== */
-  '🏗️ DX-APP Dependencies': {
-    ko: '🏗️ DX-APP 종속성', ja: '🏗️ DX-APP 依存関係',
-    'zh-CN': '🏗️ DX-APP 依赖项', 'zh-TW': '🏗️ DX-APP 相依性',
-    es: '🏗️ Dependencias de DX-APP',
-  },
-  '🔨 DX-APP Build': {
-    ko: '🔨 DX-APP 빌드', ja: '🔨 DX-APP ビルド',
-    'zh-CN': '🔨 DX-APP 构建', 'zh-TW': '🔨 DX-APP 建置',
-    es: '🔨 Compilación DX-APP',
-  },
-  '📦 Sample Assets Setup': {
-    ko: '📦 샘플 에셋 설정', ja: '📦 サンプルアセットセットアップ',
-    'zh-CN': '📦 示例资源设置', 'zh-TW': '📦 範例資源設定',
-    es: '📦 Configuración de activos de muestra',
-  },
-  '🔧 DX-Runtime Dependencies': {
-    ko: '🔧 DX-Runtime 종속성', ja: '🔧 DX-Runtime 依存関係',
-    'zh-CN': '🔧 DX-Runtime 依赖项', 'zh-TW': '🔧 DX-Runtime 相依性',
-    es: '🔧 Dependencias de DX-Runtime',
-  },
-  '🔌 NPU Linux Driver': {
-    ko: '🔌 NPU 리눅스 드라이버', ja: '🔌 NPU Linux ドライバ',
-    'zh-CN': '🔌 NPU Linux 驱动', 'zh-TW': '🔌 NPU Linux 驅動程式',
-    es: '🔌 Controlador Linux NPU',
-  },
-  '🛠️ DX-COM Compiler': {
-    ko: '🛠️ DX-COM 컴파일러', ja: '🛠️ DX-COM コンパイラ',
-    'zh-CN': '🛠️ DX-COM 编译器', 'zh-TW': '🛠️ DX-COM 編譯器',
-    es: '🛠️ Compilador DX-COM',
-  },
-  '🔐 DEEPX Developers Portal Account': {
-    ko: '🔐 DEEPX 개발자 포털 계정', ja: '🔐 DEEPX 開発者ポータルアカウント',
-    'zh-CN': '🔐 DEEPX 开发者门户账户', 'zh-TW': '🔐 DEEPX 開發者入口網站帳戶',
-    es: '🔐 Cuenta del portal de desarrolladores DEEPX',
-  },
 
-  /* ==== Compiler sections with emoji ==== */
-  '⚡ Presets': {
-    ko: '⚡ 프리셋', ja: '⚡ プリセット',
-    'zh-CN': '⚡ 预设', 'zh-TW': '⚡ 預設',
-    es: '⚡ Preajustes',
-  },
-  '📄 ONNX Model': {
-    ko: '📄 ONNX 모델', ja: '📄 ONNX モデル',
-    'zh-CN': '📄 ONNX 模型', 'zh-TW': '📄 ONNX 模型',
-    es: '📄 Modelo ONNX',
-  },
-  '📋 Load JSON Config': {
-    ko: '📋 JSON 구성 로드', ja: '📋 JSON 設定を読み込む',
-    'zh-CN': '📋 加载 JSON 配置', 'zh-TW': '📋 載入 JSON 設定',
-    es: '📋 Cargar configuración JSON',
-  },
-  '⚙️ Compile Settings': {
-    ko: '⚙️ 컴파일 설정', ja: '⚙️ コンパイル設定',
-    'zh-CN': '⚙️ 编译设置', 'zh-TW': '⚙️ 編譯設定',
-    es: '⚙️ Configuración de compilación',
-  },
-  '�� Calibration Dataset': {
-    ko: '📁 보정 데이터셋', ja: '📁 キャリブレーションデータセット',
-    'zh-CN': '📁 校准数据集', 'zh-TW': '📁 校準資料集',
-    es: '�� Conjunto de datos de calibración',
-  },
-  '🎨 Preprocessing Pipeline': {
-    ko: '🎨 전처리 파이프라인', ja: '🎨 前処理パイプライン',
-    'zh-CN': '🎨 预处理流水线', 'zh-TW': '🎨 前處理管線',
-    es: '🎨 Pipeline de pre-procesamiento',
-  },
-  '🎯 PPU Settings (Object Detection only)': {
-    ko: '🎯 PPU 설정 (객체 검출 전용)', ja: '🎯 PPU 設定 (物体検出専用)',
-    'zh-CN': '🎯 PPU 设置 (仅目标检测)', 'zh-TW': '🎯 PPU 設定 (僅物件偵測)',
-    es: '🎯 Configuración de PPU (solo detección de objetos)',
-  },
-  '📂 Output Settings': {
-    ko: '📂 출력 설정', ja: '📂 出力設定',
-    'zh-CN': '📂 输出设置', 'zh-TW': '📂 輸出設定',
-    es: '📂 Configuración de salida',
-  },
-  '📋 Compile Log': {
-    ko: '📋 컴파일 로그', ja: '📋 コンパイルログ',
-    'zh-CN': '📋 编译日志', 'zh-TW': '📋 編譯日誌',
-    es: '📋 Registro de compilación',
-  },
-  '📊 Compile Result': {
-    ko: '📊 컴파일 결과', ja: '📊 コンパイル結果',
-    'zh-CN': '📊 编译结果', 'zh-TW': '📊 編譯結果',
-    es: '📊 Resultado de compilación',
-  },
-  '🔬 Model Visualization': {
-    ko: '🔬 모델 시각화', ja: '🔬 モデル可視化',
-    'zh-CN': '🔬 模型可视化', 'zh-TW': '🔬 模型視覺化',
-    es: '🔬 Visualización del modelo',
-  },
-  '📜 Compile History': {
-    ko: '📜 컴파일 이력', ja: '📜 コンパイル履歴',
-    'zh-CN': '📜 编译历史', 'zh-TW': '📜 編譯歷史',
-    es: '📜 Historial de compilación',
-  },
 
   /* ==== Dashboard sections with emoji ==== */
-  '📦 Export Model Package': {
-    ko: '📦 모델 패키지 내보내기', ja: '📦 モデルパッケージのエクスポート',
-    'zh-CN': '📦 导出模型包', 'zh-TW': '📦 匯出模型套件',
-    es: '📦 Exportar paquete de modelo',
-  },
-  '🔄 Continuous Config': {
-    ko: '🔄 연속 구성', ja: '🔄 連続設定',
-    'zh-CN': '🔄 连续配置', 'zh-TW': '🔄 連續設定',
-    es: '🔄 Configuración continua',
-  },
-  '📺 Live Display': {
-    ko: '📺 라이브 디스플레이', ja: '📺 ライブ表示',
-    'zh-CN': '📺 实时显示', 'zh-TW': '📺 即時顯示',
-    es: '📺 Pantalla en vivo',
-  },
 
   /* ==== Topbar page titles (with emoji) ==== */
-  '⚙️ Setup & Install': {
-    ko: '⚙️ 설정 & 설치', ja: '⚙️ セットアップ & インストール',
-    'zh-CN': '⚙️ 设置 & 安装', 'zh-TW': '⚙️ 設定 & 安裝',
-    es: '⚙️ Configuración e instalación',
-  },
 
   /* ==== Misc ==== */
   'MEM': {
@@ -1836,16 +1570,6 @@ window._DX_I18N_DICT = {
     'zh-CN': '导出报告', 'zh-TW': '匯出報告',
     es: 'Exportar informe',
   },
-  '⏱️ Start Benchmark': {
-    ko: '⏱️ 벤치마크 시작', ja: '⏱️ ベンチマーク開始',
-    'zh-CN': '⏱️ 启动基准测试', 'zh-TW': '⏱️ 啟動基準測試',
-    es: '⏱️ Iniciar benchmark',
-  },
-  '📄 Export Report': {
-    ko: '📄 리포트 내보내기', ja: '📄 レポートエクスポート',
-    'zh-CN': '📄 导出报告', 'zh-TW': '📄 匯出報告',
-    es: '📄 Exportar informe',
-  },
   'auto-selected': {
     ko: '자동 선택됨', ja: '自動選択済み',
     'zh-CN': '已自动选择', 'zh-TW': '已自動選擇',
@@ -1855,26 +1579,6 @@ window._DX_I18N_DICT = {
     ko: '모델 목록에 없음', ja: 'モデルリストに見つかりません',
     'zh-CN': '在模型列表中未找到', 'zh-TW': '在模型列表中未找到',
     es: 'no encontrado en la lista de modelos',
-  },
-  '☑ All': {
-    ko: '☑ 전체', ja: '☑ すべて',
-    'zh-CN': '☑ 全部', 'zh-TW': '☑ 全部',
-    es: '☑ Todo',
-  },
-  '☐ None': {
-    ko: '☐ 해제', ja: '☐ なし',
-    'zh-CN': '☐ 无', 'zh-TW': '☐ 無',
-    es: '☐ Ninguno',
-  },
-  '📋 Models': {
-    ko: '📋 모델', ja: '📋 モデル',
-    'zh-CN': '📋 模型', 'zh-TW': '📋 模型',
-    es: '📋 Modelos',
-  },
-  '⚙️ Settings': {
-    ko: '⚙️ 설정', ja: '⚙️ 設定',
-    'zh-CN': '⚙️ 设置', 'zh-TW': '⚙️ 設定',
-    es: '⚙️ Configuración',
   },
 
   /* ==== Compiler (toast/UI) ==== */
@@ -2008,31 +1712,6 @@ window._DX_I18N_DICT = {
     'zh-CN': '输出路径', 'zh-TW': '輸出路徑',
     es: 'Ruta de salida',
   },
-  '🧪 Test Run': {
-    ko: '🧪 테스트 실행', ja: '🧪 テスト実行',
-    'zh-CN': '🧪 测试运行', 'zh-TW': '🧪 測試執行',
-    es: '🧪 Ejecución de prueba',
-  },
-  '🚀 Deploy & Run Now': {
-    ko: '🚀 배포 & 즉시 실행', ja: '🚀 デプロイ & 今すぐ実行',
-    'zh-CN': '🚀 部署 & 立即运行', 'zh-TW': '🚀 部署 & 立即執行',
-    es: '🚀 Desplegar y ejecutar ahora',
-  },
-  '📊 Deploy & Benchmark': {
-    ko: '📊 배포 & 벤치마크', ja: '📊 デプロイ & ベンチマーク',
-    'zh-CN': '📊 Deploy & 基准测试', 'zh-TW': '📊 部署 & 基準測試',
-    es: '📊 Desplegar y benchmark',
-  },
-  '📥 Download': {
-    ko: '📥 다운로드', ja: '📥 ダウンロード',
-    'zh-CN': '📥 下载', 'zh-TW': '📥 下載',
-    es: '📥 Descargar',
-  },
-  '🔬 View DXNN Graph': {
-    ko: '🔬 DXNN 그래프 보기', ja: '🔬 DXNNグラフを表示',
-    'zh-CN': '🔬 查看 DXNN 图', 'zh-TW': '🔬 檢視 DXNN 圖',
-    es: '🔬 Ver gráfico DXNN',
-  },
   'Enter a name for the deployed model:': {
     ko: '배포할 모델 이름을 입력하세요:', ja: 'デプロイするモデルの名前を入力してください:',
     'zh-CN': '请输入部署模型的名称:', 'zh-TW': '請輸入部署模型的名稱:',
@@ -2082,11 +1761,6 @@ window._DX_I18N_DICT = {
     ko: '출력 보기', ja: '出力を表示',
     'zh-CN': '显示输出', 'zh-TW': '顯示輸出',
     es: 'Mostrar salida',
-  },
-  '🧪 Test Result': {
-    ko: '🧪 테스트 결과', ja: '🧪 テスト結果',
-    'zh-CN': '🧪 测试结果', 'zh-TW': '🧪 測試結果',
-    es: '🧪 Resultado de prueba',
   },
   'Navigated to Run Inference page. Select the deployed model and run inference.': {
     ko: '추론 실행 페이지로 이동했습니다. 배포된 모델을 선택하고 추론을 실행하세요.', ja: '推論実行ページに移動しました。デプロイされたモデルを選択して推論を実行してください。',
@@ -2189,11 +1863,6 @@ window._DX_I18N_DICT = {
     ko: '패키지 추출 중: ', ja: 'パッケージ抽出中: ',
     'zh-CN': '提取包中: ', 'zh-TW': '提取套件中: ',
     es: 'Extrayendo paquete: ',
-  },
-  '📦 Export': {
-    ko: '📦 내보내기', ja: '📦 エクスポート',
-    'zh-CN': '📦 导出', 'zh-TW': '📦 匯出',
-    es: '📦 Exportar',
   },
   'Package saved to the outputs/ folder': {
     ko: '패키지가 outputs/ 폴더에 저장됨', ja: 'パッケージが outputs/ フォルダに保存されました',
@@ -2325,10 +1994,10 @@ window._DX_I18N_DICT = {
     'zh-CN': '处理中...', 'zh-TW': '處理中...',
     es: 'Procesando...',
   },
-  '❌ Error': {
-    ko: '❌ 오류', ja: '❌ エラー',
-    'zh-CN': '❌ 错误', 'zh-TW': '❌ 錯誤',
-    es: '❌ Error',
+  'Error': {
+    ko: '오류', ja: 'エラー',
+    'zh-CN': '错误', 'zh-TW': '錯誤',
+    es: 'Error',
   },
   'Continuous inference complete': {
     ko: '연속 추론 완료', ja: '連続推論完了',
@@ -2367,11 +2036,6 @@ window._DX_I18N_DICT = {
     'zh-CN': '添加流水线步骤', 'zh-TW': '新增管線步驟',
     es: 'Agregar pasos de pipeline',
   },
-  '▶ Run Pipeline': {
-    ko: '▶ 파이프라인 실행', ja: '▶ パイプライン実行',
-    'zh-CN': '▶ Run 流水线', 'zh-TW': '▶ Run 管線',
-    es: '▶ Ejecutar pipeline',
-  },
 
   /* ==== Compare ==== */
   'Select an image or video': {
@@ -2386,15 +2050,10 @@ window._DX_I18N_DICT = {
   },
 
   /* ==== File Browser ==== */
-  '📂 Select Folder': {
-    ko: '📂 폴더 선택', ja: '📂 フォルダ選択',
-    'zh-CN': '📂 选择文件夹', 'zh-TW': '📂 選擇資料夾',
-    es: '📂 Seleccionar carpeta',
-  },
-  '📄 Select File': {
-    ko: '📄 파일 선택', ja: '📄 ファイル選択',
-    'zh-CN': '📄 选择文件', 'zh-TW': '📄 選擇檔案',
-    es: '📄 Seleccionar archivo',
+  'Select Folder': {
+    ko: '폴더 선택', ja: 'フォルダ選択',
+    'zh-CN': '选择文件夹', 'zh-TW': '選擇資料夾',
+    es: 'Seleccionar carpeta',
   },
   'File browser error': {
     ko: '파일 브라우저 오류', ja: 'ファイルブラウザエラー',
@@ -2418,10 +2077,10 @@ window._DX_I18N_DICT = {
     'zh-CN': '请输入评论内容', 'zh-TW': '請輸入留言內容',
     es: 'Por favor introduzca contenido del comentario',
   },
-  'Comment posted 🎉': {
-    ko: '댓글이 등록되었습니다 🎉', ja: 'コメントが投稿されました 🎉',
-    'zh-CN': '评论已发布 🎉', 'zh-TW': '留言已發布 🎉',
-    es: '¡Comentario publicado 🎉',
+  'Comment posted': {
+    ko: '댓글이 등록되었습니다', ja: 'コメントが投稿されました',
+    'zh-CN': '评论已发布', 'zh-TW': '留言已發布',
+    es: '¡Comentario publicado',
   },
   'Please enter a title': {
     ko: '제목을 입력하세요', ja: 'タイトルを入力してください',
@@ -2433,10 +2092,10 @@ window._DX_I18N_DICT = {
     'zh-CN': '请输入内容', 'zh-TW': '請輸入內容',
     es: 'Por favor introduzca contenido',
   },
-  'Post published 🎉': {
-    ko: '게시물이 등록되었습니다 🎉', ja: '投稿が公開されました 🎉',
-    'zh-CN': '帖子已发布 🎉', 'zh-TW': '文章已發布 🎉',
-    es: '¡Publicación publicada 🎉',
+  'Post published': {
+    ko: '게시물이 등록되었습니다', ja: '投稿が公開されました',
+    'zh-CN': '帖子已发布', 'zh-TW': '文章已發布',
+    es: '¡Publicación publicada',
   },
 
   /* ==== Models ==== */
@@ -2467,25 +2126,25 @@ window._DX_I18N_DICT = {
     'zh-CN': 'px — 仅此区域将被裁剪用于推理', 'zh-TW': 'px — 僅此區域將被裁剪用於推論',
     es: 'px — solo esta región se recortará para la inferencia',
   },
-  '⚠ Model file not configured for ': {
-    ko: '⚠ 모델 파일이 설정되지 않음: ', ja: '⚠ モデルファイル未設定: ',
-    'zh-CN': '⚠ 模型文件未配置: ', 'zh-TW': '⚠ 模型檔案未設定: ',
-    es: '⚠ Archivo de modelo no configurado para ',
+  'Model file not configured for ': {
+    ko: '모델 파일이 설정되지 않음:', ja: 'モデルファイル未設定:',
+    'zh-CN': '模型文件未配置:', 'zh-TW': '模型檔案未設定:',
+    es: 'Archivo de modelo no configurado para',
   },
-  '⚠ Model file missing: ': {
-    ko: '⚠ 모델 파일 누락: ', ja: '⚠ モデルファイル欠落: ',
-    'zh-CN': '⚠ 模型文件缺失: ', 'zh-TW': '⚠ 模型檔案遺失: ',
-    es: '⚠ Archivo de modelo faltante: ',
+  'Model file missing: ': {
+    ko: '모델 파일 누락:', ja: 'モデルファイル欠落:',
+    'zh-CN': '模型文件缺失:', 'zh-TW': '模型檔案遺失:',
+    es: 'Archivo de modelo faltante:',
   },
-  '⚠ C++ binary not built for ': {
-    ko: '⚠ C++ 바이너리가 빌드되지 않음: ', ja: '⚠ C++ バイナリ未ビルド: ',
-    'zh-CN': '⚠ C++ 二进制文件未构建: ', 'zh-TW': '⚠ C++ 二進位檔未建置: ',
-    es: '⚠ Binario C++ no compilado para ',
+  'C++ binary not built for ': {
+    ko: 'C++ 바이너리가 빌드되지 않음:', ja: 'C++ バイナリ未ビルド:',
+    'zh-CN': 'C++ 二进制文件未构建:', 'zh-TW': 'C++ 二進位檔未建置:',
+    es: 'Binario C++ no compilado para',
   },
-  '⚠ Python app not found for ': {
-    ko: '⚠ Python 앱을 찾을 수 없음: ', ja: '⚠ Python アプリが見つかりません: ',
-    'zh-CN': '⚠ 未找到 Python 应用: ', 'zh-TW': '⚠ 未找到 Python 應用: ',
-    es: '⚠ Aplicación Python no encontrada para ',
+  'Python app not found for ': {
+    ko: 'Python 앱을 찾을 수 없음:', ja: 'Python アプリが見つかりません:',
+    'zh-CN': '未找到 Python 应用:', 'zh-TW': '未找到 Python 應用:',
+    es: 'Aplicación Python no encontrada para',
   },
   'Please select an image': {
     ko: '이미지를 선택해주세요', ja: '画像を選択してください',
@@ -2724,16 +2383,6 @@ window._DX_I18N_DICT = {
     'zh-CN': '全部', 'zh-TW': '全部',
     es: 'Todo',
   },
-  '🏢 Ask DeepX': {
-    ko: '🏢 DeepX에게 질문', ja: '🏢 DeepX に質問',
-    'zh-CN': '🏢 向 DeepX 提问', 'zh-TW': '🏢 向 DeepX 提問',
-    es: '🏢 Preguntar a DeepX',
-  },
-  '💬 Community': {
-    ko: '💬 커뮤니티', ja: '💬 コミュニティ',
-    'zh-CN': '💬 社区', 'zh-TW': '💬 社群',
-    es: '💬 Comunidad',
-  },
   'Latest': {
     ko: '최신순', ja: '最新',
     'zh-CN': '最新', 'zh-TW': '最新',
@@ -2749,25 +2398,15 @@ window._DX_I18N_DICT = {
     'zh-CN': '最多评论', 'zh-TW': '最多留言',
     es: 'Más comentarios',
   },
-  '✏️ New Post': {
-    ko: '✏️ 새 글 작성', ja: '✏️ 新規投稿',
-    'zh-CN': '✏️ 新帖子', 'zh-TW': '✏️ 新貼文',
-    es: '✏️ Nueva publicación',
+  'New Post': {
+    ko: '새 글 작성', ja: '新規投稿',
+    'zh-CN': '新帖子', 'zh-TW': '新貼文',
+    es: 'Nueva publicación',
   },
 
   /* ==== Model source option ==== */
-  '🔒 Internal (Air-gapped)': {
-    ko: '🔒 Internal (폐쇄망)', ja: '🔒 Internal (エアギャップ)',
-    'zh-CN': '🔒 Internal (离线)', 'zh-TW': '🔒 Internal (離線)',
-    es: '🔒 Interno (Air-gapped)',
-  },
 
   /* ==== Page descriptions ==== */
-  'Ask questions to the DeepX team or share experiences with other users. 🌐': {
-    ko: 'DeepX 팀에게 질문하거나, 사용자들과 경험을 나눠보세요. 🌐', ja: 'DeepX チームへの質問や他のユーザーとの経験共有ができます。🌐',
-    'zh-CN': '向 DeepX 团队提问或与其他用户分享经验。🌐', 'zh-TW': '向 DeepX 團隊提問或與其他使用者分享經驗。🌐',
-    es: 'Haga preguntas al equipo de DeepX o comparta experiencias con otros usuarios. 🌐',
-  },
   'Detailed guides, parameters, workflows, and tips for each DX-APP feature — all in one place.': {
     ko: 'DX-APP 기능별 상세 가이드 · 파라미터 · 워크플로우 · 팁을 한 곳에서 확인하세요.', ja: 'DX-APP の各機能の詳細ガイド・パラメータ・ワークフロー・ヒントをすべて一か所で確認できます。',
     'zh-CN': 'DX-APP 各功能的详细指南、参数、工作流和提示 — 一站式查阅。', 'zh-TW': 'DX-APP 各功能的詳細指南、參數、工作流程和提示 — 一站式查閱。',
@@ -2957,13 +2596,6 @@ window._DX_I18N_DICT = {
     'zh-CN': 'async 示例在处理视频时卡住 — 这是部分 async 运行器的已知限制，计划在后续更新中修复。请使用 Sync 模式。如需验证真实行为，请在终端通过 run_demo.sh 直接运行。',
     'zh-TW': 'async 範例在處理影片時卡住 — 這是部分 async 執行器的已知限制，計畫於後續更新中修復。請使用 Sync 模式。如需驗證實際行為，請在終端機透過 run_demo.sh 直接執行。',
     es: 'El ejemplo async se bloqueó al procesar vídeo — una limitación conocida de algunos runners async, con corrección prevista en una futura actualización. Usa el modo Sync. Para verificar el comportamiento real, ejecútalo directamente en una terminal con run_demo.sh.',
-  },
-  'Drag on the image to select a Region of Interest (ROI).✅ Only the selected area will be auto-cropped for inference. Click Apply then Run Inference to infer the ROI only.': {
-    ko: '이미지 위에서 드래그하여 관심 영역(ROI)을 선택하세요.✅ 선택한 영역만 추론을 위해 자동 잘림됩니다. Apply를 클릭한 후 Run Inference를 실행하면 ROI만 추론합니다.',
-    ja: '画像上でドラッグして関心領域 (ROI) を選択してください。✅ 選択した領域のみが推論用に自動クロップされます。Apply をクリックして Run Inference を実行すると ROI のみを推論します。',
-    'zh-CN': '在图片上拖拽选择感兴趣区域 (ROI)。✅ 仅所选区域会被自动裁剪用于推理。点击 Apply 后执行 Run Inference 即可仅对 ROI 进行推理。',
-    'zh-TW': '在影像上拖曳選擇感興趣區域 (ROI)。✅ 僅所選區域會被自動裁切用於推論。點擊 Apply 後執行 Run Inference 即可僅對 ROI 進行推論。',
-    es: 'Arrastre sobre la imagen para seleccionar una Región de Interés (ROI).✅ Solo el área seleccionada se recortará automáticamente para inferencia. Haga clic en Aplicar y luego en Ejecutar inferencia para inferir solo el ROI.',
   },
   'This will permanently delete model source files from disk.': {
     ko: '디스크에서 모델 소스 파일이 영구적으로 삭제됩니다.',
@@ -3635,11 +3267,6 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '输入要发送到进程的内容 (按 Enter)', 'zh-TW': '輸入要傳送至程序的內容 (按 Enter)',
     es: 'Escriba la entrada para enviar al proceso (presione Enter)',
   },
-  '🔍 Search…': {
-    ko: '🔍 검색…', ja: '🔍 検索…',
-    'zh-CN': '🔍 搜索…', 'zh-TW': '🔍 搜尋…',
-    es: '🔍 Buscar…',
-  },
   'Search documentation...': {
     ko: '문서 검색...', ja: 'ドキュメントを検索...',
     es: 'Buscar documentación...',
@@ -3759,11 +3386,6 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': 'DX-APP 基准测试报告', 'zh-TW': 'DX-APP 基準測試報告',
     es: 'Informe de benchmark DX-APP',
   },
-  '📊 DX-APP Benchmark Report': {
-    ko: '📊 DX-APP 벤치마크 리포트', ja: '📊 DX-APP ベンチマークレポート',
-    'zh-CN': '📊 DX-APP 基准测试报告', 'zh-TW': '📊 DX-APP 基準測試報告',
-    es: '📊 Informe de benchmark DX-APP',
-  },
   'Generated: ': {
     ko: '생성일: ', ja: '生成日: ',
     'zh-CN': '生成日期: ', 'zh-TW': '產生日期: ',
@@ -3786,21 +3408,6 @@ window._DX_I18N_PLACEHOLDERS = {
   },
 
   /* Compiler */
-  '⏳ Compiling…': {
-    ko: '⏳ 컴파일 중…', ja: '⏳ コンパイル中…',
-    'zh-CN': '⏳ 编译中…', 'zh-TW': '⏳ 編譯中…',
-    es: '⏳ Compilando…',
-  },
-  '✅ Compilation succeeded': {
-    ko: '✅ 컴파일 성공', ja: '✅ コンパイル成功',
-    'zh-CN': '✅ 编译成功', 'zh-TW': '✅ 編譯成功',
-    es: '✅ Compilación exitosa',
-  },
-  '❌ Compilation failed': {
-    ko: '❌ 컴파일 실패', ja: '❌ コンパイル失敗',
-    'zh-CN': '❌ 编译失败', 'zh-TW': '❌ 編譯失敗',
-    es: '❌ Compilación fallida',
-  },
   'Compilation stopped': {
     ko: '컴파일 중단됨', ja: 'コンパイル停止',
     'zh-CN': '编译已停止', 'zh-TW': '編譯已停止',
@@ -3882,80 +3489,70 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '报告已生成', 'zh-TW': '報告已產生',
     es: 'Informe generado',
   },
-  '📋 Full Output': {
-    ko: '📋 전체 출력', ja: '📋 全出力',
-    'zh-CN': '📋 完整输出', 'zh-TW': '📋 完整輸出',
-    es: '📋 Salida completa',
-  },
-  '🔋 Benchmark Detail — ': {
-    ko: '🔋 벤치마크 상세 — ', ja: '🔋 ベンチマーク詳細 — ',
-    'zh-CN': '🔋 基准测试详情 — ', 'zh-TW': '🔋 基準測試詳情 — ',
-    es: '🔋 Detalle de benchmark — ',
+  'Benchmark Detail — ': {
+    ko: '벤치마크 상세 —', ja: 'ベンチマーク詳細 —',
+    'zh-CN': '基准测试详情 —', 'zh-TW': '基準測試詳情 —',
+    es: 'Detalle de benchmark —',
   },
   'elapsed: ': {
     ko: '경과: ', ja: '経過: ',
     'zh-CN': '已用时间: ', 'zh-TW': '已用時間: ',
     es: 'transcurrido: ',
   },
-  '⚠️ Run Error:': {
-    ko: '⚠️ 실행 오류:', ja: '⚠️ 実行エラー:',
-    'zh-CN': '⚠️ 运行错误:', 'zh-TW': '⚠️ 執行錯誤:',
-    es: '⚠️ Error de ejecución:',
+  'Run Error:': {
+    ko: '실행 오류:', ja: '実行エラー:',
+    'zh-CN': '运行错误:', 'zh-TW': '執行錯誤:',
+    es: 'Error de ejecución:',
   },
-  '⚡ Latency Analysis': {
-    ko: '⚡ 지연시간 분석', ja: '⚡ レイテンシ分析',
-    'zh-CN': '⚡ 延迟分析', 'zh-TW': '⚡ 延遲分析',
-    es: '⚡ Análisis de latencia',
+  'Latency Analysis': {
+    ko: '지연시간 분석', ja: 'レイテンシ分析',
+    'zh-CN': '延迟分析', 'zh-TW': '延遲分析',
+    es: 'Análisis de latencia',
   },
-  '❌ Error Details': {
-    ko: '❌ 오류 상세', ja: '❌ エラー詳細',
-    'zh-CN': '❌ 错误详情', 'zh-TW': '❌ 錯誤詳情',
-    es: '❌ Detalles del error',
+  'Runtime Errors': {
+    ko: '런타임 오류', ja: 'ランタイムエラー',
+    'zh-CN': '运行时错误', 'zh-TW': '執行階段錯誤',
+    es: 'Errores de ejecución',
   },
-  '❌ Runtime Errors': {
-    ko: '❌ 런타임 오류', ja: '❌ ランタイムエラー',
-    'zh-CN': '❌ 运行时错误', 'zh-TW': '❌ 執行階段錯誤',
-    es: '❌ Errores de ejecución',
+  'Accuracy Failures': {
+    ko: '정확도 실패', ja: '精度失敗',
+    'zh-CN': '准确性失败', 'zh-TW': '準確度失敗',
+    es: 'Fallos de precisión',
   },
-  '⚠️ Accuracy Failures': {
-    ko: '⚠️ 정확도 실패', ja: '⚠️ 精度失敗',
-    'zh-CN': '⚠️ 准确性失败', 'zh-TW': '⚠️ 準確度失敗',
-    es: '⚠️ Fallos de precisión',
+  'Power Efficiency (FPS / Watt)': {
+    ko: '전력 효율 (FPS / Watt)', ja: '電力効率 (FPS / Watt)',
+    'zh-CN': '能效比 (FPS / Watt)', 'zh-TW': '能效比 (FPS / Watt)',
+    es: 'Eficiencia energética (FPS / Watt)',
   },
-  '🏅 Power Efficiency (FPS / Watt)': {
-    ko: '🏅 전력 효율 (FPS / Watt)', ja: '🏅 電力効率 (FPS / Watt)',
-    'zh-CN': '🏅 能效比 (FPS / Watt)', 'zh-TW': '🏅 能效比 (FPS / Watt)',
-    es: '🏅 Eficiencia energética (FPS / Watt)',
+  'Performance Ranking': {
+    ko: '성능 순위', ja: 'パフォーマンスランキング',
+    'zh-CN': '性能排名', 'zh-TW': '效能排名',
+    es: 'Clasificación de rendimiento',
   },
-  '🏆 Performance Ranking': {
-    ko: '🏆 성능 순위', ja: '🏆 パフォーマンスランキング',
-    'zh-CN': '🏆 性能排名', 'zh-TW': '🏆 效能排名',
-    es: '🏆 Clasificación de rendimiento',
+  'Category Summary': {
+    ko: '카테고리 요약', ja: 'カテゴリ概要',
+    'zh-CN': '类别摘要', 'zh-TW': '類別摘要',
+    es: 'Resumen de categoría',
   },
-  '📂 Category Summary': {
-    ko: '📂 카테고리 요약', ja: '📂 カテゴリ概要',
-    'zh-CN': '📂 类别摘要', 'zh-TW': '📂 類別摘要',
-    es: '📂 Resumen de categoría',
+  'FPS vs Latency': {
+    ko: 'FPS 대 지연시간', ja: 'FPS vs レイテンシ',
+    'zh-CN': 'FPS 与延迟', 'zh-TW': 'FPS 與延遲',
+    es: 'FPS vs Latencia',
   },
-  '📈 FPS vs Latency': {
-    ko: '📈 FPS 대 지연시간', ja: '📈 FPS vs レイテンシ',
-    'zh-CN': '📈 FPS 与延迟', 'zh-TW': '📈 FPS 與延遲',
-    es: '📈 FPS vs Latencia',
+  'Hardware Resources (Post-Run)': {
+    ko: '하드웨어 리소스 (실행 후)', ja: 'ハードウェアリソース (実行後)',
+    'zh-CN': '硬件资源 (运行后)', 'zh-TW': '硬體資源 (執行後)',
+    es: 'Recursos de hardware (post-ejecución)',
   },
-  '🔧 Hardware Resources (Post-Run)': {
-    ko: '🔧 하드웨어 리소스 (실행 후)', ja: '🔧 ハードウェアリソース (実行後)',
-    'zh-CN': '🔧 硬件资源 (运行后)', 'zh-TW': '🔧 硬體資源 (執行後)',
-    es: '🔧 Recursos de hardware (post-ejecución)',
+  'Environment': {
+    ko: '환경', ja: '環境',
+    'zh-CN': '环境', 'zh-TW': '環境',
+    es: 'Entorno',
   },
-  '🖥️ Environment': {
-    ko: '🖥️ 환경', ja: '🖥️ 環境',
-    'zh-CN': '🖥️ 环境', 'zh-TW': '🖥️ 環境',
-    es: '🖥️ Entorno',
-  },
-  '🖼️ Result Gallery': {
-    ko: '🖼️ 결과 갤러리', ja: '🖼️ 結果ギャラリー',
-    'zh-CN': '🖼️ 结果画廊', 'zh-TW': '🖼️ 結果圖庫',
-    es: '🖼️ Galería de resultados',
+  'Result Gallery': {
+    ko: '결과 갤러리', ja: '結果ギャラリー',
+    'zh-CN': '结果画廊', 'zh-TW': '結果圖庫',
+    es: 'Galería de resultados',
   },
 
   'All Tasks': {
@@ -3978,10 +3575,10 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '无可视化结果', 'zh-TW': '無可視化結果',
     es: 'Sin resultado visual',
   },
-  'Select a model and click ▶ Run All': {
-    ko: '모델을 선택하고 ▶ 전체 실행을 클릭하세요', ja: 'モデルを選択して ▶ 全て実行 をクリックしてください',
-    'zh-CN': '选择模型并点击 ▶ 全部运行', 'zh-TW': '選擇模型並點擊 ▶ 全部執行',
-    es: 'Seleccione un modelo y haga clic en ▶ Ejecutar todo',
+  'Select a model and click Run All': {
+    ko: '모델을 선택하고 전체 실행을 클릭하세요', ja: 'モデルを選択して 全て実行 をクリックしてください',
+    'zh-CN': '选择模型并点击 全部运行', 'zh-TW': '選擇模型並點擊 全部執行',
+    es: 'Seleccione un modelo y haga clic en Ejecutar todo',
   },
   'Task Filter': {
     ko: '태스크 필터', ja: 'Taskフィルター',
@@ -4088,16 +3685,6 @@ window._DX_I18N_PLACEHOLDERS = {
     ko: '모델 이름에 특수 문자가 포함되어 "', ja: 'モデル名に特殊文字が含まれているため "',
     es: 'El nombre del modelo contiene caracteres especiales y se guardará como "',
     'zh-CN': '模型名称包含特殊字符，将保存为 "', 'zh-TW': '模型名稱包含特殊字元，將儲存為 "'
-  },
-  '⚠️ Status check failed': {
-    ko: '⚠️ 상태 확인 실패', ja: '⚠️ ステータス確認失敗',
-    'zh-CN': '⚠️ 状态检查失败', 'zh-TW': '⚠️ 狀態檢查失敗',
-    es: '⚠️ Verificación de estado fallida',
-  },
-  '📊 Navigating to Benchmark — "': {
-    ko: '📊 벤치마크로 이동 — "', ja: '📊 ベンチマークに移動 — "',
-    es: '📊 Navegando a Benchmark — "',
-    'zh-CN': '📊 正在导航到基准测试 — "', 'zh-TW': '📊 前往基準測試 — "'
   },
 
   'Authenticated': {
@@ -4256,30 +3843,25 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '来写第一篇帖子吧！', 'zh-TW': '來撰寫第一篇貼文吧！',
     es: '¡Escriba la primera publicación!',
   },
-  '⏳ Loading…': {
-    ko: '⏳ 불러오는 중…', ja: '⏳ 読み込み中…',
-    'zh-CN': '⏳ 加载中…', 'zh-TW': '⏳ 載入中…',
-    es: '⏳ Cargando…',
+  'Failed to load. Please check the server.': {
+    ko: '불러오기 실패. 서버를 확인하세요.', ja: '読み込みに失敗しました。サーバーを確認してください。',
+    'zh-CN': '加载失败，请检查服务器。', 'zh-TW': '載入失敗，請檢查伺服器。',
+    es: 'Error al cargar. Por favor verifique el servidor.',
   },
-  '⚠️ Failed to load. Please check the server.': {
-    ko: '⚠️ 불러오기 실패. 서버를 확인하세요.', ja: '⚠️ 読み込みに失敗しました。サーバーを確認してください。',
-    'zh-CN': '⚠️ 加载失败，请检查服务器。', 'zh-TW': '⚠️ 載入失敗，請檢查伺服器。',
-    es: '⚠️ Error al cargar. Por favor verifique el servidor.',
+  'Submit': {
+    ko: '등록', ja: '送信',
+    'zh-CN': '提交', 'zh-TW': '提交',
+    es: 'Enviar',
   },
-  '✅ Submit': {
-    ko: '✅ 등록', ja: '✅ 送信',
-    'zh-CN': '✅ 提交', 'zh-TW': '✅ 提交',
-    es: '✅ Enviar',
+  'Recommend': {
+    ko: '추천', ja: 'おすすめ',
+    'zh-CN': '推荐', 'zh-TW': '推薦',
+    es: 'Recomendar',
   },
-  '👍 Recommend': {
-    ko: '👍 추천', ja: '👍 おすすめ',
-    'zh-CN': '👍 推荐', 'zh-TW': '👍 推薦',
-    es: '👍 Recomendar',
-  },
-  '💬 Comments': {
-    ko: '💬 댓글', ja: '💬 コメント',
-    'zh-CN': '💬 评论', 'zh-TW': '💬 留言',
-    es: '💬 Comentarios',
+  'Comments': {
+    ko: '댓글', ja: 'コメント',
+    'zh-CN': '评论', 'zh-TW': '留言',
+    es: 'Comentarios',
   },
 
   ' (unavailable)': {
@@ -4422,50 +4004,30 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '— 选择类别 —', 'zh-TW': '— 選擇類別 —',
     es: '— Seleccionar categoría —',
   },
-  '❌ Error: ': {
-    ko: '❌ 오류: ', ja: '❌ エラー: ',
-    'zh-CN': '❌ 错误: ', 'zh-TW': '❌ 錯誤: ',
-    es: '❌ Error: ',
+  'No result video was generated': {
+    ko: '결과 비디오가 생성되지 않았습니다', ja: '結果ビデオが生成されませんでした',
+    'zh-CN': '未生成结果视频', 'zh-TW': '未產生結果影片',
+    es: 'No se generó vídeo de resultado',
   },
-  'ℹ️ No result video was generated': {
-    ko: 'ℹ️ 결과 비디오가 생성되지 않았습니다', ja: 'ℹ️ 結果ビデオが生成されませんでした',
-    'zh-CN': 'ℹ️ 未生成结果视频', 'zh-TW': 'ℹ️ 未產生結果影片',
-    es: 'ℹ️ No se generó vídeo de resultado',
+  'Waiting…': {
+    ko: '대기 중…', ja: '待機中…',
+    'zh-CN': '等待中…', 'zh-TW': '等待中…',
+    es: 'Esperando…',
   },
-  '⏳ Processing...': {
-    ko: '⏳ 처리 중...', ja: '⏳ 処理中...',
-    'zh-CN': '⏳ 处理中...', 'zh-TW': '⏳ 處理中...',
-    es: '⏳ Procesando...',
-  },
-  '⏳ Waiting…': {
-    ko: '⏳ 대기 중…', ja: '⏳ 待機中…',
-    'zh-CN': '⏳ 等待中…', 'zh-TW': '⏳ 等待中…',
-    es: '⏳ Esperando…',
-  },
-  '⏹ Stopped': {
-    ko: '⏹ 중지됨', ja: '⏹ 停止',
-    'zh-CN': '⏹ 已停止', 'zh-TW': '⏹ 已停止',
-    es: '⏹ Detenido',
-  },
-  '▶ Press Start to begin inference': {
-    ko: '▶ 시작 버튼을 눌러 추론을 시작하세요', ja: '▶ 開始ボタンを押して推論を開始してください',
-    'zh-CN': '▶ 按“开始”按钮以开始推理', 'zh-TW': '▶ 按「開始」按鈕以開始推論',
-    es: '▶ Presione Iniciar para comenzar la inferencia',
+  'Press Start to begin inference': {
+    ko: '시작 버튼을 눌러 추론을 시작하세요', ja: '開始ボタンを押して推論を開始してください',
+    'zh-CN': '按“开始”按钮以开始推理', 'zh-TW': '按「開始」按鈕以開始推論',
+    es: 'Presione Iniciar para comenzar la inferencia',
   },
   'Inference exited abnormally (exit code: ': {
     ko: '추론이 비정상적으로 종료되었습니다 (종료 코드: ', ja: '推論が異常終了しました（終了コード: ',
     'zh-CN': '推理异常退出（退出代码: ', 'zh-TW': '推論異常結束（結束代碼: ',
     es: 'La inferencia terminó de forma anormal (código de salida: ',
   },
-  '✅ Extraction complete! Output: ': {
-    ko: '✅ 추출 완료! 출력: ', ja: '✅ 抽出完了！出力: ',
-    'zh-CN': '✅ 提取完成！输出: ', 'zh-TW': '✅ 擷取完成！輸出: ',
-    es: '✅ ¡Extracción completa! Salida: ',
-  },
-  '✅ ROI selected': {
-    ko: '✅ ROI 선택됨', ja: '✅ ROI 選択済み',
-    'zh-CN': '✅ ROI 已选择', 'zh-TW': '✅ ROI 已選擇',
-    es: '✅ ROI seleccionado',
+  'Extraction complete! Output: ': {
+    ko: '추출 완료! 출력:', ja: '抽出完了！出力:',
+    'zh-CN': '提取完成！输出:', 'zh-TW': '擷取完成！輸出:',
+    es: '¡Extracción completa! Salida:',
   },
   'Enhancement Result: outputs the image with improved brightness and contrast.': {
     ko: 'Enhancement 결과: 밝기와 대비가 개선된 이미지를 출력합니다.', ja: 'Enhancement 結果: 明るさとコントラストが改善された画像を出力します。',
@@ -4487,11 +4049,6 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': 'Instance Segmentation：绘制逐实例颜色掩码 + 边界框 + 类别标签。', 'zh-TW': 'Instance Segmentation：繪製逐實例顏色遮罩 + 邊界框 + 類別標籤。',
     es: 'Segmentación de instancias: dibuja máscaras de color por instancia + cuadros delimitadores + etiquetas de clase.',
   },
-  '🎯 ROI applied — only the selected region was inferred.': {
-    ko: '🎯 ROI 적용됨 — 선택한 영역만 추론되었습니다.', ja: '🎯 ROI 適用済み — 選択された領域のみ推論されました。',
-    'zh-CN': '🎯 ROI 已应用 — 仅对选定区域进行了推理。', 'zh-TW': '🎯 ROI 已套用 — 僅對選定區域進行了推論。',
-    es: '🎯 ROI aplicado — solo se infirió la región seleccionada.',
-  },
   'Pose Estimation: draws skeleton (joint connections) and keypoints. Low-confidence keypoints may be omitted.': {
     ko: 'Pose Estimation: 스켈레톤(관절 연결)과 키포인트를 표시합니다. 신뢰도가 낮은 키포인트는 생략될 수 있습니다.', ja: 'Pose Estimation: スケルトン（関節接続）とキーポイントを描画します。信頼度の低いキーポイントは省略される場合があります。',
     'zh-CN': 'Pose Estimation：绘制骨架（关节连接）和关键点。低置信度关键点可能会被省略。', 'zh-TW': 'Pose Estimation：繪製骨架（關節連接）和關鍵點。低信賴度關鍵點可能會被省略。',
@@ -4512,11 +4069,6 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '任务摘要 (', 'zh-TW': '任務摘要 (',
     es: 'Resumen de tareas (',
   },
-  '📐 Embedding Result: displays vector dimension, first-8 values, and L2 norm as text. Embeddings are feature vectors, not visual detections.': {
-    ko: '📐 Embedding 결과: 벡터 차원, 첫 8개 값, L2 노름을 텍스트로 표시합니다. Embedding은 특징 벡터이며 시각적 검출이 아닙니다.', ja: '📐 Embedding 結果: ベクトル次元、最初の8値、L2ノルムをテキストで表示します。Embedding は特徴ベクトルであり、視覚的な検出ではありません。',
-    'zh-CN': '📐 Embedding 结果：以文本形式显示向量维度、前 8 个值和 L2 范数。Embedding 是特征向量，不是视觉检测。', 'zh-TW': '📐 Embedding 結果：以文字形式顯示向量維度、前 8 個值和 L2 範數。Embedding 是特徵向量，不是視覺偵測。',
-    es: '📐 Resultado de incrustación: muestra la dimensión del vector, los primeros 8 valores y la norma L2 como texto. Las incrustaciones son vectores de características, no detecciones visuales.',
-  },
   'Embedding Result: side-by-side reference vs current image with cosine similarity (SAME / DIFFERENT).': {
     ko: 'Embedding 결과: 기준/현재 이미지를 나란히 표시하고 코사인 유사도(SAME / DIFFERENT)를 보여줍니다.', ja: 'Embedding 結果: 参照画像と現在画像を並べて表示し、コサイン類似度（SAME / DIFFERENT）を示します。',
     'zh-CN': 'Embedding 结果：并排显示参考图与当前图，并展示余弦相似度（SAME / DIFFERENT）。', 'zh-TW': 'Embedding 結果：並排顯示參考圖與目前圖，並展示餘弦相似度（SAME / DIFFERENT）。',
@@ -4536,11 +4088,6 @@ window._DX_I18N_PLACEHOLDERS = {
     ko: 'Super Resolution 결과: 업스케일된 이미지를 출력합니다. ESPCN은 Y 채널을 처리하고 색상을 복원합니다.', ja: 'Super Resolution 結果: アップスケールされた画像を出力します。ESPCN は Y チャネルを処理し、色を復元します。',
     'zh-CN': 'Super Resolution 结果：输出放大后的图像。ESPCN 处理 Y 通道并恢复色彩。', 'zh-TW': 'Super Resolution 結果：輸出放大後的影像。ESPCN 處理 Y 通道並恢復色彩。',
     es: 'Resultado de super resolución: genera la imagen escalada. ESPCN procesa el canal Y y restaura el color.',
-  },
-  '🖼️ Cropped Input': {
-    ko: '🖼️ 크롭된 입력', ja: '🖼️ クロップされた入力',
-    'zh-CN': '🖼️ 裁剪后的输入', 'zh-TW': '🖼️ 裁剪後的輸入',
-    es: '🖼️ Entrada recortada',
   },
   'Face Alignment: draws 3D facial landmark points.': {
     ko: 'Face Alignment: 3D 얼굴 랜드마크 포인트를 표시합니다.', ja: 'Face Alignment: 3D 顔ランドマークポイントを描画します。',
@@ -4918,30 +4465,30 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': 'Zero-DCE 低光照图像增强。零参考学习。', 'zh-TW': 'Zero-DCE 低光照影像增強。零參考學習。',
     es: 'Mejora de imágenes con poca luz Zero-DCE. Aprendizaje sin referencia.',
   },
-  '⚙️ Postprocessors': {
-    ko: '⚙️ 후처리기', ja: '⚙️ ポストプロセッサー',
-    'zh-CN': '⚙️ 后处理器', 'zh-TW': '⚙️ 後處理器',
-    es: '⚙️ Post-procesadores',
+  'Postprocessors': {
+    ko: '후처리기', ja: 'ポストプロセッサー',
+    'zh-CN': '后处理器', 'zh-TW': '後處理器',
+    es: 'Post-procesadores',
   },
-  '👁️ Visualization': {
-    ko: '👁️ 시각화', ja: '👁️ 可視化',
-    'zh-CN': '👁️ 可视化', 'zh-TW': '👁️ 視覺化',
-    es: '👁️ Visualización',
+  'Visualization': {
+    ko: '시각화', ja: '可視化',
+    'zh-CN': '可视化', 'zh-TW': '視覺化',
+    es: 'Visualización',
   },
-  '📄 Full Config (config.json)': {
-    ko: '📄 전체 설정 (config.json)', ja: '📄 全設定 (config.json)',
-    'zh-CN': '📄 完整配置 (config.json)', 'zh-TW': '📄 完整設定 (config.json)',
-    es: '📄 Configuración completa (config.json)',
+  'Full Config (config.json)': {
+    ko: '전체 설정 (config.json)', ja: '全設定 (config.json)',
+    'zh-CN': '完整配置 (config.json)', 'zh-TW': '完整設定 (config.json)',
+    es: 'Configuración completa (config.json)',
   },
-  '📋 Basic Info': {
-    ko: '📋 기본 정보', ja: '📋 基本情報',
-    'zh-CN': '📋 基本信息', 'zh-TW': '📋 基本資訊',
-    es: '📋 Información básica',
+  'Basic Info': {
+    ko: '기본 정보', ja: '基本情報',
+    'zh-CN': '基本信息', 'zh-TW': '基本資訊',
+    es: 'Información básica',
   },
-  '🔧 Preprocessing': {
-    ko: '🔧 전처리', ja: '🔧 前処理',
-    'zh-CN': '🔧 预处理', 'zh-TW': '🔧 預處理',
-    es: '🔧 Pre-procesamiento',
+  'Preprocessing': {
+    ko: '전처리', ja: '前処理',
+    'zh-CN': '预处理', 'zh-TW': '預處理',
+    es: 'Pre-procesamiento',
   },
 
   'Add Q-Lite to cart': {
@@ -5044,10 +4591,10 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '个模型', 'zh-TW': '個模型',
     es: 'modelo(s)',
   },
-  '✅ All done!': {
-    ko: '✅ 모두 완료!', ja: '✅ 全て完了！',
-    'zh-CN': '✅ 全部完成！', 'zh-TW': '✅ 全部完成！',
-    es: '✅ ¡Todo listo!',
+  'All done!': {
+    ko: '모두 완료!', ja: '全て完了！',
+    'zh-CN': '全部完成！', 'zh-TW': '全部完成！',
+    es: '¡Todo listo!',
   },
 
   'Archives': {
@@ -5106,30 +4653,15 @@ window._DX_I18N_PLACEHOLDERS = {
     'zh-CN': '正在对 ', 'zh-TW': '正在對 ',
     es: 'Ejecutando inferencia de etapa-2 en ',
   },
-  '⏳ Queued': {
-    ko: '⏳ 대기 중', ja: '⏳ キュー待ち',
-    'zh-CN': '⏳ 排队中', 'zh-TW': '⏳ 排隊中',
-    es: '⏳ En cola',
+  'Done': {
+    ko: '완료', ja: '完了',
+    'zh-CN': '完成', 'zh-TW': '完成',
+    es: 'Hecho',
   },
-  '✅ Done': {
-    ko: '✅ 완료', ja: '✅ 完了',
-    'zh-CN': '✅ 完成', 'zh-TW': '✅ 完成',
-    es: '✅ Hecho',
-  },
-  '❌ Failed': {
-    ko: '❌ 실패', ja: '❌ 失敗',
-    'zh-CN': '❌ 失败', 'zh-TW': '❌ 失敗',
-    es: '❌ Fallido',
-  },
-  '⏳ Running...': {
-    ko: '⏳ 실행 중...', ja: '⏳ 実行中...',
-    'zh-CN': '⏳ 运行中...', 'zh-TW': '⏳ 執行中...',
-    es: '⏳ Ejecutando...',
-  },
-  '⏳ Running…': {
-    ko: '⏳ 실행 중…', ja: '⏳ 実行中…',
-    'zh-CN': '⏳ 运行中…', 'zh-TW': '⏳ 執行中…',
-    es: '⏳ Ejecutando…',
+  'Running…': {
+    ko: '실행 중…', ja: '実行中…',
+    'zh-CN': '运行中…', 'zh-TW': '執行中…',
+    es: 'Ejecutando…',
   },
 
   'CPU compute — operations running on the CPU': {
@@ -5191,11 +4723,6 @@ window._DX_I18N_PLACEHOLDERS = {
     ko: '총 이벤트', ja: '合計イベント',
     'zh-CN': '总事件数', 'zh-TW': '總事件數',
     es: 'Total de eventos',
-  },
-  '🔴 Top bottlenecks (longest operations):': {
-    ko: '🔴 상위 병목 (가장 오래 걸린 연산):', ja: '🔴 トップボトルネック（最も時間がかかった処理）:',
-    'zh-CN': '🔴 主要瓶颈（耗时最长的操作）：', 'zh-TW': '🔴 主要瓶頸（耗時最長的操作）：',
-    es: '🔴 Principales cuellos de botella (operaciones más largas):',
   },
 
   /* ==== Lab Portal ==== */

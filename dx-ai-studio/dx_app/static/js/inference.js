@@ -109,6 +109,14 @@ function _invalidateRunMediaCache(cat){
   else{_runMediaCache={};_runMediaPending={};}
 }
 
+/* 아이콘 + 글자를 바뀔 때만 다시 쓴다 (폴링마다 DOM 을 갈지 않는다, 아이콘 체계 단계 5). */
+function setLabelIfChanged(el,icon,text){
+  if(!el)return;
+  var key=icon+'|'+text;
+  if(el.dataset.dxLabel===key)return;
+  el.dataset.dxLabel=key;
+  if(typeof DXIcon==='function'&&DXIcon.label)DXIcon.label(el,icon,text);else el.textContent=text;
+}
 function setTextIfChanged(el,text){
   if(el&&el.textContent!==text)el.textContent=text;
 }
@@ -344,7 +352,7 @@ function _renderRunMedia(cat,media){
           +'<div class="img-data-ph"><span class="img-data-ext">'+esc(ext)+'</span><span class="img-data-name">'+esc(fn)+'</span></div></div>';
       }
       var thumb=_runMediaThumb(p);
-      var badge=isDir?'<span class="img-dir-badge">📁</span>':'';
+      var badge=isDir?'<span class="img-dir-badge">' + DXIcon('folder') + '</span>':'';
       return '<div class="img-item'+sel+'" onclick="pickImg(this,\''+p+'\')" title="'+fn+'">'
         +badge+'<img src="/file/'+thumb+'" alt="'+fn+'" loading="lazy"/></div>';
     }).join('')||'<p class="txt-dim">'+T('No images')+'</p>';
@@ -440,11 +448,11 @@ async function doRun(){
   if(_runInFlight){toast(T('Run already in progress'),'warn');return}
   const model=$('r-model').value;if(!model){toast(T('Select a model'),'warn');return}
   const m=findModel(model);if(!m){toast(T('Model not found'),'err');return}
-  if(!m.model_file){toast(T('⚠ Model file not configured for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('Model file not configured.')+'<br><span class="txt-dim">'+T('Please configure model file in Developer mode.')+'</span></p>';return}
-  if(m.model_exists===false){toast(T('⚠ Model file missing: ')+m.model_file,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('Model file not found')+'<br><code style="font-size:11px;color:var(--text-muted)">'+esc(m.model_file)+'</code><br><span class="txt-dim">'+T('Model file (.dxnn) does not exist. Please compile and try again.')+'</span></p>';return}
+  if(!m.model_file){toast(T('Model file not configured for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">' + DXIcon('x') + ' '+T('Model file not configured.')+'<br><span class="txt-dim">'+T('Please configure model file in Developer mode.')+'</span></p>';return}
+  if(m.model_exists===false){toast(T('Model file missing: ')+m.model_file,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">' + DXIcon('x') + ' '+T('Model file not found')+'<br><code style="font-size:11px;color:var(--text-muted)">'+esc(m.model_file)+'</code><br><span class="txt-dim">'+T('Model file (.dxnn) does not exist. Please compile and try again.')+'</span></p>';return}
   const lang=$('r-lang').value;
-  if(lang==='cpp'&&!m.cpp){toast(T('⚠ C++ binary not built for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('C++ binary has not been built.')+'<br><span class="txt-dim">'+T('Run <code>make</code> build first or switch to Python.')+'</span></p>';return}
-  if(lang==='python'&&!m.python){toast(T('⚠ Python app not found for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">\u274c '+T('Python app not found.')+'<br><span class="txt-dim">'+T('Switch to C++ or add a Python app.')+'</span></p>';return}
+  if(lang==='cpp'&&!m.cpp){toast(T('C++ binary not built for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">' + DXIcon('x') + ' '+T('C++ binary has not been built.')+'<br><span class="txt-dim">'+T('Run <code>make</code> build first or switch to Python.')+'</span></p>';return}
+  if(lang==='python'&&!m.python){toast(T('Python app not found for ')+model,'err');$('r-result').innerHTML='<p style="color:var(--status-error)">' + DXIcon('x') + ' '+T('Python app not found.')+'<br><span class="txt-dim">'+T('Switch to C++ or add a Python app.')+'</span></p>';return}
   const isImg=$('r-input-img').checked;
   const inputType=isImg?'image':'video';
   if(isImg&&!S.selectedImage&&!S.uploadedImage){toast(T('Please select or upload an image'),'warn');return}
@@ -728,23 +736,23 @@ async function doExportFromRun(){
   var m=findModel(model);if(!m){toast(T('Model not found'),'err');return}
   var lang=$('r-export-lang').value;
   var path=m.category+'/'+model;
-  var btn=$('r-export-btn');btn.disabled=true;btn.textContent='⏳ '+T('Extracting...');
+  var btn=$('r-export-btn');btn.disabled=true;DXIcon.label(btn,'spinner',T('Extracting...'));
   $('r-export-out').classList.remove('hidden');$('r-export-out').textContent=T('Extracting package: ')+path+'\n...';
   var res=await postJ('/api/extract',{model_path:path,lang:lang});
-  btn.disabled=false;btn.textContent='📦 '+T('Export');
+  btn.disabled=false;DXIcon.label(btn,'models',T('Export'));
   if(res.ok){
-    var txt=T('✅ Extraction complete! Output: ')+res.output_dir+'\n\n';
+    var txt=DXIcon('check')+' '+T('Extraction complete! Output: ')+res.output_dir+'\n\n';
     (res.results||[]).forEach(function(r){
-      txt+='['+r.lang+'] '+(r.ok?'✅ OK':'❌ FAIL')+'\n';
+      txt+='['+r.lang+'] '+(r.ok?DXIcon('check') + ' OK':DXIcon('x') + ' FAIL')+'\n';
       if(r.output)txt+=r.output+'\n';
     });
     if(res.download_url){
-      txt+='\n📦 Download: '+res.download_url+'\n';
+      txt+='\n' + DXIcon('models') + ' Download: '+res.download_url+'\n';
     }
-    $('r-export-out').innerHTML=esc(txt)+(res.download_url?'<br><a class="btn btn-sm btn-acc" href="'+res.download_url+'" download style="margin-top:8px;display:inline-block">⬇️ '+T('Download .tar.gz')+'</a>':'');
+    $('r-export-out').innerHTML=esc(txt)+(res.download_url?'<br><a class="btn btn-sm btn-acc" href="'+res.download_url+'" download style="margin-top:8px;display:inline-block">' + DXIcon('download') + ' '+T('Download .tar.gz')+'</a>':'');
     toast(T('Package ready for download'),'ok',{duration:5000,action:res.download_url?{label:T('Download'),url:res.download_url,fn:function(){window.open(res.download_url)}}:null});
   }else{
-    $('r-export-out').textContent=T('❌ Error: ')+(res.error||T('Unknown'));
+    DXIcon.label($('r-export-out'),'x',T('Error: '))+(res.error||T('Unknown'));
     toast(res.error||T('Extraction failed'),'err');
   }
 }
@@ -830,7 +838,7 @@ function contRenderGrid(){
     h+='<span class="cont-badge cb-fps" id="c-fps-'+i+'"></span>';
     h+='<span class="cont-badge cb-status" id="c-status-'+i+'"></span>';
     h+='</div>';
-    h+='<div class="cont-ph" id="c-ph-'+i+'">'+(CONT.running?T('⏳ Waiting…'):T('▶ Press Start to begin inference'))+'</div>';
+    h+='<div class="cont-ph" id="c-ph-'+i+'">'+(CONT.running?DXIcon('spinner')+' '+T('Waiting…'):DXIcon('play')+' '+T('Press Start to begin inference'))+'</div>';
     h+='</div>';
   }
   grid.innerHTML=h;
@@ -874,7 +882,7 @@ async function contStart(){
     var slot=$('c-slot-'+i);
     if(slot){slot.className='cont-slot processing'}
     var statusEl=$('c-status-'+i);
-    if(statusEl)statusEl.textContent=T('⏳ Processing...');
+    if(statusEl)DXIcon.label(statusEl,'spinner',T('Processing...'));
     var phEl=$('c-ph-'+i);
     if(phEl)phEl.innerHTML='<div class="spin"></div><p class="txt-dim mt8">'+esc(sl.model)+T(' running inference…')+'</p>';
     var body={
@@ -900,13 +908,13 @@ function contShowResult(idx,res,modelName){
   if(!slot)return;
   if(res.error){
     slot.className='cont-slot error';
-    setTextIfChanged(statusEl,T('❌ Error'));
+    setLabelIfChanged(statusEl,'x',T('Error'));
     var phEl=$('c-ph-'+idx);
-    if(phEl)phEl.innerHTML='<p style="color:var(--status-error);font-size:12px;padding:12px">❌ '+esc(translatedError(res))+'</p>';
+    if(phEl)phEl.innerHTML='<p style="color:var(--status-error);font-size:12px;padding:12px">' + DXIcon('x') + ' '+esc(translatedError(res))+'</p>';
     return;
   }
   slot.className='cont-slot done';
-  setTextIfChanged(statusEl,T('✅ Done'));
+  setLabelIfChanged(statusEl,'check',T('Done'));
   if(res.fps)setTextIfChanged(fpsEl,res.fps+' FPS');
   var content='';
   if(res.result_video_url){
@@ -914,7 +922,7 @@ function contShowResult(idx,res,modelName){
   }else if(res.result_image){
     content='<img src="data:image/jpeg;base64,'+res.result_image+'" style="width:100%;display:block;border-radius:var(--radius)"/>';
   }else{
-    content='<div class="cont-ph">'+T('ℹ️ No result video was generated')+'</div>';
+    content='<div class="cont-ph">'+DXIcon('info')+' '+T('No result video was generated')+'</div>';
   }
   // Keep overlay, replace content
   var overlay=slot.querySelector('.cont-overlay');
@@ -923,7 +931,7 @@ function contShowResult(idx,res,modelName){
   var ov=slot.querySelector('.cont-overlay');
   if(!ov){
     ov=document.createElement('div');ov.className='cont-overlay';
-    ov.innerHTML='<span class="cont-badge cb-model">'+esc(modelName)+'</span><span class="cont-badge cb-fps" id="c-fps-'+idx+'">'+(res.fps?res.fps+' FPS':'')+'</span><span class="cont-badge cb-status" id="c-status-'+idx+'">'+T('✅ Done')+'</span>';
+    ov.innerHTML='<span class="cont-badge cb-model">'+esc(modelName)+'</span><span class="cont-badge cb-fps" id="c-fps-'+idx+'">'+(res.fps?res.fps+' FPS':'')+'</span><span class="cont-badge cb-status" id="c-status-'+idx+'">'+DXIcon('check')+' '+T('Done')+'</span>';
     slot.insertBefore(ov,slot.firstChild);
   }
 }
@@ -943,7 +951,7 @@ function contFinish(results){
     results.forEach(function(r,i){
       if(!r)return;
       var col=r.error?'var(--status-error)':'var(--accent)';
-      var icon=r.error?'❌':'✅';
+      var icon=r.error?DXIcon('x'):DXIcon('check');
       h+='<div class="pcard"><div class="pv" style="color:'+col+'">'+icon+'</div><div class="pk">'+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+'</div></div>';
       if(r.fps)h+='<div class="pcard"><div class="pv txt-acc">'+r.fps+'</div><div class="pk">FPS</div></div>';
       if(r.latency)h+='<div class="pcard"><div class="pv">'+r.latency+'ms</div><div class="pk">Latency</div></div>';
@@ -954,7 +962,7 @@ function contFinish(results){
     results.forEach(function(r,i){
       if(!r||r.error)return;
       if(r.task_tag&&r.task_summary){
-        h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">📊 '+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+' ('+r.task_tag+')</div>';
+        h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">' + DXIcon('dashboard') + ' '+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+' ('+r.task_tag+')</div>';
         h+=renderTaskSummary(r.task_tag,r.task_summary)+'</div>';
       }else if(r.det_summary&&Object.keys(r.det_summary).length){
         h+='<div class="mt8"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">'+(CONT.slots[i]?CONT.slots[i].model:'Slot '+i)+'</div>';
@@ -985,7 +993,8 @@ async function contStop(){
   document.querySelectorAll('#c-grid video').forEach(function(v){v.pause()});
   CONT.slots.forEach(function(sl,i){
     var statusEl=$('c-status-'+i);
-    if(statusEl&&(statusEl.textContent==='⏳ Processing...'||statusEl.textContent==='⏳ 처리 중...'))statusEl.textContent=T('⏹ Stopped');
+    /* 아직 '처리 중' 이면 (아이콘 + 번역된 말) 중지로 바꾼다 */
+    if(statusEl&&statusEl.textContent.trim()===T('Processing...'))DXIcon.label(statusEl,'stop',T('Stopped'));
     var slot=$('c-slot-'+i);
     if(slot&&slot.classList.contains('processing')){slot.className='cont-slot'}
   });
@@ -1247,7 +1256,7 @@ function contShowSummary(){
         h+='</div>';
       }
     }else if(result&&result.error){
-      h+='<p style="color:var(--status-error);font-size:12px">❌ '+esc(result.error)+'</p>';
+      h+='<p style="color:var(--status-error);font-size:12px">' + DXIcon('x') + ' '+esc(result.error)+'</p>';
     }else{
       h+='<p style="color:var(--text-muted);font-size:12px">'+T('No result data.')+'</p>';
     }

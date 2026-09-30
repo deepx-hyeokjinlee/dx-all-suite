@@ -33,8 +33,8 @@ function _fmtTs(ts) {
 /* ── Category badge HTML ──────────────────────────────────── */
 function _catBadge(cat) {
   return cat === 'ask_deepx'
-    ? '<span class="fcbadge fcbadge-ask">🏢 '+T('Ask DeepX')+'</span>'
-    : '<span class="fcbadge fcbadge-comm">💬 '+T('Community')+'</span>';
+    ? '<span class="fcbadge fcbadge-ask">'+T('Ask DeepX')+'</span>'
+    : '<span class="fcbadge fcbadge-comm">' + DXIcon('chat') + ' '+T('Community')+'</span>';
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -43,7 +43,7 @@ function _catBadge(cat) {
 async function loadForum() {
   const area = $('forum-list-area');
   if (!area) return;
-  area.innerHTML = '<div class="forum-state">'+T('⏳ Loading…')+'</div>';
+  area.innerHTML = '<div class="forum-state">'+DXIcon('spinner')+' '+T('Loading…')+'</div>';
 
   const params = new URLSearchParams({ sort: _forumSort });
   if (_forumCat) params.set('category', _forumCat);
@@ -57,7 +57,7 @@ async function loadForum() {
     if (!posts.length) {
       area.innerHTML = `
         <div class="forum-state" style="padding:60px 20px">
-          <div style="font-size:40px;margin-bottom:12px">📭</div>
+          <div style="font-size:40px;margin-bottom:12px"></div>
           <div style="font-weight:700;color:var(--text-primary);margin-bottom:6px">${T('No posts yet')}</div>
           <div style="font-size:12px">${T('Write the first post!')}</div>
         </div>`;
@@ -73,14 +73,14 @@ async function loadForum() {
         <div class="forum-item-title">${esc(p.title)}</div>
         ${p.body_preview ? `<div class="forum-item-preview">${esc(p.body_preview)}${p.body_preview.length >= 150 ? '…' : ''}</div>` : ''}
         <div class="forum-item-footer">
-          <span class="forum-meta-chip">👤 ${esc(p.author)}</span>
-          <span class="forum-meta-chip">👍 ${p.likes}</span>
-          <span class="forum-meta-chip">💬 ${p.comment_count}</span>
+          <span class="forum-meta-chip">${esc(p.author)}</span>
+          <span class="forum-meta-chip">${DXIcon('check')} ${p.likes}</span>
+          <span class="forum-meta-chip">${DXIcon('chat')} ${p.comment_count}</span>
           ${(p.tags || []).map(t => `<span class="forum-tag-pill">#${esc(t)}</span>`).join('')}
         </div>
       </div>`).join('');
   } catch (e) {
-    area.innerHTML = '<div class="forum-state" style="color:var(--status-error)">'+T('⚠️ Failed to load. Please check the server.')+'</div>';
+    area.innerHTML = '<div class="forum-state" style="color:var(--status-error)">'+DXIcon('alert')+' '+T('Failed to load. Please check the server.')+'</div>';
   }
 }
 
@@ -105,7 +105,7 @@ function forumCat(c) {
 async function openForumPost(id) {
   _ensureFModal();
   const bd = $('fmodal').querySelector('.fmodal-bd');
-  bd.innerHTML = '<div class="forum-state" style="padding:60px 0">'+T('⏳ Loading…')+'</div>';
+  bd.innerHTML = '<div class="forum-state" style="padding:60px 0">'+DXIcon('spinner')+' '+T('Loading…')+'</div>';
   openModal('fmodal');
 
   const post = await api(`/api/forum/posts/${id}`);
@@ -122,7 +122,7 @@ function _ensureFModal() {
     <div class="modal" style="width:740px;max-width:96vw;max-height:92vh;overflow:hidden;display:flex;flex-direction:column">
       <div class="modal-hd" style="flex-shrink:0">
         <span id="fmodal-ttl" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"></span>
-        <button class="modal-x" onclick="$('fmodal').close()">✕</button>
+        <button class="modal-x" onclick="$('fmodal').close()"></button>
       </div>
       <div class="fmodal-bd" style="flex:1;overflow-y:auto;padding:0"></div>
     </div>`;
@@ -138,20 +138,20 @@ function _renderFModal(p) {
   $('fmodal').querySelector('.fmodal-bd').innerHTML = `
     <div style="padding:16px 20px;border-bottom:1px solid var(--border-subtle)">
       <div class="forum-item-footer" style="margin-bottom:10px">
-        <span class="forum-meta-chip">👤 ${esc(p.author)}</span>
-        <span class="forum-meta-chip">🕐 ${_fmtTs(p.created_at)}</span>
+        <span class="forum-meta-chip">${esc(p.author)}</span>
+        <span class="forum-meta-chip">${DXIcon('clock')} ${_fmtTs(p.created_at)}</span>
         ${(p.tags || []).map(t => `<span class="forum-tag-pill">#${esc(t)}</span>`).join('')}
       </div>
       <div class="forum-body-txt">${esc(p.body || '').replace(/\n/g, '<br>')}</div>
       <div style="margin-top:14px">
         <button id="flike-btn" class="btn ${liked ? 'btn-acc' : 'btn-ghost'} btn-sm"
           onclick="forumLikePost('${p.id}')">
-          ${T('👍 Recommend')} <span id="flike-cnt">${(p.likes || []).length}</span>
+          ${DXIcon('check')+' '+T('Recommend')} <span id="flike-cnt">${(p.likes || []).length}</span>
         </button>
       </div>
     </div>
     <div style="padding:16px 20px">
-      <div class="forum-cmt-hdr">${T('💬 Comments')} <span id="fmodal-cmt-cnt">${(p.comments || []).length}</span>${T('comment count suffix')}</div>
+      <div class="forum-cmt-hdr">${DXIcon('chat')+' '+T('Comments')} <span id="fmodal-cmt-cnt">${(p.comments || []).length}</span>${T('comment count suffix')}</div>
       <div id="fmodal-cmts">
         ${(p.comments || []).map(c => _renderCmt(c, p.id)).join('')}
       </div>
@@ -173,14 +173,14 @@ function _renderCmt(c, postId) {
   return `
     <div class="forum-cmt" id="fcmt-${c.id}">
       <div class="forum-cmt-meta">
-        <span>👤 ${esc(c.author)}</span>
+        <span>${esc(c.author)}</span>
         <span>·</span>
         <span>${_fmtTs(c.created_at)}</span>
       </div>
       <div class="forum-cmt-body">${esc(c.body).replace(/\n/g, '<br>')}</div>
       <button class="btn ${liked ? 'btn-acc' : 'btn-ghost'} forum-cmt-like-btn"
         onclick="forumLikeCmt('${postId}','${c.id}',this)">
-        👍 <span>${(c.likes || []).length}</span>
+        ${DXIcon('check')} <span>${(c.likes || []).length}</span>
       </button>
     </div>`;
 }
@@ -228,7 +228,7 @@ async function forumAddCmt(postId) {
   const cntEl = $('fmodal-cmt-cnt');
   if (cntEl) cntEl.textContent = parseInt(cntEl.textContent || '0') + 1;
   $('fcmt-body').value = '';
-  toast(T('Comment posted 🎉'), 'ok');
+  toast(T('Comment posted'), 'ok');
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -242,15 +242,15 @@ function openNewPost() {
     d.innerHTML = `
       <div class="modal" style="width:580px;max-width:96vw">
         <div class="modal-hd">
-          <span>${T('✏️ New Post')}</span>
-          <button class="modal-x" onclick="$('fpost-modal').close()">✕</button>
+          <span>${DXIcon('file')+' '+T('New Post')}</span>
+          <button class="modal-x" onclick="$('fpost-modal').close()"></button>
         </div>
         <div class="modal-bd" style="gap:12px;padding:20px">
           <div class="fg">
             <label>${T('Category')}</label>
             <select id="fnp-cat" class="input" style="margin-top:5px">
-              <option value="ask_deepx">🏢 ${T('Ask DeepX')}</option>
-              <option value="community" selected>💬 ${T('Community Discussion')}</option>
+              <option value="ask_deepx">${T('Ask DeepX')}</option>
+              <option value="community" selected>${DXIcon('chat')} ${T('Community Discussion')}</option>
             </select>
           </div>
           <div class="fg">
@@ -274,7 +274,7 @@ function openNewPost() {
           </div>
           <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
             <button class="btn btn-ghost" onclick="$('fpost-modal').close()">${T('Cancel')}</button>
-            <button class="btn btn-acc" onclick="forumSubmitPost()">${T('✅ Submit')}</button>
+            <button class="btn btn-acc" onclick="forumSubmitPost()">${DXIcon('check')+' '+T('Submit')}</button>
           </div>
         </div>
       </div>`;
@@ -304,7 +304,7 @@ async function forumSubmitPost() {
   if (d.error) { toast(d.error, 'err'); return; }
 
   $('fpost-modal').close();
-  toast(T('Post published 🎉'), 'ok');
+  toast(T('Post published'), 'ok');
   loadForum();
 }
 if (typeof registerLangRefresher === 'function') {

@@ -175,7 +175,7 @@
 <!-- ═══ PAGE: Dashboard ═══ -->
 <!-- ═══ PAGE: Models ═══ -->
 <div id="page-models" class="page active">
-  <h1>📦 <span class="accent" data-i18n="Models">Models</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span class="accent" data-i18n="Models">Models</span></h1>
   <div class="chip-bar" id="cat-chips"></div>
   <div class="search-box"><input type="text" id="m-search" data-i18n-placeholder="Search models..." oninput="filterModels()"></div>
   <div class="card">
@@ -190,11 +190,11 @@
 </div>
 <!-- ═══ PAGE: Run Inference ═══ -->
 <div id="page-run" class="page">
-  <h1>▶️ <span class="accent" data-i18n="Run Inference">Run Inference</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span class="accent" data-i18n="Run Inference">Run Inference</span></h1>
   <!-- Tab Bar -->
   <div class="run-tab-bar">
-    <button class="run-tab active" data-rtab="single" onclick="toggleRunTab('single')">📷 <span data-i18n="Single">Single</span></button>
-    <button class="run-tab" data-rtab="continuous" onclick="toggleRunTab('continuous')">🔄 <span data-i18n="Continuous">Continuous</span></button>
+    <button class="run-tab active" data-rtab="single" onclick="toggleRunTab('single')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#camera"></use></svg> <span data-i18n="Single">Single</span></button>
+    <button class="run-tab" data-rtab="continuous" onclick="toggleRunTab('continuous')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg> <span data-i18n="Continuous">Continuous</span></button>
   </div>
   <!-- ── Single Tab ── -->
   <div id="run-single-tab">
@@ -211,7 +211,7 @@
           <span data-i18n="Download one from ModelZoo to run inference.">Download one from ModelZoo to run inference.</span>
         </p>
         <button type="button" class="btn btn-sm btn-accent" onclick="nav('modelzoo')">
-          ⬇️ <span data-i18n="Open ModelZoo">Open ModelZoo</span>
+          <svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#download"></use></svg> <span data-i18n="Open ModelZoo">Open ModelZoo</span>
         </button>
       </div>
       <div class="fg"><label for="r-cat" data-i18n="Category">Category</label><select id="r-cat" onchange="onRCat()"></select></div>
@@ -222,8 +222,8 @@
       </div>
       <div class="fg"><label data-i18n="Input Type">Input Type</label>
         <div class="radio-group">
-          <label><input type="radio" name="r-itype" id="r-input-img" value="image" checked onchange="toggleRInput()"><span>📷 <span data-i18n="Image">Image</span></span></label>
-          <label><input type="radio" name="r-itype" id="r-input-vid" value="video" onchange="toggleRInput()"><span>🎬 <span data-i18n="Video">Video</span></span></label>
+          <label><input type="radio" name="r-itype" id="r-input-img" value="image" checked onchange="toggleRInput()"><span><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#camera"></use></svg> <span data-i18n="Image">Image</span></span></label>
+          <label><input type="radio" name="r-itype" id="r-input-vid" value="video" onchange="toggleRInput()"><span><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#demo"></use></svg> <span data-i18n="Video">Video</span></span></label>
         </div>
       </div>
       <div id="img-picker">
@@ -231,7 +231,7 @@
           <label data-i18n="Sample Image">Sample Image</label>
           <div id="r-upload-row" class="fg-inline">
             <input type="file" id="r-upload" accept="image/*" class="hidden" onchange="onRunUpload(this)">
-            <button type="button" class="btn btn-neutral btn-sm" onclick="document.getElementById('r-upload').click()">⬆ <span data-i18n="Upload image">Upload image</span></button>
+            <button type="button" class="btn btn-neutral btn-sm" onclick="document.getElementById('r-upload').click()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#upload"></use></svg> <span data-i18n="Upload image">Upload image</span></button>
             <span id="r-upload-name" class="txt-dim"></span>
           </div>
           <div class="img-grid" id="img-grid"></div>
@@ -265,12 +265,12 @@
         </div>
       </div>
       <div id="r-params-none" class="hidden">
-        <p class="txt-sm txt-dim" style="padding:8px 0">ℹ️ <span id="r-params-desc" data-i18n="No additional parameters required for this task.">No additional parameters required for this task.</span></p>
+        <p class="txt-sm txt-dim" style="padding:8px 0"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#info"></use></svg> <span id="r-params-desc" data-i18n="No additional parameters required for this task.">No additional parameters required for this task.</span></p>
       </div>
       <p class="txt-sm txt-dim" style="margin-top:4px" id="r-params-note" data-i18n="Passed to the model&#x27;s config.json as score_threshold / nms_threshold">Passed to the model's config.json as score_threshold / nms_threshold</p>
       <div class="flex gap8 mt8">
-        <button class="btn btn-acc" id="r-run-btn" onclick="doRun()">▶ <span data-i18n="Run Inference">Run Inference</span></button>
-        <button class="btn btn-red hidden" id="r-stop-btn" onclick="doStop()">⏹ <span data-i18n="Stop">Stop</span></button>
+        <button class="btn btn-acc" id="r-run-btn" onclick="doRun()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run Inference">Run Inference</span></button>
+        <button class="btn btn-red hidden" id="r-stop-btn" onclick="doStop()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span></button>
       </div>
     </div>
     <!-- Right: Result -->
@@ -281,13 +281,13 @@
   </div>
   <!-- Export Package -->
   <div class="card mt16" id="run-export-card">
-    <h2>📦 <span data-i18n="Export Model Package">Export Model Package</span></h2>
+    <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span data-i18n="Export Model Package">Export Model Package</span></h2>
     <p class="txt-sm txt-dim mb8" data-i18n="Extract the selected model&#x27;s source code, config, and model file as a package. Available for download on the Outputs page.">Extract the selected model's source code, config, and model file as a package. Available for download on the Outputs page.</p>
     <div class="flex gap8 items-c">
       <div class="fg" style="margin:0;flex:1"><label for="r-export-lang" data-i18n="Output Language">Output Language</label>
         <select id="r-export-lang" class="input"><option value="both">Both (C++ &amp; Python)</option><option value="cpp">C++ only</option><option value="python">Python only</option></select>
       </div>
-      <button class="btn btn-acc btn-sm" id="r-export-btn" onclick="doExportFromRun()" style="margin-top:14px">📦 <span data-i18n="Export">Export</span></button>
+      <button class="btn btn-acc btn-sm" id="r-export-btn" onclick="doExportFromRun()" style="margin-top:14px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span data-i18n="Export">Export</span></button>
     </div>
     <div class="code mt8 hidden" id="r-export-out" style="max-height:150px"></div>
   </div>
@@ -297,12 +297,12 @@
     <div class="grid2">
       <!-- Left: Continuous Config -->
       <div class="card rel">
-        <h2>🔄 <span data-i18n="Continuous Config">Continuous Config</span></h2>
+        <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg> <span data-i18n="Continuous Config">Continuous Config</span></h2>
         <div class="fg"><label for="c-input-type" data-i18n="Input Type">Input Type</label>
           <select id="c-input-type" class="input" onchange="toggleContInput()">
-            <option value="video">🎬 Video</option>
-            <option value="camera">📹 Camera</option>
-            <option value="rtsp">📡 RTSP</option>
+            <option value="video">Video</option>
+            <option value="camera">Camera</option>
+            <option value="rtsp">RTSP</option>
           </select>
         </div>
         <div id="c-video-pick">
@@ -312,7 +312,7 @@
           <div class="fg"><label for="c-camera" data-i18n="Camera Device">Camera Device</label>
             <div class="flex gap8 items-c">
               <select id="c-camera" class="input" style="flex:1"><option value="0">/dev/video0</option></select>
-              <button class="btn btn-ghost btn-sm" onclick="loadCameras()" title="Refresh" data-i18n-title="Refresh">🔄</button>
+              <button class="btn btn-ghost btn-sm" onclick="loadCameras()" title="Refresh" data-i18n-title="Refresh"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg></button>
             </div>
           </div>
         </div>
@@ -331,18 +331,18 @@
         <div class="fg"><label for="c-dev" data-i18n="Device ID">Device ID</label>
           <select id="c-dev" class="input"><option value="0">NPU 0</option></select>
         </div>
-        <h2 style="margin-top:18px">📦 <span data-i18n="Model Slots">Model Slots</span> <span class="txt-dim txt-sm" style="text-transform:none;letter-spacing:0" id="c-slot-count">(1/8)</span></h2>
+        <h2 style="margin-top:18px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span data-i18n="Model Slots">Model Slots</span> <span class="txt-dim txt-sm" style="text-transform:none;letter-spacing:0" id="c-slot-count">(1/8)</span></h2>
         <div id="c-slots"></div>
         <button class="btn btn-ghost btn-sm mt8" id="c-add-btn" onclick="contAddSlot()">＋ <span data-i18n="Add Model">Add Model</span></button>
         <div class="flex gap8 mt16">
-          <button class="btn btn-acc" id="c-start-btn" onclick="contStart()">▶ <span data-i18n="Start Continuous">Start Continuous</span></button>
-          <button class="btn btn-red hidden" id="c-stop-btn" onclick="contStop()">⏹ <span data-i18n="Stop">Stop</span></button>
+          <button class="btn btn-acc" id="c-start-btn" onclick="contStart()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Start Continuous">Start Continuous</span></button>
+          <button class="btn btn-red hidden" id="c-stop-btn" onclick="contStop()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span></button>
         </div>
       </div>
       <!-- Right: Live Display -->
       <div class="card rel">
         <div class="flex between items-c mb8">
-          <h2 style="margin:0">📺 <span data-i18n="Live Display">Live Display</span></h2>
+          <h2 style="margin:0"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#monitor"></use></svg> <span data-i18n="Live Display">Live Display</span></h2>
           <div class="cont-timer" id="c-timer"><span class="ct-dot"></span><span id="c-timer-txt">00:00</span></div>
         </div>
         <div id="c-grid" class="cont-grid g1"></div>
@@ -357,16 +357,16 @@
 </div>
 <!-- ═══ PAGE: Benchmark ═══ -->
 <div id="page-bench" class="page">
-  <h1>⏱️ <span class="accent" data-i18n="Benchmark">Benchmark</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clock"></use></svg> <span class="accent" data-i18n="Benchmark">Benchmark</span></h1>
   <div class="bench-layout">
     <!-- LEFT: Settings -->
     <div class="bench-left">
       <div class="card">
-        <h3 style="margin:0 0 10px">⚙️ <span data-i18n="Settings">Settings</span></h3>
+        <h3 style="margin:0 0 10px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#gear"></use></svg> <span data-i18n="Settings">Settings</span></h3>
         <div class="fg" style="margin:0 0 8px"><label for="b-cat" data-i18n="Category">Category</label><select id="b-cat" class="input" onchange="filterBenchModels()"><option value="">All Categories</option></select></div>
         <div class="fg" style="margin:0 0 8px"><label for="b-lang" data-i18n="Code Language">Code Language</label><select id="b-lang" class="input"><option value="cpp">C++ (Compiled)</option><option value="python">Python</option></select></div>
         <div class="fg" style="margin:0 0 8px"><label for="b-mode" data-i18n="Mode">Mode</label><select id="b-mode" class="input"><option value="sync">Sync</option><option value="async">Async</option></select></div>
-        <div class="fg" style="margin:0 0 8px"><label for="b-input-type" data-i18n="Input Type">Input Type</label><select id="b-input-type" class="input" onchange="toggleBenchInput()"><option value="image">Image</option><option value="video">Video</option><option value="camera">📹 Camera</option><option value="rtsp">📡 RTSP</option></select></div>
+        <div class="fg" style="margin:0 0 8px"><label for="b-input-type" data-i18n="Input Type">Input Type</label><select id="b-input-type" class="input" onchange="toggleBenchInput()"><option value="image">Image</option><option value="video">Video</option><option value="camera">Camera</option><option value="rtsp">RTSP</option></select></div>
         <div id="b-input-image" style="margin-bottom:8px">
           <div class="fg" style="margin:0"><label data-i18n="Input Image">Input Image</label>
             <select id="b-img-sel" class="input"><option value="">Default (built-in)</option></select>
@@ -381,7 +381,7 @@
           <div class="fg" style="margin:0"><label data-i18n="Camera Device">Camera Device</label>
             <div class="flex gap8 items-c">
               <select id="b-cam-sel" class="input" style="flex:1"><option value="0">/dev/video0</option></select>
-              <button class="btn btn-ghost btn-sm" onclick="loadCameras()" title="Refresh" data-i18n-title="Refresh">🔄</button>
+              <button class="btn btn-ghost btn-sm" onclick="loadCameras()" title="Refresh" data-i18n-title="Refresh"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg></button>
             </div>
           </div>
         </div>
@@ -390,22 +390,22 @@
           <div class="fg" style="margin:0;margin-top:6px"><label data-i18n="Stream">Stream</label><select id="b-rtsp-stream" class="input"></select></div>
         </div>
         <div class="fg" style="margin:0 0 12px"><label for="b-loop" id="b-loop-label" data-i18n="Loop Count">Loop Count</label><input type="number" id="b-loop" class="input" value="100" min="1" max="10000" style="width:100%"></div>
-        <button class="btn btn-acc" id="b-run-btn" onclick="doBench()" style="width:100%">⏱️ <span data-i18n="Start Benchmark">Start Benchmark</span></button>
-        <button class="btn btn-red hidden" id="b-stop-btn" onclick="doStop()" style="width:100%;margin-top:6px">⏹ <span data-i18n="Stop">Stop</span></button>
+        <button class="btn btn-acc" id="b-run-btn" onclick="doBench()" style="width:100%"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clock"></use></svg> <span data-i18n="Start Benchmark">Start Benchmark</span></button>
+        <button class="btn btn-red hidden" id="b-stop-btn" onclick="doStop()" style="width:100%;margin-top:6px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span></button>
       </div>
     </div>
     <!-- RIGHT: Model Selection -->
     <div class="bench-right">
       <div class="card">
         <div class="flex between items-c" style="margin-bottom:8px">
-          <h3 style="margin:0">📋 <span data-i18n="Models">Models</span></h3>
+          <h3 style="margin:0"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clipboard"></use></svg> <span data-i18n="Models">Models</span></h3>
           <div class="flex gap8">
-            <button class="btn btn-sm btn-ghost" onclick="bSelAll()">☑ <span data-i18n="All">All</span></button>
-            <button class="btn btn-sm btn-ghost" onclick="bDesel()">☐ <span data-i18n="None">None</span></button>
+            <button class="btn btn-sm btn-ghost" onclick="bSelAll()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#check"></use></svg> <span data-i18n="All">All</span></button>
+            <button class="btn btn-sm btn-ghost" onclick="bDesel()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#circle"></use></svg> <span data-i18n="None">None</span></button>
           </div>
         </div>
         <div class="tbl-wrap" style="max-height:calc(100vh - 340px);overflow-y:auto">
-          <table id="bench-sel"><thead><tr><th style="width:36px">✓</th><th data-i18n="Model">Model</th><th data-i18n="Category">Category</th><th data-i18n="Lang">Lang</th></tr></thead><tbody></tbody></table>
+          <table id="bench-sel"><thead><tr><th style="width:36px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#check"></use></svg></th><th data-i18n="Model">Model</th><th data-i18n="Category">Category</th><th data-i18n="Lang">Lang</th></tr></thead><tbody></tbody></table>
         </div>
       </div>
     </div>
@@ -414,7 +414,7 @@
   <div class="card hidden" id="b-result-card">
     <div class="flex between items-c" style="margin-bottom:8px">
       <div class="card-header"><h2 style="margin:0" data-i18n="Results">Results</h2><span class="txt-sm txt-dim ml8" data-i18n="click row for detail">click row for detail</span></div>
-      <button class="btn btn-ghost btn-sm" onclick="benchExportReport()" title="Export Benchmark Report" data-i18n-title="Export Benchmark Report">📄 <span data-i18n="Export Report">Export Report</span></button>
+      <button class="btn btn-ghost btn-sm" onclick="benchExportReport()" title="Export Benchmark Report" data-i18n-title="Export Benchmark Report"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#file"></use></svg> <span data-i18n="Export Report">Export Report</span></button>
     </div>
     <div class="tbl-wrap">
       <table id="bench-res"><thead><tr><th data-i18n="Model">Model</th><th data-i18n="Category">Category</th><th data-i18n="Status">Status</th><th>FPS</th><th data-i18n="Latency(ms)">Latency(ms)</th><th></th></tr></thead><tbody></tbody></table>
@@ -425,7 +425,7 @@
 
 <!-- ═══ PAGE: A/B Compare ═══ -->
 <div id="page-compare" class="page">
-  <h1>🔀 <span class="accent" data-i18n="A/B Compare">A/B Compare</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#compare"></use></svg> <span class="accent" data-i18n="A/B Compare">A/B Compare</span></h1>
   <div class="card">
     <div class="flex gap8 items-c" id="ab-cols" style="flex-wrap:wrap">
       <span class="txt-dim txt-sm" data-i18n="Slots:">Slots:</span>
@@ -436,21 +436,21 @@
       <div style="flex:1"></div>
       <div class="fg" style="margin:0;width:140px"><label for="ab-itype" data-i18n="Input Type">Input Type</label>
         <select id="ab-itype" class="input" onchange="toggleABInput()" style="font-size:12px">
-          <option value="file">📁 File</option>
-          <option value="camera">📹 Camera</option>
-          <option value="rtsp">📡 RTSP</option>
+          <option value="file">File</option>
+          <option value="camera">Camera</option>
+          <option value="rtsp">RTSP</option>
         </select>
       </div>
       <div id="ab-file-pick" class="fg" style="margin:0;width:220px"><label for="ab-img" data-i18n="Shared Input (Image / Video)">Shared Input (Image / Video)</label><select id="ab-img" style="font-size:12px"></select></div>
       <div id="ab-cam-pick" class="fg hidden" style="margin:0;width:180px"><label data-i18n="Camera">Camera</label>
-        <div class="flex gap8 items-c"><select id="ab-camera" class="input" style="font-size:12px"><option value="0">/dev/video0</option></select><button class="btn btn-ghost btn-sm" onclick="loadCameras()" title="Refresh" data-i18n-title="Refresh" style="padding:2px 6px">🔄</button></div>
+        <div class="flex gap8 items-c"><select id="ab-camera" class="input" style="font-size:12px"><option value="0">/dev/video0</option></select><button class="btn btn-ghost btn-sm" onclick="loadCameras()" title="Refresh" data-i18n-title="Refresh" style="padding:2px 6px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg></button></div>
       </div>
       <div id="ab-rtsp-pick" class="hidden" style="display:flex;gap:8px;align-items:end">
         <div class="fg" style="margin:0;width:160px"><label data-i18n="RTSP Server">RTSP Server</label><input type="text" id="ab-rtsp-ip" class="input" value="" style="font-size:12px"></div>
         <div class="fg" style="margin:0;width:100px"><label data-i18n="Stream">Stream</label><select id="ab-rtsp-stream" class="input" style="font-size:12px"></select></div>
       </div>
       <div class="fg" style="margin:0;width:90px" id="ab-frames-pick" class="hidden"><label data-i18n="Frames">Frames</label><input type="number" id="ab-frames" class="input" value="30" min="1" max="10000" style="width:80px;font-size:12px"></div>
-      <button class="btn btn-acc" id="ab-run-btn" onclick="doABRun()">▶ <span data-i18n="Run All">Run All</span></button>
+      <button class="btn btn-acc" id="ab-run-btn" onclick="doABRun()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run All">Run All</span></button>
     </div>
   </div>
   <div class="ab-grid cols-2" id="ab-panels" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px"></div>
@@ -464,10 +464,10 @@
 <div id="page-modelzoo" class="page">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
     <div>
-      <h1 style="margin-bottom:4px">📥 <span class="accent" data-i18n="ModelZoo">ModelZoo</span></h1>
+      <h1 style="margin-bottom:4px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#download"></use></svg> <span class="accent" data-i18n="ModelZoo">ModelZoo</span></h1>
       <p class="txt-dim txt-sm mb16" data-i18n="Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro / Q-Master DXNN files directly.">Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro / Q-Master DXNN files directly.</p>
     </div>
-    <a id="mz-homepage-link" href="https://developer.deepx.ai/modelzoo/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="gap:4px;white-space:nowrap">🌐 <span data-i18n="ModelZoo Homepage">ModelZoo Homepage</span> ↗</a>
+    <a id="mz-homepage-link" href="https://developer.deepx.ai/modelzoo/" target="_blank" rel="noopener" class="btn btn-ghost btn-sm" style="gap:4px;white-space:nowrap"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#globe"></use></svg> <span data-i18n="ModelZoo Homepage">ModelZoo Homepage</span> ↗</a>
   </div>
 
   <!-- Source + Refresh -->
@@ -476,19 +476,19 @@
       <div class="fg" style="margin:0;width:160px">
         <label data-i18n="Source">Source</label>
         <select id="mz-source" class="input" onchange="mzSwitchSource()" style="font-size:12px">
-          <option value="public" selected>🌐 Public</option>
-          <option value="internal">🔒 Internal (Air-gapped)</option>
+          <option value="public" selected>Public</option>
+          <option value="internal">Internal (Air-gapped)</option>
         </select>
       </div>
       <div style="flex:1"></div>
       <!-- Batch select buttons -->
-      <button class="btn btn-ghost btn-sm" onclick="mzSelectAllVisible()">☑ <span data-i18n="Select All">Select All</span></button>
-      <button class="btn btn-ghost btn-sm" onclick="mzSelectAllNew()">🆕 <span data-i18n="New Only">New Only</span></button>
+      <button class="btn btn-ghost btn-sm" onclick="mzSelectAllVisible()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#check"></use></svg> <span data-i18n="Select All">Select All</span></button>
+      <button class="btn btn-ghost btn-sm" onclick="mzSelectAllNew()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#star"></use></svg> <span data-i18n="New Only">New Only</span></button>
       <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qlite')" style="color:var(--status-info)" data-i18n="Q-Lite All">Q-Lite All</button>
       <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qpro')" style="color:var(--app-accent)" data-i18n="Q-Pro All">Q-Pro All</button>
       <button class="btn btn-ghost btn-sm" onclick="mzSelectChipAll('qmaster')" style="color:var(--npu)" data-i18n="Q-Master All">Q-Master All</button>
-      <button class="btn btn-ghost btn-sm" onclick="mzDeselectAll()">☐ <span data-i18n="Deselect">Deselect</span></button>
-      <button class="btn btn-ghost btn-sm" onclick="mzRefresh()" title="Refresh" data-i18n-title="Refresh">🔄</button>
+      <button class="btn btn-ghost btn-sm" onclick="mzDeselectAll()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#circle"></use></svg> <span data-i18n="Deselect">Deselect</span></button>
+      <button class="btn btn-ghost btn-sm" onclick="mzRefresh()" title="Refresh" data-i18n-title="Refresh"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#refresh"></use></svg></button>
     </div>
   </div>
 
@@ -504,7 +504,7 @@
       <table id="mz-table" class="mz-full-table">
         <thead>
           <tr>
-            <th rowspan="2" style="width:36px">☑</th>
+            <th rowspan="2" style="width:36px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#check"></use></svg></th>
             <th rowspan="2" data-i18n="Task">Task</th>
             <th rowspan="2" data-i18n="Name">Name</th>
             <th rowspan="2" data-i18n="Class">Class</th>
@@ -554,32 +554,32 @@
 
 <!-- ═══ PAGE: Lab ═══ -->
 <div id="page-lab" class="page">
-  <h1>🧪 <span class="accent" data-i18n="Lab">Lab</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#lab"></use></svg> <span class="accent" data-i18n="Lab">Lab</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Manage model/task extensions, experiments, and safe change previews in one place.">Manage model/task extensions, experiments, and safe change previews in one place.</p>
   <div class="lab-status lab-status-info mb12" id="lab-status" data-i18n="Preparing Lab session">Preparing Lab session</div>
   <div class="grid" id="lab-home" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
     <button class="card lab-card lab-composer-card" id="lab-card-composer" data-lab-flow="composer" type="button">
-      <strong>🧩 <span data-i18n="DX App Composer">DX App Composer</span></strong>
+      <strong><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#puzzle"></use></svg> <span data-i18n="DX App Composer">DX App Composer</span></strong>
       <span class="txt-dim txt-sm" data-i18n="Choose a model and input, run the workflow, then export a package.">Choose a model and input, run the workflow, then export a package.</span>
     </button>
     <button class="card lab-card" id="lab-card-add-model" data-lab-flow="add-model" type="button">
-      <strong>➕ <span data-i18n="Add Model">Add Model</span></strong>
+      <strong><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#plus"></use></svg> <span data-i18n="Add Model">Add Model</span></strong>
       <span class="txt-dim txt-sm" data-i18n="Preview manifest before applying">Preview manifest before applying</span>
     </button>
     <button class="card lab-card" id="lab-card-create-task" data-lab-flow="create-task" type="button">
-      <strong>🦴 <span data-i18n="Create Task">Create Task</span></strong>
+      <strong><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg> <span data-i18n="Create Task">Create Task</span></strong>
       <span class="txt-dim txt-sm" data-i18n="Generate a new task skeleton">Generate a new task skeleton</span>
     </button>
     <button class="card lab-card" id="lab-card-experiment" data-lab-flow="experiment" type="button">
-      <strong>🧬 <span data-i18n="Experiment">Experiment</span></strong>
+      <strong><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#lab"></use></svg> <span data-i18n="Experiment">Experiment</span></strong>
       <span class="txt-dim txt-sm" data-i18n="Run DXNN experiment pipeline">Run DXNN experiment pipeline</span>
     </button>
     <button class="card lab-card" id="lab-card-generated" data-lab-flow="generated" type="button">
-      <strong>📄 <span data-i18n="Generated Files">Generated Files</span></strong>
+      <strong><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#file"></use></svg> <span data-i18n="Generated Files">Generated Files</span></strong>
       <span class="txt-dim txt-sm" data-i18n="Review generated artifacts">Review generated artifacts</span>
     </button>
     <button class="card lab-card" id="lab-card-safety" data-lab-flow="safety" type="button">
-      <strong>🛡️ <span data-i18n="Safety Center">Safety Center</span></strong>
+      <strong><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#shield"></use></svg> <span data-i18n="Safety Center">Safety Center</span></strong>
       <span class="txt-dim txt-sm" data-i18n="Inspect change plans and rollback guidance">Inspect change plans and rollback guidance</span>
     </button>
   </div>
@@ -587,7 +587,7 @@
     <div id="lab-flow-root" class="lab-flow-root"></div>
   </div>
   <div class="card mt16" id="lab-advanced-tools">
-    <h2>🧰 <span data-i18n="Advanced Tools">Advanced Tools</span></h2>
+    <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#wrench"></use></svg> <span data-i18n="Advanced Tools">Advanced Tools</span></h2>
     <div id="dev-main-sec">
       <div class="dev-tabs">
         <button class="dev-tab active" onclick="devTab(this,'dev-add')" data-i18n="Add Model">Add Model</button>
@@ -606,7 +606,7 @@
         <label style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;margin:8px 0">
           <input type="checkbox" id="da-sync"> <span data-i18n="Sync only">Sync only</span>
         </label>
-        <button class="btn btn-acc mt8" onclick="devAddModel()">➕ <span data-i18n="Add Model">Add Model</span></button>
+        <button class="btn btn-acc mt8" onclick="devAddModel()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#plus"></use></svg> <span data-i18n="Add Model">Add Model</span></button>
         <div class="code mt8 hidden" id="da-out"></div>
       </div>
       <div class="dev-panel" id="dev-del">
@@ -619,9 +619,9 @@
           <input type="text" id="dd-name" data-i18n-placeholder="or type model name manually">
         </div>
         <div class="fg"><label for="dd-lang" data-i18n="Code Language">Code Language</label><select id="dd-lang" class="input"><option value="both">Both (C++ &amp; Python)</option><option value="cpp">C++ only</option><option value="python">Python only</option></select></div>
-        <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px;margin:8px 0;font-size:12px;color:var(--status-error)">⚠️ <span data-i18n="This will permanently delete model source files from disk.">This will permanently delete model source files from disk.</span>
+        <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:10px;margin:8px 0;font-size:12px;color:var(--status-error)"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#alert"></use></svg> <span data-i18n="This will permanently delete model source files from disk.">This will permanently delete model source files from disk.</span>
         </div>
-        <button class="btn btn-red mt8" onclick="devDelModel()">🗑️ <span data-i18n="Delete Model">Delete Model</span></button>
+        <button class="btn btn-red mt8" onclick="devDelModel()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#trash"></use></svg> <span data-i18n="Delete Model">Delete Model</span></button>
         <div class="code mt8 hidden" id="dd-out"></div>
       </div>
       <div class="dev-panel" id="dev-skel">
@@ -631,7 +631,7 @@
           <div class="fg"><label for="ds-lang" data-i18n="Output Language">Output Language</label><select id="ds-lang"><option value="both">Both (C++ &amp; Python)</option><option value="cpp">C++ only</option><option value="python">Python only</option></select></div>
         </div>
         <p class="txt-dim txt-sm mt8" data-i18n="Files to generate: Factory interface, Postprocessor, Visualizer, Sync/Async Runner (C++), Postprocessor/Visualizer (Python)">Files to generate: Factory interface, Postprocessor, Visualizer, Sync/Async Runner (C++), Postprocessor/Visualizer (Python)</p>
-        <button class="btn btn-acc mt8" onclick="devNewTask()">🦴 <span data-i18n="Create Skeleton">Create Skeleton</span></button>
+        <button class="btn btn-acc mt8" onclick="devNewTask()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg> <span data-i18n="Create Skeleton">Create Skeleton</span></button>
         <div class="code mt8 hidden" id="ds-out" style="max-height:250px;overflow:auto"></div>
       </div>
       <div class="dev-panel" id="dev-git">
@@ -639,7 +639,7 @@
         <label style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;margin:8px 0">
           <input type="checkbox" id="dg-push"> <span data-i18n="Push after commit">Push after commit</span>
         </label>
-        <button class="btn btn-blue mt8" onclick="devGitCommit()">📝 <span data-i18n="Commit">Commit</span></button>
+        <button class="btn btn-blue mt8" onclick="devGitCommit()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#file"></use></svg> <span data-i18n="Commit">Commit</span></button>
         <div class="code mt8 hidden" id="dg-out"></div>
       </div>
       <div class="dev-panel" id="dev-ext">
@@ -653,7 +653,7 @@
         </div>
         <div class="fg"><label for="de-lang" data-i18n="Output Language">Output Language</label><select id="de-lang" class="input"><option value="both">Both (C++ &amp; Python)</option><option value="cpp">C++ only</option><option value="python">Python only</option></select></div>
         <p class="txt-dim txt-sm mt8" data-i18n-html="Packages are saved to &lt;code&gt;outputs/&lt;/code&gt; directory. Use the Outputs page to download.">Packages are saved to <code>outputs/</code> directory. Use the Outputs page to download.</p>
-        <button class="btn btn-acc mt8" onclick="devExtract()">📦 <span data-i18n="Extract Package">Extract Package</span></button>
+        <button class="btn btn-acc mt8" onclick="devExtract()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span data-i18n="Extract Package">Extract Package</span></button>
         <div class="code mt8 hidden" id="de-out"></div>
       </div>
     </div>
@@ -662,13 +662,13 @@
 
 <!-- ═══ PAGE: Outputs ═══ -->
 <div id="page-outputs" class="page">
-  <h1>📁 <span class="accent" data-i18n="Outputs">Outputs</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#folder"></use></svg> <span class="accent" data-i18n="Outputs">Outputs</span></h1>
   <!-- Toolbar: filters + view toggle -->
   <div class="out-toolbar">
     <div id="out-filters" class="out-filters"></div>
     <div class="out-view-toggle">
-      <button class="out-view-btn active" data-view="grid" onclick="setOutView('grid')" title="Grid view" data-i18n-title="Grid view">▦</button>
-      <button class="out-view-btn" data-view="table" onclick="setOutView('table')" title="Table view" data-i18n-title="Table view">☰</button>
+      <button class="out-view-btn active" data-view="grid" onclick="setOutView('grid')" title="Grid view" data-i18n-title="Grid view"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dashboard"></use></svg></button>
+      <button class="out-view-btn" data-view="table" onclick="setOutView('table')" title="Table view" data-i18n-title="Table view"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#menu"></use></svg></button>
     </div>
   </div>
   <!-- Gallery grid -->
@@ -688,9 +688,9 @@
     <div class="lb-header">
       <span id="lb-title" class="lb-title"></span>
       <div class="lb-header-actions">
-        <button id="lb-compare" class="btn btn-sm btn-ghost" style="display:none">⚖️ Compare</button>
-        <a id="lb-download" class="btn btn-sm btn-ghost" href="#" download>⬇ <span data-i18n="Download">Download</span></a>
-        <button class="btn btn-sm btn-ghost" onclick="closeLightbox()">✕</button>
+        <button id="lb-compare" class="btn btn-sm btn-ghost" style="display:none"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#compare"></use></svg> Compare</button>
+        <a id="lb-download" class="btn btn-sm btn-ghost" href="#" download><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#download"></use></svg> <span data-i18n="Download">Download</span></a>
+        <button class="btn btn-sm btn-ghost" onclick="closeLightbox()"></button>
       </div>
     </div>
     <div id="lb-body" class="lb-body"></div>
@@ -702,7 +702,7 @@
   <div class="lb-content cmp-content">
     <div class="lb-header">
       <span id="cmp-title" class="lb-title"></span>
-      <button class="btn btn-sm btn-ghost" onclick="closeCompare()">✕</button>
+      <button class="btn btn-sm btn-ghost" onclick="closeCompare()"></button>
     </div>
     <div id="cmp-wrap" class="cmp-wrap" style="--split:50%">
       <img id="cmp-after" class="cmp-img cmp-after" src="" alt="After">
@@ -717,11 +717,11 @@
 
 <!-- ═══ PAGE: Reference Docs v2.0 ═══ -->
 <div id="page-reference" class="page">
-  <h1>📖 <span class="accent" data-i18n="Reference">Reference</span></h1>
+  <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#book"></use></svg> <span class="accent" data-i18n="Reference">Reference</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Detailed guides, parameters, workflows, and tips for each DX-APP feature — all in one place.">Detailed guides, parameters, workflows, and tips for each DX-APP feature — all in one place.</p>
   <div class="ref-layout" id="ref-layout">
     <div class="ref-toolbar card">
-      <div class="ref-search-bar"><div class="ref-search-wrap"><span class="ref-search-icon">🔍</span><input class="ref-search" id="ref-search" type="text" data-i18n-placeholder="Search documentation..."></div></div>
+      <div class="ref-search-bar"><div class="ref-search-wrap"><span class="ref-search-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#search"></use></svg></span><input class="ref-search" id="ref-search" type="text" data-i18n-placeholder="Search documentation..."></div></div>
       <div class="chip-bar" id="ref-filter-bar"></div>
     </div>
     <div class="ref-grid" id="ref-content"></div>
@@ -758,7 +758,7 @@
 <dialog class="modal-overlay" id="modal-fb">
   <div class="modal" style="width:860px;max-width:96vw">
     <button class="modal-x" onclick="fbClose()">&times;</button>
-    <h2 id="fb-title">📂 <span data-i18n="Select File">Select File</span></h2>
+    <h2 id="fb-title"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#folder"></use></svg> <span data-i18n="Select File">Select File</span></h2>
     <div class="fb-breadcrumb" id="fb-breadcrumb"></div>
     <div class="fb-list" id="fb-list"></div>
     <div class="fb-footer" style="flex-direction:column;align-items:stretch;gap:6px">
@@ -768,7 +768,7 @@
         <div id="fb-ac-list" style="display:none;position:absolute;bottom:100%;left:0;right:0;max-height:180px;overflow-y:auto;background:var(--surface-overlay);border:1px solid var(--border-subtle);border-radius:6px 6px 0 0;z-index:10;font-size:12px"></div>
       </div>
       <div style="display:flex;gap:6px">
-        <button class="btn btn-primary btn-sm" onclick="fbConfirm()">✅ <span data-i18n="Select">Select</span></button>
+        <button class="btn btn-primary btn-sm" onclick="fbConfirm()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#check"></use></svg> <span data-i18n="Select">Select</span></button>
         <button class="btn btn-ghost btn-sm" onclick="fbClose()" data-i18n="Cancel">Cancel</button>
       </div>
     </div>
@@ -779,7 +779,7 @@
 <div class="toast-wrap" id="toast-wrap"></div>
 <!-- Notification Drawer -->
 <div class="notif-drawer" id="notif-drawer">
-  <div class="notif-header"><h3>🔔 <span data-i18n="Notifications">Notifications</span></h3><div style="display:flex;gap:8px"><button class="btn btn-sm btn-ghost" onclick="clearNotifHistory()" data-i18n="Clear">Clear</button><button class="btn btn-sm btn-ghost" onclick="toggleNotifDrawer()">✕</button></div></div>
+  <div class="notif-header"><h3><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#info"></use></svg> <span data-i18n="Notifications">Notifications</span></h3><div style="display:flex;gap:8px"><button class="btn btn-sm btn-ghost" onclick="clearNotifHistory()" data-i18n="Clear">Clear</button><button class="btn btn-sm btn-ghost" onclick="toggleNotifDrawer()"></button></div></div>
   <div class="notif-list" id="notif-list"><p class="txt-dim" style="padding:16px;text-align:center" data-i18n="No notifications yet">No notifications yet</p></div>
 </div>
 <script src="/static/js/i18n.js?m=dx_app"></script>
@@ -842,8 +842,8 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
 <dialog class="modal-overlay" id="modal-comptest">
   <div class="modal" style="width:700px;max-width:96vw">
     <div class="modal-hd">
-      <span>🧪 <span data-i18n="Test Run — Select Pipeline">Test Run — Select Pipeline</span></span>
-      <button class="modal-x" onclick="ctClose()">✕</button>
+      <span><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#lab"></use></svg> <span data-i18n="Test Run — Select Pipeline">Test Run — Select Pipeline</span></span>
+      <button class="modal-x" onclick="ctClose()"></button>
     </div>
     <div class="modal-bd" style="gap:14px;padding:18px">
       <!-- Config panel -->
@@ -852,7 +852,7 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
           <div class="fg">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
               <label class="lbl" style="margin:0" data-i18n="Category">Category</label>
-              <button class="btn btn-ghost" style="padding:0 6px;height:22px;font-size:11px;border-radius:4px" onclick="ctToggleRef()" title="View pipeline reference table" data-i18n-title="View pipeline reference table">❓</button>
+              <button class="btn btn-ghost" style="padding:0 6px;height:22px;font-size:11px;border-radius:4px" onclick="ctToggleRef()" title="View pipeline reference table" data-i18n-title="View pipeline reference table"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#info"></use></svg></button>
             </div>
             <select class="input" id="ct-cat" onchange="ctOnCatChange()"></select>
           </div>
@@ -866,11 +866,11 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
             <select class="input" id="ct-vis"></select>
           </div>
         </div>
-        <!-- ❓ Reference table -->
+        <!-- Reference table -->
         <div id="ct-ref" style="display:none;margin-bottom:14px;border:1px solid var(--border-subtle);border-radius:8px;overflow:hidden">
           <div style="padding:8px 12px;background:var(--surface-sunken);font-size:11px;font-weight:700;display:flex;justify-content:space-between;align-items:center">
-            <span>📋 <span data-i18n="Recommended Pipelines by Category">Recommended Pipelines by Category</span></span>
-            <button class="btn btn-ghost" style="padding:0 6px;height:20px;font-size:10px" onclick="ctToggleRef()">✕</button>
+            <span><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clipboard"></use></svg> <span data-i18n="Recommended Pipelines by Category">Recommended Pipelines by Category</span></span>
+            <button class="btn btn-ghost" style="padding:0 6px;height:20px;font-size:10px" onclick="ctToggleRef()"></button>
           </div>
           <div style="max-height:260px;overflow-y:auto">
             <table style="width:100%;border-collapse:collapse;font-size:11px">
@@ -884,14 +884,14 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
             </table>
           </div>
           <div style="padding:6px 12px 8px;background:var(--surface-sunken);border-top:1px solid var(--border-subtle);font-size:10px;color:var(--text-muted)">
-            💡 <b>Letterbox</b>: preserves aspect ratio (recommended for Detection/Pose) &nbsp;|&nbsp; <b>SimpleResize</b>: simple resize (Seg/Depth/Enhancement) &nbsp;|&nbsp; <b>Grayscale</b>: single-channel models
+            <svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#info"></use></svg> <b>Letterbox</b>: preserves aspect ratio (recommended for Detection/Pose) &nbsp;|&nbsp; <b>SimpleResize</b>: simple resize (Seg/Depth/Enhancement) &nbsp;|&nbsp; <b>Grayscale</b>: single-channel models
           </div>
         </div>
         <!-- Input type tab -->
         <div class="fg" style="margin-bottom:10px"><label class="lbl" data-i18n="Input Type">Input Type</label>
           <div style="display:flex;gap:16px;align-items:center;margin-top:6px">
-            <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="ct-inp" value="image" checked onchange="ctToggleInput()"><span>📷 <span data-i18n="Image">Image</span></span></label>
-            <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="ct-inp" value="video" onchange="ctToggleInput()"><span>🎬 <span data-i18n="Video">Video</span></span></label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="ct-inp" value="image" checked onchange="ctToggleInput()"><span><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#camera"></use></svg> <span data-i18n="Image">Image</span></span></label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="ct-inp" value="video" onchange="ctToggleInput()"><span><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#demo"></use></svg> <span data-i18n="Video">Video</span></span></label>
           </div>
         </div>
         <!-- Image selection -->
@@ -900,7 +900,7 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
           <div class="img-grid" id="ct-img-grid" style="margin-top:6px;min-height:52px"></div>
           <div style="display:flex;gap:6px;margin-top:6px">
             <input type="text" class="input" id="ct-img-path" data-i18n-placeholder="Or type a path directly…" style="flex:1;font-size:12px">
-            <button class="btn btn-ghost btn-sm" onclick="ctBrowseInput()" title="File browser" data-i18n-title="File browser">📂</button>
+            <button class="btn btn-ghost btn-sm" onclick="ctBrowseInput()" title="File browser" data-i18n-title="File browser"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#folder"></use></svg></button>
           </div>
         </div>
         <!-- Video selection -->
@@ -909,13 +909,13 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
             <select class="input" id="ct-video" style="margin-top:6px"></select>
           </div>
         </div>
-        <button class="btn btn-acc" onclick="ctRun()" style="width:100%;height:38px;font-size:14px">▶ <span data-i18n="Run Inference">Run Inference</span></button>
+        <button class="btn btn-acc" onclick="ctRun()" style="width:100%;height:38px;font-size:14px"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run Inference">Run Inference</span></button>
       </div>
       <!-- Result panel -->
       <div id="ct-res" style="display:none">
         <div id="ct-res-body"></div>
         <div style="display:flex;gap:8px;margin-top:12px">
-          <button class="btn btn-acc" onclick="ctShowDeploy()">📦 <span data-i18n="Deploy?">Deploy?</span></button>
+          <button class="btn btn-acc" onclick="ctShowDeploy()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#models"></use></svg> <span data-i18n="Deploy?">Deploy?</span></button>
           <button class="btn btn-ghost" onclick="ctReconfig()">↩ <span data-i18n="Reconfigure">Reconfigure</span></button>
         </div>
       </div>
@@ -925,7 +925,7 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
           <input type="text" class="input" id="ct-dep-name" style="margin-top:5px" data-i18n-placeholder="Enter model name">
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-acc" onclick="ctConfirmDeploy()">✅ <span data-i18n="Confirm Deploy">Confirm Deploy</span></button>
+          <button class="btn btn-acc" onclick="ctConfirmDeploy()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#check"></use></svg> <span data-i18n="Confirm Deploy">Confirm Deploy</span></button>
           <button class="btn btn-ghost" onclick="$('ct-dep').style.display='none'" data-i18n="Cancel">Cancel</button>
         </div>
       </div>

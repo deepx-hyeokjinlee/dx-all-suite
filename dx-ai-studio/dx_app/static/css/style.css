@@ -62,7 +62,11 @@ tbody tr:hover td{background:var(--surface-hover)}
 }
 .search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.1)}
 .search-box::before{
-  content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:var(--fs-md);
+  /* 돋보기 — sprite 의 search 와 같은 모양을 mask 로 (::before 에는 <use> 가 들어가지 못한다) */
+  content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;
+  background:currentColor;opacity:.7;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 20 20'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 20 20'/%3E%3C/svg%3E") center/contain no-repeat;
 }
 
 /*═══ Modal ═══*/
@@ -295,7 +299,7 @@ tbody tr:hover td{background:var(--surface-hover)}
 
 /*═══ Model action btns ═══*/
 /* 이 열의 내용은 **로컬에 모델이 설치돼 있는지** 에 따라 달라진다 — models.js 가
-   설치된 모델에만 `📊 Graph` 버튼을 붙이고 Download 라벨을 Re-download 로 늘린다.
+   설치된 모델에만 `Graph` 버튼을 붙이고 Download 라벨을 Re-download 로 늘린다.
    마지막 열이라 폭이 변하면 왼쪽 열들이 좁아지며 표 전체가 리플로우됐다: 모델을
    하나 받을 때마다 표가 들썩였고, 실측으로 175px ↔ 246px 였다.
    가장 넓은 상태(246px)로 고정해 설치 여부와 무관하게 자리를 잡아둔다. 네 뷰포트
@@ -664,7 +668,7 @@ tbody tr:hover td{background:var(--surface-hover)}
 .perf-table tbody td{padding:6px 12px;border-bottom:1px solid var(--border-subtle)}
 .perf-table tbody td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
 .perf-table tr.pt-bot td{color:var(--status-error)}
-.perf-table tr.pt-bot td:first-child::before{content:'● ';color:var(--status-error)}
+.perf-table tr.pt-bot td:first-child::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--status-error);margin-right:var(--sp-1);vertical-align:2px}
 /* ── Sparkline ── */
 .sparkline-wrap{background:var(--control-bg);border-radius:var(--radius-sm);padding:8px 10px}
 .sparkline-label{font-size:var(--fs-2xs);color:var(--text-muted);margin-bottom:4px}

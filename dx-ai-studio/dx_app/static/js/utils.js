@@ -31,7 +31,7 @@ function api(url,opts){return fetch(url,opts).then(r=>r.json()).catch(e=>({error
 function findModel(name){return S.models.find(function(m){return m.name===name})}
 function postJ(url,body){return api(url,{method:'POST',headers:{'Content-Type':'application/json','X-Lab-Token':S.labToken||S.devToken||''},body:JSON.stringify(body)})}
 
-const _toastIcons={ok:'✅',err:'❌',info:'ℹ️',warn:'⚠️'};
+const _toastIcons={ok:DXIcon('check'),err:DXIcon('x'),info:DXIcon('info'),warn:DXIcon('alert')};
 const _toastHistory=[];
 const _TOAST_HIST_MAX=100;
 let _toastUnread=0;
@@ -39,7 +39,7 @@ let _toastUnread=0;
 function toast(msg,type='info',opts){
   if(!opts)opts={};
   const tc=type==='ok'?'ok':type==='err'?'err':type==='warn'?'warn':'info';
-  const icon=_toastIcons[tc]||'ℹ️';
+  const icon=_toastIcons[tc]||DXIcon('info');
   _toastHistory.unshift({msg,type:tc,time:Date.now(),icon,actionLabel:opts.action?opts.action.label:null,actionUrl:opts.action&&opts.action.url?opts.action.url:null});
   if(_toastHistory.length>_TOAST_HIST_MAX)_toastHistory.pop();
   _toastUnread++;
@@ -53,7 +53,7 @@ function toast(msg,type='info',opts){
     t.appendChild(ab);
   }
   if(!opts.persist){
-    const cb=document.createElement('button');cb.className='toast-close';cb.innerHTML='✕';
+    const cb=document.createElement('button');cb.className='toast-close';cb.innerHTML='';
     cb.onclick=function(){t.classList.remove('show');setTimeout(()=>t.remove(),400);};
     t.appendChild(cb);
   }
@@ -93,7 +93,7 @@ function _renderNotifHistory(){
   if(!_toastHistory.length){c.innerHTML='<p class="txt-dim" style="padding:16px;text-align:center">'+T('No notifications yet')+'</p>';return;}
   c.innerHTML=_toastHistory.map(function(h){
     const ts=fmtClock(h.time);
-    var actionHtml=h.actionUrl?'<br><a class="btn btn-xs btn-acc" href="'+esc(h.actionUrl)+'" download style="margin-top:4px;display:inline-block;font-size:10px;padding:3px 10px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-weight:600">⬇️ '+esc(h.actionLabel||T('Download'))+'</a>':'';
+    var actionHtml=h.actionUrl?'<br><a class="btn btn-xs btn-acc" href="'+esc(h.actionUrl)+'" download style="margin-top:4px;display:inline-block;font-size:10px;padding:3px 10px;background:var(--accent);color:#fff;border-radius:6px;text-decoration:none;font-weight:600">' + DXIcon('download') + ' '+esc(h.actionLabel||T('Download'))+'</a>':'';
     return '<div class="notif-item notif-'+h.type+'"><span class="notif-icon">'+h.icon+'</span><span class="notif-msg">'+esc(h.msg)+actionHtml+'</span><span class="notif-time">'+ts+'</span></div>';
   }).join('');
 }
@@ -131,14 +131,14 @@ function fmtClock(epochMs){const d=new Date(epochMs);return d.toLocaleTimeString
 function tempColor(t){return t<40?_cv('--status-ok'):t<55?_cv('--status-warn'):_cv('--status-error')}
 
 const PAGES=['setup','models','run','rundemo','bench','compare','modelzoo','lab','outputs','reference'];
-const PAGE_TITLES={setup:'⚙️ Setup & Install',models:'Models',run:'Run Inference',rundemo:'🎬 Run Demo',bench:'Benchmark',compare:'A/B Compare',modelzoo:'📥 ModelZoo',lab:'🧪 Lab',outputs:'Outputs',reference:'📖 Reference'};
+const PAGE_TITLES={setup:DXIcon('gear') + ' Setup & Install',models:'Models',run:'Run Inference',rundemo:DXIcon('demo') + ' Run Demo',bench:'Benchmark',compare:'A/B Compare',modelzoo:DXIcon('download') + ' ModelZoo',lab:DXIcon('lab') + ' Lab',outputs:'Outputs',reference:DXIcon('book') + ' Reference'};
 function _applyLangToActivePage(){
   if(!window.DXI18n)return;
   const active=document.querySelector('.page.active');
   DXI18n.applyLang(active||document);
 }
 // 헤더의 페이지명은 활성 탭 라벨을 그대로 쓴다. PAGE_TITLES 는 이모지 접두사를
-// 달고 있어(예: '📥 ModelZoo') 탭의 SVG 아이콘과 겹쳐 보이고, 탭과 헤더가
+// 달고 있어(예: '<다운로드 이모지> ModelZoo') 탭의 SVG 아이콘과 겹쳐 보이고, 탭과 헤더가
 // 서로 다른 번역 경로를 타면 어긋난다. 탭이 없을 때만 PAGE_TITLES 로 떨어진다.
 function _shellPageLabel(page){
   const tab=document.querySelector('.dx-tab[data-page="'+page+'"] span');
@@ -226,7 +226,7 @@ function refreshBenchLanguage(){
   }
   // Update run button text if benchmark is running
   var runBtn=$('b-run-btn');
-  if(runBtn&&typeof _benchRunning!=='undefined'&&_benchRunning)runBtn.textContent=T('⏳ Running…');
+  if(runBtn&&typeof _benchRunning!=='undefined'&&_benchRunning)DXIcon.label(runBtn,'spinner',T('Running…'));
 }
 
 function refreshCompareLanguage(){

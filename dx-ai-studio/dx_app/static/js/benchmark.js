@@ -36,9 +36,9 @@ function initBenchPage(){
         if(chk.value===target){chk.checked=true;found=true;}
       });
       if(found){
-        toast('📊 "'+target+'" '+T('auto-selected')+' — '+T('choose comparison models and start benchmark'),'ok');
+        toast('"'+target+'" '+T('auto-selected')+' — '+T('choose comparison models and start benchmark'),'ok');
       }else{
-        toast('⚠️ "'+target+'" '+T('not found in model list'),'warn');
+        toast('"'+target+'" '+T('not found in model list'),'warn');
       }
     },200);
   }
@@ -68,7 +68,7 @@ function filterBenchModels(){
   $('bench-sel').querySelector('tbody').innerHTML=list.map(function(m){
     return '<tr><td><input type="checkbox" class="b-chk" value="'+esc(m.name)+'" data-cat="'+m.category+'"/></td>'
       +'<td>'+esc(m.name)+'</td><td><span class="badge b-cat">'+m.category+'</span></td>'
-      +'<td>'+(m.cpp?'\u2713':'')+' '+(m.python?'\u2713':'')+'</td></tr>';
+      +'<td>'+(m.cpp?DXIcon('check'):'')+' '+(m.python?DXIcon('check'):'')+'</td></tr>';
   }).join('');
 }
 
@@ -90,7 +90,7 @@ async function doBench(){
   tb.innerHTML='';
   S.benchRes={};
   const rc=$('b-result-card');if(rc)rc.classList.remove('hidden');
-  const runBtn=$('b-run-btn');if(runBtn){runBtn.disabled=true;runBtn.textContent='\u23f3 '+T('Running...')}
+  const runBtn=$('b-run-btn');if(runBtn){runBtn.disabled=true;DXIcon.label(runBtn,'spinner',T('Running...'))}
   for(const chk of checks){
     const name=chk.value,cat=chk.dataset.cat;
     const m=findModel(name);if(!m)continue;
@@ -122,10 +122,10 @@ async function doBench(){
         +'<td><span class="badge b-cat">'+cat+'</span></td><td>'+statusBadge+'</td>'
         +'<td class="txt-acc">'+(res.fps||'\u2014')+'</td>'
         +'<td>'+(res.latency?res.latency+'ms':'\u2014')+'</td>'
-        +'<td><button class="bench-detail-btn" onclick="event.stopPropagation();showBenchDetail(\''+ename+'\')">🔍 Detail</button></td>';
+        +'<td><button class="bench-detail-btn" onclick="event.stopPropagation();showBenchDetail(\''+ename+'\')">' + DXIcon('search') + ' Detail</button></td>';
     }
   }
-  if(runBtn){runBtn.disabled=false;runBtn.textContent='\u23f1\ufe0f '+T('Start Benchmark')}
+  if(runBtn){runBtn.disabled=false;DXIcon.label(runBtn,'clock',T('Start Benchmark'))}
   _benchRunning=false;
   const items=results.filter(function(r){return r.fps}).map(function(r){return{label:r.name.length>15?r.name.slice(0,14)+'\u2026':r.name,val:parseFloat(r.fps),color:_cv('--app-accent')}});
   if(items.length)drawBarChart($('bench-chart'),items);
@@ -138,7 +138,7 @@ function showBenchDetail(name){
   if(r.error){
     var errMsg=_benchErrorMessage(r);
     h+='<div style="background:rgba(248,81,73,.12);border:1px solid rgba(248,81,73,.4);border-radius:6px;padding:10px 14px;margin-bottom:12px;color:#ff453a">'
-      +'<strong>'+T('⚠️ Run Error:')+'</strong> '+esc(errMsg)+'</div>';
+      +'<strong>'+DXIcon('alert')+' '+T('Run Error:')+'</strong> '+esc(errMsg)+'</div>';
   }
   h+='<div class="flex gap8 mb12">';
   h+='<span class="badge b-cat">'+(r.cat||r.category||'')+'</span>';
@@ -171,7 +171,7 @@ function showBenchDetail(name){
 
   if(r.elapsed_s)h+='<div class="pcard"><div class="pv">'+r.elapsed_s+'s</div><div class="pk">Total</div></div>';
   var ec=r.exit_code===0;
-  h+='<div class="pcard"><div class="pv" style="color:'+(ec?'var(--status-ok)':'var(--status-error)')+'">'+(ec?'\u2705':'\u274c')+'</div><div class="pk">Exit '+r.exit_code+'</div></div>';
+  h+='<div class="pcard"><div class="pv" style="color:'+(ec?'var(--status-ok)':'var(--status-error)')+'">'+(ec?DXIcon('check'):DXIcon('x'))+'</div><div class="pk">Exit '+r.exit_code+'</div></div>';
   h+='</div>';
   if(r.perf&&r.perf.pipeline&&r.perf.pipeline.length)h+='<div class="mt12">'+renderWaterfall(r.perf)+'</div>';
   var hw=r.hw_after;
@@ -185,8 +185,8 @@ function showBenchDetail(name){
       if(n.power_est_mW!=null)h+='<div class="pcard"><div class="pv">'+n.power_est_mW+'mW</div><div class="pk">Power</div></div>';}
     h+='</div>';
   }
-  if(r.output)h+='<details class="mt12"><summary class="clickable txt-dim">'+T('📋 Full Output')+' ('+esc(r.output).length+' chars)</summary><div class="code mt8 txt-sm" style="max-height:300px;overflow:auto">'+esc(r.output)+'</div></details>';
-  $('md-title').innerHTML=T('🔋 Benchmark Detail — ')+esc(name);
+  if(r.output)h+='<details class="mt12"><summary class="clickable txt-dim">'+DXIcon('clipboard')+' '+T('Full Output')+' ('+esc(r.output).length+' chars)</summary><div class="code mt8 txt-sm" style="max-height:300px;overflow:auto">'+esc(r.output)+'</div></details>';
+  $('md-title').innerHTML=DXIcon('bolt')+' '+T('Benchmark Detail — ')+esc(name);
   $('md-body').innerHTML=h;
   openModal('modal-detail');
 }
@@ -245,7 +245,7 @@ function benchExportReport(){
   h+='@media print{body{background:#fff;color:#1f2937} .rpt-card{border-color:#e5e7eb;background:#f9fafb} th{background:#f3f4f6;color:#6b7280} td{border-color:#e5e7eb} tr:hover{background:transparent}}';
   h+='</style></head><body><div class="rpt">';
 
-  h+='<h1>'+T('📊 DX-APP Benchmark Report')+'</h1>';
+  h+='<h1>'+DXIcon('dashboard')+' '+T('DX-APP Benchmark Report')+'</h1>';
   h+='<div class="rpt-meta">'+T('Generated: ')+esc(ts)+' | '+T('Language: ')+esc(lang)+' | '+T('Input: ')+esc(inputType)+' | '+T('Loop: ')+esc(loopCount)+'</div>';
 
   h+='<div class="rpt-summary">';
@@ -256,7 +256,7 @@ function benchExportReport(){
   h+='<div class="rpt-card"><div class="val acc">'+avgFps+'</div><div class="lbl">'+T('Avg FPS')+'</div></div>';
   h+='</div>';
 
-  h+='<h2>'+T('🏆 Performance Ranking')+'</h2>';
+  h+='<h2>'+DXIcon('award')+' '+T('Performance Ranking')+'</h2>';
   h+='<table><thead><tr><th>#</th><th>'+T('Model')+'</th><th>'+T('Category')+'</th><th>'+T('Status')+'</th><th>FPS</th><th>'+T('Latency')+'</th><th>'+T('Elapsed')+'</th><th>'+T('FPS Bar')+'</th></tr></thead><tbody>';
   var maxFps=ranked.length?Math.max.apply(null,ranked.map(function(r){return parseFloat(r.fps)||0})):1;
   ranked.forEach(function(r,i){
@@ -283,7 +283,7 @@ function benchExportReport(){
     else if(r.status==='ERROR')cats[r.category].errors++;
     else cats[r.category].failed++;
   });
-  h+='<h2>'+T('📂 Category Summary')+'</h2>';
+  h+='<h2>'+DXIcon('folder')+' '+T('Category Summary')+'</h2>';
   h+='<table><thead><tr><th>'+T('Category')+'</th><th>'+T('Models')+'</th><th>'+T('Passed')+'</th><th>'+T('Failed')+'</th><th>'+T('Errors')+'</th><th>'+T('Avg FPS')+'</th></tr></thead><tbody>';
   Object.keys(cats).sort().forEach(function(c){
     var d=cats[c];
@@ -309,7 +309,7 @@ function benchExportReport(){
       ?((latVals[latVals.length/2-1].val+latVals[latVals.length/2].val)/2).toFixed(2)
       :latVals[Math.floor(latVals.length/2)].val.toFixed(2);
     var latP95=latVals[Math.min(Math.floor(latVals.length*0.95),latVals.length-1)];
-    h+='<h2>'+T('⚡ Latency Analysis')+'</h2>';
+    h+='<h2>'+DXIcon('bolt')+' '+T('Latency Analysis')+'</h2>';
     h+='<div class="rpt-summary">';
     h+='<div class="rpt-card"><div class="val green">'+latMin.val+'ms</div><div class="lbl">'+T('Min')+' ('+esc(latMin.name)+')</div></div>';
     h+='<div class="rpt-card"><div class="val red">'+latMax.val+'ms</div><div class="lbl">'+T('Max')+' ('+esc(latMax.name)+')</div></div>';
@@ -326,7 +326,7 @@ function benchExportReport(){
     if(allFps.length>1&&allLat.length>1){
       var fpsMin2=Math.min.apply(null,allFps)*0.9, fpsMax2=Math.max.apply(null,allFps)*1.1;
       var latMin2=Math.min.apply(null,allLat)*0.9, latMax2=Math.max.apply(null,allLat)*1.1;
-      h+='<h2>'+T('📈 FPS vs Latency')+'</h2>';
+      h+='<h2>'+DXIcon('dashboard')+' '+T('FPS vs Latency')+'</h2>';
       h+='<div style="overflow-x:auto"><svg width="'+svgW+'" height="'+svgH+'" style="background:#1d1d1f;border-radius:8px;border:1px solid #1e293b">';
       h+='<line x1="'+pad+'" y1="'+(svgH-pad)+'" x2="'+(svgW-20)+'" y2="'+(svgH-pad)+'" stroke="#1e293b" stroke-width="1"/>';
       h+='<line x1="'+pad+'" y1="20" x2="'+pad+'" y2="'+(svgH-pad)+'" stroke="#1e293b" stroke-width="1"/>';
@@ -368,7 +368,7 @@ function benchExportReport(){
     hwData.push(item);
   });
   if(hwData.length){
-    h+='<h2>'+T('🔧 Hardware Resources (Post-Run)')+'</h2>';
+    h+='<h2>'+DXIcon('wrench')+' '+T('Hardware Resources (Post-Run)')+'</h2>';
     h+='<table><thead><tr><th>Model</th><th>CPU %</th><th>RAM %</th>';
     var hasNpu=hwData.some(function(d){return d.temp!=null||d.freq!=null||d.power!=null});
     if(hasNpu)h+='<th>NPU Temp</th><th>NPU Clock</th><th>Power</th>';
@@ -401,7 +401,7 @@ function benchExportReport(){
 
     // Power Efficiency (FPS/Watt) if power data exists
     if(powerN>0){
-      h+='<h2>'+T('🏅 Power Efficiency (FPS / Watt)')+'</h2>';
+      h+='<h2>'+DXIcon('award')+' '+T('Power Efficiency (FPS / Watt)')+'</h2>';
       var effRows=[];
       models.forEach(function(name){
         var r=S.benchRes[name];
@@ -426,7 +426,7 @@ function benchExportReport(){
 
   var imgModels=models.filter(function(n){return S.benchRes[n].result_image});
   if(imgModels.length){
-    h+='<h2>'+T('🖼️ Result Gallery')+'</h2>';
+    h+='<h2>'+DXIcon('image')+' '+T('Result Gallery')+'</h2>';
     h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">';
     imgModels.forEach(function(name){
       var r=S.benchRes[name];
@@ -442,7 +442,7 @@ function benchExportReport(){
 
   var errModels=models.filter(function(n){var r=S.benchRes[n];return !!r.error});
   if(errModels.length){
-    h+='<h2>'+T('❌ Runtime Errors')+'</h2>';
+    h+='<h2>'+DXIcon('x')+' '+T('Runtime Errors')+'</h2>';
     errModels.forEach(function(name){
       var r=S.benchRes[name];
       h+='<div style="background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.25);border-radius:8px;padding:12px 16px;margin-bottom:8px">';
@@ -459,7 +459,7 @@ function benchExportReport(){
   }
   var failModels=models.filter(function(n){var r=S.benchRes[n];return !r.error&&r.exit_code!=null&&r.exit_code!==0});
   if(failModels.length){
-    h+='<h2>'+T('⚠️ Accuracy Failures')+'</h2>';
+    h+='<h2>'+DXIcon('alert')+' '+T('Accuracy Failures')+'</h2>';
     failModels.forEach(function(name){
       var r=S.benchRes[name];
       h+='<div style="background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.25);border-radius:8px;padding:12px 16px;margin-bottom:8px">';
@@ -474,7 +474,7 @@ function benchExportReport(){
     });
   }
 
-  h+='<h2>'+T('🖥️ Environment')+'</h2>';
+  h+='<h2>'+DXIcon('monitor')+' '+T('Environment')+'</h2>';
   h+='<table><tbody>';
   h+='<tr><td>'+T('Language')+'</td><td>'+esc(lang)+'</td></tr>';
   h+='<tr><td>'+T('Input Type')+'</td><td>'+esc(inputType)+'</td></tr>';
@@ -490,7 +490,7 @@ function benchExportReport(){
   a.href=URL.createObjectURL(blob);
   a.download='benchmark_report_'+new Date().toISOString().slice(0,10)+'.html';
   a.click();
-  toast('📄 '+T('Benchmark report downloaded'),'ok');
+  toast(T('Benchmark report downloaded'),'ok');
 }
 
 if (typeof registerLangRefresher === 'function') {

@@ -134,13 +134,13 @@ function mzRenderTable() {
 
       var has = !!(tier && tier.dxnn_url);
       var acc = has ? mzNl2br(esc(tier.accuracy || '–')) : '–';
-      var dxnn = has ? '<a href="' + esc(tier.dxnn_url) + '" target="_blank" class="txt-link txt-xs">📦 dxnn</a>' : '–';
-      var jsonL = (has && tier.json_url) ? '<a href="' + esc(tier.json_url) + '" target="_blank" class="txt-link txt-xs">📄 json</a>' : '–';
+      var dxnn = has ? '<a href="' + esc(tier.dxnn_url) + '" target="_blank" class="txt-link txt-xs">' + DXIcon('models') + ' dxnn</a>' : '–';
+      var jsonL = (has && tier.json_url) ? '<a href="' + esc(tier.json_url) + '" target="_blank" class="txt-link txt-xs">' + DXIcon('file') + ' json</a>' : '–';
 
       var dl = '–';
       if (has) {
         if (tier.exists && !inCart) {
-          dl = '<span class="badge b-ok txt-xs" title="' + T('Downloaded') + '">✅</span>';
+          dl = '<span class="badge b-ok txt-xs" title="' + T('Downloaded') + '">' + DXIcon('check') + '</span>';
         } else {
           dl = '<label class="mz-chk-wrap" title="' + T('Add to cart') + ' — ' + chip.label + '">'
              + '<input type="checkbox" onchange="mzToggleChip(\'' + esc(m.name) + '\',\'' + chip.key + '\')"'
@@ -155,7 +155,7 @@ function mzRenderTable() {
                  + '<td class="' + chip.col + '">' + dl + '</td>';
     }
 
-    var onnxLink = m.onnx_url ? '<a href="' + esc(m.onnx_url) + '" target="_blank" class="txt-link txt-xs">📦 onnx</a>' : '–';
+    var onnxLink = m.onnx_url ? '<a href="' + esc(m.onnx_url) + '" target="_blank" class="txt-link txt-xs">' + DXIcon('models') + ' onnx</a>' : '–';
 
     var rowCls = anyInCart ? 'mz-row-selected' : '';
 
@@ -344,14 +344,14 @@ function mzRenderCart() {
 
   var summaryHtml = '<div class="mz-cart-summary">'
     + '<div class="mz-cart-left">'
-    + '<span class="mz-cart-icon">🛒</span> '
+    + '<span class="mz-cart-icon">' + DXIcon('download') + '</span> '
     + '<strong>' + names.length + '</strong> ' + T('model(s)')
     + ' · <span class="txt-dim">' + fileCount + ' ' + T('files') + '</span>'
     + '</div>'
     + '<div class="mz-cart-right">'
-    + '<button class="btn btn-ghost btn-sm" onclick="mzToggleCartPanel()">' + (MZ.cartOpen ? '▼ ' + T('Hide') : '▲ ' + T('View Cart')) + '</button>'
-    + '<button class="btn btn-ghost btn-sm" onclick="mzCartClear()" title="' + T('Clear Cart') + '">🗑️</button>'
-    + '<button class="btn btn-acc btn-sm" onclick="mzStartDownload()" ' + (MZ.downloading ? 'disabled' : '') + '>📥 ' + T('Download All') + ' (' + fileCount + ')</button>'
+    + '<button class="btn btn-ghost btn-sm" onclick="mzToggleCartPanel()">' + (MZ.cartOpen ? '' + T('Hide') : '' + T('View Cart')) + '</button>'
+    + '<button class="btn btn-ghost btn-sm" onclick="mzCartClear()" title="' + T('Clear Cart') + '">' + DXIcon('trash') + '</button>'
+    + '<button class="btn btn-acc btn-sm" onclick="mzStartDownload()" ' + (MZ.downloading ? 'disabled' : '') + '>' + DXIcon('download') + ' ' + T('Download All') + ' (' + fileCount + ')</button>'
     + '</div></div>';
 
   var detailHtml = '';
@@ -364,7 +364,7 @@ function mzRenderCart() {
 
       detailHtml += '<div class="mz-cart-item">'
         + '<div class="mz-cart-item-info">'
-        + '<span class="mz-cart-item-name">📦 ' + esc(name) + '</span>'
+        + '<span class="mz-cart-item-name">' + DXIcon('models') + ' ' + esc(name) + '</span>'
         + '<span class="badge b-cat">' + esc(task) + '</span>'
         + '</div>'
         + '<div class="mz-cart-item-chips">';
@@ -374,12 +374,12 @@ function mzRenderCart() {
         var tier = m && m[chip.key];
         if (!tier || !tier.dxnn_url) continue;
         var cls = c[chip.key] ? 'mz-chip-on' : 'mz-chip-off';
-        var label = (tier.exists ? '✅ ' : '') + chip.label;
+        var label = (tier.exists ? DXIcon('check') + ' ' : '') + chip.label;
         detailHtml += '<button class="mz-chip-toggle ' + cls + '" onclick="mzCartChipToggle(\'' + esc(name) + '\',\'' + chip.key + '\')">' + label + '</button>';
       }
 
       detailHtml += '</div>'
-        + '<button class="mz-cart-remove" onclick="mzCartRemove(\'' + esc(name) + '\')" title="'+T('Remove')+'">✕</button>'
+        + '<button class="mz-cart-remove" onclick="mzCartRemove(\'' + esc(name) + '\')" title="'+T('Remove')+'"></button>'
         + '</div>';
     });
     detailHtml += '</div>';
@@ -441,9 +441,9 @@ async function mzPollProgress() {
     var errCount = (r.results || []).filter(function(x) { return x.status === 'error'; }).length;
 
     if (errCount > 0) {
-      toast('⚠️ ' + T('Downloaded') + ' ' + okCount + ', ' + T('errors') + ' ' + errCount, 'err');
+      toast(T('Downloaded') + ' ' + okCount + ', ' + T('errors') + ' ' + errCount, 'err');
     } else {
-      toast('✅ ' + T('Download complete —') + ' ' + okCount + ' ' + T('files'), 'ok');
+      toast(T('Download complete —') + ' ' + okCount + ' ' + T('files'), 'ok');
     }
 
     // Refresh model list (exists flags)
@@ -476,17 +476,17 @@ function mzRenderProgress(st) {
   var html = '<div class="mz-prog-header">'
     + '<div class="mz-prog-bar-wrap"><div class="mz-prog-bar" style="width:' + barW + '"></div></div>'
     + '<span class="mz-prog-pct">' + pct + '% (' + st.done + '/' + st.total + ')</span>'
-    + (st.running ? '<button class="btn btn-ghost btn-sm" onclick="mzStopDownload()">⏹ ' + T('Stop') + '</button>' : '')
+    + (st.running ? '<button class="btn btn-ghost btn-sm" onclick="mzStopDownload()">' + DXIcon('stop') + ' ' + T('Stop') + '</button>' : '')
     + '</div>';
 
   if (st.current && st.running) {
-    html += '<div class="mz-prog-current">⏳ ' + esc(st.current) + '</div>';
+    html += '<div class="mz-prog-current">' + DXIcon('spinner') + ' ' + esc(st.current) + '</div>';
   }
 
   if (st.results && st.results.length) {
     html += '<div class="mz-prog-log">';
     st.results.forEach(function(r) {
-      var icon = r.status === 'ok' ? '✅' : r.status === 'cancelled' ? '⏹' : '❌';
+      var icon = r.status === 'ok' ? DXIcon('check') : r.status === 'cancelled' ? DXIcon('stop') : DXIcon('x');
       var sizeStr = r.size ? mzFmtSize(r.size) : '';
       var detail = r.error ? '<span class="txt-dim"> — ' + esc(r.error) + '</span>' : '';
       html += '<div class="mz-prog-item">' + icon + ' ' + esc(r.file || '') + (r.chip ? ' <span class="badge b-blue">' + r.chip + '</span>' : '') + ' ' + sizeStr + detail + '</div>';
@@ -495,7 +495,7 @@ function mzRenderProgress(st) {
   }
 
   if (st.finished) {
-    html += '<div class="mt8 txt-sm" style="color:var(--status-ok)">' + T('✅ All done!') + '</div>';
+    html += '<div class="mt8 txt-sm" style="color:var(--status-ok)">' + DXIcon('check')+' '+T('All done!') + '</div>';
   }
 
   el.innerHTML = html;

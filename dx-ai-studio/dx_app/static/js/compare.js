@@ -52,7 +52,7 @@ function setABCols(n){
       +'<div class="fg"><label>'+T('Search')+'</label><div class="ac-wrap"><input type="text" class="input" id="ab-search-'+i+'" placeholder="Type model name..." oninput="filterABModels('+i+')" onfocus="filterABModels('+i+')" autocomplete="off"><div class="ac-list" id="ab-ac-'+i+'"></div></div></div>'
       +'<div class="fg"><label>Model</label><select class="input" id="ab-model-'+i+'"><option value="">'+T('— Select Model —')+'</option>'+opts+'</select></div>'
       +'<div class="fg"><label>Language</label><select class="input" id="ab-lang-'+i+'"><option value="cpp">C++ (Compiled)</option><option value="python">Python</option></select></div>'
-      +'<div class="ab-res-area"><div id="ab-res-'+i+'" class="txt-dim txt-sm">'+T('Select a model and click ▶ Run All')+'</div></div>'
+      +'<div class="ab-res-area"><div id="ab-res-'+i+'" class="txt-dim txt-sm">'+T('Select a model and click Run All')+'</div></div>'
       +'</div></div>';
   }
   if(_abDocClickHandler){document.removeEventListener('click',_abDocClickHandler)}
@@ -121,7 +121,7 @@ async function doABRun(){
   var isLive=(inputType==='camera'||inputType==='rtsp');
   var origHtml='';
   if(isLive){
-    origHtml='<div class="txt-dim txt-sm" style="padding:8px">📹 Live source ('+(inputType==='camera'?'/dev/video'+($('ab-camera').value||'0'):'RTSP')+')</div>';
+    origHtml='<div class="txt-dim txt-sm" style="padding:8px">' + DXIcon('video') + ' Live source ('+(inputType==='camera'?'/dev/video'+($('ab-camera').value||'0'):'RTSP')+')</div>';
   }else if(inputType==='image'){
     origHtml='<img src="/file/'+inputPath+'" class="res-img mb8" onclick="previewImg(this.src)" style="max-width:100%;border:1px solid var(--control-bg);border-radius:6px"/>';
   }else{
@@ -147,7 +147,7 @@ async function doABRun(){
     h+='</div>';
     if(r.perf&&r.perf.pipeline&&r.perf.pipeline.length){h+='<div class="mt8">'+renderWaterfall(r.perf)+'</div>';}
     if(r.exit_code!==0)h+='<p class="txt-sm" style="color:var(--status-error)">Exit code: '+r.exit_code+'</p>';
-    if(r.output)h+='<details class="mt8"><summary class="clickable txt-dim txt-sm">\ud83d\udccb Full Output</summary><div class="code mt4" style="max-height:200px;overflow:auto;font-size:10px">'+esc(r.output)+'</div></details>';
+    if(r.output)h+='<details class="mt8"><summary class="clickable txt-dim txt-sm">' + DXIcon('clipboard') + ' Full Output</summary><div class="code mt4" style="max-height:200px;overflow:auto;font-size:10px">'+esc(r.output)+'</div></details>';
     $('ab-res-'+si).innerHTML=h;
   });
   $('ab-compare-card').classList.remove('hidden');

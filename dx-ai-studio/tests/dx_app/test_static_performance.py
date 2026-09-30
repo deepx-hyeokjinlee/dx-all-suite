@@ -131,8 +131,10 @@ def test_continuous_result_status_skips_same_value_text_writes():
     result_body = _function_body(source, "function contShowResult(")
 
     assert "function setTextIfChanged(" in source
-    assert "setTextIfChanged(statusEl,T('❌ Error'));" in result_body
-    assert "setTextIfChanged(statusEl,T('✅ Done'));" in result_body
+    # 상태는 아이콘 + 말 — 같은 값이면 다시 쓰지 않는다 (setLabelIfChanged, 아이콘 체계 단계 5).
+    assert "function setLabelIfChanged(" in source
+    assert "setLabelIfChanged(statusEl,'x',T('Error'));" in result_body
+    assert "setLabelIfChanged(statusEl,'check',T('Done'));" in result_body
     assert "setTextIfChanged(fpsEl,res.fps+' FPS');" in result_body
     assert "statusEl.textContent" not in result_body
     assert "fpsEl.textContent" not in result_body
@@ -226,7 +228,7 @@ def test_continuous_processing_state_set_per_slot_not_pre_marked():
     )
 
     # Slots waiting for their turn should show 'Waiting…' not 'Processing…'
-    assert "T('⏳ Waiting…')" in grid_body or "T('▶ Press Start to begin inference')" in grid_body, (
+    assert "T('Waiting…')" in grid_body or "T('Press Start to begin inference')" in grid_body, (
         "contRenderGrid should show a non-processing placeholder for pending slots"
     )
 

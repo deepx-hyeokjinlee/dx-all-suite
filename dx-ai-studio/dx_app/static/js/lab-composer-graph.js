@@ -202,7 +202,7 @@ window.LabComposerGraph = (function () {
     toolbar.appendChild(actionButton('− ' + text('zoomOut', 'Zoom out'), function () { zoomBy(0.85); }));
     toolbar.appendChild(actionButton('+ ' + text('zoomIn', 'Zoom in'), function () { zoomBy(1.15); }));
     toolbar.appendChild(actionButton('⊙ ' + text('fitView', 'Fit view'), function () { fitView(); }));
-    toolbar.appendChild(actionButton('✓ ' + text('validate', 'Validate graph'), function () { emitValidation(); }));
+    toolbar.appendChild(actionButton(text('validate', 'Validate graph'), function () { emitValidation(); }));
     toolbar.appendChild(status);
     root.appendChild(toolbar);
     root.appendChild(canvas);

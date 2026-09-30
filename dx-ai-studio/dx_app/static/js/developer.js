@@ -112,20 +112,20 @@ async function devExtract(){
   var lang=$('de-lang').value;
   if(!path){toast(T('Select or enter a model path'),'warn');return}
   var btn=document.querySelector('#dev-ext .btn-acc');
-  if(btn){btn.disabled=true;btn.textContent='\u23f3 '+T('Extracting...')}
+  if(btn){btn.disabled=true;DXIcon.label(btn,'spinner',T('Extracting...'))}
   $('de-out').textContent=T('Extracting package for: ')+path+'\n...';$('de-out').classList.remove('hidden');
   const res=await postJ('/api/dev/extract',{model_path:path,lang:lang});
-  if(btn){btn.disabled=false;btn.textContent='\ud83d\udce6 '+T('Extract Package')}
+  if(btn){btn.disabled=false;DXIcon.label(btn,'models',T('Extract Package'))}
   if(res.ok){
-    var txt='\u2705 Success! Output directory: '+res.output_dir+'\n\n';
+    var txt=DXIcon('check') + ' Success! Output directory: '+res.output_dir+'\n\n';
     (res.results||[]).forEach(function(r){
-      txt+='['+(r.lang||'?')+'] '+(r.ok?'\u2705 OK':'\u274c FAIL')+'\n';
+      txt+='['+(r.lang||'?')+'] '+(r.ok?DXIcon('check') + ' OK':DXIcon('x') + ' FAIL')+'\n';
       if(r.output)txt+=r.output+'\n';
     });
     $('de-out').textContent=txt;
     toast(T('Package extracted to outputs/'),'ok');
   }else{
-    $('de-out').textContent='\u274c Error: '+(res.error||'Unknown error');
+    DXIcon.label($('de-out'),'x','Error: '+(res.error||'Unknown error'));
     toast(res.error||T('Extract failed'),'err');
   }
 }
@@ -136,7 +136,7 @@ async function devNewTask(){
   if(!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(name)){toast(T('Use letters, digits, underscores only (must start with a letter)'),'warn');return}
   var lang=$('ds-lang').value;
   var btn=document.querySelector('#dev-skel .btn-acc');
-  if(btn){btn.disabled=true;btn.textContent='⏳ '+T('Creating...')}
+  if(btn){btn.disabled=true;DXIcon.label(btn,'spinner',T('Creating...'))}
   $('ds-out').textContent=T('Creating skeleton for: ')+name+'\n...';$('ds-out').classList.remove('hidden');
   var data={task_name:name,lang:lang};
   var res=await postJ('/api/dev/new_task',data);
@@ -145,18 +145,18 @@ async function devNewTask(){
     if(confirm(msg)){
       data.confirm_overwrite=true;
       res=await postJ('/api/dev/new_task',data);
-    }else{if(btn){btn.disabled=false;btn.textContent='🦴 '+T('Create Skeleton')}toast(T('Cancelled'),'warn');return}
+    }else{if(btn){btn.disabled=false;DXIcon.label(btn,'dev',T('Create Skeleton'))}toast(T('Cancelled'),'warn');return}
   }
-  if(btn){btn.disabled=false;btn.textContent='🦴 '+T('Create Skeleton')}
+  if(btn){btn.disabled=false;DXIcon.label(btn,'dev',T('Create Skeleton'))}
   if(res.ok){
-    var txt='✅ Task skeleton created: '+res.task_name+' ('+res.task_upper+')\n\n';
+    var txt=DXIcon('check') + ' Task skeleton created: '+res.task_name+' ('+res.task_upper+')\n\n';
     txt+='Generated '+res.count+' files:\n';
-    (res.files||[]).forEach(function(f){txt+='  📄 '+f+'\n'});
-    txt+='\n💡 Search TODO in generated files for implementation points.';
+    (res.files||[]).forEach(function(f){txt+='  ' + DXIcon('file') + ' '+f+'\n'});
+    txt+='\n' + DXIcon('info') + ' Search TODO in generated files for implementation points.';
     $('ds-out').textContent=txt;
     toast(T('Skeleton created: ')+res.task_name,'ok');
   }else{
-    $('ds-out').textContent='❌ Error: '+(res.error||'Unknown error');
+    DXIcon.label($('ds-out'),'x','Error: '+(res.error||'Unknown error'));
     toast(res.error||T('Failed'),'err');
   }
 }

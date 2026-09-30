@@ -1,22 +1,6 @@
 {
   "dx_agent_dev/static/js/console.js": 3,
-  "dx_app/static/css/style.css": 3,
-  "dx_app/static/js/benchmark.js": 24,
-  "dx_app/static/js/compare.js": 3,
-  "dx_app/static/js/developer.js": 13,
-  "dx_app/static/js/filebrowser.js": 8,
-  "dx_app/static/js/forum.js": 23,
-  "dx_app/static/js/i18n.js": 790,
-  "dx_app/static/js/inference.js": 32,
-  "dx_app/static/js/lab-composer-graph.js": 1,
-  "dx_app/static/js/models.js": 21,
-  "dx_app/static/js/modelzoo.js": 20,
-  "dx_app/static/js/outputs.js": 15,
-  "dx_app/static/js/pipeline.js": 7,
-  "dx_app/static/js/reference.js": 280,
-  "dx_app/static/js/tutorial.js": 551,
-  "dx_app/static/js/utils.js": 14,
-  "dx_app/templates/index.html": 90,
+  "dx_app/templates/index.html": 1,
   "dx_stream/templates/index.html": 1,
   "launcher/static/home-console.js": 2
 }
