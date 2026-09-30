@@ -538,6 +538,8 @@
   flex-shrink: 0;
   line-height: 1.2;
 }
+.agent-auth-badge { display: inline-flex; align-items: center; }
+.agent-auth-badge .dx-ico { width: 14px; height: 14px; }
 .agent-auth-badge.ok {
   color: var(--status-ok);
   border-color: var(--status-ok);

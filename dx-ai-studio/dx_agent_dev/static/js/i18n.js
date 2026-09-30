@@ -218,12 +218,12 @@ window._DX_I18N_DICT = {
     'zh-TW': '互動方式',
     es: 'Interacción',
   },
-  'Main chat for building NPU apps. The 💬 button (bottom-right) is for SDK Q&A.': {
-    ko: 'NPU 앱을 만들 메인 채팅입니다. 우하단 💬는 SDK 질문용입니다.',
-    ja: 'NPUアプリ構築用のメインチャットです。右下の💬はSDK質問用です。',
-    'zh-CN': '用于构建 NPU 应用的主聊天。右下角 💬 用于 SDK 问答。',
-    'zh-TW': '用於建構 NPU 應用的主聊天。右下角 💬 用於 SDK 問答。',
-    es: 'Chat principal para crear apps NPU. El botón 💬 (abajo a la derecha) es para preguntas del SDK.',
+  'Main chat for building NPU apps. The chat button (bottom-right) is for SDK Q&A.': {
+    ko: 'NPU 앱을 만들 메인 채팅입니다. 우하단 채팅 버튼은 SDK 질문용입니다.',
+    ja: 'NPUアプリ構築用のメインチャットです。右下のチャットボタンはSDK質問用です。',
+    'zh-CN': '用于构建 NPU 应用的主聊天。右下角的聊天按钮用于 SDK 问答。',
+    'zh-TW': '用於建構 NPU 應用的主聊天。右下角的聊天按鈕用於 SDK 問答。',
+    es: 'Chat principal para crear apps NPU. El botón de chat (abajo a la derecha) es para preguntas del SDK.',
   },
   'Model': {
     ko: '모델',

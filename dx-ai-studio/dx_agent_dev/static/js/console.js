@@ -202,11 +202,11 @@
     }
     badge.removeAttribute('hidden');
     if (agent.authenticated === true) {
-      badge.textContent = '✓';
+      badge.innerHTML = (typeof DXIcon === 'function') ? DXIcon('check') : '';
       badge.className = 'agent-auth-badge ok';
       badge.title = T('Logged in');
     } else {
-      badge.textContent = '⚠';
+      badge.innerHTML = (typeof DXIcon === 'function') ? DXIcon('alert') : '';
       badge.className = 'agent-auth-badge warn';
       badge.title = T('Login required');
     }
