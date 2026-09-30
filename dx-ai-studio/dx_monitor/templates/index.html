@@ -38,7 +38,7 @@
     <div class="card mt16">
       <div class="controls-row">
         <div class="btn-group" id="time-range-btns">
-          <button id="tr-rt" class="active" onclick="setTimeRange('rt')">⏱ <span data-i18n="Realtime">Realtime</span></button>
+          <button id="tr-rt" class="active" onclick="setTimeRange('rt')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clock"></use></svg> <span data-i18n="Realtime">Realtime</span></button>
           <button id="tr-5m" onclick="setTimeRange('5m')">5m</button>
           <button id="tr-15m" onclick="setTimeRange('15m')">15m</button>
           <button id="tr-30m" onclick="setTimeRange('30m')">30m</button>
@@ -46,18 +46,18 @@
           <button id="tr-all" onclick="setTimeRange('all')" data-i18n="All">All</button>
         </div>
         <div class="btn-group" id="chart-mode-btns">
-          <button id="cm-temp" class="active" onclick="setChartMode('temp')">🌡️ <span data-i18n="NPU Temp">NPU Temp</span></button>
-          <button id="cm-volt" onclick="setChartMode('volt')">⚡ <span data-i18n="Volt">Volt</span></button>
-          <button id="cm-clock" onclick="setChartMode('clock')"><span class="icon-clock" aria-hidden="true"></span> <span data-i18n="Clock">Clock</span></button>
-          <button id="cm-dram" onclick="setChartMode('dram')">💾 NPU DRAM</button>
-          <button id="cm-util" onclick="setChartMode('util')">⚙️ <span data-i18n="NPU Util">NPU Util</span></button>
-          <button id="cm-ctemp" onclick="setChartMode('ctemp')">🌡️ <span data-i18n="Core Temp">Core Temp</span></button>
+          <button id="cm-temp" class="active" onclick="setChartMode('temp')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#thermometer"></use></svg> <span data-i18n="NPU Temp">NPU Temp</span></button>
+          <button id="cm-volt" onclick="setChartMode('volt')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#bolt"></use></svg> <span data-i18n="Volt">Volt</span></button>
+          <button id="cm-clock" onclick="setChartMode('clock')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#clock"></use></svg> <span data-i18n="Clock">Clock</span></button>
+          <button id="cm-dram" onclick="setChartMode('dram')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#memory"></use></svg> NPU DRAM</button>
+          <button id="cm-util" onclick="setChartMode('util')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#gear"></use></svg> <span data-i18n="NPU Util">NPU Util</span></button>
+          <button id="cm-ctemp" onclick="setChartMode('ctemp')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#thermometer"></use></svg> <span data-i18n="Core Temp">Core Temp</span></button>
           <span class="btn-sep">|</span>
-          <button id="cm-cpu" onclick="setChartMode('cpu')">💻 <span data-i18n="CPU Load">CPU Load</span></button>
-          <button id="cm-mem" onclick="setChartMode('mem')">🧠 <span data-i18n="Memory">Memory</span></button>
-          <button id="cm-cpucores" onclick="setChartMode('cpucores')">🖥️ <span data-i18n="CPU Cores">CPU Cores</span></button>
+          <button id="cm-cpu" onclick="setChartMode('cpu')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#cpu"></use></svg> <span data-i18n="CPU Load">CPU Load</span></button>
+          <button id="cm-mem" onclick="setChartMode('mem')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#memory"></use></svg> <span data-i18n="Memory">Memory</span></button>
+          <button id="cm-cpucores" onclick="setChartMode('cpucores')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#cpu"></use></svg> <span data-i18n="CPU Cores">CPU Cores</span></button>
           <span class="btn-sep">|</span>
-          <button id="cm-all" onclick="setChartMode('all')">⊞ <span data-i18n="View All">View All</span></button>
+          <button id="cm-all" onclick="setChartMode('all')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dashboard"></use></svg> <span data-i18n="View All">View All</span></button>
         </div>
       </div>
     </div>

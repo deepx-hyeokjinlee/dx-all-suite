@@ -340,17 +340,6 @@ window._DX_I18N_DICT = {
   },
   'Mock Data': { ko: '모의 데이터', ja: 'モックデータ', 'zh-CN': '模拟数据', 'zh-TW': '模擬資料',es:'Datos simulados'},
   ' NPU(s)': { ko: ' NPU', ja: ' NPU', 'zh-CN': ' NPU', 'zh-TW': ' NPU',es:' NPU(s)'},
-  '🌡️ Avg Temp': { ko: '🌡️ 평균 온도', ja: '🌡️ 平均温度', 'zh-CN': '🌡️ 平均温度', 'zh-TW': '🌡️ 平均溫度',es:'🌡️ Temp. promedio'},
-  '🌡️ Cores': { ko: '🌡️ 코어', ja: '🌡️ コア', 'zh-CN': '🌡️ 核心', 'zh-TW': '🌡️ 核心',es:'🌡️ Núcleos'},
-  '⚡ Voltage': { ko: '⚡ 전압', ja: '⚡ 電圧', 'zh-CN': '⚡ 电压', 'zh-TW': '⚡ 電壓',es:'⚡ Voltaje'},
-  '🔄 Clock': { ko: '🔄 클럭', ja: '🔄 クロック', 'zh-CN': '🔄 时钟', 'zh-TW': '🔄 時脈',es:'🔄 Reloj'},
-  '🧪 Cores': { ko: '🧪 코어', ja: '🧪 コア', 'zh-CN': '🧪 核心', 'zh-TW': '🧪 核心',es:'🧪 Núcleos'},
-  '🔧 Firmware': { ko: '🔧 펌웨어', ja: '🔧 ファームウェア', 'zh-CN': '🔧 固件', 'zh-TW': '🔧 韌體', es: '🔧 Firmware'},
-  '🧩 Chip': { ko: '🧩 칩', ja: '🧩 チップ', 'zh-CN': '🧩 芯片', 'zh-TW': '🧩 晶片', es: '🧩 Procesador'},
-  '📋 Board': { ko: '📋 보드', ja: '📋 ボード', 'zh-CN': '📋 板卡', 'zh-TW': '📋 板卡',es:'📋 Placa'},
-  '💿 DDR Type': { ko: '💿 DDR 타입', ja: '💿 DDR タイプ', 'zh-CN': '💿 DDR 类型', 'zh-TW': '💿 DDR 類型',es:'💿 Tipo DDR'},
-  '💾 DRAM': { ko: '💾 DRAM', ja: '💾 DRAM', 'zh-CN': '💾 DRAM', 'zh-TW': '💾 DRAM',es:'💾 DRAM'},
-  '🌡️ DDR Channel Temp': { ko: '🌡️ DDR 채널 온도', ja: '🌡️ DDR チャネル温度', 'zh-CN': '🌡️ DDR 通道温度', 'zh-TW': '🌡️ DDR 通道溫度',es:'🌡️ Temp. del canal DDR'},
 
   'Mock': {
     ko: '모의',
@@ -471,6 +460,9 @@ window._DX_I18N_DICT = {
     'zh-TW': 'NPU {id}',
     es: 'NPU {id}',
   },
+  // 차트 임계선 이름 (아이콘 체계 단계 5 — 선 끝의 이모지 대신)
+  'warn': { ko: '경고', ja: '警告', 'zh-CN': '警告', 'zh-TW': '警告', es: 'aviso' },
+  'crit': { ko: '위험', ja: '危険', 'zh-CN': '危险', 'zh-TW': '危險', es: 'crítico' },
   'Avg Temp': {
     ko: '평균 온도',
     ja: '平均温度',

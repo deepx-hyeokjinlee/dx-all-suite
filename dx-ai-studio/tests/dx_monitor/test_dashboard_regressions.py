@@ -449,7 +449,8 @@ def test_telemetry_status_template_and_clock_control_contract():
     assert template.index('id="sse-status"') < template.index('id="telemetry-status"')
     assert "cm-clock" in template
     assert "🔄" not in template
-    assert 'class="icon-clock"' in template
+    # 아이콘은 sprite 의 clock (아이콘 체계 단계 5 — 예전의 CSS .icon-clock 을 대신한다).
+    assert 'dx-icons.svg#clock' in template
     assert 'aria-hidden="true"' in template
     assert "��" not in template
 
@@ -462,11 +463,11 @@ def test_clock_controls_use_deterministic_accessibility_icon():
 
     assert "🔄" not in template
     assert "🔄" not in dashboard
-    assert 'class="icon-clock"' in template
-    assert 'class="icon-clock"' in dashboard
-    assert 'aria-hidden="true"' in dashboard
-    assert ".icon-clock" in css
-    assert "currentColor" in css
+    # 정적 · 동적 Clock 라벨 모두 sprite 의 clock (DXIcon 은 aria-hidden 으로 그린다).
+    assert 'dx-icons.svg#clock' in template
+    assert "_mIco('clock')" in dashboard
+    assert "aria-hidden" in (MONITOR.parent / "shared" / "static" / "dx-icon.js").read_text(encoding="utf-8")
+    assert "currentColor" in (MONITOR.parent / "shared" / "static" / "dx-icons.svg").read_text(encoding="utf-8")
 
 
 def test_dashboard_tracks_telemetry_mode_and_safely_updates_visible_status():

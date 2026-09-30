@@ -4,7 +4,7 @@ function _updateMockBanner(){
   var el=$('mock-banner');
   if(!el)return;
   if(S.isMock){
-    el.textContent='⚠ '+statusLabel('Mock Mode');
+    _mLabel(el,'alert',statusLabel('Mock Mode'));
     el.style.display='inline';
   }else{
     el.textContent='';
@@ -35,11 +35,11 @@ function _updateTelemetryStatus(hw){
     return mode;
   }
   if(mode==='stale'){
-    el.textContent='⚠ NPU telemetry is not current.';
+    _mLabel(el,'alert','NPU telemetry is not current.');
   }else{
     var diagnostics=Array.isArray(telemetry.diagnostics)?telemetry.diagnostics:[];
     var detail=telemetry.error||diagnostics[0]||'';
-    el.textContent='⚠ NPU telemetry unavailable'+(detail?': '+String(detail):'');
+    _mLabel(el,'alert','NPU telemetry unavailable'+(detail?': '+String(detail):''));
   }
   el.className='sse-status telemetry-status degraded '+mode;
   el.style.display='inline';
@@ -112,7 +112,7 @@ function renderStatusBar(hw){
   var h='';
   if(telemetryMode==='unavailable'||telemetryMode==='stale'){
     var telemetryText=telemetryMode==='stale'?'NPU telemetry is not current':'NPU telemetry unavailable';
-    h+='<div class="status-card '+statusClass('none')+'" data-help-id="status-npu-telemetry"><span class="sc-badge">'+statusEmoji('none')+'</span><span class="sc-label">NPU</span><span class="sc-value">'+telemetryText+'</span></div>';
+    h+='<div class="status-card '+statusClass('none')+'" data-help-id="status-npu-telemetry"><span class="sc-badge">'+statusIcon('none')+'</span><span class="sc-label">NPU</span><span class="sc-value">'+telemetryText+'</span></div>';
   }
   // NPU별 온도 카드
   npus.forEach(function(n, idx){
@@ -123,7 +123,7 @@ function renderStatusBar(hw){
     var st=hasTemp?getStatus('npu_temp',n.temp_avg||0):'none';
     var valStr=hasTemp?(n.temp_avg||0).toFixed(1)+'°C':statusLabel('No data available');
     h+='<div class="status-card '+statusClass(st)+'" data-help-id="status-npu-'+idx+'">'
-      +'<span class="sc-badge">'+statusEmoji(st)+'</span>'
+      +'<span class="sc-badge">'+statusIcon(st)+'</span>'
       +'<span class="sc-label">NPU '+n.id+'</span>'
       +'<span class="sc-value">'+valStr+'</span>'
       +(n.mock||mockMode?'<span class="sc-mock">('+statusLabel('Mock')+')</span>':'')
@@ -134,7 +134,7 @@ function renderStatusBar(hw){
     var dramValues=npus.map(function(n){return _normalizeDramPct(n.dram_pct)}).filter(function(v){return v!=null});
     var worstDram=dramValues.length?Math.max.apply(null,dramValues):null;
     var dSt=worstDram==null?'none':getStatus('npu_dram',worstDram);
-    h+='<div class="status-card '+statusClass(dSt)+'" data-help-id="status-dram"><span class="sc-badge">'+statusEmoji(dSt)+'</span><span class="sc-label">'+statusLabel('DRAM')+'</span><span class="sc-value">'+_formatDramPct(worstDram)+'</span></div>';
+    h+='<div class="status-card '+statusClass(dSt)+'" data-help-id="status-dram"><span class="sc-badge">'+statusIcon(dSt)+'</span><span class="sc-label">'+statusLabel('DRAM')+'</span><span class="sc-value">'+_formatDramPct(worstDram)+'</span></div>';
     // Util worst-case (임계치 없음)
     var worstUtil=Math.max.apply(null,npus.map(function(n){var u=n.utilization||[];return u.length?u.reduce(function(a,b){return a+b},0)/u.length:0}));
     h+='<div class="status-card" data-help-id="status-util"><span class="sc-label">'+statusLabel('Util')+'</span><span class="sc-value">'+worstUtil.toFixed(1)+'%</span></div>';
@@ -146,9 +146,9 @@ function renderStatusBar(hw){
     h+='<div class="status-card" data-help-id="status-clock"><span class="sc-label">'+statusLabel('Clock')+'</span><span class="sc-value">'+worstClock.toFixed(0)+' MHz</span></div>';
   }
   var cpuSt=getStatus('cpu_load',hw.cpu_load||0);
-  h+='<div class="status-card '+statusClass(cpuSt)+'" data-help-id="status-cpu"><span class="sc-badge">'+statusEmoji(cpuSt)+'</span><span class="sc-label">CPU</span><span class="sc-value">'+(hw.cpu_load||0).toFixed(2)+'</span></div>';
+  h+='<div class="status-card '+statusClass(cpuSt)+'" data-help-id="status-cpu"><span class="sc-badge">'+statusIcon(cpuSt)+'</span><span class="sc-label">CPU</span><span class="sc-value">'+(hw.cpu_load||0).toFixed(2)+'</span></div>';
   var memSt=getStatus('memory',hw.mem_pct||0);
-  h+='<div class="status-card '+statusClass(memSt)+'" data-help-id="status-memory"><span class="sc-badge">'+statusEmoji(memSt)+'</span><span class="sc-label">'+statusLabel('Memory')+'</span><span class="sc-value">'+(hw.mem_pct||0).toFixed(1)+'%</span></div>';
+  h+='<div class="status-card '+statusClass(memSt)+'" data-help-id="status-memory"><span class="sc-badge">'+statusIcon(memSt)+'</span><span class="sc-label">'+statusLabel('Memory')+'</span><span class="sc-value">'+(hw.mem_pct||0).toFixed(1)+'%</span></div>';
   $('status-bar').innerHTML=h;
 }
 
@@ -234,7 +234,7 @@ function _setSseStatus(status){
   var el=$('sse-status');
   if(!el)return;
   if(status==='degraded'){
-    el.textContent='⚠ Polling';
+    _mLabel(el,'alert','Polling');
     el.className='sse-status degraded';
     el.style.display='';
   }else{
@@ -287,8 +287,8 @@ function _thresholdsFor(key){
   var th=S.thresholds[thKey];
   if(!th||!th.warn)return[];
   return[
-    {value:th.warn,color:'rgba(210,153,34,.6)',label:th.warn+''+(th.unit||'')+' ⚠️'},
-    {value:th.crit,color:'rgba(248,81,73,.6)',label:th.crit+''+(th.unit||'')+' 🔴'}
+    {value:th.warn,color:'rgba(210,153,34,.6)',label:th.warn+''+(th.unit||'')+' '+T('warn')},
+    {value:th.crit,color:'rgba(248,81,73,.6)',label:th.crit+''+(th.unit||'')+' '+T('crit')}
   ];
 }
 
@@ -410,7 +410,7 @@ function _drawSingleMode(area,data,tl,npuCount,mode){
         +'<div class="chart-row-label '+statusClass(r.status)+'" data-help-id="chart-label-'+esc(r.id)+'">'
         +'<div class="cr-id">'+esc(r.label)+'</div>'
         +'<div class="cr-val">'+(r.val==null?T('N/A'):r.val.toFixed(1))+'</div>'
-        +'<div class="cr-badge">'+statusEmoji(r.status)+'</div>'
+        +'<div class="cr-badge">'+statusIcon(r.status)+'</div>'
         +(r.mock?'<div class="cr-mock">('+statusLabel('Mock')+')</div>':'')
         +'</div>'
         +'<div class="chart-row-canvas"><div class="chart-box" data-help-id="chart-box-single-'+idx+'"><canvas id="'+canvasId+'"></canvas></div></div>'
@@ -425,7 +425,7 @@ function _drawSingleMode(area,data,tl,npuCount,mode){
         var valEl=labelEl.querySelector('.cr-val');
         if(valEl)valEl.textContent=r.val==null?T('N/A'):r.val.toFixed(1);
         var badgeEl=labelEl.querySelector('.cr-badge');
-        if(badgeEl)badgeEl.textContent=statusEmoji(r.status);
+        if(badgeEl)badgeEl.innerHTML=statusIcon(r.status);
       }
     });
   }
@@ -517,13 +517,13 @@ function _renderDdrStatus(n){
   var badges=s.map(function(v,i){
     return'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:'+tempColor(v)+'">CH'+i+' '+v+'</span>';
   }).join('');
-  return'<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+T('🌡️ DDR Channel Temp')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+badges+'</span></div>';
+  return'<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+_mIco('thermometer')+' '+T('DDR Channel Temp')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+badges+'</span></div>';
 }
 function _renderDdrErrors(n){
   var sbe=n.ddr_sbe_cnt||[],dbe=n.ddr_dbe_cnt||[];
   var hasSbe=sbe.some(function(v){return v>0}),hasDbe=dbe.some(function(v){return v>0});
   if(!hasSbe&&!hasDbe)return'';
-  var h='<div class="npu-metric" style="align-items:flex-start"><span class="mk" style="color:var(--status-error)">⚠️ '+T('DDR Errors')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">';
+  var h='<div class="npu-metric" style="align-items:flex-start"><span class="mk" style="color:var(--status-error)">'+_mIco('alert')+' '+T('DDR Errors')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">';
   if(hasSbe)h+=sbe.map(function(v,i){return v>0?'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(210,153,34,.12);color:var(--status-warn)">CH'+i+' SBE:'+v+'</span>':'';}).join('');
   if(hasDbe)h+=dbe.map(function(v,i){return v>0?'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(248,81,73,.12);color:var(--status-error)">CH'+i+' DBE:'+v+'</span>':'';}).join('');
   return h+'</span></div>';
@@ -541,7 +541,7 @@ function renderNPUTopo(hw){
       var badges=(n.temperatures||[]).map(function(t,i){
         return '<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:'+tempColor(t)+'">C'+i+' '+t.toFixed(0)+'°</span>';
       }).join('');
-      coreRows='<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+T('🌡️ Cores')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+badges+'</span></div>';
+      coreRows='<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+_mIco('thermometer')+' '+T('Cores')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+badges+'</span></div>';
     }
     var npuId=esc(n.id==null?'':String(n.id));
     var firmware=esc(String(n.firmware_version||''));
@@ -553,17 +553,17 @@ function renderNPUTopo(hw){
     var dramWidth=dramPct==null?0:Math.min(dramPct,100);
     return '<div class="npu-card mb8" data-help-id="npu-card-'+idx+'">'
       +'<div class="npu-id"><span class="dot" style="background:'+tc+'"></span>NPU '+npuId+' '+(n.mock||mockMode?'('+T('Mock')+')':'')+'</div>'
-      +'<div class="npu-metric"><span class="mk">'+T('🌡️ Avg Temp')+'</span><span class="mv" style="color:'+tc+'">'+(n.temp_avg||0).toFixed(1)+'°C</span></div>'
+      +'<div class="npu-metric"><span class="mk">'+_mIco('thermometer')+' '+T('Avg Temp')+'</span><span class="mv" style="color:'+tc+'">'+(n.temp_avg||0).toFixed(1)+'°C</span></div>'
       +coreRows
-      +'<div class="npu-metric"><span class="mk">'+T('⚡ Voltage')+'</span><span class="mv">'+(n.voltage_avg||0).toFixed(0)+' mV</span></div>'
-      +'<div class="npu-metric"><span class="mk"><span class="icon-clock" aria-hidden="true"></span> '+T('Clock')+'</span><span class="mv">'+(n.clock_avg||0).toFixed(0)+' MHz</span></div>'
-      +(n.dram_total_mb>0?'<div class="npu-metric" style="flex-direction:column;align-items:flex-start;gap:4px"><span class="mk">'+T('💾 DRAM')+'</span><div style="width:100%;background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin:2px 0"><div style="width:'+dramWidth.toFixed(1)+'%;background:#e879f9;border-radius:4px;height:6px"></div></div><span class="mv" style="color:#e879f9">'+(n.dram_used_mb||0)+' / '+(n.dram_total_mb||0)+' MB ('+_formatDramPct(dramPct)+')</span></div>':'')
-      +((n.utilization||[]).length?'<div class="npu-metric" style="align-items:flex-start"><span class="mk">⚙️ '+T('Util')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+(n.utilization||[]).map(function(u,i){return'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:var(--status-info)">C'+i+' '+u+'%</span>';}).join('')+'</span></div>':'')
-      +'<div class="npu-metric"><span class="mk">'+T('🧪 Cores')+'</span><span class="mv">'+(n.cores||1)+'</span></div>'
-      +(n.firmware_version?'<div class="npu-metric"><span class="mk">'+T('🔧 Firmware')+'</span><span class="mv" style="color:var(--status-info)">'+firmware+'</span></div>':'')
-      +(n.device_variant||n.device_type?'<div class="npu-metric"><span class="mk">'+T('🧩 Chip')+'</span><span class="mv" style="color:var(--npu-light)">'+chip+'</span></div>':'')
-      +(n.board_type?'<div class="npu-metric"><span class="mk">'+T('📋 Board')+'</span><span class="mv">'+board+'</span></div>':'')
-      +(n.memory_type?'<div class="npu-metric"><span class="mk">'+T('💿 DDR Type')+'</span><span class="mv">'+memory+'</span></div>':'')
+      +'<div class="npu-metric"><span class="mk">'+_mIco('bolt')+' '+T('Voltage')+'</span><span class="mv">'+(n.voltage_avg||0).toFixed(0)+' mV</span></div>'
+      +'<div class="npu-metric"><span class="mk">'+_mIco('clock')+' '+T('Clock')+'</span><span class="mv">'+(n.clock_avg||0).toFixed(0)+' MHz</span></div>'
+      +(n.dram_total_mb>0?'<div class="npu-metric" style="flex-direction:column;align-items:flex-start;gap:4px"><span class="mk">'+_mIco('memory')+' '+T('DRAM')+'</span><div style="width:100%;background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin:2px 0"><div style="width:'+dramWidth.toFixed(1)+'%;background:#e879f9;border-radius:4px;height:6px"></div></div><span class="mv" style="color:#e879f9">'+(n.dram_used_mb||0)+' / '+(n.dram_total_mb||0)+' MB ('+_formatDramPct(dramPct)+')</span></div>':'')
+      +((n.utilization||[]).length?'<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+_mIco('gear')+' '+T('Util')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+(n.utilization||[]).map(function(u,i){return'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:var(--status-info)">C'+i+' '+u+'%</span>';}).join('')+'</span></div>':'')
+      +'<div class="npu-metric"><span class="mk">'+_mIco('cpu')+' '+T('Cores')+'</span><span class="mv">'+(n.cores||1)+'</span></div>'
+      +(n.firmware_version?'<div class="npu-metric"><span class="mk">'+_mIco('wrench')+' '+T('Firmware')+'</span><span class="mv" style="color:var(--status-info)">'+firmware+'</span></div>':'')
+      +(n.device_variant||n.device_type?'<div class="npu-metric"><span class="mk">'+_mIco('puzzle')+' '+T('Chip')+'</span><span class="mv" style="color:var(--npu-light)">'+chip+'</span></div>':'')
+      +(n.board_type?'<div class="npu-metric"><span class="mk">'+_mIco('clipboard')+' '+T('Board')+'</span><span class="mv">'+board+'</span></div>':'')
+      +(n.memory_type?'<div class="npu-metric"><span class="mk">'+_mIco('memory')+' '+T('DDR Type')+'</span><span class="mv">'+memory+'</span></div>':'')
       +_renderDdrStatus(n)
       +_renderDdrErrors(n)
       +'</div>';
@@ -574,7 +574,7 @@ function renderSysInfo(si){
   var rows=[['OS',si.os],[T('Hostname'),si.hostname],[T('CPU'),si.cpu_model],[T('CPU Cores'),si.cpu_cores],
     [T('Memory'),si.mem_total_gb+'GB'],['Python',si.python],['OpenCV',si.opencv],
     ['DX-RT',si.dx_rt_version],['DX-APP',si.dx_app_version],[T('NPU Count'),si.npu_count],
-    [T('NPU PCI'),(si.npu_pci||[]).join(', ')],[T('DX Engine'),si.dx_engine_available?'✅ '+T('Available'):'❌ '+T('Unavailable')],
+    [T('NPU PCI'),(si.npu_pci||[]).join(', ')],[T('DX Engine'),si.dx_engine_available?T('Available'):T('Unavailable')],
     [T('SDK Version'),si.sdk_version||T('N/A')],[T('Driver Version'),si.driver_version||T('N/A')],
     [T('PCIe Driver'),si.pcie_driver_version||T('N/A')],[T('Uptime'),si.uptime||T('N/A')]];
   $('sysinfo-table').querySelector('tbody').innerHTML=rows.map(function(row, idx){return '<tr data-help-id="sysinfo-row-'+idx+'"><td style="color:var(--text-muted);width:120px">'+esc(row[0])+'</td><td>'+esc(row[1]||T('N/A'))+'</td></tr>'}).join('');

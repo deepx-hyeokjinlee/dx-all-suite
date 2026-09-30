@@ -18,10 +18,6 @@ body{overflow-x:auto;overflow-y:auto}
 .npu-card .npu-id .dot{width:8px;height:8px;border-radius:50%}
 .npu-metric:last-child{border-bottom:none}
 .npu-metric .mk{color:var(--text-muted)}.npu-metric .mv{font-weight:600}
-.icon-clock{display:inline-block;width:.85em;height:.85em;box-sizing:border-box;border:2px solid currentColor;border-radius:50%;position:relative;vertical-align:-.08em}
-.icon-clock::before,.icon-clock::after{content:'';position:absolute;left:50%;top:50%;width:2px;background:currentColor;transform-origin:50% 0}
-.icon-clock::before{height:30%;transform:translate(-50%,0)}
-.icon-clock::after{height:23%;transform:translate(-50%,0) rotate(120deg)}
 
 /*═══ Charts ═══*/
 .chart-box canvas{display:block;width:100%;height:100%}
