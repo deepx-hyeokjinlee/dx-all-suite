@@ -133,7 +133,7 @@ def test_a_chip_fills_the_prompt_instead_of_running_it():
 # (launcher-splash.js _WORK). chip 이 showcase 원문으로 바뀌면서 home 에서 사라졌는데,
 # 입력창은 모듈로 바로 보내는 일 (home-router) 도 하므로 그 쪽 예시를 placeholder 순환에
 # 남긴다 (2026-09-28 사용자 결정 A).
-ROUTED = ["4-channel CCTV object detection", "segment a video file", "compile yolo26n to DXNN"]
+ROUTED = ["16-channel CCTV object detection", "segment a video file", "compile yolo26n to DXNN"]
 
 
 def _placeholders() -> list:

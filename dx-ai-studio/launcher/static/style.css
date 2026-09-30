@@ -1060,9 +1060,8 @@ body.lang-zh-TW .zh-CN { display: none !important; }
    그리고 요청이 끝난 뒤에 온다 — 타입은 마지막에 온다는 규칙 그대로다. */
 .cue-answer {
   font-size: var(--ap-t-body);
-  font-weight: 600;
-  letter-spacing: .01em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: -.005em;
   color: var(--brand-subtle);
   opacity: 0;
   transform: translateY(4px);
@@ -1080,6 +1079,155 @@ body.lang-zh-TW .zh-CN { display: none !important; }
 /* 움직임을 줄여 달라고 한 사람에게는 일하는 장면도 캐럿도 없다. */
 .splash-overlay.is-still .mark-cue { display: none; }
 @media (prefers-reduced-motion: reduce) { .cue-caret { animation: none; } }
+
+/* ── 2a. Stream 장면 — 16채널 pull-back ──────────────────
+   intro-stream.js 의 주석에 문법을 적어 뒀다. 요약: 16:10 무대 하나가 화면을 cover 로 채우고,
+   wall · box · 시작 화면이 그 좌표계를 같이 쓴다. 시작 화면은 transform 한 번으로 자기 칸에 앉고,
+   원색 사진이 걷히면 그 밑의 grade 칸이 드러난다. 움직이는 것은 transform 과 opacity 뿐.
+
+   card · 채널 번호 · score 를 두지 않는다 — 그것들이 이 장면을 debug 화면처럼 보이게 했다. */
+.intro-stream {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .35s var(--ap-ease);
+}
+.intro-stream.is-on { opacity: 1; }
+.intro-stream.is-out { opacity: 0; transition: opacity .4s var(--ap-ease); }
+.ist-stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100vw, 160vh);
+  height: max(62.5vw, 100vh);
+  transform: translate(-50%, -50%);
+}
+/* 물러난 뒤에도 카메라가 아주 조금 더 물러난다 — 정지 frame 이 살아 있게 */
+.ist-drift {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.035);
+  transition: transform 4.2s linear;
+}
+.intro-stream.is-on .ist-drift { transform: none; }
+.ist-wall,
+.ist-hero-photo {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.ist-slot {
+  position: absolute;
+  left: var(--hx);
+  top: var(--hy);
+  width: calc(var(--hsx) * 100%);
+  height: calc(var(--hsy) * 100%);
+}
+.ist-hero {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  transition: transform .9s cubic-bezier(.65, 0, .25, 1);
+}
+.intro-stream.is-pulled .ist-hero {
+  transform: translate(var(--hx), var(--hy)) scale(var(--hsx), var(--hsy));
+}
+/* 시작 화면은 원색에 가깝게 (살짝 어둡게) — 물러나는 도중에 걷히며 grade 칸이 드러난다 */
+.ist-hero-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .2);
+}
+.intro-stream.is-pulled .ist-hero-photo {
+  opacity: 0;
+  transition: opacity .5s var(--ap-ease) .42s;
+}
+.ist-boxes,
+.ist-hero-boxes {
+  position: absolute;
+  inset: 0;
+}
+/* corner bracket — 네 모서리를 gradient 여덟 줄로. 잡힐 때 110% 에서 제 크기로 조여든다
+   (되튀지 않는다). 요소마다 layer 라 물결 동안 무대를 다시 칠하지 않는다 (intro-stream.js _box). */
+.ist-b {
+  --t: 1.25px;
+  --c: linear-gradient(var(--accent), var(--accent));
+  position: absolute;
+  background:
+    var(--c) left top / var(--lx) var(--t), var(--c) left top / var(--t) var(--ly),
+    var(--c) right top / var(--lx) var(--t), var(--c) right top / var(--t) var(--ly),
+    var(--c) left bottom / var(--lx) var(--t), var(--c) left bottom / var(--t) var(--ly),
+    var(--c) right bottom / var(--lx) var(--t), var(--c) right bottom / var(--t) var(--ly);
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: scale(1.1);
+  will-change: transform, opacity;
+  transition: opacity .3s var(--ap-ease) var(--d),
+              transform .45s cubic-bezier(.2, .9, .25, 1) var(--d);
+}
+.ist-hero-boxes .ist-b { --t: 2px; }
+.intro-stream.is-on .ist-hero-boxes .ist-b,
+.intro-stream.is-rippled .ist-boxes .ist-b { opacity: .95; transform: none; }
+/* 시작 화면의 큰 box 는 물러나며 걷히고, 그 칸의 제 크기 box 가 같은 자리를 받는다 */
+.intro-stream.is-pulled .ist-hero-boxes .ist-b { opacity: 0; transition: opacity .3s var(--ap-ease) .5s; }
+.intro-stream.is-pulled .ist-boxes .ist-b.is-hero {
+  opacity: .95;
+  transform: none;
+  transition: opacity .3s var(--ap-ease) .5s, transform 0s;
+}
+.ist-labels { position: absolute; inset: 0; }
+.ist-label {
+  position: absolute;
+  transform: translateY(-130%);
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .01em;
+  color: var(--brand-on-shade);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .3s var(--ap-ease) var(--d);
+}
+.intro-stream.is-on .ist-label { opacity: .88; }
+.intro-stream.is-pulled .ist-label { opacity: 0; transition: opacity .2s var(--ap-ease); }
+/* NPU 가 16칸을 한 번에 훑는 빛 — 물결과 같은 방향 (왼쪽 위 → 오른쪽 아래) */
+.ist-scan {
+  position: absolute;
+  inset: -10% -30%;
+  background: linear-gradient(110deg, transparent 42%, rgba(var(--accent-rgb), .16) 50%, transparent 58%);
+  opacity: 0;
+  transform: translateX(-70%);
+}
+.intro-stream.is-rippled .ist-scan { animation: istScan 1s cubic-bezier(.45, 0, .55, 1) forwards; }
+@keyframes istScan {
+  0% { opacity: 0; transform: translateX(-70%); }
+  15%, 85% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(70%); }
+}
+/* 가장자리 vignette + prompt 가 앉을 아래쪽 scrim */
+.ist-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 45%, transparent 55%, rgba(0, 0, 0, .55) 100%),
+    linear-gradient(to top, rgba(0, 0, 0, .78), rgba(0, 0, 0, 0) 34%);
+}
+/* 장면이 화면을 쓰는 동안 logo 는 물러나고, prompt 는 화면 아래로 간다 — 초점은 하나 */
+.splash-overlay.is-streaming .mark,
+.splash-overlay.is-streaming .mark-sub { opacity: 0; }
+.splash-overlay.is-streaming .cue-scene { display: none; }
+.splash-overlay.is-streaming .mark-slot {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 8vh;
+  margin: 0;
+  transform: none;
+}
 
 /* ── 3. close ───────────────────────────────────────────
    애플 광고는 주장 하나로 닫는다. 우리가 할 주장은 지어낼 필요가 없다 — 회사가

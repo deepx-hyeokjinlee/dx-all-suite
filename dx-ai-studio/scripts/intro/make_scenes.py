@@ -1,4 +1,8 @@
-"""인트로의 세 장면을 그린다.
+"""인트로의 작업 장면 중 둘 (segment · silicon) 을 그린다.
+
+첫 장면 (Stream, 16채널) 은 2026-09-30 부터 실제 영상과 DX-M1 의 실제 detection 이다 —
+bake_stream.py. 아래의 "사진을 쓰지 않는 이유" 두 가지 (제각각인 톤 · 구워진 overlay) 를 그쪽은
+grade 하나와 좌표로 둔 box 로 푼다. 나머지 둘도 같은 길로 옮길 차례다.
 
 스톡 사진을 쓰지 않는 이유: 우리가 가진 것들은 톤이 제각각이고 이미 AI 오버레이가
 구워져 있어서, 검은 무대 위에 얹으면 인트로가 아니라 브로슈어가 된다. 벡터로 직접
@@ -38,74 +42,6 @@ def car_path(cx, base, w):
             f'q{w*.10:.1f} {h*.04:.1f} {w*.10:.1f} {h*.21:.1f}v{h*.44:.1f}Z"/>')
 
 
-def bbox_of_person(cx, base, h):
-    w = h * .30
-    return cx - w * .72, base - h, w * 1.44, h
-
-
-def bbox_of_car(cx, base, w):
-    h = w * .44
-    return cx - w * .54, base - h - 2, w * 1.08, h + 4
-
-
-def corners(x, y, w, h, c, t=8, sw=1.4):
-    p = []
-    for (cx, cy, dx, dy) in ((x, y, 1, 1), (x+w, y, -1, 1), (x, y+h, 1, -1), (x+w, y+h, -1, -1)):
-        p.append(f'M{cx+dx*t:.1f} {cy:.1f}H{cx:.1f}V{cy+dy*t:.1f}')
-    return f'<path d="{"".join(p)}" stroke="{c}" stroke-width="{sw}" stroke-linecap="square"/>'
-
-
-# ── 1. 4채널 객체 검출 ───────────────────────────────────────
-def detect():
-    s = [HEAD, '<defs>'
-         '<linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">'
-         '<stop offset="0" stop-color="#0b1220"/><stop offset=".62" stop-color="#080d16"/>'
-         '<stop offset="1" stop-color="#0a111c"/></linearGradient>'
-         '<linearGradient id="sil" x1="0" y1="0" x2="0" y2="1">'
-         '<stop offset="0" stop-color="#b9cde8" stop-opacity=".52"/>'
-         '<stop offset="1" stop-color="#7d96b8" stop-opacity=".22"/></linearGradient>'
-         '<filter id="sb" x="-30%" y="-30%" width="160%" height="160%">'
-         '<feGaussianBlur stdDeviation="2.1"/></filter></defs>',
-         f'<rect width="600" height="318" fill="{INK}"/>']
-    chans = [
-        [('p', 78, 118, 62), ('p', 132, 122, 50), ('v', 214, 124, 74)],
-        [('v', 128, 126, 104)],
-        [('p', 56, 120, 58), ('p', 104, 124, 66), ('p', 158, 118, 52), ('p', 222, 122, 60)],
-        [('p', 140, 124, 70), ('p', 190, 120, 46)],
-    ]
-    warm = {1: 0}
-    for i, subs in enumerate(chans):
-        ox, oy = 12 + (i % 2) * 294, 12 + (i // 2) * 153
-        live = (i == 2)
-        s.append(f'<g transform="translate({ox} {oy})">')
-        s.append(f'<rect width="282" height="141" rx="7" fill="url(#pg)" '
-                 f'stroke="{ACC if live else LINE}" stroke-opacity="{.45 if live else 1}"/>')
-        s.append('<g clip-path="inset(0 round 7)">')
-        s.append(f'<path d="M0 96H282" stroke="{LINE}"/>')
-        s.append(f'<path d="M96 141 138 96M186 141 144 96" stroke="{LINE}" stroke-opacity=".55"/>')
-        shapes, boxes = [], []
-        for kind, cx, base, size in subs:
-            if kind == 'p':
-                shapes.append(person_path(cx, base, size)); boxes.append(bbox_of_person(cx, base, size))
-            else:
-                shapes.append(car_path(cx, base, size)); boxes.append(bbox_of_car(cx, base, size))
-        s.append(f'<g fill="url(#sil)" filter="url(#sb)">{"".join(shapes)}</g>')
-        for k, (bx, by, bw, bh) in enumerate(boxes):
-            c = AMBER if warm.get(i) == k else ACC
-            s.append(f'<rect x="{bx:.1f}" y="{by:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="2" '
-                     f'stroke="{c}" stroke-opacity=".26"/>')
-            s.append(corners(bx, by, bw, bh, c))
-            s.append(f'<rect x="{bx:.1f}" y="{by-7:.1f}" width="{min(bw, 24):.1f}" height="3" rx="1.5" fill="{c}"/>')
-        s.append('</g>')
-        s.append(f'<text x="13" y="24" font-family="{MONO}" font-size="9.5" letter-spacing=".6" '
-                 f'fill="#fff" fill-opacity="{.55 if live else .28}">{i+1:02d}</text>')
-        if live:
-            s.append(f'<circle cx="269" cy="20" r="2.6" fill="{ACC}"/>')
-        s.append('</g>')
-    return ''.join(s) + '</svg>'
-
-
-# ── 2. 시맨틱 분할 ───────────────────────────────────────────
 def segment():
     H, LEG = 112, 286
     classes = [('sky', '#1b3a63'), ('building', '#24406b'), ('road', '#161e2d'),
@@ -203,7 +139,7 @@ def silicon():
 
 if __name__ == '__main__':
     OUT.mkdir(parents=True, exist_ok=True)
-    for name, fn in (('scene-detect', detect), ('scene-segment', segment), ('scene-silicon', silicon)):
+    for name, fn in (('scene-segment', segment), ('scene-silicon', silicon)):
         path = OUT / f'{name}.svg'
         path.write_text(fn(), encoding='utf-8')
         print(f'{path.name:22s} {path.stat().st_size:6d} bytes')

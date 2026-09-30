@@ -462,45 +462,47 @@ def test_the_working_beat_shows_the_product_rather_than_claiming_it():
         assert ">" + by + "<" in html, f"{by!r} is not a module the home lists"
 
 
-def test_the_working_beat_is_drawn_rather_than_photographed():
-    """The scenes are ours, and they are regenerable.
+def test_the_working_beats_are_regenerable_and_stay_in_the_splash():
+    """Every scene in the working beats can be made again, and none leaks into the page.
 
-    The stock photography in the repo is a mixed bag — different colour casts,
-    AI overlays already baked in, and one file whose name says smart mobility
-    while the picture is a cafe. Dropped onto a black stage they read as a
-    brochure rather than an intro, so the three scenes are drawn instead: four
-    detection channels, a segmented street, and the die everything compiles
-    down to. Vector, so they stay sharp at any size and weigh almost nothing,
-    and drawn from the same palette as the stage.
+    The first beat (Stream, sixteen channels) is real footage now: frames from
+    DEEPX's own sample videos with the boxes a DX-M1 actually drew, baked by
+    scripts/intro/bake_stream.py (2026-09-30 user decision). The drawn scenes
+    read as clip-art. The two objections to photographs the drawings answered
+    (mixed colour casts, AI overlays baked in) are met there by one grade over
+    the wall and by keeping the boxes as coordinates the page draws itself.
 
-    Drawn assets rot differently from photographs: the day someone wants the
-    accent changed, an SVG nobody can regenerate is worse than a JPEG. So the
-    generator ships with them, and this pins that it does.
+    The other two beats are still drawn by make_scenes.py. Either way the rule
+    is the same: an asset nobody can regenerate is worse than none.
 
     It also pins the boundary that was crossed once already: replacing the
     photo paths matched the About section's use-case images too, and quietly
     swapped them for intro scenes.
     """
     scenes = ROOT / "launcher" / "static" / "img" / "intro"
-    names = ["scene-detect.svg", "scene-segment.svg", "scene-silicon.svg"]
-    for n in names:
+    drawn = ["scene-segment.svg", "scene-silicon.svg"]
+    for n in drawn:
         f = scenes / n
         assert f.exists(), f"{n} is missing"
         assert f.read_text(encoding="utf-8").lstrip().startswith("<svg"), f"{n} is not an SVG"
+    gen = (ROOT / "scripts" / "intro" / "make_scenes.py").read_text(encoding="utf-8")
+    for n in drawn:
+        assert n.replace(".svg", "") in gen, f"{n} is not produced by the generator"
+    assert not (scenes / "scene-detect.svg").exists(), "the drawn Stream scene was replaced by footage"
 
-    gen = ROOT / "scripts" / "intro" / "make_scenes.py"
-    assert gen.exists(), "the scenes cannot be regenerated"
-    src = gen.read_text(encoding="utf-8")
-    for n in names:
-        assert n.replace(".svg", "") in src, f"{n} is not produced by the generator"
+    stream = scenes / "stream"
+    for n in ("wall.webp", "hero.webp", "detections.json", "SOURCE.md", "MEASURED.md"):
+        assert (stream / n).exists(), f"stream/{n} is missing"
+    assert (ROOT / "scripts" / "intro" / "bake_stream.py").exists(), "the Stream scene cannot be baked again"
 
     html = index()
     splash = html[html.index('id="splashOverlay"'):html.index("</header>")]
-    for n in names:
+    for n in drawn:
         assert n in splash, f"{n} is not used by the intro"
+    assert '<script src="/intro-stream.js"></script>' in html
     # The About section keeps its own photographs.
     about = html[html.index("</header>"):]
-    assert "img/intro/scene-" not in about, (
+    assert "img/intro/" not in about, (
         "an intro scene leaked into the page; the photo swap matched outside the splash"
     )
     for photo in ("usecase-smart-factory-agv-robot.jpg", "usecase-security-cctv-ip-camera.jpg"):

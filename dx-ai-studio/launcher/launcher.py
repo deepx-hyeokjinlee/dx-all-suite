@@ -1463,6 +1463,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/launcher-language.js", "application/javascript")
         elif path == "/launcher-splash.js":
             self._send_shell_asset(BASE_DIR / "static/launcher-splash.js", "application/javascript")
+        elif path == "/intro-stream.js":
+            self._send_shell_asset(BASE_DIR / "static/intro-stream.js", "application/javascript")
         elif path == "/platform-info.js":
             self._send_shell_asset(BASE_DIR / "static/platform-info.js", "application/javascript")
         elif path == "/launcher-app-frame.js":

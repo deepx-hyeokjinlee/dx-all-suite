@@ -42,19 +42,27 @@
      박자로 끝나야 시퀀스가 어긋나지 않는다. */
   var _TYPE_MS = 900;
   var _BEAT = 1950;
+  /* 박자마다 길이가 다를 수 있다 — Stream 은 장면이 세 번 움직이므로 (box · pull-back · 물결)
+     길다 (intro-stream.js). answerAt 은 대답이 오는 때: 장면이 할 말을 다 한 뒤 — 그리고 대답을
+     읽을 시간을 준다 (2.4s, 처음 0.9s 는 "나오자마자 넘어간다" 는 사용자 피드백). note 는 대답에
+     붙는 실측 한 줄 — img/intro/stream/MEASURED.md. 16 × 30 fps 는 NPU 로는 넘지만 이 host (N97)
+     의 end-to-end 는 채널당 약 18 fps 라서, 참인 NPU 수치로 말한다 (2026-09-30 사용자 결정). */
   var _WORK = [
-    { ask: '4-channel CCTV object detection', by: 'Stream' },
+    { ask: '16-channel CCTV object detection', by: 'Stream', note: '16 channels on one DX-M1 · 495 fps NPU',
+      ms: 5300, answerAt: 2600, scene: 'stream' },
     { ask: 'segment a video file',            by: 'App' },
     { ask: 'compile yolo26n to DXNN',         by: 'Compiler' }
   ];
+  function _ms(item) { return item.ms || _BEAT; }
+  var _WORK_MS = _WORK.reduce(function (sum, item) { return sum + _ms(item); }, 0);
   /* hero 의 부제("AI Studio")는 CSS 가 1.9s 에 띄운다. work 는 그게 자리를
      잡고 한 박자 쉰 다음에 시작해야 한다 — 처음엔 2.8s 로 잡았더니 부제가
      250ms 만에 밀려나서, 있었는지도 모르게 지나갔다. */
   var _WORK_IN  = 3400;
-  var _CLOSE    = _WORK_IN + _BEAT * 3;       /* 9250 */
+  var _CLOSE    = _WORK_IN + _WORK_MS;         /* 12600 */
   /* close 는 주장 하나로 닫는다. 읽을 시간이 필요하므로 hero 로 돌아오는
      것보다 길게 잡는다 — 한 문장을 못 읽고 끝나면 없느니만 못하다. */
-  var _INTRO    = _CLOSE + 2600;              /* 11850 */
+  var _INTRO    = _CLOSE + 2600;              /* 15200 */
 
   function _t(key) {
     return (window.DXI18n && window.DXI18n.T) ? window.DXI18n.T(key) : key;
@@ -83,11 +91,14 @@
     _later(function () {
       cue.classList.remove('is-answered', 'is-out');
       cue.setAttribute('data-beat', String(index));
-      answer.textContent = item.by;
+      answer.textContent = item.note ? item.by + ' \u00b7 ' + _t(item.note) : item.by;
+      if (item.scene === 'stream' && window.DXIntroStream) {
+        window.DXIntroStream.play(document.getElementById('splashOverlay'), _ms(item));
+      }
       _type(text, _t(item.ask));
     }, at);
-    _later(function () { cue.classList.add('is-answered'); }, at + _TYPE_MS + 260);
-    _later(function () { cue.classList.add('is-out'); }, at + _BEAT - 260);
+    _later(function () { cue.classList.add('is-answered'); }, at + (item.answerAt || _TYPE_MS + 260));
+    _later(function () { cue.classList.add('is-out'); }, at + _ms(item) - 260);
   }
 
   function initSplashV2() {
@@ -104,7 +115,9 @@
     var overlay = document.getElementById('splashOverlay');
 
     /* 움직임을 줄여 달라고 한 사람에게는 크로스페이드. */
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!still && window.DXIntroStream) window.DXIntroStream.prepare();
+    if (still) {
       if (overlay) overlay.classList.add('is-still');
       ns._splashTimers.push(setTimeout(skipSplash, 700));
       return true;
@@ -122,8 +135,8 @@
 
         /* 2. work — 이름이 물러나고 그 자리에서 제품이 일한다. */
         _later(function () { if (overlay) overlay.classList.add('is-working'); }, _WORK_IN - 400);
-        for (var i = 0; i < _WORK.length; i++) {
-          _beat(_WORK[i], i, _WORK_IN + _BEAT * i);
+        for (var i = 0, at = _WORK_IN; i < _WORK.length; at += _ms(_WORK[i]), i++) {
+          _beat(_WORK[i], i, at);
         }
 
         /* 3. close — 프롬프트가 걷히고 마크가 이름과 함께 남는다. */
@@ -155,6 +168,7 @@
     ns._splashTimers.forEach(function(id) { clearTimeout(id); });
     ns._splashTimers.length = 0;
     ns._splashActive = false;
+    if (window.DXIntroStream) window.DXIntroStream.stop();
     if (ns._decodeRAF) { cancelAnimationFrame(ns._decodeRAF); ns._decodeRAF = null; }
     if (window._splashParticleCleanup) window._splashParticleCleanup();
 
@@ -215,7 +229,6 @@
         '</blockquote>' +
       '<div class="mark-cue" id="splashCue" aria-hidden="true">' +
         '<div class="cue-scene" aria-hidden="true">' +
-          '<img class="cue-shot" data-beat="0" src="/static/img/intro/scene-detect.svg" alt="Four camera channels with people and vehicles boxed as they are detected">' +
           '<img class="cue-shot" data-beat="1" src="/static/img/intro/scene-segment.svg" alt="A street segmented into road, vehicle, person and vegetation classes">' +
           '<img class="cue-shot" data-beat="2" src="/static/img/intro/scene-silicon.svg" alt="The DX-M1 die the models are compiled down to">' +
         '</div>' +

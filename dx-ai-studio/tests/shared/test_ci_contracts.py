@@ -16,6 +16,7 @@ BROWSER_SUITE_PATHS = {
     "tests/launcher/test_home_router_browser.py",
     "tests/launcher/test_home_icons_browser.py",
     "tests/launcher/test_boot_assets_browser.py",
+    "tests/launcher/test_intro_stream_browser.py",
     "tests/launcher/test_home_stage_browser.py",
     "tests/launcher/test_home_widgets_browser.py",
     "tests/launcher/test_home_hero_browser.py",

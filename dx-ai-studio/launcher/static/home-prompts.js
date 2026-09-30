@@ -23,7 +23,7 @@ window.DXHomePlaceholders = [
   "Build a squat-counting fitness mini-game using yolo26n-pose on DEEPX NPU",
   "Build an OCR inference app whose text detection + recognition runs on the DEEPX DX-M1 NPU.",
   "Using the Ultralytics Python package, adapt the base yolo26n model for a medical edge device that screens MRI/CT brain scans for tumors.",
-  "4-channel CCTV object detection",
+  "16-channel CCTV object detection",
   "Export the Ultralytics YOLO26n detection model to DeepX NPU format using the one-shot format=deepx export path, then run inference on the Ultralytics bus sample image.",
   "Using the yolo26n-pose model on the DEEPX NPU, build a simple arcade-style stretching mini-game.",
   "Build a PDF-to-Markdown app whose document-parsing pipeline (layout analysis + OCR + table/formula recognition) runs on the DEEPX DX-M1 NPU.",

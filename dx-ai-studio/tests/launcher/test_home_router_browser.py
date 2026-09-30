@@ -68,6 +68,13 @@ def test_it_reads_task_channels_and_target(route):
     assert got["routes"], "a matched sentence must offer somewhere to go"
 
 
+def test_the_intro_stream_prompt_goes_to_stream_with_sixteen_channels(route):
+    """intro 의 첫 작업 장면이 타이핑하는 문장 — home 이 실제로 그 일을 받아야 한다 (spec 2026-09-30)."""
+    got = json.loads(route("16-channel CCTV object detection", CATALOG, DEMOS))
+    assert got["parsed"]["channels"] == 16
+    assert any(r.get("module") == "stream" for r in got["routes"]), got["routes"]
+
+
 def test_a_model_name_resolves_that_model(route):
     got = json.loads(route("run yolo26n_pose", CATALOG, DEMOS))
     assert any(r.get("model") == "YOLOv26n_Pose" for r in got["routes"])

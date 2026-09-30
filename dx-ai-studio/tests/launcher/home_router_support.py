@@ -20,7 +20,7 @@ ROUTER = ROOT / "launcher" / "static" / "home-router.js"
 HERO_CHIPS = (
     "compile yolo26n to DXNN",
     "pose estimation on webcam",
-    "4-channel CCTV object detection",
+    "16-channel CCTV object detection",
     "segment a video file",
 )
 
