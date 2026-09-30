@@ -96,7 +96,8 @@
     moreBtn.appendChild(moreLabel);
     moreBtn.insertAdjacentHTML(
       'beforeend',
-      '<svg aria-hidden="true"><use href="/static/shared/dx-icons.svg#dots"></use></svg>'
+      '<svg aria-hidden="true"><use href="' +
+        (window.DXIcon ? window.DXIcon.url('dots') : '/static/shared/dx-icons.svg' + '#dots') + '"></use></svg>'
     );
     row.appendChild(moreBtn);
 

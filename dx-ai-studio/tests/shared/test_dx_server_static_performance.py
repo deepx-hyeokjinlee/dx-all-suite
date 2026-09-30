@@ -405,3 +405,99 @@ def test_production_sse_handlers_call_end_sse():
             assert found_in_finally, (
                 f"{rel_path}::{node.name} must call self.end_sse() inside a finally block"
             )
+
+# ── hash 가 맞는 static 은 immutable (spec 2026-09-30-studio-boot-assets) ──────────────
+# ?v= 는 render_html_with_asset_hashes 가 붙인 내용 hash 다. 맞으면 URL 이 곧 내용이라 재검증할
+# 이유가 없다 — VS Code port-forward tunnel 너머에서 CSS/JS 수십 개의 304 왕복이 사라진다.
+IMMUTABLE = "public, max-age=31536000, immutable"
+
+
+def test_static_with_matching_hash_is_immutable(static_server, tmp_path):
+    digest = DXBaseHandler.asset_content_hash(tmp_path / "static" / "app.js")
+    resp = urlopen(f"{static_server}/static/app.js?v={digest}", timeout=5)
+    resp.read()
+    assert resp.headers["Cache-Control"] == IMMUTABLE
+
+
+def test_static_with_stale_or_missing_hash_keeps_revalidating(static_server):
+    for url in (f"{static_server}/static/app.js?v=deadbeef", f"{static_server}/static/app.js"):
+        resp = urlopen(url, timeout=5)
+        resp.read()
+        assert resp.headers["Cache-Control"] == "no-cache, must-revalidate", url
+
+
+def test_static_304_with_matching_hash_is_immutable(static_server, tmp_path):
+    digest = DXBaseHandler.asset_content_hash(tmp_path / "static" / "app.js")
+    url = f"{static_server}/static/app.js?v={digest}"
+    first = urlopen(url, timeout=5)
+    first.read()
+    with pytest.raises(HTTPError) as exc_info:
+        urlopen(Request(url, headers={"If-None-Match": first.headers["ETag"]}), timeout=5)
+    assert exc_info.value.code == 304
+    assert exc_info.value.headers["Cache-Control"] == IMMUTABLE
+
+
+def test_explicit_cache_control_yields_to_matching_hash(tmp_path):
+    """launcher 는 shell asset 에 cache_control=_SHELL_CACHE 를 준다 — hash 가 맞으면 그래도 immutable."""
+    asset = tmp_path / "shell.js"
+    asset.write_text("window.shell = 1;\n", encoding="utf-8")
+    digest = DXBaseHandler.asset_content_hash(asset)
+
+    class Handler(StaticPerfHandler):
+        def route(self):
+            self.send_file(asset, "application/javascript", cache_control="no-cache, must-revalidate")
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    base = f"http://127.0.0.1:{server.server_address[1]}"
+    try:
+        hit = urlopen(f"{base}/shell.js?v={digest}", timeout=5)
+        hit.read()
+        miss = urlopen(f"{base}/shell.js?v=00000000", timeout=5)
+        miss.read()
+    finally:
+        server.shutdown()
+        server.server_close()
+    assert hit.headers["Cache-Control"] == IMMUTABLE
+    assert miss.headers["Cache-Control"] == "no-cache, must-revalidate"
+
+
+# ── 아이콘 sprite 도 hash URL 로 ─────────────────────────────────────────────────────────
+SPRITE = "/static/shared/dx-icons.svg"
+
+
+def _sprite_hash():
+    return DXBaseHandler.asset_content_hash(
+        Path(__file__).resolve().parents[2] / "shared" / "static" / "dx-icons.svg")
+
+
+def test_sprite_refs_get_content_hash_and_keep_fragment():
+    handler = object.__new__(StaticPerfHandler)
+    html = ('<html><head><title>x</title></head><body>'
+            f'<svg><use href="{SPRITE}#check"></use></svg>'
+            f"<svg><use href='{SPRITE}#globe'></use></svg></body></html>")
+    out = handler.render_html_with_asset_hashes(html)
+    h = _sprite_hash()
+    assert f'href="{SPRITE}?v={h}#check"' in out
+    assert f"href='{SPRITE}?v={h}#globe'" in out
+    assert f'{SPRITE}#' not in out
+
+
+def test_sprite_meta_is_injected_once_before_head_close():
+    handler = object.__new__(StaticPerfHandler)
+    html = "<html><head><title>x</title></head><body></body></html>"
+    once = handler.render_html_with_asset_hashes(html)
+    twice = handler.render_html_with_asset_hashes(once)
+    meta = f'<meta name="dx-icons" content="{SPRITE}?v={_sprite_hash()}">'
+    assert once.count('name="dx-icons"') == 1
+    assert once.index(meta) < once.index("</head>")
+    assert twice.count('name="dx-icons"') == 1
+    assert meta in twice
+
+
+def test_fragments_injected_after_the_rewrite_can_be_versioned_on_their_own():
+    """launcher 가 proxy 응답에 끼워 넣는 NPU Monitor widget 은 module server 의 rewrite 를 거치지 않는다."""
+    snippet = f'<div><svg><use href="{SPRITE}#clock"></use></svg></div>'
+    out = DXBaseHandler.version_sprite_refs(snippet)
+    assert out == f'<div><svg><use href="{SPRITE}?v={_sprite_hash()}#clock"></use></svg></div>'
+    assert 'name="dx-icons"' not in out

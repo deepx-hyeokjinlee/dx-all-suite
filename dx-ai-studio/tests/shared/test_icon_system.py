@@ -88,7 +88,8 @@ def test_the_helper_hides_decoration_and_names_meaning():
     js = (ROOT / "shared" / "static" / "dx-icon.js").read_text(encoding="utf-8")
     assert "window.DXIcon" in js
     assert "aria-hidden" in js and "role" in js and "aria-label" in js
-    assert "/static/shared/dx-icons.svg#" in js
+    # hash URL 은 <meta name="dx-icons"> 에서, 없으면 hash 없는 경로 (test_the_helper_takes_the_hashed_sprite_url_from_the_page)
+    assert "'/static/shared/dx-icons.svg'" in js
 
 
 def test_the_home_uses_the_sprite_for_its_glyphs():
@@ -116,3 +117,23 @@ def test_every_module_tab_shows_its_glyph(doc, mod):
     assert "data:image/svg+xml" not in html.split("</head>")[0], "이모지 data-URI favicon 이 남아 있다"
     svg = (ROOT / "shared" / "static" / "favicons" / f"{mod}.svg").read_text(encoding="utf-8")
     assert svg.startswith("<svg") and 'viewBox="0 0 32 32"' in svg
+
+
+def test_the_helper_takes_the_hashed_sprite_url_from_the_page():
+    """server 가 <meta name="dx-icons"> 로 hash 붙은 sprite URL 을 알린다 (spec 2026-09-30 boot assets).
+    <use> 와 DXIcon.load() 가 같은 URL 을 써야 cache 한 항목으로 끝난다."""
+    js = (ROOT / "shared" / "static" / "dx-icon.js").read_text(encoding="utf-8")
+    assert 'meta[name="dx-icons"]' in js
+    assert "DXIcon.url = " in js
+
+
+def test_no_script_spells_the_sprite_path_itself():
+    """sprite 경로를 직접 쓰면 hash 없는 URL 로 한 번 더 받는다 — DXIcon.url() 을 쓴다."""
+    offenders = []
+    for base in [ROOT / "shared", *sorted(ROOT.glob("*/static"))]:
+        for p in base.rglob("*.js"):
+            if p.name == "dx-icon.js" or "vendor" in p.parts or "node_modules" in p.parts:
+                continue
+            if "dx-icons.svg#" in p.read_text(encoding="utf-8", errors="ignore"):
+                offenders.append(p.relative_to(ROOT).as_posix())
+    assert offenders == []

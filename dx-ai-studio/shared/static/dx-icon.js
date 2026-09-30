@@ -13,8 +13,18 @@
 (function () {
   'use strict';
 
-  var SPRITE = '/static/shared/dx-icons.svg#';
   var NS = 'http://www.w3.org/2000/svg';
+
+  /* sprite URL — server 가 <meta name="dx-icons"> 에 내용 hash 붙은 URL 을 적는다 (dx_server
+     _render_sprite_refs). hash URL 은 immutable cache 라 재방문에 왕복이 없다. <use> 와 load() 가 같은
+     URL 을 써야 cache 한 항목으로 끝난다. meta 가 없는 문서 (정적 미리보기 등) 는 hash 없는 경로. */
+  var _sprite = null;
+  function _spriteUrl() {
+    if (_sprite) return _sprite;
+    var meta = document.querySelector('meta[name="dx-icons"]');
+    _sprite = (meta && meta.getAttribute('content')) || '/static/shared/dx-icons.svg';
+    return _sprite;
+  }
 
   function _esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
@@ -28,8 +38,13 @@
     var a11y = opts.label
       ? ' role="img" aria-label="' + _esc(opts.label) + '"'
       : ' aria-hidden="true" focusable="false"';
-    return '<svg class="' + _esc(cls) + '"' + a11y + '><use href="' + SPRITE + _esc(name) + '"></use></svg>';
+    return '<svg class="' + _esc(cls) + '"' + a11y + '><use href="' + _esc(DXIcon.url(name)) + '"></use></svg>';
   }
+
+  /* <use href> 값 — 직접 <svg> 를 짜는 곳 (dx-tabs 등) 도 이것을 쓴다 */
+  DXIcon.url = function (name) {
+    return _spriteUrl() + '#' + name;
+  };
 
   DXIcon.el = function (name, opts) {
     opts = opts || {};
@@ -43,7 +58,7 @@
       svg.setAttribute('focusable', 'false');
     }
     var use = document.createElementNS(NS, 'use');
-    use.setAttribute('href', SPRITE + name);
+    use.setAttribute('href', DXIcon.url(name));
     svg.appendChild(use);
     return svg;
   };
@@ -90,7 +105,7 @@
   }
   DXIcon.load = function () {
     if (_loading) return _loading;
-    _loading = fetch(SPRITE.slice(0, -1)).then(function (r) { return r.text(); }).then(function (text) {
+    _loading = fetch(_spriteUrl()).then(function (r) { return r.text(); }).then(function (text) {
       var doc = new DOMParser().parseFromString(text, 'image/svg+xml'), map = {};
       Array.prototype.forEach.call(doc.querySelectorAll('symbol'), function (sym) {
         var one = { fill: [], line: [] };

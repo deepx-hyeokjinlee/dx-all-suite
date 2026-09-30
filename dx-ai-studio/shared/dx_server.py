@@ -344,6 +344,12 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         ".woff", ".woff2", ".ttf", ".otf", ".eot",
         ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico",
     ))
+    # ?v=<내용 hash> 가 맞는 static (render_html_with_asset_hashes 가 붙인 URL)
+    _HASHED_CACHE = "public, max-age=31536000, immutable"
+    # 아이콘 sprite — <use href> 와 dx-icon.js 가 같은 hash URL 을 쓰게 한다
+    _SPRITE_URL = "/static/shared/dx-icons.svg"
+    _SPRITE_REF_RE = re.compile(r'(?P<q>["\'])/static/shared/dx-icons\.svg(?:\?[^"\'#]*)?#')
+    _SPRITE_META_RE = re.compile(r'<meta name="dx-icons" content="[^"]*">')
     # gzip 대상 MIME 타입 (text/html, text/event-stream 제외)
     _GZIP_MIME_TYPES = frozenset((
         "application/javascript", "application/x-javascript",
@@ -384,6 +390,11 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
                 cache_control = "public, max-age=86400, must-revalidate"
             else:
                 cache_control = "no-cache, must-revalidate"
+        # ?v= 가 지금 내용 hash 와 같으면 URL 이 곧 내용이다 — 재검증할 이유가 없다. HTML 이 늘 새로
+        # 받아지고 (no-cache) 새 hash 를 적으므로, 내용이 바뀌면 URL 이 바뀐다. 옛 HTML 이 옛 hash 로
+        # 부르면 맞지 않아 위 정책 그대로 (stale 없음). 명시 cache_control= (launcher shell) 보다 우선.
+        if base_ct != "text/html" and self._request_asset_version_matches(p):
+            cache_control = self._HASHED_CACHE
 
         gzip_eligible = False
         if base_ct not in ("text/html", "text/event-stream"):
@@ -556,8 +567,47 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
                     return candidate, False
         return None, False
 
+    def _request_asset_version_matches(self, p: Path) -> bool:
+        """요청 query 의 v 가 파일 내용 hash 와 같은가."""
+        try:
+            versions = parse_qs(urlsplit(getattr(self, "path", "") or "").query).get("v")
+            return bool(versions) and versions[-1] == self.asset_content_hash(p)
+        except (OSError, ValueError):
+            return False
+
+    @classmethod
+    def sprite_url(cls) -> str | None:
+        """내용 hash 붙은 sprite URL. sprite 가 없으면 None."""
+        try:
+            return f"{cls._SPRITE_URL}?v={cls.asset_content_hash(cls._shared_static / 'dx-icons.svg')}"
+        except (OSError, PermissionError):
+            return None
+
+    @classmethod
+    def version_sprite_refs(cls, text: str) -> str:
+        """sprite 참조 (정적 <use> · inline script 문자열) 에 hash 를 붙인다. fragment (#id) 는 그대로.
+        rewrite 뒤에 끼워 넣는 조각 (launcher 의 NPU Monitor widget) 도 이것을 거친다."""
+        url = cls.sprite_url()
+        if url is None:
+            return text
+        return cls._SPRITE_REF_RE.sub(lambda m: f"{m.group('q')}{url}#", text)
+
+    def _render_sprite_refs(self, html: str) -> str:
+        """sprite 참조에 hash 를 붙이고 <meta name="dx-icons"> 로 dx-icon.js 에 같은 URL 을 알린다."""
+        url = self.sprite_url()
+        if url is None:
+            return html
+        html = self.version_sprite_refs(html)
+        meta = f'<meta name="dx-icons" content="{url}">'
+        if self._SPRITE_META_RE.search(html):
+            return self._SPRITE_META_RE.sub(meta, html, count=1)
+        idx = html.lower().find("</head>")
+        if idx == -1:
+            return html
+        return html[:idx] + meta + html[idx:]
+
     def render_html_with_asset_hashes(self, html: str, asset_scope=None, extra_static_roots=None) -> str:
-        """HTML 내 로컬 CSS/JS URL에 콘텐츠 해시 v= 쿼리를 추가."""
+        """HTML 내 로컬 CSS/JS URL에 콘텐츠 해시 v= 쿼리를 추가 (아이콘 sprite 참조 포함)."""
         def _replace_url(match):
             prefix = match.group("prefix")
             raw_url = match.group("url")
@@ -584,7 +634,7 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
             new_url = urlunsplit(("", "", url_path, new_query, ""))
             return f"{prefix}{new_url}{suffix}"
 
-        return self._ASSET_ATTR_RE.sub(_replace_url, html)
+        return self._render_sprite_refs(self._ASSET_ATTR_RE.sub(_replace_url, html))
 
     def send_html_no_cache(self, html: str, status: int = 200):
         """HTML 응답 + Cache-Control: no-cache."""

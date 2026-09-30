@@ -857,7 +857,9 @@ def _proxy(handler, target_port, path, inject_widget=True):
         if is_html_inject:
             body = resp.read()
             if widget_cache:
-                body = _inject_before_body_close(body, widget_cache)
+                # the module page was hash-rewritten by its own server; this snippet was not
+                snippet = DXBaseHandler.version_sprite_refs(widget_cache.decode("utf-8", "ignore"))
+                body = _inject_before_body_close(body, snippet.encode("utf-8"))
             handler.send_header('Content-Length', len(body))
             handler.end_headers()
             handler.wfile.write(body)
@@ -1287,22 +1289,23 @@ class LauncherHandler(DXBaseHandler):
         # Inject the live DX-AllSuite version (from release.ver) into the hub, instead of a
         # stale hard-coded string.
         html = html.replace("{{SDK_VERSION}}", _suite_sdk_version())
-        html = self.render_html_with_asset_hashes(
-            html,
-            asset_scope=None,
-            extra_static_roots=[BASE_DIR / "static"],
-        )
         # Inject the shared NPU Monitor float into the launcher shell so the launcher-native
         # views (About DEEPX, SDK Library) show the same collapsible monitor as the proxied
         # module pages. Visibility is gated client-side (setVisibleView adds .hw-native-visible
         # only on those views), so it never doubles up with a module iframe's own widget nor
-        # clutters the home splash.
+        # clutters the home splash. Injected before the hash rewrite so its asset and sprite
+        # URLs get the content hash too.
         widget = _get_widget_cache()
         if widget:
             snippet = widget.decode("utf-8", "ignore")
             low = html.lower()
             idx = low.rfind("</body>")
             html = (html[:idx] + snippet + html[idx:]) if idx != -1 else (html + snippet)
+        html = self.render_html_with_asset_hashes(
+            html,
+            asset_scope=None,
+            extra_static_roots=[BASE_DIR / "static"],
+        )
         self.send_html_no_cache(html)
 
     def _client_id(self) -> str:
