@@ -93,9 +93,11 @@ _MODEL_COUNT = '<span class="mz-model-count" id="modelCount"></span>'
 
 _ZOO_TOOLBAR = (
     '<a href="https://developer.deepx.ai/modelzoo/" target="_blank" rel="noopener"'
-    ' class="mz-btn mz-btn-outline" style="gap:4px;white-space:nowrap;text-decoration:none"'
-    ' data-i18n-title="ModelZoo public site" title="ModelZoo public site">'
-    '<span data-i18n="ModelZoo Homepage">ModelZoo Homepage</span> ↗</a>'
+    ' class="mz-btn mz-btn-outline mz-homepage-link" style="gap:4px;white-space:nowrap;text-decoration:none"'
+    ' data-i18n-title="ModelZoo public site" title="ModelZoo public site"'
+    ' aria-label="ModelZoo public site" data-i18n-aria-label="ModelZoo public site">'
+    '<span class="mz-homepage-text" data-i18n="ModelZoo Homepage">ModelZoo Homepage</span>'
+    '<svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#external"></use></svg></a>'
     '<span class="mz-dx-app-status" id="dxAppStatus"></span>'
 )
 
