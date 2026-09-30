@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "Update submodule ${{ github.event.client_payload.name }} → ${{ github.event.client_payload.sha }}"
           cd ${{ github.event.client_payload.name }}
-          git fetch --all && git checkout ${{ github.event.client_payload.sha }}
+          git fetch --depth=1 origin ${{ github.event.client_payload.sha }} && git checkout --detach ${{ github.event.client_payload.sha }}
 
       - name: Generate Change Log
         run: |
