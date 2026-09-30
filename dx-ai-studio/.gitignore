@@ -49,3 +49,9 @@ dx_modelzoo/data/sync_report.json
 # (tests/dx_modelzoo/test_optimize_images_needs_sources.py).
 dx_modelzoo/data/thumbnails/
 dx_modelzoo/data/examples/
+
+# 실행할 때마다 다시 쓰는 포트 기록 (launcher.sh 의 고정 포트 · 접속 URL, 하위 서버가 알리는 :0 포트).
+# 추적하면 테스트를 돌릴 때마다 작업 트리가 더러워진다.
+/.launcher-port
+/.launcher-url
+/launcher/.ports/
