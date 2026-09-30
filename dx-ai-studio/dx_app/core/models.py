@@ -6,6 +6,8 @@ from dx_app.core.config import (BUILD_DIR, CPP_DIR, PY_DIR, ASSETS_DIR, CONFIG_F
                     SKIP_CAT, CATEGORIES, CAT_LABEL, CAT_IMAGE, CAT_VIDEO,
                     TASK_TYPES, POSTPROCESSORS, DX_APP_ROOT, resolve_model_path)
 from dx_app.core.inference_exec import _find_fallback_binary, _is_executable_file, _python_runtime_ready
+from shared import dx_app_layout as _layout
+from shared.tasks import canonical as _canonical_task
 from shared.catalog_sources import parse_test_models_conf as _shared_parse_test_models_conf
 
 _BUNDLED_MODEL_CATALOG = Path(__file__).resolve().parents[2] / "dx_modelzoo" / "data" / "model_catalog.json"
@@ -93,7 +95,7 @@ def _to_class_name(model_name):
 def _pp_info(lang,cat,mn):
     i={"name":None,"file":None}
     if lang=="cpp":
-        fd=CPP_DIR/cat/mn/"factory"
+        fd=_layout.example_dir(DX_APP_ROOT,"cpp",cat,mn)/"factory"
         if fd.is_dir():
             for hpp in fd.glob("*.hpp"):
                 m=re.search(r'#include\s+"[^"]*?([a-z_]+_postprocessor)\.hpp"',hpp.read_text(errors="replace"))
@@ -102,7 +104,7 @@ def _pp_info(lang,cat,mn):
                     if pp.exists():i["file"]=str(pp.relative_to(DX_APP_ROOT))
                 break
     else:
-        fd=PY_DIR/cat/mn/"factory"
+        fd=_layout.example_dir(DX_APP_ROOT,"python",cat,mn)/"factory"
         if fd.is_dir():
             for pyf in fd.glob("*.py"):
                 if "__init__" in pyf.name:continue
@@ -133,65 +135,94 @@ def _read_config_cached(cf):
     return parsed
 
 
+def _installed(path):
+    """설치된 model 파일인가 — 0 byte 는 받다 만 것이다 (workspace/res/models 에 191 개가 그랬다)."""
+    try:
+        return path.is_file() and path.stat().st_size > 0
+    except OSError:
+        return False
+
+
 def _required_dxnn_exists(model_file):
     if model_file.startswith("-"):
         import shlex as _shlex
         _args=_shlex.split(model_file)
-        return all(resolve_model_path(a, DX_APP_ROOT).exists() for a in _args if not a.startswith("-") and a.endswith(".dxnn"))
-    return bool(model_file)and resolve_model_path(model_file, DX_APP_ROOT).exists()
+        return all(_installed(resolve_model_path(a, DX_APP_ROOT)) for a in _args if not a.startswith("-") and a.endswith(".dxnn"))
+    return bool(model_file)and _installed(resolve_model_path(model_file, DX_APP_ROOT))
 
 
-def _cpp_runner_ready(category,model_name,variant):
+def _cpp_runner_ready(category,model_name,variant,allow_fallback=True):
     direct=BUILD_DIR/f"{model_name}_{variant}"
     if _is_executable_file(direct):
         return True
+    # per-model layout 의 binary 는 자기 model 의 전처리 · 후처리를 박아 두었다 — 남의 binary 로 돌리면 틀린 결과다.
+    # 빌린 binary 는 예제가 없는 custom model (registry-only) 에만.
+    if not allow_fallback:
+        return False
     return _is_executable_file(_find_fallback_binary(category,variant,build_dir=BUILD_DIR))
 
 
 def _python_runner_ready(category,model_name,variant,runtime_ready):
-    return bool(runtime_ready and (PY_DIR/category/model_name/f"{model_name}_{variant}.py").is_file())
+    if not runtime_ready:return False
+    if (PY_DIR/category/model_name/f"{model_name}_{variant}.py").is_file():return True
+    return _layout.python_script(DX_APP_ROOT,category,model_name,variant).is_file()
 
 
 def get_models():
     models={}
-    for lang,base in[("cpp",CPP_DIR),("python",PY_DIR)]:
-        if not base.is_dir():continue
-        for cd in sorted(base.iterdir()):
-            if not cd.is_dir() or cd.name in SKIP_CAT:continue
-            cat=cd.name
-            for md in sorted(cd.iterdir()):
-                if not md.is_dir() or md.name in SKIP_CAT or md.name.startswith("_"):continue
-                mn=md.name;ext=".cpp" if lang=="cpp" else ".py"
-                hs=(md/f"{mn}_sync{ext}").exists();ha=(md/f"{mn}_async{ext}").exists()
-                if ext==".py":hsp=(md/f"{mn}_sync_cpp_postprocess.py").exists();hap=(md/f"{mn}_async_cpp_postprocess.py").exists()
-                if not hs and not ha:continue
-                key=f"{cat}/{mn}"
-                if key not in models:
-                    reg=_REG.get(mn,{});mf=reg.get("file","")
-                    _mexists=_required_dxnn_exists(mf)
-                    models[key]={"name":mn,"category":cat,"category_label":CAT_LABEL.get(cat,cat),
-                     "cpp":False,"python":False,"cpp_sync":False,"cpp_async":False,
-                     "py_sync":False,"py_async":False,
-                     "py_sync_cpp_postprocess":False,"py_async_cpp_postprocess":False,"model_file":mf,
-                     "model_exists":_mexists,
-                     "npu_core":"","dataset":"","input_resolution":"","config":{}}
-                    cfg=_read_config_cached(md/"config.json")
-                    if isinstance(cfg,dict):
-                        models[key].update({"config":cfg,
-                         "npu_core":cfg.get("npu_core",cfg.get("NPU_CORE","")),
-                         "dataset":cfg.get("dataset",cfg.get("DATASET","")),
-                         "input_resolution":cfg.get("input_size",cfg.get("INPUT_SIZE",""))})
-                if lang=="cpp":models[key].update({"cpp":True,"cpp_sync":hs,"cpp_async":ha})
-                else:models[key].update({"python":True,"py_sync":hs,"py_async":ha,
-                     "py_sync_cpp_postprocess":hsp,"py_async_cpp_postprocess":hap})
+    # 예제 폴더는 resolver 가 찾는다 — legacy (<task>/<model>) 와 per-model (<task>/<family>/<stem>) 둘 다
+    # (shared/dx_app_layout.py, spec 2026-10-01 dx_app per-model layout).
+    _per_model=_layout.detect(DX_APP_ROOT)==_layout.PER_MODEL
+    for ex in sorted(_layout.examples(DX_APP_ROOT),key=lambda e:(e.task,e.name)):
+        cat,mn=ex.task,ex.name
+        key=f"{cat}/{mn}"
+        for lang,md in(("cpp",ex.cpp_dir),("python",ex.py_dir)):
+            if md is None:continue
+            ext=".cpp" if lang=="cpp" else ".py"
+            hs=(md/f"{mn}_sync{ext}").exists();ha=(md/f"{mn}_async{ext}").exists()
+            if ext==".py":hsp=(md/f"{mn}_sync_cpp_postprocess.py").exists();hap=(md/f"{mn}_async_cpp_postprocess.py").exists()
+            if not hs and not ha:continue
+            if key not in models:
+                spec=_read_config_cached(md/"config.json")
+                spec=spec if isinstance(spec,dict) else {}
+                nested=_per_model and "variant" in spec
+                if nested and spec.get("dxnn_file"):mf="assets/models/"+spec["dxnn_file"]
+                else:reg=_REG.get(mn,{});mf=reg.get("file","")
+                _mexists=_required_dxnn_exists(mf)
+                cfg=_layout.flat_config(spec) if spec else {}
+                models[key]={"name":mn,"category":cat,"category_label":CAT_LABEL.get(cat,cat),
+                 "family":ex.family,
+                 "cpp":False,"python":False,"cpp_sync":False,"cpp_async":False,
+                 "py_sync":False,"py_async":False,
+                 "py_sync_cpp_postprocess":False,"py_async_cpp_postprocess":False,"model_file":mf,
+                 "model_exists":_mexists,
+                 "npu_core":"","dataset":"","input_resolution":"","config":cfg}
+                if nested:
+                    models[key].update({"image_only":bool(spec.get("image_only")),
+                     "default_image":spec.get("default_image") or "","default_video":spec.get("default_video") or "",
+                     "input_resolution":f"{spec.get('input_width')}x{spec.get('input_height')}" if spec.get("input_width") else ""})
+                elif cfg:
+                    models[key].update({"npu_core":cfg.get("npu_core",cfg.get("NPU_CORE","")),
+                     "dataset":cfg.get("dataset",cfg.get("DATASET","")),
+                     "input_resolution":cfg.get("input_size",cfg.get("INPUT_SIZE",""))})
+            if lang=="cpp":models[key].update({"cpp":True,"cpp_sync":hs,"cpp_async":ha})
+            else:models[key].update({"python":True,"py_sync":hs,"py_async":ha,
+                 "py_sync_cpp_postprocess":hsp,"py_async_cpp_postprocess":hap})
     # Also include registry-only models (deployed via compiler but no source code yet)
+    # per-model layout 에서는 registry 의 옛 이름 (yolo26n …) 이 이미 stem 예제로 있다 — 예제가 쓰지 않는
+    # model 파일만 (Compiler 로 배포한 custom model) registry-only 로 더한다.
+    _covered={(m.get("model_file") or "").rsplit("/",1)[-1] for m in models.values()} if _per_model else set()
     for mn,reg in _REG.items():
         cat=reg.get("category","custom")
         key=f"{cat}/{mn}"
+        if _per_model and ((reg.get("file") or "").rsplit("/",1)[-1] in _covered or not _required_dxnn_exists(reg.get("file",""))):
+            continue
+        if _per_model:
+            cat=_canonical_task(cat);key=f"{cat}/{mn}"
         if key not in models:
             mf=reg.get("file","")
             _mexists=_required_dxnn_exists(mf)
-            models[key]={"name":mn,"category":cat,"category_label":CAT_LABEL.get(cat,cat),
+            models[key]={"name":mn,"category":cat,"category_label":CAT_LABEL.get(cat,cat),"registry_only":True,
              "cpp":True,"python":False,"cpp_sync":True,"cpp_async":False,
              "py_sync":False,"py_async":False,"model_file":mf,
              "model_exists":_mexists,
@@ -201,12 +232,19 @@ def get_models():
     _python_ready=_python_runtime_ready() if any(any(m.get(k) for k in _py_modes) for m in models.values()) else False
     for m in models.values():
         for key in _cpp_modes:
-            m[key]=bool(m.get(key) and _cpp_runner_ready(m["category"],m["name"],key[4:]))
+            m[key]=bool(m.get(key) and _cpp_runner_ready(m["category"],m["name"],key[4:],
+                        allow_fallback=not _per_model or m.get("registry_only",False)))
         for key in _py_modes:
             m[key]=bool(m.get(key) and _python_runner_ready(m["category"],m["name"],key[3:],_python_ready))
         m["cpp"]=any(m[key] for key in _cpp_modes)
         m["python"]=any(m[key] for key in _py_modes)
     models={key:m for key,m in models.items() if m["model_exists"] and (m["cpp"] or m["python"])}
+    # DX-RT 가 못 읽는 container (Model Zoo 2_5_0 = v9, DX-RT 3.4.2 는 6–8) — 목록에는 두고 이유를 단다.
+    # 실행은 run_inference 가 막는다 (spec 2026-10-01 결정 5).
+    from shared import dxrt as _dxrt
+    for m in models.values():
+        mf=m.get("model_file") or ""
+        m["needs_dxrt"]=None if mf.startswith("-") else _dxrt.needs_for_file(resolve_model_path(mf, DX_APP_ROOT))
     # Attach the ModelZoo Q-Lite download link so the Models table can pull a not-yet-installed
     # model straight from the catalog, same as the ModelZoo page. Join by any of: the .dxnn
     # filename, the normalized class_name, or the normalized model name — local example-dir

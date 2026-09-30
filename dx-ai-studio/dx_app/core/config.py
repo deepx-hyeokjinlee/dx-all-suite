@@ -49,7 +49,17 @@ def resolve_model_path(model_file: str, root=None):
         parts = PurePosixPath(model_file).parts
         if parts[:2] == _MODEL_PREFIX:
             return MODELS_DIR.joinpath(*parts[2:])
-    return base/model_file
+    p = base/model_file
+    # 없으면 (또는 0 byte — 받다 만 것) suite 의 workspace/res/models 에서도 찾는다: teammate dx_app 의
+    # run_demo.sh · run_demo.py 와 같은 순서 (spec 2026-10-01 dx_app per-model layout 결정 7).
+    try:
+        if p.is_file() and p.stat().st_size > 0:
+            return p
+    except OSError:
+        return p
+    from shared import dx_app_layout as _lay
+    alt = _lay.find_model(model_file, base, _SUITE_ROOT)
+    return alt if alt is not None else p
 CONFIG_FILE = DX_APP_ROOT/"config"/"test_models.conf"
 # C++ binary location varies by how dx_app was provisioned: a source build lands
 # under build_<arch>/src/cpp_example, while the dx-runtime tree ships prebuilt
@@ -74,6 +84,14 @@ _HARDCODED_CATEGORIES=["object_detection","face_detection","pose_estimation","ob
  "face_alignment","hand_landmark","object_detection_x_semantic_segmentation"]
 _VIRTUAL_CATEGORIES={"object_detection_x_semantic_segmentation"}
 
+from shared import dx_app_layout as _layout
+from shared.tasks import TaskTable as _TaskTable, TaskSet as _TaskSet, canonical as _canonical_task
+# dx_app 이 per-model layout (teammate 8d0b748 이후) 이면 task 폴더 이름이 새 key 다 — 옛 key 를 섞으면 빈
+# 분류가 목록에 생긴다. ppu 는 task 가 아니라 흩어졌다 (spec 2026-10-01 dx_app per-model layout 결정 3).
+LAYOUT=_layout.detect(DX_APP_ROOT)
+if LAYOUT==_layout.PER_MODEL:
+    _HARDCODED_CATEGORIES=sorted({_canonical_task(c) for c in _HARDCODED_CATEGORIES if c!="ppu"})
+
 def _scan_categories():
     cats=set(_HARDCODED_CATEGORIES)
     for base in[CPP_DIR,PY_DIR]:
@@ -94,7 +112,7 @@ def _make_label(c):
 CAT_LABEL={c:_make_label(c) for c in CATEGORIES}
 _DEFAULT_IMAGE="sample/img/sample_street.jpg"
 _DEFAULT_VIDEO="assets/videos/dance-group.mov"
-_CAT_IMAGE_OVERRIDES={"object_detection":"sample/img/sample_street.jpg",
+_CAT_IMAGE_OVERRIDES=_TaskTable({"object_detection":"sample/img/sample_street.jpg",
  "face_detection":"sample/img/sample_face.jpg",
  "pose_estimation":"sample/img/sample_people.jpg","obb_detection":"sample/img/sample_airport_satellite_view.png",
  "classification":"sample/img/sample_dog.jpg","instance_segmentation":"sample/img/sample_street.jpg",
@@ -109,10 +127,15 @@ _CAT_IMAGE_OVERRIDES={"object_detection":"sample/img/sample_street.jpg",
  "hand_detection":"sample/img/sample_hand.jpg","keypoint_detection":"sample/img/sample_street.jpg",
  "object_pose_estimation":"sample/dope/000000.png","panoptic_driving_perception":"sample/img/sample_parking.jpg",
  "3d_object_detection":"sample/kitti/velodyne/000049.bin",
- "object_detection_x_semantic_segmentation":"sample/img/sample_parking.jpg"}
+ "object_detection_x_semantic_segmentation":"sample/img/sample_parking.jpg",
+ # per-model layout 의 새 task (그 예제들의 config.json default_image, 8d0b748)
+ "anomaly_detection":"sample/img/sample_parking.jpg","zero_shot_image_classification":"sample/img/sample_dog.jpg",
+ "zero_shot_instance_segmentation":"sample/img/sample_street.jpg","image_matting":"sample/img/sample_person_b.jpg",
+ "image_retrieval":"sample/img/sample_person_a2.jpg","visual_place_recognition":"sample/vpr/queries/q1.jpg",
+ "face_attribute":"sample/img/sample_person_a1.jpg"})
 # Canonical per-category demo videos — synced to dx_app-dev scripts/run_demo.py (v3.1.x).
 # Each maps to a task-appropriate clip present in assets/videos (sample_videos_v3.1.0).
-_CAT_VIDEO_OVERRIDES={"object_detection":"assets/videos/snowboard.mp4",
+_CAT_VIDEO_OVERRIDES=_TaskTable({"object_detection":"assets/videos/snowboard.mp4",
  "face_detection":"assets/videos/dance-group.mov","obb_detection":"assets/videos/obb.mp4",
  "pose_estimation":"assets/videos/dance-solo.mov","hand_landmark":"assets/videos/hand.mp4",
  "hand_detection":"assets/videos/hand.mp4","face_alignment":"assets/videos/face-alignment-closeup.mp4",
@@ -124,9 +147,11 @@ _CAT_VIDEO_OVERRIDES={"object_detection":"assets/videos/snowboard.mp4",
  "keypoint_detection":"assets/videos/snowboard.mp4","object_pose_estimation":"assets/videos/snowboard.mp4",
  "panoptic_driving_perception":"assets/videos/blackbox-city-road.mp4",
  "3d_object_detection":"assets/videos/blackbox-city-road.mp4",
- "object_detection_x_semantic_segmentation":"assets/videos/blackbox-city-road.mp4"}
-CAT_IMAGE={c:_CAT_IMAGE_OVERRIDES.get(c,_DEFAULT_IMAGE) for c in CATEGORIES}
-CAT_VIDEO={c:_CAT_VIDEO_OVERRIDES.get(c,_DEFAULT_VIDEO) for c in CATEGORIES}
+ "object_detection_x_semantic_segmentation":"assets/videos/blackbox-city-road.mp4",
+ "anomaly_detection":"assets/videos/blackbox-city-road.mp4","image_matting":"assets/videos/blackbox-city-road.mp4",
+ "zero_shot_instance_segmentation":"assets/videos/dogs.mp4"})
+CAT_IMAGE=_TaskTable({c:_CAT_IMAGE_OVERRIDES.get(c,_DEFAULT_IMAGE) for c in CATEGORIES})
+CAT_VIDEO=_TaskTable({c:_CAT_VIDEO_OVERRIDES.get(c,_DEFAULT_VIDEO) for c in CATEGORIES})
 # Categories whose runners accept image input ONLY (exact mirror of dx_app
 # _IMAGE_ONLY_TASKS in common/runner/sync_runner.py:178 — {embedding, reid,
 # attribute_recognition, object_pose_estimation, 3d_detection}). The run tab disables
@@ -134,9 +159,11 @@ CAT_VIDEO={c:_CAT_VIDEO_OVERRIDES.get(c,_DEFAULT_VIDEO) for c in CATEGORIES}
 # NOTE: hand_detection / hand_landmark are NOT image-only — their runners process video
 # per-frame (verified: hand video save produced 855 frames), so they were removed here;
 # gating them off video was a bug that hid a working mode.
-IMAGE_ONLY_CATEGORIES={"embedding","reid","attribute_recognition",
- "object_pose_estimation","3d_object_detection"}
-_TASK_TYPES_EXCLUDE={"face_alignment","hand_landmark","object_detection_x_semantic_segmentation"}
+IMAGE_ONLY_CATEGORIES=_TaskSet({"embedding","reid","attribute_recognition",
+ "object_pose_estimation","3d_object_detection",
+ # per-model layout 의 새 task 중 image-only (registry image_only, 8d0b748). 모델별 값은 config.json 이 더 정확하다.
+ "image_retrieval","visual_place_recognition","face_attribute"})
+_TASK_TYPES_EXCLUDE={"face_alignment","face_landmark","hand_landmark","object_detection_x_semantic_segmentation"}
 TASK_TYPES=[c for c in CATEGORIES if c not in _TASK_TYPES_EXCLUDE]
 POSTPROCESSORS={"object_detection":["yolov5","yolov7","yolov8","yolov9","yolov10","yolov11",
  "yolov12","yolov26","yolox","ssd","nanodet","damoyolo","centernet","efficientdet"],

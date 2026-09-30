@@ -1,5 +1,6 @@
 """DX-APP ModelZoo — browse, cart, download from DEEPX ModelZoo page."""
 
+from shared import dxrt as _dxrt
 import os, sys, json, time, threading, re, ssl
 import urllib.request
 from pathlib import Path
@@ -481,28 +482,49 @@ def _download_worker(tasks, source):
         with _dl_lock:
             _dl_state["current"] = f"{task['name']} ({task['chip']}/{task['type']})"
 
-        url = task["url"]
         dest = task["dest"]
         _ensure_dir(dest.parent)
-
-        try:
-            with _open(opener, url, 120) as r:
-                if r.status != 200:
-                    return {"file": dest.name, "status": "error", "error": f"HTTP {r.status}"}
-                downloaded = 0
-                with open(dest, "wb") as f:
-                    while True:
-                        chunk = r.read(256 * 1024)
-                        if not chunk:
-                            break
-                        if _dl_state["cancel"]:
-                            return {"file": dest.name, "status": "cancelled"}
-                        f.write(chunk)
-                        downloaded += len(chunk)
-            return {"file": dest.name, "status": "ok", "size": downloaded,
+        # DX-RT 가 v9 (Model Zoo 2_5_0) 를 못 읽으면 같은 파일의 2_4_0 (v8) 을 받는다. 2_4_0 에 없는 model 은 받지
+        # 않고 "DX-RT 3.5 필요" 로 끝낸다 — 받아 두어도 실행이 실패한다 (spec 2026-10-01 결정 6).
+        urls = _dxrt.download_urls(task["url"])
+        last_err = None
+        for url in urls:
+            tmp = dest.with_name(dest.name + ".part")
+            try:
+                with _open(opener, url, 120) as r:
+                    if r.status != 200:
+                        last_err = f"HTTP {r.status}"
+                        continue
+                    downloaded = 0
+                    with open(tmp, "wb") as f:
+                        while True:
+                            chunk = r.read(256 * 1024)
+                            if not chunk:
+                                break
+                            if _dl_state["cancel"]:
+                                f.close()
+                                tmp.unlink(missing_ok=True)
+                                return {"file": dest.name, "status": "cancelled"}
+                            f.write(chunk)
+                            downloaded += len(chunk)
+                if task["type"] == "dxnn" and _dxrt.needs_for_file(tmp):
+                    tmp.unlink(missing_ok=True)
+                    last_err = "needs_dxrt"
+                    continue
+                os.replace(tmp, dest)
+                return {"file": dest.name, "status": "ok", "size": downloaded,
+                        "chip": task["chip"], "name": task["name"]}
+            except Exception as e:
+                try:
+                    tmp.unlink(missing_ok=True)
+                except OSError:
+                    pass
+                last_err = str(e)
+        if task["type"] == "dxnn" and (last_err == "needs_dxrt" or (urls != [task["url"]] and _dxrt.is_v9_only(task["url"]))):
+            return {"file": dest.name, "status": "needs_dxrt", "needs_dxrt": _dxrt.NEEDS_FOR_V9,
+                    "error": f"DX-RT {_dxrt.NEEDS_FOR_V9} required (this .dxnn is container v9)",
                     "chip": task["chip"], "name": task["name"]}
-        except Exception as e:
-            return {"file": dest.name, "status": "error", "error": str(e)}
+        return {"file": dest.name, "status": "error", "error": last_err or "download failed"}
 
     try:
         # Create the model dirs up front. Do it here (not at module import) so a
@@ -560,6 +582,11 @@ def modelzoo_stop():
 
 def _auto_register():
     """After download, update test_models.conf for newly downloaded models."""
+    # per-model layout (teammate 8d0b748) 의 registry 는 499 model 을 다 갖는다 — 외부 repo 의 test_models.conf 에
+    # 더 적지 않는다 (spec 2026-10-01 결정 12).
+    from shared import dx_app_layout as _layout
+    if _layout.detect(DX_APP_ROOT) == _layout.PER_MODEL:
+        return
     try:
         from dx_app.core.models import _reload_reg
 

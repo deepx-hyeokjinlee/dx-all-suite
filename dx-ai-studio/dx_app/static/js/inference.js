@@ -185,6 +185,7 @@ function _applyPendingAutoSelect(){
 
 function initRunPage(){
   _invalidateRunMediaCache();
+  loadTaskDefaults();
   $('r-export-out').classList.add('hidden');
   [['r-input-img','image'],['r-input-vid','video'],['r-video','video']].forEach(function(pair){
     var input=$(pair[0]);
@@ -217,16 +218,32 @@ function onRCat(){
   updateRunInputMode(cat);
 }
 
+// task 표 (기본 입력 · image-only · 옛 key) 는 서버의 것을 쓴다 — /api/task_defaults (spec 2026-10-01
+// dx_app per-model layout). 서버가 답하기 전 · 답하지 않을 때만 아래 옛 표로.
+var _TASK_DEFAULTS=null;
+function loadTaskDefaults(){
+  if(_TASK_DEFAULTS)return Promise.resolve(_TASK_DEFAULTS);
+  return api('/api/task_defaults').then(function(r){_TASK_DEFAULTS=(r&&!r.error)?r:{};return _TASK_DEFAULTS;})
+    .catch(function(){_TASK_DEFAULTS={};return _TASK_DEFAULTS;});
+}
+function _taskInfo(cat){return (_TASK_DEFAULTS&&_TASK_DEFAULTS[cat])||{};}
+function _taskLegacy(cat){return _taskInfo(cat).legacy||cat;}
+function _selectedRunModel(){
+  var name=$('r-model')&&$('r-model').value, cat=$('r-cat')&&$('r-cat').value;
+  return (S.models||[]).find(function(m){return m.name===name&&m.category===cat;})||null;
+}
 function updateRunInputMode(cat){
   // Exact mirror of dx_app _IMAGE_ONLY_TASKS (common/runner/sync_runner.py:178): these 5
   // runners reject video/camera/rtsp — detector-crop pipeline (embedding/reid/attribute),
   // static pose (DOPE), or LiDAR .bin (SFA3D). Video is hard-disabled for them here.
   // hand_detection / hand_landmark are NOT image-only (they process video per-frame).
+  // per-model layout 의 model 은 자기 image_only 를 안다 (config.json) — 그것이 먼저, 다음이 서버의 task 표.
   var imageOnly=['embedding','reid','attribute_recognition',
                  'object_pose_estimation','3d_object_detection'];
   var vidRadio=$('r-input-vid');
   var imgRadio=$('r-input-img');
-  var restrict=imageOnly.indexOf(cat)!==-1;
+  var mdl=_selectedRunModel();
+  var restrict=(mdl&&mdl.image_only===true)||_taskInfo(cat).image_only===true||imageOnly.indexOf(_taskLegacy(cat))!==-1;
   var ps=PENDING_AUTO_SELECT;
   if(restrict&&imgRadio&&!(ps&&ps.selectedInput))imgRadio.checked=true;
   if(vidRadio){
@@ -332,7 +349,8 @@ function loadRunImages(cat){
 function _renderRunMedia(cat,media){
   var grid=$('img-grid');
   var list=media&&Array.isArray(media.images)?media.images:[];
-  var defImg=CAT_IMG[cat];
+  var _m=_selectedRunModel();
+  var defImg=(_m&&_m.default_image)||_taskInfo(cat).image||CAT_IMG[_taskLegacy(cat)];
   var ps=PENDING_AUTO_SELECT;
   var selectedInput=ps&&ps.selectedInput?ps.selectedInput:'';
   if(defImg&&!selectedInput&&(!S.selectedImage||list.indexOf(S.selectedImage)===-1)){
@@ -579,6 +597,7 @@ window.renderInferenceResult=function(el,res){
     hand_landmark:T('Hand Landmark: draws 21 hand landmark points and connections.'),
     face_alignment:T('Face Alignment: draws 3D facial landmark points.')
   };
+  if(!VIS_HINTS[cat]&&VIS_HINTS[_taskLegacy(cat)])cat=_taskLegacy(cat);
   if(VIS_HINTS[cat]){
     /* task 아이콘은 Model Zoo 와 같은 한 표 (sprite 의 task-<key>, 아이콘 체계 단계 3) — 문장 앞의 이모지가 아니다. */
     var hintIco=(typeof DXIcon==='function')?DXIcon('task-'+cat,{cls:'res-hint-ico'}):'';

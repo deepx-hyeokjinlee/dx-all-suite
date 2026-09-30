@@ -110,9 +110,21 @@ def _model_identifier(model: dict) -> tuple[str, str]:
     name = model.get("name")
     if not isinstance(category, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", category):
         raise ValueError("workflow model category is invalid")
-    if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", name):
+    # per-model layout 의 이름은 .dxnn stem 이라 '.' 이 들어갈 수 있다 (3ddfa-v2_mobilenet-0.5_120x120) — '..' 는 막는다
+    if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", name) or ".." in name:
         raise ValueError("workflow model name is invalid")
     return category, name
+
+
+def _example_rel(source_root: Path, language: str, category: str, model: str) -> PurePosixPath:
+    """예제 폴더의 source_root 상대 경로 — legacy <task>/<model> · per-model <task>/<family>/<stem>
+    (shared/dx_app_layout.py, spec 2026-10-01 dx_app per-model layout)."""
+    from shared import dx_app_layout as layout
+    d = layout.example_dir(source_root, language, category, model)
+    try:
+        return PurePosixPath(Path(d).relative_to(source_root).as_posix())
+    except ValueError:
+        return PurePosixPath(f"src/{language}_example") / category / model
 
 
 def _runner_source(
@@ -121,15 +133,21 @@ def _runner_source(
     if language == "python":
         if variant not in {"sync", "sync_cpp_postprocess"}:
             return None
-        relative = PurePosixPath("src/python_example") / category / model / f"{model}_{variant}.py"
+        relative = _example_rel(source_root, "python", category, model) / f"{model}_{variant}.py"
     else:
         if variant != "sync":
             return None
-        relative = PurePosixPath("src/cpp_example") / category / model / f"{model}_sync.cpp"
+        relative = _example_rel(source_root, "cpp", category, model) / f"{model}_sync.cpp"
     try:
         return _safe_source_file(source_root, relative.as_posix(), "exact runner source")
     except ValueError:
         return None
+
+
+def _extract_target(source_root: Path, language: str, category: str, name: str) -> str:
+    """extract_model_package.sh 의 대상: legacy 는 task/model, per-model 은 task/family/stem (branch 의 새 인자)."""
+    rel = _example_rel(source_root, language, category, name)
+    return "/".join(rel.parts[2:]) or f"{category}/{name}"
 
 
 def _copy_extracted_runner(extracted_root: Path, runner_name: str, destination: Path) -> bool:
@@ -177,7 +195,8 @@ def _bundle_exact_runner(package_dir: Path, source_root: Path, model: dict) -> d
     if extractor.is_file():
         with tempfile.TemporaryDirectory(prefix="dx-app-lab-extract-") as extracted:
             completed = subprocess.run(
-                ["bash", str(extractor), f"{category}/{name}", "--lang", "py" if language == "python" else "cpp",
+                ["bash", str(extractor), _extract_target(source_root, language, category, name),
+                 "--lang", "py" if language == "python" else "cpp",
                  "--output-dir", extracted],
                 cwd=source_root,
                 text=True,

@@ -8,16 +8,21 @@ from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared import debug_log
 
 from dx_app.core import config
-from dx_app.core.config import (SCRIPT_DIR, DX_APP_ROOT, STATIC_DIR, TEMPLATES_DIR, SERVER_NAME, OUTPUTS_DIR,
+from dx_app.core.config import (resolve_model_path, SCRIPT_DIR, DX_APP_ROOT, STATIC_DIR, TEMPLATES_DIR, SERVER_NAME, OUTPUTS_DIR,
                     CATEGORIES, TASK_TYPES, POSTPROCESSORS,
                     _HEARTBEAT, _HB_TIMEOUT, ASSETS_DIR, SAMPLE_DIR)
 from dx_app.core.dx_app_security import (resolve_under, sanitize_filename, safe_content_disposition,
                              resolve_existing_file, resolve_existing_path, existing_onnx)
 
 ONNX_INPUT_ROOTS = (OUTPUTS_DIR,)
-MODEL_INPUT_ROOTS = (DX_APP_ROOT, ASSETS_DIR, ASSETS_DIR / "models", OUTPUTS_DIR)
+from shared.paths import SUITE_ROOT as _SUITE_FOR_MODELS
+_WORKSPACE_MODELS = _SUITE_FOR_MODELS / "workspace" / "res" / "models"
+MODEL_INPUT_ROOTS = (DX_APP_ROOT, ASSETS_DIR, ASSETS_DIR / "models", OUTPUTS_DIR, _WORKSPACE_MODELS)
 TEST_RUN_INPUT_ROOTS = (DX_APP_ROOT, SAMPLE_DIR, ASSETS_DIR, OUTPUTS_DIR)
 _SAFE_ID_RE = re.compile(r'^[A-Za-z0-9_]+$')
+# model 이름: per-model layout 의 stem 은 .dxnn 이름이라 '-' 와 '.' 이 들어간다 (3ddfa-v2_mobilenet-0.5_120x120).
+# 경로 구분자 · '..' · 앞의 '.' 은 여전히 막는다 (spec 2026-10-01 dx_app per-model layout).
+_MODEL_NAME_RE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.\-]*$')
 _RUN_LANGS = {"cpp", "python"}
 # *_cpp_postprocess variants run the Python app with the C++ dx_postprocess pybind
 # extension; they exist only as Python scripts (no C++ binary), so they're python-only.
@@ -39,6 +44,15 @@ def _validation_error_key(message):
     return "invalid_payload"
 
 
+def _task_defaults():
+    """task → 기본 입력 · image-only · 옛 key (JS 가 같은 표를 쓰게 — 예전에는 utils.js 의 CAT_IMG 가 서버 표와
+    어긋나 있었다). per-model layout 의 task key 도 옛 key 의 값을 찾는다 (shared/tasks.py)."""
+    from dx_app.core.config import CAT_IMAGE, CAT_VIDEO, IMAGE_ONLY_CATEGORIES
+    from shared.tasks import legacy
+    return {c: {"image": CAT_IMAGE.get(c, ""), "video": CAT_VIDEO.get(c, ""),
+                "image_only": c in IMAGE_ONLY_CATEGORIES, "legacy": legacy(c)} for c in CATEGORIES}
+
+
 def _require_category(category):
     """Validate category is a known value with no path traversal. Raises ValueError."""
     if not category or not isinstance(category, str):
@@ -52,6 +66,11 @@ def _require_category(category):
 def _require_safe_id(value, label):
     if not value or not isinstance(value, str) or not _SAFE_ID_RE.fullmatch(value):
         raise ValueError(f"Invalid {label}: {value!r}")
+
+
+def _require_model_name(value):
+    if not value or not isinstance(value, str) or not _MODEL_NAME_RE.fullmatch(value) or ".." in value:
+        raise ValueError(f"Invalid model_name: {value!r}")
 
 
 def _candidate_path(value):
@@ -74,7 +93,11 @@ def _require_model_file(model_file):
             if has_path_shape:
                 resolve_existing_file(_candidate_path(part), MODEL_INPUT_ROOTS, (".dxnn",))
         return
-    resolve_existing_file(_candidate_path(model_file), MODEL_INPUT_ROOTS, (".dxnn",))
+    # assets/models 에 없으면 suite 의 workspace/res/models 에서 찾는다 (config.resolve_model_path)
+    cand = _candidate_path(model_file)
+    if not Path(model_file).is_absolute() and not Path(cand).is_file():
+        cand = str(resolve_model_path(model_file, DX_APP_ROOT))
+    resolve_existing_file(cand, MODEL_INPUT_ROOTS, (".dxnn",))
 
 
 def _require_optional_input_path(value, label, allow_dir=False):
@@ -90,7 +113,7 @@ def _validate_inference_payload(data, live=False):
         return _error_payload("invalid_payload", "request must be an object"), 400
     try:
         _require_category(data.get("category", ""))
-        _require_safe_id(data.get("model_name", ""), "model_name")
+        _require_model_name(data.get("model_name", ""))
         _require_model_file(data.get("model_file", ""))
         lang = data.get("lang", "cpp")
         if lang not in _RUN_LANGS:
@@ -307,6 +330,7 @@ class Handler(DXBaseHandler):
             if path=="/api/images":return self.send_json(get_images(self.read_query_param("category") or None))
             if path=="/api/videos":return self.send_json(get_videos(self.read_query_param("category") or None))
             if path=="/api/categories":return self.send_json(CATEGORIES)
+            if path=="/api/task_defaults":return self.send_json(_task_defaults())
             if path=="/api/recent_runs":
                 with config._history_lock:data=list(config._recent_runs)
                 return self.send_json(data)

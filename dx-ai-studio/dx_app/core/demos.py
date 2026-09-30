@@ -52,10 +52,17 @@ def parse_run_demo(run_demo_path: Path) -> list[dict]:
         n = len(cols["DEMO_LABELS"])
         if n == 0 or any(len(v) != n for v in cols.values()):
             return []
+        # per-model layout (teammate 8d0b748): DEMO_PY_DIR 는 task/family, model 은 DEMO_MODEL 의 stem 이다 —
+        # studio 의 model 이름 · 실행 경로도 stem (spec 2026-10-01 dx_app per-model layout 결정 9).
+        from shared import dx_app_layout as _layout
+        per_model = _layout.detect(Path(run_demo_path).parent) == _layout.PER_MODEL
         demos = []
         for i in range(n):
             py_dir = cols["DEMO_PY_DIR"][i]
             category, _, model_name = py_dir.partition("/")
+            family = None
+            if per_model:
+                family, model_name = model_name, cols["DEMO_MODEL"][i].rsplit("/", 1)[-1].removesuffix(".dxnn")
             demos.append({
                 "idx": i,
                 "label": cols["DEMO_LABELS"][i],
@@ -63,6 +70,7 @@ def parse_run_demo(run_demo_path: Path) -> list[dict]:
                 "model": cols["DEMO_MODEL"][i],
                 "category": category,
                 "model_name": model_name,
+                "family": family,
                 "py_base": cols["DEMO_PY_BASE"][i],
                 "cpp_base": cols["DEMO_CPP_BASE"][i],
                 "default_video": cols["DEMO_VIDEO"][i],
@@ -79,12 +87,12 @@ def parse_run_demo(run_demo_path: Path) -> list[dict]:
 
 
 def _dx_app_root():
-    """dx-runtime/dx_app — run_demo.sh lives here and its sample media paths are relative to it."""
+    """dx_app root (DX_APP_ROOT 설정을 따른다) — run_demo.sh 가 여기 있고 sample media 경로도 여기 기준."""
     try:
-        from dx_app.core.config import DX_RT_ROOT
+        from dx_app.core.config import DX_APP_ROOT
     except Exception:
-        from config import DX_RT_ROOT  # dx_app/core on sys.path (studio runtime)
-    return DX_RT_ROOT.parent / "dx_app"
+        from config import DX_APP_ROOT  # dx_app/core on sys.path (studio runtime)
+    return Path(DX_APP_ROOT)
 
 
 def list_demos() -> dict:
@@ -127,10 +135,32 @@ def build_demos_payload() -> dict:
         d["run_ref"] = {"model_name": m.get("name") or d["model_name"],
                         "category": m.get("category") or d["category"],
                         "model_file": m.get("model_file") or d["model"]}
-        thumb = _resolve_thumb(d["model_name"], d["run_ref"]["model_name"], d.get("model"))
+        # per-model 의 stem (yolov7_640x640) 은 Model Zoo 썸네일 이름 (yolov7d6.jpg) 과 멀다 — family 와 registry 의
+        # 옛 이름으로도 찾는다.
+        thumb = _resolve_thumb(d["model_name"], d["run_ref"]["model_name"], d.get("model"),
+                               _legacy_name(d["model_name"]), d.get("family"))
         d["thumbnail"] = ("/api/demo-thumb?f=" + thumb) if thumb else None
         d["media"] = {"video": _media_exists(d.get("default_video")), "image": _media_exists(d.get("default_image"))}
     return base
+
+
+_LEGACY_NAMES = None
+
+
+def _legacy_name(stem):
+    """per-model registry 의 stem → 옛 model_name (yolov7_640x640 → yolov7). 없으면 None."""
+    global _LEGACY_NAMES
+    if _LEGACY_NAMES is None:
+        _LEGACY_NAMES = {}
+        try:
+            import json as _json
+            rows = _json.loads((_dx_app_root() / "config" / "model_registry.json").read_text(encoding="utf-8"))
+            for r in rows if isinstance(rows, list) else []:
+                if isinstance(r, dict) and r.get("variant") and r.get("model_name"):
+                    _LEGACY_NAMES[r["variant"]] = r["model_name"]
+        except (OSError, ValueError):
+            pass
+    return _LEGACY_NAMES.get(stem)
 
 
 def _media_exists(rel) -> bool:
@@ -140,7 +170,8 @@ def _media_exists(rel) -> bool:
         return False
     try:
         p = Path(rel)
-        return (p if p.is_absolute() else _dx_app_root() / p).is_file()
+        q = p if p.is_absolute() else _dx_app_root() / p
+        return q.is_file() or q.is_dir()    # face_pair · person_pair 는 이미지 쌍의 폴더다
     except Exception:
         return True
 

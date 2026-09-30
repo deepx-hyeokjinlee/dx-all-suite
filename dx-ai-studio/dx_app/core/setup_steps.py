@@ -251,8 +251,12 @@ def setup_status():
                                if not (cmake_ok and gcc_ok and ninja_ok) else []))}
     bdir=DX_APP_ROOT/"build_x86_64"
     bins=list(bdir.rglob("*_sync"))[:1] if bdir.exists() else []
+    # build.sh 가 설치하는 bin/ 도 빌드된 것이다 (prebuilt tree · per-model layout 의 --minimal build)
+    bin_dir=DX_APP_ROOT/"bin"
+    if not bins and bin_dir.is_dir():
+        bins=[p for p in bin_dir.glob("*_sync") if p.is_file()][:1]
     r["dx-app-build"]={"ok":bool(bins),
-        "detail":f"build_x86_64/ {'found' if bdir.exists() else 'not found'}"}
+        "detail":f"build_x86_64/ {'found' if bdir.exists() else 'not found'}" + (" · bin/" if bin_dir.is_dir() else "")}
     mdir=ASSETS_DIR/"models";vdir=ASSETS_DIR/"videos"
     nm=len(list(mdir.glob("*.dxnn"))) if mdir.exists() else 0
     nv=len([f for f in vdir.iterdir() if f.is_file()]) if vdir.exists() else 0

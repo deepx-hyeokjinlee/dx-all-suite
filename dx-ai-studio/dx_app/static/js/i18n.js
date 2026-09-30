@@ -598,6 +598,11 @@ window._DX_I18N_DICT = {
     es: 'Descargue modelos y videos de ejemplo para demos de Ejecución / Benchmark',
   },
   // Run Demo 카드의 task 이름 (아이콘 체계 단계 4) — Model Zoo CATEGORIES 의 라벨과 같은 말.
+  // dx_app per-model layout 의 새 demo (spec 2026-10-01) — Model Zoo CATEGORIES 의 라벨과 같은 말.
+  'Image Matting': { ko: '이미지 매팅', ja: '画像マッティング', 'zh-CN': '图像抠图', 'zh-TW': '影像去背', es: 'Matting de imagen' },
+  'Image Retrieval': { ko: '이미지 검색', ja: '画像検索', 'zh-CN': '图像检索', 'zh-TW': '影像檢索', es: 'Recuperación de imágenes' },
+  'Visual Place Recognition': { ko: '장소 인식', ja: '視覚的場所認識', 'zh-CN': '视觉地点识别', 'zh-TW': '視覺地點辨識', es: 'Reconocimiento visual de lugares' },
+  'Retrieval & Matting': { ko: '검색 · 매팅', ja: '検索 · マッティング', 'zh-CN': '检索 · 抠图', 'zh-TW': '檢索 · 去背', es: 'Recuperación y matting' },
   '3D Object Detection': { ko: '3D 객체 탐지', ja: '3D物体検出', 'zh-CN': '3D目标检测', 'zh-TW': '3D物件偵測', es: 'Detección de objetos 3D' },
   'Attribute Recognition': { ko: '속성 인식', ja: '属性認識', 'zh-CN': '属性识别', 'zh-TW': '屬性辨識', es: 'Reconocimiento de atributos' },
   'Classification': { ko: '분류', ja: '分類', 'zh-CN': '分类', 'zh-TW': '分類', es: 'Clasificación' },
@@ -1903,6 +1908,15 @@ window._DX_I18N_DICT = {
     ko: '모델 파일이 설정되지 않았습니다', ja: 'モデルファイルが設定されていません',
     'zh-CN': '未配置模型文件', 'zh-TW': '未設定模型檔案',
     es: 'Archivo de modelo no configurado',
+  },
+  // DX-RT 가 못 읽는 .dxnn (Model Zoo 2_5_0 = container v9, spec 2026-10-01 dx_app per-model layout)
+  'needs_dxrt': {
+    en: 'This model needs DX-RT 3.5.0 or later (.dxnn container v9). The installed DX-RT reads up to v8.',
+    ko: '이 model 은 DX-RT 3.5.0 이상이 필요합니다 (.dxnn container v9). 설치된 DX-RT 는 v8 까지 읽습니다.',
+    ja: 'このモデルには DX-RT 3.5.0 以降が必要です (.dxnn container v9)。インストール済みの DX-RT は v8 までです。',
+    'zh-CN': '此模型需要 DX-RT 3.5.0 或更高版本 (.dxnn container v9)。已安装的 DX-RT 仅支持到 v8。',
+    'zh-TW': '此模型需要 DX-RT 3.5.0 或更新版本 (.dxnn container v9)。已安裝的 DX-RT 僅支援到 v8。',
+    es: 'Este modelo requiere DX-RT 3.5.0 o posterior (.dxnn container v9). El DX-RT instalado lee hasta v8.',
   },
   'model_not_found': {
     ko: '모델 파일을 찾을 수 없습니다', ja: 'モデルファイルが見つかりません',
