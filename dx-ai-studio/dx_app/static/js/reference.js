@@ -30,145 +30,145 @@ function buildRefSections(){
 var apiBase=refApiBase();
 return [
 /* ── Getting Started ── */
-{cat:'start',id:'quick-start',icon:'🚀',name:refT5('Quick Start Guide','빠른 시작 가이드','クイックスタートガイド','快速入门指南','快速入門指南'),desc:refT5('Run your first inference in 5 minutes','5분 안에 첫 추론 실행하기','5分で初めての推論を実行','5分钟内运行首次推理','5分鐘內執行首次推理'),page:null,tabs:{
+{cat:'start',id:'quick-start',icon:'run',name:refT5('Quick Start Guide','빠른 시작 가이드','クイックスタートガイド','快速入门指南','快速入門指南'),desc:refT5('Run your first inference in 5 minutes','5분 안에 첫 추론 실행하기','5分で初めての推論を実行','5分钟内运行首次推理','5分鐘內執行首次推理'),page:null,tabs:{
   overview:refT5('<h4>Overview</h4><p>A quick start guide for first-time DX-APP users. Follow the steps below in order and you can run your first NPU inference within 5 minutes.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① Run Setup</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② Check Models</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ Check Results</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Click <strong>Run All</strong> on the Setup page to install dependencies → build → download sample assets all at once.</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. Run Setup</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. Check Models</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. Check Results</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Click <strong>Run All</strong> on the Setup page to install dependencies → build → download sample assets all at once.</span></div>',
     '<h4>개요</h4><p>DX-APP을 처음 사용하는 분을 위한 빠른 시작 가이드입니다. 아래 단계를 순서대로 따라 하면 5분 이내에 첫 번째 NPU 추론을 실행할 수 있습니다.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① Setup 실행</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② 모델 확인</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ 결과 확인</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Setup 페이지에서 <strong>Run All</strong>을 클릭하면 의존성 설치 → 빌드 → 샘플 에셋 다운로드를 한 번에 실행합니다.</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. Setup 실행</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. 모델 확인</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. 결과 확인</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Setup 페이지에서 <strong>Run All</strong>을 클릭하면 의존성 설치 → 빌드 → 샘플 에셋 다운로드를 한 번에 실행합니다.</span></div>',
     '<h4>概要</h4><p>DX-APPを初めてお使いになる方のためのクイックスタートガイドです。以下の手順に従えば、5分以内に最初のNPU推論を実行できます。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① Setup 実行</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② モデル確認</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ 結果確認</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Setup ページで <strong>Run All</strong> をクリックすると、依存関係のインストール→ビルド→サンプルアセットのダウンロードを一括実行します。</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. Setup 実行</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. モデル確認</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. 結果確認</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Setup ページで <strong>Run All</strong> をクリックすると、依存関係のインストール→ビルド→サンプルアセットのダウンロードを一括実行します。</span></div>',
     '<h4>概述</h4><p>面向首次使用 DX-APP 用户的快速入门指南。按照以下步骤操作，5分钟内即可运行首次 NPU 推理。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① 运行 Setup</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② 检查模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ 查看结果</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>在 Setup 页面点击 <strong>Run All</strong>，可一次性完成依赖安装→构建→示例资源下载。</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. 运行 Setup</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. 检查模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. 查看结果</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>在 Setup 页面点击 <strong>Run All</strong>，可一次性完成依赖安装→构建→示例资源下载。</span></div>',
     '<h4>概述</h4><p>專為首次使用 DX-APP 的使用者準備的快速入門指南。依照以下步驟操作，5分鐘內即可執行首次 NPU 推理。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① 執行 Setup</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② 確認模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ 查看結果</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>在 Setup 頁面點擊 <strong>Run All</strong>，可一次完成依賴安裝→建構→範例資源下載。</span></div>'),
+    '<div class="ref-flow"><span class="ref-flow-step">1. 執行 Setup</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. 確認模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Run Inference</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. 查看結果</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>在 Setup 頁面點擊 <strong>Run All</strong>，可一次完成依賴安裝→建構→範例資源下載。</span></div>'),
   workflow:refT5('<h4>Detailed Workflow</h4>'+
     '<ol><li>Go to <strong>Setup page</strong> → Click <code>Run All</code> — DX-APP build, model/video download runs automatically.</li>'+
     '<li>Check deployed <code>.dxnn</code> models on the <strong>Models page</strong>.</li>'+
-    '<li><strong>Run page</strong> → Single mode → Select model → Select image/video → <code>▶ Run</code></li>'+
+    '<li><strong>Run page</strong> → Single mode → Select model → Select image/video → <code>' + DXIcon('play') + ' Run</code></li>'+
     '<li>Bounding boxes/masks/classes are displayed on the result image.</li>'+
     '<li>Check the full run history on the <strong>Outputs page</strong>.</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>NPU inference is unavailable if the NPU driver (<code>dx_rt_npu_linux_driver</code>) is not installed. Check step ⑤ in Setup.</span></div>',
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>NPU inference is unavailable if the NPU driver (<code>dx_rt_npu_linux_driver</code>) is not installed. Check step 5 in Setup.</span></div>',
     '<h4>상세 워크플로우</h4>'+
     '<ol><li><strong>Setup 페이지</strong>로 이동 → <code>Run All</code> 클릭 — DX-APP 빌드, 모델/비디오 다운로드가 자동 실행됩니다.</li>'+
     '<li><strong>Models 페이지</strong>에서 배포된 <code>.dxnn</code> 모델을 확인합니다.</li>'+
-    '<li><strong>Run 페이지</strong> → Single 모드 → 모델 선택 → 이미지/비디오 선택 → <code>▶ Run</code></li>'+
+    '<li><strong>Run 페이지</strong> → Single 모드 → 모델 선택 → 이미지/비디오 선택 → <code>' + DXIcon('play') + ' Run</code></li>'+
     '<li>결과 이미지에 바운딩 박스/마스크/클래스가 표시됩니다.</li>'+
     '<li><strong>Outputs 페이지</strong>에서 전체 실행 이력을 확인합니다.</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>NPU 드라이버(<code>dx_rt_npu_linux_driver</code>)가 설치되지 않으면 NPU 추론은 불가합니다. Setup에서 ⑤번을 확인하세요.</span></div>',
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>NPU 드라이버(<code>dx_rt_npu_linux_driver</code>)가 설치되지 않으면 NPU 추론은 불가합니다. Setup에서 5번을 확인하세요.</span></div>',
     '<h4>詳細ワークフロー</h4>'+
     '<ol><li><strong>Setup ページ</strong>に移動 → <code>Run All</code> をクリック — DX-APP ビルド、モデル/動画のダウンロードが自動実行されます。</li>'+
     '<li><strong>Models ページ</strong>でデプロイ済みの <code>.dxnn</code> モデルを確認します。</li>'+
-    '<li><strong>Run ページ</strong> → Single モード → モデル選択 → 画像/動画選択 → <code>▶ Run</code></li>'+
+    '<li><strong>Run ページ</strong> → Single モード → モデル選択 → 画像/動画選択 → <code>' + DXIcon('play') + ' Run</code></li>'+
     '<li>結果画像にバウンディングボックス/マスク/クラスが表示されます。</li>'+
     '<li><strong>Outputs ページ</strong>で実行履歴全体を確認します。</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>NPU ドライバー（<code>dx_rt_npu_linux_driver</code>）がインストールされていない場合、NPU 推論は利用できません。Setup の手順⑤を確認してください。</span></div>',
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>NPU ドライバー（<code>dx_rt_npu_linux_driver</code>）がインストールされていない場合、NPU 推論は利用できません。Setup の手順5を確認してください。</span></div>',
     '<h4>详细工作流</h4>'+
     '<ol><li>前往 <strong>Setup 页面</strong> → 点击 <code>Run All</code> — DX-APP 构建、模型/视频下载将自动执行。</li>'+
     '<li>在 <strong>Models 页面</strong>查看已部署的 <code>.dxnn</code> 模型。</li>'+
-    '<li><strong>Run 页面</strong> → Single 模式 → 选择模型 → 选择图片/视频 → <code>▶ Run</code></li>'+
+    '<li><strong>Run 页面</strong> → Single 模式 → 选择模型 → 选择图片/视频 → <code>' + DXIcon('play') + ' Run</code></li>'+
     '<li>结果图片上显示边界框/掩码/类别。</li>'+
     '<li>在 <strong>Outputs 页面</strong>查看完整运行历史。</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>若未安装 NPU 驱动程序（<code>dx_rt_npu_linux_driver</code>），则无法使用 NPU 推理。请检查 Setup 步骤⑤。</span></div>',
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>若未安装 NPU 驱动程序（<code>dx_rt_npu_linux_driver</code>），则无法使用 NPU 推理。请检查 Setup 步骤5。</span></div>',
     '<h4>詳細工作流程</h4>'+
     '<ol><li>前往 <strong>Setup 頁面</strong> → 點擊 <code>Run All</code> — DX-APP 建構、模型/影片下載將自動執行。</li>'+
     '<li>在 <strong>Models 頁面</strong>查看已部署的 <code>.dxnn</code> 模型。</li>'+
-    '<li><strong>Run 頁面</strong> → Single 模式 → 選擇模型 → 選擇圖片/影片 → <code>▶ Run</code></li>'+
+    '<li><strong>Run 頁面</strong> → Single 模式 → 選擇模型 → 選擇圖片/影片 → <code>' + DXIcon('play') + ' Run</code></li>'+
     '<li>結果圖片上顯示邊界框/遮罩/類別。</li>'+
     '<li>在 <strong>Outputs 頁面</strong>查看完整執行歷史。</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>若未安裝 NPU 驅動程式（<code>dx_rt_npu_linux_driver</code>），則無法使用 NPU 推理。請檢查 Setup 步驟⑤。</span></div>'),
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>若未安裝 NPU 驅動程式（<code>dx_rt_npu_linux_driver</code>），則無法使用 NPU 推理。請檢查 Setup 步驟5。</span></div>'),
   tips:refT5('<h4>Useful Tips</h4>'+
     '<ul><li>Each step in Setup can be run individually — you can re-run only the failed step</li>'+
     '<li>If you have no models, download from <strong>ModelZoo</strong></li>'+
     '<li>Real-time inference with camera/RTSP is available in Continuous mode</li>'+
-    '<li>Click the top-right <strong>🎓 Tutorial</strong> button to open the interactive guide for the current page</li></ul>',
+    '<li>Click the top-right <strong>' + DXIcon('graduation') + ' Tutorial</strong> button to open the interactive guide for the current page</li></ul>',
     '<h4>유용한 팁</h4>'+
     '<ul><li>Setup의 각 단계는 개별 실행할 수 있습니다 — 실패한 단계만 재실행 가능</li>'+
     '<li>모델이 없다면 <strong>ModelZoo</strong>에서 다운로드하세요</li>'+
     '<li>Continuous 모드로 카메라/RTSP 실시간 추론도 가능합니다</li>'+
-    '<li>우측 상단 <strong>🎓 튜토리얼</strong> 버튼으로 현재 페이지의 대화형 가이드를 열 수 있습니다</li></ul>',
+    '<li>우측 상단 <strong>' + DXIcon('graduation') + ' 튜토리얼</strong> 버튼으로 현재 페이지의 대화형 가이드를 열 수 있습니다</li></ul>',
     '<h4>便利なヒント</h4>'+
     '<ul><li>Setup の各ステップは個別に実行可能です — 失敗したステップだけを再実行できます</li>'+
     '<li>モデルがない場合は <strong>ModelZoo</strong> からダウンロードしてください</li>'+
     '<li>Continuous モードでカメラ/RTSP のリアルタイム推論も可能です</li>'+
-    '<li>右上の <strong>🎓 チュートリアル</strong> ボタンで現在のページのガイドを開けます</li></ul>',
+    '<li>右上の <strong>' + DXIcon('graduation') + ' チュートリアル</strong> ボタンで現在のページのガイドを開けます</li></ul>',
     '<h4>实用技巧</h4>'+
     '<ul><li>Setup 中的每个步骤都可以单独运行 — 仅重新运行失败的步骤即可</li>'+
     '<li>如果没有模型，请从 <strong>ModelZoo</strong> 下载</li>'+
     '<li>Continuous 模式下可使用摄像头/RTSP 进行实时推理</li>'+
-    '<li>点击右上角的 <strong>🎓 教程</strong> 按钮可打开当前页面的交互式指南</li></ul>',
+    '<li>点击右上角的 <strong>' + DXIcon('graduation') + ' 教程</strong> 按钮可打开当前页面的交互式指南</li></ul>',
     '<h4>實用技巧</h4>'+
     '<ul><li>Setup 中的每個步驟都可以單獨執行 — 僅重新執行失敗的步驟即可</li>'+
     '<li>如果沒有模型，請從 <strong>ModelZoo</strong> 下載</li>'+
     '<li>Continuous 模式下可使用攝影機/RTSP 進行即時推理</li>'+
-    '<li>點擊右上角的 <strong>🎓 教學</strong> 按鈕可開啟目前頁面的互動式指南</li></ul>',
+    '<li>點擊右上角的 <strong>' + DXIcon('graduation') + ' 教學</strong> 按鈕可開啟目前頁面的互動式指南</li></ul>',
     '<h4>Consejos útiles</h4>'+
     '<ul><li>Cada paso de Setup puede ejecutarse por separado: puede repetir solo el paso fallido</li>'+
     '<li>Si no tiene modelos, descárguelos desde <strong>ModelZoo</strong></li>'+
     '<li>La inferencia en tiempo real con cámara/RTSP está disponible en modo Continuous</li>'+
-    '<li>Haga clic en el botón <strong>🎓 Tutorial</strong> arriba a la derecha para abrir la guía interactiva de la página actual</li></ul>')
+    '<li>Haga clic en el botón <strong>' + DXIcon('graduation') + ' Tutorial</strong> arriba a la derecha para abrir la guía interactiva de la página actual</li></ul>')
 }},
 
-{cat:'start',id:'setup-install',icon:'⚙️',name:refT5('Setup & Install','환경 설정 & 설치','セットアップ＆インストール','环境设置与安装','環境設定與安裝'),desc:refT5('Install dependencies, build, download sample assets','의존성 설치, 빌드, 샘플 에셋 다운로드','依存関係のインストール、ビルド、サンプルアセットのダウンロード','安装依赖、构建、下载示例资源','安裝依賴、建構、下載範例資源'),page:'setup',tabs:{
+{cat:'start',id:'setup-install',icon:'gear',name:refT5('Setup & Install','환경 설정 & 설치','セットアップ＆インストール','环境设置与安装','環境設定與安裝'),desc:refT5('Install dependencies, build, download sample assets','의존성 설치, 빌드, 샘플 에셋 다운로드','依存関係のインストール、ビルド、サンプルアセットのダウンロード','安装依赖、构建、下载示例资源','安裝依賴、建構、下載範例資源'),page:'setup',tabs:{
   overview:refT5('<h4>Overview</h4><p>The Setup page configures the DX-APP runtime environment step by step. Five cards run sequentially or individually. ONNX→DXNN compilation moved to the Launcher <strong>Compiler</strong> module.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">⑤ NPU Driver</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">5. NPU Driver</span></div>',
     '<h4>개요</h4><p>Setup 페이지는 DX-APP 실행 환경을 단계별로 구성합니다. 5개 카드가 순차 또는 개별 실행됩니다. ONNX→DXNN 컴파일은 Launcher <strong>Compiler</strong> 모듈에서 수행합니다.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">⑤ NPU Driver</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">5. NPU Driver</span></div>',
     '<h4>概要</h4><p>Setup ページは DX-APP の実行環境をステップごとに構成します。5つのカードを順次または個別に実行できます。ONNX→DXNN コンパイルは Launcher の <strong>Compiler</strong> モジュールで行います。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">⑤ NPU Driver</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">5. NPU Driver</span></div>',
     '<h4>概述</h4><p>Setup 页面逐步配置 DX-APP 运行环境。5张卡片可按顺序或单独执行。ONNX→DXNN 编译已移至 Launcher <strong>Compiler</strong> 模块。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">⑤ NPU Driver</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">1. DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">5. NPU Driver</span></div>',
     '<h4>概述</h4><p>Setup 頁面逐步配置 DX-APP 執行環境。5張卡片可依序或單獨執行。ONNX→DXNN 編譯已移至 Launcher <strong>Compiler</strong> 模組。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">① DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">② DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">③ Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">④ DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">⑤ NPU Driver</span></div>'),
+    '<div class="ref-flow"><span class="ref-flow-step">1. DX-APP Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">2. DX-APP Build</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">3. Sample Assets</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">4. DX-RT Deps</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">5. NPU Driver</span></div>'),
   params:refT5('<h4>Step Details</h4>'+
     '<table class="ref-tbl"><tr><th>Step</th><th>Description</th><th>sudo</th><th>Notes</th></tr>'+
-    '<tr><td><strong>① DX-APP Dependencies</strong></td><td>Install build tools: cmake, gcc, ninja, OpenCV, etc.</td><td>✅</td><td>apt-based</td></tr>'+
-    '<tr><td><strong>② DX-APP Build</strong></td><td>C++ Release build (CMake + Ninja)</td><td>—</td><td>~2 min</td></tr>'+
-    '<tr><td><strong>③ Sample Assets</strong></td><td>Download models (.dxnn) + demo videos</td><td>—</td><td>~500MB</td></tr>'+
-    '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>Runtime library dependencies</td><td>✅</td><td></td></tr>'+
-    '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS kernel module installation</td><td>✅</td><td>Reboot recommended</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN compilation is in the Launcher <strong>Compiler</strong> module (not on this Setup page).</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Use the <strong>Run All</strong> button to run all steps at once. Already completed steps are shown with <span style="color:#30d158">✅</span>.</span></div>',
+    '<tr><td><strong>1 DX-APP Dependencies</strong></td><td>Install build tools: cmake, gcc, ninja, OpenCV, etc.</td><td>' + DXIcon('check') + '</td><td>apt-based</td></tr>'+
+    '<tr><td><strong>2. DX-APP Build</strong></td><td>C++ Release build (CMake + Ninja)</td><td>—</td><td>~2 min</td></tr>'+
+    '<tr><td><strong>3. Sample Assets</strong></td><td>Download models (.dxnn) + demo videos</td><td>—</td><td>~500MB</td></tr>'+
+    '<tr><td><strong>4 DX-Runtime Deps</strong></td><td>Runtime library dependencies</td><td>' + DXIcon('check') + '</td><td></td></tr>'+
+    '<tr><td><strong>5 NPU Driver</strong></td><td>DKMS kernel module installation</td><td>' + DXIcon('check') + '</td><td>Reboot recommended</td></tr></table>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-COM ONNX→DXNN compilation is in the Launcher <strong>Compiler</strong> module (not on this Setup page).</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Use the <strong>Run All</strong> button to run all steps at once. Already completed steps are shown with <span style="color:#30d158">' + DXIcon('check') + '</span>.</span></div>',
     '<h4>단계별 상세</h4>'+
     '<table class="ref-tbl"><tr><th>단계</th><th>설명</th><th>sudo</th><th>비고</th></tr>'+
-    '<tr><td><strong>① DX-APP Dependencies</strong></td><td>cmake, gcc, ninja, OpenCV 등 빌드 도구 설치</td><td>✅</td><td>apt 기반</td></tr>'+
-    '<tr><td><strong>② DX-APP Build</strong></td><td>C++ Release 빌드 (CMake + Ninja)</td><td>—</td><td>~2분</td></tr>'+
-    '<tr><td><strong>③ Sample Assets</strong></td><td>모델(.dxnn) + 데모 비디오 다운로드</td><td>—</td><td>~500MB</td></tr>'+
-    '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>런타임 라이브러리 의존성</td><td>✅</td><td></td></tr>'+
-    '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS 커널 모듈 설치</td><td>✅</td><td>재부팅 권장</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN 컴파일은 Launcher <strong>Compiler</strong> 모듈에서 수행합니다 (Setup 페이지 아님).</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span><strong>Run All</strong> 버튼으로 전체 단계를 한 번에 실행할 수 있습니다. 이미 완료된 단계는 <span style="color:#30d158">✅</span> 상태로 표시됩니다.</span></div>',
+    '<tr><td><strong>1 DX-APP Dependencies</strong></td><td>cmake, gcc, ninja, OpenCV 등 빌드 도구 설치</td><td>' + DXIcon('check') + '</td><td>apt 기반</td></tr>'+
+    '<tr><td><strong>2. DX-APP Build</strong></td><td>C++ Release 빌드 (CMake + Ninja)</td><td>—</td><td>~2분</td></tr>'+
+    '<tr><td><strong>3. Sample Assets</strong></td><td>모델(.dxnn) + 데모 비디오 다운로드</td><td>—</td><td>~500MB</td></tr>'+
+    '<tr><td><strong>4 DX-Runtime Deps</strong></td><td>런타임 라이브러리 의존성</td><td>' + DXIcon('check') + '</td><td></td></tr>'+
+    '<tr><td><strong>5 NPU Driver</strong></td><td>DKMS 커널 모듈 설치</td><td>' + DXIcon('check') + '</td><td>재부팅 권장</td></tr></table>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-COM ONNX→DXNN 컴파일은 Launcher <strong>Compiler</strong> 모듈에서 수행합니다 (Setup 페이지 아님).</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span><strong>Run All</strong> 버튼으로 전체 단계를 한 번에 실행할 수 있습니다. 이미 완료된 단계는 <span style="color:#30d158">' + DXIcon('check') + '</span> 상태로 표시됩니다.</span></div>',
     '<h4>ステップ詳細</h4>'+
     '<table class="ref-tbl"><tr><th>ステップ</th><th>説明</th><th>sudo</th><th>備考</th></tr>'+
-    '<tr><td><strong>① DX-APP Dependencies</strong></td><td>cmake, gcc, ninja, OpenCV などビルドツールのインストール</td><td>✅</td><td>apt ベース</td></tr>'+
-    '<tr><td><strong>② DX-APP Build</strong></td><td>C++ Release ビルド (CMake + Ninja)</td><td>—</td><td>約2分</td></tr>'+
-    '<tr><td><strong>③ Sample Assets</strong></td><td>モデル (.dxnn) + デモ動画のダウンロード</td><td>—</td><td>約500MB</td></tr>'+
-    '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>ランタイムライブラリの依存関係</td><td>✅</td><td></td></tr>'+
-    '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS カーネルモジュールのインストール</td><td>✅</td><td>再起動推奨</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN コンパイルは Launcher の <strong>Compiler</strong> モジュールで行います (Setup ページではありません)。</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span><strong>Run All</strong> ボタンで全ステップを一括実行できます。完了済みのステップは <span style="color:#30d158">✅</span> で表示されます。</span></div>',
+    '<tr><td><strong>1 DX-APP Dependencies</strong></td><td>cmake, gcc, ninja, OpenCV などビルドツールのインストール</td><td>' + DXIcon('check') + '</td><td>apt ベース</td></tr>'+
+    '<tr><td><strong>2. DX-APP Build</strong></td><td>C++ Release ビルド (CMake + Ninja)</td><td>—</td><td>約2分</td></tr>'+
+    '<tr><td><strong>3. Sample Assets</strong></td><td>モデル (.dxnn) + デモ動画のダウンロード</td><td>—</td><td>約500MB</td></tr>'+
+    '<tr><td><strong>4 DX-Runtime Deps</strong></td><td>ランタイムライブラリの依存関係</td><td>' + DXIcon('check') + '</td><td></td></tr>'+
+    '<tr><td><strong>5 NPU Driver</strong></td><td>DKMS カーネルモジュールのインストール</td><td>' + DXIcon('check') + '</td><td>再起動推奨</td></tr></table>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-COM ONNX→DXNN コンパイルは Launcher の <strong>Compiler</strong> モジュールで行います (Setup ページではありません)。</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span><strong>Run All</strong> ボタンで全ステップを一括実行できます。完了済みのステップは <span style="color:#30d158">' + DXIcon('check') + '</span> で表示されます。</span></div>',
     '<h4>步骤详情</h4>'+
     '<table class="ref-tbl"><tr><th>步骤</th><th>说明</th><th>sudo</th><th>备注</th></tr>'+
-    '<tr><td><strong>① DX-APP Dependencies</strong></td><td>安装构建工具：cmake、gcc、ninja、OpenCV 等</td><td>✅</td><td>基于 apt</td></tr>'+
-    '<tr><td><strong>② DX-APP Build</strong></td><td>C++ Release 构建 (CMake + Ninja)</td><td>—</td><td>约2分钟</td></tr>'+
-    '<tr><td><strong>③ Sample Assets</strong></td><td>下载模型 (.dxnn) + 演示视频</td><td>—</td><td>约500MB</td></tr>'+
-    '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>运行时库依赖</td><td>✅</td><td></td></tr>'+
-    '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS 内核模块安装</td><td>✅</td><td>建议重启</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN 编译在 Launcher <strong>Compiler</strong> 模块中进行（不在 Setup 页面）。</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>使用 <strong>Run All</strong> 按钮可一次性运行所有步骤。已完成的步骤显示为 <span style="color:#30d158">✅</span>。</span></div>',
+    '<tr><td><strong>1 DX-APP Dependencies</strong></td><td>安装构建工具：cmake、gcc、ninja、OpenCV 等</td><td>' + DXIcon('check') + '</td><td>基于 apt</td></tr>'+
+    '<tr><td><strong>2. DX-APP Build</strong></td><td>C++ Release 构建 (CMake + Ninja)</td><td>—</td><td>约2分钟</td></tr>'+
+    '<tr><td><strong>3. Sample Assets</strong></td><td>下载模型 (.dxnn) + 演示视频</td><td>—</td><td>约500MB</td></tr>'+
+    '<tr><td><strong>4 DX-Runtime Deps</strong></td><td>运行时库依赖</td><td>' + DXIcon('check') + '</td><td></td></tr>'+
+    '<tr><td><strong>5 NPU Driver</strong></td><td>DKMS 内核模块安装</td><td>' + DXIcon('check') + '</td><td>建议重启</td></tr></table>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-COM ONNX→DXNN 编译在 Launcher <strong>Compiler</strong> 模块中进行（不在 Setup 页面）。</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>使用 <strong>Run All</strong> 按钮可一次性运行所有步骤。已完成的步骤显示为 <span style="color:#30d158">' + DXIcon('check') + '</span>。</span></div>',
     '<h4>步驟詳情</h4>'+
     '<table class="ref-tbl"><tr><th>步驟</th><th>說明</th><th>sudo</th><th>備註</th></tr>'+
-    '<tr><td><strong>① DX-APP Dependencies</strong></td><td>安裝建構工具：cmake、gcc、ninja、OpenCV 等</td><td>✅</td><td>基於 apt</td></tr>'+
-    '<tr><td><strong>② DX-APP Build</strong></td><td>C++ Release 建構 (CMake + Ninja)</td><td>—</td><td>約2分鐘</td></tr>'+
-    '<tr><td><strong>③ Sample Assets</strong></td><td>下載模型 (.dxnn) + 演示影片</td><td>—</td><td>約500MB</td></tr>'+
-    '<tr><td><strong>④ DX-Runtime Deps</strong></td><td>執行時期程式庫依賴</td><td>✅</td><td></td></tr>'+
-    '<tr><td><strong>⑤ NPU Driver</strong></td><td>DKMS 核心模組安裝</td><td>✅</td><td>建議重新啟動</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-COM ONNX→DXNN 編譯在 Launcher <strong>Compiler</strong> 模組中進行（不在 Setup 頁面）。</span></div>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>使用 <strong>Run All</strong> 按鈕可一次執行所有步驟。已完成的步驟顯示為 <span style="color:#30d158">✅</span>。</span></div>'),
+    '<tr><td><strong>1 DX-APP Dependencies</strong></td><td>安裝建構工具：cmake、gcc、ninja、OpenCV 等</td><td>' + DXIcon('check') + '</td><td>基於 apt</td></tr>'+
+    '<tr><td><strong>2. DX-APP Build</strong></td><td>C++ Release 建構 (CMake + Ninja)</td><td>—</td><td>約2分鐘</td></tr>'+
+    '<tr><td><strong>3. Sample Assets</strong></td><td>下載模型 (.dxnn) + 演示影片</td><td>—</td><td>約500MB</td></tr>'+
+    '<tr><td><strong>4 DX-Runtime Deps</strong></td><td>執行時期程式庫依賴</td><td>' + DXIcon('check') + '</td><td></td></tr>'+
+    '<tr><td><strong>5 NPU Driver</strong></td><td>DKMS 核心模組安裝</td><td>' + DXIcon('check') + '</td><td>建議重新啟動</td></tr></table>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-COM ONNX→DXNN 編譯在 Launcher <strong>Compiler</strong> 模組中進行（不在 Setup 頁面）。</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>使用 <strong>Run All</strong> 按鈕可一次執行所有步驟。已完成的步驟顯示為 <span style="color:#30d158">' + DXIcon('check') + '</span>。</span></div>'),
   tips:refT5('<h4>Troubleshooting</h4>'+
     '<ul><li><strong>Build failure</strong> — Try a clean build with <code>build.sh --clean</code></li>'+
     '<li><strong>NPU driver load failure</strong> — Check driver load with <code>lsmod | grep dxnpu</code>, then check errors with <code>dmesg</code></li>'+
@@ -191,17 +191,17 @@ return [
     '<li>在<strong>離線網路</strong>中請事先準備離線套件</li></ul>')
 }},
 
-{cat:'start',id:'deep-diagnostics',icon:'🔍',name:'Deep Diagnostics',desc:refT5('Comprehensive system health check','시스템 종합 진단','システム総合診断','系统综合诊断','系統綜合診斷'),page:'setup',tabs:{
+{cat:'start',id:'deep-diagnostics',icon:'search',name:'Deep Diagnostics',desc:refT5('Comprehensive system health check','시스템 종합 진단','システム総合診断','系统综合诊断','系統綜合診斷'),page:'setup',tabs:{
   overview:refT5('<h4>Overview</h4><p>Deep Diagnostics runs 12 automated checks covering hardware, drivers, software, and resources. Results appear as pass/fail cards with fix suggestions.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">▶ Run Diagnostics</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12 Checks</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Pass/Fail Cards</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Fix Suggestions</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">' + DXIcon('play') + ' Run Diagnostics</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12 Checks</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Pass/Fail Cards</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Fix Suggestions</span></div>',
     '<h4>개요</h4><p>Deep Diagnostics는 하드웨어, 드라이버, 소프트웨어, 리소스를 포함한 12개 자동 검사를 실행합니다. 결과는 통과/실패 카드와 수정 제안으로 표시됩니다.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">▶ 진단 실행</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12개 검사</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">통과/실패 카드</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">수정 제안</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">' + DXIcon('play') + ' 진단 실행</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12개 검사</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">통과/실패 카드</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">수정 제안</span></div>',
     '<h4>概要</h4><p>Deep Diagnostics はハードウェア、ドライバー、ソフトウェア、リソースを含む12項目の自動チェックを実行します。結果は合格/不合格カードと修正提案で表示されます。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">▶ 診断実行</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12項目チェック</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">合格/不合格カード</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">修正提案</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">' + DXIcon('play') + ' 診断実行</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12項目チェック</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">合格/不合格カード</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">修正提案</span></div>',
     '<h4>概述</h4><p>Deep Diagnostics 运行涵盖硬件、驱动、软件和资源的12项自动检查。结果以通过/失败卡片和修复建议的形式显示。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">▶ 运行诊断</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12项检查</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">通过/失败卡片</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">修复建议</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">' + DXIcon('play') + ' 运行诊断</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12项检查</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">通过/失败卡片</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">修复建议</span></div>',
     '<h4>概述</h4><p>Deep Diagnostics 執行涵蓋硬體、驅動、軟體和資源的12項自動檢查。結果以通過/失敗卡片和修復建議的形式顯示。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">▶ 執行診斷</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12項檢查</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">通過/失敗卡片</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">修復建議</span></div>'),
+    '<div class="ref-flow"><span class="ref-flow-step">' + DXIcon('play') + ' 執行診斷</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">12項檢查</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">通過/失敗卡片</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">修復建議</span></div>'),
   params:refT5('<h4>Check Items (12)</h4>'+
     '<table class="ref-tbl"><tr><th>#</th><th>Check</th><th>Description</th></tr>'+
     '<tr><td>1</td><td>PCIe Link</td><td>DeepX NPU detected on PCIe bus (Vendor ID 1ff4)</td></tr>'+
@@ -274,52 +274,52 @@ return [
     '<tr><td>12</td><td>OpenCV</td><td>cv2 可匯入</td></tr></table>'),
   tips:refT5('<h4>Tips</h4>'+
     '<ul><li>Run diagnostics <strong>after</strong> completing all Setup steps for best results</li>'+
-    '<li>Failed items show a 💡 fix suggestion — follow the recommended command</li>'+
+    '<li>Failed items show a ' + DXIcon('info') + ' fix suggestion — follow the recommended command</li>'+
     '<li>All checks are Python-native (no shell dependency) and run in under 10 seconds</li></ul>',
     '<h4>팁</h4>'+
     '<ul><li>최적의 결과를 위해 Setup 단계를 모두 완료한 <strong>후</strong> 진단을 실행하세요</li>'+
-    '<li>실패한 항목에는 💡 수정 제안이 표시됩니다 — 권장 명령어를 따라하세요</li>'+
+    '<li>실패한 항목에는 ' + DXIcon('info') + ' 수정 제안이 표시됩니다 — 권장 명령어를 따라하세요</li>'+
     '<li>모든 검사는 Python 네이티브(쉘 의존 없음)이며 10초 이내에 완료됩니다</li></ul>',
     '<h4>ヒント</h4>'+
     '<ul><li>最良の結果を得るために、Setup の全ステップ完了<strong>後</strong>に診断を実行してください</li>'+
-    '<li>失敗した項目には💡修正提案が表示されます — 推奨コマンドに従ってください</li>'+
+    '<li>失敗した項目には' + DXIcon('info') + '修正提案が表示されます — 推奨コマンドに従ってください</li>'+
     '<li>すべてのチェックは Python ネイティブ（シェル依存なし）で、10秒以内に完了します</li></ul>',
     '<h4>提示</h4>'+
     '<ul><li>为获得最佳结果，请在完成所有 Setup 步骤<strong>之后</strong>运行诊断</li>'+
-    '<li>失败的项目会显示💡修复建议 — 请按照推荐命令操作</li>'+
+    '<li>失败的项目会显示' + DXIcon('info') + '修复建议 — 请按照推荐命令操作</li>'+
     '<li>所有检查均为 Python 原生（无 shell 依赖），10秒内完成</li></ul>',
     '<h4>提示</h4>'+
     '<ul><li>為獲得最佳結果，請在完成所有 Setup 步驟<strong>之後</strong>執行診斷</li>'+
-    '<li>失敗的項目會顯示💡修復建議 — 請依照建議命令操作</li>'+
+    '<li>失敗的項目會顯示' + DXIcon('info') + '修復建議 — 請依照建議命令操作</li>'+
     '<li>所有檢查均為 Python 原生（無 shell 依賴），10秒內完成</li></ul>')
 }},
 
 /* ── Core Features ── */
-{cat:'core',id:'models',icon:'🗂️',name:'Models',desc:refT5('Deployed model list · Details · Graph visualization','배포 모델 목록 · 상세 정보 · 그래프 시각화','デプロイ済みモデル一覧・詳細・グラフ可視化','已部署模型列表·详情·图形可视化','已部署模型列表·詳情·圖形視覺化'),page:'models',tabs:{
+{cat:'core',id:'models',icon:'folder',name:'Models',desc:refT5('Deployed model list · Details · Graph visualization','배포 모델 목록 · 상세 정보 · 그래프 시각화','デプロイ済みモデル一覧・詳細・グラフ可視化','已部署模型列表·详情·图形可视化','已部署模型列表·詳情·圖形視覺化'),page:'models',tabs:{
   overview:refT5('<h4>Overview</h4><p>The Models page displays deployed <code>.dxnn</code> models on the current system as cards.</p>'+
     '<ul><li><strong>Model Card</strong> — Name, task, Input/Output tensors, model size</li>'+
     '<li><strong>Detail Panel</strong> — Tensor shape, data type, operator info</li>'+
-    '<li><strong>📊 Graph</strong> — Opens the model graph in the dx-compiler viewer (ONNX models)</li>'+
+    '<li><strong>' + DXIcon('dashboard') + ' Graph</strong> — Opens the model graph in the dx-compiler viewer (ONNX models)</li>'+
     '<li><strong>Search & Filter</strong> — Name search, filter by task type</li></ul>',
     '<h4>개요</h4><p>Models 페이지는 현재 시스템에 배포된 <code>.dxnn</code> 모델 목록을 카드 형태로 표시합니다.</p>'+
     '<ul><li><strong>모델 카드</strong> — 이름, 태스크, Input/Output 텐서, 모델 사이즈</li>'+
     '<li><strong>상세 패널</strong> — 텐서 Shape, 데이터 타입, Operator 정보</li>'+
-    '<li><strong>📊 Graph</strong> — dx-compiler 뷰어에서 모델 그래프 보기 (ONNX 모델)</li>'+
+    '<li><strong>' + DXIcon('dashboard') + ' Graph</strong> — dx-compiler 뷰어에서 모델 그래프 보기 (ONNX 모델)</li>'+
     '<li><strong>검색 & 필터</strong> — 이름 검색, 태스크별 필터링</li></ul>',
     '<h4>概要</h4><p>Models ページは現在のシステムにデプロイされた <code>.dxnn</code> モデルをカード形式で表示します。</p>'+
     '<ul><li><strong>モデルカード</strong> — 名前、タスク、入出力テンソル、モデルサイズ</li>'+
     '<li><strong>詳細パネル</strong> — テンソル Shape、データ型、Operator 情報</li>'+
-    '<li><strong>📊 Graph</strong> — dx-compiler ビューアでモデルグラフを表示（ONNX モデル）</li>'+
+    '<li><strong>' + DXIcon('dashboard') + ' Graph</strong> — dx-compiler ビューアでモデルグラフを表示（ONNX モデル）</li>'+
     '<li><strong>検索 & フィルター</strong> — 名前検索、タスク別フィルタリング</li></ul>',
     '<h4>概述</h4><p>Models 页面以卡片形式显示当前系统中已部署的 <code>.dxnn</code> 模型列表。</p>'+
     '<ul><li><strong>模型卡片</strong> — 名称、任务、输入/输出张量、模型大小</li>'+
     '<li><strong>详情面板</strong> — 张量 Shape、数据类型、Operator 信息</li>'+
-    '<li><strong>📊 Graph</strong> — 在 dx-compiler 查看器中打开模型图形（ONNX 模型）</li>'+
+    '<li><strong>' + DXIcon('dashboard') + ' Graph</strong> — 在 dx-compiler 查看器中打开模型图形（ONNX 模型）</li>'+
     '<li><strong>搜索与筛选</strong> — 名称搜索、按任务类型筛选</li></ul>',
     '<h4>概述</h4><p>Models 頁面以卡片形式顯示當前系統中已部署的 <code>.dxnn</code> 模型列表。</p>'+
     '<ul><li><strong>模型卡片</strong> — 名稱、任務、輸入/輸出張量、模型大小</li>'+
     '<li><strong>詳情面板</strong> — 張量 Shape、資料型別、Operator 資訊</li>'+
-    '<li><strong>📊 Graph</strong> — 在 dx-compiler 檢視器中開啟模型圖形（ONNX 模型）</li>'+
+    '<li><strong>' + DXIcon('dashboard') + ' Graph</strong> — 在 dx-compiler 檢視器中開啟模型圖形（ONNX 模型）</li>'+
     '<li><strong>搜尋與篩選</strong> — 名稱搜尋、依任務類型篩選</li></ul>'),
   params:refT5('<h4>Supported Task Types</h4>'+
     '<table class="ref-tbl"><tr><th>Task</th><th>Description</th><th>Output Format</th></tr>'+
@@ -330,7 +330,7 @@ return [
     '<tr><td>Super Resolution</td><td>Super resolution</td><td>High-resolution image</td></tr>'+
     '<tr><td>Denoising</td><td>Noise removal</td><td>Clean image</td></tr>'+
     '<tr><td>Depth Estimation</td><td>Depth estimation</td><td>Depth Map</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>The Graph button opens the model graph in the dx-compiler viewer in a new tab (ONNX models).</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>The Graph button opens the model graph in the dx-compiler viewer in a new tab (ONNX models).</span></div>',
     '<h4>지원 태스크 유형</h4>'+
     '<table class="ref-tbl"><tr><th>태스크</th><th>설명</th><th>Output 형식</th></tr>'+
     '<tr><td>Classification</td><td>이미지 분류</td><td>Top-K 클래스 + 확률</td></tr>'+
@@ -340,7 +340,7 @@ return [
     '<tr><td>Super Resolution</td><td>초해상도</td><td>고해상도 이미지</td></tr>'+
     '<tr><td>Denoising</td><td>노이즈 제거</td><td>클린 이미지</td></tr>'+
     '<tr><td>Depth Estimation</td><td>깊이 추정</td><td>Depth Map</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Graph 버튼을 클릭하면 새 탭의 dx-compiler 뷰어에서 모델 그래프가 열립니다 (ONNX 모델).</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Graph 버튼을 클릭하면 새 탭의 dx-compiler 뷰어에서 모델 그래프가 열립니다 (ONNX 모델).</span></div>',
     '<h4>サポートタスクタイプ</h4>'+
     '<table class="ref-tbl"><tr><th>タスク</th><th>説明</th><th>出力形式</th></tr>'+
     '<tr><td>Classification</td><td>画像分類</td><td>Top-K クラス + 確率</td></tr>'+
@@ -350,7 +350,7 @@ return [
     '<tr><td>Super Resolution</td><td>超解像</td><td>高解像度画像</td></tr>'+
     '<tr><td>Denoising</td><td>ノイズ除去</td><td>クリーン画像</td></tr>'+
     '<tr><td>Depth Estimation</td><td>深度推定</td><td>Depth Map</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Graph ボタンをクリックすると、新しいタブの dx-compiler ビューアにモデルグラフが開きます（ONNX モデル）。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Graph ボタンをクリックすると、新しいタブの dx-compiler ビューアにモデルグラフが開きます（ONNX モデル）。</span></div>',
     '<h4>支持的任务类型</h4>'+
     '<table class="ref-tbl"><tr><th>任务</th><th>说明</th><th>输出格式</th></tr>'+
     '<tr><td>Classification</td><td>图像分类</td><td>Top-K 类别 + 概率</td></tr>'+
@@ -360,7 +360,7 @@ return [
     '<tr><td>Super Resolution</td><td>超分辨率</td><td>高分辨率图像</td></tr>'+
     '<tr><td>Denoising</td><td>降噪</td><td>干净图像</td></tr>'+
     '<tr><td>Depth Estimation</td><td>深度估计</td><td>Depth Map</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>点击 Graph 按钮可在新标签页的 dx-compiler 查看器中打开模型图形（ONNX 模型）。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>点击 Graph 按钮可在新标签页的 dx-compiler 查看器中打开模型图形（ONNX 模型）。</span></div>',
     '<h4>支援的任務類型</h4>'+
     '<table class="ref-tbl"><tr><th>任務</th><th>說明</th><th>輸出格式</th></tr>'+
     '<tr><td>Classification</td><td>影像分類</td><td>Top-K 類別 + 機率</td></tr>'+
@@ -370,7 +370,7 @@ return [
     '<tr><td>Super Resolution</td><td>超解析度</td><td>高解析度影像</td></tr>'+
     '<tr><td>Denoising</td><td>降噪</td><td>乾淨影像</td></tr>'+
     '<tr><td>Depth Estimation</td><td>深度估計</td><td>Depth Map</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>點擊 Graph 按鈕可在新分頁的 dx-compiler 檢視器中開啟模型圖形（ONNX 模型）。</span></div>'),
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>點擊 Graph 按鈕可在新分頁的 dx-compiler 檢視器中開啟模型圖形（ONNX 模型）。</span></div>'),
   tips:refT5('<h4>Tips</h4>'+
     '<ul><li>Click a model card to open the detail panel with animation</li>'+
     '<li>Task filter buttons are highlighted with <strong>accent color</strong> when active</li>'+
@@ -393,27 +393,27 @@ return [
     '<li>如果沒有模型，請從 <strong>ModelZoo</strong> 頁面下載</li></ul>')
 }},
 
-{cat:'core',id:'run-inference',icon:'▶️',name:'Run Inference',desc:refT5('Single · Continuous inference · Parameter settings','Single · Continuous 추론 실행 · 파라미터 설정','Single・Continuous 推論実行・パラメータ設定','Single·Continuous 推理执行·参数设置','Single·Continuous 推理執行·參數設定'),page:'run',tabs:{
+{cat:'core',id:'run-inference',icon:'play',name:'Run Inference',desc:refT5('Single · Continuous inference · Parameter settings','Single · Continuous 추론 실행 · 파라미터 설정','Single・Continuous 推論実行・パラメータ設定','Single·Continuous 推理执行·参数设置','Single·Continuous 推理執行·參數設定'),page:'run',tabs:{
   overview:refT5('<h4>Overview</h4><p>The Run page is the core interface for NPU inference. Two modes are supported:</p>'+
     '<ul><li><strong>Single mode</strong> — Select a single image or video for one-shot inference</li>'+
     '<li><strong>Continuous mode</strong> — Continuous real-time inference with video/camera/RTSP sources (up to 8 slots simultaneously)</li></ul>'+
-    '<div class="ref-flow"><span class="ref-flow-step">Select Model</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Select Input</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Set Parameters</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Check Results</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">Select Model</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Select Input</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Set Parameters</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Check Results</span></div>',
     '<h4>개요</h4><p>Run 페이지는 NPU 추론의 핵심 실행 인터페이스입니다. 두 가지 모드를 지원합니다:</p>'+
     '<ul><li><strong>Single 모드</strong> — 이미지 또는 비디오 1개를 선택하여 단일 추론 실행</li>'+
     '<li><strong>Continuous 모드</strong> — 비디오/카메라/RTSP 소스로 연속 실시간 추론 (최대 8 슬롯 동시)</li></ul>'+
-    '<div class="ref-flow"><span class="ref-flow-step">모델 선택</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">입력 선택</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">파라미터 설정</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">결과 확인</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">모델 선택</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">입력 선택</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">파라미터 설정</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">결과 확인</span></div>',
     '<h4>概要</h4><p>Run ページは NPU 推論のコア実行インターフェースです。2つのモードをサポートしています：</p>'+
     '<ul><li><strong>Single モード</strong> — 画像または動画1つを選択して単発推論を実行</li>'+
     '<li><strong>Continuous モード</strong> — 動画/カメラ/RTSP ソースで連続リアルタイム推論（最大8スロット同時）</li></ul>'+
-    '<div class="ref-flow"><span class="ref-flow-step">モデル選択</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">入力選択</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">パラメータ設定</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">結果確認</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">モデル選択</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">入力選択</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">パラメータ設定</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">結果確認</span></div>',
     '<h4>概述</h4><p>Run 页面是 NPU 推理的核心执行界面。支持两种模式：</p>'+
     '<ul><li><strong>Single 模式</strong> — 选择单个图片或视频进行单次推理</li>'+
     '<li><strong>Continuous 模式</strong> — 通过视频/摄像头/RTSP 源进行连续实时推理（最多8个槽位同时运行）</li></ul>'+
-    '<div class="ref-flow"><span class="ref-flow-step">选择模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">选择输入</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">设置参数</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">查看结果</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">选择模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">选择输入</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">设置参数</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">查看结果</span></div>',
     '<h4>概述</h4><p>Run 頁面是 NPU 推理的核心執行介面。支援兩種模式：</p>'+
     '<ul><li><strong>Single 模式</strong> — 選擇單個圖片或影片進行單次推理</li>'+
     '<li><strong>Continuous 模式</strong> — 透過影片/攝影機/RTSP 來源進行連續即時推理（最多8個插槽同時運行）</li></ul>'+
-    '<div class="ref-flow"><span class="ref-flow-step">選擇模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">選擇輸入</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">設定參數</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">查看結果</span></div>'),
+    '<div class="ref-flow"><span class="ref-flow-step">選擇模型</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">選擇輸入</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">設定參數</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">查看結果</span></div>'),
   params:refT5('<h4>Inference Parameters</h4>'+
     '<table class="ref-tbl"><tr><th>Parameter</th><th>Range</th><th>Default</th><th>Description</th></tr>'+
     '<tr><td>Confidence Threshold</td><td>0.0 – 1.0</td><td>0.5</td><td>Detection confidence threshold</td></tr>'+
@@ -478,72 +478,72 @@ return [
     '<ol><li>Select a model from the model cards on the left</li>'+
     '<li>Select an image/video file (thumbnail preview)</li>'+
     '<li>Adjust parameters if needed (Confidence, NMS, etc.)</li>'+
-    '<li>Click <code>▶ Run</code> → NPU inference runs</li>'+
+    '<li>Click <code>' + DXIcon('play') + ' Run</code> → NPU inference runs</li>'+
     '<li>Bounding boxes / masks / keypoints are overlaid on the result image</li>'+
     '<li>Compare original and result with the <strong>Before / After</strong> slider</li></ol>'+
     '<h4>Continuous Mode Workflow</h4>'+
     '<ol><li>Switch to Continuous tab (top tabs)</li>'+
     '<li>Add slots (up to 8) → assign model/input to each slot</li>'+
-    '<li>Click <code>▶ Start</code> → real-time inference begins</li>'+
+    '<li>Click <code>' + DXIcon('play') + ' Start</code> → real-time inference begins</li>'+
     '<li>Real-time performance displayed: FPS, latency, etc.</li>'+
-    '<li>Stop individual/all with <code>■ Stop</code></li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>In Continuous mode, more slots share NPU resources and may reduce FPS.</span></div>',
+    '<li>Stop individual/all with <code>' + DXIcon('stop') + ' Stop</code></li></ol>'+
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>In Continuous mode, more slots share NPU resources and may reduce FPS.</span></div>',
     '<h4>Single 모드 워크플로우</h4>'+
     '<ol><li>좌측 모델 카드에서 모델 선택</li>'+
     '<li>이미지/비디오 파일 선택 (썸네일 미리보기)</li>'+
     '<li>필요시 파라미터 조정 (Confidence, NMS 등)</li>'+
-    '<li><code>▶ Run</code> 클릭 → NPU 추론 실행</li>'+
+    '<li><code>' + DXIcon('play') + ' Run</code> 클릭 → NPU 추론 실행</li>'+
     '<li>결과 이미지에 바운딩 박스 / 마스크 / 키포인트가 오버레이됩니다</li>'+
     '<li><strong>Before / After</strong> 슬라이더로 원본과 결과 비교</li></ol>'+
     '<h4>Continuous 모드 워크플로우</h4>'+
     '<ol><li>Continuous 탭으로 전환 (화면 상단 탭)</li>'+
     '<li>슬롯(최대 8개) 추가 → 각 슬롯에 모델/입력 할당</li>'+
-    '<li><code>▶ Start</code> 클릭 → 실시간 추론 시작</li>'+
+    '<li><code>' + DXIcon('play') + ' Start</code> 클릭 → 실시간 추론 시작</li>'+
     '<li>FPS, 지연시간 등 실시간 성능 표시</li>'+
-    '<li><code>■ Stop</code>으로 개별/전체 중지</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>Continuous 모드에서 슬롯이 많으면 NPU 자원을 공유하여 FPS가 떨어질 수 있습니다.</span></div>',
+    '<li><code>' + DXIcon('stop') + ' Stop</code>으로 개별/전체 중지</li></ol>'+
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>Continuous 모드에서 슬롯이 많으면 NPU 자원을 공유하여 FPS가 떨어질 수 있습니다.</span></div>',
     '<h4>Single モードワークフロー</h4>'+
     '<ol><li>左側のモデルカードからモデルを選択</li>'+
     '<li>画像/動画ファイルを選択（サムネイルプレビュー）</li>'+
     '<li>必要に応じてパラメータを調整（Confidence、NMS など）</li>'+
-    '<li><code>▶ Run</code> をクリック → NPU 推論を実行</li>'+
+    '<li><code>' + DXIcon('play') + ' Run</code> をクリック → NPU 推論を実行</li>'+
     '<li>結果画像にバウンディングボックス/マスク/キーポイントがオーバーレイされます</li>'+
     '<li><strong>Before / After</strong> スライダーで元画像と結果を比較</li></ol>'+
     '<h4>Continuous モードワークフロー</h4>'+
     '<ol><li>Continuous タブに切り替え（画面上部のタブ）</li>'+
     '<li>スロット（最大8つ）を追加 → 各スロットにモデル/入力を割り当て</li>'+
-    '<li><code>▶ Start</code> をクリック → リアルタイム推論開始</li>'+
+    '<li><code>' + DXIcon('play') + ' Start</code> をクリック → リアルタイム推論開始</li>'+
     '<li>FPS、レイテンシなどのリアルタイム性能を表示</li>'+
-    '<li><code>■ Stop</code> で個別/全体を停止</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>Continuous モードではスロットが多いほど NPU リソースを共有し、FPS が低下する場合があります。</span></div>',
+    '<li><code>' + DXIcon('stop') + ' Stop</code> で個別/全体を停止</li></ol>'+
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>Continuous モードではスロットが多いほど NPU リソースを共有し、FPS が低下する場合があります。</span></div>',
     '<h4>Single 模式工作流</h4>'+
     '<ol><li>从左侧模型卡片中选择模型</li>'+
     '<li>选择图片/视频文件（缩略图预览）</li>'+
     '<li>根据需要调整参数（Confidence、NMS 等）</li>'+
-    '<li>点击 <code>▶ Run</code> → 执行 NPU 推理</li>'+
+    '<li>点击 <code>' + DXIcon('play') + ' Run</code> → 执行 NPU 推理</li>'+
     '<li>结果图片上叠加边界框/掩码/关键点</li>'+
     '<li>使用 <strong>Before / After</strong> 滑块对比原图和结果</li></ol>'+
     '<h4>Continuous 模式工作流</h4>'+
     '<ol><li>切换到 Continuous 标签页（顶部标签）</li>'+
     '<li>添加槽位（最多8个）→ 为每个槽位分配模型/输入</li>'+
-    '<li>点击 <code>▶ Start</code> → 开始实时推理</li>'+
+    '<li>点击 <code>' + DXIcon('play') + ' Start</code> → 开始实时推理</li>'+
     '<li>显示 FPS、延迟等实时性能</li>'+
-    '<li>使用 <code>■ Stop</code> 单独/全部停止</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>Continuous 模式下槽位越多，NPU 资源共享越多，FPS 可能降低。</span></div>',
+    '<li>使用 <code>' + DXIcon('stop') + ' Stop</code> 单独/全部停止</li></ol>'+
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>Continuous 模式下槽位越多，NPU 资源共享越多，FPS 可能降低。</span></div>',
     '<h4>Single 模式工作流程</h4>'+
     '<ol><li>從左側模型卡片中選擇模型</li>'+
     '<li>選擇圖片/影片檔案（縮圖預覽）</li>'+
     '<li>如需調整參數（Confidence、NMS 等）</li>'+
-    '<li>點擊 <code>▶ Run</code> → 執行 NPU 推理</li>'+
+    '<li>點擊 <code>' + DXIcon('play') + ' Run</code> → 執行 NPU 推理</li>'+
     '<li>結果圖片上疊加邊界框/遮罩/關鍵點</li>'+
     '<li>使用 <strong>Before / After</strong> 滑桿對比原圖和結果</li></ol>'+
     '<h4>Continuous 模式工作流程</h4>'+
     '<ol><li>切換到 Continuous 分頁（頂部分頁）</li>'+
     '<li>新增插槽（最多8個）→ 為每個插槽指派模型/輸入</li>'+
-    '<li>點擊 <code>▶ Start</code> → 開始即時推理</li>'+
+    '<li>點擊 <code>' + DXIcon('play') + ' Start</code> → 開始即時推理</li>'+
     '<li>顯示 FPS、延遲等即時效能</li>'+
-    '<li>使用 <code>■ Stop</code> 單獨/全部停止</li></ol>'+
-    '<div class="ref-box warn"><span class="ref-box-icon">⚠️</span><span>Continuous 模式下插槽越多，NPU 資源共享越多，FPS 可能降低。</span></div>'),
+    '<li>使用 <code>' + DXIcon('stop') + ' Stop</code> 單獨/全部停止</li></ol>'+
+    '<div class="ref-box warn"><span class="ref-box-icon">' + DXIcon('alert') + '</span><span>Continuous 模式下插槽越多，NPU 資源共享越多，FPS 可能降低。</span></div>'),
   tips:refT5('<h4>Tips</h4>'+
     '<ul><li><strong>Export Package</strong> lets you export source code + model + config as a single package</li>'+
     '<li>SR (Super Resolution) results output at higher resolution than the original</li>'+
@@ -566,17 +566,17 @@ return [
     '<li>DnCNN 降噪學習噪聲殘差並從原圖中減去</li></ul>')
 }},
 
-{cat:'core',id:'rtsp-continuous',icon:'📡',name:refT5('RTSP Streaming','RTSP 스트리밍','RTSP ストリーミング','RTSP 串流','RTSP 串流'),desc:refT5('RTSP server details for Continuous mode','Continuous 모드의 RTSP 서버 상세','Continuous モードの RTSP サーバー詳細','Continuous 模式的 RTSP 服务器详情','Continuous 模式的 RTSP 伺服器詳情'),page:'run',tabs:{
+{cat:'core',id:'rtsp-continuous',icon:'stream',name:refT5('RTSP Streaming','RTSP 스트리밍','RTSP ストリーミング','RTSP 串流','RTSP 串流'),desc:refT5('RTSP server details for Continuous mode','Continuous 모드의 RTSP 서버 상세','Continuous モードの RTSP サーバー詳細','Continuous 模式的 RTSP 服务器详情','Continuous 模式的 RTSP 伺服器詳情'),page:'run',tabs:{
   overview:refT5('<h4>Overview</h4><p>In Continuous mode, RTSP streaming allows real-time inference on network video streams from IP cameras or media servers.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">Enter RTSP URL</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Select Stream</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Start</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Live Inference</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">Enter RTSP URL</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Select Stream</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Start</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Live Inference</span></div>',
     '<h4>개요</h4><p>Continuous 모드에서 RTSP 스트리밍은 IP 카메라 또는 미디어 서버의 네트워크 비디오 스트림에 실시간 추론을 수행합니다.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">RTSP URL 입력</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">스트림 선택</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ 시작</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">실시간 추론</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">RTSP URL 입력</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">스트림 선택</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' 시작</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">실시간 추론</span></div>',
     '<h4>概要</h4><p>Continuous モードでは、RTSP ストリーミングにより IP カメラやメディアサーバーのネットワーク動画ストリームに対してリアルタイム推論を実行します。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">RTSP URL 入力</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">ストリーム選択</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ 開始</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">リアルタイム推論</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">RTSP URL 入力</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">ストリーム選択</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' 開始</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">リアルタイム推論</span></div>',
     '<h4>概述</h4><p>在 Continuous 模式下，RTSP 串流可对来自 IP 摄像头或媒体服务器的网络视频流进行实时推理。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">输入 RTSP URL</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">选择串流</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ 开始</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">实时推理</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">输入 RTSP URL</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">选择串流</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' 开始</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">实时推理</span></div>',
     '<h4>概述</h4><p>在 Continuous 模式下，RTSP 串流可對來自 IP 攝影機或媒體伺服器的網路影片串流進行即時推理。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">輸入 RTSP URL</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">選擇串流</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ 開始</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">即時推理</span></div>'),
+    '<div class="ref-flow"><span class="ref-flow-step">輸入 RTSP URL</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">選擇串流</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' 開始</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">即時推理</span></div>'),
   params:refT5('<h4>RTSP Configuration</h4>'+
     '<table class="ref-tbl"><tr><th>Field</th><th>Format</th><th>Example</th><th>Description</th></tr>'+
     '<tr><td>Server IP</td><td>IP:Port</td><td>192.168.1.100:554</td><td>RTSP server address and port</td></tr>'+
@@ -659,17 +659,17 @@ return [
     '<li>最大並行 RTSP 插槽數取決於網路頻寬和 NPU 容量</li></ul>')
 }},
 
-{cat:'core',id:'benchmark',icon:'⏱️',name:'Benchmark',desc:refT5('Multi-model performance measurement · FPS comparison · Report','다중 모델 성능 측정 · FPS 비교 · 리포트','複数モデル性能測定・FPS 比較・レポート','多模型性能测量·FPS 对比·报告','多模型效能測量·FPS 對比·報告'),page:'bench',tabs:{
+{cat:'core',id:'benchmark',icon:'clock',name:'Benchmark',desc:refT5('Multi-model performance measurement · FPS comparison · Report','다중 모델 성능 측정 · FPS 비교 · 리포트','複数モデル性能測定・FPS 比較・レポート','多模型性能测量·FPS 对比·报告','多模型效能測量·FPS 對比·報告'),page:'bench',tabs:{
   overview:refT5('<h4>Overview</h4><p>The Benchmark page measures and compares NPU inference performance across multiple models.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">Select Models (multi)</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Set Loop Count</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Result Chart</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">Select Models (multi)</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Set Loop Count</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Result Chart</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
     '<h4>개요</h4><p>Benchmark 페이지는 여러 모델의 NPU 추론 성능을 측정하고 비교합니다.</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">모델 선택 (다중)</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Loop Count 설정</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">결과 차트</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">모델 선택 (다중)</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Loop Count 설정</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">결과 차트</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
     '<h4>概要</h4><p>Benchmark ページは複数モデルの NPU 推論性能を測定し比較します。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">モデル選択（複数）</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Loop Count 設定</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">結果チャート</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">モデル選択（複数）</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Loop Count 設定</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">結果チャート</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
     '<h4>概述</h4><p>Benchmark 页面测量和比较多个模型的 NPU 推理性能。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">选择模型（多选）</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">设置 Loop Count</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">结果图表</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
+    '<div class="ref-flow"><span class="ref-flow-step">选择模型（多选）</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">设置 Loop Count</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">结果图表</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>',
     '<h4>概述</h4><p>Benchmark 頁面測量和比較多個模型的 NPU 推理效能。</p>'+
-    '<div class="ref-flow"><span class="ref-flow-step">選擇模型（多選）</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">設定 Loop Count</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">▶ Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">結果圖表</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>'),
+    '<div class="ref-flow"><span class="ref-flow-step">選擇模型（多選）</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">設定 Loop Count</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">' + DXIcon('play') + ' Run Benchmark</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">結果圖表</span><span class="ref-flow-arrow">→</span><span class="ref-flow-step">Export Report</span></div>'),
   params:refT5('<h4>Parameters</h4>'+
     '<table class="ref-tbl"><tr><th>Parameter</th><th>Range</th><th>Default</th><th>Description</th></tr>'+
     '<tr><td>Loop Count</td><td>1 – 10,000</td><td>100</td><td>Inference iteration count (higher = more accurate)</td></tr></table>'+
@@ -718,80 +718,80 @@ return [
   tips:refT5('<h4>Tips</h4>'+
     '<ul><li>First run may be slightly slower due to model warmup — Loop 100+ recommended</li>'+
     '<li>FPS comparison chart provides intuitive comparison via horizontal bar graph</li>'+
-    '<li><strong>📄 Export Report</strong> saves the benchmark report as PDF/image</li></ul>',
+    '<li><strong>' + DXIcon('file') + ' Export Report</strong> saves the benchmark report as PDF/image</li></ul>',
     '<h4>팁</h4>'+
     '<ul><li>첫 실행은 모델 워밍업으로 약간 느릴 수 있습니다 — Loop 100 이상 권장</li>'+
     '<li>FPS 비교 차트는 수평 막대 그래프로 직관적 비교 가능</li>'+
-    '<li><strong>📄 Export Report</strong>로 PDF/이미지 형태의 벤치마크 보고서를 저장합니다</li></ul>',
+    '<li><strong>' + DXIcon('file') + ' Export Report</strong>로 PDF/이미지 형태의 벤치마크 보고서를 저장합니다</li></ul>',
     '<h4>ヒント</h4>'+
     '<ul><li>初回実行はモデルのウォームアップにより少し遅くなる場合があります — Loop 100以上推奨</li>'+
     '<li>FPS 比較チャートは水平棒グラフで直感的に比較できます</li>'+
-    '<li><strong>📄 Export Report</strong> でベンチマークレポートを PDF/画像として保存します</li></ul>',
+    '<li><strong>' + DXIcon('file') + ' Export Report</strong> でベンチマークレポートを PDF/画像として保存します</li></ul>',
     '<h4>提示</h4>'+
     '<ul><li>首次运行可能因模型预热略慢 — 建议 Loop 100 以上</li>'+
     '<li>FPS 对比图通过水平柱状图提供直观比较</li>'+
-    '<li><strong>📄 Export Report</strong> 可将基准测试报告保存为 PDF/图片</li></ul>',
+    '<li><strong>' + DXIcon('file') + ' Export Report</strong> 可将基准测试报告保存为 PDF/图片</li></ul>',
     '<h4>提示</h4>'+
     '<ul><li>首次執行可能因模型預熱略慢 — 建議 Loop 100 以上</li>'+
     '<li>FPS 對比圖透過水平長條圖提供直觀比較</li>'+
-    '<li><strong>📄 Export Report</strong> 可將基準測試報告儲存為 PDF/圖片</li></ul>')
+    '<li><strong>' + DXIcon('file') + ' Export Report</strong> 可將基準測試報告儲存為 PDF/圖片</li></ul>')
 }},
 
-{cat:'core',id:'compare',icon:'🔀',name:'A/B Compare',desc:refT5('2–8 model simultaneous comparison · Performance table','2~8 모델 동시 비교 · 성능 테이블','2〜8モデル同時比較・パフォーマンステーブル','2~8模型同时对比·性能表','2~8模型同時對比·效能表'),page:'compare',tabs:{
+{cat:'core',id:'compare',icon:'compare',name:'A/B Compare',desc:refT5('2–8 model simultaneous comparison · Performance table','2~8 모델 동시 비교 · 성능 테이블','2〜8モデル同時比較・パフォーマンステーブル','2~8模型同时对比·性能表','2~8模型同時對比·效能表'),page:'compare',tabs:{
   overview:refT5('<h4>Overview</h4><p>The A/B Compare page runs multiple models simultaneously on the same input and compares results side by side.</p>'+
     '<ul><li><strong>Simultaneous comparison</strong> — Assign different models to 2–8 slots</li>'+
     '<li><strong>Shared input</strong> — All slots use the same image/video/camera/RTSP input</li>'+
     '<li><strong>Performance table</strong> — Compare FPS, latency for each model in table format</li></ul>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Adjust slot count with the <strong>Slot Count</strong> dropdown at the top right (2/4/6/8).</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Adjust slot count with the <strong>Slot Count</strong> dropdown at the top right (2/4/6/8).</span></div>',
     '<h4>개요</h4><p>A/B Compare 페이지는 동일한 입력에 대해 여러 모델을 동시에 실행하여 결과를 나란히 비교합니다.</p>'+
     '<ul><li><strong>동시 비교</strong> — 2~8개 슬롯에 각각 다른 모델 할당</li>'+
     '<li><strong>입력 공유</strong> — 모든 슬롯이 동일한 이미지/비디오/카메라/RTSP 입력 사용</li>'+
     '<li><strong>성능 테이블</strong> — 각 모델의 FPS, Latency를 표 형태로 비교</li></ul>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>슬롯 수는 우측 상단의 <strong>Slot Count</strong> 드롭다운으로 조절합니다 (2/4/6/8).</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>슬롯 수는 우측 상단의 <strong>Slot Count</strong> 드롭다운으로 조절합니다 (2/4/6/8).</span></div>',
     '<h4>概要</h4><p>A/B Compare ページは同じ入力に対して複数のモデルを同時に実行し、結果を並べて比較します。</p>'+
     '<ul><li><strong>同時比較</strong> — 2〜8スロットにそれぞれ異なるモデルを割り当て</li>'+
     '<li><strong>入力共有</strong> — すべてのスロットが同じ画像/動画/カメラ/RTSP 入力を使用</li>'+
     '<li><strong>パフォーマンステーブル</strong> — 各モデルの FPS、レイテンシを表形式で比較</li></ul>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>スロット数は右上の <strong>Slot Count</strong> ドロップダウンで調整します（2/4/6/8）。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>スロット数は右上の <strong>Slot Count</strong> ドロップダウンで調整します（2/4/6/8）。</span></div>',
     '<h4>概述</h4><p>A/B Compare 页面在相同输入上同时运行多个模型，并排比较结果。</p>'+
     '<ul><li><strong>同时对比</strong> — 在2~8个槽位上分别分配不同模型</li>'+
     '<li><strong>共享输入</strong> — 所有槽位使用相同的图片/视频/摄像头/RTSP 输入</li>'+
     '<li><strong>性能表</strong> — 以表格形式比较各模型的 FPS、延迟</li></ul>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>通过右上角的 <strong>Slot Count</strong> 下拉菜单调整槽位数（2/4/6/8）。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>通过右上角的 <strong>Slot Count</strong> 下拉菜单调整槽位数（2/4/6/8）。</span></div>',
     '<h4>概述</h4><p>A/B Compare 頁面在相同輸入上同時執行多個模型，並排比較結果。</p>'+
     '<ul><li><strong>同時對比</strong> — 在2~8個插槽上分別指派不同模型</li>'+
     '<li><strong>共享輸入</strong> — 所有插槽使用相同的圖片/影片/攝影機/RTSP 輸入</li>'+
     '<li><strong>效能表</strong> — 以表格形式比較各模型的 FPS、延遲</li></ul>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>透過右上角的 <strong>Slot Count</strong> 下拉選單調整插槽數（2/4/6/8）。</span></div>'),
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>透過右上角的 <strong>Slot Count</strong> 下拉選單調整插槽數（2/4/6/8）。</span></div>'),
   workflow:refT5('<h4>Workflow</h4>'+
     '<ol><li>Select Slot Count (2–8)</li>'+
     '<li>Assign models to compare in each slot</li>'+
     '<li>Select shared input source (file/camera/RTSP)</li>'+
-    '<li><code>▶ Start</code> → All slots run inference simultaneously</li>'+
+    '<li><code>' + DXIcon('play') + ' Start</code> → All slots run inference simultaneously</li>'+
     '<li>Compare results side by side, check the Performance Comparison table at the bottom</li></ol>',
     '<h4>워크플로우</h4>'+
     '<ol><li>Slot Count 선택 (2~8)</li>'+
     '<li>각 슬롯에 비교할 모델 할당</li>'+
     '<li>공유 입력 소스 선택 (파일/카메라/RTSP)</li>'+
-    '<li><code>▶ Start</code> → 모든 슬롯 동시 추론</li>'+
+    '<li><code>' + DXIcon('play') + ' Start</code> → 모든 슬롯 동시 추론</li>'+
     '<li>결과를 나란히 비교, 하단 Performance Comparison 테이블 확인</li></ol>',
     '<h4>ワークフロー</h4>'+
     '<ol><li>Slot Count を選択（2〜8）</li>'+
     '<li>各スロットに比較するモデルを割り当て</li>'+
     '<li>共有入力ソースを選択（ファイル/カメラ/RTSP）</li>'+
-    '<li><code>▶ Start</code> → 全スロット同時推論</li>'+
+    '<li><code>' + DXIcon('play') + ' Start</code> → 全スロット同時推論</li>'+
     '<li>結果を並べて比較、下部の Performance Comparison テーブルを確認</li></ol>',
     '<h4>工作流</h4>'+
     '<ol><li>选择 Slot Count（2~8）</li>'+
     '<li>为每个槽位分配要对比的模型</li>'+
     '<li>选择共享输入源（文件/摄像头/RTSP）</li>'+
-    '<li><code>▶ Start</code> → 所有槽位同时推理</li>'+
+    '<li><code>' + DXIcon('play') + ' Start</code> → 所有槽位同时推理</li>'+
     '<li>并排比较结果，查看底部 Performance Comparison 表格</li></ol>',
     '<h4>工作流程</h4>'+
     '<ol><li>選擇 Slot Count（2~8）</li>'+
     '<li>為每個插槽指派要對比的模型</li>'+
     '<li>選擇共享輸入來源（檔案/攝影機/RTSP）</li>'+
-    '<li><code>▶ Start</code> → 所有插槽同時推理</li>'+
+    '<li><code>' + DXIcon('play') + ' Start</code> → 所有插槽同時推理</li>'+
     '<li>並排比較結果，查看底部 Performance Comparison 表格</li></ol>'),
   tips:refT5('<h4>Tips</h4>'+
     '<ul><li>Comparing models with the same task type lets you visually see accuracy differences</li>'+
@@ -816,7 +816,7 @@ return [
 }},
 
 /* ── Advanced Tools ── */
-{cat:'advanced',id:'modelzoo',icon:'📥',name:'ModelZoo',desc:refT5('Model download · Internal/Public · Cart','모델 다운로드 · Internal/Public · 장바구니','モデルダウンロード · Internal/Public · カート','模型下载 · Internal/Public · 购物车','模型下載 · Internal/Public · 購物車'),page:'modelzoo',tabs:{
+{cat:'advanced',id:'modelzoo',icon:'download',name:'ModelZoo',desc:refT5('Model download · Internal/Public · Cart','모델 다운로드 · Internal/Public · 장바구니','モデルダウンロード · Internal/Public · カート','模型下载 · Internal/Public · 购物车','模型下載 · Internal/Public · 購物車'),page:'modelzoo',tabs:{
   overview:refT5(
     '<h4>Overview</h4><p>ModelZoo is a page for browsing and downloading pre-compiled <code>.dxnn</code> models.</p>'+
     '<ul><li><strong>Internal</strong> — Internal (on-premise) model repository</li>'+
@@ -848,27 +848,27 @@ return [
     '<table class="ref-tbl"><tr><th>Type</th><th>Quantization</th><th>Characteristics</th></tr>'+
     '<tr><td>Q-Lite</td><td>Light quantization</td><td>Faster speed, slight accuracy loss</td></tr>'+
     '<tr><td>Q-Pro</td><td>Precision quantization</td><td>Higher accuracy, slight speed loss</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Click the <strong>Q-Lite</strong> / <strong>Q-Pro</strong> buttons on each model card individually, or add to <strong>Cart (🛒)</strong> for batch download.</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Click the <strong>Q-Lite</strong> / <strong>Q-Pro</strong> buttons on each model card individually, or add to <strong>Cart (' + DXIcon('download') + ')</strong> for batch download.</span></div>',
     '<h4>모델 바리에이션</h4>'+
     '<table class="ref-tbl"><tr><th>유형</th><th>양자화</th><th>특징</th></tr>'+
     '<tr><td>Q-Lite</td><td>가벼운 양자화</td><td>빠른 속도, 약간의 정확도 감소</td></tr>'+
     '<tr><td>Q-Pro</td><td>정밀 양자화</td><td>높은 정확도, 약간의 속도 감소</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>각 모델 카드의 <strong>Q-Lite</strong> / <strong>Q-Pro</strong> 버튼을 개별 클릭하거나, <strong>장바구니(🛒)</strong>에 추가하여 일괄 다운로드할 수 있습니다.</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>각 모델 카드의 <strong>Q-Lite</strong> / <strong>Q-Pro</strong> 버튼을 개별 클릭하거나, <strong>장바구니(' + DXIcon('download') + ')</strong>에 추가하여 일괄 다운로드할 수 있습니다.</span></div>',
     '<h4>モデルバリエーション</h4>'+
     '<table class="ref-tbl"><tr><th>タイプ</th><th>量子化</th><th>特徴</th></tr>'+
     '<tr><td>Q-Lite</td><td>軽量量子化</td><td>高速、わずかな精度低下</td></tr>'+
     '<tr><td>Q-Pro</td><td>精密量子化</td><td>高精度、わずかな速度低下</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>各モデルカードの<strong>Q-Lite</strong> / <strong>Q-Pro</strong>ボタンを個別にクリックするか、<strong>カート（🛒）</strong>に追加して一括ダウンロードできます。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>各モデルカードの<strong>Q-Lite</strong> / <strong>Q-Pro</strong>ボタンを個別にクリックするか、<strong>カート（' + DXIcon('download') + '）</strong>に追加して一括ダウンロードできます。</span></div>',
     '<h4>模型变体</h4>'+
     '<table class="ref-tbl"><tr><th>类型</th><th>量化</th><th>特点</th></tr>'+
     '<tr><td>Q-Lite</td><td>轻量量化</td><td>速度快，精度略有下降</td></tr>'+
     '<tr><td>Q-Pro</td><td>精密量化</td><td>精度高，速度略有下降</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>点击各模型卡片上的 <strong>Q-Lite</strong> / <strong>Q-Pro</strong> 按钮单独下载，或添加到<strong>购物车（🛒）</strong>批量下载。</span></div>',
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>点击各模型卡片上的 <strong>Q-Lite</strong> / <strong>Q-Pro</strong> 按钮单独下载，或添加到<strong>购物车（' + DXIcon('download') + '）</strong>批量下载。</span></div>',
     '<h4>模型變體</h4>'+
     '<table class="ref-tbl"><tr><th>類型</th><th>量化</th><th>特點</th></tr>'+
     '<tr><td>Q-Lite</td><td>輕量量化</td><td>速度快，精度略有下降</td></tr>'+
     '<tr><td>Q-Pro</td><td>精密量化</td><td>精度高，速度略有下降</td></tr></table>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>點擊各模型卡片上的 <strong>Q-Lite</strong> / <strong>Q-Pro</strong> 按鈕單獨下載，或加入<strong>購物車（🛒）</strong>批次下載。</span></div>'),
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>點擊各模型卡片上的 <strong>Q-Lite</strong> / <strong>Q-Pro</strong> 按鈕單獨下載，或加入<strong>購物車（' + DXIcon('download') + '）</strong>批次下載。</span></div>'),
   tips:refT5(
     '<h4>Tips</h4>'+
     '<ul><li>In a closed network, only the <strong>Internal</strong> tab is available</li>'+
@@ -892,7 +892,7 @@ return [
     '<li>搜尋欄可搜尋模型名、任務名和描述</li></ul>')
 }},
 
-{cat:'advanced',id:'outputs',icon:'📂',name:'Outputs',desc:refT5('Inference result history · Image/Video viewer','추론 결과 이력 · 이미지/비디오 뷰어','推論結果履歴 · 画像/動画ビューア','推理结果历史 · 图像/视频查看器','推論結果歷史 · 圖片/影片檢視器'),page:'outputs',tabs:{
+{cat:'advanced',id:'outputs',icon:'folder',name:'Outputs',desc:refT5('Inference result history · Image/Video viewer','추론 결과 이력 · 이미지/비디오 뷰어','推論結果履歴 · 画像/動画ビューア','推理结果历史 · 图像/视频查看器','推論結果歷史 · 圖片/影片檢視器'),page:'outputs',tabs:{
   overview:refT5(
     '<h4>Overview</h4><p>The Outputs page is a file browser for storing and exploring all inference execution results.</p>'+
     '<ul><li><strong>Result Images/Videos</strong> — Thumbnail previews of inference results + click to enlarge</li>'+
@@ -937,7 +937,7 @@ return [
     '<li>Benchmark 報告也可在此查看</li></ul>')
 }},
 
-{cat:'advanced',id:'pipeline',icon:'🔗',name:'Pipeline (Waterfall)',desc:refT5('Inference pipeline performance analysis · Bottleneck detection','추론 파이프라인 성능 분석 · 병목 감지','推論パイプライン性能分析 · ボトルネック検出','推理流水线性能分析 · 瓶颈检测','推論流水線效能分析 · 瓶頸偵測'),page:null,tabs:{
+{cat:'advanced',id:'pipeline',icon:'external',name:'Pipeline (Waterfall)',desc:refT5('Inference pipeline performance analysis · Bottleneck detection','추론 파이프라인 성능 분석 · 병목 감지','推論パイプライン性能分析 · ボトルネック検出','推理流水线性能分析 · 瓶颈检测','推論流水線效能分析 · 瓶頸偵測'),page:null,tabs:{
   overview:refT5(
     '<h4>Overview</h4><p>The <strong>Waterfall Chart</strong> on the Run / Benchmark / Compare pages visually displays the time spent on each stage of the inference pipeline.</p>'+
     '<ul><li><strong>Read</strong> — Read input data <span style="background:var(--status-info);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">Blue</span></li>'+
@@ -966,20 +966,20 @@ return [
     '<li><strong>Postprocess</strong> — 後處理（NMS、視覺化等） <span style="background:var(--status-error);color:#000;padding:1px 6px;border-radius:3px;font-size:11px">紅色</span></li></ul>'),
   params:refT5(
     '<h4>Bottleneck Indicator</h4>'+
-    '<p>The stage with the longest duration is marked with a <strong>diagonal stripe pattern</strong>. A <code>▲ bottleneck</code> tag also appears in the Legend.</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Identifying the bottleneck stage helps determine optimization direction. e.g., Preprocess bottleneck → optimize preprocessing code / Inference bottleneck → consider model lightweighting</span></div>',
+    '<p>The stage with the longest duration is marked with a <strong>diagonal stripe pattern</strong>. A <code>bottleneck</code> tag also appears in the Legend.</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Identifying the bottleneck stage helps determine optimization direction. e.g., Preprocess bottleneck → optimize preprocessing code / Inference bottleneck → consider model lightweighting</span></div>',
     '<h4>병목(Bottleneck) 표시</h4>'+
-    '<p>가장 소요 시간이 긴 단계에는 <strong>빗금 패턴(diagonal stripe)</strong>이 표시됩니다. Legend에도 <code>▲ bottleneck</code> 태그가 붙습니다.</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>병목 단계를 식별하면 최적화 방향을 결정할 수 있습니다. 예: Preprocess 병목 → 전처리 코드 최적화 / Inference 병목 → 모델 경량화 검토</span></div>',
+    '<p>가장 소요 시간이 긴 단계에는 <strong>빗금 패턴(diagonal stripe)</strong>이 표시됩니다. Legend에도 <code>bottleneck</code> 태그가 붙습니다.</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>병목 단계를 식별하면 최적화 방향을 결정할 수 있습니다. 예: Preprocess 병목 → 전처리 코드 최적화 / Inference 병목 → 모델 경량화 검토</span></div>',
     '<h4>ボトルネック表示</h4>'+
-    '<p>最も所要時間が長いステージには<strong>斜線パターン（diagonal stripe）</strong>が表示されます。Legendにも<code>▲ bottleneck</code>タグが付きます。</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>ボトルネックステージを特定すると最適化の方向性を決定できます。例：Preprocessボトルネック → 前処理コードの最適化 / Inferenceボトルネック → モデル軽量化の検討</span></div>',
+    '<p>最も所要時間が長いステージには<strong>斜線パターン（diagonal stripe）</strong>が表示されます。Legendにも<code>bottleneck</code>タグが付きます。</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>ボトルネックステージを特定すると最適化の方向性を決定できます。例：Preprocessボトルネック → 前処理コードの最適化 / Inferenceボトルネック → モデル軽量化の検討</span></div>',
     '<h4>瓶颈指示</h4>'+
-    '<p>耗时最长的阶段会显示<strong>斜线图案（diagonal stripe）</strong>。Legend 中也会标注 <code>▲ bottleneck</code> 标签。</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>识别瓶颈阶段有助于确定优化方向。例：Preprocess 瓶颈 → 优化预处理代码 / Inference 瓶颈 → 考虑模型轻量化</span></div>',
+    '<p>耗时最长的阶段会显示<strong>斜线图案（diagonal stripe）</strong>。Legend 中也会标注 <code>bottleneck</code> 标签。</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>识别瓶颈阶段有助于确定优化方向。例：Preprocess 瓶颈 → 优化预处理代码 / Inference 瓶颈 → 考虑模型轻量化</span></div>',
     '<h4>瓶頸指示</h4>'+
-    '<p>耗時最長的階段會顯示<strong>斜線圖案（diagonal stripe）</strong>。Legend 中也會標註 <code>▲ bottleneck</code> 標籤。</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>識別瓶頸階段有助於確定優化方向。例：Preprocess 瓶頸 → 優化前處理程式碼 / Inference 瓶頸 → 考慮模型輕量化</span></div>'),
+    '<p>耗時最長的階段會顯示<strong>斜線圖案（diagonal stripe）</strong>。Legend 中也會標註 <code>bottleneck</code> 標籤。</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>識別瓶頸階段有助於確定優化方向。例：Preprocess 瓶頸 → 優化前處理程式碼 / Inference 瓶頸 → 考慮模型輕量化</span></div>'),
   tips:refT5(
     '<h4>Tips</h4>'+
     '<ul><li>Colors for each stage are fixed — only the bottleneck is highlighted with a stripe pattern</li>'+
@@ -999,7 +999,7 @@ return [
 }},
 
 /* ── System & Extras ── */
-{cat:'system',id:'shortcuts',icon:'⌨️',name:refT5('Keyboard Shortcuts','키보드 단축키','キーボードショートカット','键盘快捷键','鍵盤快捷鍵'),desc:refT5('Global shortcuts · Tutorial controls','전역 단축키 · 튜토리얼 제어','グローバルショートカット · チュートリアル制御','全局快捷键 · 教程控制','全域快捷鍵 · 教學控制'),page:null,tabs:{
+{cat:'system',id:'shortcuts',icon:'dev',name:refT5('Keyboard Shortcuts','키보드 단축키','キーボードショートカット','键盘快捷键','鍵盤快捷鍵'),desc:refT5('Global shortcuts · Tutorial controls','전역 단축키 · 튜토리얼 제어','グローバルショートカット · チュートリアル制御','全局快捷键 · 教程控制','全域快捷鍵 · 教學控制'),page:null,tabs:{
   overview:refT5(
     '<h4>Global Shortcuts</h4>'+
     '<table class="ref-tbl"><tr><th>Key</th><th>Action</th><th>Context</th></tr>'+
@@ -1033,52 +1033,52 @@ return [
     '<tr><td><span class="ref-kbd">Enter</span></td><td>下一步 / 確認</td><td>教學進行中</td></tr></table>'),
   tips:refT5(
     '<h4>Tips</h4>'+
-    '<ul><li>Use the TOC (table of contents) button <span class="ref-kbd">☰</span> in the tutorial to view the overall structure</li>'+
-    '<li>The <strong>🎓 Tutorial</strong> button opens the guide for the current page</li></ul>',
+    '<ul><li>Use the TOC (table of contents) button <span class="ref-kbd">' + DXIcon('menu') + '</span> in the tutorial to view the overall structure</li>'+
+    '<li>The <strong>' + DXIcon('graduation') + ' Tutorial</strong> button opens the guide for the current page</li></ul>',
     '<h4>팁</h4>'+
-    '<ul><li>튜토리얼의 TOC(목차) 버튼 <span class="ref-kbd">☰</span>으로 전체 구조를 확인할 수 있습니다</li>'+
-    '<li><strong>🎓 튜토리얼</strong> 버튼으로 현재 페이지의 가이드를 열 수 있습니다</li></ul>',
+    '<ul><li>튜토리얼의 TOC(목차) 버튼 <span class="ref-kbd">' + DXIcon('menu') + '</span>으로 전체 구조를 확인할 수 있습니다</li>'+
+    '<li><strong>' + DXIcon('graduation') + ' 튜토리얼</strong> 버튼으로 현재 페이지의 가이드를 열 수 있습니다</li></ul>',
     '<h4>ヒント</h4>'+
-    '<ul><li>チュートリアルのTOC（目次）ボタン <span class="ref-kbd">☰</span> で全体構造を確認できます</li>'+
-    '<li><strong>🎓 チュートリアル</strong> ボタンで現在のページのガイドを開けます</li></ul>',
+    '<ul><li>チュートリアルのTOC（目次）ボタン <span class="ref-kbd">' + DXIcon('menu') + '</span> で全体構造を確認できます</li>'+
+    '<li><strong>' + DXIcon('graduation') + ' チュートリアル</strong> ボタンで現在のページのガイドを開けます</li></ul>',
     '<h4>提示</h4>'+
-    '<ul><li>使用教程中的目录按钮 <span class="ref-kbd">☰</span> 可查看整体结构</li>'+
-    '<li><strong>🎓 教程</strong> 按钮会打开当前页面的指南</li></ul>',
+    '<ul><li>使用教程中的目录按钮 <span class="ref-kbd">' + DXIcon('menu') + '</span> 可查看整体结构</li>'+
+    '<li><strong>' + DXIcon('graduation') + ' 教程</strong> 按钮会打开当前页面的指南</li></ul>',
     '<h4>提示</h4>'+
-    '<ul><li>使用教學中的目錄按鈕 <span class="ref-kbd">☰</span> 可查看整體結構</li>'+
-    '<li><strong>🎓 教學</strong> 按鈕會開啟目前頁面的指南</li></ul>',
+    '<ul><li>使用教學中的目錄按鈕 <span class="ref-kbd">' + DXIcon('menu') + '</span> 可查看整體結構</li>'+
+    '<li><strong>' + DXIcon('graduation') + ' 教學</strong> 按鈕會開啟目前頁面的指南</li></ul>',
     '<h4>Consejos</h4>'+
-    '<ul><li>Use el botón TOC (tabla de contenidos) <span class="ref-kbd">☰</span> del tutorial para ver la estructura general</li>'+
-    '<li>El botón <strong>🎓 Tutorial</strong> abre la guía de la página actual</li></ul>')
+    '<ul><li>Use el botón TOC (tabla de contenidos) <span class="ref-kbd">' + DXIcon('menu') + '</span> del tutorial para ver la estructura general</li>'+
+    '<li>El botón <strong>' + DXIcon('graduation') + ' Tutorial</strong> abre la guía de la página actual</li></ul>')
 }},
 
-{cat:'system',id:'themes-i18n',icon:'🎨',name:refT5('Theme & Language','테마 & 언어','テーマ & 言語','主题与语言','主題與語言'),desc:refT5('Dark/Light theme · Language switching','다크/라이트 테마 · 한국어/영어 전환','ダーク/ライトテーマ · 言語切替','深色/浅色主题 · 语言切换','深色/淺色主題 · 語言切換'),page:null,tabs:{
+{cat:'system',id:'themes-i18n',icon:'theme',name:refT5('Theme & Language','테마 & 언어','テーマ & 言語','主题与语言','主題與語言'),desc:refT5('Dark/Light theme · Language switching','다크/라이트 테마 · 한국어/영어 전환','ダーク/ライトテーマ · 言語切替','深色/浅色主题 · 语言切换','深色/淺色主題 · 語言切換'),page:null,tabs:{
   overview:refT5(
     '<h4>Theme</h4>'+
-    '<p>Toggle between dark/light themes using the 🌙/☀️ icon in the upper right. All components are automatically applied via CSS variables.</p>'+
+    '<p>Toggle between dark/light themes using the ' + DXIcon('moon') + '/' + DXIcon('sun') + ' icon in the upper right. All components are automatically applied via CSS variables.</p>'+
     '<h4>Internationalization (i18n)</h4>'+
-    '<p>Switch languages using the <strong>🌐 KO / EN</strong> toggle in the left sidebar or top bar.</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-APP uses the <code>T(en, ko)</code> function.</span></div>',
+    '<p>Switch languages using the <strong>' + DXIcon('globe') + ' KO / EN</strong> toggle in the left sidebar or top bar.</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-APP uses the <code>T(en, ko)</code> function.</span></div>',
     '<h4>테마</h4>'+
-    '<p>우측 상단 🌙/☀️ 아이콘으로 다크/라이트 테마를 전환합니다. CSS 변수 기반으로 모든 컴포넌트가 자동 적용됩니다.</p>'+
+    '<p>우측 상단 ' + DXIcon('moon') + '/' + DXIcon('sun') + ' 아이콘으로 다크/라이트 테마를 전환합니다. CSS 변수 기반으로 모든 컴포넌트가 자동 적용됩니다.</p>'+
     '<h4>다국어 (i18n)</h4>'+
-    '<p>좌측 사이드바 또는 상단 바의 <strong>🌐 KO / EN</strong> 토글로 언어를 전환합니다.</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-APP은 <code>T(en, ko)</code> 함수를 사용합니다.</span></div>',
+    '<p>좌측 사이드바 또는 상단 바의 <strong>' + DXIcon('globe') + ' KO / EN</strong> 토글로 언어를 전환합니다.</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-APP은 <code>T(en, ko)</code> 함수를 사용합니다.</span></div>',
     '<h4>テーマ</h4>'+
-    '<p>右上の🌙/☀️アイコンでダーク/ライトテーマを切り替えます。CSS変数ベースですべてのコンポーネントが自動適用されます。</p>'+
+    '<p>右上の' + DXIcon('moon') + '/' + DXIcon('sun') + 'アイコンでダーク/ライトテーマを切り替えます。CSS変数ベースですべてのコンポーネントが自動適用されます。</p>'+
     '<h4>多言語対応（i18n）</h4>'+
-    '<p>左サイドバーまたはトップバーの<strong>🌐 KO / EN</strong>トグルで言語を切り替えます。</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-APPは<code>T(en, ko)</code>関数を使用します。</span></div>',
+    '<p>左サイドバーまたはトップバーの<strong>' + DXIcon('globe') + ' KO / EN</strong>トグルで言語を切り替えます。</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-APPは<code>T(en, ko)</code>関数を使用します。</span></div>',
     '<h4>主题</h4>'+
-    '<p>通过右上角的 🌙/☀️ 图标切换深色/浅色主题。基于 CSS 变量，所有组件自动适配。</p>'+
+    '<p>通过右上角的 ' + DXIcon('moon') + '/' + DXIcon('sun') + ' 图标切换深色/浅色主题。基于 CSS 变量，所有组件自动适配。</p>'+
     '<h4>国际化（i18n）</h4>'+
-    '<p>通过左侧边栏或顶部栏的 <strong>🌐 KO / EN</strong> 开关切换语言。</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-APP 使用 <code>T(en, ko)</code> 函数。</span></div>',
+    '<p>通过左侧边栏或顶部栏的 <strong>' + DXIcon('globe') + ' KO / EN</strong> 开关切换语言。</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-APP 使用 <code>T(en, ko)</code> 函数。</span></div>',
     '<h4>主題</h4>'+
-    '<p>透過右上角的 🌙/☀️ 圖示切換深色/淺色主題。基於 CSS 變數，所有元件自動適配。</p>'+
+    '<p>透過右上角的 ' + DXIcon('moon') + '/' + DXIcon('sun') + ' 圖示切換深色/淺色主題。基於 CSS 變數，所有元件自動適配。</p>'+
     '<h4>國際化（i18n）</h4>'+
-    '<p>透過左側邊欄或頂部列的 <strong>🌐 KO / EN</strong> 開關切換語言。</p>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>DX-APP 使用 <code>T(en, ko)</code> 函式。</span></div>'),
+    '<p>透過左側邊欄或頂部列的 <strong>' + DXIcon('globe') + ' KO / EN</strong> 開關切換語言。</p>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>DX-APP 使用 <code>T(en, ko)</code> 函式。</span></div>'),
   tips:refT5(
     '<h4>Tips</h4>'+
     '<ul><li>Theme settings are saved in <code>localStorage</code> and persist after refresh</li>'+
@@ -1097,7 +1097,7 @@ return [
     '<li>並非所有文字都已完全翻譯</li></ul>')
 }},
 
-{cat:'system',id:'global-features',icon:'🔧',name:refT5('Global Features','글로벌 기능','グローバル機能','全局功能','全域功能'),desc:refT5('Toast notifications · Navigation · Sidebar','Toast 알림 · 네비게이션 · 사이드바','Toast通知 · ナビゲーション · サイドバー','Toast 通知 · 导航 · 侧边栏','Toast 通知 · 導覽 · 側邊欄'),page:null,tabs:{
+{cat:'system',id:'global-features',icon:'wrench',name:refT5('Global Features','글로벌 기능','グローバル機能','全局功能','全域功能'),desc:refT5('Toast notifications · Navigation · Sidebar','Toast 알림 · 네비게이션 · 사이드바','Toast通知 · ナビゲーション · サイドバー','Toast 通知 · 导航 · 侧边栏','Toast 通知 · 導覽 · 側邊欄'),page:null,tabs:{
   overview:refT5(
     '<h4>Toast Notifications</h4>'+
     '<p>Operation results (success/failure/warning/info) are displayed as Toast messages in the lower right. They disappear automatically and can also be dismissed by clicking.</p>'+
@@ -1106,7 +1106,7 @@ return [
     '<li><strong>Top Bar</strong> — Current page title, breadcrumbs, theme/language toggle</li>'+
     '<li><strong>SPA Mode</strong> — Smooth page transitions without full page reload</li></ul>'+
     '<h4>Tutorial System</h4>'+
-    '<ul><li>Top-right <strong>🎓 Tutorial</strong> button → Start the interactive guide for the current page</li>'+
+    '<ul><li>Top-right <strong>' + DXIcon('graduation') + ' Tutorial</strong> button → Start the interactive guide for the current page</li>'+
     '<li>Tutorials guide you step-by-step with highlights and tooltips</li>'+
     '<li>Jump directly to any section via the TOC (table of contents)</li></ul>',
     '<h4>Toast 알림</h4>'+
@@ -1116,7 +1116,7 @@ return [
     '<li><strong>상단 바</strong> — 현재 페이지 제목, 빵크럼, 테마/언어 토글</li>'+
     '<li><strong>SPA 방식</strong> — 페이지 전환 시 새로고침 없이 부드러운 전환</li></ul>'+
     '<h4>튜토리얼 시스템</h4>'+
-    '<ul><li>우측 상단 <strong>🎓 튜토리얼</strong> 버튼 → 현재 페이지의 대화형 가이드 시작</li>'+
+    '<ul><li>우측 상단 <strong>' + DXIcon('graduation') + ' 튜토리얼</strong> 버튼 → 현재 페이지의 대화형 가이드 시작</li>'+
     '<li>튜토리얼은 하이라이트 + 툴팁으로 단계별 안내</li>'+
     '<li>TOC(목차)에서 원하는 섹션으로 직접 이동 가능</li></ul>',
     '<h4>Toast通知</h4>'+
@@ -1126,7 +1126,7 @@ return [
     '<li><strong>トップバー</strong> — 現在のページタイトル、パンくずリスト、テーマ/言語トグル</li>'+
     '<li><strong>SPA方式</strong> — ページ遷移時にリロードなしのスムーズな切替</li></ul>'+
     '<h4>チュートリアルシステム</h4>'+
-    '<ul><li>右上の <strong>🎓 チュートリアル</strong> ボタン → 現在のページのガイドを開始</li>'+
+    '<ul><li>右上の <strong>' + DXIcon('graduation') + ' チュートリアル</strong> ボタン → 現在のページのガイドを開始</li>'+
     '<li>チュートリアルはハイライト＋ツールチップでステップバイステップで案内</li>'+
     '<li>TOC（目次）から任意のセクションに直接ジャンプ可能</li></ul>',
     '<h4>Toast 通知</h4>'+
@@ -1136,7 +1136,7 @@ return [
     '<li><strong>顶部栏</strong> — 当前页面标题、面包屑、主题/语言开关</li>'+
     '<li><strong>SPA 模式</strong> — 页面切换时无需刷新，平滑过渡</li></ul>'+
     '<h4>教程系统</h4>'+
-    '<ul><li>右上角 <strong>🎓 教程</strong> 按钮 → 启动当前页面的交互式指南</li>'+
+    '<ul><li>右上角 <strong>' + DXIcon('graduation') + ' 教程</strong> 按钮 → 启动当前页面的交互式指南</li>'+
     '<li>教程通过高亮和工具提示逐步引导</li>'+
     '<li>可通过目录直接跳转到任意章节</li></ul>',
     '<h4>Toast 通知</h4>'+
@@ -1146,7 +1146,7 @@ return [
     '<li><strong>頂部列</strong> — 目前頁面標題、麵包屑、主題/語言開關</li>'+
     '<li><strong>SPA 模式</strong> — 頁面切換時無需重新整理，平滑過渡</li></ul>'+
     '<h4>教學系統</h4>'+
-    '<ul><li>右上角 <strong>🎓 教學</strong> 按鈕 → 啟動目前頁面的互動式指南</li>'+
+    '<ul><li>右上角 <strong>' + DXIcon('graduation') + ' 教學</strong> 按鈕 → 啟動目前頁面的互動式指南</li>'+
     '<li>教學透過高亮和工具提示逐步引導</li>'+
     '<li>可透過目錄直接跳轉到任意章節</li></ul>',
     '<h4>Notificaciones Toast</h4>'+
@@ -1156,7 +1156,7 @@ return [
     '<li><strong>Barra superior</strong> — Título de la página, migas de pan, tema/idioma</li>'+
     '<li><strong>Modo SPA</strong> — Transiciones suaves sin recargar la página</li></ul>'+
     '<h4>Sistema de tutorial</h4>'+
-    '<ul><li>Botón <strong>🎓 Tutorial</strong> arriba a la derecha → Inicia la guía interactiva de la página actual</li>'+
+    '<ul><li>Botón <strong>' + DXIcon('graduation') + ' Tutorial</strong> arriba a la derecha → Inicia la guía interactiva de la página actual</li>'+
     '<li>Los tutoriales guían paso a paso con resaltados y tooltips</li>'+
     '<li>Salte a cualquier sección desde el TOC (tabla de contenidos)</li></ul>'),
   tips:refT5(
@@ -1177,7 +1177,7 @@ return [
     '<li>發生錯誤時，點擊 Toast 可查看詳細資訊</li></ul>')
 }},
 
-{cat:'system',id:'api-endpoints',icon:'🌐',name:'API Endpoints',desc:refT5('Backend REST API reference','Backend REST API 레퍼런스','バックエンド REST API リファレンス','后端 REST API 参考','後端 REST API 參考'),page:null,tabs:{
+{cat:'system',id:'api-endpoints',icon:'globe',name:'API Endpoints',desc:refT5('Backend REST API reference','Backend REST API 레퍼런스','バックエンド REST API リファレンス','后端 REST API 参考','後端 REST API 參考'),page:null,tabs:{
   overview:refT5(
     '<h4>Key API Endpoints</h4>'+
     '<table class="ref-tbl"><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>'+
@@ -1231,27 +1231,27 @@ return [
     '<tr><td><span class="ref-api-method ref-api-get">GET</span></td><td class="mono">/api/outputs</td><td>推論結果清單</td></tr></table>'),
   tips:refT5(
     '<h4>Developer Tips</h4>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>All APIs are based on <code>'+apiBase+'</code>. You can call the same endpoints used by the GUI directly with <code>curl</code>, etc.</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>All APIs are based on <code>'+apiBase+'</code>. You can call the same endpoints used by the GUI directly with <code>curl</code>, etc.</span></div>'+
     '<ul><li>Responses are in JSON format</li>'+
     '<li>File uploads use <code>multipart/form-data</code> format</li></ul>',
     '<h4>개발자 팁</h4>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>모든 API는 <code>'+apiBase+'</code> 기반입니다. GUI에서 사용하는 것과 동일한 엔드포인트를 <code>curl</code> 등으로 직접 호출할 수 있습니다.</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>모든 API는 <code>'+apiBase+'</code> 기반입니다. GUI에서 사용하는 것과 동일한 엔드포인트를 <code>curl</code> 등으로 직접 호출할 수 있습니다.</span></div>'+
     '<ul><li>응답은 JSON 형식입니다</li>'+
     '<li>파일 업로드는 <code>multipart/form-data</code> 형식입니다</li></ul>',
     '<h4>開発者向けヒント</h4>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>すべてのAPIは<code>'+apiBase+'</code>ベースです。GUIで使用しているのと同じエンドポイントを<code>curl</code>等で直接呼び出せます。</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>すべてのAPIは<code>'+apiBase+'</code>ベースです。GUIで使用しているのと同じエンドポイントを<code>curl</code>等で直接呼び出せます。</span></div>'+
     '<ul><li>レスポンスはJSON形式です</li>'+
     '<li>ファイルアップロードは<code>multipart/form-data</code>形式です</li></ul>',
     '<h4>开发者提示</h4>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>所有 API 基于 <code>'+apiBase+'</code>。可以使用 <code>curl</code> 等工具直接调用与 GUI 相同的端点。</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>所有 API 基于 <code>'+apiBase+'</code>。可以使用 <code>curl</code> 等工具直接调用与 GUI 相同的端点。</span></div>'+
     '<ul><li>响应为 JSON 格式</li>'+
     '<li>文件上传使用 <code>multipart/form-data</code> 格式</li></ul>',
     '<h4>開發者提示</h4>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>所有 API 基於 <code>'+apiBase+'</code>。可以使用 <code>curl</code> 等工具直接呼叫與 GUI 相同的端點。</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>所有 API 基於 <code>'+apiBase+'</code>。可以使用 <code>curl</code> 等工具直接呼叫與 GUI 相同的端點。</span></div>'+
     '<ul><li>回應為 JSON 格式</li>'+
     '<li>檔案上傳使用 <code>multipart/form-data</code> 格式</li></ul>',
     '<h4>Consejos para desarrolladores</h4>'+
-    '<div class="ref-box tip"><span class="ref-box-icon">💡</span><span>Todas las API usan <code>'+apiBase+'</code> como base. Puede llamar directamente los mismos endpoints que usa la GUI con <code>curl</code>, etc.</span></div>'+
+    '<div class="ref-box tip"><span class="ref-box-icon">' + DXIcon('info') + '</span><span>Todas las API usan <code>'+apiBase+'</code> como base. Puede llamar directamente los mismos endpoints que usa la GUI con <code>curl</code>, etc.</span></div>'+
     '<ul><li>Las respuestas están en formato JSON</li>'+
     '<li>Las cargas de archivos usan <code>multipart/form-data</code></li></ul>')
 }}
@@ -1285,7 +1285,7 @@ function renderRef(){
     _SEC.forEach(function(s){
       if(s.cat!==c.id) return;
       mH+='<button class="ref-topic-card" id="ref-sec-'+s.id+'" data-ref-cat="'+s.cat+'" data-ref-id="'+s.id+'" data-help-id="ref-topic-'+s.id+'">'+
-        '<span class="ref-section-icon">'+s.icon+'</span>'+
+        '<span class="ref-section-icon">'+_refIco(s.icon)+'</span>'+
         '<span class="ref-section-info"><span class="ref-section-name">'+s.name+'</span><span class="ref-section-desc">'+s.desc+'</span></span>'+
       '</button>';
     });
@@ -1296,12 +1296,15 @@ function renderRef(){
 
 /* ════════════  INTERACTIONS  ════════════ */
 
+/* 주제 아이콘은 sprite 이름 (아이콘 체계 단계 5). 옛 글자 icon 은 그대로. */
+function _refIco(n){return (/^[a-z0-9_-]+$/.test(n||'')&&typeof DXIcon==='function')?DXIcon(n):(n||'');}
+
 function _refBuildDetail(s){
   var tabKeys=Object.keys(s.tabs);
-  var tabLabels={overview:'📋 '+refT5('Overview','개요','概要','概述','概述'),params:'⚙️ '+refT5('Parameters','파라미터','パラメータ','参数','參數'),workflow:'🔄 '+refT5('Workflow','워크플로우','ワークフロー','工作流','工作流程'),tips:'💡 '+refT5('Tips','팁','ヒント','提示','提示')};
+  var tabLabels={overview:DXIcon('clipboard') + ' '+refT5('Overview','개요','概要','概述','概述'),params:DXIcon('gear') + ' '+refT5('Parameters','파라미터','パラメータ','参数','參數'),workflow:DXIcon('refresh') + ' '+refT5('Workflow','워크플로우','ワークフロー','工作流','工作流程'),tips:DXIcon('info') + ' '+refT5('Tips','팁','ヒント','提示','提示')};
   var navLabel=refT5(' → Go to page',' 페이지로 →',' ページへ →',' → 前往页面',' → 前往頁面');
   var goBtn=s.page?'<button class="btn btn-ghost btn-sm" onclick="if(typeof nav===\'function\')nav(\''+s.page+'\')">'+s.name+navLabel+'</button>':'';
-  var h='<div class="ref-detail-hd"><div><div class="ref-detail-kicker">'+ refT5('Reference','레퍼런스','リファレンス','参考','參考') +'</div><h2>'+s.icon+' '+s.name+'</h2><p>'+s.desc+'</p></div>'+goBtn+'</div>';
+  var h='<div class="ref-detail-hd"><div><div class="ref-detail-kicker">'+ refT5('Reference','레퍼런스','リファレンス','参考','參考') +'</div><h2>'+_refIco(s.icon)+' '+s.name+'</h2><p>'+s.desc+'</p></div>'+goBtn+'</div>';
   h+='<div class="ref-tabs" data-ref-tabs="'+s.id+'">';
   tabKeys.forEach(function(k,i){h+='<div class="ref-tab'+(i===0?' active':'')+'" data-ref-tab="'+s.id+'-'+k+'">'+((tabLabels[k])||k)+'</div>';});
   h+='</div>';
@@ -1342,7 +1345,7 @@ function selectRefSection(secId,card){
 
   /* 닫기 버튼 */
   var closeBtn=document.createElement('button');
-  closeBtn.className='ref-expand-close';closeBtn.textContent='✕';
+  closeBtn.className='ref-expand-close';closeBtn.innerHTML=(typeof DXIcon==='function')?DXIcon('x'):'';closeBtn.setAttribute('aria-label','Close');
     expand.appendChild(closeBtn);
 
   /* 상세 내용 */

@@ -180,7 +180,7 @@
       content: { en: 'Specify calibration dataset path and file extensions.', ko: '캘리브레이션 데이터셋 경로와 파일 확장자를 지정합니다.', ja: 'キャリブレーションデータセットのパスとファイル拡張子を指定します。', 'zh-CN': '指定校准数据集路径和文件扩展名。', 'zh-TW': '指定校準資料集路徑和檔案副檔名。', es: 'Especifique la ruta del conjunto de calibración y las extensiones de archivo.' },
       beforeStep: function () { openWizardStep(3); } },
     { target: '#prep-select', position: 'bottom',
-      title: { en: 'Preprocessing', ko: '전처리', ja: '前処理', 'zh-CN': '预处理', 'zh-TW': '預處理', es: 'Preprocesamiento' },
+      title: { en: 'Preprocessing', ko: '전처리', ja: '前処理', 'zh-CN': '预处理', 'zh-TW': '預處理', es: 'Pre-procesamiento' },
       content: { en: 'Add preprocessing transforms (resize, normalize, etc.) to the pipeline.', ko: 'resize, normalize 등 14종 전처리를 순서대로 파이프라인에 추가합니다.', ja: '前処理（resize、normalizeなど）をパイプラインに追加します。', 'zh-CN': '将预处理变换（resize、normalize等）添加到管线。', 'zh-TW': '將預處理轉換（resize、normalize等）新增到管線。', es: 'Añada transformaciones de preprocesamiento (resize, normalize, etc.) a la canalización.' },
       beforeStep: function () { openWizardStep(3); } },
     { target: '#wiz-calib-num', position: 'bottom',
