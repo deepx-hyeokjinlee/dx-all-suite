@@ -198,3 +198,24 @@ for name, (fills, lines) in S.items():
 out += ['</defs>', '</svg>']
 open(__import__('pathlib').Path(__file__).resolve().parents[1] / 'shared/static/dx-icons.svg', 'w', encoding='utf-8').write('\n'.join(out) + '\n')
 print(len(S), 'symbols')
+
+# ── 탭 아이콘 (favicon) — 모듈 glyph 를 어두운 판 위에 (아이콘 체계 단계 5) ──
+# 탭 줄은 밝기도 어둡기도 하다 — 어두운 판 + 강조색 선이면 어느 쪽에서도 보인다.
+# 모듈 이름 → glyph. launcher 는 스튜디오 전체라 DX 글자.
+FAV_DIR = __import__('pathlib').Path(__file__).resolve().parents[1] / 'shared/static/favicons'
+FAV = {'dx_app': 'app', 'dx_stream': 'stream', 'dx_modelzoo': 'zoo', 'dx_compiler': 'compiler',
+       'dx_benchmark': 'bench', 'dx_planner': 'edge', 'dx_monitor': 'monitor', 'dx_agent_dev': 'agent'}
+FAV_BG, FAV_FG = '#0b1220', '#2997ff'
+FAV_DIR.mkdir(parents=True, exist_ok=True)
+def _fav(body):
+    return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
+            f'<rect width="32" height="32" rx="7" fill="{FAV_BG}"/>{body}</svg>\n')
+for mod, name in FAV.items():
+    fills, lines = S[name]
+    g = (f'<g transform="translate(2.5 2.5) scale(1.125)">'
+         f'<g fill="{FAV_FG}" fill-opacity=".28" stroke="none">' + ''.join(fills) + '</g>'
+         f'<g fill="none" stroke="{FAV_FG}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ''.join(lines) + '</g></g>')
+    (FAV_DIR / f'{mod}.svg').write_text(_fav(g), encoding='utf-8')
+(FAV_DIR / 'launcher.svg').write_text(_fav(
+    f'<text x="16" y="21.5" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="14" font-weight="800" fill="{FAV_FG}">DX</text>'), encoding='utf-8')
+print(len(FAV) + 1, 'favicons')

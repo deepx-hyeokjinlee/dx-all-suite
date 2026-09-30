@@ -96,3 +96,23 @@ def test_the_home_uses_the_sprite_for_its_glyphs():
     for key in ["app", "stream", "zoo", "compiler", "edge", "bench", "monitor", "agent", "library", "book"]:
         assert f'<use href="/static/shared/dx-icons.svg#{key}"' in html, key
     assert 'class="g-fill"' not in html, "인라인 glyph 가 남아 있다"
+
+
+FAVICONS = {
+    "launcher/static/index.html": "launcher", "dx_app/templates/index.html": "dx_app",
+    "dx_stream/templates/index.html": "dx_stream", "dx_modelzoo/templates/index.html": "dx_modelzoo",
+    "dx_compiler/templates/base.html": "dx_compiler", "dx_benchmark/templates/index.html": "dx_benchmark",
+    "dx_planner/templates/index.html": "dx_planner", "dx_monitor/templates/index.html": "dx_monitor",
+    "dx_agent_dev/templates/index.html": "dx_agent_dev",
+}
+
+
+@pytest.mark.parametrize("doc,mod", sorted(FAVICONS.items()))
+def test_every_module_tab_shows_its_glyph(doc, mod):
+    """탭 아이콘 (favicon) 도 같은 한 벌 — 예전엔 두 모듈만 이모지 (🔷 · 🎬) 였고 나머지는 브라우저 기본값이었다.
+    scripts/build_icon_sprite.py 가 모듈 glyph 를 어두운 판 위에 그려 shared/static/favicons/ 에 둔다."""
+    html = (ROOT / doc).read_text(encoding="utf-8")
+    assert f'<link rel="icon" type="image/svg+xml" href="/static/shared/favicons/{mod}.svg">' in html
+    assert "data:image/svg+xml" not in html.split("</head>")[0], "이모지 data-URI favicon 이 남아 있다"
+    svg = (ROOT / "shared" / "static" / "favicons" / f"{mod}.svg").read_text(encoding="utf-8")
+    assert svg.startswith("<svg") and 'viewBox="0 0 32 32"' in svg
