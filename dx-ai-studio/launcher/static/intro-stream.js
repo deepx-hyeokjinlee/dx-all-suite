@@ -144,23 +144,17 @@
     if (!_ready || !overlay) return false;
     stop();
     _root = _build(overlay);
-    overlay.classList.add('is-streaming');
     requestAnimationFrame(function () {
       requestAnimationFrame(function () { if (_root) _root.classList.add('is-on'); });
     });
     _later(function () { if (_root) _root.classList.add('is-pulled'); }, PULL_AT);
     _later(function () { if (_root) _root.classList.add('is-rippled'); }, RIPPLE_AT);
-    /* 장면이 먼저 물러나고, prompt 가 걷힌 (cue is-out) 다음 박자 직전에 logo 가 돌아온다 —
-       자리 (is-streaming) 를 먼저 풀면 prompt 가 사라지는 도중에 가운데로 튄다. */
-    _later(function () { if (_root) _root.classList.add('is-out'); }, beatMs - 320);
-    _later(function () { overlay.classList.remove('is-streaming'); }, beatMs - 10);
+    _later(function () { if (_root) _root.classList.add('is-out'); }, beatMs - 250);
     _later(stop, beatMs + 400);
     return true;
   }
 
   function stop() {
-    var ov = document.getElementById('splashOverlay');
-    if (ov) ov.classList.remove('is-streaming');
     _timers.forEach(clearTimeout);
     _timers.length = 0;
     if (_root && _root.parentNode) _root.parentNode.removeChild(_root);

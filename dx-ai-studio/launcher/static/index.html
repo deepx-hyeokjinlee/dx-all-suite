@@ -76,7 +76,7 @@
       <p class="mark-sub" id="splashSubtitle">AI Studio</p>
       <!-- Verbatim, from DEEPX's own newsroom: https://deepx.ai/ces-2026-foundry-deepx-declares-the-era-of-physical-ai-with-global-partners/ (8 January 2026). Not translated: a sentence attributed to a named person is a quotation, and re-authoring it in five languages would make it ours. The emphasis on "the physical world" is ours, not the speaker's - it marks where the sentence turns, and it is the thing the three scenes before it just showed. The wording is untouched. -->
       <blockquote class="mark-claim"><p class="claim-line"><span class="claim-a">“The center of gravity in AI is shifting</span> <span class="claim-b">from the cloud to <em>the physical world</em>.”</span></p><footer class="claim-by">Lokwon Kim · Founder &amp; CEO, DEEPX · CES 2026</footer></blockquote>
-      <div class="mark-cue" id="splashCue" aria-hidden="true"><div class="cue-scene" aria-hidden="true"><img class="cue-shot" data-beat="1" src="/static/img/intro/scene-segment.svg" alt="A street segmented into road, vehicle, person and vegetation classes"><img class="cue-shot" data-beat="2" src="/static/img/intro/scene-silicon.svg" alt="The DX-M1 die the models are compiled down to"></div><span class="cue-line"><span class="cue-text" id="splashCueText"></span><i class="cue-caret"></i></span><span class="cue-answer" id="splashCueAnswer"></span></div>
+      <div class="mark-cue" id="splashCue" aria-hidden="true"><span class="cue-line"><span class="cue-text" id="splashCueText"></span><i class="cue-caret"></i></span><span class="cue-answer" id="splashCueAnswer"></span></div>
     </div>
     <div class="splash-skip" data-i18n="Click to skip">Click to skip</div>
   </div>
@@ -726,6 +726,8 @@
     '4-channel CCTV, detect people, 30 FPS': { ko:'4채널 CCTV, 사람 감지, 30 FPS', ja:'4チャンネルCCTV、人物検出、30 FPS', es:'CCTV de 4 canales, detectar personas, 30 FPS', 'zh-CN':'4 路 CCTV，检测行人，30 FPS', 'zh-TW':'4 路 CCTV，偵測行人，30 FPS' },
     'compile yolo26n to DXNN': { ko:'yolo26n을 DXNN으로 컴파일', ja:'yolo26n を DXNN にコンパイル', es:'compilar yolo26n a DXNN', 'zh-CN':'把 yolo26n 编译为 DXNN', 'zh-TW':'把 yolo26n 編譯為 DXNN' },
     'pose estimation on webcam': { ko:'웹캠으로 포즈 추정', ja:'ウェブカメラで姿勢推定', es:'estimación de pose con webcam', 'zh-CN':'用摄像头做姿态估计', 'zh-TW':'用攝影機做姿態估計' },
+    'segformer · 200 fps on one DX-M1': { ko:'segformer · DX-M1 한 개로 200 fps', ja:'segformer · DX-M1 1基で 200 fps', es:'segformer · 200 fps en un solo DX-M1', 'zh-CN':'segformer · 一颗 DX-M1 跑 200 fps', 'zh-TW':'segformer · 一顆 DX-M1 跑 200 fps' },
+    'yolo26n → DXNN · 212 fps on DX-M1': { ko:'yolo26n → DXNN · DX-M1 에서 212 fps', ja:'yolo26n → DXNN · DX-M1 で 212 fps', es:'yolo26n → DXNN · 212 fps en DX-M1', 'zh-CN':'yolo26n → DXNN · DX-M1 上 212 fps', 'zh-TW':'yolo26n → DXNN · DX-M1 上 212 fps' },
     '16 channels on one DX-M1 · 495 fps NPU': { ko:'DX-M1 한 개로 16채널 · NPU 495 fps', ja:'DX-M1 1基で16チャンネル · NPU 495 fps', es:'16 canales en un solo DX-M1 · NPU a 495 fps', 'zh-CN':'一颗 DX-M1 跑 16 路 · NPU 495 fps', 'zh-TW':'一顆 DX-M1 跑 16 路 · NPU 495 fps' },
     '16-channel CCTV object detection': { ko:'16채널 CCTV 객체 감지', ja:'16チャンネルCCTV 物体検出', es:'detección de objetos en CCTV de 16 canales', 'zh-CN':'16 路 CCTV 目标检测', 'zh-TW':'16 路 CCTV 物件偵測' },
     'segment a video file': { ko:'비디오 파일 분할', ja:'動画ファイルをセグメンテーション', es:'segmentar un archivo de vídeo', 'zh-CN':'对视频文件做分割', 'zh-TW':'對影片檔做分割' },
@@ -1522,6 +1524,8 @@
   <script src="/launcher-state.js"></script>
   <script src="/launcher-language.js"></script>
   <script src="/intro-stream.js"></script>
+  <script src="/intro-app.js"></script>
+  <script src="/intro-compile.js"></script>
   <script src="/launcher-splash.js"></script>
   <script src="/platform-info.js"></script>
   <script src="/launcher-app-frame.js"></script>

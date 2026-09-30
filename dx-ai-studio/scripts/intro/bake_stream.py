@@ -2,7 +2,7 @@
 
 spec: docs/superpowers/specs/2026-09-30-intro-stream-scene-design.md
 
-make_scenes.py 가 사진을 쓰지 않은 이유는 둘이었다 — 사진마다 톤이 제각각이고, 가진 사진에는 AI
+옛 make_scenes.py (2026-09-30 지움) 가 사진을 쓰지 않은 이유는 둘이었다 — 사진마다 톤이 제각각이고, 가진 사진에는 AI
 overlay 가 이미 구워져 있었다. 여기서는 둘 다 풀린다: 16칸에 grade 를 하나로 입히고 (wall), box 는
 구운 그림이 아니라 좌표 (detections.json) 로 두어 화면이 직접 그리고 움직인다.
 

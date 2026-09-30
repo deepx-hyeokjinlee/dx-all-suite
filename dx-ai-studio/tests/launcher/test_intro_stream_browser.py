@@ -52,13 +52,25 @@ def test_the_first_work_beat_is_the_sixteen_channel_wall(browser, port):
     ctx, page = _open(browser, port)
     try:
         page.wait_for_selector(".intro-stream.is-on", state="visible", timeout=15000)
-        assert page.evaluate("document.getElementById('splashOverlay').classList.contains('is-streaming')")
+        assert page.evaluate("document.getElementById('splashOverlay').classList.contains('is-scene')")
         n = page.evaluate("document.querySelectorAll('.intro-stream .ist-boxes .ist-b').length")
         assert n == TOTAL, f"bake 한 box {TOTAL} 개가 다 그려져야 한다: {n}"
         text = page.evaluate("document.querySelector('.intro-stream').innerText")
         assert not re.search(r"\d\.\d\d|\b0\d\b", text), f"score · 채널 번호 같은 debug 표시: {text!r}"
         page.wait_for_function("document.getElementById('splashCueText').textContent.startsWith('16-channel')",
                                timeout=5000)
+    finally:
+        ctx.close()
+
+
+def test_the_logo_is_gone_before_the_first_scene_comes_in(browser, port):
+    """logo 가 반투명하게 남아 교차로 위에 겹쳤다 (사용자 피드백 2026-09-30) — 장면이 들어올 때는 이미 없다."""
+    ctx, page = _open(browser, port)
+    try:
+        page.wait_for_selector(".intro-stream", state="attached", timeout=15000)
+        seen = page.evaluate("""() => ['splashMark', 'splashSubtitle'].map(id =>
+          parseFloat(getComputedStyle(document.getElementById(id)).opacity))""")
+        assert max(seen) < 0.05, f"장면이 들어오는 순간 logo · 부제가 남아 있다: {seen}"
     finally:
         ctx.close()
 

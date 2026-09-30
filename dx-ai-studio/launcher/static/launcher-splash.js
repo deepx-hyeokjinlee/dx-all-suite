@@ -44,25 +44,34 @@
   var _BEAT = 1950;
   /* 박자마다 길이가 다를 수 있다 — Stream 은 장면이 세 번 움직이므로 (box · pull-back · 물결)
      길다 (intro-stream.js). answerAt 은 대답이 오는 때: 장면이 할 말을 다 한 뒤 — 그리고 대답을
-     읽을 시간을 준다 (2.4s, 처음 0.9s 는 "나오자마자 넘어간다" 는 사용자 피드백). note 는 대답에
+     읽을 시간을 준다. 처음 0.9s 는 "나오자마자 넘어간다", 2.4s 는 "넘어갈 때가 길다" 는 사용자
+     피드백이었다 — 지금은 약 1.7–1.8s. note 는 대답에
      붙는 실측 한 줄 — img/intro/stream/MEASURED.md. 16 × 30 fps 는 NPU 로는 넘지만 이 host (N97)
      의 end-to-end 는 채널당 약 18 fps 라서, 참인 NPU 수치로 말한다 (2026-09-30 사용자 결정). */
   var _WORK = [
     { ask: '16-channel CCTV object detection', by: 'Stream', note: '16 channels on one DX-M1 · 495 fps NPU',
-      ms: 5300, answerAt: 2600, scene: 'stream' },
-    { ask: 'segment a video file',            by: 'App' },
-    { ask: 'compile yolo26n to DXNN',         by: 'Compiler' }
+      ms: 4700, answerAt: 2600, scene: 'stream' },
+    { ask: 'segment a video file', by: 'App', note: 'segformer · 200 fps on one DX-M1',
+      ms: 4600, answerAt: 2650, scene: 'app' },
+    { ask: 'compile yolo26n to DXNN', by: 'Compiler', note: 'yolo26n → DXNN · 212 fps on DX-M1',
+      ms: 4600, answerAt: 2650, scene: 'compile' }
   ];
+  /* 박자마다 화면을 채우는 장면 — 셋 다 prepare / play / stop 모양이다. 장면이 준비되지 않았으면
+     (느린 tunnel · 그림 없음) 박자는 prompt 만으로 간다. */
+  function _scene(name) {
+    return { stream: window.DXIntroStream, app: window.DXIntroApp, compile: window.DXIntroCompile }[name];
+  }
+  var _SCENES = ['stream', 'app', 'compile'];
   function _ms(item) { return item.ms || _BEAT; }
   var _WORK_MS = _WORK.reduce(function (sum, item) { return sum + _ms(item); }, 0);
   /* hero 의 부제("AI Studio")는 CSS 가 1.9s 에 띄운다. work 는 그게 자리를
      잡고 한 박자 쉰 다음에 시작해야 한다 — 처음엔 2.8s 로 잡았더니 부제가
      250ms 만에 밀려나서, 있었는지도 모르게 지나갔다. */
   var _WORK_IN  = 3400;
-  var _CLOSE    = _WORK_IN + _WORK_MS;         /* 12600 */
+  var _CLOSE    = _WORK_IN + _WORK_MS;         /* 17300 */
   /* close 는 주장 하나로 닫는다. 읽을 시간이 필요하므로 hero 로 돌아오는
      것보다 길게 잡는다 — 한 문장을 못 읽고 끝나면 없느니만 못하다. */
-  var _INTRO    = _CLOSE + 2600;              /* 15200 */
+  var _INTRO    = _CLOSE + 2600;              /* 19900 */
 
   function _t(key) {
     return (window.DXI18n && window.DXI18n.T) ? window.DXI18n.T(key) : key;
@@ -92,9 +101,13 @@
       cue.classList.remove('is-answered', 'is-out');
       cue.setAttribute('data-beat', String(index));
       answer.textContent = item.note ? item.by + ' \u00b7 ' + _t(item.note) : item.by;
-      if (item.scene === 'stream' && window.DXIntroStream) {
-        window.DXIntroStream.play(document.getElementById('splashOverlay'), _ms(item));
-      }
+      /* is-scene (prompt 를 아래로, logo 는 비킨다) 은 여기 한 곳이 박자마다 정한다. 장면이 각자
+         끄던 때는 앞 장면이 늦게 시작한 날 그 timer 가 다음 장면이 켠 뒤에 돌아, Compiler 도중
+         prompt 가 가운데로 튀어 칩과 겹쳤다 (간헐 — 여유가 9–15ms 였다). */
+      var ov = document.getElementById('splashOverlay');
+      var scene = item.scene && _scene(item.scene);
+      var played = !!(scene && scene.play(ov, _ms(item)));
+      if (ov) ov.classList.toggle('is-scene', played);
       _type(text, _t(item.ask));
     }, at);
     _later(function () { cue.classList.add('is-answered'); }, at + (item.answerAt || _TYPE_MS + 260));
@@ -116,7 +129,7 @@
 
     /* 움직임을 줄여 달라고 한 사람에게는 크로스페이드. */
     var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!still && window.DXIntroStream) window.DXIntroStream.prepare();
+    if (!still) _SCENES.forEach(function (name) { var s = _scene(name); if (s) s.prepare(); });
     if (still) {
       if (overlay) overlay.classList.add('is-still');
       ns._splashTimers.push(setTimeout(skipSplash, 700));
@@ -142,7 +155,7 @@
         /* 3. close — 프롬프트가 걷히고 마크가 이름과 함께 남는다. */
         _later(function () {
           if (!overlay) return;
-          overlay.classList.remove('is-working');
+          overlay.classList.remove('is-working', 'is-scene');
           overlay.classList.add('is-closed');
         }, _CLOSE);
 
@@ -168,7 +181,7 @@
     ns._splashTimers.forEach(function(id) { clearTimeout(id); });
     ns._splashTimers.length = 0;
     ns._splashActive = false;
-    if (window.DXIntroStream) window.DXIntroStream.stop();
+    _SCENES.forEach(function (name) { var s = _scene(name); if (s) s.stop(); });
     if (ns._decodeRAF) { cancelAnimationFrame(ns._decodeRAF); ns._decodeRAF = null; }
     if (window._splashParticleCleanup) window._splashParticleCleanup();
 
@@ -228,10 +241,6 @@
           '<footer class="claim-by">Lokwon Kim \u00b7 Founder &amp; CEO, DEEPX \u00b7 CES 2026</footer>' +
         '</blockquote>' +
       '<div class="mark-cue" id="splashCue" aria-hidden="true">' +
-        '<div class="cue-scene" aria-hidden="true">' +
-          '<img class="cue-shot" data-beat="1" src="/static/img/intro/scene-segment.svg" alt="A street segmented into road, vehicle, person and vegetation classes">' +
-          '<img class="cue-shot" data-beat="2" src="/static/img/intro/scene-silicon.svg" alt="The DX-M1 die the models are compiled down to">' +
-        '</div>' +
         '<span class="cue-line"><span class="cue-text" id="splashCueText"></span>' +
         '<i class="cue-caret"></i></span>' +
         '<span class="cue-answer" id="splashCueAnswer"></span>' +

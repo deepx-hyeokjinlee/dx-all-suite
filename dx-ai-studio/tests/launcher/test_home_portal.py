@@ -465,41 +465,34 @@ def test_the_working_beat_shows_the_product_rather_than_claiming_it():
 def test_the_working_beats_are_regenerable_and_stay_in_the_splash():
     """Every scene in the working beats can be made again, and none leaks into the page.
 
-    The first beat (Stream, sixteen channels) is real footage now: frames from
-    DEEPX's own sample videos with the boxes a DX-M1 actually drew, baked by
-    scripts/intro/bake_stream.py (2026-09-30 user decision). The drawn scenes
-    read as clip-art. The two objections to photographs the drawings answered
-    (mixed colour casts, AI overlays baked in) are met there by one grade over
-    the wall and by keeping the boxes as coordinates the page draws itself.
+    All three beats are real material now (2026-09-30 user decisions): sixteen
+    channels of DEEPX's own sample footage with the boxes a DX-M1 drew, a drive
+    through LA segmented frame by frame on a DX-M1, and the real YOLO26n graph
+    folding into the chip. The drawn scenes read as clip-art and are gone, with
+    their generator. The two objections to photographs the drawings once
+    answered (mixed colour casts, AI overlays baked in) are met by one grade per
+    scene and by keeping results as data the page draws where it can.
 
-    The other two beats are still drawn by make_scenes.py. Either way the rule
-    is the same: an asset nobody can regenerate is worse than none.
+    The rule the drawings kept still holds: an asset nobody can regenerate is
+    worse than none, so every folder names its bake script and its source.
 
     It also pins the boundary that was crossed once already: replacing the
     photo paths matched the About section's use-case images too, and quietly
     swapped them for intro scenes.
     """
-    scenes = ROOT / "launcher" / "static" / "img" / "intro"
-    drawn = ["scene-segment.svg", "scene-silicon.svg"]
-    for n in drawn:
-        f = scenes / n
-        assert f.exists(), f"{n} is missing"
-        assert f.read_text(encoding="utf-8").lstrip().startswith("<svg"), f"{n} is not an SVG"
-    gen = (ROOT / "scripts" / "intro" / "make_scenes.py").read_text(encoding="utf-8")
-    for n in drawn:
-        assert n.replace(".svg", "") in gen, f"{n} is not produced by the generator"
-    assert not (scenes / "scene-detect.svg").exists(), "the drawn Stream scene was replaced by footage"
-
-    stream = scenes / "stream"
-    for n in ("wall.webp", "hero.webp", "detections.json", "SOURCE.md", "MEASURED.md"):
-        assert (stream / n).exists(), f"stream/{n} is missing"
-    assert (ROOT / "scripts" / "intro" / "bake_stream.py").exists(), "the Stream scene cannot be baked again"
+    intro = ROOT / "launcher" / "static" / "img" / "intro"
+    for stale in ("scene-detect.svg", "scene-segment.svg", "scene-silicon.svg"):
+        assert not (intro / stale).exists(), f"{stale} was replaced by real material"
+    assert not (ROOT / "scripts" / "intro" / "make_scenes.py").exists()
+    for folder, script in (("stream", "bake_stream.py"), ("app", "bake_app.py"), ("compile", "bake_compile.py")):
+        assert (intro / folder / "SOURCE.md").exists(), f"{folder}/SOURCE.md is missing"
+        assert (ROOT / "scripts" / "intro" / script).exists(), f"{folder} cannot be baked again"
+        assert script in (intro / folder / "SOURCE.md").read_text(encoding="utf-8")
 
     html = index()
-    splash = html[html.index('id="splashOverlay"'):html.index("</header>")]
-    for n in drawn:
-        assert n in splash, f"{n} is not used by the intro"
-    assert '<script src="/intro-stream.js"></script>' in html
+    for js in ("intro-stream.js", "intro-app.js", "intro-compile.js"):
+        assert f'<script src="/{js}"></script>' in html
+    assert 'class="cue-scene"' not in html, "the old card is gone"
     # The About section keeps its own photographs.
     about = html[html.index("</header>"):]
     assert "img/intro/" not in about, (
