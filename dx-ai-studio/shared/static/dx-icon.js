@@ -48,5 +48,20 @@
     return svg;
   };
 
+  /* 아이콘 + 글자를 한 번에 — el.textContent = '<체크 이모지> ' + T('Done') 이던 자리 (아이콘 체계 단계 5).
+     글자는 text node 로 넣는다 (번역 · 서버 메시지를 HTML 로 해석하지 않는다).
+       DXIcon.label(btn, 'check', T('Use This Config'))
+       DXIcon.label(h3, 'spinner', T('Compiling...'), { cls: 'dx-ico--spin' }) */
+  DXIcon.label = function (el, name, text, opts) {
+    if (!el) return el;
+    el.textContent = '';
+    if (name) {
+      el.appendChild(DXIcon.el(name, opts));
+      el.appendChild(document.createTextNode(' '));
+    }
+    el.appendChild(document.createTextNode(text == null ? '' : String(text)));
+    return el;
+  };
+
   window.DXIcon = DXIcon;
 })();

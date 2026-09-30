@@ -125,6 +125,8 @@
   color: var(--dxt-text);
 }
 .dxt-tip-body strong { color: var(--dxt-accent); }
+/* 본문 안의 아이콘 ({{i:name}} — tutorial-engine.js _dxtExpandIcons). 글자 높이에 맞춘다. */
+.dxt-tip-body .dxt-inline-ico { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
 
 .dxt-tip-nav {
   display: flex; align-items: center; gap: var(--sp-2);

@@ -70,7 +70,7 @@ def test_the_tutorial_draws_its_marks_from_the_sprite():
     js = _src("tutorial-engine.js")
     for name in ("graduation", "check", "lock", "circle", "play", "refresh", "clipboard", "x", "file"):
         assert f"'{name}'" in js, name
-    assert re.search(r"/\^\[a-z-\]\+\$/", js), "구역 아이콘이 sprite 이름이면 그리는 분기가 없다"
+    assert re.search(r"/\^\[a-z0-9_-\]\+\$/", js), "구역 아이콘이 sprite 이름 (task-object_detection 포함) 이면 그리는 분기가 없다"
 
 
 def test_the_npu_widget_uses_the_sprite():

@@ -205,7 +205,10 @@
         tutorials.forEach(function(tut) {
           var item = document.createElement('div');
           item.className = 'tutorial-menu-item';
-          item.textContent = (tut.icon || '') + ' ' + tut.name;
+          // icon 은 sprite 이름 (아이콘 체계 단계 5). 예전 글자 icon 이 남아 있으면 글자 그대로.
+          if (tut.icon && /^[a-z0-9_-]+$/.test(tut.icon)) item.innerHTML = _ico(tut.icon) + ' ';
+          else if (tut.icon) item.textContent = tut.icon + ' ';
+          item.appendChild(document.createTextNode(tut.name));
           item.addEventListener('click', function() {
             menuDropdown.style.display = 'none';
             _startTutorial(tut, opts);

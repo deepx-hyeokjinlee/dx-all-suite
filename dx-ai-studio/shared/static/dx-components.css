@@ -258,6 +258,12 @@
   vertical-align: -.125em;
   overflow: visible;
 }
+/* 진행 중 표시 (spinner) 가 돈다. 움직임을 줄이라는 설정이면 멈춰 둔다. */
+.dx-ico--spin { animation: dx-spin 1s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .dx-ico--spin { animation: none; } }
+/* 접기 · 펼치기 chevron: 접힌 쪽을 가리킨다 (열림 = 아래, 닫힘 = 오른쪽). */
+.dx-ico--fold { transition: transform .15s; }
+.is-collapsed > .dx-ico--fold, .collapsed .dx-ico--fold, [aria-expanded="false"] > .dx-ico--fold { transform: rotate(-90deg); }
 .dx-ico--sm { font-size: var(--fs-sm); }
 .dx-ico--lg { width: 1.5em; height: 1.5em; }
 

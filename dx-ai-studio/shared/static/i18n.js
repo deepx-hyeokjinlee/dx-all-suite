@@ -253,6 +253,22 @@
     // (.legend-item 은 색 점 span + 라벨 span 인데, 여기서 평평해지면
     //  점이 사라진다.)
     if (el.querySelector('[data-i18n], [data-i18n-html]')) return;
+    // 아이콘 + 글자 (DXIcon.label · 아이콘 체계 단계 5): 자식 엘리먼트가 아이콘뿐이면 글자 node 만 바꾼다 —
+    // textContent 로 통째 갈면 아이콘이 사라진다.
+    var kids = el.children;
+    if (kids.length && Array.prototype.every.call(kids, function (k) {
+      return k.tagName && k.tagName.toLowerCase() === 'svg' && k.classList.contains('dx-ico');
+    })) {
+      var texts = Array.prototype.filter.call(el.childNodes, function (n) { return n.nodeType === 3; });
+      var plain = texts.map(function (n) { return n.nodeValue; }).join('').trim();
+      if (!plain) return;
+      if (!el.dataset.i18nOrig) el.dataset.i18nOrig = plain;
+      var o = el.dataset.i18nOrig;
+      var tr = _lang === 'en' ? (_rev[plain] || o) : _lookup(o);
+      var out = (tr !== null && tr !== undefined) ? tr : o;
+      texts.forEach(function (n, i) { n.nodeValue = i === texts.length - 1 ? ' ' + out : ''; });
+      return;
+    }
     var text = el.textContent.trim();
     if (!text) return;
     if (!el.dataset.i18nOrig) el.dataset.i18nOrig = text;

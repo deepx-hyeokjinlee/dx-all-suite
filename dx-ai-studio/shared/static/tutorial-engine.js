@@ -3,12 +3,21 @@
 function _dxtIcon(name) {
   return (typeof window !== 'undefined' && typeof window.DXIcon === 'function') ? window.DXIcon(name) : '';
 }
-/* 구역 아이콘: sprite 이름 (/^[a-z-]+$/) 이면 그 아이콘, 아니면 적힌 글자 그대로 (모듈 튜토리얼의
-   이모지 icon 필드는 단계 5 에서 이름으로 바꾼다). 없으면 file. */
+/* 구역 아이콘: sprite 이름 (task-object_detection 처럼 숫자 · 밑줄도) 이면 그 아이콘, 아니면 적힌 글자
+   그대로. 없으면 file. */
+var _DXT_ICON_NAME = /^[a-z0-9_-]+$/;
 function _dxtSectionIcon(icon) {
   if (!icon) return _dxtIcon('file');
-  if (/^[a-z-]+$/.test(icon)) return _dxtIcon(icon);
+  if (_DXT_ICON_NAME.test(icon)) return _dxtIcon(icon);
   return String(icon);
+}
+/* 단계 본문 안의 아이콘: {{i:check}} → sprite 아이콘 (아이콘 체계 단계 5). 본문은 화면의 버튼 · 표시를
+   가리키므로 (예: "Ready 표시 {{i:check}}") 그 모양을 그대로 쓴다 — 이모지는 OS 마다 다르게 그려졌다. */
+function _dxtExpandIcons(html) {
+  return String(html || '').replace(/\{\{i:([a-z0-9_-]+)\}\}/g, function (m, name) {
+    return (typeof window !== 'undefined' && typeof window.DXIcon === 'function')
+      ? window.DXIcon(name, { cls: 'dxt-inline-ico' }) : '';
+  });
 }
 
 class DXTutorialEngine {
@@ -563,7 +572,7 @@ class DXTutorialEngine {
       '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
-      '<div class="dxt-tip-body">' + this._t(step.content) + '</div>' +
+      '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
       '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
       '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
@@ -587,7 +596,7 @@ class DXTutorialEngine {
       '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
-      '<div class="dxt-tip-body">' + this._t(step.content) + '</div>' +
+      '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
       '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
       '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
