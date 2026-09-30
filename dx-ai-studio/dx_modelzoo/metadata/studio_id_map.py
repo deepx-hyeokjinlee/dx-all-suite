@@ -217,28 +217,87 @@ def page_task_key(label: str) -> str:
 
 
 def _artifact_stem_key(fields: dict):
+    """page model 의 정체 = artifact 파일 이름 (확장자만 뗀 것). canonical_model_id 는 '.' 과 판 표기를 접어
+    squeezenet1.0 · 1.1 을 한 key 로 만든다 — 여기서는 글자를 접지 않고 영숫자 밖의 것만 '_' 로."""
     for url_field in _ARTIFACT_URL_FIELDS:
         url = fields.get(url_field)
         if url and url not in ("-", ""):
-            stem = url.rstrip("/").split("/")[-1]
-            return canonical_model_id(Path(stem).stem if "." in stem else stem)
+            name = url.rstrip("/").split("/")[-1]
+            name = re.sub(r"\.(dxnn|onnx|json)$", "", name, flags=re.I)
+            return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_") or None
     return None
+
+
+def _claim_score(sid: str, stem: str, own: set) -> tuple:
+    """한 stem 을 여러 studio id 가 원할 때 누가 갖나 — 작을수록 앞. PPU 여부가 같고, id 자신의 파일 이름이
+    그 stem 이고, 이름이 더 많이 겹치는 id."""
+    ppu_mismatch = ("ppu" in sid) != ("ppu" in stem)
+    own_hit = canonical_model_id(stem) in own or stem in own
+    common = 0
+    for a, b in zip(sid.replace("_", ""), stem.replace("_", "")):
+        if a != b:
+            break
+        common += 1
+    return (ppu_mismatch, not own_hit, -common, sid)
 
 
 def remap_public_models(public_models: dict, index: dict) -> tuple[dict, list[str]]:
     """Re-key public adapter output from artifact ids to studio catalog ids.
 
-    studio catalog 에 없는 model 은 artifact 의 .dxnn stem 을 key 로 — page 가 한 model 을 이름 · stem 두 key 로
-    주므로 그대로 두면 두 줄이 된다. 그 task 도 page 글자 대신 key 로."""
+    한 page model = 한 .dxnn stem = 한 줄. page 는 model 마다 두 key (이름 · stem) 로 주고, 이름이 비슷한 model
+    (yolo11-m 과 그 pre-optimized 판) 은 같은 studio id 로 풀리기도 한다 — 합치면 한쪽이 목록에서 사라졌다 (497 중
+    41). 그래서 studio id 하나에는 stem 하나만: 그 id 자신의 파일 이름과 맞는 stem 이 id 를 갖고, 나머지는 자기
+    stem 을 key 로 따로 선다. studio catalog 에 없는 model 도 stem 을 key 로, task 는 page 글자 대신 key 로
+    (spec 2026-10-01 dx_app per-model layout 결정 8)."""
     remapped: dict[str, dict] = {}
     warnings: list[str] = []
 
+    rows = []
     for pub_key, fields in public_models.items():
-        studio_id = resolve_studio_id(pub_key, fields, index)
+        rows.append((pub_key, fields, resolve_studio_id(pub_key, fields, index), _artifact_stem_key(fields)))
+
+    # studio id → 그 id 로 풀린 stem 들. 둘 이상이면 id 자신의 이름 · 파일과 맞는 stem 하나만 id 를 갖는다.
+    own_keys: dict[str, set] = {}
+    for canon, sid in (index.get("by_key") or {}).items():
+        own_keys.setdefault(sid, set()).add(canon)
+    stems_by_sid: dict[str, set] = {}
+    for _pk, _f, sid, stem in rows:
+        if sid and stem:
+            stems_by_sid.setdefault(sid, set()).add(stem)
+    winner: dict[str, str] = {}
+    for sid, stems in stems_by_sid.items():
+        if len(stems) == 1:
+            winner[sid] = next(iter(stems))
+            continue
+        own = own_keys.get(sid, set())
+        mine = sorted(st for st in stems if st in own or canonical_model_id(st) in own)
+        plain = sorted(stems, key=lambda st: (("pre_optimized" in st) + ("ppu2" in st), len(st), st))
+        winner[sid] = mine[0] if mine else plain[0]
+
+    # 한 stem 을 두 studio id 가 가지면 (curated catalog 에 같은 model 이 두 id 로 있는 경우) 이름이 그 stem 인 id 만
+    sids_by_stem: dict[str, list] = {}
+    for sid, st in winner.items():
+        sids_by_stem.setdefault(st, []).append(sid)
+    for st, sids in sids_by_stem.items():
+        if len(sids) > 1:
+            keep = sorted(sids, key=lambda sid: _claim_score(sid, st, own_keys.get(sid, set())))[0]
+            for sid in sids:
+                if sid != keep:
+                    winner.pop(sid, None)
+    sid_by_stem = {st: sid for sid, st in winner.items()}
+    for pub_key, fields, studio_id, stem in rows:
+        demoted = False
+        if studio_id is not None and stem and winner.get(studio_id) != stem and stem in sid_by_stem:
+            studio_id = sid_by_stem[stem]     # 이 stem 은 다른 id 가 가졌다
+        elif studio_id is not None and stem and winner.get(studio_id) != stem:
+            studio_id, demoted = None, True   # 같은 id 를 다른 stem 이 가졌다 — 자기 stem 으로 따로
+        if studio_id is None and stem in sid_by_stem:
+            studio_id = sid_by_stem[stem]     # 같은 model 의 다른 key (이름 key 는 풀렸고 stem key 는 못 풀린 경우)
         target = studio_id or pub_key
-        if studio_id is None and pub_key not in index["studio_ids"]:
+        # 밀려난 줄은 key 가 studio id 와 같아도 (yolov5m6 의 1280 판) 그 id 로 돌아가면 안 된다
+        if studio_id is None and (demoted or pub_key not in index["studio_ids"]):
             warnings.append(f"unmapped public model key: {pub_key!r} ({fields.get('display.class_name', '')})")
-            target = _artifact_stem_key(fields) or pub_key
+            target = stem or pub_key
             if fields.get("display.task"):
                 fields = dict(fields, **{"display.task": page_task_key(fields["display.task"])})
         if target in remapped:

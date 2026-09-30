@@ -1,7 +1,7 @@
 {
   "schema_version": "2.0",
   "source_profile": "internal",
-  "generated_at": "2026-09-30T17:58:29.052433+00:00",
+  "generated_at": "2026-09-30T23:14:47.541708+00:00",
   "models": [
     {
       "id": "3ddfa_v2_mobilnet0_5_120x120",
@@ -10835,146 +10835,6 @@
         "config": {
           "top_k": 5
         }
-      }
-    },
-    {
-      "id": "efficientnet_lite0_224x224",
-      "display": {
-        "name": "efficientnet-lite0_224x224",
-        "task": "image_classification",
-        "class_name": "efficientnet-lite0_224x224",
-        "summary": {
-          "en": "AI model for image_classification tasks."
-        },
-        "category_label": "Image Classification"
-      },
-      "specification": {
-        "operations": "404.52 MMACs",
-        "parameters": "4.63 M",
-        "dataset": "ILSVRC2012",
-        "input_resolution": "224x3",
-        "metric": {
-          "name": "Top1"
-        }
-      },
-      "evaluation": {
-        "raw": {
-          "accuracy": "74.576"
-        },
-        "qlite": {
-          "accuracy": "74.418"
-        },
-        "qpro": {
-          "accuracy": "67.258"
-        }
-      },
-      "performance": {
-        "fps": 3445.0,
-        "fps_per_watt": 2929.77,
-        "source_status": "provided"
-      },
-      "legal": {
-        "source_url": "https://github.com/huggingface/pytorch-image-models",
-        "license": "Apache-2.0"
-      },
-      "artifacts": {
-        "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/efficientnet-lite0_224x224.onnx"
-        },
-        "qlite_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/efficientnet-lite0_224x224.dxnn"
-        },
-        "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/efficientnet-lite0_224x224.json"
-        },
-        "qpro_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/efficientnet-lite0_224x224.dxnn"
-        }
-      },
-      "processor": {
-        "supported_devices": [],
-        "status": "metadata_pending"
-      },
-      "missing": [
-        "qpro_json"
-      ],
-      "content": {
-        "use_case": {
-          "en": "AI model for image_classification tasks."
-        }
-      },
-      "provenance": {
-        "display.name": {
-          "source": "local_modelzoo_repo"
-        },
-        "display.class_name": {
-          "source": "local_modelzoo_repo"
-        },
-        "display.task": {
-          "source": "local_modelzoo_repo"
-        },
-        "content.use_case.en": {
-          "source": "local_modelzoo_repo"
-        },
-        "legal.source_url": {
-          "source": "local_modelzoo_repo"
-        },
-        "specification.operations": {
-          "source": "local_modelzoo_repo"
-        },
-        "specification.parameters": {
-          "source": "local_modelzoo_repo"
-        },
-        "specification.dataset": {
-          "source": "local_modelzoo_repo"
-        },
-        "technical.input_shape": {
-          "source": "local_modelzoo_repo"
-        },
-        "specification.input_resolution": {
-          "source": "local_modelzoo_repo"
-        },
-        "legal.license": {
-          "source": "internal_modelzoo"
-        },
-        "specification.metric.name": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.raw.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.onnx.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.qlite.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qlite_dxnn.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qlite_json.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.qpro.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qpro_dxnn.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "performance.fps": {
-          "source": "internal_modelzoo"
-        },
-        "performance.fps_per_watt": {
-          "source": "internal_modelzoo"
-        }
-      },
-      "technical": {
-        "input_shape": [
-          1,
-          224,
-          224,
-          3
-        ]
       }
     },
     {
@@ -22084,6 +21944,128 @@
       }
     },
     {
+      "id": "regnet_x1_6gf_224x224_v2",
+      "display": {
+        "name": "RegNetX1_6GF-1",
+        "task": "classification",
+        "summary": {
+          "en": "Image classification model for visual recognition tasks."
+        },
+        "category_label": "Classification"
+      },
+      "specification": {
+        "dataset": "ImageNet",
+        "input_resolution": "224x224x3",
+        "operations": "1.62",
+        "parameters": "9.17",
+        "metric": {
+          "name": "Top1"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "79.686"
+        },
+        "qlite": {
+          "accuracy": "79.05"
+        },
+        "qpro": {
+          "accuracy": "79.506"
+        }
+      },
+      "performance": {
+        "fps": 747.0,
+        "fps_per_watt": 719.78,
+        "source_status": "provided"
+      },
+      "legal": {
+        "license": "BSD-3-Clause",
+        "source_url": "https://github.com/pytorch/vision"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/regnet-x1.6gf_224x224_v2.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/regnet-x1.6gf_224x224_v2.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/regnet-x1.6gf_224x224_v2.json"
+        },
+        "qpro_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/regnet-x1.6gf_224x224_v2.dxnn"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Image classification model for visual recognition tasks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qpro.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qpro_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps_per_watt": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "regnetx16gf",
       "display": {
         "name": "RegNetX16GF",
@@ -22276,18 +22258,18 @@
       },
       "evaluation": {
         "raw": {
-          "accuracy": "79.686"
+          "accuracy": "77.058"
         },
         "qlite": {
-          "accuracy": "79.05"
+          "accuracy": "76.77"
         },
         "qpro": {
-          "accuracy": "79.506"
+          "accuracy": "76.916"
         }
       },
       "performance": {
         "fps": 747.0,
-        "fps_per_watt": 719.78,
+        "fps_per_watt": 708.31,
         "source_status": "provided"
       },
       "legal": {
@@ -22301,13 +22283,13 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/regnet-x1.6gf_224x224_v2.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/regnet-x1.6gf_224x224_v1.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/regnet-x1.6gf_224x224_v2.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/regnet-x1.6gf_224x224_v1.json"
         },
         "qpro_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/regnet-x1.6gf_224x224_v2.dxnn"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/regnet-x1.6gf_224x224_v1.dxnn"
         }
       },
       "processor": {
@@ -26004,18 +25986,18 @@
       },
       "evaluation": {
         "raw": {
-          "accuracy": "70.998"
+          "accuracy": "69.744"
         },
         "qlite": {
-          "accuracy": "70.646"
+          "accuracy": "69.482"
         },
         "qpro": {
-          "accuracy": "70.830"
+          "accuracy": "69.682"
         }
       },
       "performance": {
-        "fps": 2580.0,
-        "fps_per_watt": 1143.29,
+        "fps": 2587.0,
+        "fps_per_watt": 1133.7,
         "source_status": "provided"
       },
       "legal": {
@@ -26029,13 +26011,13 @@
           "local_exists": true
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/resnet18_224x224_brecq.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/resnet18_224x224.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/resnet18_224x224_brecq.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/resnet18_224x224.json"
         },
         "qpro_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/resnet18_224x224_brecq.dxnn"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/resnet18_224x224.dxnn"
         }
       },
       "processor": {
@@ -26147,6 +26129,146 @@
         "config": {
           "top_k": 5
         }
+      }
+    },
+    {
+      "id": "resnet18_224x224_brecq",
+      "display": {
+        "name": "resnet18_224x224_brecq",
+        "task": "image_classification",
+        "class_name": "resnet18_224x224_brecq",
+        "summary": {
+          "en": "AI model for image_classification tasks."
+        },
+        "category_label": "Image Classification"
+      },
+      "specification": {
+        "operations": "1.82 GMACs",
+        "parameters": "11.68 M",
+        "dataset": "ILSVRC2012",
+        "input_resolution": "224x224",
+        "metric": {
+          "name": "Top1"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "70.998"
+        },
+        "qlite": {
+          "accuracy": "70.646"
+        },
+        "qpro": {
+          "accuracy": "70.830"
+        }
+      },
+      "performance": {
+        "fps": 2580.0,
+        "fps_per_watt": 1143.29,
+        "source_status": "provided"
+      },
+      "legal": {
+        "source_url": "https://github.com/yhhhli/BRECQ",
+        "license": "Apache-2.0"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/resnet18_224x224_brecq.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/resnet18_224x224_brecq.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/resnet18_224x224_brecq.json"
+        },
+        "qpro_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/resnet18_224x224_brecq.dxnn"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "AI model for image_classification tasks."
+        }
+      },
+      "provenance": {
+        "display.name": {
+          "source": "local_modelzoo_repo"
+        },
+        "display.class_name": {
+          "source": "local_modelzoo_repo"
+        },
+        "display.task": {
+          "source": "local_modelzoo_repo"
+        },
+        "content.use_case.en": {
+          "source": "local_modelzoo_repo"
+        },
+        "legal.source_url": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.operations": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.parameters": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.dataset": {
+          "source": "local_modelzoo_repo"
+        },
+        "technical.input_shape": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.input_resolution": {
+          "source": "local_modelzoo_repo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qpro.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qpro_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps_per_watt": {
+          "source": "internal_modelzoo"
+        }
+      },
+      "technical": {
+        "input_shape": [
+          1,
+          3,
+          224,
+          224
+        ]
       }
     },
     {
@@ -26980,18 +27102,18 @@
       },
       "evaluation": {
         "raw": {
-          "accuracy": "78.884"
+          "accuracy": "81.192"
         },
         "qlite": {
-          "accuracy": "78.56"
+          "accuracy": "80.814"
         },
         "qpro": {
-          "accuracy": "78.724"
+          "accuracy": "80.960"
         }
       },
       "performance": {
         "fps": 487.0,
-        "fps_per_watt": 355.71,
+        "fps_per_watt": 356.99,
         "source_status": "provided"
       },
       "legal": {
@@ -27005,13 +27127,13 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/resnext50-32x4d_224x224_imgclsmob.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/resnext50-32x4d_224x224.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/resnext50-32x4d_224x224_imgclsmob.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/resnext50-32x4d_224x224.json"
         },
         "qpro_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/resnext50-32x4d_224x224_imgclsmob.dxnn"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/resnext50-32x4d_224x224.dxnn"
         }
       },
       "processor": {
@@ -27123,6 +27245,146 @@
         "config": {
           "top_k": 5
         }
+      }
+    },
+    {
+      "id": "resnext50_32x4d_224x224_imgclsmob",
+      "display": {
+        "name": "resnext50-32x4d_224x224_imgclsmob",
+        "task": "image_classification",
+        "class_name": "resnext50-32x4d_224x224_imgclsmob",
+        "summary": {
+          "en": "AI model for image_classification tasks."
+        },
+        "category_label": "Image Classification"
+      },
+      "specification": {
+        "operations": "4.27 GMACs",
+        "parameters": "24.99 M",
+        "dataset": "ILSVRC2012",
+        "input_resolution": "224x224",
+        "metric": {
+          "name": "Top1"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "78.884"
+        },
+        "qlite": {
+          "accuracy": "78.56"
+        },
+        "qpro": {
+          "accuracy": "78.724"
+        }
+      },
+      "performance": {
+        "fps": 487.0,
+        "fps_per_watt": 355.71,
+        "source_status": "provided"
+      },
+      "legal": {
+        "source_url": "https://github.com/osmr/imgclsmob",
+        "license": "MIT"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/resnext50-32x4d_224x224_imgclsmob.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/resnext50-32x4d_224x224_imgclsmob.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/resnext50-32x4d_224x224_imgclsmob.json"
+        },
+        "qpro_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/resnext50-32x4d_224x224_imgclsmob.dxnn"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "AI model for image_classification tasks."
+        }
+      },
+      "provenance": {
+        "display.name": {
+          "source": "local_modelzoo_repo"
+        },
+        "display.class_name": {
+          "source": "local_modelzoo_repo"
+        },
+        "display.task": {
+          "source": "local_modelzoo_repo"
+        },
+        "content.use_case.en": {
+          "source": "local_modelzoo_repo"
+        },
+        "legal.source_url": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.operations": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.parameters": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.dataset": {
+          "source": "local_modelzoo_repo"
+        },
+        "technical.input_shape": {
+          "source": "local_modelzoo_repo"
+        },
+        "specification.input_resolution": {
+          "source": "local_modelzoo_repo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qpro.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qpro_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps_per_watt": {
+          "source": "internal_modelzoo"
+        }
+      },
+      "technical": {
+        "input_shape": [
+          1,
+          3,
+          224,
+          224
+        ]
       }
     },
     {
@@ -35553,7 +35815,7 @@
           "accuracy": "80.95"
         },
         "qlite": {
-          "accuracy": "80.266"
+          "accuracy": "80.284"
         },
         "qpro": {
           "accuracy": "39.744"
@@ -36207,6 +36469,9 @@
       "evaluation": {
         "raw": {
           "accuracy": "88.066"
+        },
+        "qlite": {
+          "accuracy": "80.818"
         }
       },
       "performance": {
@@ -36265,6 +36530,9 @@
           "source": "internal_modelzoo"
         },
         "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
           "source": "internal_modelzoo"
         }
       }
@@ -37114,6 +37382,113 @@
       }
     },
     {
+      "id": "yolo11_l_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-l_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "46.61",
+        "parameters": "25.38",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "52.3834"
+        },
+        "qlite": {
+          "accuracy": "51.8259"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-l_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-l_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-l_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolo11_l_pose_640x640",
       "display": {
         "name": "yolo11-l-pose-1",
@@ -37320,6 +37695,434 @@
       }
     },
     {
+      "id": "yolo11_l_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-l-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "74.61",
+        "parameters": "27.69",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "38.3155"
+        },
+        "qlite": {
+          "accuracy": "37.5161"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-l-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-l-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-l-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_m_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-m_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "36.40",
+        "parameters": "20.13",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "50.598"
+        },
+        "qlite": {
+          "accuracy": "49.8973"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-m_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_m_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-m-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "38.12",
+        "parameters": "20.96",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "62.9951"
+        },
+        "qlite": {
+          "accuracy": "61.184"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-m-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_m_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-m-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "64.41",
+        "parameters": "22.44",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "37.3051"
+        },
+        "qlite": {
+          "accuracy": "36.2037"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-m-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolo11_n_640x640_pre_optimized",
       "display": {
         "name": "yolo11-n_640x640_ppu2-1",
@@ -37427,6 +38230,862 @@
       }
     },
     {
+      "id": "yolo11_n_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-n-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "4.34",
+        "parameters": "2.93",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "47.771"
+        },
+        "qlite": {
+          "accuracy": "46.609"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-n-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-n-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-n-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_n_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-n-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "5.94",
+        "parameters": "2.91",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "29.1196"
+        },
+        "qlite": {
+          "accuracy": "28.6139"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-n-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-n-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-n-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_s_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-s_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "11.90",
+        "parameters": "9.49",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "45.8988"
+        },
+        "qlite": {
+          "accuracy": "45.7086"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-s_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_s_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-s-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "12.71",
+        "parameters": "9.97",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "56.5501"
+        },
+        "qlite": {
+          "accuracy": "54.7827"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-s-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_s_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-s-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "19.09",
+        "parameters": "10.14",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "34.0765"
+        },
+        "qlite": {
+          "accuracy": "33.698"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-s-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_x_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-x_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "102.16",
+        "parameters": "56.96",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "53.6813"
+        },
+        "qlite": {
+          "accuracy": "53.2343"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-x_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_x_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-x-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "106.13",
+        "parameters": "58.82",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "67.5549"
+        },
+        "qlite": {
+          "accuracy": "66.3555"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-x-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo11_x_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolo11-x-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "164.72",
+        "parameters": "62.14",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "39.1218"
+        },
+        "qlite": {
+          "accuracy": "38.3158"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo11-x-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolo11l_seg",
       "display": {
         "name": "yolo11-l-seg-1",
@@ -37453,7 +39112,7 @@
           "accuracy": "43.0"
         },
         "qlite": {
-          "accuracy": "37.5161"
+          "accuracy": "37.4946"
         },
         "qpro": {
           "accuracy": "38.249"
@@ -37475,10 +39134,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-l-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-l-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-l-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-l-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-l-seg_640x640.dxnn"
@@ -37646,10 +39305,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-m-pose_640x640.dxnn"
@@ -37795,7 +39454,7 @@
           "accuracy": "41.5"
         },
         "qlite": {
-          "accuracy": "36.2037"
+          "accuracy": "36.1919"
         },
         "qpro": {
           "accuracy": "37.211"
@@ -37817,10 +39476,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-m-seg_640x640.dxnn"
@@ -37988,10 +39647,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-n-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-n-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-n-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-n-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-n-pose_640x640.dxnn"
@@ -38159,10 +39818,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-n-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-n-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-n-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-n-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-n-seg_640x640.dxnn"
@@ -38308,7 +39967,7 @@
           "accuracy": "58.8"
         },
         "qlite": {
-          "accuracy": "54.7827"
+          "accuracy": "54.7488"
         },
         "qpro": {
           "accuracy": "55.344"
@@ -38330,10 +39989,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-s-pose_640x640.dxnn"
@@ -38501,10 +40160,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-s-seg_640x640.dxnn"
@@ -38650,7 +40309,7 @@
           "accuracy": "69.7"
         },
         "qlite": {
-          "accuracy": "66.3555"
+          "accuracy": "66.3443"
         },
         "qpro": {
           "accuracy": "65.474"
@@ -38672,10 +40331,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-x-pose_640x640.dxnn"
@@ -38821,7 +40480,7 @@
           "accuracy": "44.1"
         },
         "qlite": {
-          "accuracy": "38.3158"
+          "accuracy": "38.3612"
         },
         "qpro": {
           "accuracy": "39.010"
@@ -38843,10 +40502,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-x-seg_640x640.dxnn"
@@ -38962,250 +40621,6 @@
           "obj_threshold": 0.25,
           "score_threshold": 0.25,
           "nms_threshold": 0.45
-        }
-      }
-    },
-    {
-      "id": "yolo26_cls_n_224x224",
-      "display": {
-        "name": "yolo26n-cls-1",
-        "task": "classification",
-        "summary": {
-          "en": "Image classification model for visual recognition tasks."
-        },
-        "category_label": "Classification"
-      },
-      "specification": {
-        "dataset": "ImageNet",
-        "input_resolution": "224x224x3",
-        "operations": "0.24",
-        "parameters": "2.81",
-        "metric": {
-          "name": "Top1"
-        }
-      },
-      "evaluation": {
-        "raw": {
-          "accuracy": "71.398"
-        },
-        "qlite": {
-          "accuracy": "70.616"
-        },
-        "qpro": {
-          "accuracy": "68.470"
-        }
-      },
-      "performance": {
-        "fps": 3695.0,
-        "fps_per_watt": 5845.76,
-        "source_status": "provided"
-      },
-      "legal": {
-        "license": "AGPL-3.0",
-        "source_url": "https://github.com/ultralytics/ultralytics"
-      },
-      "artifacts": {
-        "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-cls-n_224x224.onnx"
-        },
-        "qlite_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-cls-n_224x224.dxnn"
-        },
-        "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-cls-n_224x224.json"
-        },
-        "qpro_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-cls-n_224x224.dxnn"
-        }
-      },
-      "processor": {
-        "supported_devices": [],
-        "status": "metadata_pending"
-      },
-      "missing": [
-        "qpro_json"
-      ],
-      "content": {
-        "use_case": {
-          "en": "Image classification model for visual recognition tasks."
-        }
-      },
-      "provenance": {
-        "display.task": {
-          "source": "internal_modelzoo"
-        },
-        "display.name": {
-          "source": "internal_modelzoo"
-        },
-        "specification.dataset": {
-          "source": "internal_modelzoo"
-        },
-        "specification.input_resolution": {
-          "source": "internal_modelzoo"
-        },
-        "specification.operations": {
-          "source": "internal_modelzoo"
-        },
-        "specification.parameters": {
-          "source": "internal_modelzoo"
-        },
-        "legal.license": {
-          "source": "internal_modelzoo"
-        },
-        "specification.metric.name": {
-          "source": "internal_modelzoo"
-        },
-        "legal.source_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.raw.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.onnx.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.qlite.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qlite_dxnn.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qlite_json.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.qpro.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qpro_dxnn.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "performance.fps": {
-          "source": "internal_modelzoo"
-        },
-        "performance.fps_per_watt": {
-          "source": "internal_modelzoo"
-        }
-      }
-    },
-    {
-      "id": "yolo26_cls_s_224x224",
-      "display": {
-        "name": "yolo26s-cls-1",
-        "task": "classification",
-        "summary": {
-          "en": "Image classification model for visual recognition tasks."
-        },
-        "category_label": "Classification"
-      },
-      "specification": {
-        "dataset": "ImageNet",
-        "input_resolution": "224x224x3",
-        "operations": "0.82",
-        "parameters": "6.72",
-        "metric": {
-          "name": "Top1"
-        }
-      },
-      "evaluation": {
-        "raw": {
-          "accuracy": "75.976"
-        },
-        "qlite": {
-          "accuracy": "75.446"
-        },
-        "qpro": {
-          "accuracy": "75.000"
-        }
-      },
-      "performance": {
-        "fps": 2065.0,
-        "fps_per_watt": 2245.95,
-        "source_status": "provided"
-      },
-      "legal": {
-        "license": "AGPL-3.0",
-        "source_url": "https://github.com/ultralytics/ultralytics"
-      },
-      "artifacts": {
-        "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-cls-s_224x224.onnx"
-        },
-        "qlite_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-cls-s_224x224.dxnn"
-        },
-        "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-cls-s_224x224.json"
-        },
-        "qpro_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-cls-s_224x224.dxnn"
-        }
-      },
-      "processor": {
-        "supported_devices": [],
-        "status": "metadata_pending"
-      },
-      "missing": [
-        "qpro_json"
-      ],
-      "content": {
-        "use_case": {
-          "en": "Image classification model for visual recognition tasks."
-        }
-      },
-      "provenance": {
-        "display.task": {
-          "source": "internal_modelzoo"
-        },
-        "display.name": {
-          "source": "internal_modelzoo"
-        },
-        "specification.dataset": {
-          "source": "internal_modelzoo"
-        },
-        "specification.input_resolution": {
-          "source": "internal_modelzoo"
-        },
-        "specification.operations": {
-          "source": "internal_modelzoo"
-        },
-        "specification.parameters": {
-          "source": "internal_modelzoo"
-        },
-        "legal.license": {
-          "source": "internal_modelzoo"
-        },
-        "specification.metric.name": {
-          "source": "internal_modelzoo"
-        },
-        "legal.source_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.raw.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.onnx.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.qlite.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qlite_dxnn.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qlite_json.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.qpro.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "artifacts.qpro_dxnn.remote_url": {
-          "source": "internal_modelzoo"
-        },
-        "performance.fps": {
-          "source": "internal_modelzoo"
-        },
-        "performance.fps_per_watt": {
-          "source": "internal_modelzoo"
         }
       }
     },
@@ -39855,6 +41270,1076 @@
       }
     },
     {
+      "id": "yolo26_l_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-l_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "46.42",
+        "parameters": "24.85",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "53.3346"
+        },
+        "qlite": {
+          "accuracy": "52.9975"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-l_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-l_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-l_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_l_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-l-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "48.89",
+        "parameters": "26.00",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "69.4339"
+        },
+        "qlite": {
+          "accuracy": "67.7854"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-l-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-l-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-l-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_m_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-m_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "36.57",
+        "parameters": "20.45",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "51.7229"
+        },
+        "qlite": {
+          "accuracy": "51.2046"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-m_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-m_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-m_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_m_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-m-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "39.05",
+        "parameters": "21.61",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "68.1422"
+        },
+        "qlite": {
+          "accuracy": "66.1368"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-m-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-m-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-m-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_n_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-n_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "3.35",
+        "parameters": "2.45",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "39.8752"
+        },
+        "qlite": {
+          "accuracy": "39.0555"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-n_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-n_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-n_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_n_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-n-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "4.41",
+        "parameters": "2.99",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "56.1291"
+        },
+        "qlite": {
+          "accuracy": "55.019"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-n-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-n-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-n-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_s_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-s_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "11.63",
+        "parameters": "9.54",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "47.209"
+        },
+        "qlite": {
+          "accuracy": "46.5933"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-s_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-s_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-s_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_s_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-s-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "13.25",
+        "parameters": "10.43",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "62.1849"
+        },
+        "qlite": {
+          "accuracy": "60.3815"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-s-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-s-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-s-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_x_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-x_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "101.72",
+        "parameters": "55.77",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "55.4276"
+        },
+        "qlite": {
+          "accuracy": "55.0262"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-x_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-x_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-x_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolo26_x_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolo26-x-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "105.69",
+        "parameters": "57.63",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "71.0538"
+        },
+        "qlite": {
+          "accuracy": "70.2116"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-x-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-x-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-x-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolo26l",
       "display": {
         "name": "yolo26l",
@@ -39881,7 +42366,7 @@
           "accuracy": "53.3346"
         },
         "qlite": {
-          "accuracy": "52.9975"
+          "accuracy": "52.9808"
         },
         "qpro": {
           "accuracy": "52.816"
@@ -39903,10 +42388,10 @@
           "local_exists": true
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-l_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-l_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-l_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-l_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-l_640x640.dxnn"
@@ -40389,7 +42874,7 @@
           "accuracy": "69.4339"
         },
         "qlite": {
-          "accuracy": "67.7854"
+          "accuracy": "67.796"
         },
         "qpro": {
           "accuracy": "64.559"
@@ -40411,10 +42896,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-l-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-l-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-l-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-l-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-l-pose_640x640.dxnn"
@@ -40729,7 +43214,7 @@
           "accuracy": "51.7229"
         },
         "qlite": {
-          "accuracy": "51.2046"
+          "accuracy": "51.2258"
         },
         "qpro": {
           "accuracy": "51.335"
@@ -40751,10 +43236,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-m_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-m_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-m_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-m_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-m_640x640.dxnn"
@@ -41237,7 +43722,7 @@
           "accuracy": "68.1422"
         },
         "qlite": {
-          "accuracy": "66.1368"
+          "accuracy": "66.0497"
         },
         "qpro": {
           "accuracy": "64.362"
@@ -41259,10 +43744,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-m-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-m-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-m-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-m-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-m-pose_640x640.dxnn"
@@ -41577,7 +44062,7 @@
           "accuracy": "39.8752"
         },
         "qlite": {
-          "accuracy": "39.0555"
+          "accuracy": "39.0832"
         },
         "qpro": {
           "accuracy": "39.421"
@@ -41599,10 +44084,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-n_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-n_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-n_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-n_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-n_640x640.dxnn"
@@ -42085,7 +44570,7 @@
           "accuracy": "56.1291"
         },
         "qlite": {
-          "accuracy": "55.019"
+          "accuracy": "54.9995"
         },
         "qpro": {
           "accuracy": "55.253"
@@ -42107,10 +44592,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-n-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-n-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-n-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-n-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-n-pose_640x640.dxnn"
@@ -42425,7 +44910,7 @@
           "accuracy": "47.209"
         },
         "qlite": {
-          "accuracy": "46.5933"
+          "accuracy": "46.6165"
         },
         "qpro": {
           "accuracy": "46.884"
@@ -42447,10 +44932,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-s_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-s_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-s_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-s_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-s_640x640.dxnn"
@@ -42933,7 +45418,7 @@
           "accuracy": "62.1849"
         },
         "qlite": {
-          "accuracy": "60.3815"
+          "accuracy": "60.3747"
         },
         "qpro": {
           "accuracy": "59.459"
@@ -42955,10 +45440,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-s-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-s-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-s-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-s-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-s-pose_640x640.dxnn"
@@ -43273,7 +45758,7 @@
           "accuracy": "55.4276"
         },
         "qlite": {
-          "accuracy": "55.0262"
+          "accuracy": "54.9945"
         },
         "qpro": {
           "accuracy": "54.855"
@@ -43295,10 +45780,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-x_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-x_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-x_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-x_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-x_640x640.dxnn"
@@ -43781,7 +46266,7 @@
           "accuracy": "71.0538"
         },
         "qlite": {
-          "accuracy": "70.2116"
+          "accuracy": "70.0117"
         },
         "qpro": {
           "accuracy": "69.320"
@@ -43803,10 +46288,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-x-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo26-x-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-x-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo26-x-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo26-x-pose_640x640.dxnn"
@@ -45465,10 +47950,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-l_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-l_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-l_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-l_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-l_640x640.dxnn"
@@ -45613,7 +48098,7 @@
           "accuracy": "50.598"
         },
         "qlite": {
-          "accuracy": "49.8973"
+          "accuracy": "49.8974"
         },
         "qpro": {
           "accuracy": "50.217"
@@ -45635,10 +48120,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-m_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-m_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-m_640x640.dxnn"
@@ -46124,7 +48609,7 @@
           "accuracy": "45.8988"
         },
         "qlite": {
-          "accuracy": "45.7086"
+          "accuracy": "45.6906"
         },
         "qpro": {
           "accuracy": "45.616"
@@ -46146,10 +48631,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-s_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-s_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-s_640x640.dxnn"
@@ -46294,7 +48779,7 @@
           "accuracy": "53.6813"
         },
         "qlite": {
-          "accuracy": "53.2343"
+          "accuracy": "53.2266"
         },
         "qpro": {
           "accuracy": "53.272"
@@ -46316,10 +48801,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolo11-x_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolo11-x_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolo11-x_640x640.dxnn"
@@ -50056,7 +52541,7 @@
           "accuracy": "53.7983"
         },
         "qlite": {
-          "accuracy": "53.7034"
+          "accuracy": "53.7292"
         }
       },
       "performance": {
@@ -52150,6 +54635,128 @@
       }
     },
     {
+      "id": "yolov5_n6_1280x1280_v6_1",
+      "display": {
+        "name": "YOLOV5N6_61-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "1280x1280x3",
+        "operations": "11.05",
+        "parameters": "3.65",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "35.3742"
+        },
+        "qlite": {
+          "accuracy": "34.7471"
+        },
+        "qpro": {
+          "accuracy": "34.874"
+        }
+      },
+      "performance": {
+        "fps": 81.0,
+        "fps_per_watt": 149.92,
+        "source_status": "provided"
+      },
+      "legal": {
+        "license": "GPL-3.0",
+        "source_url": "https://github.com/ultralytics/yolov5"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov5-n6_1280x1280_v6.1.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov5-n6_1280x1280_v6.1.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov5-n6_1280x1280_v6.1.json"
+        },
+        "qpro_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov5-n6_1280x1280_v6.1.dxnn"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qpro.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qpro_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps": {
+          "source": "internal_modelzoo"
+        },
+        "performance.fps_per_watt": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolov5_pose",
       "display": {
         "name": "YOLOV5Pose-1",
@@ -52321,21 +54928,20 @@
       }
     },
     {
-      "id": "yolov5_s6_1280x1280_v6",
+      "id": "yolov5_s6_1280x1280_v6_1",
       "display": {
-        "name": "yolov5-s6_1280x1280_v6.1",
+        "name": "YOLOV5S6_61-1",
         "task": "object_detection",
-        "class_name": "yolov5-s6_1280x1280_v6.1",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
         },
         "category_label": "Object Detection"
       },
       "specification": {
-        "operations": "37.16 GMACs",
-        "parameters": "13.02 M",
         "dataset": "COCO",
-        "input_resolution": "1280x1280",
+        "input_resolution": "1280x1280x3",
+        "operations": "37.16",
+        "parameters": "13.02",
         "metric": {
           "name": "mAP"
         }
@@ -52357,8 +54963,8 @@
         "source_status": "provided"
       },
       "legal": {
-        "source_url": "https://github.com/ultralytics/yolov5",
-        "license": "GPL-3.0"
+        "license": "GPL-3.0",
+        "source_url": "https://github.com/ultralytics/yolov5"
       },
       "artifacts": {
         "onnx": {
@@ -52387,40 +54993,31 @@
         }
       },
       "provenance": {
-        "display.name": {
-          "source": "local_modelzoo_repo"
-        },
-        "display.class_name": {
-          "source": "local_modelzoo_repo"
-        },
         "display.task": {
-          "source": "local_modelzoo_repo"
+          "source": "internal_modelzoo"
         },
-        "content.use_case.en": {
-          "source": "local_modelzoo_repo"
-        },
-        "legal.source_url": {
-          "source": "local_modelzoo_repo"
-        },
-        "specification.operations": {
-          "source": "local_modelzoo_repo"
-        },
-        "specification.parameters": {
-          "source": "local_modelzoo_repo"
+        "display.name": {
+          "source": "internal_modelzoo"
         },
         "specification.dataset": {
-          "source": "local_modelzoo_repo"
-        },
-        "technical.input_shape": {
-          "source": "local_modelzoo_repo"
+          "source": "internal_modelzoo"
         },
         "specification.input_resolution": {
-          "source": "local_modelzoo_repo"
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
         },
         "legal.license": {
           "source": "internal_modelzoo"
         },
         "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
           "source": "internal_modelzoo"
         },
         "evaluation.raw.accuracy": {
@@ -52450,14 +55047,6 @@
         "performance.fps_per_watt": {
           "source": "internal_modelzoo"
         }
-      },
-      "technical": {
-        "input_shape": [
-          1,
-          3,
-          1280,
-          1280
-        ]
       }
     },
     {
@@ -53166,18 +55755,18 @@
       },
       "evaluation": {
         "raw": {
-          "accuracy": "50.5766"
+          "accuracy": "44.7419"
         },
         "qlite": {
-          "accuracy": "50.2298"
+          "accuracy": "44.3966"
         },
         "qpro": {
-          "accuracy": "50.285"
+          "accuracy": "44.280"
         }
       },
       "performance": {
-        "fps": 53.0,
-        "fps_per_watt": 18.0,
+        "fps": 236.0,
+        "fps_per_watt": 77.94,
         "source_status": "provided"
       },
       "legal": {
@@ -53191,13 +55780,13 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov5-m6_1280x1280.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov5-m6_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov5-m6_1280x1280.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov5-m6_640x640.json"
         },
         "qpro_dxnn": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov5-m6_1280x1280.dxnn"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov5-m6_640x640.dxnn"
         }
       },
       "processor": {
@@ -61041,6 +63630,220 @@
       }
     },
     {
+      "id": "yolov8_l_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-l-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "86.85",
+        "parameters": "44.53",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "65.6049"
+        },
+        "qlite": {
+          "accuracy": "65.1864"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-l-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-l-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-l-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov8_l_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-l-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "113.13",
+        "parameters": "46.02",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "37.8081"
+        },
+        "qlite": {
+          "accuracy": "37.1225"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-l-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-l-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-l-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolov8_m_640x640_pre_optimized",
       "display": {
         "name": "yolov8-m_640x640_ppu2-1",
@@ -61100,6 +63903,220 @@
       "content": {
         "use_case": {
           "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov8_m_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-m-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "42.18",
+        "parameters": "26.49",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "63.1983"
+        },
+        "qlite": {
+          "accuracy": "61.5049"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-m-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-m-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-m-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov8_m_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-m-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "57.03",
+        "parameters": "27.29",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "36.3473"
+        },
+        "qlite": {
+          "accuracy": "35.5948"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-m-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-m-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-m-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
         }
       },
       "provenance": {
@@ -61255,6 +64272,220 @@
       }
     },
     {
+      "id": "yolov8_n_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-n-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "5.11",
+        "parameters": "3.36",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "48.4952"
+        },
+        "qlite": {
+          "accuracy": "47.8471"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-n-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-n-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-n-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov8_n_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-n-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "6.95",
+        "parameters": "3.40",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "27.4896"
+        },
+        "qlite": {
+          "accuracy": "27.3059"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-n-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-n-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-n-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolov8_s_640x640_pre_optimized",
       "display": {
         "name": "yolov8-s_640x640_ppu2-1",
@@ -61362,6 +64593,220 @@
       }
     },
     {
+      "id": "yolov8_s_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-s-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "16.05",
+        "parameters": "11.66",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "58.3454"
+        },
+        "qlite": {
+          "accuracy": "57.4364"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-s-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-s-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-s-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov8_s_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-s-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "22.43",
+        "parameters": "11.84",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "32.985"
+        },
+        "qlite": {
+          "accuracy": "32.7934"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-s-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-s-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-s-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "yolov8_x_640x640_pre_optimized",
       "display": {
         "name": "yolov8-x_640x640_ppu2-1",
@@ -61421,6 +64866,220 @@
       "content": {
         "use_case": {
           "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov8_x_pose_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-x-pose-pre-optimized-1",
+        "task": "pose_estimation",
+        "summary": {
+          "en": "Pose estimation model for detecting body keypoints."
+        },
+        "category_label": "Pose Estimation"
+      },
+      "specification": {
+        "dataset": "COCOPose",
+        "input_resolution": "640x640x3",
+        "operations": "134.82",
+        "parameters": "69.53",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "67.1972"
+        },
+        "qlite": {
+          "accuracy": "66.6646"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-x-pose_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-x-pose_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-x-pose_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Pose estimation model for detecting body keypoints."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov8_x_seg_640x640_pre_optimized",
+      "display": {
+        "name": "yolov8-x-seg_640x640_ppu2-1",
+        "task": "instance_segmentation",
+        "summary": {
+          "en": "Instance segmentation model for per-object pixel masks."
+        },
+        "category_label": "Instance Segmentation"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "175.65",
+        "parameters": "71.84",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "38.597"
+        },
+        "qlite": {
+          "accuracy": "37.7373"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "AGPL-3.0",
+        "source_url": "https://github.com/ultralytics/ultralytics"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-x-seg_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov8-x-seg_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-x-seg_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Instance segmentation model for per-object pixel masks."
         }
       },
       "provenance": {
@@ -61665,7 +65324,7 @@
           "accuracy": "65.9"
         },
         "qlite": {
-          "accuracy": "65.1864"
+          "accuracy": "65.0724"
         },
         "qpro": {
           "accuracy": "64.667"
@@ -61687,10 +65346,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-l-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-l-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-l-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-l-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-l-pose_640x640.dxnn"
@@ -61836,7 +65495,7 @@
           "accuracy": "44.0"
         },
         "qlite": {
-          "accuracy": "37.1225"
+          "accuracy": "37.1295"
         },
         "qpro": {
           "accuracy": "37.648"
@@ -61858,10 +65517,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-l-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-l-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-l-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-l-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-l-seg_640x640.dxnn"
@@ -62199,10 +65858,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-m-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-m-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-m-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-m-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-m-pose_640x640.dxnn"
@@ -62370,10 +66029,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-m-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-m-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-m-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-m-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-m-seg_640x640.dxnn"
@@ -62689,7 +66348,7 @@
           "accuracy": "50.4"
         },
         "qlite": {
-          "accuracy": "47.8471"
+          "accuracy": "47.7763"
         },
         "qpro": {
           "accuracy": "47.545"
@@ -62711,10 +66370,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-n-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-n-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-n-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-n-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-n-pose_640x640.dxnn"
@@ -63031,7 +66690,7 @@
           "accuracy": "27.4896"
         },
         "qlite": {
-          "accuracy": "27.3059"
+          "accuracy": "27.312"
         },
         "qpro": {
           "accuracy": "27.424"
@@ -63053,10 +66712,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-n-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-n-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-n-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-n-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-n-seg_640x640.dxnn"
@@ -63542,7 +67201,7 @@
           "accuracy": "58.3454"
         },
         "qlite": {
-          "accuracy": "57.4364"
+          "accuracy": "57.3635"
         },
         "qpro": {
           "accuracy": "57.477"
@@ -63564,10 +67223,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-s-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-s-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-s-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-s-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-s-pose_640x640.dxnn"
@@ -63906,10 +67565,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-s-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-s-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-s-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-s-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-s-seg_640x640.dxnn"
@@ -64224,7 +67883,7 @@
           "accuracy": "69.8"
         },
         "qlite": {
-          "accuracy": "66.6646"
+          "accuracy": "66.6805"
         },
         "qpro": {
           "accuracy": "65.988"
@@ -64246,10 +67905,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-x-pose_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-x-pose_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-x-pose_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-x-pose_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-x-pose_640x640.dxnn"
@@ -64417,10 +68076,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-x-seg_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov8-x-seg_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-x-seg_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov8-x-seg_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov8-x-seg_640x640.dxnn"
@@ -65075,6 +68734,220 @@
         },
         "qlite_json": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov9-gelan-c_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov9_m_640x640_pre_optimized",
+      "display": {
+        "name": "yolov9-m_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "40.41",
+        "parameters": "20.00",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "50.3581"
+        },
+        "qlite": {
+          "accuracy": "50.0163"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "GPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov9-m_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov9-m_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov9-m_640x640_pre-optimized.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Object detection model for identifying and localizing objects."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
+      "id": "yolov9_s_640x640_pre_optimized",
+      "display": {
+        "name": "yolov9-s_640x640_ppu2-1",
+        "task": "object_detection",
+        "summary": {
+          "en": "Object detection model for identifying and localizing objects."
+        },
+        "category_label": "Object Detection"
+      },
+      "specification": {
+        "dataset": "COCO",
+        "input_resolution": "640x640x3",
+        "operations": "14.50",
+        "parameters": "7.13",
+        "metric": {
+          "name": "mAP"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "45.9748"
+        },
+        "qlite": {
+          "accuracy": "44.6536"
+        }
+      },
+      "performance": {
+        "fps_per_watt": null,
+        "fps": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "GPL-3.0",
+        "source_url": "No Reference"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov9-s_640x640_pre-optimized.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolov9-s_640x640_pre-optimized.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov9-s_640x640_pre-optimized.json"
         }
       },
       "processor": {
@@ -66083,7 +69956,7 @@
           "accuracy": "50.3581"
         },
         "qlite": {
-          "accuracy": "50.0163"
+          "accuracy": "49.9786"
         },
         "qpro": {
           "accuracy": "50.209"
@@ -66105,10 +69978,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov9-m_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov9-m_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov9-m_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov9-m_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov9-m_640x640.dxnn"
@@ -66275,10 +70148,10 @@
           "local_exists": false
         },
         "onnx": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov9-s_640x640_pre-optimized.onnx"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/yolov9-s_640x640.onnx"
         },
         "qlite_json": {
-          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov9-s_640x640_pre-optimized.json"
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/yolov9-s_640x640.json"
         },
         "qpro_dxnn": {
           "remote_url": "https://sdk.deepx.ai/modelzoo/q-pro-dxnn/2_4_0/yolov9-s_640x640.dxnn"
