@@ -40,7 +40,10 @@ SPECS: dict[str, dict] = {
         # 회귀까지 통과시키게 되므로, 불안정한 요소만 가린다.
         #   #sortSelect       네이티브 <select> 의 값 렌더가 호스트마다/실행마다 흔들린다
         #   .mz-dx-app-status dx_app 연결 상태 점 — 폴링 결과에 따라 색이 바뀐다
-        "mask": ("#sortSelect", ".mz-dx-app-status"),
+        #   #catalogSubtitle  "synced <날짜>" — gitignore 된 local catalog cache 가 다시 만들어지면
+        #                     날짜가 바뀌어 코드와 무관하게 붉어졌다 (2026-09-30). 개수는 header
+        #                     chip 이, 날짜 표시는 tests/dx_modelzoo/test_catalog_freshness.py 가 본다.
+        "mask": ("#sortSelect", ".mz-dx-app-status", "#catalogSubtitle"),
     },
     "dx_benchmark": {"settle_ms": _DEFAULT_SETTLE_MS},
     "dx_planner": {
