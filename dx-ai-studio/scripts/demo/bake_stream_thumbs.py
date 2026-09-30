@@ -25,7 +25,8 @@ from pathlib import Path
 
 STUDIO = Path(__file__).resolve().parents[2]
 SUITE = STUDIO.parent
-EXAMPLES = SUITE / "dx-runtime" / "dx_app" / "src" / "python_example"
+DX_APP = Path(os.environ.get("DX_APP_ROOT") or SUITE / "dx-runtime" / "dx_app")
+EXAMPLES = DX_APP / "src" / "python_example"
 OUT = STUDIO / "dx_stream" / "static" / "img" / "demo"
 SIZE = (640, 360)
 MAX_BYTES = 60 * 1024
@@ -84,8 +85,22 @@ def grab(video: Path, at: float, out: Path) -> None:
     cv2.imwrite(str(out), frame, [cv2.IMWRITE_JPEG_QUALITY, 95])
 
 
+def example_dir(example: str, model: str) -> Path:
+    """PLAN 의 예제는 main 의 모양 (<task>/<model>). dx_app 이 per-model layout (teammate 8d0b748 이후) 이면
+    그 model 의 Model Zoo stem 폴더 (<task>/<family>/<stem>) 를 쓴다 (shared/dx_app_layout.py 와 같은 모양)."""
+    legacy = EXAMPLES / example
+    if legacy.is_dir():
+        return legacy
+    # runtime venv 에서 돈다 (studio 의 shared 가 없다) — 폴더 찾기는 glob 하나로 충분하다
+    stem = MODEL_ZOO.get(model, model).rsplit("/", 1)[-1].removesuffix(".dxnn")
+    hits = sorted(d for d in EXAMPLES.glob(f"*/*/{stem}") if (d / f"{stem}_sync.py").is_file())
+    if not hits:
+        raise SystemExit(f"예제를 찾지 못했다: {example} ({stem})")
+    return hits[0]
+
+
 def infer(example: str, model: Path, image: Path, out: Path) -> None:
-    ex = EXAMPLES / example
+    ex = example_dir(example, model.name)
     script = ex / f"{ex.name}_sync.py"
     env = dict(os.environ, DXAPP_SAVE_IMAGE=str(out))
     env.pop("DISPLAY", None)

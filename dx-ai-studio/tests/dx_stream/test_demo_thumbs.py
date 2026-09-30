@@ -64,3 +64,16 @@ def _webp_size(data: bytes) -> tuple[int, int]:
     if chunk == b"VP8X":
         return (int.from_bytes(data[24:27], "little") + 1, int.from_bytes(data[27:30], "little") + 1)
     raise AssertionError(chunk)
+
+
+def test_the_bake_finds_examples_in_the_per_model_layout(tmp_path, monkeypatch):
+    """dx_app 이 per-model layout (teammate 8d0b748) 이면 PLAN 의 main 경로 (object_detection/yolo26n) 대신 그
+    model 의 Model Zoo stem 폴더 (object_detection/yolo26/yolo26-n_640x640)."""
+    bake = _bake()
+    root = tmp_path / "dx_app"
+    ex = root / "src/python_example/object_detection/yolo26/yolo26-n_640x640"
+    ex.mkdir(parents=True)
+    (ex / "yolo26-n_640x640_sync.py").write_text("")
+    monkeypatch.setattr(bake, "DX_APP", root)
+    monkeypatch.setattr(bake, "EXAMPLES", root / "src/python_example")
+    assert bake.example_dir("object_detection/yolo26n", "yolo26n.dxnn") == ex

@@ -247,7 +247,17 @@
 .dds-none p { margin: 0; font-size: var(--fs-base); color: var(--text-secondary); }
 
 /* ── filter ────────────────────────────────────────────────────────────── */
-.dds-filter { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-3); }
+/* 한 줄 — 넘치면 옆으로 민다 (App 은 group 이 13 개라 두 줄로 접히며 card 를 밀어냈다) */
+.dds-filter {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding-bottom: 2px;
+}
+.dds-filter .dds-fbtn { flex: none; white-space: nowrap; }
 .dds-fbtn {
   font: inherit;
   font-size: var(--fs-sm);

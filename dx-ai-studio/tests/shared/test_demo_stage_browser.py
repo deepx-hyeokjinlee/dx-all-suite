@@ -171,3 +171,19 @@ def test_metrics_and_stage_bars_render(browser, port):
         assert page.evaluate("document.querySelector('.dds-state').dataset.kind") == "done"
     finally:
         page.close()
+
+
+def test_many_filters_stay_on_one_line(browser, port):
+    """group 이 많아도 filter 는 한 줄 — 두 줄로 접히면 card 첫 줄이 화면 밖으로 밀린다."""
+    many = "[" + ",".join(f"{{id: 'm{i}', title: 'M{i}', category: 'group_{i}', task: {{label: 'Task'}}, ready: true}}"
+                          for i in range(14)) + "]"
+    page = _page(browser, port, items=many)
+    try:
+        page.evaluate("""() => { const f = document.querySelector('.dds-filter');
+          ['Detection','Pose & Landmark','Segmentation','Classification','Depth Estimation','Image Restoration',
+           'Recognition','PPU','Keypoint & Pose','Driving & 3D','Hand Detection','Retrieval & Matting','More'].forEach(t => {
+             const b = document.createElement('button'); b.className = 'dds-fbtn'; b.textContent = t; f.appendChild(b); }); }""")
+        tops = page.evaluate("[...new Set([...document.querySelectorAll('.dds-filter button')].map(b => Math.round(b.getBoundingClientRect().top)))]")
+        assert len(tops) == 1, tops
+    finally:
+        page.close()
