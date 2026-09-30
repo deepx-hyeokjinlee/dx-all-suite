@@ -262,7 +262,7 @@ async function initConfigurator() {
     await DataLoader.load();
   } catch (e) {
     const panel = document.getElementById('requirementsPanel');
-    if (panel) panel.innerHTML = '<p style="color:var(--status-error);padding:2rem;">⚠️ 벤치마크 데이터를 로드할 수 없습니다.</p>';
+    if (panel) panel.innerHTML = '<p style="color:var(--status-error);padding:2rem;">' + ((typeof DXIcon === 'function') ? DXIcon('alert') : '') + ' 벤치마크 데이터를 로드할 수 없습니다.</p>';
     return;
   }
 

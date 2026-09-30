@@ -51,9 +51,13 @@ const CardRenderer = {
     return '<span class="badge badge-confidence" data-confidence="' + key + '">' + shown + '</span>';
   },
 
+  // 순위는 숫자 원 — 1위만 금빛 (메달 이모지는 OS 마다 다르게 그려졌다, 아이콘 체계 단계 5).
   _rankBadge(i) {
-    const medals = ['🥇', '🥈', '🥉'];
-    return i < 3 ? medals[i] : String(i + 1);
+    return '<span class="rank-disc' + (i === 0 ? ' rank-disc--top' : '') + '">' + (i + 1) + '</span>';
+  },
+
+  _ico(name) {
+    return (typeof window.DXIcon === 'function') ? window.DXIcon(name) : '';
   },
 
   _buildCard(r, idx, inputs) {
@@ -73,8 +77,8 @@ const CardRenderer = {
     const chVal = this._formatChannels(r.maxChannels, r.boundaryFlag);
     const benchmarkMeta = this._benchmarkMeta(pid);
     const statusBadge = meets
-      ? '<span class="badge badge-meets">✅ <span data-i18n="Meets">Meets</span></span>'
-      : '<span class="badge badge-insufficient">⚠️ <span data-i18n="Insufficient">Insufficient</span></span>';
+      ? '<span class="badge badge-meets">' + this._ico('check') + ' <span data-i18n="Meets">Meets</span></span>'
+      : '<span class="badge badge-insufficient">' + this._ico('alert') + ' <span data-i18n="Insufficient">Insufficient</span></span>';
     const featuredBadge = idx === 0
       ? '<span class="badge badge-featured" data-i18n="Top pick">Top pick</span>'
       : '';

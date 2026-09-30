@@ -95,8 +95,8 @@
   }
 
   var sections = [
-    { id: 'overview', icon: '🏠',
-      title: { ko: '🏠 전체 소개', en: '🏠 Overview', ja: '🏠 概要', 'zh-CN': '🏠 概述', 'zh-TW': '🏠 概述', es: '🏠 Resumen general' },
+    { id: 'overview', icon: 'home',
+      title: { ko: '전체 소개', en: 'Overview', ja: '概要', 'zh-CN': '概述', 'zh-TW': '概述', es: 'Resumen general' },
       description: { ko: 'EdgeGuide 한 화면 워크스페이스 구성 소개', en: 'Introduction to the EdgeGuide single-screen workspace', ja: 'EdgeGuideの1画面ワークスペースの紹介', 'zh-CN': 'EdgeGuide单屏工作区介绍', 'zh-TW': 'EdgeGuide單一畫面工作區介紹', es: 'Introducción al espacio de trabajo de una sola pantalla de DX EdgeGuide' },
       steps: [
         { target: '.dx-shell-header', position: 'bottom',
@@ -122,8 +122,8 @@
       ]
     },
 
-    { id: 'requirements', icon: '⚙️',
-      title: { ko: '⚙️ 조건 설정', en: '⚙️ Requirements', ja: '⚙️ 要件設定', 'zh-CN': '⚙️ 条件设置', 'zh-TW': '⚙️ 條件設定', es: '⚙️ Configuración de requisitos' },
+    { id: 'requirements', icon: 'gear',
+      title: { ko: '조건 설정', en: 'Requirements', ja: '要件設定', 'zh-CN': '条件设置', 'zh-TW': '條件設定', es: 'Requisitos' },
       description: { ko: 'AI 작업, 모델 크기, 채널, FPS, 런타임, 우선순위 설정', en: 'Configure task, model size, channels, FPS, runtime, and priority', ja: 'AIタスク、モデルサイズ、チャンネル、FPS、ランタイム、優先度を設定', 'zh-CN': '配置任务、模型大小、通道、FPS、运行时和优先级', 'zh-TW': '設定任務、模型大小、通道、FPS、執行環境和優先順序', es: 'Configure la tarea de IA, el tamaño del modelo, los canales, el FPS, el entorno de ejecución y la prioridad' },
       beforeStart: function () { _ensureSetupStep1(); },
       steps: [
@@ -163,8 +163,8 @@
       ]
     },
 
-    { id: 'recommendations', icon: '📊',
-      title: { ko: '📊 추천 결과', en: '📊 Recommendations', ja: '📊 推奨結果', 'zh-CN': '📊 推荐结果', 'zh-TW': '📊 推薦結果', es: '📊 Resultados de recomendación' },
+    { id: 'recommendations', icon: 'dashboard',
+      title: { ko: '추천 결과', en: 'Recommendations', ja: '推奨結果', 'zh-CN': '推荐结果', 'zh-TW': '推薦結果', es: 'Recomendaciones' },
       description: { ko: '조건 요약, 처리량 차트, 추천 카드 확인', en: 'Review condition summary, throughput chart, and recommendation cards', ja: '条件サマリー、スループットチャート、推奨カードを確認', 'zh-CN': '查看条件摘要、吞吐量图表和推荐卡片', 'zh-TW': '查看條件摘要、吞吐量圖表和推薦卡片', es: 'Revise el resumen de condiciones, el gráfico de rendimiento y las tarjetas de recomendación' },
       beforeStart: ensureWorkspaceRecommendation,
       steps: [
@@ -194,8 +194,8 @@
       ]
     },
 
-    { id: 'details', icon: '🔍',
-      title: { ko: '🔍 상세 / 비교', en: '🔍 Details / Compare', ja: '🔍 詳細 / 比較', 'zh-CN': '🔍 详情 / 比较', 'zh-TW': '🔍 詳情 / 比較', es: '🔍 Detalle / Comparación' },
+    { id: 'details', icon: 'search',
+      title: { ko: '상세 / 비교', en: 'Details / Compare', ja: '詳細 / 比較', 'zh-CN': '详情 / 比较', 'zh-TW': '詳情 / 比較', es: 'Detalles / Comparar' },
       description: { ko: '선택 플랫폼의 dense 수치, 비교, 벤치마크 근거 확인', en: 'Inspect dense metrics, comparison, and benchmark evidence', ja: '選択プラットフォームの詳細指標、比較、ベンチマーク根拠を確認', 'zh-CN': '查看所选平台的详细指标、比较和基准依据', 'zh-TW': '查看所選平台的詳細指標、比較和基準依據', es: 'Consulte las métricas detalladas, la comparación y la evidencia de benchmarks de la plataforma seleccionada' },
       beforeStart: ensureWorkspaceDetail,
       steps: [
@@ -236,7 +236,7 @@
     },
   ];
 var referenceDocs = [
-    { id: 'ref-workspace', icon: '🔄',
+    { id: 'ref-workspace', icon: 'refresh',
       title: { ko: '사용 흐름', en: 'Usage flow', ja: '利用フロー', 'zh-CN': '使用流程', 'zh-TW': '使用流程', es: 'Flujo de uso' },
       body: { ko: '<h3>사용 흐름</h3><ol><li>시나리오 칩 또는 task/size/ops로 조건을 입력합니다.</li><li>다음 → 채널·성능·전력 우선순위 → 추천 실행.</li><li>카드나 차트 막대를 선택해 상세/비교/구매 패널을 확인합니다.</li></ol>',
               en: '<h3>Usage flow</h3><ol><li>Enter requirements via scenario chips or task/size/ops fields.</li><li>Next → set channels/performance/power priority → Run recommendation.</li><li>Select a card or chart bar to inspect details, comparison, and commerce links.</li></ol>',
@@ -244,7 +244,7 @@ var referenceDocs = [
               'zh-CN': '<h3>使用流程</h3><ol><li>通过场景标签或 task/size/ops 输入条件。</li><li>下一步 → 设置通道/性能/功耗优先级 → 执行推荐。</li><li>选择卡片或图表柱条查看详情、比较与购买链接。</li></ol>',
               'zh-TW': '<h3>使用流程</h3><ol><li>透過情境標籤或 task/size/ops 輸入條件。</li><li>下一步 → 設定通道/效能/功耗優先順序 → 執行推薦。</li><li>選擇卡片或圖表長條查看詳情、比較與購買連結。</li></ol>',
               es: '<h3>Flujo de uso</h3><ol><li>Ingrese requisitos con chips de escenario o campos task/size/ops.</li><li>Siguiente → prioridad canales/rendimiento/consumo → Ejecutar recomendación.</li><li>Seleccione tarjeta o barra para detalle, comparación y enlaces comerciales.</li></ol>' } },
-    { id: 'ref-recommend', icon: '🎯',
+    { id: 'ref-recommend', icon: 'edge',
       title: { ko: '추천 기준', en: 'Recommendation basis', ja: '推奨基準', 'zh-CN': '推荐依据', 'zh-TW': '推薦依據', es: 'Base de recomendación' },
       body: { ko: '<h3>추천 원리</h3><ul><li>선택한 task/size/runtime의 benchmark와 multi-stream 데이터를 사용합니다.</li><li>요구 채널을 충족하는 플랫폼을 먼저 보여줍니다.</li><li>채널, 성능, 전력 우선순위에 따라 정렬이 달라집니다.</li></ul>',
               en: '<h3>How recommendations work</h3><ul><li>Uses benchmark and multi-stream data for the selected task, size, and runtime.</li><li>Platforms meeting required channels are ranked first.</li><li>Sorting changes by channels, performance, or power priority.</li></ul>',
@@ -252,7 +252,7 @@ var referenceDocs = [
               'zh-CN': '<h3>推荐原理</h3><ul><li>使用所选task、size、runtime的benchmark和multi-stream数据。</li><li>优先展示满足所需通道的平台。</li><li>排序会随通道、性能或功耗优先级变化。</li></ul>',
               'zh-TW': '<h3>推薦原理</h3><ul><li>使用所選task、size、runtime的benchmark和multi-stream資料。</li><li>優先顯示滿足所需通道的平台。</li><li>排序會隨通道、效能或功耗優先順序變化。</li></ul>',
               es: '<h3>Cómo funcionan las recomendaciones</h3><ul><li>Utiliza datos de benchmark y multi-stream de la task, el size y el runtime seleccionados.</li><li>Las plataformas que cumplen los canales requeridos aparecen primero.</li><li>El orden cambia según la prioridad de canales, rendimiento o consumo eléctrico.</li></ul>' } },
-    { id: 'ref-detail', icon: '📈',
+    { id: 'ref-detail', icon: 'dashboard',
       title: { ko: '상세 패널', en: 'Detail panel', ja: '詳細パネル', 'zh-CN': '详情面板', 'zh-TW': '詳情面板', es: 'Panel de detalle' },
       body: { ko: '<h3>상세 패널</h3><ul><li>핵심 수치: throughput, latency, TOPS/W</li><li>비교: 드롭다운으로 다른 플랫폼과 주요 수치를 비교</li><li>근거: benchmark table과 multi-stream 측정값 확인</li></ul>',
               en: '<h3>Detail panel</h3><ul><li>Key metrics: throughput, latency, TOPS/W</li><li>Comparison: use the dropdown to compare with another platform</li><li>Evidence: inspect benchmark table and multi-stream measurements</li></ul>',
@@ -276,7 +276,7 @@ var referenceDocs = [
       var engine = window._dxTutorial;
       var sec = engine.sections.find(function (s) { return s.id === sectionId; });
       if (typeof toast === 'function' && sec) {
-        toast('✅ "' + engine._t(sec.title) + '" ' + engine._tl('tutorial complete!'), 'ok');
+        toast('"' + engine._t(sec.title) + '" ' + engine._tl('tutorial complete!'), 'ok');
       }
     },
     patchNav: function () {}
