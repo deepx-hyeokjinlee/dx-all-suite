@@ -726,5 +726,24 @@ def list_demo_entries() -> list[dict]:
             entry["model_file"] = _model_file(demo["model"])
         if demo.get("models"):
             entry["model_files"] = [_model_file(m) for m in demo["models"]]
+        entry["thumbnail"] = _demo_thumb(demo["id"])
         demo_list.append(entry)
     return demo_list
+
+
+# Card · stage preview: the demo's own model run on the official sample video on a DX-M1
+# (scripts/demo/bake_stream_thumbs.py, spec 2026-10-01 demo stage). ?v= is the content hash so a
+# re-bake reaches browsers that cached the old image.
+_THUMB_DIR = Path(__file__).resolve().parents[1] / "static" / "img" / "demo"
+_THUMB_CACHE: dict = {}
+
+
+def _demo_thumb(demo_id: int):
+    if demo_id not in _THUMB_CACHE:
+        p = _THUMB_DIR / f"{demo_id}.webp"
+        try:
+            import hashlib
+            _THUMB_CACHE[demo_id] = f"/static/img/demo/{demo_id}.webp?v=" + hashlib.sha1(p.read_bytes()).hexdigest()[:10]
+        except OSError:
+            _THUMB_CACHE[demo_id] = None
+    return _THUMB_CACHE[demo_id]
