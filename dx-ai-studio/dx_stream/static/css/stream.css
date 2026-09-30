@@ -27,8 +27,6 @@ h1 .accent{color:var(--accent)}
 h2{font-size:var(--fs-md);margin:16px 0 8px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.6px}
 
 .card-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-/* 데모 카드는 준비 안 된 것이 짧다 — 같은 줄의 긴 카드에 맞춰 늘리지 않는다 (아이콘 체계 단계 4). */
-#demo-grid{align-items:start}
 /* launcher 에도 .card-grid 가 있지만 다른 컴포넌트다 — 공유 계층에 올리면 샌다. */
 @media(max-width:1200px){.card-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.card-grid{grid-template-columns:1fr}}
@@ -139,6 +137,23 @@ tbody tr:hover td{background:var(--surface-hover)}
 .video-container img{
   width:100%;height:100%;object-fit:contain;display:block;
 }
+
+/* 무대 media 안의 영상 상자 (Demo Launcher, spec 2026-10-01 demo stage). FPS 는 영상 구석이 아니라
+   panel 의 수치로 — overlay 는 transport 의 숫자를 받는 자리로만 남는다 (stream-demo.js _demoStartMetrics). */
+.dds-live{position:relative;width:100%;height:100%}
+.dds-live .video-container{height:100%;aspect-ratio:auto;border:0;border-radius:0;background:transparent}
+.dds-live #webrtc-stats-overlay{display:none}
+.dds-live-fs{position:absolute;top:var(--sp-2);right:var(--sp-2);display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;padding:0;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);
+  background:var(--surface-panel);color:var(--text-secondary);cursor:pointer;opacity:.85}
+.dds-live-fs:hover{opacity:1;color:var(--text-primary)}
+.dds-live-fs .dx-ico{width:16px;height:16px}
+.dds-live:fullscreen{background:var(--surface-sunken)}
+/* 전체 화면에서는 panel 이 안 보인다 — Stop 을 영상 안에 (Esc 말고도 멈출 수 있게) */
+.dds-live-stop{display:none;position:absolute;top:var(--sp-2);right:calc(var(--sp-2) + 40px);align-items:center;gap:var(--sp-1);
+  height:32px;padding:0 var(--sp-3);border:1px solid var(--status-error);border-radius:var(--radius-sm);
+  background:var(--surface-panel);color:var(--status-error);font:inherit;font-size:var(--fs-sm);cursor:pointer}
+.dds-live:fullscreen .dds-live-stop{display:inline-flex}
 
 /* ═══════════════════════════════════════════════════════════════════
    DX Stream — Video Overlay (FPS / Latency)

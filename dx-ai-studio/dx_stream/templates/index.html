@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/static/shared/dx-utilities.css">
     <link rel="stylesheet" href="/static/shared/module-chrome.css">
     <link rel="stylesheet" href="/static/shared/dx-components.css">
+<link rel="stylesheet" href="/static/shared/dx-demo-stage.css">
     <link rel="stylesheet" href="/static/shared/brand.css">
     <link rel="stylesheet" href="/static/shared/tutorial.css">
     <link rel="stylesheet" href="/static/shared/toolbar.css">
@@ -154,55 +155,19 @@
   <h1><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#demo"></use></svg> <span class="accent" data-i18n="Demo Launcher">Demo Launcher</span></h1>
   <p class="txt-dim txt-sm mb16" data-i18n="Select a demo and view results in real-time.">Select a demo and view results in real-time.</p>
 
-  <!-- Playback mode: WebRTC for local/same-LAN (low latency), MJPEG for remote access -->
-  <div class="playback-mode-bar" id="playback-mode-bar">
-    <span class="txt-xs txt-dim playback-mode-label" data-i18n="Playback">Playback</span>
-    <button class="btn btn-ghost btn-sm active" data-mode="local" onclick="DXStream.setPlaybackMode('local',this)"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#monitor"></use></svg> <span data-i18n="Local (WebRTC)">Local (WebRTC)</span></button>
-    <button class="btn btn-ghost btn-sm" data-mode="remote" onclick="DXStream.setPlaybackMode('remote',this)"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#globe"></use></svg> <span data-i18n="Remote (MJPEG)">Remote (MJPEG)</span></button>
-    <span class="txt-xs txt-dim playback-mode-hint" id="playback-mode-hint-local" data-i18n="Viewing on the board&#x27;s own PC / same LAN (low latency, no re-encode)">Viewing on the board's own PC / same LAN (low latency, no re-encode)
-    </span>
-    <span class="txt-xs txt-dim playback-mode-hint" id="playback-mode-hint-remote" style="display:none" data-i18n="Remote access from another PC / SSH tunnel (H264 over HTTP, works anywhere)">Remote access from another PC / SSH tunnel (H264 over HTTP, works anywhere)
-    </span>
-  </div>
+  <!-- 결과 무대 + filter + card (shared/static/dx-demo-stage.js, spec 2026-10-01). Playback (Local WebRTC /
+       Remote MJPEG) · RTSP 주소 · Start 는 무대 옵션, 영상은 무대 media 에서 돈다. -->
+  <div id="demo-root"></div>
 
-  <!-- Demo Filter -->
-  <div class="filter-bar" id="demo-filter-bar">
-    <button class="btn btn-ghost btn-sm active" data-cat="all" onclick="DXStream.filterDemos('all',this)" data-i18n="All">All</button>
-    <button class="btn btn-ghost btn-sm" data-cat="object_detection" onclick="DXStream.filterDemos('object_detection',this)" data-i18n="Detection">Detection</button>
-    <button class="btn btn-ghost btn-sm" data-cat="face_detection" onclick="DXStream.filterDemos('face_detection',this)" data-i18n="Face">Face</button>
-    <button class="btn btn-ghost btn-sm" data-cat="segmentation" onclick="DXStream.filterDemos('segmentation',this)" data-i18n="Segmentation">Segmentation</button>
-    <button class="btn btn-ghost btn-sm" data-cat="pose_estimation" onclick="DXStream.filterDemos('pose_estimation',this)" data-i18n="Pose">Pose</button>
-    <button class="btn btn-ghost btn-sm" data-cat="tracking" onclick="DXStream.filterDemos('tracking',this)" data-i18n="Tracking">Tracking</button>
-    <button class="btn btn-ghost btn-sm" data-cat="multi_stream" onclick="DXStream.filterDemos('multi_stream',this)" data-i18n="Multi">Multi</button>
-    <button class="btn btn-ghost btn-sm" data-cat="secondary" onclick="DXStream.filterDemos('secondary',this)" data-i18n="Secondary">Secondary</button>
-  </div>
-
-  <!-- Demo Cards -->
-  <div class="card-grid" id="demo-grid"><!-- JS fills --></div>
-
-  <!-- Video Player -->
-  <div class="video-section" id="demo-video-section" style="display:none">
-    <div class="video-header">
-      <h2 class="section-title" id="demo-video-title">--</h2>
-      <div class="video-controls">
-        <button class="btn btn-ghost btn-sm" id="btn-demo-stop" onclick="DXStream.stopDemo()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span>
-        </button>
-        <button class="btn btn-ghost btn-sm" id="btn-demo-fullscreen" onclick="DXStream.toggleFullscreen()" ><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#external"></use></svg> <span data-i18n="Fullscreen">Fullscreen</span>
-        </button>
+  <!-- 영상 상자는 하나 — 도는 demo 를 무대가 보여 줄 때만 무대 media 로 옮긴다 (stream-demo.js _demoPaint). -->
+  <div id="demo-video-park" hidden>
+    <div class="dds-live" id="demo-video-section">
+      <div class="video-container" id="demo-video">
+        <video id="webrtc-video" autoplay playsinline muted></video>
+        <div id="webrtc-stats-overlay"></div>
       </div>
-    </div>
-    <div class="video-container" id="demo-video" style="position:relative">
-      <video id="webrtc-video" autoplay playsinline muted></video>
-      <div id="webrtc-stats-overlay"></div>
-    </div>
-    <p class="demo-perf-note txt-xs txt-dim" style="margin:8px 2px 0;line-height:1.55">
-      <svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#alert"></use></svg> <span data-i18n="Browser streaming (WebRTC/MJPEG) adds encoding overhead, so on-screen speed can differ from real performance. For true numbers, run in a terminal:">Browser streaming (WebRTC/MJPEG) adds encoding overhead, so on-screen speed can differ from real performance. For true numbers, run in a terminal:</span>
-      <br><code id="demo-perf-cmd" style="font-size:11px;user-select:all;word-break:break-all">bash dx_stream/pipelines/&lt;run_*.sh&gt;</code>
-    </p>
-    <div class="video-info-bar">
-      <span class="txt-xs txt-dim" id="demo-pipeline-info">--</span>
-      <span class="txt-xs txt-dim" id="demo-resolution-info">--</span>
-      <span class="txt-xs txt-dim" id="demo-model-info">--</span>
+      <button type="button" class="dds-live-stop" onclick="DXStream.stopDemo()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stop"></use></svg> <span data-i18n="Stop">Stop</span></button>
+      <button type="button" class="dds-live-fs" id="btn-demo-fullscreen" onclick="DXStream.toggleFullscreen()" title="Fullscreen" data-i18n-title="Fullscreen"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#external"></use></svg></button>
     </div>
   </div>
 
@@ -803,6 +768,7 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
 </script>
 
 <script src="/static/js/stream-dashboard.js?m=dx_stream"></script>
+<script src="/static/shared/dx-demo-stage.js"></script>
 <script src="/static/js/stream-demo.js?m=dx_stream"></script>
 <script src="/static/js/stream-pipeline-state.js?m=dx_stream"></script>
 <script src="/static/js/stream-pipeline-api.js?m=dx_stream"></script>

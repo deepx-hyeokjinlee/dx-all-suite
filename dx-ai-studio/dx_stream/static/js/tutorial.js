@@ -45,28 +45,13 @@
     return list;
   }
 
+  // 무대 (spec 2026-10-01 demo stage) 위에 도는 모습을 흉내 낸다 — 그리는 것은 stream-demo.js 가 (번역 포함).
   function _mockDemoVideoPreview() {
-    var section = document.getElementById('demo-video-section');
-    if (section) {
-      section.style.display = '';
-      section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    var pipe = document.getElementById('demo-pipeline-info');
-    if (pipe) pipe.textContent = 'YOLOv8n · 1920×1080 · filesrc sample.mp4';
-    var res = document.getElementById('demo-resolution-info');
-    if (res) res.textContent = '1920×1080';
-    var model = document.getElementById('demo-model-info');
-    if (model) model.textContent = 'YOLOv8n';
-    var stats = document.getElementById('webrtc-stats-overlay');
-    if (stats) {
-      stats.style.display = '';
-      stats.textContent = '28.4 FPS | RTT: 18ms | lost: 0';
-    }
+    if (window.DXStream && typeof DXStream._demoMockRunning === 'function') DXStream._demoMockRunning(true);
   }
 
   function _hideDemoVideoPreview() {
-    var section = document.getElementById('demo-video-section');
-    if (section) section.style.display = 'none';
+    if (window.DXStream && typeof DXStream._demoMockRunning === 'function') DXStream._demoMockRunning(false);
   }
 
   function _mockStreamToast() {
@@ -229,17 +214,28 @@
     { id: 'demo', icon: 'demo',
       title: { ko: '데모 런처', en: 'Demo Launcher', ja: 'デモランチャー', 'zh-CN': '演示启动器', 'zh-TW': '示範啟動器', es: 'Lanzador de demos' },
       description: { ko: 'AI 데모 실행 및 실시간 영상', en: 'Run AI demos and view real-time video', ja: 'AIデモの実行とリアルタイム映像', 'zh-CN': '运行AI演示并查看实时视频', 'zh-TW': '執行AI示範並查看即時影像', es: 'Ejecute demos de IA y vea vídeo en tiempo real' },
-      beforeStart: function () { goPage('demo'); },
+      // 무대가 그려질 때까지 기다렸다가 demo 하나를 연다 — 아무것도 설치되지 않은 PC 에서도 둘러볼 수 있게.
+      beforeStart: function () {
+        goPage('demo');
+        return new Promise(function (resolve) {
+          var t0 = Date.now();
+          (function wait() {
+            if (window.DXStream && DXStream._demoCtl) { DXStream._demoTutorialOpen(); resolve(); return; }
+            if (Date.now() - t0 > 6000) { resolve(); return; }
+            setTimeout(wait, 100);
+          })();
+        });
+      },
       steps: [
-        { target: '#playback-mode-bar', position: 'bottom',
+        { target: '#demo-root .dds-stage [data-axis-row="playback"]', optionalTarget: true, position: 'left',  // 준비된 demo 에서만
           title: { ko: '재생 방식 (로컬 / 원격)', en: 'Playback Mode (Local / Remote)', ja: '再生方式 (ローカル / リモート)', 'zh-CN': '播放方式 (本地 / 远程)', 'zh-TW': '播放方式 (本機 / 遠端)', es: 'Modo de reproducción (Local / Remoto)' },
           content: { ko: '보드와 같은 PC·LAN에서 보면 <strong>로컬 (WebRTC)</strong> — 저지연, 재인코딩 없음. 다른 PC에서 원격 접속하면 <strong>원격 (MJPEG)</strong> — 어디서나 재생됩니다. WebRTC는 브라우저↔보드 직접 연결이라 원격에서는 붙지 않을 수 있어 MJPEG를 씁니다.', en: 'Viewing on the board\'s own PC / same LAN → <strong>Local (WebRTC)</strong> (low latency, no re-encode). Accessing remotely from another PC → <strong>Remote (MJPEG)</strong> (works anywhere). WebRTC needs a direct browser↔board path, so remote viewers use MJPEG.', ja: 'ボードと同じPC・LANで視聴 → <strong>ローカル (WebRTC)</strong>(低遅延・再エンコードなし)。別PCからリモート接続 → <strong>リモート (MJPEG)</strong>(どこでも再生)。WebRTCはブラウザ↔ボード直結が必要なため、リモートではMJPEGを使います。', 'zh-CN': '在开发板本机 / 同一 LAN 观看 → <strong>本地 (WebRTC)</strong>(低延迟, 无重编码)。从其他 PC 远程访问 → <strong>远程 (MJPEG)</strong>(随处播放)。WebRTC 需要浏览器↔开发板直连, 远程时改用 MJPEG。', 'zh-TW': '在開發板本機 / 同一 LAN 觀看 → <strong>本機 (WebRTC)</strong>(低延遲, 無重編碼)。從其他 PC 遠端存取 → <strong>遠端 (MJPEG)</strong>(隨處播放)。WebRTC 需要瀏覽器↔開發板直連, 遠端時改用 MJPEG。', es: 'Viendo en el PC de la placa / misma LAN → <strong>Local (WebRTC)</strong> (baja latencia, sin recodificar). Acceso remoto desde otro PC → <strong>Remoto (MJPEG)</strong> (funciona en cualquier lugar). WebRTC necesita una ruta directa navegador↔placa, por eso los remotos usan MJPEG.' } },
-        { target: '#demo-filter-bar', position: 'bottom',
+        { target: '#demo-root .dds-filter', position: 'bottom',
           title: { ko: '카테고리 필터', en: 'Category Filter', ja: 'カテゴリフィルター', 'zh-CN': '类别筛选', 'zh-TW': '類別篩選', es: 'Filtro por categoría' },
           content: { ko: '<strong>감지, 얼굴, 분할, 포즈, 추적, 멀티 스트림, 2차 추론</strong> 카테고리별로 데모를 필터링합니다.', en: 'Filter demos by <strong>detection, face, segmentation, pose, tracking, multi-stream, secondary</strong>.', ja: '<strong>検出、顔、セグメンテーション、ポーズ、追跡、マルチストリーム、2次推論</strong>カテゴリ別にデモをフィルタリングします。', 'zh-CN': '按<strong>检测、人脸、分割、姿态、跟踪、多路流、二次推理</strong>类别筛选演示。', 'zh-TW': '依<strong>偵測、人臉、分割、姿態、追蹤、多路串流、二次推論</strong>類別篩選示範。', es: 'Filtre demos por <strong>detección, rostro, segmentación, pose, seguimiento, multistream y secundaria</strong>.' } },
-        { target: '#demo-grid', position: 'bottom',
+        { target: '#demo-root .dds-grid', position: 'top',
           title: { ko: '데모 카드', en: 'Demo Cards', ja: 'デモカード', 'zh-CN': '演示卡片', 'zh-TW': '示範卡片', es: 'Tarjetas de demo' },
-          content: { ko: '각 카드에 <strong>모델명, 카테고리, 실행 상태 배지</strong>가 표시됩니다. {{i:play}} 버튼으로 데모를 시작합니다. <strong>다중 객체 추적, 멀티 스트림 RTSP, 2차 추론</strong> 데모가 포함됩니다.', en: 'Each card shows <strong>model name, category, status badge</strong>. Click {{i:play}} to start. Includes <strong>Multi-Object Tracking, Multi-Stream RTSP, Secondary Inference</strong>.', ja: '各カードに<strong>モデル名、カテゴリ、実行状態バッジ</strong>が表示されます。{{i:play}}ボタンでデモを開始します。<strong>複数物体追跡、マルチストリームRTSP、2次推論</strong>を含みます。', 'zh-CN': '每张卡片显示<strong>模型名称、类别、运行状态徽章</strong>。点击{{i:play}}启动演示。包含<strong>多目标跟踪、多路流RTSP、二次推理</strong>。', 'zh-TW': '每張卡片顯示<strong>模型名稱、類別、執行狀態徽章</strong>。點擊{{i:play}}啟動示範。包含<strong>多物件追蹤、多路串流RTSP、二次推論</strong>。', es: 'Cada tarjeta muestra <strong>nombre del modelo, categoría e insignia de estado</strong>. Haga clic en {{i:play}} para iniciar. Incluye <strong>seguimiento multiobjeto, RTSP multistream e inferencia secundaria</strong>.' } },
+          content: { ko: '카드를 누르면 위쪽 <strong>무대</strong>에 그 데모가 열립니다. <strong>다중 객체 추적, 멀티 스트림 RTSP, 2차 추론</strong> 데모가 포함됩니다. 준비가 안 된 카드는 이유 한 줄과 <strong>Set up</strong> 버튼을 보여 줍니다.', en: 'Click a card to open that demo on the <strong>stage</strong> above. Includes <strong>Multi-Object Tracking, Multi-Stream RTSP, Secondary Inference</strong>. A card that isn&rsquo;t ready shows a one-line reason and a <strong>Set up</strong> button.', ja: 'カードを押すと上の<strong>ステージ</strong>にそのデモが開きます。<strong>マルチオブジェクト追跡、マルチストリームRTSP、二次推論</strong>のデモを含みます。準備できていないカードは理由1行と<strong>Set up</strong>ボタンを表示します。', 'zh-CN': '点击卡片即可在上方<strong>舞台</strong>中打开该演示。包括<strong>多目标跟踪、多路 RTSP、二次推理</strong>演示。未就绪的卡片会显示一行原因和<strong>Set up</strong>按钮。', 'zh-TW': '點擊卡片即可在上方<strong>舞台</strong>中開啟該示範。包括<strong>多目標追蹤、多路 RTSP、二次推論</strong>示範。未就緒的卡片會顯示一行原因和<strong>Set up</strong>按鈕。', es: 'Haga clic en una tarjeta para abrir esa demo en el <strong>escenario</strong> superior. Incluye <strong>seguimiento multiobjeto, RTSP multistream e inferencia secundaria</strong>. Una tarjeta que no está lista muestra una línea con el motivo y un botón <strong>Set up</strong>.' } },
         { target: '#dx-input-modal', position: 'bottom',
           title: { ko: '입력 소스 모달', en: 'Input Source Modal', ja: '入力ソースモーダル', 'zh-CN': '输入源模态框', 'zh-TW': '輸入來源對話框', es: 'Modal de fuente de entrada' },
           content: { ko: '카메라·RTSP URL·파일 경로·sudo 비밀번호 등을 묻는 <strong>접근 가능한 입력 dialog</strong>입니다. 브라우저 <code>prompt()</code> 대신 사용하며, 데모·파이프라인·Setup에서 나타납니다.', en: 'An <strong>accessible input dialog</strong> for camera names, RTSP URLs, file paths, sudo passwords, and more — used instead of browser <code>prompt()</code> in demos, the pipeline builder, and Setup.', ja: 'カメラ名・RTSP URL・ファイルパス・sudoパスワードなどを尋ねる<strong>アクセシブルな入力ダイアログ</strong>です。ブラウザの<code>prompt()</code>の代わりにデモ・パイプライン・Setupで表示されます。', 'zh-CN': '用于询问摄像头名称、RTSP URL、文件路径、sudo 密码等的<strong>无障碍输入对话框</strong>，在演示、管道构建器和 Setup 中替代浏览器 <code>prompt()</code>。', 'zh-TW': '用於詢問攝影機名稱、RTSP URL、檔案路徑、sudo 密碼等的<strong>無障礙輸入對話框</strong>，在示範、管線建構器和 Setup 中替代瀏覽器 <code>prompt()</code>。', es: 'Un <strong>diálogo de entrada accesible</strong> para nombres de cámara, URL RTSP, rutas de archivo, contraseñas sudo y más; sustituye a <code>prompt()</code> del navegador en demos, el constructor de pipelines y Setup.' },
@@ -252,41 +248,37 @@
               });
             }
           } },
-        // Start 와 (준비 안 된 카드의) Setup 링크가 같은 자리 — demo-card-go (아이콘 체계 단계 4).
-        { target: '#demo-grid .demo-card-go', position: 'right',
+        // Start (준비 안 된 demo 는 Set up) 는 무대의 actions 자리 (spec 2026-10-01 demo stage).
+        { target: '#demo-root .dds-stage .dds-actions', position: 'left',
           title: { ko: '데모 시작', en: 'Start Demo', ja: 'デモ開始', 'zh-CN': '启动演示', 'zh-TW': '啟動示範', es: 'Iniciar demo' },
-          content: { ko: '{{i:play}} 버튼을 클릭하면 파이프라인이 시작됩니다. 실행 중인 카드에는 <strong>초록 테두리 + pulse 애니메이션</strong>이 표시됩니다.', en: 'Click {{i:play}} to start the pipeline. Running cards show a <strong>green border + pulse animation</strong>.', ja: '{{i:play}}をクリックするとパイプラインが開始します。実行中のカードには<strong>緑枠 + パルスアニメーション</strong>が表示されます。', 'zh-CN': '点击{{i:play}}启动管道。运行中的卡片显示<strong>绿色边框 + 脉冲动画</strong>。', 'zh-TW': '點擊{{i:play}}啟動管線。執行中的卡片顯示<strong>綠色邊框 + 脈衝動畫</strong>。', es: 'Haga clic en {{i:play}} para iniciar el pipeline. Las tarjetas en ejecución muestran un <strong>borde verde y animación de pulso</strong>.' },
+          content: { ko: '{{i:play}} <strong>Start</strong>를 누르면 파이프라인이 시작되고 영상이 무대의 같은 자리에서 재생됩니다. 도는 데모의 카드에는 <strong>Running</strong>이 표시됩니다.', en: 'Click {{i:play}} <strong>Start</strong> to start the pipeline — the video plays in the same place on the stage. The running demo&rsquo;s card shows <strong>Running</strong>.', ja: '{{i:play}} <strong>Start</strong>を押すとパイプラインが開始し、映像がステージの同じ場所で再生されます。実行中のデモのカードには<strong>Running</strong>が表示されます。', 'zh-CN': '点击{{i:play}} <strong>Start</strong>即可启动管道，视频会在舞台的同一位置播放。运行中演示的卡片会显示<strong>Running</strong>。', 'zh-TW': '點擊{{i:play}} <strong>Start</strong>即可啟動管線，影片會在舞台的同一位置播放。執行中示範的卡片會顯示<strong>Running</strong>。', es: 'Haga clic en {{i:play}} <strong>Start</strong> para iniciar el pipeline: el vídeo se reproduce en el mismo lugar del escenario. La tarjeta de la demo en ejecución muestra <strong>Running</strong>.' },
           beforeStep: function () {
             if (window.DXStream && typeof DXStream._inputModalCancel === 'function') {
               DXStream._inputModalCancel();
             }
-            var btn = document.querySelector('#demo-grid [id^="start-demo-"]:not([disabled])') || document.querySelector('#demo-grid .demo-card-go');
-            if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            var stage = document.querySelector('#demo-root .dds-stage');
+            if (stage) stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
           } },
-        { target: '#demo-video-section', position: 'bottom',
-          title: { ko: '비디오 플레이어', en: 'Video Player', ja: 'ビデオプレイヤー', 'zh-CN': '视频播放器', 'zh-TW': '影片播放器', es: 'Reproductor de vídeo' },
-          content: { ko: '데모 실행 시 <strong>WebRTC 실시간 영상</strong>이 표시됩니다. AI 추론 결과(바운딩 박스 등)가 오버레이됩니다.', en: 'When a demo runs, <strong>WebRTC real-time video</strong> appears with AI inference overlays (bounding boxes, etc.).', ja: 'デモ実行時に<strong>WebRTCリアルタイム映像</strong>が表示されます。AI推論結果(バウンディングボックスなど)がオーバーレイされます。', 'zh-CN': '演示运行时显示<strong>WebRTC实时视频</strong>，并叠加AI推理结果（边界框等）。', 'zh-TW': '示範執行時顯示<strong>WebRTC即時影像</strong>，並疊加AI推論結果（邊界框等）。', es: 'Al ejecutar una demo, aparece <strong>vídeo WebRTC en tiempo real</strong> con superposiciones de inferencia de IA (cuadros delimitadores, etc.).' },
+        { target: '#demo-root .dds-stage .dds-media', position: 'right',
+          title: { ko: '영상', en: 'Video', ja: '映像', 'zh-CN': '视频', 'zh-TW': '影片', es: 'Vídeo' },
+          content: { ko: '데모 실행 시 <strong>실시간 영상</strong>이 무대 왼쪽에 표시됩니다. AI 추론 결과(바운딩 박스 등)가 오버레이됩니다.', en: 'When a demo runs, the <strong>real-time video</strong> plays on the left of the stage with AI inference overlays (bounding boxes, etc.).', ja: 'デモ実行時、<strong>リアルタイム映像</strong>がステージ左側に表示されます。AI推論結果（バウンディングボックス等）がオーバーレイされます。', 'zh-CN': '演示运行时，<strong>实时视频</strong>会显示在舞台左侧，并叠加 AI 推理结果（边界框等）。', 'zh-TW': '示範執行時，<strong>即時影像</strong>會顯示在舞台左側，並疊加 AI 推論結果（邊界框等）。', es: 'Cuando una demo se ejecuta, el <strong>vídeo en tiempo real</strong> se reproduce a la izquierda del escenario con las superposiciones de inferencia (cuadros delimitadores, etc.).' },
           beforeStep: function () { _mockDemoVideoPreview(); } },
-        { target: '#webrtc-stats-overlay', position: 'bottom',
-          title: { ko: '통계 오버레이', en: 'Stats Overlay', ja: '統計オーバーレイ', 'zh-CN': '统计叠加', 'zh-TW': '統計疊加', es: 'Superposición de estadísticas' },
-          content: { ko: '영상 위에 <strong>FPS, RTT, 패킷 손실률</strong>이 실시간 표시됩니다. 네트워크 품질을 모니터링할 수 있습니다.', en: '<strong>FPS, RTT, packet loss</strong> are displayed in real-time on the video. Monitor network quality.', ja: '映像上に<strong>FPS、RTT、パケットロス率</strong>がリアルタイム表示されます。ネットワーク品質を監視できます。', 'zh-CN': '视频上实时显示<strong>FPS、RTT、丢包率</strong>。可监控网络质量。', 'zh-TW': '影像上即時顯示<strong>FPS、RTT、封包遺失率</strong>。可監控網路品質。', es: 'Se muestran en tiempo real en el vídeo <strong>FPS, RTT y pérdida de paquetes</strong>. Supervise la calidad de la red.' },
+        { target: '#demo-root .dds-stage .dds-metrics', position: 'left',
+          title: { ko: '실시간 수치', en: 'Live Numbers', ja: 'リアルタイム数値', 'zh-CN': '实时数值', 'zh-TW': '即時數值', es: 'Cifras en vivo' },
+          content: { ko: '무대 오른쪽에 <strong>FPS, 해상도, 모델</strong>이 실시간 표시됩니다. 브라우저 전송(WebRTC/MJPEG) 기준 수치입니다.', en: 'The right of the stage shows <strong>FPS, resolution and model</strong> live. The numbers are measured on the browser stream (WebRTC/MJPEG).', ja: 'ステージ右側に<strong>FPS、解像度、モデル</strong>がリアルタイム表示されます。ブラウザ配信（WebRTC/MJPEG）基準の数値です。', 'zh-CN': '舞台右侧实时显示<strong>FPS、分辨率和模型</strong>。数值基于浏览器传输（WebRTC/MJPEG）。', 'zh-TW': '舞台右側即時顯示<strong>FPS、解析度和模型</strong>。數值以瀏覽器傳輸（WebRTC/MJPEG）為準。', es: 'A la derecha del escenario se muestran en vivo <strong>FPS, resolución y modelo</strong>. Las cifras se miden sobre el stream del navegador (WebRTC/MJPEG).' },
           beforeStep: function () { _mockDemoVideoPreview(); } },
         { target: '#btn-demo-fullscreen', position: 'left',
           title: { ko: '전체화면', en: 'Fullscreen', ja: 'フルスクリーン', 'zh-CN': '全屏', 'zh-TW': '全螢幕', es: 'Pantalla completa' },
           content: { ko: '비디오를 <strong>전체화면</strong>으로 전환합니다. Esc로 나갈 수 있습니다.', en: 'Switch video to <strong>fullscreen</strong>. Press Esc to exit.', ja: 'ビデオを<strong>フルスクリーン</strong>に切り替えます。Escで終了できます。', 'zh-CN': '将视频切换为<strong>全屏</strong>模式。按Esc退出。', 'zh-TW': '將影片切換為<strong>全螢幕</strong>模式。按Esc退出。', es: 'Cambie el vídeo a <strong>pantalla completa</strong>. Pulse Esc para salir.' },
           beforeStep: function () { _mockDemoVideoPreview(); } },
-        { target: '#btn-demo-stop', position: 'left',
+        { target: '#demo-root .dds-stage #btn-demo-stop', position: 'left',
           title: { ko: '데모 중지', en: 'Stop Demo', ja: 'デモ停止', 'zh-CN': '停止演示', 'zh-TW': '停止示範', es: 'Detener demo' },
-          content: { ko: '{{i:stop}} 버튼을 클릭하면 실행 중인 <strong>데모를 중지</strong>합니다. 파이프라인이 종료되고 비디오 섹션이 닫힙니다.', en: 'Click {{i:stop}} to <strong>stop the running demo</strong>. The pipeline stops and the video section closes.', ja: '{{i:stop}}をクリックすると実行中の<strong>デモを停止</strong>します。パイプラインが終了しビデオセクションが閉じます。', 'zh-CN': '点击{{i:stop}}<strong>停止运行中的演示</strong>。管道停止，视频区域关闭。', 'zh-TW': '點擊{{i:stop}}<strong>停止執行中的示範</strong>。管線停止，影片區域關閉。', es: 'Haga clic en {{i:stop}} para <strong>detener la demo en ejecución</strong>. El pipeline se detiene y se cierra la sección de vídeo.' },
+          content: { ko: '{{i:stop}} 버튼을 클릭하면 실행 중인 <strong>데모를 중지</strong>합니다. 파이프라인이 종료되고 무대는 미리보기로 돌아갑니다.', en: 'Click {{i:stop}} to <strong>stop the running demo</strong>. The pipeline stops and the stage returns to the preview.', ja: '{{i:stop}}ボタンをクリックすると実行中の<strong>デモを停止</strong>します。パイプラインが終了し、ステージはプレビューに戻ります。', 'zh-CN': '点击{{i:stop}}按钮即可<strong>停止正在运行的演示</strong>。管道结束，舞台回到预览。', 'zh-TW': '點擊{{i:stop}}按鈕即可<strong>停止執行中的示範</strong>。管線結束，舞台回到預覽。', es: 'Haga clic en {{i:stop}} para <strong>detener la demo en ejecución</strong>. El pipeline se detiene y el escenario vuelve a la vista previa.' },
           beforeStep: function () { _mockDemoVideoPreview(); } },
-        { target: '#demo-pipeline-info', position: 'top',
-          title: { ko: '파이프라인 정보', en: 'Pipeline Info', ja: 'パイプライン情報', 'zh-CN': '管道信息', 'zh-TW': '管線資訊', es: 'Información del pipeline' },
-          content: { ko: '실행 중인 파이프라인의 <strong>모델명, 해상도, 입력 소스</strong> 등의 정보가 하단 바에 표시됩니다.', en: 'Shows <strong>model name, resolution, input source</strong> of the running pipeline in the bottom bar.', ja: '実行中のパイプラインの<strong>モデル名、解像度、入力ソース</strong>などの情報がボトムバーに表示されます。', 'zh-CN': '底部栏显示运行中管道的<strong>模型名称、分辨率、输入源</strong>等信息。', 'zh-TW': '底部欄顯示執行中管線的<strong>模型名稱、解析度、輸入來源</strong>等資訊。', es: 'Muestra en la barra inferior <strong>nombre del modelo, resolución y fuente de entrada</strong> del pipeline en ejecución.' },
-          beforeStep: function () {
-            _mockDemoVideoPreview();
-            var bar = document.querySelector('#demo-video-section .video-info-bar');
-            if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          },
+        { target: '#demo-root .dds-stage .dds-extra', position: 'left',
+          title: { ko: '터미널 명령', en: 'Terminal Command', ja: 'ターミナルコマンド', 'zh-CN': '终端命令', 'zh-TW': '終端機命令', es: 'Comando de terminal' },
+          content: { ko: '브라우저 전송은 인코딩 부담이 있어 화면 속도가 실제 성능과 다를 수 있습니다. <strong>Terminal command</strong>를 열면 같은 파이프라인을 터미널에서 돌리는 명령이 있습니다.', en: 'Browser streaming adds encoding overhead, so on-screen speed can differ from real performance. Open <strong>Terminal command</strong> for the command that runs the same pipeline in a terminal.', ja: 'ブラウザ配信はエンコード負荷があるため、画面上の速度は実性能と異なる場合があります。<strong>Terminal command</strong>を開くと、同じパイプラインをターミナルで実行するコマンドがあります。', 'zh-CN': '浏览器传输有编码开销，画面速度可能与实际性能不同。打开<strong>Terminal command</strong>可查看在终端运行同一管道的命令。', 'zh-TW': '瀏覽器傳輸有編碼負擔，畫面速度可能與實際效能不同。開啟<strong>Terminal command</strong>可查看在終端機執行同一管線的命令。', es: 'El streaming del navegador añade sobrecarga de codificación, así que la velocidad en pantalla puede diferir del rendimiento real. Abra <strong>Terminal command</strong> para ver el comando que ejecuta el mismo pipeline en una terminal.' },
+          beforeStep: function () { _mockDemoVideoPreview(); },
           afterStep: function () { _hideDemoVideoPreview(); } },
       ]
     },

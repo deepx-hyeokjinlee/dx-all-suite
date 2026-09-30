@@ -174,6 +174,10 @@ def test_demo_fullscreen_target_keeps_stop_controls_inside():
 
     assert "var target = DXStream.$('demo-video-section')" in src
     assert "requestFullscreen()" in src
+    # panel 은 전체 화면 밖이다 — Stop 이 영상 상자 안에도 있다
+    html = template_source()
+    box = html[html.index('id="demo-video-section"'):html.index('id="btn-demo-fullscreen"')]
+    assert 'class="dds-live-stop" onclick="DXStream.stopDemo()"' in box
 
 
 def test_demo_stop_exits_fullscreen_before_hiding_video_section():
@@ -187,7 +191,8 @@ def test_demo_stop_exits_fullscreen_before_hiding_video_section():
 
     assert "document.fullscreenElement" in src
     assert "document.exitFullscreen()" in src
-    assert src.index("document.exitFullscreen()") < src.index("videoSection.style.display = 'none'")
+    # 영상 상자를 무대에서 빼기 (숨은 자리로) 전에 전체 화면을 끝낸다 (spec 2026-10-01 demo stage)
+    assert src.index("document.exitFullscreen()") < src.index("_demoParkVideo()")
 
 
 def test_stream_reference_uses_event_delegation_not_inline_handlers():

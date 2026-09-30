@@ -569,5 +569,10 @@ window._DX_I18N_DICT = {
   // 데모 카드 상태 (아이콘 체계 단계 4) — Setup 단계 목록과 같은 말.
   'Ready': { ko: '준비됨', ja: '準備完了', 'zh-CN': '就绪', 'zh-TW': '就緒', es: 'Listo' },
   'Needs setup': { ko: '설치 필요', ja: 'セットアップが必要', 'zh-CN': '需要安装', 'zh-TW': '需要安裝', es: 'Requiere instalación' },
+  // 결과 무대 (spec 2026-10-01 demo stage)
+  'Install a model in Setup to run a demo.': { ko: 'Setup 에서 model 을 설치하면 데모를 실행할 수 있습니다.', ja: 'Setup でモデルをインストールするとデモを実行できます。', 'zh-CN': '在 Setup 中安装模型即可运行演示。', 'zh-TW': '在 Setup 中安裝模型即可執行示範。', es: 'Instale un modelo en Setup para ejecutar una demo.' },
+  'Terminal command': { ko: '터미널 명령', ja: 'ターミナルコマンド', 'zh-CN': '终端命令', 'zh-TW': '終端機命令', es: 'Comando de terminal' },
+  'Resolution': { ko: '해상도', ja: '解像度', 'zh-CN': '分辨率', 'zh-TW': '解析度', es: 'Resolución' },
+  'Model': { ko: '모델', ja: 'モデル', 'zh-CN': '模型', 'zh-TW': '模型', es: 'Modelo' },
   'Set up': { ko: '설치하러 가기', ja: 'セットアップへ', 'zh-CN': '前往安装', 'zh-TW': '前往安裝', es: 'Ir a instalar' },
 };
