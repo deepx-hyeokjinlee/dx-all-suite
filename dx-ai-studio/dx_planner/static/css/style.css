@@ -784,6 +784,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
   }
 }
 .btn-methodology-inline { margin-top: 0; }
+/* 밝은 테마: 노란 판 위의 옅은 노란 글자는 거의 보이지 않았다 — 테마의 경고색 (진한 주황) 으로. */
+:root[data-theme="light"] .btn-methodology { color: var(--status-warn); }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .btn-methodology { color: var(--status-warn); }
+}
 
 .planner-dialog {
   border: none;
