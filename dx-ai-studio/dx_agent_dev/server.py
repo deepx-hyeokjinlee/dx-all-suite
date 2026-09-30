@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 
@@ -248,7 +249,10 @@ class AgentDevHandler(DXBaseHandler):
         env = environment.detect_environment()
         forced = env.get("forced_mock", False)
         available = env["available"] or forced
-        agents = [] if forced else environment.detect_available_agents()
+        # mock 이어도 agent 목록을 고정해 두었으면 (DX_AGENT_DEV_PIN_AGENTS — 시각 회귀 · browser test) 그것을
+        # 보인다: 화면은 진짜처럼 고르고, 실행은 mock 이 받는다.
+        pinned = os.environ.get("DX_AGENT_DEV_PIN_AGENTS") is not None
+        agents = environment.detect_available_agents() if (pinned or not forced) else []
         snap = _live.snapshot()
         status = {
             "available": available,
@@ -260,6 +264,10 @@ class AgentDevHandler(DXBaseHandler):
             "run_id": snap["run_id"],
             "event_count": snap["count"],
             "run_done": snap["done"],
+            # 이어받는 쪽 (home → Agent Dev) 이 첫 줄 · 대화 · mode 를 안다
+            "run_prompt": snap["info"].get("prompt"),
+            "run_conversation_id": snap["info"].get("conversation_id"),
+            "run_mode": snap["info"].get("mode"),
         }
         if not available:
             # Same localized guidance as the SSE degraded event (see _degraded_payload) — this
@@ -275,11 +283,14 @@ class AgentDevHandler(DXBaseHandler):
     def _agent_models(self):
         """?agent=<name> → 동적 모델 목록(+default). 정적 config 폴백은 list_agent_models 내부."""
         from urllib.parse import urlparse, parse_qs
-        from dx_agent_dev.core.agents_config import AGENTS
         agent = (parse_qs(urlparse(self.path).query).get("agent", [""])[0] or "").strip()
-        models = environment.list_agent_models(agent) if agent else []
-        return {"agent": agent, "models": models,
-                "default_model": AGENTS.get(agent, {}).get("default_model")}
+        if not agent:
+            return {"agent": agent, "models": [], "default_model": None}
+        info = environment.agent_model_info(agent)
+        out = {"agent": agent, "models": info["models"], "default_model": info["default_model"]}
+        if info.get("catalog"):
+            out["catalog"] = info["catalog"]   # 전체 + enabled — 계정이 고를 수 있는 것만 enabled
+        return out
 
     def _login_status(self):
         """in-UI 로그인 보조: ?agent=<name> → 설치/인증 상태 + 로그인 명령 안내.
@@ -458,7 +469,9 @@ class AgentDevHandler(DXBaseHandler):
             prompt, harness, adapter=adapter, conversation=conv, run_ctx=run_ctx,
         )
         try:
-            _live.start(source, cancel=_runner.cancel, on_event=_absorb)
+            _live.start(source, cancel=_runner.cancel, on_event=_absorb,
+                        info={"prompt": raw_prompt, "conversation_id": conv.id,
+                              "mode": "autopilot" if autopilot else "interactive"})
         except RuntimeError:
             return self.send_error_json(409, "agent busy")
 

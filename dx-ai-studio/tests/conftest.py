@@ -10,6 +10,12 @@ if str(ROOT) in sys.path:
     sys.path.remove(str(ROOT))
 sys.path.insert(0, str(ROOT))
 
+# test 는 진짜 agent CLI (copilot · claude · cursor …) 를 돌리지 않는다. adapter 가 이 값을 보고
+# PATH 의 진짜 CLI 실행을 거절한다 (가짜 script 는 그대로). module server 하위 process 도 물려받는다.
+# agent 를 지정하지 않은 실행이 기본 copilot 으로 가서, CLI 를 설치 · 로그인하자 test 한 번에 실제
+# 실행이 12번 돌았다 (2026-09-30). 계약: tests/dx_agent_dev/test_no_real_runs_in_tests.py
+os.environ["DX_AGENT_NO_REAL_RUN"] = "1"
+
 # 일부 모듈 테스트가 자체 top-level package 경로를 앞에 추가해도 감사 도구 import가
 # 흔들리지 않도록 root namespace를 먼저 고정한다.
 import tools.i18n_audit  # noqa: E402,F401

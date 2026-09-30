@@ -21,8 +21,10 @@ def test_make_adapter_binds_name_and_default_model():
     a = make_adapter("copilot")
     assert a is not None
     assert a.name == "copilot"
-    # copilot now defaults to the original harness model (claude-sonnet-4.6)
-    assert a.model == "claude-sonnet-4.6"
+    # copilot defaults to "auto" (the CLI picks): which models an account may use differs per plan
+    # and org policy, and the old harness default claude-sonnet-4.6 was not offered to a measured
+    # account (2026-09-30). The account's own default arrives with its model list (ACP).
+    assert a.model == "auto"
 
 
 def test_make_adapter_explicit_model():

@@ -18,7 +18,12 @@ from tests.server_helpers import start_module_server
 
 
 @pytest.fixture()
-def agent():
+def agent(monkeypatch):
+    # mock 으로 — agent 를 지정하지 않은 실행은 기본 copilot 으로 간다. copilot CLI 가 설치 · 로그인된
+    # 기기에서 이 test 가 실제 실행을 12번 돌렸다 (2026-09-30). 느린 mock 으로 "도중에 떠났다 붙기" 를
+    # 실제로 만든다 (즉시 끝나는 mock 이면 떠나기 전에 끝난다).
+    monkeypatch.setenv("DX_AGENT_ADAPTER", "mock")
+    monkeypatch.setenv("DX_AGENT_MOCK_DELAY", "0.25")
     server, port = start_module_server("dx_agent_dev")
     try:
         yield f"http://127.0.0.1:{port}"

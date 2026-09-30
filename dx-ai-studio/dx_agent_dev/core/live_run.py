@@ -28,6 +28,7 @@ class LiveRun:
         self._events: list[dict] = []
         self._done = True
         self._run_id: Optional[str] = None
+        self._info: dict = {}
         self._thread: Optional[threading.Thread] = None
         self._cancel: Optional[Callable[[], None]] = None
         self._on_event = on_event
@@ -40,8 +41,10 @@ class LiveRun:
         *,
         cancel: Optional[Callable[[], None]] = None,
         on_event: Optional[Callable[[dict], None]] = None,
+        info: Optional[dict] = None,
     ) -> str:
-        """`source` 를 백그라운드에서 소비하기 시작하고 run_id 를 돌려준다."""
+        """`source` 를 백그라운드에서 소비하기 시작하고 run_id 를 돌려준다. `info` 는 이 실행이 무엇인지
+        (prompt · conversation · mode) — 이어받는 쪽이 첫 줄과 대화를 알아야 한다."""
         with self._cv:
             if not self._done:
                 raise RuntimeError("run already in progress")
@@ -49,6 +52,7 @@ class LiveRun:
             self._events = []
             self._done = False
             self._run_id = run_id
+            self._info = dict(info or {})
             self._cancel = cancel
             if on_event is not None:
                 self._on_event = on_event
@@ -108,4 +112,5 @@ class LiveRun:
 
     def snapshot(self) -> dict[str, Any]:
         with self._cv:
-            return {"run_id": self._run_id, "count": len(self._events), "done": self._done}
+            return {"run_id": self._run_id, "count": len(self._events), "done": self._done,
+                    "info": dict(self._info)}
