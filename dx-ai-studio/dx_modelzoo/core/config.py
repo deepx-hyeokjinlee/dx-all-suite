@@ -1,4 +1,5 @@
 """DX Model Zoo — 경로, 상수, 카테고리 정의."""
+from shared.tasks import TaskTable
 import importlib
 import os
 from pathlib import Path
@@ -59,10 +60,26 @@ CATEGORIES = {
     "object_pose_estimation":{"label_en": "Object Pose Estimation","label_ko": "객체 자세 추정",     "label_ja": "物体姿勢推定",          "label_es": "Estimación de pose de objetos","label_zh-CN": "物体姿态估计","label_zh-TW": "物件姿態估計","icon": "task-object_pose_estimation"},
     "panoptic_driving_perception":{"label_en": "Panoptic Driving Perception","label_ko": "파놉틱 주행 인식","label_ja": "パノプティック走行認識","label_es": "Percepción panóptica de conducción","label_zh-CN": "全景驾驶感知","label_zh-TW": "全景駕駛感知","icon": "task-panoptic_driving_perception"},
     "3d_object_detection":  {"label_en": "3D Object Detection",   "label_ko": "3D 객체 탐지",       "label_ja": "3D物体検出",            "label_es": "Detección de objetos 3D",      "label_zh-CN": "3D目标检测", "label_zh-TW": "3D物件偵測", "icon": "task-3d_object_detection"},
+    # dx_app per-model layout 의 task key (spec 2026-10-01) — 옛 key 와의 짝은 shared/tasks.py LEGACY_TO_TASK
+    "image_classification": {"label_en": "Image Classification", "label_ko": "이미지 분류", "label_ja": "画像分類", "label_es": "Clasificación de imágenes", "label_zh-CN": "图像分类", "label_zh-TW": "影像分類", "icon": "task-image_classification"},
+    "oriented_object_detection": {"label_en": "Oriented Object Detection", "label_ko": "회전 객체 탐지", "label_ja": "回転物体検出", "label_es": "Detección de objetos orientados", "label_zh-CN": "旋转目标检测", "label_zh-TW": "旋轉物件偵測", "icon": "task-oriented_object_detection"},
+    "face_landmark": {"label_en": "Face Landmark", "label_ko": "얼굴 랜드마크", "label_ja": "顔ランドマーク", "label_es": "Puntos faciales", "label_zh-CN": "人脸关键点", "label_zh-TW": "人臉關鍵點", "icon": "task-face_landmark"},
+    "face_recognition": {"label_en": "Face Recognition", "label_ko": "얼굴 인식", "label_ja": "顔認識", "label_es": "Reconocimiento facial", "label_zh-CN": "人脸识别", "label_zh-TW": "人臉辨識", "icon": "task-face_recognition"},
+    "person_attribute": {"label_en": "Person Attribute", "label_ko": "사람 속성", "label_ja": "人物属性", "label_es": "Atributos de persona", "label_zh-CN": "行人属性", "label_zh-TW": "行人屬性", "icon": "task-person_attribute"},
+    "low_light_enhancement": {"label_en": "Low-Light Enhancement", "label_ko": "저조도 향상", "label_ja": "低照度補正", "label_es": "Mejora con poca luz", "label_zh-CN": "低光增强", "label_zh-TW": "低光增強", "icon": "task-low_light_enhancement"},
+    "person_reid": {"label_en": "Person Re-ID", "label_ko": "사람 재식별", "label_ja": "人物再識別", "label_es": "Re-ID de personas", "label_zh-CN": "行人重识别", "label_zh-TW": "行人重新識別", "icon": "task-person_reid"},
+    "anomaly_detection": {"label_en": "Anomaly Detection", "label_ko": "이상 탐지", "label_ja": "異常検知", "label_es": "Detección de anomalías", "label_zh-CN": "异常检测", "label_zh-TW": "異常偵測", "icon": "task-anomaly_detection"},
+    "zero_shot_image_classification": {"label_en": "Zero-Shot Classification", "label_ko": "제로샷 분류", "label_ja": "ゼロショット分類", "label_es": "Clasificación zero-shot", "label_zh-CN": "零样本分类", "label_zh-TW": "零樣本分類", "icon": "task-zero_shot_image_classification"},
+    "zero_shot_instance_segmentation": {"label_en": "Zero-Shot Segmentation", "label_ko": "제로샷 분할", "label_ja": "ゼロショットセグメンテーション", "label_es": "Segmentación zero-shot", "label_zh-CN": "零样本分割", "label_zh-TW": "零樣本分割", "icon": "task-zero_shot_instance_segmentation"},
+    "image_matting": {"label_en": "Image Matting", "label_ko": "이미지 매팅", "label_ja": "画像マッティング", "label_es": "Matting de imagen", "label_zh-CN": "图像抠图", "label_zh-TW": "影像去背", "icon": "task-image_matting"},
+    "image_retrieval": {"label_en": "Image Retrieval", "label_ko": "이미지 검색", "label_ja": "画像検索", "label_es": "Recuperación de imágenes", "label_zh-CN": "图像检索", "label_zh-TW": "影像檢索", "icon": "task-image_retrieval"},
+    "visual_place_recognition": {"label_en": "Visual Place Recognition", "label_ko": "장소 인식", "label_ja": "視覚的場所認識", "label_es": "Reconocimiento visual de lugares", "label_zh-CN": "视觉地点识别", "label_zh-TW": "視覺地點辨識", "icon": "task-visual_place_recognition"},
+    "face_attribute": {"label_en": "Face Attribute", "label_ko": "얼굴 속성", "label_ja": "顔属性", "label_es": "Atributos faciales", "label_zh-CN": "人脸属性", "label_zh-TW": "人臉屬性", "icon": "task-face_attribute"},
 }
 
 # 태스크별 Example 이미지 표시 타입
-EXAMPLE_TYPES = {
+# TaskTable: 새 task key (image_classification …) 로 물어도 옛 key 의 값을 찾는다 (shared/tasks.py)
+EXAMPLE_TYPES = TaskTable({
     "object_detection": "single", "face_detection": "single",
     "pose_estimation": "single", "obb_detection": "single",
     "ppu": "single", "face_alignment": "single", "hand_landmark": "single",
@@ -75,7 +92,10 @@ EXAMPLE_TYPES = {
     "hand_detection": "single", "keypoint_detection": "single",
     "object_pose_estimation": "single", "3d_object_detection": "single",
     "panoptic_driving_perception": "overlay",
-}
+    "anomaly_detection": "overlay", "image_matting": "overlay", "zero_shot_instance_segmentation": "overlay",
+    "zero_shot_image_classification": "classified", "image_retrieval": "gallery",
+    "visual_place_recognition": "gallery", "face_attribute": "single",
+})
 
 # 태스크별 기본 샘플 이미지 (inference 용)
 # dx_app 이 v3.2.0/v3.2.1 에서 샘플을 교체했는데 이 표가 따라가지 않아, 한 달 넘게
@@ -89,7 +109,7 @@ EXAMPLE_TYPES = {
 # 둘 다 같은 커밋에서 대체물을 함께 넣었다. 자산이 사라진 것이 아니라 교체된 것이다.
 # 진짜 출처는 dx_app/scripts/run_examples.sh 의 CATEGORY_IMAGE 표이고,
 # 이제 tests/dx_modelzoo/test_conf_categories_are_known.py 가 어긋나면 말한다.
-SAMPLE_IMAGES = {
+SAMPLE_IMAGES = TaskTable({
     "object_detection": "sample/img/sample_street.jpg",
     "face_detection": "sample/img/sample_face.jpg",
     "pose_estimation": "sample/img/sample_people.jpg",
@@ -112,7 +132,15 @@ SAMPLE_IMAGES = {
     "object_pose_estimation": "sample/dope/000000.png",
     "panoptic_driving_perception": "sample/img/sample_parking.jpg",
     "3d_object_detection": "sample/kitti/velodyne/000049.bin",
-}
+    # dx_app per-model layout 의 새 task — 그 예제들의 config.json default_image (8d0b748)
+    "anomaly_detection": "sample/img/sample_parking.jpg",
+    "zero_shot_image_classification": "sample/img/sample_dog.jpg",
+    "zero_shot_instance_segmentation": "sample/img/sample_street.jpg",
+    "image_matting": "sample/img/sample_person_b.jpg",
+    "image_retrieval": "sample/img/sample_person_a2.jpg",
+    "visual_place_recognition": "sample/vpr/queries/q1.jpg",
+    "face_attribute": "sample/img/sample_person_a1.jpg",
+})
 
 MODEL_IMAGE_OVERRIDE = {
     "scrfd500m_ppu": "sample/img/sample_face.jpg",

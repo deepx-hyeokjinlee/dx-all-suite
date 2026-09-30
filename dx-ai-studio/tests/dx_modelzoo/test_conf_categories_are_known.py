@@ -57,13 +57,16 @@ def test_every_category_in_the_conf_is_declared(table):
 def test_the_three_tables_agree_with_each_other():
     """셋 중 하나만 채우고 나머지를 잊는 것이 가장 흔한 실수다."""
     cfg = _config()
-    cats, examples, samples = set(cfg.CATEGORIES), set(cfg.EXAMPLE_TYPES), set(cfg.SAMPLE_IMAGES)
-    assert cats == examples, (
-        f"CATEGORIES 와 EXAMPLE_TYPES 가 다르다 — "
-        f"CATEGORIES 에만: {sorted(cats - examples)}, EXAMPLE_TYPES 에만: {sorted(examples - cats)}")
-    assert cats == samples, (
-        f"CATEGORIES 와 SAMPLE_IMAGES 가 다르다 — "
-        f"CATEGORIES 에만: {sorted(cats - samples)}, SAMPLE_IMAGES 에만: {sorted(samples - cats)}")
+    # 두 표는 TaskTable 이라 per-model layout 의 새 이름 (image_classification …) 이 옛 이름 (classification) 의
+    # 값을 찾는다 (shared/tasks.py) — 같은 task 를 두 번 적지 않는다. 그래서 key 가 아니라 "찾아지는가" 로 본다.
+    cats = set(cfg.CATEGORIES)
+    no_example = sorted(c for c in cats if c not in cfg.EXAMPLE_TYPES)
+    no_sample = sorted(c for c in cats if c not in cfg.SAMPLE_IMAGES)
+    assert not no_example, f"EXAMPLE_TYPES 가 모르는 task: {no_example}"
+    assert not no_sample, f"SAMPLE_IMAGES 가 모르는 task: {no_sample}"
+    for name, table in (("EXAMPLE_TYPES", cfg.EXAMPLE_TYPES), ("SAMPLE_IMAGES", cfg.SAMPLE_IMAGES)):
+        extra = sorted(set(table) - cats)
+        assert not extra, f"CATEGORIES 에 없는 {name} key: {extra}"
 
 
 def test_each_sample_image_actually_exists():
@@ -80,9 +83,16 @@ def test_each_sample_image_actually_exists():
     cfg = _config()
     from dx_modelzoo.core.config import DX_APP_ROOT
 
+    from shared import dx_app_layout as layout
+    from shared.tasks import NEW_TASKS
+    legacy_root = layout.detect(DX_APP_ROOT) == layout.LEGACY
+
     missing = []
     for category, rel in cfg.SAMPLE_IMAGES.items():
         if not rel:
+            continue
+        # 새 task 의 sample (sample/vpr/ …) 은 per-model layout 의 dx_app 에만 있다
+        if legacy_root and category in NEW_TASKS:
             continue
         if not (Path(DX_APP_ROOT) / rel).exists():
             missing.append(f"{category} -> {rel}")

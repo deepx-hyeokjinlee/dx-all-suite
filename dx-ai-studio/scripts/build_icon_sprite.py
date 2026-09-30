@@ -157,6 +157,26 @@ S['task-panoptic_driving_perception'] = ([P('M8.5 3.5h7L20.5 20.5h-17z')],
     [P('M8.5 3.5 3.5 20.5M15.5 3.5l5 17'), P('M12 5v2M12 10.5v2.5M12 16.5v4')])
 S['task-3d_object_detection'] = ([R(3, 9, 12, 12, 1.5)],
     [R(3, 9, 12, 12, 1.5), P('M9 3h10.5A1.5 1.5 0 0 1 21 4.5V15'), P('M3.4 9.4 9 3.4M14.6 9.4 20.6 3.4M14.6 20.6l5.9-5.9'), P('M9 3v2.5M9 8v1')])
+# ── dx_app per-model layout 의 task key (spec 2026-10-01): 옛 key 를 새 이름으로 부른 것은 같은 그림을 자기 id 로,
+#    새 task 7 개는 새 그림. dx_modelzoo/core/config.py CATEGORIES · shared/tasks.py 의 LEGACY_TO_TASK 와 같은 표. ──
+S['task-image_classification'] = S['task-classification']
+S['task-oriented_object_detection'] = S['task-obb_detection']
+S['task-face_landmark'] = S['task-face_alignment']
+S['task-face_recognition'] = S['task-embedding']
+S['task-person_attribute'] = S['task-attribute_recognition']
+S['task-low_light_enhancement'] = S['task-image_enhancement']
+S['task-person_reid'] = S['task-reid']
+SPARK = 'M18.5 2.5v4M16.5 4.5h4'
+S['task-anomaly_detection'] = ([FRAME], [FRAME, P('M6 14.5h3l2-5.5 2.5 8 1.5-3.5H18')])
+S['task-zero_shot_image_classification'] = ([P(TAG)], [P(TAG), C(8.5, 8.5, 1.5), P(SPARK)])
+S['task-zero_shot_instance_segmentation'] = ([P('M4 14a5.5 5.5 0 0 1 11 0v3.5A2.5 2.5 0 0 1 12.5 20h-6A2.5 2.5 0 0 1 4 17.5z')],
+    [P('M4 14a5.5 5.5 0 0 1 11 0v3.5A2.5 2.5 0 0 1 12.5 20h-6A2.5 2.5 0 0 1 4 17.5z'), C(15.5, 10.5, 4), P('M5.5 2.5v4M3.5 4.5h4')])
+S['task-image_matting'] = ([C(12, 9.5, 3.2), P('M6 20.5a6 6 0 0 1 12 0z')],
+    [R(3, 3, 18, 18, 2.5), C(12, 9.5, 3.2), P('M6 20.5a6 6 0 0 1 12 0'), P('M3 8h2M3 13h2M19 8h2M19 13h2')])
+S['task-image_retrieval'] = ([R(3, 3, 12, 12, 2)], [R(3, 3, 12, 12, 2), C(15.5, 15.5, 4), P('M18.5 18.5l3 3')])
+S['task-visual_place_recognition'] = ([P(PIN)], [P(PIN), P('M9.5 10.5l2 2 3.5-4'), P('M4 21.5h16')])
+S['task-face_attribute'] = ([C(10, 12.5, 6.5)],
+    [C(10, 12.5, 6.5), P('M8.3 11.2v.1M11.7 11.2v.1'), P('M8 14.8c1.2.9 2.8.9 4 0'), P('M16.5 3h3.5l1.5 1.8-1.5 1.8h-3.5z')])
 
 # ── 단계 5: launcher About · SDK Library 의 분야 · 상 표시 ──
 CAR = 'M5 16.5V12l1.8-4.6A2 2 0 0 1 8.6 6h6.8a2 2 0 0 1 1.8 1.4L19 12v4.5'
