@@ -98,10 +98,10 @@ function _commercialUseValue(cu) {
 
 function _commercialUseWarning(cu) {
   if (cu === 'non-commercial') {
-    return `<div class="mz-commercial-warn non-commercial">⚠ ${escapeHtml(T('This model is licensed for non-commercial use only — review the source license before deploying commercially.'))}</div>`;
+    return `<div class="mz-commercial-warn non-commercial">${_mzIco('alert')} ${escapeHtml(T('This model is licensed for non-commercial use only — review the source license before deploying commercially.'))}</div>`;
   }
   if (cu === 'restricted') {
-    return `<div class="mz-commercial-warn restricted">⚠ ${escapeHtml(T('This model has no clear commercial-use license — review the source license before deploying commercially.'))}</div>`;
+    return `<div class="mz-commercial-warn restricted">${_mzIco('alert')} ${escapeHtml(T('This model has no clear commercial-use license — review the source license before deploying commercially.'))}</div>`;
   }
   return '';
 }
@@ -214,9 +214,9 @@ function renderDetailActionBar(model) {
   // on location.hash: any hash that is not "#model=..." makes route() hide the detail view.
   return `<div class="mz-detail-action-bar" data-detail-action-bar>
     <button class="mz-btn mz-btn-outline" onclick="location.hash=''">← ${T('Back to Catalog')}</button>
-    <button class="mz-btn mz-btn-outline" onclick="scrollToDetailSection('sectionCompile')">🔧 ${T('How to Compile DXNN')}</button>
-    <button class="mz-btn mz-btn-primary" onclick="scrollToDetailSection('demoSection')">▶ ${T('Demo Usage')}</button>
-    <button class="mz-btn mz-btn-outline" onclick="exportModelCardHtml()">💾 ${T('Save as HTML')}</button>
+    <button class="mz-btn mz-btn-outline" onclick="scrollToDetailSection('sectionCompile')">${_mzIco('wrench')} ${T('How to Compile DXNN')}</button>
+    <button class="mz-btn mz-btn-primary" onclick="scrollToDetailSection('demoSection')">${_mzIco('play')} ${T('Demo Usage')}</button>
+    <button class="mz-btn mz-btn-outline" onclick="exportModelCardHtml()">${_mzIco('download')} ${T('Save as HTML')}</button>
   </div>`;
 }
 
@@ -256,7 +256,7 @@ function renderDetail(container, model) {
             <div class="mz-detail-side-sticky">
               ${renderDetailActionBar(model)}
               <section class="mz-detail-section mz-detail-side-section" id="sectionQuickFacts">
-                <h3>📌 ${T('Key Facts')}</h3>
+                <h3>${_mzIco('clipboard')} ${T('Key Facts')}</h3>
                 ${renderKeyFacts(model)}
               </section>
             </div>
@@ -264,7 +264,7 @@ function renderDetail(container, model) {
 
           <div class="mz-detail-panel mz-detail-panel-d">
             <section class="mz-detail-section" id="sectionSpec" data-section="sectionTiers">
-              <h3>📊 ${T('Specification')}</h3>
+              <h3>${_mzIco('dashboard')} ${T('Specification')}</h3>
               <div class="mz-spec-metrics-grid">
                 ${renderAccuracyMatrix(model)}
                 ${renderRuntimePerformance(model)}
@@ -274,7 +274,7 @@ function renderDetail(container, model) {
             </section>
 
             <section class="mz-detail-section" id="sectionCompile">
-              <h3>🔧 ${T('How to Compile DXNN')}</h3>
+              <h3>${_mzIco('wrench')} ${T('How to Compile DXNN')}</h3>
               ${renderCompileGuide(model)}
             </section>
           </div>
@@ -283,16 +283,16 @@ function renderDetail(container, model) {
         <div class="mz-detail-col mz-detail-col-left">
           <div class="mz-detail-panel mz-detail-panel-a">
             <section class="mz-detail-section" id="sectionUseCase">
-              <h3>📝 ${T('Use Case & Description')}</h3>
+              <h3>${_mzIco('file')} ${T('Use Case & Description')}</h3>
               ${renderDescription(model)}
             </section>
 
             <section class="mz-detail-section" id="sectionExample">
-              <h3>🖼️ ${T('Example')}</h3>
+              <h3>${_mzIco('image')} ${T('Example')}</h3>
               ${renderExampleText(model)}
               ${renderExampleImages(model)}
               <details style="margin-top:24px">
-                <summary style="cursor:pointer;font-weight:600">🔬 ${T('Run Inference')}</summary>
+                <summary style="cursor:pointer;font-weight:600">${_mzIco('lab')} ${T('Run Inference')}</summary>
                 <div id="inferencePanel"></div>
               </details>
             </section>
@@ -300,7 +300,7 @@ function renderDetail(container, model) {
 
           <div class="mz-detail-panel mz-detail-panel-c">
             <section class="mz-detail-section" id="demoSection">
-              <h3>💻 ${T('Demo Usage')}</h3>
+              <h3>${_mzIco('dev')} ${T('Demo Usage')}</h3>
               <div id="demoContent"><div class="mz-placeholder"><div class="mz-spinner"></div></div></div>
             </section>
           </div>
@@ -308,7 +308,7 @@ function renderDetail(container, model) {
       </div>
 
       <section class="mz-detail-section" id="sectionLegal">
-        <h3>⚖️ ${T('Legal Information')}</h3>
+        <h3>${_mzIco('book')} ${T('Legal Information')}</h3>
         ${renderLegal(model)}
       </section>
     </article>
@@ -595,7 +595,7 @@ function renderCompileGuide(model) {
         <div class="mz-compile-outputs">
           ${outputs.map((item) => `
             <span class="mz-compile-output ${item.ready ? 'ready' : 'pending'}">
-              ${item.ready ? '✅' : '⏳'} ${escapeHtml(item.label)}
+              ${item.ready ? _mzIco('check') : _mzIco('spinner')} ${escapeHtml(item.label)}
             </span>
           `).join('')}
         </div>
@@ -612,9 +612,9 @@ function renderCompileGuide(model) {
   const isValidOnnxUrl = /^https?:\/\//i.test(guide.onnx_url || '');
   if (_artifactAvailable(model, 'onnx') || isValidOnnxUrl) {
     const href = _artifactEndpoint(model.id, 'onnx');
-    html += `<a href="${escapeHtml(href)}" target="_blank" rel="noopener" class="mz-btn mz-btn-outline" id="btnOnnxLink">📦 ${T('ONNX Model Link')}</a>`;
+    html += `<a href="${escapeHtml(href)}" target="_blank" rel="noopener" class="mz-btn mz-btn-outline" id="btnOnnxLink">${_mzIco('models')} ${T('ONNX Model Link')}</a>`;
   }
-  html += `<button class="mz-btn mz-btn-primary" id="btnDxtronCompiler" onclick="openModelzooGraph('${escapeHtml(model.id)}')">📊 ${T('View Model Graph')}</button>`;
+  html += `<button class="mz-btn mz-btn-primary" id="btnDxtronCompiler" onclick="openModelzooGraph('${escapeHtml(model.id)}')">${_mzIco('dashboard')} ${T('View Model Graph')}</button>`;
   html += `</div>`;
   return html;
 }
@@ -726,20 +726,20 @@ async function loadDemoCode(model) {
 
     if (data.cpp) {
       html += `<div class="mz-code-panel" id="panel-cpp" style="${tabs[0].id !== 'cpp' ? 'display:none' : ''}">
-        <div class="mz-code-block"><button class="mz-code-copy" onclick="copyCode(this)">📋 ${T('Copy')}</button><pre><code>${escapeHtml(data.cpp)}</code></pre></div></div>`;
+        <div class="mz-code-block"><button class="mz-code-copy" onclick="copyCode(this)">${_mzIco('clipboard')} ${T('Copy')}</button><pre><code>${escapeHtml(data.cpp)}</code></pre></div></div>`;
     }
     if (data.python) {
       html += `<div class="mz-code-panel" id="panel-python" style="${tabs[0].id !== 'python' ? 'display:none' : ''}">
-        <div class="mz-code-block"><button class="mz-code-copy" onclick="copyCode(this)">📋 ${T('Copy')}</button><pre><code>${escapeHtml(data.python)}</code></pre></div></div>`;
+        <div class="mz-code-block"><button class="mz-code-copy" onclick="copyCode(this)">${_mzIco('clipboard')} ${T('Copy')}</button><pre><code>${escapeHtml(data.python)}</code></pre></div></div>`;
     }
     if (data.cli_command) {
       html += `<div class="mz-code-panel" id="panel-cli" style="${tabs[0].id !== 'cli' ? 'display:none' : ''}">
-        <div class="mz-code-block"><button class="mz-code-copy" onclick="copyCode(this)">📋 ${T('Copy')}</button><pre><code>${escapeHtml(data.cli_command)}</code></pre></div></div>`;
+        <div class="mz-code-block"><button class="mz-code-copy" onclick="copyCode(this)">${_mzIco('clipboard')} ${T('Copy')}</button><pre><code>${escapeHtml(data.cli_command)}</code></pre></div></div>`;
     }
 
     html += `<div style="margin-top:16px">
       <button class="mz-btn mz-btn-primary" onclick="openInferencePanelFromDemo()">
-        ▶ ${T('Run Demo')}
+        ${_mzIco('play')} ${T('Run Demo')}
       </button>
     </div>`;
 
@@ -762,9 +762,9 @@ function copyCode(btn) {
   const code = btn.parentElement.querySelector('code');
   if (code) {
     navigator.clipboard.writeText(code.textContent).then(() => {
-      const orig = btn.textContent;
-      btn.textContent = `✓ ${T('Copied!')}`;
-      setTimeout(() => { btn.textContent = orig; }, 2000);
+      const orig = btn.innerHTML;  // 아이콘 + 글자 그대로 되돌린다
+      DXIcon.label(btn, 'check', T('Copied!'));
+      setTimeout(() => { btn.innerHTML = orig; }, 2000);
     });
   }
 }
@@ -881,9 +881,9 @@ function _buildModelCardHtml(m, imgDataUrl) {
     [T('Last metadata sync'), v(lastSync)],
   ].map(function (r) { return '<tr><th>' + e(r[0]) + '</th><td>' + (r[0] === T('Source') ? r[1] : r[1]) + '</td></tr>'; }).join('');
   const legalWarn = (legal.commercial_use === 'non-commercial')
-    ? ('<p class="sum">⚠ ' + e(T('This model is licensed for non-commercial use only — review the source license before deploying commercially.')) + '</p>')
+    ? ('<p class="sum">' + _mzIco('alert') + ' ' + e(T('This model is licensed for non-commercial use only — review the source license before deploying commercially.')) + '</p>')
     : (legal.commercial_use === 'restricted')
-      ? ('<p class="sum">⚠ ' + e(T('This model has no clear commercial-use license — review the source license before deploying commercially.')) + '</p>')
+      ? ('<p class="sum">' + _mzIco('alert') + ' ' + e(T('This model has no clear commercial-use license — review the source license before deploying commercially.')) + '</p>')
       : '';
 
   const preview = imgDataUrl
@@ -959,18 +959,18 @@ function renderDownloadButtons(model, scope = 'inline') {
   const helpScope = escapeHtml(scope);
   let html = '';
   if (model.downloaded_qlite !== undefined || model.downloaded_qpro !== undefined) {
-    if (model.downloaded_qlite) html += `<span class="mz-download-badge ready">✅ Q-Lite</span>`;
-    if (model.downloaded_qpro) html += `<span class="mz-download-badge ready">✅ Q-Pro</span>`;
+    if (model.downloaded_qlite) html += `<span class="mz-download-badge ready">${_mzIco('check')} Q-Lite</span>`;
+    if (model.downloaded_qpro) html += `<span class="mz-download-badge ready">${_mzIco('check')} Q-Pro</span>`;
   } else if (model.downloaded) {
-    html += `<span class="mz-download-badge ready">✓ ${T('Downloaded')}</span>`;
+    html += `<span class="mz-download-badge ready">${_mzIco('check')} ${T('Downloaded')}</span>`;
   }
   if (qlite && _dxAppAlive) {
     html += `<button class="mz-btn mz-btn-primary" data-model-id="${escapeHtml(model.id)}" data-quant="qlite" data-help-id="detail-download-${helpScope}-qlite">
-      ⬇ ${T('Download Q-Lite')}</button>`;
+      ${_mzIco('download')} ${T('Download Q-Lite')}</button>`;
   }
   if (qpro && _dxAppAlive) {
     html += `<button class="mz-btn mz-btn-outline" data-model-id="${escapeHtml(model.id)}" data-quant="qpro" data-help-id="detail-download-${helpScope}-qpro">
-      ⬇ ${T('Download Q-Pro')}</button>`;
+      ${_mzIco('download')} ${T('Download Q-Pro')}</button>`;
   }
   if (!_dxAppAlive) {
     html += `<span style="font-size:12px;color:var(--status-warn)">${T('DX App is not running. Run Inference needs the DX App module (port 8080) — launch DX AI Studio (it auto-starts DX App) or start the DX App module, then retry.')}</span>`;
@@ -1034,7 +1034,7 @@ async function downloadModel(event, modelId, quantType) {
         <span id="dl-pct-${quantType}">0%</span>
         <span style="color:var(--text-muted)">${T('Downloading')}</span>
         <button class="mz-btn mz-btn-outline" style="font-size:12px;padding:2px 8px"
-          data-cancel-download>✕ ${T('Cancel Download')}</button>
+          data-cancel-download>${_mzIco('x')} ${T('Cancel Download')}</button>
       </div>`);
     const cancelBtn = statusEl.querySelector('[data-cancel-download]');
     if (cancelBtn) {
@@ -1073,7 +1073,7 @@ async function downloadModel(event, modelId, quantType) {
           setModelZooStatusHtml(statusEl, `<span style="color:var(--text-muted)">${T('Download cancelled')}</span>`);
           btn.style.display = '';
         } else {
-          setModelZooStatusHtml(statusEl, `<span style="color:var(--status-ok)">✅ ${T('Download complete')}</span>`);
+          setModelZooStatusHtml(statusEl, `<span style="color:var(--status-ok)">${_mzIco('check')} ${T('Download complete')}</span>`);
           btn.style.display = '';
         }
       } catch (_) { /* polling error, continue */ }

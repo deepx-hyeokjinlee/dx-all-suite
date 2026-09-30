@@ -45,6 +45,11 @@ function _escapeAttr(s) {
   return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/* 화면의 표시 아이콘 (sprite, 아이콘 체계 단계 5) — HTML 문자열 안에서 쓴다. */
+function _mzIco(name) {
+  return (typeof window.DXIcon === 'function') ? window.DXIcon(name) : '';
+}
+
 /* task 아이콘 — sprite 의 task-<key> (dx_modelzoo/core/config.py CATEGORIES 의 icon, 아이콘 체계 단계 3).
    모르는 이름이면 모델 일반 표시 (models) 로. 옆에 task 이름이 적혀 있으므로 장식이다 (label 없음). */
 function _taskIcon(catInfo, cls) {
@@ -80,7 +85,7 @@ function _artifactAvailable(m, artifactId) {
 function _artifactBadge(m, artifactId, label) {
   const available = _artifactAvailable(m, artifactId);
   const status = available ? 'ready' : 'not-ready';
-  const icon = available ? '✅' : '⏳';
+  const icon = available ? _mzIco('check') : _mzIco('spinner');
   const title = available ? label : T('Artifact unavailable');
   return `<span class="mz-download-badge ${status}" title="${_escapeAttr(title)}">${icon} ${_escapeAttr(label)}</span>`;
 }

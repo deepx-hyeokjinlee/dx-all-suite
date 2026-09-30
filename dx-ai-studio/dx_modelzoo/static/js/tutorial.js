@@ -147,7 +147,7 @@
     box.id = 'dxt-mock-dl';
     box.style.cssText = 'margin-top:8px;font-size:13px;width:100%';
     if (state === 'complete') {
-      box.innerHTML = '<span class="mz-download-badge ready" style="color:var(--status-ok,#30d158)">✅ ' +
+      box.innerHTML = '<span class="mz-download-badge ready" style="color:var(--status-ok,#30d158)">' + ((typeof DXIcon === 'function') ? DXIcon('check') : '') + ' ' +
         _lc({ ko: '다운로드 완료', en: 'Download complete', ja: 'ダウンロード完了', 'zh-CN': '下载完成', 'zh-TW': '下載完成', es: 'Descarga completada' }) + '</span>';
     } else {
       box.innerHTML = '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
@@ -155,7 +155,7 @@
         '<div style="width:65%;height:100%;background:var(--accent,#4c8dff)"></div></div>' +
         '<span>65%</span><span style="color:var(--text-muted)">' +
         _lc({ ko: '다운로드 중', en: 'Downloading', ja: 'ダウンロード中', 'zh-CN': '下载中', 'zh-TW': '下載中', es: 'Descargando' }) + '</span>' +
-        '<button class="mz-btn mz-btn-outline" style="font-size:12px;padding:2px 8px">✕</button></div>';
+        '<button class="mz-btn mz-btn-outline" style="font-size:12px;padding:2px 8px">' + ((typeof DXIcon === 'function') ? DXIcon('x') : '') + '</button></div>';
     }
     host.appendChild(box);
     host.scrollIntoView({ block: 'center' });
@@ -185,8 +185,8 @@
 
   var sections = [
 
-    { id: 'topbar', icon: '🔝',
-      title: { ko: '🔝 상단 바', en: '🔝 Top Bar', ja: '🔝 トップバー', 'zh-CN': '🔝 顶部栏', 'zh-TW': '🔝 頂部列', es: '🔝 Barra superior' },
+    { id: 'topbar', icon: 'menu',
+      title: { ko: '상단 바', en: 'Top Bar', ja: 'トップバー', 'zh-CN': '顶部栏', 'zh-TW': '頂部列', es: 'Barra superior' },
       description: { ko: '상단 바 UI 요소 소개', en: 'Top bar UI elements overview', ja: 'トップバーUI要素の紹介', 'zh-CN': '顶部栏UI元素概览', 'zh-TW': '頂部列UI元素概覽', es: 'Descripción general de los elementos de la barra superior' },
       steps: [
         { target: '.dx-shell-header', position: 'bottom',
@@ -201,12 +201,12 @@
         // position: bottom — 8×8px dot이므로 left보다 bottom이 안전
         { target: '#dxAppStatus', position: 'bottom',
           title: { ko: 'DX App 상태', en: 'DX App Status', ja: 'DX App 状態', 'zh-CN': 'DX App 状态', 'zh-TW': 'DX App 狀態', es: 'Estado de DX App' },
-          content: { ko: '🟢 <strong>초록</strong> = DX App 연결됨 (다운로드 가능), 🔴 <strong>빨강</strong> = 오프라인 (다운로드 불가). DX App이 실행 중이어야 모델 다운로드가 가능합니다.', en: '🟢 <strong>Green</strong> = DX App connected (downloads available), 🔴 <strong>Red</strong> = offline (downloads unavailable). DX App must be running for model downloads.', ja: '🟢 <strong>緑</strong> = DX App接続済み（ダウンロード可能）、🔴 <strong>赤</strong> = オフライン（ダウンロード不可）。モデルのダウンロードにはDX Appの実行が必要です。', 'zh-CN': '🟢 <strong>绿色</strong> = DX App已连接（可下载），🔴 <strong>红色</strong> = 离线（无法下载）。模型下载需要DX App运行。', 'zh-TW': '🟢 <strong>綠色</strong> = DX App已連線（可下載），🔴 <strong>紅色</strong> = 離線（無法下載）。模型下載需要DX App執行。', es: '🟢 <strong>Verde</strong> = DX App conectada (descargas disponibles), 🔴 <strong>Rojo</strong> = sin conexión (descargas no disponibles). DX App debe estar en ejecución para descargar modelos.' } },
+          content: { ko: '<strong>초록</strong> = DX App 연결됨 (다운로드 가능), <strong>빨강</strong> = 오프라인 (다운로드 불가). DX App이 실행 중이어야 모델 다운로드가 가능합니다.', en: '<strong>Green</strong> = DX App connected (downloads available), <strong>Red</strong> = offline (downloads unavailable). DX App must be running for model downloads.', ja: '<strong>緑</strong> = DX App接続済み（ダウンロード可能）、<strong>赤</strong> = オフライン（ダウンロード不可）。モデルのダウンロードにはDX Appの実行が必要です。', 'zh-CN': '<strong>绿色</strong> = DX App已连接（可下载），<strong>红色</strong> = 离线（无法下载）。模型下载需要DX App运行。', 'zh-TW': '<strong>綠色</strong> = DX App已連線（可下載），<strong>紅色</strong> = 離線（無法下載）。模型下載需要DX App執行。', es: '<strong>Verde</strong> = DX App conectada (descargas disponibles), <strong>Rojo</strong> = sin conexión (descargas no disponibles). DX App debe estar en ejecución para descargar modelos.' } },
       ]
     },
 
-    { id: 'catalog', icon: '📋',
-      title: { ko: '📋 카탈로그 탐색', en: '📋 Catalog Browse', ja: '📋 カタログ閲覧', 'zh-CN': '📋 目录浏览', 'zh-TW': '📋 目錄瀏覽', es: '📋 Explorar catálogo' },
+    { id: 'catalog', icon: 'clipboard',
+      title: { ko: '카탈로그 탐색', en: 'Catalog Browse', ja: 'カタログ閲覧', 'zh-CN': '目录浏览', 'zh-TW': '目錄瀏覽', es: 'Explorar catálogo' },
       description: { ko: '모델 검색, 필터링, 정렬 방법', en: 'Search, filter, and sort models', ja: 'モデルの検索、フィルター、ソート方法', 'zh-CN': '搜索、筛选和排序模型', 'zh-TW': '搜尋、篩選和排序模型', es: 'Busque, filtre y ordene modelos' },
       beforeStart: function () { if (location.hash) location.hash = ''; },
       steps: [
@@ -218,7 +218,7 @@
           content: { ko: '첫 번째 칩은 <strong>전체 보기(All)</strong>입니다. 클릭하면 모든 필터가 해제되어 전체 모델이 표시됩니다.', en: 'The first chip is <strong>All</strong>. Click to clear all filters and show every model.', ja: '最初のチップは<strong>全体表示（All）</strong>です。クリックするとすべてのフィルターが解除され、全モデルが表示されます。', 'zh-CN': '第一个标签是<strong>全部（All）</strong>。点击清除所有筛选条件，显示所有模型。', 'zh-TW': '第一個標籤是<strong>全部（All）</strong>。點擊清除所有篩選條件，顯示所有模型。', es: 'La primera etiqueta es <strong>All</strong>. Haga clic para borrar todos los filtros y mostrar todos los modelos.' } },
         { target: '#categoryChips .mz-category-option:nth-child(2)', position: 'bottom',
           title: { ko: '카테고리 칩', en: 'Category Chips', ja: 'カテゴリチップ', 'zh-CN': '类别标签', 'zh-TW': '類別標籤', es: 'Etiquetas de categoría' },
-          content: { ko: '각 칩에는 <strong>아이콘 + 카테고리명 + 개수 배지</strong>가 표시됩니다. 예: 🎯 Detection (12). 여러 칩을 동시 선택하면 OR 조건으로 필터링됩니다.', en: 'Each chip shows <strong>icon + category name + count badge</strong>. e.g., 🎯 Detection (12). Multi-select applies OR filter.', ja: '各チップには<strong>アイコン + カテゴリ名 + 個数バッジ</strong>が表示されます。例：🎯 Detection (12)。複数選択でOR条件フィルタリングされます。', 'zh-CN': '每个标签显示<strong>图标 + 类别名 + 数量标记</strong>。例如：🎯 Detection (12)。多选时应用OR筛选。', 'zh-TW': '每個標籤顯示<strong>圖示 + 類別名 + 數量標記</strong>。例如：🎯 Detection (12)。多選時套用OR篩選。', es: 'Cada etiqueta muestra <strong>icono + nombre de categoría + insignia de conteo</strong>. p. ej., 🎯 Detection (12). La selección múltiple aplica filtro OR.' },
+          content: { ko: '각 칩에는 <strong>아이콘 + 카테고리명 + 개수 배지</strong>가 표시됩니다. 예: {{i:task-object_detection}} Detection (12). 여러 칩을 동시 선택하면 OR 조건으로 필터링됩니다.', en: 'Each chip shows <strong>icon + category name + count badge</strong>. e.g., {{i:task-object_detection}} Detection (12). Multi-select applies OR filter.', ja: '各チップには<strong>アイコン + カテゴリ名 + 個数バッジ</strong>が表示されます。例：{{i:task-object_detection}} Detection (12)。複数選択でOR条件フィルタリングされます。', 'zh-CN': '每个标签显示<strong>图标 + 类别名 + 数量标记</strong>。例如：{{i:task-object_detection}} Detection (12)。多选时应用OR筛选。', 'zh-TW': '每個標籤顯示<strong>圖示 + 類別名 + 數量標記</strong>。例如：{{i:task-object_detection}} Detection (12)。多選時套用OR篩選。', es: 'Cada etiqueta muestra <strong>icono + nombre de categoría + insignia de conteo</strong>. p. ej., {{i:task-object_detection}} Detection (12). La selección múltiple aplica filtro OR.' },
           beforeStep: function () { _ensureCategoryChip(); } },
         { target: '#searchInput', position: 'bottom',
           title: { ko: '모델 검색', en: 'Model Search', ja: 'モデル検索', 'zh-CN': '模型搜索', 'zh-TW': '模型搜尋', es: 'Búsqueda de modelos' },
@@ -237,13 +237,13 @@
         // topbar can cover a 'top' callout.
         { target: '#catalogContainer .mz-card', position: 'bottom',
           title: { ko: '모델 카드', en: 'Model Cards', ja: 'モデルカード', 'zh-CN': '模型卡片', 'zh-TW': '模型卡片', es: 'Tarjetas de modelo' },
-          content: { ko: '각 카드를 클릭하면 해당 모델의 <strong>상세 페이지</strong>로 이동합니다. 카드에는 모델명, 카테고리 아이콘, FPS 성능 배지(Q-Lite/Q-Pro), 다운로드 상태(✅/📥)가 표시됩니다.', en: 'Click any card to open its <strong>detail page</strong>. Each card shows the model name, category icon, FPS badges (Q-Lite/Q-Pro), and download status (✅/📥).', ja: '各カードをクリックすると該当モデルの<strong>詳細ページ</strong>に移動します。カードにはモデル名、カテゴリアイコン、FPSバッジ（Q-Lite/Q-Pro）、ダウンロード状態（✅/📥）が表示されます。', 'zh-CN': '点击任意卡片进入其<strong>模型详情页</strong>。每张卡片显示模型名称、类别图标、FPS 标记（Q-Lite/Q-Pro）和下载状态（✅/📥）。', 'zh-TW': '點擊任意卡片進入其<strong>模型詳情頁</strong>。每張卡片顯示模型名稱、類別圖示、FPS 標記（Q-Lite/Q-Pro）和下載狀態（✅/📥）。', es: 'Haga clic en cualquier tarjeta para abrir su <strong>página de detalle</strong>. Cada tarjeta muestra el nombre del modelo, el icono de categoría, las insignias FPS (Q-Lite/Q-Pro) y el estado de descarga (✅/📥).' },
+          content: { ko: '각 카드를 클릭하면 해당 모델의 <strong>상세 페이지</strong>로 이동합니다. 카드에는 모델명, 카테고리 아이콘, FPS 성능 배지(Q-Lite/Q-Pro), 다운로드 상태({{i:check}}/{{i:download}})가 표시됩니다.', en: 'Click any card to open its <strong>detail page</strong>. Each card shows the model name, category icon, FPS badges (Q-Lite/Q-Pro), and download status ({{i:check}}/{{i:download}}).', ja: '各カードをクリックすると該当モデルの<strong>詳細ページ</strong>に移動します。カードにはモデル名、カテゴリアイコン、FPSバッジ（Q-Lite/Q-Pro）、ダウンロード状態（{{i:check}}/{{i:download}}）が表示されます。', 'zh-CN': '点击任意卡片进入其<strong>模型详情页</strong>。每张卡片显示模型名称、类别图标、FPS 标记（Q-Lite/Q-Pro）和下载状态（{{i:check}}/{{i:download}}）。', 'zh-TW': '點擊任意卡片進入其<strong>模型詳情頁</strong>。每張卡片顯示模型名稱、類別圖示、FPS 標記（Q-Lite/Q-Pro）和下載狀態（{{i:check}}/{{i:download}}）。', es: 'Haga clic en cualquier tarjeta para abrir su <strong>página de detalle</strong>. Cada tarjeta muestra el nombre del modelo, el icono de categoría, las insignias FPS (Q-Lite/Q-Pro) y el estado de descarga ({{i:check}}/{{i:download}}).' },
           beforeStep: function () { scrollTo('#catalogContainer .mz-card'); } },
       ]
     },
 
-    { id: 'detail', icon: '🔍',
-      title: { ko: '🔍 모델 상세', en: '🔍 Model Detail', ja: '🔍 モデル詳細', 'zh-CN': '🔍 模型详情', 'zh-TW': '🔍 模型詳情', es: '🔍 Detalle del modelo' },
+    { id: 'detail', icon: 'search',
+      title: { ko: '모델 상세', en: 'Model Detail', ja: 'モデル詳細', 'zh-CN': '模型详情', 'zh-TW': '模型詳情', es: 'Detalle del modelo' },
       description: { ko: '모델 사양, 설명, 법적 정보 확인', en: 'View model specs, description, and legal info', ja: 'モデルの仕様、説明、法的情報の確認', 'zh-CN': '查看模型规格、描述和法律信息', 'zh-TW': '查看模型規格、描述和法律資訊', es: 'Vea especificaciones, descripción e información legal del modelo' },
       prerequisite: 'catalog',
       prerequisiteMessage: { ko: '먼저 카탈로그 섹션을 완료하세요.', en: 'Complete the Catalog section first.', ja: '先にカタログセクションを完了してください。', 'zh-CN': '请先完成目录部分。', 'zh-TW': '請先完成目錄部分。', es: 'Complete primero la sección Catálogo.' },
@@ -281,8 +281,8 @@
       ]
     },
 
-    { id: 'examples', icon: '🖼️',
-      title: { ko: '🖼️ 예제 이미지', en: '🖼️ Example Images', ja: '🖼️ サンプル画像', 'zh-CN': '🖼️ 示例图像', 'zh-TW': '🖼️ 範例影像', es: '🖼️ Imágenes de ejemplo' },
+    { id: 'examples', icon: 'image',
+      title: { ko: '예제 이미지', en: 'Example Images', ja: 'サンプル画像', 'zh-CN': '示例图像', 'zh-TW': '範例影像', es: 'Imágenes de ejemplo' },
       description: { ko: '5가지 유형의 모델 예제 확인', en: 'View 5 types of model examples', ja: '5種類のモデルサンプルを確認', 'zh-CN': '查看5种模型示例类型', 'zh-TW': '查看5種模型範例類型', es: 'Vea 5 tipos de ejemplos de modelos' },
       prerequisite: 'detail',
       prerequisiteMessage: { ko: '먼저 모델 상세 섹션을 완료하세요.', en: 'Complete the Model Detail section first.', ja: '先にモデル詳細セクションを完了してください。', 'zh-CN': '请先完成模型详情部分。', 'zh-TW': '請先完成模型詳情部分。', es: 'Complete primero la sección Detalle del modelo.' },
@@ -314,8 +314,8 @@
       ]
     },
 
-    { id: 'download', icon: '📥',
-      title: { ko: '📥 모델 다운로드', en: '📥 Model Download', ja: '📥 モデルダウンロード', 'zh-CN': '📥 模型下载', 'zh-TW': '📥 模型下載', es: '📥 Descarga de modelos' },
+    { id: 'download', icon: 'download',
+      title: { ko: '모델 다운로드', en: 'Model Download', ja: 'モデルダウンロード', 'zh-CN': '模型下载', 'zh-TW': '模型下載', es: 'Descarga de modelos' },
       description: { ko: '모델 다운로드 프로세스 안내', en: 'Model download process guide', ja: 'モデルダウンロードプロセスガイド', 'zh-CN': '模型下载流程指南', 'zh-TW': '模型下載流程指南', es: 'Guía del proceso de descarga de modelos' },
       prerequisite: 'detail',
       prerequisiteMessage: { ko: '먼저 모델 상세 섹션을 완료하세요.', en: 'Complete the Model Detail section first.', ja: '先にモデル詳細セクションを完了してください。', 'zh-CN': '请先完成模型详情部分。', 'zh-TW': '請先完成模型詳情部分。', es: 'Complete primero la sección Detalle del modelo.' },
@@ -324,7 +324,7 @@
         // Hero badges always render via renderDetail() — goDetail() waits for visible bbox
         { target: '#detailView .mz-detail-hero-badges .mz-download-badge', position: 'bottom',
           title: { ko: '다운로드 상태', en: 'Download Status', ja: 'ダウンロード状態', 'zh-CN': '下载状态', 'zh-TW': '下載狀態', es: 'Estado de descarga' },
-          content: { ko: '✅ = 이미 다운로드됨, 📥 = 다운로드 가능. <strong>Q-Lite</strong>(경량)와 <strong>Q-Pro</strong>(고성능) 두 가지 버전이 있습니다.', en: '✅ = already downloaded, 📥 = available. Two versions: <strong>Q-Lite</strong> (lightweight) and <strong>Q-Pro</strong> (high-performance).', ja: '✅ = ダウンロード済み、📥 = ダウンロード可能。<strong>Q-Lite</strong>（軽量版）と<strong>Q-Pro</strong>（高性能版）の2つのバージョンがあります。', 'zh-CN': '✅ = 已下载，📥 = 可下载。两个版本：<strong>Q-Lite</strong>（轻量版）和<strong>Q-Pro</strong>（高性能版）。', 'zh-TW': '✅ = 已下載，📥 = 可下載。兩個版本：<strong>Q-Lite</strong>（輕量版）和<strong>Q-Pro</strong>（高效能版）。', es: '✅ = ya descargado, 📥 = disponible. Dos versiones: <strong>Q-Lite</strong> (ligera) y <strong>Q-Pro</strong> (alto rendimiento).' },
+          content: { ko: '{{i:check}} = 이미 다운로드됨, {{i:download}} = 다운로드 가능. <strong>Q-Lite</strong>(경량)와 <strong>Q-Pro</strong>(고성능) 두 가지 버전이 있습니다.', en: '{{i:check}} = already downloaded, {{i:download}} = available. Two versions: <strong>Q-Lite</strong> (lightweight) and <strong>Q-Pro</strong> (high-performance).', ja: '{{i:check}} = ダウンロード済み、{{i:download}} = ダウンロード可能。<strong>Q-Lite</strong>（軽量版）と<strong>Q-Pro</strong>（高性能版）の2つのバージョンがあります。', 'zh-CN': '{{i:check}} = 已下载，{{i:download}} = 可下载。两个版本：<strong>Q-Lite</strong>（轻量版）和<strong>Q-Pro</strong>（高性能版）。', 'zh-TW': '{{i:check}} = 已下載，{{i:download}} = 可下載。兩個版本：<strong>Q-Lite</strong>（輕量版）和<strong>Q-Pro</strong>（高效能版）。', es: '{{i:check}} = ya descargado, {{i:download}} = disponible. Dos versiones: <strong>Q-Lite</strong> (ligera) y <strong>Q-Pro</strong> (alto rendimiento).' },
           beforeStep: function () { scrollTo('.mz-detail-header'); _scrollToDownloadBadge(); } },
         // 실제 다운로드 버튼은 data 속성 기반으로 렌더링된다.
         { target: '[data-model-id][data-quant]', optionalTarget: true,  // 상세 화면 + DX App 연결 시에만 (detail.js:968) position: 'bottom',
@@ -339,11 +339,11 @@
         // 실제 상단 바의 DX App 상태 표시등을 스팟라이트
         { target: '#dxAppStatus', position: 'bottom',
           title: { ko: 'DX App 필요', en: 'DX App Required', ja: 'DX App 必要', 'zh-CN': '需要DX App', 'zh-TW': '需要DX App', es: 'DX App requerida' },
-          content: { ko: '모델 다운로드에는 <strong>DX App이 실행 중</strong>이어야 합니다. 상단 바의 DX App 상태가 🟢인지 확인하세요.', en: '<strong>DX App must be running</strong> for downloads. Check the DX App status indicator (🟢) in the top bar.', ja: 'モデルのダウンロードには<strong>DX Appが実行中</strong>である必要があります。トップバーのDX App状態が🟢であることを確認してください。', 'zh-CN': '模型下载需要<strong>DX App正在运行</strong>。请检查顶部栏的DX App状态指示器（🟢）。', 'zh-TW': '模型下載需要<strong>DX App正在執行</strong>。請檢查頂部列的DX App狀態指示器（🟢）。', es: '<strong>DX App debe estar en ejecución</strong> para descargar. Compruebe el indicador de estado de DX App (🟢) en la barra superior.' } },
-        // 완료 배지는 다운로드 완료 후에만 존재 → 튜토리얼 미리보기(✅ 배지)를 주입해 스팟라이트
+          content: { ko: '모델 다운로드에는 <strong>DX App이 실행 중</strong>이어야 합니다. 상단 바의 DX App 상태 점이 초록인지 확인하세요.', en: '<strong>DX App must be running</strong> for downloads. Check that the DX App status dot in the top bar is green.', ja: 'モデルのダウンロードには<strong>DX Appが実行中</strong>である必要があります。トップバーのDX App状態ドットが緑であることを確認してください。', 'zh-CN': '模型下载需要<strong>DX App正在运行</strong>。请确认顶部栏的DX App状态点为绿色。', 'zh-TW': '模型下載需要<strong>DX App正在執行</strong>。請確認頂部列的DX App狀態點為綠色。', es: '<strong>DX App debe estar en ejecución</strong> para descargar. Compruebe que el punto de estado de DX App en la barra superior esté en verde.' } },
+        // 완료 배지는 다운로드 완료 후에만 존재 → 튜토리얼 미리보기(완료 배지)를 주입해 스팟라이트
         { target: '#dxt-mock-dl', position: 'bottom',
           title: { ko: '다운로드 완료', en: 'Download Complete', ja: 'ダウンロード完了', 'zh-CN': '下载完成', 'zh-TW': '下載完成', es: 'Descarga completada' },
-          content: { ko: '다운로드 완료 시 ✅ 배지로 변경됩니다. 실패하면 에러 메시지가 표시되며 재시도할 수 있습니다.', en: 'Badge changes to ✅ on completion. On failure, an error message appears and you can retry.', ja: '完了するとバッジが✅に変わります。失敗した場合はエラーメッセージが表示され、再試行できます。', 'zh-CN': '完成后标记变为✅。失败时会显示错误消息，可以重试。', 'zh-TW': '完成後標記變為✅。失敗時會顯示錯誤訊息，可以重試。', es: 'Al completarse, la insignia cambia a ✅. Si falla, aparece un mensaje de error y puede reintentar.' },
+          content: { ko: '다운로드 완료 시 {{i:check}} 배지로 변경됩니다. 실패하면 에러 메시지가 표시되며 재시도할 수 있습니다.', en: 'Badge changes to {{i:check}} on completion. On failure, an error message appears and you can retry.', ja: '完了するとバッジが{{i:check}}に変わります。失敗した場合はエラーメッセージが表示され、再試行できます。', 'zh-CN': '完成后标记变为{{i:check}}。失败时会显示错误消息，可以重试。', 'zh-TW': '完成後標記變為{{i:check}}。失敗時會顯示錯誤訊息，可以重試。', es: 'Al completarse, la insignia cambia a {{i:check}}. Si falla, aparece un mensaje de error y puede reintentar.' },
           beforeStep: function () { _mockDownload('complete'); } },
         // ONNX 모델 링크 — onnx_url이 있는 모델에서만 존재
         { target: '#btnOnnxLink', position: 'bottom',
@@ -358,8 +358,8 @@
       ]
     },
 
-    { id: 'inference', icon: '🔬',
-      title: { ko: '🔬 라이브 추론', en: '🔬 Live Inference', ja: '🔬 ライブ推論', 'zh-CN': '🔬 实时推理', 'zh-TW': '🔬 即時推論', es: '🔬 Inferencia en vivo' },
+    { id: 'inference', icon: 'lab',
+      title: { ko: '라이브 추론', en: 'Live Inference', ja: 'ライブ推論', 'zh-CN': '实时推理', 'zh-TW': '即時推論', es: 'Inferencia en vivo' },
       description: { ko: '데모 코드 확인 및 추론 실행', en: 'View demo code and run inference', ja: 'デモコードの確認と推論の実行', 'zh-CN': '查看演示代码并运行推理', 'zh-TW': '查看示範程式碼並執行推論', es: 'Vea el código de demostración y ejecute inferencia' },
       prerequisite: 'detail',
       prerequisiteMessage: { ko: '먼저 모델 상세 섹션을 완료하세요.', en: 'Complete the Model Detail section first.', ja: '先にモデル詳細セクションを完了してください。', 'zh-CN': '请先完成模型详情部分。', 'zh-TW': '請先完成模型詳情部分。', es: 'Complete primero la sección Detalle del modelo.' },
@@ -381,7 +381,7 @@
         // position: top — 코드 블록 안쪽(left)이 아닌 위쪽에 표시
         { target: '.mz-code-copy', position: 'top',
           title: { ko: '코드 복사', en: 'Copy Code', ja: 'コードコピー', 'zh-CN': '复制代码', 'zh-TW': '複製程式碼', es: 'Copiar código' },
-          content: { ko: '📋 버튼을 클릭하면 현재 표시된 코드가 <strong>클립보드에 복사</strong>됩니다.', en: 'Click 📋 to <strong>copy the displayed code to clipboard</strong>.', ja: '📋ボタンをクリックすると現在表示されているコードが<strong>クリップボードにコピー</strong>されます。', 'zh-CN': '点击📋将显示的代码<strong>复制到剪贴板</strong>。', 'zh-TW': '點擊📋將顯示的程式碼<strong>複製到剪貼簿</strong>。', es: 'Haga clic en 📋 para <strong>copiar el código mostrado al portapapeles</strong>.' },
+          content: { ko: '{{i:clipboard}} 버튼을 클릭하면 현재 표시된 코드가 <strong>클립보드에 복사</strong>됩니다.', en: 'Click {{i:clipboard}} to <strong>copy the displayed code to clipboard</strong>.', ja: '{{i:clipboard}}ボタンをクリックすると現在表示されているコードが<strong>クリップボードにコピー</strong>されます。', 'zh-CN': '点击{{i:clipboard}}将显示的代码<strong>复制到剪贴板</strong>。', 'zh-TW': '點擊{{i:clipboard}}將顯示的程式碼<strong>複製到剪貼簿</strong>。', es: 'Haga clic en {{i:clipboard}} para <strong>copiar el código mostrado al portapapeles</strong>.' },
           beforeStep: function () { pollFor('.mz-code-copy', 50); } },
         // 안정적 ID 사용 (기존 nth-child(4) details summary → #sectionExample details summary)
         { target: '#sectionExample details summary', position: 'bottom',
@@ -397,7 +397,7 @@
           } },
         { target: '#inferenceUploadTrigger', position: 'bottom',
           title: { ko: '이미지 업로드', en: 'Upload Image', ja: '画像アップロード', 'zh-CN': '上传图像', 'zh-TW': '上傳影像', es: 'Subir imagen' },
-          content: { ko: '<strong>📁 Upload Image</strong> 버튼을 클릭하여 추론할 이미지를 선택합니다. JPG, PNG 등 이미지 파일을 지원합니다.', en: 'Click <strong>📁 Upload Image</strong> to select an image for inference. Supports JPG, PNG, and other image formats.', ja: '<strong>📁 Upload Image</strong>ボタンをクリックして推論する画像を選択します。JPG、PNGなどの画像ファイルに対応しています。', 'zh-CN': '点击<strong>📁 Upload Image</strong>选择推理图像。支持JPG、PNG等图像格式。', 'zh-TW': '點擊<strong>📁 Upload Image</strong>選擇推論影像。支援JPG、PNG等影像格式。', es: 'Haga clic en <strong>📁 Upload Image</strong> para seleccionar una imagen para inferencia. Admite JPG, PNG y otros formatos de imagen.' },
+          content: { ko: '<strong>{{i:folder}} Upload Image</strong> 버튼을 클릭하여 추론할 이미지를 선택합니다. JPG, PNG 등 이미지 파일을 지원합니다.', en: 'Click <strong>{{i:folder}} Upload Image</strong> to select an image for inference. Supports JPG, PNG, and other image formats.', ja: '<strong>{{i:folder}} Upload Image</strong>ボタンをクリックして推論する画像を選択します。JPG、PNGなどの画像ファイルに対応しています。', 'zh-CN': '点击<strong>{{i:folder}} Upload Image</strong>选择推理图像。支持JPG、PNG等图像格式。', 'zh-TW': '點擊<strong>{{i:folder}} Upload Image</strong>選擇推論影像。支援JPG、PNG等影像格式。', es: 'Haga clic en <strong>{{i:folder}} Upload Image</strong> para seleccionar una imagen para inferencia. Admite JPG, PNG y otros formatos de imagen.' },
           beforeStep: function () {
             var d = document.querySelector('#inferencePanel');
             if (d) { var det = d.closest('details'); if (det) det.open = true; }
@@ -405,7 +405,7 @@
           } },
         { target: '#btnRunDefault', position: 'bottom',
           title: { ko: '기본 이미지 실행', en: 'Use Default Image', ja: 'デフォルト画像使用', 'zh-CN': '使用默认图像', 'zh-TW': '使用預設影像', es: 'Usar imagen predeterminada' },
-          content: { ko: '<strong>▶ Use Default</strong> 버튼을 클릭하면 모델에 포함된 <strong>기본 샘플 이미지</strong>로 즉시 추론을 실행합니다.', en: 'Click <strong>▶ Use Default</strong> to instantly run inference with the model\'s <strong>built-in sample image</strong>.', ja: '<strong>▶ Use Default</strong>ボタンをクリックすると、モデルに含まれる<strong>デフォルトサンプル画像</strong>で即座に推論を実行します。', 'zh-CN': '点击<strong>▶ Use Default</strong>使用模型的<strong>内置样本图像</strong>立即运行推理。', 'zh-TW': '點擊<strong>▶ Use Default</strong>使用模型的<strong>內建範例影像</strong>立即執行推論。', es: 'Haga clic en <strong>▶ Use Default</strong> para ejecutar inferencia al instante con la <strong>imagen de muestra integrada</strong> del modelo.' },
+          content: { ko: '<strong>{{i:play}} Use Default</strong> 버튼을 클릭하면 모델에 포함된 <strong>기본 샘플 이미지</strong>로 즉시 추론을 실행합니다.', en: 'Click <strong>{{i:play}} Use Default</strong> to instantly run inference with the model\'s <strong>built-in sample image</strong>.', ja: '<strong>{{i:play}} Use Default</strong>ボタンをクリックすると、モデルに含まれる<strong>デフォルトサンプル画像</strong>で即座に推論を実行します。', 'zh-CN': '点击<strong>{{i:play}} Use Default</strong>使用模型的<strong>内置样本图像</strong>立即运行推理。', 'zh-TW': '點擊<strong>{{i:play}} Use Default</strong>使用模型的<strong>內建範例影像</strong>立即執行推論。', es: 'Haga clic en <strong>{{i:play}} Use Default</strong> para ejecutar inferencia al instante con la <strong>imagen de muestra integrada</strong> del modelo.' },
           beforeStep: function () {
             var d = document.querySelector('#inferencePanel');
             if (d) { var det = d.closest('details'); if (det) det.open = true; }

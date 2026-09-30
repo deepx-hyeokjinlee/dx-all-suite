@@ -68,7 +68,7 @@ function handleImageFallback(img) {
   placeholder.className = 'mz-img-placeholder' + (img.className ? ' ' + img.className : '');
   const icon = document.createElement('span');
   icon.className = 'mz-img-placeholder-icon';
-  icon.textContent = '🖼️';
+  icon.innerHTML = _mzIco('image');
   placeholder.appendChild(icon);
   if (img.alt) {
     const label = document.createElement('span');
@@ -231,7 +231,7 @@ function _licenseBadge(m) {
   const title = cu === 'non-commercial'
     ? T('Commercial use prohibited')
     : T('Commercial use requires license review');
-  return `<span class="mz-license-badge ${cu}" title="${_escapeAttr(title)}">⚠ ${_escapeAttr(label)}</span>`;
+  return `<span class="mz-license-badge ${cu}" title="${_escapeAttr(title)}">${_mzIco('alert')} ${_escapeAttr(label)}</span>`;
 }
 
 function _commitCatalogStateSave(state) {
@@ -628,7 +628,7 @@ const ModelZooVirtualCatalog = {
     ];
     let html = '<table class="mz-list-table"><thead><tr>';
     headers.forEach(h => {
-      const arrow = _sortField === h.key ? (_sortDir === 'asc' ? ' ▲' : ' ▼') : '';
+      const arrow = _sortField === h.key ? (_sortDir === 'asc' ? ' ↑' : ' ↓') : '';
       html += `<th data-sort-key="${_escapeAttr(h.key)}">${_escapeAttr(h.label)}${arrow}</th>`;
     });
     html += '</tr></thead><tbody>';
@@ -896,7 +896,7 @@ function renderCategoryChips() {
     const unkActive = _selectedCategories.includes('__unknown__');
     html += `<label class="mz-category-option${unkActive ? ' active' : ''}">
       <input type="checkbox" data-cat="__unknown__" ${unkActive ? 'checked' : ''}>
-      <span class="mz-category-label">❓ ${_escapeAttr(unknownLabel)}</span>
+      <span class="mz-category-label">${_mzIco('info')} ${_escapeAttr(unknownLabel)}</span>
       <span class="chip-count">${_escapeAttr(unknownCount)}</span>
     </label>`;
   }

@@ -79,14 +79,14 @@ function renderInferencePanel(model) {
   const disabled = !_dxAppAlive;
   const disabledAttr = disabled ? 'disabled' : '';
   const disabledMsg = disabled
-    ? `<p style="color:var(--status-warn);font-size:13px;margin-top:8px">⚠️ ${T('DX App is not running. Run Inference needs the DX App module (port 8080) — launch DX AI Studio (it auto-starts DX App) or start the DX App module, then retry.')}</p>`
+    ? `<p style="color:var(--status-warn);font-size:13px;margin-top:8px">${_mzIco('alert')} ${T('DX App is not running. Run Inference needs the DX App module (port 8080) — launch DX AI Studio (it auto-starts DX App) or start the DX App module, then retry.')}</p>`
     : '';
   // Inference needs the .dxnn locally. Without it the backend returns a confusing
   // "File not found" — gate the run controls and tell the user to download first.
   const isDownloaded = !!(model.downloaded_qlite || model.downloaded_qpro || model.downloaded);
   const runDisabledAttr = (disabled || !isDownloaded) ? 'disabled' : '';
   const notDownloadedMsg = (!disabled && !isDownloaded)
-    ? `<p style="color:var(--status-warn);font-size:13px;margin-top:8px">⚠️ ${T('Download the model first to run inference.')}</p>`
+    ? `<p style="color:var(--status-warn);font-size:13px;margin-top:8px">${_mzIco('alert')} ${T('Download the model first to run inference.')}</p>`
     : '';
   // The image the model's representative thumbnail was generated from. "Use Default"
   // runs the demo on exactly this, so the result matches what the catalog shows.
@@ -98,7 +98,7 @@ function renderInferencePanel(model) {
   const specialInputMsg = _specialInputSampleMsg(model.category);
   const sampleUnavailableMsg = hasSampleMetadata
     ? ''
-    : `<p style="color:var(--text-muted);font-size:13px;margin-top:8px">ℹ️ ${specialInputMsg || T('Sample not available for this model')}</p>`;
+    : `<p style="color:var(--text-muted);font-size:13px;margin-top:8px">${_mzIco('info')} ${specialInputMsg || T('Sample not available for this model')}</p>`;
   const eId = _escAttr(model.id);
   const eCat = _escAttr(model.category);
   const eFile = _escAttr(model.model_file);
@@ -108,7 +108,7 @@ function renderInferencePanel(model) {
   const execOpts = _buildExecPathOptions(model);
   const execPathSelectHtml = execOpts.length > 1
     ? `<div class="mz-exec-path-row">
-         <label class="mz-exec-path-label" for="infExecPath">⚙ ${T('Execution path')}</label>
+         <label class="mz-exec-path-label" for="infExecPath">${_mzIco('gear')} ${T('Execution path')}</label>
          <select id="infExecPath" class="mz-exec-select" ${runDisabledAttr}>
            ${execOpts.map(o => `<option value="${_escAttr(o.value)}">${escapeHtml(o.label)}</option>`).join('')}
          </select>
@@ -117,7 +117,7 @@ function renderInferencePanel(model) {
 
   container.innerHTML = `
     <div class="mz-inference-panel">
-      <h3>🔬 ${T('Run Inference')}</h3>
+      <h3>${_mzIco('lab')} ${T('Run Inference')}</h3>
       ${disabledMsg}
       ${notDownloadedMsg}
       <div class="mz-input-mode-tabs" style="margin-top:16px">
@@ -125,13 +125,13 @@ function renderInferencePanel(model) {
           data-model-id="${eId}" data-category="${eCat}" data-model-file="${eFile}"
           onclick="switchInferenceTabFromButton(this, 'upload')"
           ${disabledAttr}>
-          📁 ${T('Upload Image')}
+          ${_mzIco('folder')} ${T('Upload Image')}
         </button>
         <button class="mz-tab-btn" id="tabSample"
           data-model-id="${eId}" data-category="${eCat}" data-model-file="${eFile}"
           onclick="switchInferenceTabFromButton(this, 'sample')"
           ${sampleDisabledAttr}>
-          🖼 ${T('Sample Image')}
+          ${_mzIco('image')} ${T('Sample Image')}
         </button>
       </div>
       ${sampleUnavailableMsg}
@@ -140,7 +140,7 @@ function renderInferencePanel(model) {
       <!-- Upload 탭 패널 -->
       <div id="tabPanelUpload" class="mz-tab-panel" style="margin-top:12px">
         <label class="mz-btn mz-btn-outline" id="inferenceUploadTrigger" data-help-id="inference-upload-trigger" style="cursor:pointer" ${runDisabledAttr}>
-          📁 ${T('Choose File')}
+          ${_mzIco('folder')} ${T('Choose File')}
           <input type="file" accept="image/*" id="inferenceFileInput" style="display:none"
             data-model-id="${eId}" data-category="${eCat}" data-model-file="${eFile}"
             onchange="onInferenceFileSelectedFromInput(this)"
@@ -149,9 +149,9 @@ function renderInferencePanel(model) {
         <button class="mz-btn mz-btn-primary" id="btnRunDefault" style="margin-left:8px" ${runDisabledAttr}
           data-model-id="${eId}" data-category="${eCat}" data-model-file="${eFile}" data-demo-input="${eDemo}"
           onclick="runDefaultInferenceFromButton(this)">
-          ▶ ${T('Use Default')}
+          ${_mzIco('play')} ${T('Use Default')}
         </button>
-        ${samplePath ? `<p style="font-size:12px;color:var(--text-muted);margin-top:8px">📷 ${T('Default sample')}: <code>${_escAttr(samplePath)}</code></p>` : ''}
+        ${samplePath ? `<p style="font-size:12px;color:var(--text-muted);margin-top:8px">${_mzIco('camera')} ${T('Default sample')}: <code>${_escAttr(samplePath)}</code></p>` : ''}
       </div>
 
       <!-- Sample 탭 패널 -->
@@ -163,7 +163,7 @@ function renderInferencePanel(model) {
           <button class="mz-btn mz-btn-primary" id="btnRunSample" ${sampleDisabledAttr} disabled
             data-model-id="${eId}" data-category="${eCat}" data-model-file="${eFile}"
             onclick="runSampleInferenceFromButton(this)">
-            ▶ ${T('Run Inference')}
+            ${_mzIco('play')} ${T('Run Inference')}
           </button>
         </div>
       </div>
@@ -373,7 +373,7 @@ async function runInference(modelId, category, modelFile, imagePath, imageBase64
     const dxAppUnavailable = ((!data.ok && data.code === 'DX_APP_UNAVAILABLE') ||
       data.error === 'DX_APP_UNAVAILABLE');
     if (dxAppUnavailable) {
-      resultDiv.innerHTML = `<p style="color:var(--status-error)">⚠️ ${T('DX App is not running. Run Inference needs the DX App module (port 8080) — launch DX AI Studio (it auto-starts DX App) or start the DX App module, then retry.')}</p>`;
+      resultDiv.innerHTML = `<p style="color:var(--status-error)">${_mzIco('alert')} ${T('DX App is not running. Run Inference needs the DX App module (port 8080) — launch DX AI Studio (it auto-starts DX App) or start the DX App module, then retry.')}</p>`;
       _dxAppAlive = false;
       document.getElementById('dxAppStatus')?.classList.remove('alive');
       return;
@@ -381,7 +381,7 @@ async function runInference(modelId, category, modelFile, imagePath, imageBase64
 
     if (data.error) {
       const msg = /dx_postprocess/.test(String(data.error))
-        ? `⚠️ ${T('This path needs the dx_postprocess module (C++ postprocess), which is not installed. Build it in dx_app or pick another execution path.')}`
+        ? `${_mzIco('alert')} ${T('This path needs the dx_postprocess module (C++ postprocess), which is not installed. Build it in dx_app or pick another execution path.')}`
         : `${T('Inference failed')}: ${escapeHtml(String(data.error))}`;
       resultDiv.innerHTML = `<p style="color:var(--status-error)">${msg}</p>`;
       return;
