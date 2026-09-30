@@ -1128,6 +1128,8 @@ class DXServer:
         self.name = name
         self.default_port = default_port
         self._server = None
+        self._shutdown_lock = threading.Lock()
+        self._shutdown_requested = False
 
     def start(self):
         """CLI 파싱 → 서버 생성 → 시그널 등록 → serve_forever."""
@@ -1230,11 +1232,17 @@ class DXServer:
         return None
 
     def _register_signals(self):
+        # 신호 처리기는 serve_forever() 가 도는 main thread 에서 불린다. 여기서 바로 shutdown() 을 부르면
+        # shutdown() 이 serve_forever() 가 끝나기를 기다리고, serve_forever() 는 이 처리기가 끝나기를
+        # 기다려 둘 다 멈춘다 — SIGTERM 을 받은 서버가 살아남아 고아로 쌓였다. dx_monitor 처럼 다른
+        # thread 에 맡기면 serve_forever() 가 돌아와 start() 가 끝나고 프로세스가 내려간다.
         def _shutdown(*_):
             print(f"\n  [{self.name}] Shutting down...")
-            if self._server:
-                self._server.shutdown()
-            sys.exit(0)
+            with self._shutdown_lock:
+                if self._shutdown_requested or self._server is None:
+                    return
+                self._shutdown_requested = True
+                threading.Thread(target=self._server.shutdown, name=f"{self.name}-shutdown", daemon=True).start()
 
         signal.signal(signal.SIGINT, _shutdown)
         signal.signal(signal.SIGTERM, _shutdown)
