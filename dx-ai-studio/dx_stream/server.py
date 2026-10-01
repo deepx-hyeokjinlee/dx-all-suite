@@ -44,6 +44,7 @@ except Exception:
 _playback_lock = threading.RLock()
 _current_output_mode = None
 _current_pipeline_id = None
+_current_demo_id = None   # 실행 중인 demo (대시보드가 이름을 보인다, release audit S-15)
 
 def _active_stream_context() -> tuple[ContractResult, object | None]:
     """Resolve the validated profile context shared by every Stream launch path."""
@@ -126,7 +127,7 @@ def _check_webrtc_available() -> bool:
 
 def _stop_all_playback() -> None:
     """WebRTC + MJPEG 양쪽 백엔드를 모두 중지한다."""
-    global _current_output_mode, _current_pipeline_id
+    global _current_output_mode, _current_pipeline_id, _current_demo_id
     with _playback_lock:
         if _pipeline_mgr is not None:
             try:
@@ -145,6 +146,24 @@ def _stop_all_playback() -> None:
             log.debug("fMP4 pipeline stop failed during cleanup", exc_info=True)
         _current_output_mode = None
         _current_pipeline_id = None
+        _current_demo_id = None
+
+
+def _playback_running() -> bool:
+    """WebRTC · MJPEG · fMP4 중 무엇으로든 재생 중인가 — 예전 /api/pipeline/status 는 WebRTC 만 보아,
+    MJPEG 로 돌고 있는 demo 를 대시보드가 Idle 이라고 했다."""
+    if _pipeline_mgr is not None and _pipeline_mgr.is_running():
+        return True
+    try:
+        if _current_output_mode == "mjpeg":
+            from dx_stream.core import mjpeg
+            return bool(mjpeg.is_streaming())
+        if _current_output_mode == "fmp4":
+            from dx_stream.core import fmp4
+            return bool(fmp4.is_streaming())
+    except Exception:
+        return False
+    return False
 
 
 def _demo_launch_failure_payload(attempted_modes: list[str]) -> dict:
@@ -369,11 +388,13 @@ class DXStreamHandler(DXBaseHandler):
                 rules = elements.get_connection_rules()
                 return self.send_json({"categories": cats, **rules})
             if path == "/api/pipeline/status":
-                if _pipeline_mgr is None:
-                    return self.send_json({"running": False, "pipeline_id": None})
+                running = _playback_running()
+                webrtc = _pipeline_mgr is not None and _pipeline_mgr.is_running()
                 return self.send_json({
-                    "running": _pipeline_mgr.is_running(),
-                    "pipeline_id": _pipeline_mgr.get_pipeline_id(),
+                    "running": running,
+                    "pipeline_id": (_pipeline_mgr.get_pipeline_id() if webrtc else _current_pipeline_id) if running else None,
+                    "output_mode": (_current_output_mode or ("webrtc" if webrtc else None)) if running else None,
+                    "demo_id": _current_demo_id if running else None,
                 })
             if path == "/api/pipeline/list":
                 from dx_stream.core.config import PIPELINES_DIR
@@ -537,7 +558,7 @@ class DXStreamHandler(DXBaseHandler):
 
     def _handle_demo_start(self, path: str):
         """데모 파이프라인 시작 — WebRTC 우선, MJPEG 폴백."""
-        global _current_output_mode, _current_pipeline_id
+        global _current_output_mode, _current_pipeline_id, _current_demo_id
         attempted_modes: list[str] = []
         playback_stopped = False
         body = self._safe_read_json()
@@ -619,6 +640,7 @@ class DXStreamHandler(DXBaseHandler):
                     attempted_modes.append("webrtc")
                     pid = _try_start_webrtc_pipeline(pipeline_str, extra_env=extra_env)
                 if pid is not None:
+                    _current_demo_id = demo_id
                     return self.send_json({
                         "started": True, "pipeline_id": pid,
                         "demo_id": demo_id, "output_mode": "webrtc"
@@ -632,6 +654,7 @@ class DXStreamHandler(DXBaseHandler):
                     if ready:
                         _current_output_mode = "fmp4"
                         _current_pipeline_id = "fmp4-demo-" + str(demo_id)
+                        _current_demo_id = demo_id
                         return self.send_json({
                             "started": True, "pipeline_id": _current_pipeline_id,
                             "demo_id": demo_id, "output_mode": "fmp4"
@@ -652,6 +675,7 @@ class DXStreamHandler(DXBaseHandler):
 
                 _current_output_mode = "mjpeg"
                 _current_pipeline_id = "mjpeg-demo-" + str(demo_id)
+                _current_demo_id = demo_id
                 self.send_json({
                     "started": True, "pipeline_id": _current_pipeline_id,
                     "demo_id": demo_id, "output_mode": "mjpeg"

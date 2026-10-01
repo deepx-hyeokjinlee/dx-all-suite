@@ -295,6 +295,11 @@ tbody tr:hover td{background:var(--surface-hover)}
 
 /* Dashboard helper */
 .pipeline-placeholder{padding:32px 16px;text-align:center;border:2px dashed var(--border-subtle);border-radius:var(--radius);color:var(--text-faint)}
+/* 실행 중인 파이프라인 (release audit S-15) */
+.pipe-live{display:flex;align-items:center;gap:var(--sp-3);padding:16px;border:1px solid var(--border-subtle);border-radius:var(--radius)}
+.pipe-live-dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--status-ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--status-ok) 25%,transparent)}
+.pipe-live-text{flex:1;min-width:0}
+.pipe-live-name{font-weight:600;color:var(--text-primary);overflow-wrap:anywhere}
 /* Element detail card */
 .element-detail-card{
   background:var(--control-bg);border:1px solid var(--accent);border-radius:var(--radius-lg);

@@ -1,4 +1,8 @@
 window._DX_I18N_DICT = {
+    'Custom pipeline': { ko: '사용자 파이프라인', ja: 'カスタムパイプライン', 'zh-CN': '自定义管道', 'zh-TW': '自訂管線', es: 'Canalización propia' },
+    'Open Demo Launcher': { ko: 'Demo Launcher 열기', ja: 'Demo Launcher を開く', 'zh-CN': '打开 Demo Launcher', 'zh-TW': '開啟 Demo Launcher', es: 'Abrir Demo Launcher' },
+    'Open Pipeline Builder': { ko: 'Pipeline Builder 열기', ja: 'Pipeline Builder を開く', 'zh-CN': '打开 Pipeline Builder', 'zh-TW': '開啟 Pipeline Builder', es: 'Abrir Pipeline Builder' },
+    'With WebRTC the browser receives the video; see FPS on the Demo page.': { ko: 'WebRTC는 브라우저가 영상을 받으므로 FPS는 Demo 화면에서 보세요.', ja: 'WebRTC ではブラウザが映像を受け取るため、FPS は Demo 画面で確認してください。', 'zh-CN': 'WebRTC 由浏览器接收视频，请在 Demo 页面查看 FPS。', 'zh-TW': 'WebRTC 由瀏覽器接收影片，請在 Demo 頁面查看 FPS。', es: 'Con WebRTC el navegador recibe el video; vea los FPS en la página Demo.' },
     // 재생 · 연결 알림 (release audit: 사전에 없어 모든 언어에서 영어였다)
     'MSE init failed, using MJPEG: ': { ko: 'MSE 초기화 실패, MJPEG로 전환: ', ja: 'MSE の初期化に失敗、MJPEG に切り替え: ', 'zh-CN': 'MSE 初始化失败，改用 MJPEG：', 'zh-TW': 'MSE 初始化失敗，改用 MJPEG：', es: 'Falló la inicialización de MSE, se usa MJPEG: ' },
     'fMP4 stream error: ': { ko: 'fMP4 스트림 오류: ', ja: 'fMP4 ストリームのエラー: ', 'zh-CN': 'fMP4 流错误：', 'zh-TW': 'fMP4 串流錯誤：', es: 'Error en el flujo fMP4: ' },
@@ -346,7 +350,8 @@ window._DX_I18N_DICT = {
   'Demo 7 — Multi-Object Tracking': { ko: '데모 7 — 다중 객체 추적', ja: 'デモ 7 — 複数物体追跡', 'zh-CN': '演示 7 — 多目标跟踪', 'zh-TW': '示範 7 — 多物件追蹤',es:'Demo 7 — Multi-Objeto Seguimiento'},
   'Demo 8 — Multi-Stream': { ko: '데모 8 — 멀티 스트림', ja: 'デモ 8 — マルチストリーム', 'zh-CN': '演示 8 — 多路流', 'zh-TW': '示範 8 — 多路串流',es:'Demo 8 — Multi-Stream'},
   'Demo 9 — RTSP Stream': { ko: '데모 9 — RTSP 스트림', ja: 'デモ 9 — RTSP ストリーム', 'zh-CN': '演示 9 — RTSP 流', 'zh-TW': '示範 9 — RTSP 串流',es:'Demo 9 — RTSP Stream'},
-  'Demo 10 — Secondary Inference': { ko: '데모 10 — 2차 추론', ja: 'デモ 10 — 二次推論', 'zh-CN': '演示 10 — 二次推理', 'zh-TW': '示範 10 — 二次推論',es:'Demo 10 — Secondary Inferencia'},
+  'Demo 10 — Secondary Inference': { ko: '데모 10 — 2차 추론', ja: 'デモ 10 — 二次推論', 'zh-CN': '演示 10 — 二次推理', 'zh-TW': '示範 10 — 二次推論',es:'Demo 10 — Inferencia secundaria'},
+  'Demo 11 — Depth Estimation': { ko: '데모 11 — 깊이 추정', ja: 'デモ 11 — 深度推定', 'zh-CN': '演示 11 — 深度估计', 'zh-TW': '示範 11 — 深度估計', es: 'Demo 11 — Estimación de profundidad' },
   'Search...': { ko: '검색...', ja: '検索...', es: 'Buscar...', 'zh-CN': '搜索...', 'zh-TW': '搜尋...' },
   'Zoom In': { ko: '확대', ja: '拡大', 'zh-CN': '放大', 'zh-TW': '放大',es:'Acercar'},
   'Zoom Out': { ko: '축소', ja: '縮小', 'zh-CN': '缩小', 'zh-TW': '縮小',es:'Alejar'},

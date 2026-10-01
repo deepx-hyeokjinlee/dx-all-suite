@@ -41,6 +41,7 @@ BROWSER_SUITE_PATHS = {
     "tests/dx_stream/test_pipeline_canvas_theme_browser.py",
     "tests/dx_app/test_reference_browser.py",
     "tests/dx_stream/test_reference_browser.py",
+    "tests/dx_stream/test_dashboard_live_browser.py",
     "tests/dx_stream/test_demo_cards_browser.py",
     "tests/shared/test_icon_label_browser.py",
     "tests/launcher/test_sdk_library_module_nav_browser.py",

@@ -44,10 +44,103 @@ async function _fetchStatus() {
             data.build.ok ? T('Built') : T('Not built'));
     }
 
-    // 성능 지표 업데이트 (서버가 perf 필드 제공 시)
-    _updatePerfTable(data);
-
     _updatePipelineBadge(pipeResp);
+    _renderPipelineOverview(pipeResp);
+    _setPerfPolling(!!(pipeResp && pipeResp.running));
+}
+
+/* ── 실행 중인 파이프라인과 그 수치 (release audit S-15) ──
+   예전 표는 /api/status 의 perf 필드를 기다렸는데 서버는 그것을 보낸 적이 없어 늘 "--" 였다. 이제:
+   FPS 는 /api/stream/stats 의 프레임 수 차이 (MJPEG · fMP4 — WebRTC 는 브라우저가 받으므로 Demo 화면에서),
+   NPU 사용률은 DX Monitor (/dx_monitor/api/hw_status, launcher 안에서만). 근거가 없는 지연 행은 뺐다. */
+var _perfTimer = null;
+var _perfPrev = null;
+var _perfRunKey = null;
+var _demoNames = null;
+
+function _demoName(id) {
+    if (_demoNames === null) {
+        _demoNames = {};
+        DXStream.api('/api/demos').then(function (r) {
+            var list = (r && (r.demos || r)) || [];
+            if (Array.isArray(list)) list.forEach(function (d) { _demoNames[d.id] = d; });
+            var box = DXStream.$('pipeline-overview');
+            if (box) box.dataset.state = '';
+            _fetchStatus();
+        });
+    }
+    var d = _demoNames[id];
+    if (!d) return 'Demo ' + id;
+    var lang = (window.DXI18n && DXI18n.lang) || 'en';
+    return d['name_' + lang.replace('-', '_')] || d['name_' + lang] || d.name_en || d.name || ('Demo ' + id);
+}
+
+function _renderPipelineOverview(data) {
+    var box = DXStream.$('pipeline-overview');
+    if (!box) return;
+    var lang = (window.DXI18n && DXI18n.lang) || 'en';
+    var running = !!(data && data.running);
+    var key = running ? [data.pipeline_id, data.demo_id, data.output_mode, lang].join('|') : 'idle|' + lang;
+    if (box.dataset.state === key) return;
+    box.dataset.state = key;
+    var esc = DXStream.escHtml || function (s) { return String(s); };
+    if (!running) {
+        box.innerHTML = '<div class="pipeline-placeholder"><span class="txt-dim">' +
+            esc(T('No active pipeline — run a demo or build a pipeline')) + '</span></div>';
+        return;
+    }
+    var name = data.demo_id != null ? _demoName(data.demo_id) : T('Custom pipeline');
+    var mode = { webrtc: 'WebRTC', mjpeg: 'MJPEG', fmp4: 'fMP4' }[data.output_mode] || '';
+    var target = data.demo_id != null ? 'demo' : 'pipeline';
+    box.innerHTML = '<div class="pipe-live">' +
+        '<span class="pipe-live-dot" aria-hidden="true"></span>' +
+        '<div class="pipe-live-text"><div class="pipe-live-name">' + esc(name) + '</div>' +
+        (mode ? '<div class="txt-dim txt-sm">' + esc(mode) + '</div>' : '') + '</div>' +
+        '<button type="button" class="btn btn-sm" onclick="DXStream.nav(\'' + target + '\')">' +
+        esc(target === 'demo' ? T('Open Demo Launcher') : T('Open Pipeline Builder')) + '</button></div>';
+}
+
+function _setPerfPolling(on) {
+    if (on && !_perfTimer) {
+        _perfPrev = null;
+        _perfTimer = setInterval(_perfTick, 1000);
+        _perfTick();
+    } else if (!on && _perfTimer) {
+        clearInterval(_perfTimer);
+        _perfTimer = null;
+        _perfPrev = null;
+    }
+}
+
+function _avgUtilization(hw) {
+    var vals = [];
+    ((hw && hw.npus) || []).forEach(function (n) {
+        (n.utilization || []).forEach(function (u) { if (typeof u === 'number' && u >= 0) vals.push(u); });
+    });
+    if (!vals.length) return null;
+    return vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+}
+
+function _perfTick() {
+    if (DXStream.S.currentPage !== 'dashboard') { _setPerfPolling(false); return; }
+    if (!_dashboardVisible()) return;
+    Promise.all([
+        DXStream.api('/api/stream/stats'),
+        fetch('/dx_monitor/api/hw_status', { cache: 'no-store', credentials: 'same-origin' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .catch(function () { return null; })
+    ]).then(function (rs) {
+        var stats = rs[0] || {};
+        var now = Date.now();
+        var fps = null;
+        if ((stats.mode === 'mjpeg' || stats.mode === 'fmp4') && typeof stats.frames === 'number') {
+            if (_perfPrev && stats.frames >= _perfPrev.frames && now > _perfPrev.t) {
+                fps = (stats.frames - _perfPrev.frames) * 1000 / (now - _perfPrev.t);
+            }
+            _perfPrev = { frames: stats.frames, t: now };
+        }
+        _updatePerfTable({ fps: fps, npu: _avgUtilization(rs[1]), mode: stats.mode });
+    });
 }
 
 function _updatePipelineBadge(data) {
@@ -109,29 +202,23 @@ DXStream.quickLaunchDemo = function (demoId) {
 DXStream._perfHistory = { fps: [], npu: [] };
 var _PERF_MAX_POINTS = 60;
 
-function _updatePerfTable(data) {
-    if (!data || !data.perf) return;
-    var p = data.perf;
+function _updatePerfTable(p) {
+    if (!p) return;
     var $ = DXStream.$;
 
+    var fpsEl = $('perf-fps-current');
     if (p.fps != null) {
-        var fpsEl = $('perf-fps-current');
-        if (fpsEl) fpsEl.textContent = Math.round(p.fps);
+        if (fpsEl) { fpsEl.textContent = Math.round(p.fps); fpsEl.removeAttribute('title'); }
         DXStream._perfHistory.fps.push(p.fps);
         if (DXStream._perfHistory.fps.length > _PERF_MAX_POINTS) DXStream._perfHistory.fps.shift();
+    } else if (fpsEl && p.mode === 'webrtc') {
+        fpsEl.textContent = '—';
+        fpsEl.title = T('With WebRTC the browser receives the video; see FPS on the Demo page.');
     }
-    if (p.latency != null) {
-        var latEl = $('perf-latency-current');
-        if (latEl) latEl.textContent = p.latency.toFixed(1) + ' ms';
-    }
-    if (p.e2e != null) {
-        var e2eEl = $('perf-e2e-current');
-        if (e2eEl) e2eEl.textContent = p.e2e.toFixed(1) + ' ms';
-    }
-    if (p.npu_util != null) {
+    if (p.npu != null) {
         var npuEl = $('perf-npu-current');
-        if (npuEl) npuEl.textContent = Math.round(p.npu_util) + '%';
-        DXStream._perfHistory.npu.push(p.npu_util);
+        if (npuEl) npuEl.textContent = Math.round(p.npu) + '%';
+        DXStream._perfHistory.npu.push(p.npu);
         if (DXStream._perfHistory.npu.length > _PERF_MAX_POINTS) DXStream._perfHistory.npu.shift();
     }
 
