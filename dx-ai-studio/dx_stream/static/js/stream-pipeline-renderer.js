@@ -597,7 +597,7 @@ function _refreshCanvas() {
     ctx.fillRect(0, 0, w, h);
 
     var step = 20 * st.zoom;
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.strokeStyle = _cvAlpha('--text-primary', 0.06);
     ctx.lineWidth = 1;
     ctx.beginPath();
     for (var x = ((st.offsetX % step) + step) % step; x < w; x += step) {
@@ -609,7 +609,7 @@ function _refreshCanvas() {
     ctx.stroke();
 
     if (st.nodes.length === 0) {
-        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillStyle = _cvAlpha('--text-primary', 0.4);
         ctx.font = '14px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(T('Drag elements from the palette'), w / 2, h / 2);
@@ -698,7 +698,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.restore();
 
-    ctx.strokeStyle = selected ? '#fff' : 'rgba(' + r + ',' + g + ',' + b + ',0.6)';
+    ctx.strokeStyle = selected ? _cv('--text-primary') : 'rgba(' + r + ',' + g + ',' + b + ',0.6)';
     ctx.lineWidth = selected ? 2 : 1;
     _roundRect(ctx, x, y, _NODE_W, _NODE_H, 10);
     ctx.stroke();
@@ -722,7 +722,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     // 분류 아이콘 — sprite 를 캔버스에 (DXIcon.draw). 아직 못 읽었으면 다 읽은 뒤 다시 그린다.
     if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, icon, x + 8, y + _NODE_H / 2 - 7, 14, color);
 
-    ctx.fillStyle = '#f5f5f7';
+    ctx.fillStyle = _cv('--text-primary');
     ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -740,7 +740,7 @@ function _drawNode(ctx, node, selected, connStatus) {
         ctx.fill();
         ctx.beginPath();
         ctx.arc(x, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-        ctx.fillStyle = '#1d1d1f';
+        ctx.fillStyle = _themeColor('bg0');
         ctx.fill();
         ctx.strokeStyle = color;
         ctx.lineWidth = 1.5;
@@ -753,7 +753,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.beginPath();
     ctx.arc(x + _NODE_W, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-    ctx.fillStyle = '#1d1d1f';
+    ctx.fillStyle = _themeColor('bg0');
     ctx.fill();
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.5;
@@ -777,18 +777,18 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
     ctx.bezierCurveTo(x1 + cpOff, y1, x2 - cpOff, y2, x2, y2);
 
     if (selected) {
-        ctx.strokeStyle = '#ff453a';
+        ctx.strokeStyle = _cv('--status-error');
     } else if (warnEdge) {
         ctx.strokeStyle = _cv('--status-warn');
     } else if (dashed) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.strokeStyle = _cvAlpha('--text-primary', 0.3);
     } else if (fromColor && toColor) {
         var grad = ctx.createLinearGradient(x1, y1, x2, y2);
         grad.addColorStop(0, fromColor);
         grad.addColorStop(1, toColor);
         ctx.strokeStyle = grad;
     } else {
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.strokeStyle = _cvAlpha('--text-primary', 0.5);
     }
     ctx.lineWidth = selected ? 3 : 2;
     if (dashed) ctx.setLineDash([6, 4]);
@@ -807,7 +807,7 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
         ctx.lineTo(-8, -4);
         ctx.lineTo(-8, 4);
         ctx.closePath();
-        ctx.fillStyle = warnEdge ? _cv('--status-warn') : (toColor || 'rgba(255,255,255,0.5)');
+        ctx.fillStyle = warnEdge ? _cv('--status-warn') : (toColor || _cvAlpha('--text-primary', 0.5));
         ctx.fill();
         ctx.restore();
     }
@@ -1007,10 +1007,10 @@ function _drawMinimap(st, canvasW, canvasH) {
     var scale = Math.min(mw / bw, mh / bh);
 
     mmCtx.clearRect(0, 0, mw, mh);
-    mmCtx.fillStyle = 'rgba(0,0,0,0.5)';
+    mmCtx.fillStyle = _cvAlpha('--surface-page', 0.85);
     mmCtx.fillRect(0, 0, mw, mh);
 
-    mmCtx.strokeStyle = 'rgba(255,255,255,0.25)';
+    mmCtx.strokeStyle = _cvAlpha('--text-primary', 0.25);
     mmCtx.lineWidth = 1;
     st.edges.forEach(function (ed) {
         var fn = nodeMap[ed.from];
