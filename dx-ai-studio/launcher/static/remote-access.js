@@ -18,6 +18,7 @@
   var ns = window.DXLauncher = window.DXLauncher || {};
   var _status = null;
   var _dialog = null;
+  var _focusKey = null;
 
   function _t(key) {
     return (window.DXI18n && window.DXI18n.T) ? window.DXI18n.T(key) : key;
@@ -95,8 +96,28 @@
     _dialog.id = 'remoteAccessDialog';
     _dialog.setAttribute('aria-labelledby', 'remoteAccessTitle');
     _dialog.addEventListener('click', function (ev) { if (ev.target === _dialog) _dialog.close(); });
+    /* 어디에 focus 가 있었는지 — 목록을 다시 그리면 (새로 고침 · 연결 끊기) 그 자리로 돌려준다
+       (release audit L-19: focus 가 body 로 빠져 키보드 사용자가 길을 잃었다) */
+    _dialog.addEventListener('focusin', function (ev) {
+      var row = ev.target.closest && ev.target.closest('.ra-row');
+      _focusKey = row ? 'row:' + row.dataset.session : 'close';
+    });
     document.body.appendChild(_dialog);
     return _dialog;
+  }
+
+  function _restoreFocus(d) {
+    if (!d.open) return;
+    var key = _focusKey || 'close';
+    var target = null;
+    if (key.indexOf('row:') === 0) {
+      var id = key.slice(4);
+      Array.prototype.forEach.call(d.querySelectorAll('.ra-row'), function (r) {
+        if (r.dataset.session === id) target = r.querySelector('button');
+      });
+      if (!target) target = d.querySelector('.ra-row button');   // 끊은 줄은 없다 — 다음 줄로
+    }
+    (target || d.querySelector('.modal-x')).focus();
   }
 
   function _render(sessions, error) {
@@ -105,7 +126,7 @@
     var box = _el('div', 'modal ra-modal');
     var close = _el('button', 'modal-x');
     close.type = 'button';
-    close.innerHTML = '&times;';
+    close.innerHTML = '<svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg>';
     close.setAttribute('aria-label', _t('Close'));
     close.addEventListener('click', function () { d.close(); });
     box.appendChild(close);
@@ -156,6 +177,7 @@
     });
     box.appendChild(list);
     d.appendChild(box);
+    _restoreFocus(d);
   }
 
   function _disconnect(s, btn) {
@@ -176,6 +198,7 @@
 
   function open() {
     var d = _ensureDialog();
+    _focusKey = 'close';
     _render([], false);
     if (!d.open) d.showModal();
     /* 주소 (보드 IP) 는 열 때마다 다시 — 네트워크가 바뀌었을 수 있다 */

@@ -97,8 +97,13 @@ def test_the_board_sees_who_is_connected_and_can_disconnect_one(studio, access, 
         assert "Chrome · Windows" in text and "Safari · iOS" in text
         assert access.pairing.code not in text, "코드는 콘솔에만"
         assert "This browser" not in text, "보드 자신은 목록에 없다"
-        page.locator(f'#remoteAccessDialog .ra-row[data-session="{laptop}"] button').click()
+        assert page.evaluate("document.getElementById('remoteAccessDialog').contains(document.activeElement)"), \
+            "목록을 불러온 뒤에도 focus 가 대화상자 안에 있다"
+        page.locator(f'#remoteAccessDialog .ra-row[data-session="{laptop}"] button').focus()
+        page.keyboard.press("Enter")
         page.wait_for_function("document.querySelectorAll('#remoteAccessDialog .ra-row').length === 1")
+        assert page.evaluate("document.activeElement.closest('.ra-row') !== null"), \
+            "끊은 줄이 사라지면 focus 는 남은 줄의 단추로 (release audit L-19)"
         left = [s["id"] for s in access.sessions.list()]
         assert laptop not in left and len(left) == 1
         page.keyboard.press("Escape")
