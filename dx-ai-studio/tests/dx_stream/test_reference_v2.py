@@ -89,7 +89,7 @@ def test_stream_reference_template_uses_v2_layout():
 
 def test_stream_reference_js_uses_v2_renderer_contract():
     js = reference_js_source()
-    assert "function _T5(en, ko, ja, zhCN, zhTW)" in js
+    assert "function _T5(en, ko, ja, zhCN, zhTW, es)" in js
     assert "DXStream._L(" not in js
     assert "var _L = S._L" not in js
     assert "ref-grid" not in js
@@ -111,15 +111,18 @@ def test_stream_reference_preserves_categories_and_topics():
 
 
 def test_stream_reference_categories_have_v2_descriptions():
+    """카테고리 설명은 여섯 언어 (release audit S-9 — 예전에는 스페인어가 없었다)."""
     js = reference_js_source()
     for expected in (
-        "Setup, dashboard, and first demo flow",
-        "Preset demos, MJPEG/WebRTC",
-        "Pipeline builder, validation, presets, and export",
-        "Model catalog, GStreamer elements, and custom libraries",
-        "Monitoring, APIs, keyboard shortcuts, and troubleshooting",
+        "Setup, dashboard and the first demo",
+        "12 preset demos, WebRTC and MJPEG",
+        "Pipeline Builder, connection rules, presets and export",
+        "Model catalog, GStreamer elements and custom libraries",
+        "Shortcuts, API, theme and language",
     ):
         assert expected in js
+    cats = js[js.index("function buildRefCategories()"):js.index("function buildRefTopics()")]
+    assert cats.count("es:'") >= 5
 
 
 def test_stream_reference_css_defines_v2_components():
@@ -294,11 +297,11 @@ def test_stream_reference_renderer_matches_dx_app_visual_dom_shape():
 
 def test_stream_reference_detail_chrome_uses_localized_labels():
     js = reference_js_source()
-    assert "_T5('Reference','레퍼런스','リファレンス','参考','參考')" in js
-    assert "_T5('Overview','개요','概要','概述','概述')" in js
-    assert "_T5('Parameters','파라미터','パラメータ','参数','參數')" in js
-    assert "_T5('Workflow','워크플로우','ワークフロー','工作流','工作流程')" in js
-    assert "_T5('Tips','팁','ヒント','提示','提示')" in js
+    assert "_T5('Reference','레퍼런스','リファレンス','参考','參考','Referencia')" in js
+    assert "_T5('Overview','개요','概要','概述','概述','Descripción general')" in js
+    assert "_T5('Details','상세','詳細','详情','詳情','Detalles')" in js
+    assert "_T5('Workflow','작업 순서','手順','操作流程','操作流程','Flujo de trabajo')" in js
+    assert "_T5('Tips','팁','ヒント','提示','提示','Consejos')" in js
     assert "overview:'📋 Overview'" not in js
     assert "ref-detail-kicker\">Reference" not in js
 
@@ -322,15 +325,16 @@ def test_stream_reference_tab_labels_support_keyboard_activation():
 
 
 def test_stream_reference_matches_dev_demo_surface():
+    """Demo 목록은 dx_stream/core/demos.py 와 같다 — 12개, 6번은 instance segmentation, 11번은 depth
+    (release audit S-9: 11개 · semantic 으로 적혀 있었다)."""
     source = reference_js_source()
     assert "OBB Detection" not in source
     assert "YOLO26n_OBB" not in source
-    assert "<td>Classification</td>" not in source
     assert "Secondary Inference" in source
     assert "Multi-Object Tracking" in source
-    assert "Manage 16 DEEPX" in source
-    assert "Object Detection(8)" in source
-    assert "Depth(1)" not in source
+    assert "['6','Instance Segmentation'" in source
+    assert "['11','Depth Estimation'" in source
+    assert "Manage 16 DEEPX" not in source and "7-step" not in source
 
 
 def test_reference_screen_has_exactly_one_definition():
