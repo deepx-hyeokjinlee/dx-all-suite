@@ -1872,14 +1872,14 @@ def main():
 
     # Unmissable, now-LIVE URL banner — safe to surface here because the port is bound.
     _studio_url = f"http://localhost:{port}"
-    print("\n  ┌────────────────────────────────────────────────┐")
+    print("\n  ┌──────────────────────────────────────────────────┐")
     print(f"  │  👉  OPEN THE STUDIO:  {_studio_url:<25} │")
     if REMOTE_ACCESS is not None:
         # 다른 컴퓨터에서 열 주소 — 처음 한 번 위의 원격 접속 코드를 묻는다
         for _ip in _lan_addresses()[:3]:
             _lan_url = f"http://{_ip}:{port}"
             print(f"  │      other computers:  {_lan_url:<25} │")
-    print("  └────────────────────────────────────────────────┘\n")
+    print("  └──────────────────────────────────────────────────┘\n")
 
     show_logo(animate=not _fast)
     show_system_check(module_count=len(boot_modules), animate=not _fast)
