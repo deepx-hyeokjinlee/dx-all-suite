@@ -106,7 +106,8 @@ def test_static_response_uses_http11_cache_headers_and_validators(static_server)
     assert resp.headers["Cache-Control"] == "no-cache, must-revalidate"
     assert resp.headers["ETag"].startswith('W/"')
     assert resp.headers["Last-Modified"]
-    assert resp.headers["Access-Control-Allow-Origin"] == "*"
+    # 2026-10-01 (QA COM-A1): CORS 를 열지 않는다 — same-origin 만
+    assert "Access-Control-Allow-Origin" not in resp.headers
     assert resp.headers["Vary"] == "Accept-Encoding"
 
 
@@ -219,7 +220,7 @@ def test_304_includes_cache_headers_but_no_content_length(static_server):
         assert second.getheader("ETag") == etag
         assert second.getheader("Cache-Control") is not None
         assert second.getheader("Last-Modified") is not None
-        assert second.getheader("Access-Control-Allow-Origin") == "*"
+        assert second.getheader("Access-Control-Allow-Origin") is None   # QA COM-A1
         assert second.getheader("Vary") == "Accept-Encoding"
     finally:
         conn.close()

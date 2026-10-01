@@ -147,20 +147,24 @@ class TestNoAuthLocalMode:
         data = json.loads(resp.read())
 
         assert resp.status == 200
+        # 2026-10-01 (QA COM-A1): 로컬은 그대로 — 인증 없이 통과한다고 알린다. 원격은 페어링
+        # (tests/shared/test_remote_access.py). 이 시험의 서버에는 페어링 상태가 없다.
         assert data == {
             "ok": True,
             "auth_enabled": False,
             "locked": False,
+            "local": True,
             "authenticated": True,
+            "pairing": False,
         }
 
-    def test_unlock_is_noop_and_does_not_set_cookie(self, live_server):
-        resp = _post(live_server["base"], "/api/auth/unlock", {"pin": "anything"})
-        data = json.loads(resp.read())
-
-        assert resp.status == 200
-        assert data == {"ok": True, "auth_enabled": False, "csrf": ""}
-        assert resp.headers.get("Set-Cookie") is None
+    def test_unlock_without_pairing_sets_no_cookie(self, live_server):
+        # 페어링 상태가 없는 launcher (loopback 에만 열림) 에서는 unlock 할 것이 없다 — 403, 쿠키 없음
+        import urllib.error
+        with pytest.raises(urllib.error.HTTPError) as e:
+            _post(live_server["base"], "/api/auth/unlock", {"code": "123456"})
+        assert e.value.code == 403
+        assert e.value.headers.get("Set-Cookie") is None
 
     def test_logout_and_relock_are_noop_no_content(self, live_server):
         for path in ("/api/auth/logout", "/api/auth/relock"):

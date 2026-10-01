@@ -167,6 +167,15 @@ class TestThePatternsActuallyMatchWhatTheServerSends:
         "output_dir is required",
         "temperature must be a number",
         "temperature must be between 0 and 2",
+        "model_path is outside the allowed folders",
+        "dataset_path (in config) is outside the allowed folders",
+        "config_path does not exist",
+        "model_path is not a file",
+        "dataset_path is not a folder",
+        "output_dir is not a valid path",
+        "output_dir cannot be a compiler job folder",
+        "Host not allowed",
+        "Cross-origin request refused",
     ]
 
     @staticmethod

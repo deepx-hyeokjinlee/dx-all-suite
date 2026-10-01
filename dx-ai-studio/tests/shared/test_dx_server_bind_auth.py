@@ -1,4 +1,8 @@
-"""Optional bind-local and API-token contracts for DXBaseHandler / DXServer."""
+"""bind · API-token contracts for DXBaseHandler / DXServer.
+
+2026-10-01 (QA COM-A1): 모듈 서버의 기본 bind 는 loopback, 로컬 요청은 그대로 통과, 원격 요청은 DX_API_TOKEN
+(또는 launcher 의 페어링 세션) 이 있어야 한다. 전체 매트릭스는 tests/shared/test_remote_access.py.
+"""
 from __future__ import annotations
 
 import io
@@ -32,11 +36,11 @@ class _AuthProbeHandler(DXBaseHandler):
 
 
 class TestBindHostResolution(unittest.TestCase):
-    def test_default_is_all_interfaces(self):
+    def test_default_is_loopback(self):
         env = os.environ
         for key in ("DX_BIND_LOCAL", "DX_BIND_HOST"):
             env.pop(key, None)
-        self.assertIsNone(_resolve_bind_host())
+        self.assertEqual(_resolve_bind_host(), "127.0.0.1")
 
     def test_bind_local_flag(self):
         with patch.dict(os.environ, {"DX_BIND_LOCAL": "1"}, clear=False):
@@ -47,21 +51,29 @@ class TestBindHostResolution(unittest.TestCase):
             self.assertEqual(_resolve_bind_host(), "192.168.1.5")
 
 
+def _remote_handler(headers):
+    handler = _AuthProbeHandler.__new__(_AuthProbeHandler)
+    handler.headers = headers
+    handler.client_address = ("192.168.0.99", 5555)
+    handler.command = "GET"
+    return handler
+
+
 class TestApiTokenGate(unittest.TestCase):
-    def test_no_token_configured_allows_request(self):
+    def test_a_local_request_needs_no_token(self):
         handler = _AuthProbeHandler.__new__(_AuthProbeHandler)
+        handler.client_address = ("127.0.0.1", 5555)
+        handler.command = "GET"
         handler.headers = {}
         handler.wfile = io.BytesIO()
         handler.send_response = MagicMock()
         handler.send_header = MagicMock()
         handler.end_headers = MagicMock()
-        with patch.dict(os.environ, {}, clear=False):
-            os.environ.pop("DX_API_TOKEN", None)
+        with patch.dict(os.environ, {"DX_API_TOKEN": "secret"}, clear=False):
             self.assertFalse(handler._enforce_auth())
 
-    def test_missing_token_rejects(self):
-        handler = _AuthProbeHandler.__new__(_AuthProbeHandler)
-        handler.headers = {}
+    def test_a_remote_request_without_the_token_is_rejected(self):
+        handler = _remote_handler({})
         handler.wfile = io.BytesIO()
         handler.send_response = MagicMock()
         handler.send_header = MagicMock()
@@ -72,8 +84,7 @@ class TestApiTokenGate(unittest.TestCase):
         self.assertEqual(body["error"], "Unauthorized")
 
     def test_bearer_token_accepts(self):
-        handler = _AuthProbeHandler.__new__(_AuthProbeHandler)
-        handler.headers = {"Authorization": "Bearer secret"}
+        handler = _remote_handler({"Authorization": "Bearer secret"})
         handler.wfile = io.BytesIO()
         with patch.dict(os.environ, {"DX_API_TOKEN": "secret"}, clear=False):
             self.assertFalse(handler._enforce_auth())
