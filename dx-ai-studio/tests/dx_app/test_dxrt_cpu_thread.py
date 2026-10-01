@@ -48,3 +48,17 @@ def test_an_inference_run_gets_dynamic_cpu_thread(tmp_path, monkeypatch):
 def test_live_runs_use_the_same_env():
     src = (ROOT / "dx_app" / "core" / "live.py").read_text(encoding="utf-8")
     assert "run_env(" in src, "카메라 · RTSP live 실행도 같은 env 를 쓴다"
+
+
+def test_run_env_drops_the_qt_paths_that_opencv_python_sets_on_import():
+    """opencv-python 은 import 될 때 QT_QPA_PLATFORM_PLUGIN_PATH · QT_QPA_FONTDIR 를 자기 cv2/qt 로 바꾼다. 서버가
+    한 번 cv2 를 쓰면 (이미지 추론 · 썸네일) 그 뒤의 C++ runner 는 시스템 Qt5 에 pip 의 플러그인을 싣다가
+    "Could not load the Qt platform plugin xcb" 로 abort (-6) — 라이브 화면이 검다 (release audit A-30, 이 PC)."""
+    from shared import dxrt
+    cv2_qt = "/venv/lib/python3.12/site-packages/cv2/qt"
+    env = dxrt.run_env({"QT_QPA_PLATFORM_PLUGIN_PATH": cv2_qt + "/plugins", "QT_QPA_FONTDIR": cv2_qt + "/fonts",
+                        "QT_PLUGIN_PATH": cv2_qt + "/plugins", "DISPLAY": ":99"})
+    assert not {"QT_QPA_PLATFORM_PLUGIN_PATH", "QT_QPA_FONTDIR", "QT_PLUGIN_PATH"} & set(env)
+    assert env["DISPLAY"] == ":99"
+    mine = {"QT_QPA_PLATFORM_PLUGIN_PATH": "/opt/qt5/plugins"}
+    assert dxrt.run_env(mine)["QT_QPA_PLATFORM_PLUGIN_PATH"] == "/opt/qt5/plugins", "사용자가 정한 Qt 는 둔다"
