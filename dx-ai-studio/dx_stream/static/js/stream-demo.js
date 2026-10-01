@@ -5,6 +5,14 @@
 DXStream._runningDemoId = null;
 DXStream._startingDemo = false;
 
+/* 서버가 주는 /static/img/demo/… 는 모듈 기준 — launcher 안 (/stream/) 에서는 launcher 의 /static 으로 풀려 404 였다
+   (2026-10-02 release audit S-2). 모듈 접두어를 붙인다. */
+function _thumbUrl(u) {
+  if (!u) return '';
+  var base = (window.DXStream && DXStream._base) || '';
+  return u.charAt(0) === '/' && base && u.indexOf(base + '/') !== 0 ? base + u : u;
+}
+
 /* ── XSS 방지: HTML 특수문자 이스케이프 ── */
 function _escHtml(s) {
     if (s == null) return '';
@@ -135,7 +143,7 @@ function _demoItem(d) {
         category: d.category || '',
         task: { icon: _DEMO_ICON[d.category] || (/^[a-z0-9_]+$/.test(d.category || '') ? 'task-' + d.category : 'models'),
                 label: _demoCatLabel(d.category) },
-        thumb: d.thumbnail || '',
+        thumb: _thumbUrl(d.thumbnail),
         ready: !!d.available,
         sub: d.model || '',
         reason: d.available ? '' : (shortReason || full),
@@ -252,7 +260,7 @@ function _demoPaint(id) {
         _demoStartMetrics();
     } else {
         _demoParkVideo();
-        if (!st.media.firstElementChild) st.setMedia(d.thumbnail ? '<img class="dds-preview" src="' + _escHtml(d.thumbnail) + '" alt="">'
+        if (!st.media.firstElementChild) st.setMedia(d.thumbnail ? '<img class="dds-preview" src="' + _escHtml(_thumbUrl(d.thumbnail)) + '" alt="">'
             : '<div class="dds-blank">' + _demoIco(_demoItem(d).task.icon, 'dds-ico') + '</div>');
         st.setState('ready', T('Ready'));
         st.setMetrics([]);
