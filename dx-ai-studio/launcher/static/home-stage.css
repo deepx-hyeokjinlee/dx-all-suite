@@ -178,7 +178,23 @@
 
 /* 입력 뒤의 무대. 보일 때만 자리를 갖는다 (아래 Dock 규칙). */
 .stage-work { grid-area: work; display: none; min-width: 0; }
-.stage-close { float: inline-end; }
+/* 닫기 — 글자 "×" 가 브라우저 기본 단추로 보였다. 다른 닫기와 같은 아이콘 단추로. */
+.stage-close {
+  float: inline-end;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.stage-close:hover { color: var(--text-primary); background: color-mix(in srgb, var(--text-primary) 8%, transparent); }
+.stage-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.stage-close .dx-ico { width: 16px; height: 16px; }
 
 /* deck: 위젯 · 아이콘 · 위젯 (spec §4.1 가로 예산 264 · 48 · 520 · 48 · 264) */
 .stage-deck {

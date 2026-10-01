@@ -190,7 +190,7 @@
     <!-- 입력 뒤의 무대 (spec §5.7b). 보이면 #landing:has(...) 가 Dock 으로 바꾼다. -->
     <section class="stage-work" id="homeStageWork">
       <section class="home-answer" id="homeAnswer" hidden aria-live="polite">
-          <button type="button" class="stage-close" id="answerClose" aria-label="Close" data-i18n-aria-label="Close">×</button>
+          <button type="button" class="stage-close" id="answerClose" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
           <div class="answer-read" id="answerRead"></div>
 
           <div class="answer-routes" id="answerRoutes"></div>
@@ -228,7 +228,7 @@
                  닿는 자리이기도 했다. -->
             <span class="work-setup" id="workSetupSummary"></span>
             <button type="button" class="work-stop" id="workStop" data-i18n="Stop">Stop</button>
-            <button type="button" class="stage-close" id="workClose" aria-label="Close" data-i18n-aria-label="Close">×</button>
+            <button type="button" class="stage-close" id="workClose" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
           </header>
 
           <div class="work-split" id="workSplit">
@@ -649,6 +649,9 @@
     /* task 이름은 Model Zoo 사전 (dx_modelzoo/static/js/i18n-dict-shared.js) 과 같다. */
     'Object Detection': { ko:'객체 탐지', ja:'物体検出', es:'Detección de objetos', 'zh-CN':'目标检测', 'zh-TW':'物件偵測' },
     'Instance Segmentation': { ko:'인스턴스 분할', ja:'インスタンスセグメンテーション', es:'Segmentación de instancias', 'zh-CN':'实例分割', 'zh-TW':'實例分割' },
+    'Segmentation': { ko:'분할', ja:'セグメンテーション', es:'Segmentación', 'zh-CN':'分割', 'zh-TW':'分割' },
+    'Face Detection': { ko:'얼굴 탐지', ja:'顔検出', es:'Detección de rostros', 'zh-CN':'人脸检测', 'zh-TW':'人臉偵測' },
+    'Semantic Segmentation': { ko:'의미론적 분할', ja:'セマンティックセグメンテーション', es:'Segmentación semántica', 'zh-CN':'语义分割', 'zh-TW':'語意分割' },
     'Pose Estimation': { ko:'자세 추정', ja:'姿勢推定', es:'Estimación de pose', 'zh-CN':'姿态估计', 'zh-TW':'姿態估計' },
     'Classification': { ko:'분류', ja:'分類', es:'Clasificación', 'zh-CN':'分类', 'zh-TW':'分類' },
     'OBB Detection': { ko:'OBB 탐지', ja:'OBB 検出', es:'Detección OBB', 'zh-CN':'OBB 检测', 'zh-TW':'OBB 偵測' },
@@ -723,17 +726,19 @@
     'channels': { ko:'채널', ja:'チャンネル', es:'canales', 'zh-CN':'路数', 'zh-TW':'路數' },
     'target': { ko:'목표', ja:'目標', es:'objetivo', 'zh-CN':'目标', 'zh-TW':'目標' },
     'input': { ko:'입력', ja:'入力', es:'entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
-    'Pick': { ko:'선택', ja:'選択', es:'Elegir', 'zh-CN':'选择', 'zh-TW':'選擇' },
-    'Find': { ko:'탐색', ja:'検索', es:'Buscar', 'zh-CN':'查找', 'zh-TW':'尋找' },
-    'Generate': { ko:'생성', ja:'生成', es:'Generar', 'zh-CN':'生成', 'zh-TW':'產生' },
-    'Wire': { ko:'연결', ja:'接続', es:'Conectar', 'zh-CN':'接入', 'zh-TW':'接入' },
+    '**Pick** a model for {task}': { ko:'{task}에 맞는 모델 **고르기**', ja:'{task} に合うモデルを**選ぶ**', es:'**Elegir** un modelo para {task}', 'zh-CN':'为{task}**选择**模型', 'zh-TW':'為{task}**選擇**模型' },
+    '**Find** the closest model in the zoo': { ko:'Model Zoo에서 가장 가까운 모델 **찾기**', ja:'Model Zoo で最も近いモデルを**探す**', es:'**Buscar** el modelo más parecido en el Model Zoo', 'zh-CN':'在 Model Zoo 中**查找**最接近的模型', 'zh-TW':'在 Model Zoo 中**尋找**最接近的模型' },
+    '**Generate** an app in a new session folder': { ko:'새 세션 폴더에 앱 **만들기**', ja:'新しいセッションフォルダにアプリを**生成**', es:'**Generar** una app en una carpeta de sesión nueva', 'zh-CN':'在新会话目录中**生成**应用', 'zh-TW':'在新工作階段目錄中**產生**應用' },
+    '**Wire** {input} and the logic you described': { ko:'{input} · 설명하신 로직 **연결하기**', ja:'{input}と説明されたロジックを**つなぐ**', es:'**Conectar** {input} y la lógica que describió', 'zh-CN':'**连接**{input}与你描述的逻辑', 'zh-TW':'**連接**{input}與你描述的邏輯' },
+    '**Run** it and show you the output': { ko:'**실행**하고 결과 보여 주기', ja:'**実行**して結果を表示', es:'**Ejecutar** y mostrarle el resultado', 'zh-CN':'**运行**并展示结果', 'zh-TW':'**執行**並展示結果' },
+    'about 3–6 min': { ko:'약 3–6분', ja:'約 3〜6 分', es:'unos 3–6 min', 'zh-CN':'约 3–6 分钟', 'zh-TW':'約 3–6 分鐘' },
+    '{n} models': { ko:'모델 {n}개', ja:'{n} 件のモデル', es:'{n} modelos', 'zh-CN':'{n} 个模型', 'zh-TW':'{n} 個模型' },
+    '{n}-channel': { ko:'{n}채널', ja:'{n} チャンネル', es:'{n} canales', 'zh-CN':'{n} 路', 'zh-TW':'{n} 路' },
+    'Webcam': { ko:'웹캠', ja:'Web カメラ', es:'Cámara web', 'zh-CN':'摄像头', 'zh-TW':'網路攝影機' },
+    'Video file': { ko:'동영상 파일', ja:'動画ファイル', es:'Archivo de video', 'zh-CN':'视频文件', 'zh-TW':'影片檔' },
+    'RTSP stream': { ko:'RTSP 스트림', ja:'RTSP ストリーム', es:'Transmisión RTSP', 'zh-CN':'RTSP 流', 'zh-TW':'RTSP 串流' },
     'Run': { ko:'실행', ja:'実行', es:'Ejecutar', 'zh-CN':'运行', 'zh-TW':'執行' },
-    'a model for': { ko:'에 맞는 모델을', ja:'に合うモデルを', es:'un modelo para', 'zh-CN':'适合的模型：', 'zh-TW':'適合的模型：' },
-    'the closest model in the zoo': { ko:'모델 저장소에서 가장 가까운 모델을', ja:'モデルズーで最も近いモデルを', es:'el modelo más parecido del zoo', 'zh-CN':'模型库中最接近的模型', 'zh-TW':'模型庫中最接近的模型' },
-    'an app in a new session folder': { ko:'새 세션 폴더에 앱을', ja:'新しいセッションフォルダにアプリを', es:'una app en una carpeta de sesión nueva', 'zh-CN':'在新会话目录里生成应用', 'zh-TW':'在新工作階段目錄產生應用' },
-    'the input': { ko:'입력을', ja:'入力を', es:'la entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
-    'and the logic you described': { ko:'설명하신 로직에 연결', ja:'と説明されたロジックを', es:'y la lógica que describió', 'zh-CN':'与你描述的逻辑', 'zh-TW':'與你描述的邏輯' },
-    'it and show you the output': { ko:'하고 결과를 보여줌', ja:'して結果を表示', es:'y mostrarle el resultado', 'zh-CN':'并展示结果', 'zh-TW':'並展示結果' },
+    'the input': { ko:'입력', ja:'入力', es:'la entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
     'Home': { ko:'홈', ja:'ホーム', es:'Inicio', 'zh-CN':'首页', 'zh-TW':'首頁' },
     'Models': { ko:'모델', ja:'モデル', es:'Modelos', 'zh-CN':'模型', 'zh-TW':'模型' },
     'Studio': { ko:'스튜디오', ja:'スタジオ', es:'Estudio', 'zh-CN':'工作台', 'zh-TW':'工作臺' },
