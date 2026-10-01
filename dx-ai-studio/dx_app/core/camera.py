@@ -146,14 +146,35 @@ def _ensure_xvfb(slot_idx=0):
         proc = _xvfb_procs.get(slot_idx)
         if proc and proc.poll() is None:
             return
-        os.system(f"pkill -f 'Xvfb {display}' 2>/dev/null")
-        time.sleep(0.3)
+        # 그 display 에 이미 X 서버가 있으면 (이전 실행이 남긴 것 · 다른 studio) 죽이지 않고 쓴다 — 예전의
+        # `pkill -f 'Xvfb :99'` 는 ':990' 이나 남의 Xvfb 까지 죽였다 (2026-10-02 release audit A-15). -ac 라 그려도 된다.
+        if _xcb_conn(display) is not None:
+            _xvfb_procs.pop(slot_idx, None)
+            return
         p = subprocess.Popen(
             ["Xvfb", display, "-screen", "0", _XVFB_RES, "-ac"],
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         time.sleep(1)
         _xvfb_procs[slot_idx] = p
         print(f"[LIVE] Xvfb started on {display} PID={p.pid}")
+
+
+def stop_xvfb(slot_idx):
+    """이 서버가 띄운 slot 의 Xvfb 만 끈다 (남이 띄운 display 는 건드리지 않는다). 다음 실행이 다시 띄운다 (약 1초)."""
+    with _xvfb_lock:
+        p = _xvfb_procs.pop(slot_idx, None)
+    conn = _xcb_conns.pop(f":{_XVFB_BASE + slot_idx}", None)
+    if conn is not None and _XCB:
+        try:
+            _XCB.xcb_disconnect(conn[0])
+        except Exception:
+            pass
+    if p is not None and p.poll() is None:
+        p.terminate()
+        try:
+            p.wait(timeout=3)
+        except Exception:
+            p.kill()
 
 
 # ── Live 화면: 창 맞추기 · Qt 테두리 잘라내기 (계약: tests/dx_app/test_live_display.py) ──────────────

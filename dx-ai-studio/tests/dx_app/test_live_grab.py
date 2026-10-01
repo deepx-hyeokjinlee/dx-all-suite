@@ -100,3 +100,48 @@ def test_a_virtual_display_that_dies_is_reported_not_fatal(tmp_path):
     out = subprocess.run([os.sys.executable, str(script)], capture_output=True, text=True, timeout=60)
     assert out.returncode == 0, out.stderr[-800:]
     assert out.stdout.strip().splitlines()[-1] == "(160, 120) None (160, 120)"
+
+
+def test_an_x_server_already_on_the_display_is_reused_not_killed(monkeypatch):
+    """`pkill -f 'Xvfb :99'` 는 ':990' 이나 다른 studio 의 Xvfb 까지 죽였다. 이미 있으면 쓰고, 멈출 때는 자기 것만 끈다
+    (2026-10-02 release audit A-15)."""
+    if not shutil.which("Xvfb"):
+        pytest.skip("Xvfb not installed")
+    from dx_app.core import camera
+    code = [ln.split("#", 1)[0] for ln in (ROOT / "dx_app/core/camera.py").read_text(encoding="utf-8").splitlines()]
+    assert not any("pkill" in ln for ln in code), "camera.py 가 pkill 을 부른다"
+    monkeypatch.setattr(camera, "_XVFB_BASE", 180)
+    slot, disp, sock = 6, ":186", "/tmp/.X11-unix/X186"
+
+    def up():
+        p = subprocess.Popen(["Xvfb", disp, "-screen", "0", "160x120x24", "-nolisten", "tcp"],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        for _ in range(100):
+            if os.path.exists(sock):
+                break
+            time.sleep(0.1)
+        time.sleep(0.5)
+        return p
+
+    other = up()
+    try:
+        camera._ensure_xvfb(slot)
+        assert slot not in camera._xvfb_procs, "남의 display 는 우리 것으로 적지 않는다"
+        camera.stop_xvfb(slot)
+        assert other.poll() is None, "남의 Xvfb 를 죽였다"
+    finally:
+        other.terminate()
+        other.wait(timeout=5)
+    for _ in range(50):
+        if not os.path.exists(sock):
+            break
+        time.sleep(0.1)
+    camera._ensure_xvfb(slot)
+    ours = camera._xvfb_procs.get(slot)
+    try:
+        assert ours is not None and ours.poll() is None
+        camera.stop_xvfb(slot)
+        assert ours.poll() is not None, "멈추면 우리가 띄운 Xvfb 는 끈다"
+    finally:
+        if ours is not None and ours.poll() is None:
+            ours.kill()

@@ -543,6 +543,10 @@ def stop_inference_live(slot_idx=None):
     # Stop camera multiplexer when stopping all slots
     if slot_idx is None:
         _stop_cam_mux()
+    # 멈춘 slot 의 Xvfb 도 끈다 — 예전에는 서버가 끝날 때까지 남았다 (release audit A-15)
+    from dx_app.core import camera as _camera
+    for s in targets:
+        _camera.stop_xvfb(s)
     return {"status": "stopping", "slots": stopped}
 
 
