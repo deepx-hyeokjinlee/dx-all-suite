@@ -59,8 +59,15 @@ def _require_category(category):
         raise ValueError("category is required")
     if "/" in category or "\\" in category or ".." in category:
         raise ValueError(f"Invalid category: {category!r}")
-    if category not in CATEGORIES:
-        raise ValueError(f"Unknown category: {category!r}")
+    if category in CATEGORIES:
+        return category
+    # legacy ↔ per-model 짝 이름 (obb_detection ↔ oriented_object_detection …) — 예전 recent run · 링크 · client
+    # 는 다른 layout 의 이름으로 보낸다 (계약: tests/dx_app/test_category_alias.py)
+    from shared.tasks import canonical, legacy
+    for alt in (canonical(category), legacy(category)):
+        if alt != category and alt in CATEGORIES:
+            return alt
+    raise ValueError(f"Unknown category: {category!r}")
 
 
 def _require_safe_id(value, label):
@@ -112,7 +119,7 @@ def _validate_inference_payload(data, live=False):
     if not isinstance(data, dict):
         return _error_payload("invalid_payload", "request must be an object"), 400
     try:
-        _require_category(data.get("category", ""))
+        data["category"] = _require_category(data.get("category", ""))
         _require_model_name(data.get("model_name", ""))
         _require_model_file(data.get("model_file", ""))
         lang = data.get("lang", "cpp")

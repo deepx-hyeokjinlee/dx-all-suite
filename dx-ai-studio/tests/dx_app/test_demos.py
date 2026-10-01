@@ -132,7 +132,11 @@ class TestParseRunDemo(unittest.TestCase):
         if not r["ok"]:
             self.skipTest("list_demos() could not locate/parse the real run_demo.sh in this environment")
         self.assertTrue(r["ok"] is True)
-        self.assertEqual(len(r["demos"]), 23)
+        # main (01b7727) 의 run_demo.sh 는 23 개, teammate per-model layout (8d0b748) 은 27 개 — 이 PC 의 checkout 에 따라
+        from dx_app.core.demos import _dx_app_root
+        from shared import dx_app_layout
+        expected = 27 if dx_app_layout.detect(_dx_app_root()) == dx_app_layout.PER_MODEL else 23
+        self.assertEqual(len(r["demos"]), expected)
         self.assertTrue(len(r["groups"]) > 0)
         self.assertEqual(len(set(r["groups"])), len(r["groups"]))
         self.assertEqual(r["groups"][0], "Detection")
