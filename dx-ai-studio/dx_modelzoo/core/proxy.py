@@ -3,7 +3,7 @@ import re
 import json
 import http.client
 import socket
-from dx_modelzoo.core.config import DX_APP_PORT
+from dx_modelzoo.core.config import DX_APP_PORT, dx_app_port
 
 _SAFE_ID_RE = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9._\-]{0,127}$")
 
@@ -17,7 +17,7 @@ def is_safe_model_id(model_id):
 
 def is_dx_app_alive(port=None, timeout=1):
     """dx_app TCP 연결 가능 여부."""
-    port = port or DX_APP_PORT
+    port = port or dx_app_port()
     try:
         sock = socket.create_connection(("127.0.0.1", port), timeout=timeout)
         sock.close()
@@ -41,7 +41,7 @@ def proxy_request(method, path, query=None, body=None, headers=None, port=None):
     Returns:
         (status_code, response_headers, response_body)
     """
-    port = port or DX_APP_PORT
+    port = port or dx_app_port()
     url = path
     if query:
         url = f"{path}?{query}"

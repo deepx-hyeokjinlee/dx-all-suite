@@ -743,6 +743,8 @@ def start_sub_server(name, directory, port=0, server_id=None):
     # dx_app port (dx_app is started before modelzoo in main()).
     if _LAUNCHER_PROXY_PORTS.get("dx_app") is not None:
         env["DX_APP_PORT"] = str(_LAUNCHER_PROXY_PORTS["dx_app"])
+    # dx_app 이 다시 뜨면 port 가 바뀐다 — 그 port 를 담는 파일을 넘겨 Zoo 가 요청마다 읽게 한다
+    env["DX_APP_PORT_FILE"] = str(PORTS_DIR / "dx_app.port")
 
     proc = subprocess.Popen(
         cmd,

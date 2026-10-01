@@ -35,6 +35,24 @@ try:
     DX_APP_PORT = int(os.environ.get("DX_APP_PORT", "8080"))
 except (TypeError, ValueError):
     DX_APP_PORT = 8080
+
+
+def dx_app_port() -> int:
+    """지금 dx_app 의 port — launcher 가 쓰는 port 파일 (DX_APP_PORT_FILE) 을 요청마다 읽는다. dx_app 이 재시작하면
+    (watchdog · 홈) 새 임시 port 로 오는데, 시작할 때 받은 DX_APP_PORT 만 쓰면 Zoo 의 Run Inference 가 전부
+    DX_APP_UNAVAILABLE 이었다 (2026-10-02 release audit). 파일이 없으면 DX_APP_PORT."""
+    pf = os.environ.get("DX_APP_PORT_FILE", "").strip()
+    if pf:
+        try:
+            return int(open(pf, encoding="utf-8").read().strip())
+        except (OSError, ValueError):
+            pass
+    try:
+        return int(os.environ.get("DX_APP_PORT", "") or DX_APP_PORT)
+    except (TypeError, ValueError):
+        return DX_APP_PORT
+
+
 SERVER_NAME = "DX Model Zoo"
 
 CATEGORIES = {
