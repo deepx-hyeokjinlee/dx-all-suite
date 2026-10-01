@@ -875,6 +875,7 @@ async function contStart(){
     if(m.model_exists===false){toast(T('Model file not found: ')+CONT.slots[i].model,'err');return}
   }
   CONT.running=true;
+  CONT.stopped=false;
   $('c-start-btn').classList.add('hidden');
   $('c-stop-btn').classList.remove('hidden');
   document.querySelectorAll('#run-cont-tab select, #c-add-btn').forEach(function(el){el.disabled=true});
@@ -913,10 +914,12 @@ async function contStart(){
     if(cInputType==='camera'){body.camera_id=parseInt($('c-camera').value)||0;body.loop=parseInt($('c-cam-frames').value)||300}
     if(cInputType==='rtsp'){body.rtsp_url=buildRTSPUrl('c-rtsp-ip','c-rtsp-stream')}
     var res=await postJ('/api/run',body);
+    if(!CONT.running)break;   // 멈춘 slot 의 (죽인) 결과는 요약에 넣지 않는다
     allResults.push(res);
-    if(!CONT.running)break;
     contShowResult(i,res,sl.model);
   }
+  // Stop 이 이미 UI 를 정리했다 — '완료' toast · 요약을 또 내지 않는다 (release audit A-5)
+  if(CONT.stopped)return;
   contFinish(allResults);
 }
 
@@ -1001,6 +1004,7 @@ async function contStop(){
     return;
   }
   CONT.running=false;
+  CONT.stopped=true;
   await postJ('/api/stop',{});
   clearInterval(CONT.timerInt);
   $('c-timer').classList.remove('active');
@@ -1016,6 +1020,13 @@ async function contStop(){
     if(statusEl&&statusEl.textContent.trim()===T('Processing...'))DXIcon.label(statusEl,'stop',T('Stopped'));
     var slot=$('c-slot-'+i);
     if(slot&&slot.classList.contains('processing')){slot.className='cont-slot'}
+    /* 아직 끝나지 않은 slot 의 spinner ('… running inference…' · 'Waiting…') 를 멈춤 표시로 (A-5) */
+    var phEl=$('c-ph-'+i);
+    var finished=slot&&(slot.classList.contains('done')||slot.classList.contains('error'));
+    if(phEl&&!finished){
+      phEl.innerHTML='<p class="txt-dim mt8">'+DXIcon('stop')+' '+T('Stopped')+'</p>';
+      if(statusEl)DXIcon.label(statusEl,'stop',T('Stopped'));
+    }
   });
   toast(T('Continuous inference stopped'),'info');
 }
