@@ -17,7 +17,7 @@ function initBenchPage(){
   var hasResults=S.benchRes&&Object.keys(S.benchRes).length>0;
   var skipRebuild=_benchRunning; // don't wipe results during a running benchmark
   var cats=[...new Set(S.models.map(function(m){return m.category}))].sort();
-  $('b-cat').innerHTML='<option value="">'+T('All Categories')+'</option>'+cats.map(function(c){return '<option>'+c+'</option>'}).join('');
+  $('b-cat').innerHTML='<option value="">'+T('All Categories')+'</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(catText(c))+'</option>'}).join('');
   api('/api/images').then(function(imgs){
     var list=Array.isArray(imgs)?imgs:[];
     $('b-img-sel').innerHTML='<option value="">'+T('Default (built-in)')+'</option>'+list.map(function(f){return '<option value="'+esc(f)+'">'+esc(f.split('/').pop())+'</option>'}).join('');

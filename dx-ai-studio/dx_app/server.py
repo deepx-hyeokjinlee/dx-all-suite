@@ -332,6 +332,9 @@ class Handler(DXBaseHandler):
             if path=="/api/images":return self.send_json(get_images(self.read_query_param("category") or None))
             if path=="/api/videos":return self.send_json(get_videos(self.read_query_param("category") or None))
             if path=="/api/categories":return self.send_json(CATEGORIES)
+            if path=="/api/category_labels":
+                from dx_app.core.models import category_labels
+                return self.send_json(category_labels())
             if path=="/api/task_defaults":return self.send_json(_task_defaults())
             if path=="/api/recent_runs":
                 with config._history_lock:data=list(config._recent_runs)

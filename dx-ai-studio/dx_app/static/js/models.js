@@ -12,7 +12,7 @@ function renderModelsPage(){
   var src=(S.catalog&&S.catalog.length)?S.catalog:S.models;
   var cats=[...new Set(src.map(function(m){return m.category}))].sort();
   var html='<button class="chip active" data-cat="" onclick="chipFilter(this)">'+T('All')+'</button>';
-  cats.forEach(function(c){html+='<button class="chip" data-cat="'+c+'" onclick="chipFilter(this)">'+c.replace(/_/g,' ')+'</button>'});
+  cats.forEach(function(c){html+='<button class="chip" data-cat="'+c+'" onclick="chipFilter(this)">'+esc(catText(c))+'</button>'});
   $('cat-chips').innerHTML=html;
   filterModels();
 }
@@ -75,7 +75,7 @@ function filterModels(){
     var fileInfo=m.model_file?(m.model_exists?DXIcon('check'):DXIcon('x'))+'<span class="txt-dim"> '+m.model_file.split('/').pop()+'</span>':'\u2014';
     return '<tr>'
       +'<td>'+esc(m.name)+'</td>'
-      +'<td><span class="badge b-cat">'+m.category.replace(/_/g,' ')+'</span></td>'
+      +'<td><span class="badge b-cat">'+esc(catText(m.category))+'</span></td>'
       +'<td>'+(dl&&m.cpp?'<span class="badge b-ok">' + DXIcon('check') + '</span>':'<span class="badge b-no">\u2014</span>')+'</td>'
       +'<td>'+(dl&&m.python?'<span class="badge b-ok">' + DXIcon('check') + '</span>':'<span class="badge b-no">\u2014</span>')+'</td>'
       +'<td>'+modes.join(' ')+'</td>'
@@ -216,7 +216,7 @@ async function showDetail(name){
   };
   var h='';
   h+='<div class="detail-info-card"><h3>'+DXIcon('clipboard')+' '+T('Basic Info')+'</h3><table class="detail-tbl">';
-  h+='<tr><td>'+T('Category')+'</td><td><span class="badge b-cat">'+(info.category||'').replace(/_/g,' ')+'</span></td></tr>';
+  h+='<tr><td>'+T('Category')+'</td><td><span class="badge b-cat">'+esc(catText(info.category||''))+'</span></td></tr>';
   h+='<tr><td>'+T('Model File')+'</td><td>'+(info.model_exists?DXIcon('check'):DXIcon('x'))+' <span class="txt-sm" style="color:var(--text-primary)">'+(info.model_file||'N/A')+'</span>'
     +(_onnxGraphArg(info.model_file)&&info.model_exists?' <button class="btn btn-ghost btn-sm" style="margin-left:8px;height:22px;font-size:11px" onclick="closeModal(\'modal-detail\');openModelGraph(\''+esc(info.model_file)+'\')">' + DXIcon('dashboard') + ' View Graph</button>':'')
     +'</td></tr>';

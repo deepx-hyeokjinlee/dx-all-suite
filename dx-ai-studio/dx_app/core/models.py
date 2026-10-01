@@ -524,3 +524,25 @@ def get_catalog():
     except Exception:
         pass
     return out
+
+
+_LANGS = ("en", "ko", "ja", "zh-CN", "zh-TW", "es")
+
+
+def category_labels():
+    """slug → {언어: 이름} — 화면에 snake_case 를 그대로 보이지 않게 (2026-10-02 release audit A-12).
+
+    이름은 Model Zoo 의 카테고리 표 (6개 언어) 에서 — 두 모듈이 같은 task 를 같은 말로 부른다. dx_app 의 slug 가
+    다르게 불리면 (legacy ↔ per-model, shared.tasks) 짝을 찾고, 그래도 없으면 slug 를 사람 말로 펼친 영어."""
+    try:
+        from dx_modelzoo.core.config import CATEGORIES as _MZ
+    except Exception:
+        _MZ = {}
+    from shared.tasks import canonical, legacy
+    out = {}
+    for slug in sorted(set(CATEGORIES) | set(_MZ)):
+        info = _MZ.get(slug) or _MZ.get(canonical(slug)) or _MZ.get(legacy(slug)) or {}
+        en = info.get("label_en") or " ".join(w.upper() if w in ("ppu", "obb", "3d") else w.capitalize()
+                                             for w in slug.split("_"))
+        out[slug] = {lang: info.get(f"label_{lang}") or en for lang in _LANGS}
+    return out

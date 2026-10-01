@@ -29,6 +29,19 @@ const $=id=>document.getElementById(id);
 const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML};
 function api(url,opts){return fetch(url,opts).then(r=>r.json()).catch(e=>({error:e.message}))}
 function findModel(name){return S.models.find(function(m){return m.name===name})}
+/* task slug → 지금 언어의 이름 (Model Zoo 와 같은 6개 언어 표, /api/category_labels). 표를 아직 못 받았으면
+   slug 를 펼친 말 — 예전에는 'zero_shot_image_classification' 이 그대로 보였다 (release audit A-12). */
+function catText(c){
+  var labels=S.catLabels||{};
+  var e=labels[c];
+  if(!e){   // Models 쪽 catalog 는 slug 대신 영어 이름 ('Attribute Recognition') 을 준다
+    for(var k in labels){if(labels[k]&&labels[k].en===c){e=labels[k];break}}
+  }
+  var lang=(window.DXI18n&&DXI18n.lang)||'en';
+  if(e)return e[lang]||e.en;
+  var plain=String(c||'').replace(/_/g,' ');
+  return (typeof T==='function')?T(plain):plain;
+}
 function postJ(url,body){return api(url,{method:'POST',headers:{'Content-Type':'application/json','X-Lab-Token':S.labToken||S.devToken||''},body:JSON.stringify(body)})}
 
 const _toastIcons={ok:DXIcon('check'),err:DXIcon('x'),info:DXIcon('info'),warn:DXIcon('alert')};

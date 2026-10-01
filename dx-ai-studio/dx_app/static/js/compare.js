@@ -16,7 +16,7 @@ function filterABModels(i){
   if(acList&&q.length>0){
     acList.innerHTML=filtered.slice(0,15).map(function(m){
       return '<div class="ac-item" data-name="'+m.name+'" onclick="pickABModel('+i+',\''+m.name+'\')">'+
-        esc(m.name)+'<span class="ac-cat">'+m.category.replace(/_/g,' ')+'</span></div>';
+        esc(m.name)+'<span class="ac-cat">'+esc(catText(m.category))+'</span></div>';
     }).join('')||'<div class="ac-item txt-dim">'+T('No matches')+'</div>';
     acList.classList.add('open');
   }else if(acList){acList.classList.remove('open');}
@@ -42,7 +42,7 @@ function setABCols(n){
   grid.innerHTML='';
   const slots=['A','B','C','D','E','F','G','H'];
   const cats=[...new Set(S.models.map(function(m){return m.category}))].sort();
-  const catOpts='<option value="">'+T('All Tasks')+'</option>'+cats.map(function(c){return '<option>'+c+'</option>'}).join('');
+  const catOpts='<option value="">'+T('All Tasks')+'</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(catText(c))+'</option>'}).join('');
   const opts=S.models.map(function(m){return '<option value="'+m.name+'">'+m.name+'</option>'}).join('');
   for(var i=0;i<n;i++){
     grid.innerHTML+='<div class="ab-panel" id="abp-'+i+'">'
