@@ -287,8 +287,9 @@ def test_models_only_on_the_publish_page_are_listed(monkeypatch):
 
     monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 4, 2))
     monkeypatch.setattr(catalog, "load_generated_catalog", lambda: {"schema_version": "2.0", "models": [
-        {"id": "patchcore_224x224", "display": {"name": "PatchCore", "task": "anomaly_detection"},
-         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/patchcore_224x224.dxnn"}},
+        # 어느 dx_app conf 에도 없는 model 이어야 한다 — per-model conf 에는 patchcore 가 이미 있다
+        {"id": "brandnew_224x224", "display": {"name": "Brand New", "task": "anomaly_detection"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/brandnew_224x224.dxnn"}},
          "legal": {"source_url": "No Reference"}},
         {"id": "mystery_x", "display": {"name": "X", "task": "Not A Task"}}]})
     try:
@@ -296,9 +297,9 @@ def test_models_only_on_the_publish_page_are_listed(monkeypatch):
     finally:
         monkeypatch.undo()
         catalog.reload_catalog()   # 가짜 catalog 를 cache 에 남기지 않는다 — 뒤의 test 가 그것을 읽었다
-    pc = models["patchcore_224x224"]
+    pc = models["brandnew_224x224"]
     assert pc["category"] == "anomaly_detection" and pc["publish_only"] is True
-    assert pc["model_file"] == "assets/models/patchcore_224x224.dxnn"
+    assert pc["model_file"] == "assets/models/brandnew_224x224.dxnn"
     assert pc["requires_dxrt"] == "3.5.0"
     assert pc["legal"]["source_url"] == "", "page 의 'No Reference' 를 출처처럼 두지 않는다"
     assert "mystery_x" not in models, "모르는 task 는 목록에 넣지 않는다"
@@ -348,3 +349,32 @@ def test_a_legacy_row_outside_the_curated_catalog_takes_the_id_of_its_file():
              "model_file": "assets/models/deit-b_384x384.dxnn"}]
     out = catalog.conf_ids_from_generated(rows, gen, curated_ids=["deit_base384_distilled"])
     assert [r["id"] for r in out] == ["yolo26_depth_n_768x768", "deit_base384_distilled"]
+
+
+def test_a_per_model_row_takes_the_task_of_its_example_dir(tmp_path, monkeypatch):
+    """per-model dx_app 의 test_models.conf 는 repvgg-a0-reid 를 image_classification 이라 적지만 예제는
+    person_reid/ 에 있고 (registry 도 person_reid), 그 runner 는 query 한 장 + gallery 로 돈다. Model Zoo 가 conf 를
+    따르면 개 사진으로 분류를 돌렸다 — 돌아가는 방식을 정하는 예제 폴더의 task 를 쓴다 (2026-10-01)."""
+    import json
+    from dx_modelzoo.core import catalog
+    from shared import dx_app_layout as layout
+
+    root = tmp_path / "dx_app"
+    ex = root / "src/python_example/person_reid/repvgg_reid/repvgg-a0-reid_256x128"
+    ex.mkdir(parents=True)
+    (ex / "repvgg-a0-reid_256x128_sync.py").write_text("")
+    (ex / "config.json").write_text(json.dumps({"variant": "repvgg-a0-reid_256x128", "task": "person_reid"}))
+    (root / "src/python_example/common/runner").mkdir(parents=True)
+    conf = root / "config/test_models.conf"
+    conf.parent.mkdir(parents=True)
+    conf.write_text("repvgg_reid\timage_classification\tassets/models/repvgg-a0-reid_256x128.dxnn\trepvgg-a0-reid_256x128\n"
+                    "casvit\timage_classification\tassets/models/casvit-t_224x224.dxnn\tcasvit-t_224x224\n")
+    monkeypatch.setattr(catalog, "DX_APP_ROOT", root)
+    monkeypatch.setattr(catalog, "CONFIG_FILE", conf)
+    layout.clear_cache()
+    try:
+        rows = {r["id"]: r for r in catalog.parse_test_models_conf()}
+    finally:
+        layout.clear_cache()
+    assert rows["repvgg-a0-reid_256x128"]["category"] == "person_reid"
+    assert rows["casvit-t_224x224"]["category"] == "image_classification", "예제가 없으면 conf 그대로"

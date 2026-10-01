@@ -44,9 +44,10 @@ def _conf_categories() -> set[str]:
 
 @pytest.mark.parametrize("table", ["CATEGORIES", "EXAMPLE_TYPES", "SAMPLE_IMAGES"])
 def test_every_category_in_the_conf_is_declared(table):
-    declared = set(getattr(_config(), table))
+    declared = getattr(_config(), table)
     used = _conf_categories()
-    missing = sorted(used - declared)
+    # EXAMPLE_TYPES · SAMPLE_IMAGES 는 TaskTable — per-model conf 의 새 이름 (face_landmark …) 은 옛 이름의 짝으로 찾는다
+    missing = sorted(c for c in used if c not in declared)
     assert not missing, (
         f"test_models.conf 가 쓰는 카테고리가 {table} 에 없다: {missing}\n"
         f"  → dx_modelzoo/core/config.py 의 {table} 에 추가해야 한다.\n"
@@ -120,8 +121,16 @@ def test_sample_images_agree_with_the_runtime_source_of_truth():
     assert truth, "CATEGORY_IMAGE 표가 비어 보인다 — 파싱이 틀렸을 수 있다"
 
     cfg = _config()
+    # per-model dx_app 의 표에는 옛 이름 ([reid] = 쌍 폴더) 과 새 이름 ([person_reid] = query 한 장) 이 같이 있다.
+    # studio 는 짝을 한 칸으로 보므로, 둘 다 있으면 이 checkout 의 이름 쪽만 본다.
+    from shared import dx_app_layout as layout
+    from shared.tasks import canonical, legacy
+    per_model = layout.detect(DX_APP_ROOT) == layout.PER_MODEL
     drift = []
     for category, path in truth.items():
+        current = canonical(category) if per_model else legacy(category)
+        if current != category and current in truth:
+            continue
         mine = cfg.SAMPLE_IMAGES.get(category)
         if mine is None:
             continue  # 선언 누락은 위의 다른 계약이 잡는다

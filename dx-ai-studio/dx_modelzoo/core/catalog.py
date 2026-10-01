@@ -98,6 +98,10 @@ def _enrich_legal(model):
     lg = model.get("legal")
     if not isinstance(lg, dict):
         return
+    # page 가 출처를 "No Reference" 로 적은 model — 지어내지 않고 비워 둔다 (화면은 'Not provided by source').
+    # publish_only row 든 per-model conf row 든 (계약: test_legal_enrich.py)
+    if str(lg.get("source_url") or "").strip().lower() in ("no reference", "-"):
+        lg["source_url"] = ""
     if not lg.get("copyright") and lg.get("source_url"):
         url = lg["source_url"]
         m = re.search(r"(?:github\.com|huggingface\.co|gitlab\.com)/([^/]+)/", url)
@@ -220,7 +224,18 @@ def parse_test_models_conf(conf_path=None):
     conf_path = Path(conf_path or CONFIG_FILE)
     if not conf_path.exists():
         print(f"[WARNING] test_models.conf not found: {conf_path}")
-    return _shared_parse_test_models_conf(conf_path)
+    rows = _shared_parse_test_models_conf(conf_path)
+    # per-model dx_app: conf 의 task 와 예제 폴더가 다를 때가 있다 (repvgg-a0-reid — conf image_classification,
+    # 예제 · registry person_reid). 돌아가는 방식은 예제 폴더가 정한다 (계약: test_catalog.py).
+    if any(r.get("variant") for r in rows) and DX_APP_ROOT.exists():
+        from shared import dx_app_layout as _layout
+        task_of = {e.name: e.task for e in _layout.examples(DX_APP_ROOT)} \
+            if _layout.detect(DX_APP_ROOT) == _layout.PER_MODEL else {}
+        for r in rows:
+            t = task_of.get(r.get("variant"))
+            if t and t != r["category"]:
+                r["category"] = t
+    return rows
 
 
 def conf_ids_from_generated(conf_models, generated, curated_ids=(), unpublished=()):
@@ -765,10 +780,7 @@ def _generated_only_models(generated, used_ids, metadata_source):
                                          "category": task, "model_file": f"assets/models/{fname}"}],
                                        {"models": []})[0]
         _enrich_model_entry(entry, gm, metadata_source=metadata_source)
-        # page 가 출처를 "No Reference" 로 적은 model — 지어내지 않고 비워 둔다 (화면은 'Not provided by source')
-        lg = entry.get("legal") or {}
-        if str(lg.get("source_url") or "").strip().lower() in ("no reference", "-"):
-            lg["source_url"] = ""
+        # 출처 'No Reference' 는 _enrich_legal 이 비운다
         entry["publish_only"] = True     # 지금의 dx_app 에는 예제가 없다 — per-model layout 과 함께 온다
         out.append(entry)
     return out

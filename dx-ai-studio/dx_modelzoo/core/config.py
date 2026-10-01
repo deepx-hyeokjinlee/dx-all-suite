@@ -142,6 +142,12 @@ SAMPLE_IMAGES = TaskTable({
     "face_attribute": "sample/img/sample_person_a1.jpg",
 })
 
+# per-model dx_app (8d0b748) 의 person ReID (reid ↔ person_reid) 는 사람 쌍 폴더가 아니라 query 한 장 + gallery
+# (sample/gallery/*.bin) 다 — 그 예제의 config.json default_image · run_examples.sh 의 [person_reid]. main 은 쌍 폴더.
+from shared import dx_app_layout as _layout
+if _layout.detect(DX_APP_ROOT) == _layout.PER_MODEL:
+    SAMPLE_IMAGES["reid"] = "sample/reid/queries/sample_person_a2.jpg"
+
 MODEL_IMAGE_OVERRIDE = {
     "scrfd500m_ppu": "sample/img/sample_face.jpg",
     "yolov5pose_ppu": "sample/img/sample_people.jpg",

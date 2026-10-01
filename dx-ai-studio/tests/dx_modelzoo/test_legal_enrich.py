@@ -14,6 +14,24 @@ def _models():
     return C.get_catalog()["models"]
 
 
+def _no_reference_ids():
+    import json
+    gen = json.loads((REPO_ROOT / "dx_modelzoo" / "data" / "generated_catalog.json").read_text(encoding="utf-8"))
+    return {g["id"] for g in gen["models"]
+            if str(((g.get("legal") or {}).get("source_url") or "")).strip().lower() in ("no reference", "-")}
+
+
+def test_no_reference_is_never_shown_as_a_source():
+    """page 가 출처를 "No Reference" 로 적은 model 은 publish_only 든 conf row 든 출처를 비운다 — 그 글자를
+    URL 자리에 두지 않는다 (per-model dx_app 에서 conf row 가 된 28 개가 그랬다, 2026-10-01)."""
+    from core import catalog as C
+    m = {"legal": {"source_url": "No Reference", "license": "Apache-2.0"}}
+    C._enrich_legal(m)
+    assert m["legal"]["source_url"] == "" and m["legal"]["license_text"]
+    shown = [x["id"] for x in _models() if str((x.get("legal") or {}).get("source_url") or "").lower() == "no reference"]
+    assert not shown, shown[:10]
+
+
 def test_all_models_have_complete_legal_block():
     ms = _models()
     # source_url + copyright are mechanically derivable for every model: the source
@@ -21,9 +39,11 @@ def test_all_models_have_complete_legal_block():
     # `reference` field, and copyright is derived from the repo owner.
     # publish page 에만 있는 model (publish_only) 중 page 가 출처를 "No Reference" 로 적은 것은 비워 둔다 — 지어내지
     # 않는다 (spec 2026-10-01 dx_app per-model layout 결정 8).
+    # per-model dx_app 에서는 그런 model 도 conf 에 있어 publish_only 가 아니다 — page 의 말 ("No Reference") 로 가린다.
+    no_ref = _no_reference_ids()
     for key in ("source_url", "copyright"):
         missing = [m["id"] for m in ms if not (m.get("legal") or {}).get(key)
-                   and not (m.get("publish_only") and not (m.get("legal") or {}).get("source_url"))]
+                   and not (m["id"] in no_ref and not (m.get("legal") or {}).get("source_url"))]
         assert not missing, f"{key} missing for: {missing[:10]}"
     # License is filled wherever the upstream license is known (curated, or mapped from
     # the source repo). It must always come paired with its canonical license_text — we
