@@ -41,6 +41,12 @@ window._DX_CHAT_I18N = window._DX_CHAT_I18N || {
   'Testing...': { ko: '테스트 중...', ja: 'テスト中...', es: 'Probando...', 'zh-CN': '测试中...', 'zh-TW': '測試中...' },
   'Connected: ': { ko: '연결 성공: ', ja: '接続成功: ', es: 'Conectado: ', 'zh-CN': '已连接：', 'zh-TW': '已連線：' },
   'Open DEEPX Agent on the web': { ko: '웹에서 DEEPX Agent 열기', ja: 'Web で DEEPX Agent を開く', es: 'Abrir DEEPX Agent en la web', 'zh-CN': '在网页中打开 DEEPX Agent', 'zh-TW': '在網頁中開啟 DEEPX Agent' },
+  'Chat': { ko: '채팅', ja: 'チャット', es: 'Chat', 'zh-CN': '聊天', 'zh-TW': '聊天' },
+  'Send': { ko: '보내기', ja: '送信', es: 'Enviar', 'zh-CN': '发送', 'zh-TW': '傳送' },
+  'API Key': { ko: 'API 키', ja: 'API キー', es: 'Clave de API', 'zh-CN': 'API 密钥', 'zh-TW': 'API 金鑰' },
+  'Model': { ko: '모델', ja: 'モデル', es: 'Modelo', 'zh-CN': '模型', 'zh-TW': '模型' },
+  'Endpoint': { ko: '엔드포인트', ja: 'エンドポイント', es: 'Endpoint', 'zh-CN': '端点', 'zh-TW': '端點' },
+  'Custom endpoint': { ko: '직접 지정한 엔드포인트', ja: 'カスタムエンドポイント', es: 'Endpoint personalizado', 'zh-CN': '自定义端点', 'zh-TW': '自訂端點' },
   'DX Assistant': { ko: 'DX 어시스턴트', ja: 'DXアシスタント', es: 'Asistente DX', 'zh-CN': 'DX 助手', 'zh-TW': 'DX 助手' },
   'AI assistant is not configured. Open chat settings to register your API key. Basic guidance is available without AI. <button type="button" class="dx-chat-banner-action" data-action="settings-open">Open settings</button>': {
     ko: 'AI 어시스턴트가 설정되지 않았습니다. 채팅 설정에서 API 키를 등록하세요. 기본 안내는 AI 없이도 가능합니다. <button type="button" class="dx-chat-banner-action" data-action="settings-open">설정 열기</button>',
@@ -201,10 +207,31 @@ const DXChat = (() => {
   }
 
 
+  /* 글자 · 이름은 key 로 달아 두고 언어가 바뀌면 다시 번역한다 (release audit L-14: 'API Key' · 'Model' ·
+     'Endpoint' · 'Custom endpoint' 는 영어 고정이었고, 다른 글자는 처음 그린 언어에 머물렀다).
+     data-chat-t → 글자, data-chat-tip → title + aria-label, data-chat-title → title, data-chat-ph → placeholder. */
+  function _relabel() {
+    var win = _els.win;
+    if (!win) return;
+    win.querySelectorAll('[data-chat-t]').forEach(function (el) { el.textContent = _t(el.dataset.chatT); });
+    win.querySelectorAll('[data-chat-tip]').forEach(function (el) {
+      el.title = _t(el.dataset.chatTip);
+      el.setAttribute('aria-label', el.title);
+    });
+    win.querySelectorAll('[data-chat-title]').forEach(function (el) { el.title = _t(el.dataset.chatTitle); });
+    win.querySelectorAll('[data-chat-ph]').forEach(function (el) { el.placeholder = _t(el.dataset.chatPh); });
+    if (_els.fab) _els.fab.setAttribute('aria-label', _open ? _t('Close', '닫기') : _t('Chat'));
+    if (_headerTitle) {
+      var titleEl = win.querySelector('.dx-chat-header-title');
+      if (titleEl) titleEl.textContent = _headerTitle[_chatLang()] || _headerTitle.en || titleEl.textContent;
+    }
+  }
+
+
   function _buildDOM() {
     const fab = document.createElement('button');
     fab.className = 'dx-chat-fab';
-    fab.setAttribute('aria-label', 'Chat');
+    fab.setAttribute('aria-label', _t('Chat'));
     fab.innerHTML = _ico('chat');
     fab.addEventListener('click', toggle);
     document.body.appendChild(fab);
@@ -218,51 +245,51 @@ const DXChat = (() => {
       '  <div class="dx-chat-header-actions">',
       /* 웹 챗봇 (DEEPX Agent) 은 launcher 막대에 따로 있던 링크였다. 같은 "물어보기" 이므로
          챗 안에서 연다 — 모든 모듈의 챗에 생긴다 (spec 2026-09-23 §5.7). */
-      '    <a class="dx-chat-header-link" href="https://deepx.rapidflare.ai/" target="_blank" rel="noopener noreferrer" title="' + _t('Open DEEPX Agent on the web') + '" aria-label="' + _t('Open DEEPX Agent on the web') + '">DEEPX Agent <span aria-hidden="true">↗</span></a>',
-      '    <button class="dx-chat-header-btn" data-action="settings" title="' + _t('AI settings', 'AI 설정') + '" aria-label="' + _t('AI settings', 'AI 설정') + '">' + _ico('gear') + '</button>',
-      '    <button class="dx-chat-header-btn" data-action="clear" title="' + _t('Clear chat', '대화 초기화') + '" aria-label="' + _t('Clear chat', '대화 초기화') + '">' + _ico('trash') + '</button>',
-      '    <button class="dx-chat-header-btn" data-action="close" title="' + _t('Close', '닫기') + '" aria-label="' + _t('Close', '닫기') + '">' + _ico('x') + '</button>',
+      '    <a class="dx-chat-header-link" href="https://deepx.rapidflare.ai/" target="_blank" rel="noopener noreferrer" data-chat-tip="Open DEEPX Agent on the web">DEEPX Agent <span aria-hidden="true">↗</span></a>',
+      '    <button class="dx-chat-header-btn" data-action="settings" data-chat-tip="AI settings">' + _ico('gear') + '</button>',
+      '    <button class="dx-chat-header-btn" data-action="clear" data-chat-tip="Clear chat">' + _ico('trash') + '</button>',
+      '    <button class="dx-chat-header-btn" data-action="close" data-chat-tip="Close">' + _ico('x') + '</button>',
       '  </div>',
       '</div>',
       '<div class="dx-chat-banner" style="display:none"></div>',
       '<div class="dx-chat-settings-panel" hidden>',
       '  <form class="dx-chat-settings-form">',
-      '    <div class="dx-chat-settings-title">' + _t('AI Assistant Settings', 'AI 어시스턴트 설정') + '</div>',
+      '    <div class="dx-chat-settings-title" data-chat-t="AI Assistant Settings"></div>',
       '    <label class="dx-chat-settings-field">',
-      '      <span>' + _t('Provider', '제공자') + '</span>',
+      '      <span data-chat-t="Provider"></span>',
       '      <select class="dx-chat-settings-provider">',
       '        <option value="openai">OpenAI</option>',
       '        <option value="github">GitHub Models</option>',
-      '        <option value="custom">Custom endpoint</option>',
-      '        <option value="local">' + _t('Local / Self-hosted', '로컬 / 자체 호스팅') + '</option>',
-      '        <option value="agent-cli">' + _t('Coding agent (CLI login)', '코딩 에이전트 (CLI 로그인)') + '</option>',
+      '        <option value="custom" data-chat-t="Custom endpoint"></option>',
+      '        <option value="local" data-chat-t="Local / Self-hosted"></option>',
+      '        <option value="agent-cli" data-chat-t="Coding agent (CLI login)"></option>',
       '        <option value="anthropic">Anthropic</option>',
       '        <option value="google">Google</option>',
       '      </select>',
       '    </label>',
       '    <label class="dx-chat-settings-field">',
-      '      <span>API Key</span>',
+      '      <span data-chat-t="API Key"></span>',
       '      <input class="dx-chat-settings-api-key" type="password" autocomplete="off" placeholder="sk-...">',
       '    </label>',
       '    <label class="dx-chat-settings-field">',
-      '      <span>Model</span>',
+      '      <span data-chat-t="Model"></span>',
       '      <select class="dx-chat-settings-model-select" hidden></select>',
       '      <select class="dx-chat-settings-agentmodel-select" hidden></select>',
       '      <input class="dx-chat-settings-model" type="text" placeholder="gpt-4o-mini" autocomplete="off" hidden>',
       '    </label>',
       '    <label class="dx-chat-settings-field dx-chat-settings-endpoint-field" hidden>',
-      '      <span>Endpoint</span>',
+      '      <span data-chat-t="Endpoint"></span>',
       '      <input class="dx-chat-settings-endpoint" type="url" placeholder="https://api.example.com/v1/chat/completions">',
       '    </label>',
       '    <label class="dx-chat-settings-field">',
-      '      <span>' + _t('Temperature', '온도') + ' <strong class="dx-chat-settings-temp-value">0.7</strong></span>',
+      '      <span><span data-chat-t="Temperature"></span> <strong class="dx-chat-settings-temp-value">0.7</strong></span>',
       '      <input class="dx-chat-settings-temp" type="range" min="0" max="2" step="0.1" value="0.7">',
       '    </label>',
       '    <div class="dx-chat-settings-actions">',
-      '      <button type="button" class="dx-chat-settings-test">' + _t('Test', '테스트') + '</button>',
-      '      <button type="button" class="dx-chat-settings-refresh-kb" title="' + _t('Re-sync SDK knowledge from .deepx', '.deepx에서 SDK 지식 재동기화') + '">' + _t('Refresh knowledge', '지식 새로고침') + '</button>',
-      '      <button type="submit" class="dx-chat-settings-save">' + _t('Save', '저장') + '</button>',
-      '      <button type="button" class="dx-chat-settings-close" data-action="settings-close">' + _t('Close', '닫기') + '</button>',
+      '      <button type="button" class="dx-chat-settings-test" data-chat-t="Test"></button>',
+      '      <button type="button" class="dx-chat-settings-refresh-kb" data-chat-title="Re-sync SDK knowledge from .deepx" data-chat-t="Refresh knowledge"></button>',
+      '      <button type="submit" class="dx-chat-settings-save" data-chat-t="Save"></button>',
+      '      <button type="button" class="dx-chat-settings-close" data-action="settings-close" data-chat-t="Close"></button>',
       '    </div>',
       '    <div class="dx-chat-settings-status" aria-live="polite"></div>',
       '  </form>',
@@ -270,12 +297,13 @@ const DXChat = (() => {
       '<div class="dx-chat-messages"></div>',
       '<div class="dx-chat-suggestions"></div>',
       '<div class="dx-chat-input-area">',
-      '  <textarea class="dx-chat-input" placeholder="' + _t('Ask a question...', '질문을 입력하세요...') + '" rows="1"></textarea>',
-      '  <button class="dx-chat-send-btn" aria-label="Send">' + _ico('send') + '</button>',
+      '  <textarea class="dx-chat-input" data-chat-ph="Ask a question..." rows="1"></textarea>',
+      '  <button class="dx-chat-send-btn" data-chat-tip="Send">' + _ico('send') + '</button>',
       '</div>',
     ].join('\n');
     document.body.appendChild(win);
     _els.win = win;
+    _relabel();
     _els.banner = win.querySelector('.dx-chat-banner');
     _els.settingsPanel = win.querySelector('.dx-chat-settings-panel');
     _els.settingsForm = win.querySelector('.dx-chat-settings-form');
@@ -345,24 +373,7 @@ const DXChat = (() => {
 
     if (typeof DXI18n !== 'undefined') {
       DXI18n.onLangChange(function() {
-        if (_els.input) _els.input.placeholder = _t('Ask a question...', '질문을 입력하세요...');
-        if (_headerTitle) {
-          const titleEl = _els.win && _els.win.querySelector('.dx-chat-header-title');
-          if (titleEl) {
-            titleEl.textContent = _headerTitle[DXI18n.lang] || _headerTitle.en || titleEl.textContent;
-          }
-        }
-        var settingsBtn = win.querySelector('[data-action="settings"]');
-        if (settingsBtn) settingsBtn.title = _t('AI settings', 'AI 설정');
-        var clearBtn = win.querySelector('[data-action="clear"]');
-        if (clearBtn) clearBtn.title = _t('Clear chat', '대화 초기화');
-        var closeBtn = win.querySelector('[data-action="close"]');
-        if (closeBtn) closeBtn.title = _t('Close', '닫기');
-        var webLink = win.querySelector('.dx-chat-header-link');
-        if (webLink) {
-          webLink.title = _t('Open DEEPX Agent on the web');
-          webLink.setAttribute('aria-label', webLink.title);
-        }
+        _relabel();
         _renderConfigBanner();
       });
     }
@@ -378,7 +389,7 @@ const DXChat = (() => {
     _els.fab.classList.toggle('open', _open);
     /* 열리면 닫기 표시로 바뀐다 — 예전에는 말풍선 이모지를 45° 돌렸는데, 아이콘을 돌리면 기울어진 말풍선일 뿐이다. */
     _els.fab.innerHTML = _ico(_open ? 'x' : 'chat');
-    _els.fab.setAttribute('aria-label', _open ? _t('Close', '닫기') : 'Chat');
+    _els.fab.setAttribute('aria-label', _open ? _t('Close', '닫기') : _t('Chat'));
     if (_open) {
       _els.input.focus();
       _scrollBottom();

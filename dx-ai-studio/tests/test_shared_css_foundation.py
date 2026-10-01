@@ -965,7 +965,9 @@ def test_shared_chat_runtime_messages_reference_widget_settings():
     assert "채팅 설정" in fallback_source
     assert "chat settings" in engine_source
     assert "채팅 설정" in engine_source
-    assert "_t('Temperature', '온도')" in widget_source
+    # 설정 글자는 key 로 달고 언어마다 번역한다 (tests/shared/test_chat_widget_lang_browser.py)
+    assert 'data-chat-t="Temperature"' in widget_source
+    assert "'Temperature': { ko: '온도'" in widget_source
     assert "⚙️ settings" not in sdk_library_js
 
 

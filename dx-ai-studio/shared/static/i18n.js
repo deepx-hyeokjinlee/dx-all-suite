@@ -33,6 +33,25 @@
     if (_placeholders.hasOwnProperty(_pk) && !_dict.hasOwnProperty(_pk)) _dict[_pk] = _placeholders[_pk];
   }
 
+  // 모든 module 이 같이 쓰는 chrome (shell rail · toolbar · chat 단추) 의 말. module 사전에 같은 key 가 없을 때만
+  // 쓴다 — 예전에는 module 마다 사전에 따로 있어야 해서 대부분의 module 에서 영어로 남았다 (release audit L-13).
+  var _SHARED = {
+    'Modules': { ko: '모듈', ja: 'モジュール', 'zh-CN': '模块', 'zh-TW': '模組', es: 'Módulos' },
+    'Hub': { ko: '홈', ja: 'ホーム', 'zh-CN': '首页', 'zh-TW': '首頁', es: 'Inicio' },
+    'Language': { ko: '언어', ja: '言語', 'zh-CN': '语言', 'zh-TW': '語言', es: 'Idioma' },
+    'Theme: dark': { ko: '테마: 어둡게', ja: 'テーマ: ダーク', 'zh-CN': '主题：深色', 'zh-TW': '主題：深色', es: 'Tema: oscuro' },
+    'Theme: light': { ko: '테마: 밝게', ja: 'テーマ: ライト', 'zh-CN': '主题：浅色', 'zh-TW': '主題：淺色', es: 'Tema: claro' },
+    'Theme: system': { ko: '테마: 시스템 설정', ja: 'テーマ: システム設定', 'zh-CN': '主题：跟随系统', 'zh-TW': '主題：跟隨系統', es: 'Tema: del sistema' },
+    'Tutorial': { ko: '튜토리얼', ja: 'チュートリアル', 'zh-CN': '教程', 'zh-TW': '教學', es: 'Tutorial' },
+    'Tutorial unavailable': { ko: '튜토리얼 없음', ja: 'チュートリアルなし', 'zh-CN': '暂无教程', 'zh-TW': '暫無教學', es: 'Tutorial no disponible' },
+    'Settings': { ko: '설정', ja: '設定', 'zh-CN': '设置', 'zh-TW': '設定', es: 'Configuración' },
+    'Chat': { ko: '채팅', ja: 'チャット', 'zh-CN': '聊天', 'zh-TW': '聊天', es: 'Chat' },
+    'Close': { ko: '닫기', ja: '閉じる', 'zh-CN': '关闭', 'zh-TW': '關閉', es: 'Cerrar' }
+  };
+  for (var _sk in _SHARED) {
+    if (_SHARED.hasOwnProperty(_sk) && !_dict.hasOwnProperty(_sk)) _dict[_sk] = _SHARED[_sk];
+  }
+
   // Reverse dictionary: any-language-value → English key
   var _rev = {};
   for (var en in _dict) {
@@ -262,10 +281,13 @@
     if (el.querySelector('[data-i18n], [data-i18n-html]')) return;
     // 아이콘 + 글자 (DXIcon.label · 아이콘 체계 단계 5): 자식 엘리먼트가 아이콘뿐이면 글자 node 만 바꾼다 —
     // textContent 로 통째 갈면 아이콘이 사라진다.
+    // 입력 · 단추 · 링크 · 그림을 품은 것 (예: <label>글자 <select>…</label>) 도 글자 node 만 — 통째로 갈면 그 control 이
+    // 사라진다 (release audit: dx_app 의 'label' selector 가 chat 설정 form 의 select · input 을 지웠다).
     var kids = el.children;
-    if (kids.length && Array.prototype.every.call(kids, function (k) {
-      return k.tagName && k.tagName.toLowerCase() === 'svg' && k.classList.contains('dx-ico');
-    })) {
+    if (kids.length && (el.querySelector('input, select, textarea, button, a, img, video, canvas') ||
+        Array.prototype.every.call(kids, function (k) {
+          return k.tagName && k.tagName.toLowerCase() === 'svg' && k.classList.contains('dx-ico');
+        }))) {
       var texts = Array.prototype.filter.call(el.childNodes, function (n) { return n.nodeType === 3; });
       var plain = texts.map(function (n) { return n.nodeValue; }).join('').trim();
       if (!plain) return;
