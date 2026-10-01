@@ -15,9 +15,9 @@ var _draftSaveTimer = null;
 function _cachePipelineThemeColors() {
     var cs = getComputedStyle(document.documentElement);
     _pipelineThemeColors = {
-        bg0: cs.getPropertyValue('--bg-0').trim() || '#0f0f1a',
-        success: cs.getPropertyValue('--success').trim(),
-        warning: cs.getPropertyValue('--warning').trim(),
+        bg0: cs.getPropertyValue('--surface-page').trim() || '#0f0f1a',
+        success: cs.getPropertyValue('--status-ok').trim(),
+        warning: cs.getPropertyValue('--status-warn').trim(),
         raw: {},
     };
     return _pipelineThemeColors;
@@ -29,9 +29,9 @@ function _themeColor(name) {
 
 function _cv(k) {
     var colors = _pipelineThemeColors || _cachePipelineThemeColors();
-    if (k === '--bg-0') return colors.bg0;
-    if (k === '--success') return colors.success;
-    if (k === '--warning') return colors.warning;
+    if (k === '--surface-page') return colors.bg0;
+    if (k === '--status-ok') return colors.success;
+    if (k === '--status-warn') return colors.warning;
     if (!colors.raw[k]) {
         colors.raw[k] = getComputedStyle(document.documentElement).getPropertyValue(k).trim();
     }
@@ -114,18 +114,19 @@ var _elemCatColors = {
     default:       '#78909c',
 };
 var _elemCatIcons = {
-    source:        '▶',
-    preprocess:    '⚙',
-    inference:     '✦',
-    postprocess:   '⬡',
-    visualization: '👁',
-    tracking:      '⌖',
-    messaging:     '✉',
-    output:        '⏏',
-    utility:       '☰',
+    source:        'camera',
+    preprocess:    'setup',
+    inference:     'cpu',
+    postprocess:   'models',
+    visualization: 'eye',
+    tracking:      'task-object_detection',
+    messaging:     'send',
+    output:        'external',
+    utility:       'wrench',
 };
 function _catColor(cat) { return _elemCatColors[cat] || _elemCatColors.default; }
-function _catIcon(cat) { return _elemCatIcons[cat] || '○'; }
+// 요소 분류 아이콘은 sprite 이름 (아이콘 체계 단계 5) — 목록은 DXIcon, 캔버스는 DXIcon.draw 로 그린다.
+function _catIcon(cat) { return _elemCatIcons[cat] || 'circle'; }
 var _catNameI18n = {
     source:        { ko: '소스',     ja: 'ソース',         'zh-CN': '源',      'zh-TW': '來源' },
     preprocess:    { ko: '전처리',   ja: '前処理',         'zh-CN': '预处理',  'zh-TW': '前處理' },

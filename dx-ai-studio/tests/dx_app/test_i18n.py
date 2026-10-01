@@ -195,8 +195,15 @@ def test_app_refresh_language_has_no_unsafe_initializers():
 
 
 def test_app_dictionary_has_no_duplicate_keys():
-    """Every key in _DX_I18N_DICT must appear exactly once."""
-    source = i18n_source()
+    """Every key in _DX_I18N_DICT must appear exactly once.
+
+    Scoped to the dictionary object. _DX_I18N_PLACEHOLDERS is a separate map
+    keyed by placeholder text and feeds a different attribute, so the same
+    English string may legitimately appear in both ("Class" is a table header
+    and a filter placeholder). dx_compiler's sibling contract splits the same
+    way; this one used to scan the whole file and read that as a duplicate.
+    """
+    source = i18n_source().split("window._DX_I18N_PLACEHOLDERS")[0]
     keys = re.findall(r"'((?:\\.|[^'\\])+)':\s*\{", source)
     from collections import Counter
     counts = Counter(keys)

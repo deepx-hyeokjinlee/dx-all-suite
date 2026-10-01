@@ -1,0 +1,214 @@
+# dx-all-suite/.github/workflows/dx-ai-studio-pytest.yml
+#
+# PR gate for dx-ai-studio.
+#
+#   pytest-gate    BLOCKING   — the seven numbered stages of scripts/run_ci.sh,
+#                               including the chromium inference E2E triple gate.
+#   cross-browser  advisory   — sharded Playwright suites on chromium + firefox.
+#   coverage       advisory   — all ten modules vs config/coverage_baseline.json.
+#
+# The advisory jobs are continue-on-error by design (staged rollout): they report
+# without blocking until they have proven non-flaky. Promote by deleting the
+# continue-on-error line — and for coverage, by setting DX_COVERAGE_ENFORCE=1.
+# See docs/superpowers/specs/2026-08-27-dx-ai-studio-e2e-ci-gate-design.md.
+name: dx-ai-studio pytest gate
+run-name: dx-ai-studio gate — ${{ github.event.pull_request.title || github.ref_name }}
+
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+    paths:
+      - 'dx-ai-studio/**'
+      - '.github/workflows/dx-ai-studio-pytest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push to the same PR supersedes the in-flight run.
+concurrency:
+  group: dx-ai-studio-pytest-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest-gate:
+    name: run_ci.sh (blocking)
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The venv lives OUTSIDE the workspace on purpose: actions/checkout cleans
+      # untracked files, which would delete an in-tree .venv on every run and add
+      # a multi-minute reinstall to each PR.
+      - name: Provision test venv
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt
+          "$VENV/bin/python" -m pip check
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Run blocking gate
+        run: bash scripts/run_ci.sh
+
+  cross-browser:
+    name: Playwright shard ${{ matrix.shard }}/3 (advisory)
+    needs: pytest-gate
+    continue-on-error: true
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    env:
+      DX_BROWSER_ENGINES: chromium,firefox
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provision test venv
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      # WebKit is deliberately absent from DX_BROWSER_ENGINES: it needs distro
+      # packages (libevent, libavif) that only root can install, and the suite
+      # skips it cleanly rather than failing.
+      - name: Ensure browser engines
+        run: |
+          "$VENV_PYTHON" -m playwright install chromium firefox
+
+      - name: Browser suites (shard ${{ matrix.shard }}/3)
+        run: bash scripts/run_ci.sh --browser --shard=${{ matrix.shard }}/3
+
+      - name: Upload failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-shard-${{ matrix.shard }}
+          path: dx-ai-studio/var/e2e-traces/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  visual:
+    name: Pixel visual regression (advisory)
+    needs: pytest-gate
+    # Advisory by design: baselines are captured on THIS runner because font
+    # rasterisation differs between machines, so a red here means "the page moved"
+    # OR "you are on a different box" — not something to block a merge on until the
+    # runner is pinned. The diff PNGs are the actual deliverable.
+    continue-on-error: true
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provision test venv
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Ensure browser engine
+        run: |
+          "$VENV_PYTHON" -m playwright install chromium
+
+      - name: Visual regression
+        run: bash scripts/run_ci.sh --visual
+
+      - name: Upload visual diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diffs
+          path: dx-ai-studio/var/visual-diffs/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  coverage:
+    name: Coverage vs baseline (advisory)
+    needs: pytest-gate
+    continue-on-error: true
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    env:
+      # Turns a per-module drop below the committed baseline into a non-zero exit.
+      # The job stays continue-on-error, so this makes a regression VISIBLE (red
+      # step, named module, delta) without blocking the merge — the staged step
+      # between "report-only" and gating.
+      DX_COVERAGE_ENFORCE: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provision test venv
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt pytest-cov
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Run coverage
+        run: bash scripts/run_ci.sh --coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: dx-ai-studio/coverage.xml
+          if-no-files-found: ignore
+          retention-days: 14

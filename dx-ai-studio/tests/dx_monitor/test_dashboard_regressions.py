@@ -6,6 +6,7 @@ import shutil
 import subprocess
 
 import pytest
+from tests.css_rules import css_rule
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -160,12 +161,6 @@ def extract_braced_body(source: str, anchor: str) -> str:
     raise AssertionError(f"unmatched braces after {anchor!r}")
 
 
-def css_rule(css: str, selector: str) -> str:
-    match = re.search(rf"{re.escape(selector)}\s*\{{([^}}]+)\}}", css)
-    assert match, f"{selector} rule not found"
-    return match.group(1)
-
-
 def test_dashboard_never_renders_negative_npu_dram_percent():
     dashboard = read_text(MONITOR / "static" / "js" / "dashboard.js")
     status_body = extract_braced_body(dashboard, "function renderStatusBar(hw)")
@@ -224,18 +219,20 @@ def test_shared_line_chart_skips_missing_metric_samples():
 
 
 def test_monitor_language_menu_parent_stacks_above_monitor_content():
+    # 헤더/툴바 사다리는 통합 shell(dx-shell.css)이 소유한다.
+    shell_css = read_text(MONITOR.parent / "shared" / "static" / "dx-shell.css")
     css = read_text(MONITOR / "static" / "css" / "style.css")
-    top_bar = css_rule(css, ".top-bar")
-    toolbar = css_rule(css, ".toolbar")
+    top_bar = css_rule(shell_css, ".dx-shell-header")
+    toolbar = css_rule(shell_css, ".dx-shell-header-right")
     monitor_main = css_rule(css, ".monitor-main")
 
     z_match = re.search(r"z-index\s*:\s*(\d+)\s*;", top_bar)
-    assert z_match, ".top-bar must declare an explicit z-index"
-    assert int(z_match.group(1)) >= 1000
-    assert "overflow: visible" in top_bar
-    assert "position: relative" in toolbar
+    assert z_match, ".dx-shell-header must declare an explicit z-index"
+    assert int(z_match.group(1)) > 100, "헤더는 페이지 콘텐츠 위에 있어야 한다"
+    assert "overflow:visible" in top_bar.replace(" ", "")
+    assert "position:relative" in toolbar.replace(" ", "")
     toolbar_z = re.search(r"z-index\s*:\s*(\d+)\s*;", toolbar)
-    assert toolbar_z, ".toolbar must stack language dropdown above toolbar siblings"
+    assert toolbar_z, "toolbar must stack language dropdown above toolbar siblings"
     assert int(toolbar_z.group(1)) >= 1
     # Must not tie with shared popup layer (10000)
     assert int(toolbar_z.group(1)) != 10000
@@ -360,8 +357,9 @@ def test_monitor_z_index_ladder_no_shared_toolbar_conflict():
     .toolbar should position children but NOT use the same z-index as the shared
     lang-menu popup (10000 in toolbar.css).
     """
-    css = read_text(MONITOR / "static" / "css" / "style.css")
-    toolbar_rule = css_rule(css, ".toolbar")
+    # .toolbar 는 통합 shell 이 소유한다 (.dx-shell-header-right 와 같은 요소).
+    shell_css = read_text(MONITOR.parent / "shared" / "static" / "dx-shell.css")
+    toolbar_rule = css_rule(shell_css, ".toolbar")
 
     # Shared toolbar.css .dx-lang-menu uses z-index:10000
     # Monitor .toolbar must NOT also declare z-index:10000
@@ -451,7 +449,8 @@ def test_telemetry_status_template_and_clock_control_contract():
     assert template.index('id="sse-status"') < template.index('id="telemetry-status"')
     assert "cm-clock" in template
     assert "🔄" not in template
-    assert 'class="icon-clock"' in template
+    # 아이콘은 sprite 의 clock (아이콘 체계 단계 5 — 예전의 CSS .icon-clock 을 대신한다).
+    assert 'dx-icons.svg#clock' in template
     assert 'aria-hidden="true"' in template
     assert "��" not in template
 
@@ -464,11 +463,11 @@ def test_clock_controls_use_deterministic_accessibility_icon():
 
     assert "🔄" not in template
     assert "🔄" not in dashboard
-    assert 'class="icon-clock"' in template
-    assert 'class="icon-clock"' in dashboard
-    assert 'aria-hidden="true"' in dashboard
-    assert ".icon-clock" in css
-    assert "currentColor" in css
+    # 정적 · 동적 Clock 라벨 모두 sprite 의 clock (DXIcon 은 aria-hidden 으로 그린다).
+    assert 'dx-icons.svg#clock' in template
+    assert "_mIco('clock')" in dashboard
+    assert "aria-hidden" in (MONITOR.parent / "shared" / "static" / "dx-icon.js").read_text(encoding="utf-8")
+    assert "currentColor" in (MONITOR.parent / "shared" / "static" / "dx-icons.svg").read_text(encoding="utf-8")
 
 
 def test_dashboard_tracks_telemetry_mode_and_safely_updates_visible_status():

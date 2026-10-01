@@ -83,7 +83,12 @@ _COPYRIGHT_HOST = {
     "pytorch.org": "PyTorch (Torch Contributors)", "cv.gluon.ai": "GluonCV",
     "www.tensorflow.org": "Google", "tensorflow.org": "Google", "ai.google.dev": "Google",
     "google.github.io": "Google",
+    "paddle-imagenet-models-name.bj.bcebos.com": "PaddlePaddle (Baidu)",
+    "docs.ultralytics.com": "Ultralytics",
 }
+
+
+_LICENSE_ALIASES = {"Apache 2.0": "Apache-2.0", "Apache License 2.0": "Apache-2.0", "MIT License": "MIT"}
 
 
 def _enrich_legal(model):
@@ -93,6 +98,10 @@ def _enrich_legal(model):
     lg = model.get("legal")
     if not isinstance(lg, dict):
         return
+    # page 가 출처를 "No Reference" 로 적은 model — 지어내지 않고 비워 둔다 (화면은 'Not provided by source').
+    # publish_only row 든 per-model conf row 든 (계약: test_legal_enrich.py)
+    if str(lg.get("source_url") or "").strip().lower() in ("no reference", "-"):
+        lg["source_url"] = ""
     if not lg.get("copyright") and lg.get("source_url"):
         url = lg["source_url"]
         m = re.search(r"(?:github\.com|huggingface\.co|gitlab\.com)/([^/]+)/", url)
@@ -103,6 +112,9 @@ def _enrich_legal(model):
             host = re.search(r"https?://([^/]+)", url)
             if host and host.group(1).lower() in _COPYRIGHT_HOST:
                 lg["copyright"] = _COPYRIGHT_HOST[host.group(1).lower()]
+    # publish page 는 같은 license 를 다른 글자로 적기도 한다 ("Apache 2.0") — SPDX id 로
+    if lg.get("license") in _LICENSE_ALIASES:
+        lg["license"] = _LICENSE_ALIASES[lg["license"]]
     if not lg.get("license_text") and lg.get("license"):
         ref = _LICENSE_TEXT_REF.get(lg["license"])
         if ref:
@@ -132,6 +144,32 @@ def _enrich_summary(model):
         if desc.get(lang):
             summary[lang] = desc[lang]
     disp["summary"] = summary
+
+
+def _enrich_input_resolution(model):
+    """Fill specification.input_{width,height} from the .dxnn filename when the
+    official sync carried no spec at all.
+
+    Source-derived models (present in the dx_app tree but not yet in the ModelZoo
+    sync snapshot — e.g. the yolo26-depth family) arrive with `specification: {}`,
+    so the catalog showed no resolution for them. The resolution is right there in
+    the artifact name: `yolo26-depth-n_768x768.dxnn`.
+
+    Only width/height are derived. The channel count is NOT guessed: the other 347
+    models report `WxHxC` because dx_engine read the real input tensor, and inventing
+    a `x3` here would fabricate a fact rather than fill a gap. Once dx_engine can
+    introspect the .dxnn at sync time, this fallback becomes redundant.
+    """
+    spec = model.get("specification")
+    if not isinstance(spec, dict):
+        spec = model.setdefault("specification", {})
+    if spec.get("input_resolution") or spec.get("input_width"):
+        return
+    match = re.search(r"_(\d+)x(\d+)(?:[._]|$)", model.get("model_file") or "")
+    if not match:
+        return
+    spec["input_width"] = int(match.group(1))
+    spec["input_height"] = int(match.group(2))
 
 
 def _enrich_input_shape(model):
@@ -186,7 +224,62 @@ def parse_test_models_conf(conf_path=None):
     conf_path = Path(conf_path or CONFIG_FILE)
     if not conf_path.exists():
         print(f"[WARNING] test_models.conf not found: {conf_path}")
-    return _shared_parse_test_models_conf(conf_path)
+    rows = _shared_parse_test_models_conf(conf_path)
+    # per-model dx_app: conf 의 task 와 예제 폴더가 다를 때가 있다 (repvgg-a0-reid — conf image_classification,
+    # 예제 · registry person_reid). 돌아가는 방식은 예제 폴더가 정한다 (계약: test_catalog.py).
+    if any(r.get("variant") for r in rows) and DX_APP_ROOT.exists():
+        from shared import dx_app_layout as _layout
+        task_of = {e.name: e.task for e in _layout.examples(DX_APP_ROOT)} \
+            if _layout.detect(DX_APP_ROOT) == _layout.PER_MODEL else {}
+        for r in rows:
+            t = task_of.get(r.get("variant"))
+            if t and t != r["category"]:
+                r["category"] = t
+    return rows
+
+
+def conf_ids_from_generated(conf_models, generated, curated_ids=(), unpublished=()):
+    """per-model test_models.conf 의 줄 (id = variant = .dxnn 이름) 을 Model Zoo 의 id 로 — 같은 .dxnn 을 가리키는
+    generated catalog 항목의 id (curated id 또는 stem key). task 는 짝이 있으면 옛 key (Model Zoo 의 무리와 같이)."""
+    from shared.tasks import legacy
+
+    def key(name):   # 파일 이름의 stem → 비교용 key (확장자 · 대소문자 · 구분 기호를 접는다)
+        name = re.sub(r"\.(dxnn|onnx|json)$", "", str(name or "").rsplit("/", 1)[-1], flags=re.I)
+        return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+
+    by_key = {}
+    for gm in (generated or {}).get("models", []):
+        gid = gm.get("id")
+        for art in (gm.get("artifacts") or {}).values():      # .dxnn 이 없고 onnx 만 있는 model 도 (BEiT …)
+            url = (art or {}).get("remote_url") or ""
+            if url.endswith((".dxnn", ".onnx")):
+                by_key.setdefault(key(url), gid)
+        by_key.setdefault(key(gid), gid)
+    for cid in curated_ids:                                    # SCRFD500M_PPU.dxnn ↔ scrfd500m_ppu (page 에 없다)
+        by_key.setdefault(key(cid), cid)
+    curated = set(curated_ids)
+    out = []
+    for cm in conf_models:
+        if not cm.get("variant"):
+            # main 의 3 열 줄: curated catalog 에 없는 id (yolo26_depth_n …) 는 같은 .dxnn 의 id 로 — dx_app 판에 따라
+            # id 가 달라지면 그림 (thumbnails/<id>.jpg) 을 찾지 못한다
+            mid = by_key.get(key(cm.get("model_file"))) if cm["id"] not in curated else None
+            out.append(dict(cm, id=mid, name=mid) if mid else cm)
+            continue
+        if cm["variant"] in unpublished:                       # 아직 받을 수 없는 model (registry published:false)
+            continue
+        mid = by_key.get(key(cm.get("model_file"))) or cm["id"]
+        out.append(dict(cm, id=mid, name=mid if mid != cm["id"] else cm["name"], category=legacy(cm["category"])))
+    return out
+
+
+def _unpublished_variants():
+    """per-model dx_app registry 의 published:false (지금은 vit-l-p16_512x512_swag 하나)."""
+    try:
+        rows = json.loads((DX_APP_ROOT / "config" / "model_registry.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return set()
+    return {r.get("variant") for r in rows if isinstance(r, dict) and r.get("variant") and r.get("published") is False}
 
 
 def load_catalog_json(catalog_path=None):
@@ -299,6 +392,14 @@ def _metadata_source_from_generated(generated_catalog):
 # suffix — directional so meaningful resolution variants (e.g. *_1280) are never collapsed.
 _GEN_ID_SUFFIXES = ("_q_lite", "_q_pro", "_q_master", "_1")
 
+# 해상도 접미사(768x768 등)는 위 화이트리스트에 없다. 그래서 studio 의
+# `yolo26_depth_n` 이 생성 카탈로그의 `yolo26_depth_n_768x768` 을 못 찾아 legal 이
+# 통째로 비어 있었다. 화이트리스트에 해상도를 하나씩 더하는 대신, 후보가 **유일할
+# 때만** 접는다 — 위 주석이 지키려던 것은 "foo 와 foo_1280 을 섞지 않는다" 이고,
+# 후보가 둘 이상이면 그 위험이 실재하므로 그때는 매칭하지 않는다.
+# 계약: tests/dx_modelzoo/test_generated_id_match.py
+_RES_SUFFIX = re.compile(r"^\d+x\d+$")
+
 def _match_generated(model_id, gen_map):
     g = gen_map.get(model_id)
     if g is not None:
@@ -307,6 +408,13 @@ def _match_generated(model_id, gen_map):
         g = gen_map.get(model_id + suf)
         if g is not None:
             return g
+    prefix = model_id + "_"
+    cands = [
+        k for k in gen_map
+        if k.startswith(prefix) and _RES_SUFFIX.match(k[len(prefix):])
+    ]
+    if len(cands) == 1:
+        return gen_map[cands[0]]
     return None
 
 
@@ -370,6 +478,16 @@ def _enrich_model_entry(base, enriched, metadata_source=None):
             for k, v in enriched["demo"].items():
                 if k not in base["demo"] or not base["demo"][k]:
                     base["demo"][k] = v
+
+    # Model Zoo 2_5_0 만 있는 model 은 container v9 — 이 PC 의 DX-RT 가 못 읽으면 필요한 판을 단다
+    # (spec 2026-10-01 dx_app per-model layout 결정 5). 2_4_0 이 있는 model 의 URL 은 local manifest 의 2_4_0 이다.
+    from shared import dxrt as _dxrt
+    qlite_url = ((base.get("artifacts") or {}).get("qlite_dxnn") or {}).get("remote_url") or ""
+    need = _dxrt.needs_for(9) if _dxrt.is_v9_only(qlite_url) else None
+    if need:
+        base["requires_dxrt"] = need
+    else:
+        base.pop("requires_dxrt", None)
 
     return base
 
@@ -593,17 +711,25 @@ def reload_catalog():
     conf_models = parse_test_models_conf()
     if not conf_models:
         conf_models = _catalog_models_as_conf(catalog_data)
+    generated = load_generated_catalog()
+    conf_models = conf_ids_from_generated(conf_models, generated,
+                                          curated_ids=[m.get("id") for m in catalog_data.get("models", [])],
+                                          unpublished=_unpublished_variants())
     merged = merge_conf_and_catalog(conf_models, catalog_data)
 
     # 생성된 카탈로그(schema 2.0) 로드 및 enriched 필드 병합
-    generated = load_generated_catalog()
     if generated is not None:
         gen_map = {m["id"]: m for m in generated.get("models", [])}
         metadata_source = _metadata_source_from_generated(generated)
+        used = set()
         for model in merged:
             enriched = _match_generated(model["id"], gen_map)
             if enriched:
+                used.add(enriched.get("id"))
                 _enrich_model_entry(model, enriched, metadata_source=metadata_source)
+        # publish page 에만 있는 model (dx_app per-model layout 과 함께 온 새 model, spec 2026-10-01 결정 8) 도 목록에 —
+        # 예전에는 curated catalog 에 없는 model 은 보강만 되고 목록에 들지 않았다. 아는 task 인 것만.
+        merged.extend(_generated_only_models(generated, used, metadata_source))
         # 기본 processor/specification 보장 (생성된 카탈로그에 없는 모델용)
         for model in merged:
             model.setdefault("processor", {"supported_devices": [], "status": "metadata_pending"})
@@ -616,6 +742,7 @@ def reload_catalog():
 
     for model in merged:
         _enrich_legal(model)
+        _enrich_input_resolution(model)
         _enrich_input_shape(model)
         _enrich_postprocessor(model)
         _enrich_summary(model)
@@ -624,11 +751,39 @@ def reload_catalog():
         "categories": CATEGORIES,
         "count": len(merged),
     }
+    # 이 목록이 언제·무엇으로부터 만들어졌는지. 값은 늘 파일에 있었지만 개별 모델의
+    # 상세 화면에만 닿았다 — 정작 "이 목록 전체가 낡았나" 를 묻는 자리인 목록 화면은
+    # 알 수 없었고, 그래서 8일 묵은 카탈로그가 조용히 서빙됐다(2026-09-16).
+    # 계약: tests/dx_modelzoo/test_catalog_freshness.py
+    if generated:
+        for key in ("generated_at", "source_profile"):
+            if generated.get(key):
+                next_cache[key] = generated[key]
     with _catalog_lock:
         _catalog_cache = next_cache
     print(f"[{__name__}] Loaded {len(merged)} models, {len(CATEGORIES)} categories"
           + (", enriched from generated catalog" if generated else ""))
     return next_cache
+
+
+def _generated_only_models(generated, used_ids, metadata_source):
+    """generated catalog 에만 있는 model → 목록 항목 (curated 항목과 같은 모양)."""
+    out = []
+    for gm in generated.get("models", []):
+        mid = gm.get("id")
+        task = (gm.get("display") or {}).get("task") or ""
+        if not mid or mid in used_ids or task not in CATEGORIES:
+            continue
+        url = ((gm.get("artifacts") or {}).get("qlite_dxnn") or {}).get("remote_url") or ""
+        fname = url.rstrip("/").rsplit("/", 1)[-1] if url.endswith(".dxnn") else f"{mid}.dxnn"
+        entry = merge_conf_and_catalog([{"id": mid, "name": (gm.get("display") or {}).get("name") or mid,
+                                         "category": task, "model_file": f"assets/models/{fname}"}],
+                                       {"models": []})[0]
+        _enrich_model_entry(entry, gm, metadata_source=metadata_source)
+        # 출처 'No Reference' 는 _enrich_legal 이 비운다
+        entry["publish_only"] = True     # 지금의 dx_app 에는 예제가 없다 — per-model layout 과 함께 온다
+        out.append(entry)
+    return out
 
 
 def apply_generated_catalog(generated_catalog):

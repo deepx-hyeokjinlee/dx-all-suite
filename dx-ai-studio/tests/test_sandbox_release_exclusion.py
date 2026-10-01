@@ -32,29 +32,23 @@ def test_launcher_runtime_does_not_register_sandbox():
 
 
 def test_launcher_state_registers_exact_eight_release_modules():
+    """Eight modules, no sandbox — checked where the app actually routes.
+
+    This used to check APP_PATHS and then check the same eight names again in
+    _SPLASH_MODULES, a second list the intro kept for itself. The intro no
+    longer names modules and that list is gone, so there is one register now.
+    The names themselves are asserted where they are shown: the home's list.
+    """
     src = read("launcher/static/launcher-state.js")
     app_paths = _js_block(src, "window.DXLauncher.APP_PATHS")
     assert "sandbox" not in app_paths
     assert app_paths.count(":") == 8
 
-    splash = _js_block(src, "window.DXLauncher._SPLASH_MODULES")
-    assert "DX Sandbox" not in splash
-    assert "sandbox" not in splash
-    expected_names = [
-        "DX App",
-        "DX Stream",
-        "DX Model Zoo",
-        "DX Compiler",
-        "DX EdgeGuide",
-        "DX Benchmark",
-        "DX Monitor",
-        "DX Agent Dev",
-    ]
-    for name in expected_names:
-        assert name in splash
-    expected_angles = ["0", "45", "90", "135", "180", "225", "270", "315"]
-    for angle in expected_angles:
-        assert f"angle: {angle}" in splash
+    html = read("launcher/static/index.html")
+    for name in ("App", "Stream", "Model Zoo", "Compiler",
+                 "EdgeGuide", "Benchmark", "Monitor", "Agent Dev"):
+        assert ">" + name + "<" in html, f"{name} is missing from the home's list"
+    assert "DX Sandbox" not in html
 
 
 def test_launcher_navigation_shortcuts_are_compact_eight_modules():
@@ -104,24 +98,35 @@ def test_launcher_home_copy_and_cards_are_eight_module_release():
     assert "8 módulos" in html
     assert "8 个模块" in html
     assert "8 個模組" in html
-    cards = re.findall(r'class="orbital-card"[^>]+data-app="([^"]+)"[^>]+data-angle="([^"]+)"', html)
+    # The cards used to carry data-angle because the home laid them out on a
+    # ring at eight fixed bearings. The portal home lays them out in a grid, so
+    # the angle is gone — the ring survives only in the splash, which computes
+    # its own bearings from the module count. What this test is for is unchanged:
+    # eight modules, in order, with no ninth and no sandbox.
+    # 2026-09-23: 무대의 5×2 칸 순서 (spec §4.1). 책 두 권 (SDK Library, About) 은
+    # 모듈이 아니므로 여기 세지 않는다. 지키는 것은 그대로 — 여덟 개, 아홉 번째 없음,
+    # sandbox 없음. 칸 순서를 바꾸면 여기도 같이 고친다.
+    cards = re.findall(r'class="orbital-card"[^>]*\sdata-app="([^"]+)"', html)
     assert cards == [
-        ("app", "0"),
-        ("stream", "45"),
-        ("zoo", "90"),
-        ("compiler", "135"),
-        ("planner", "180"),
-        ("benchmark", "225"),
-        ("dx_monitor", "270"),
-        ("agent", "315"),
+        "app", "stream", "zoo", "compiler",
+        "benchmark", "planner", "dx_monitor", "agent",
     ]
 
 
-def test_splash_branches_follow_module_count():
-    src = read("launcher/static/launcher-splash.js")
-    icons = _js_block(src, "var _MODULE_ICONS")
-    assert "sandbox" not in icons
-    assert "var mainAngles = [22.5" not in src
-    assert "ns._SPLASH_MODULES.length" in src
-    assert "360 / moduleCount" in src
-    assert "ns._SPLASH_MODULES.map" in src
+def test_the_intro_carries_no_module_list():
+    """The intro stopped naming the modules, so the data it needed is gone too.
+
+    It listed all eight — first on a ring with per-module bearings, then as a
+    stagger of pills. The Gargantua sequence has one subject and it is not a
+    menu. _SPLASH_MODULES and the icon table it fed were left behind by that
+    change, and unread data is how a ninth module ends up with an invented
+    bearing for a ring that no longer exists.
+    """
+    state = read("launcher/static/launcher-state.js")
+    splash = read("launcher/static/launcher-splash.js")
+    assert "_SPLASH_MODULES" not in state, "the intro's module list outlived its only reader"
+    assert "_SPLASH_MODULES" not in splash
+    assert "_MODULE_ICONS" not in splash, "the intro's icon table has no consumer"
+    # The home's own list is where the eight modules are named, and it stays.
+    html = read("launcher/static/index.html")
+    assert html.count('class="orbital-card"') == 8

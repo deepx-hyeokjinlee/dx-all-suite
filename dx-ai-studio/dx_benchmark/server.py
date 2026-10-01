@@ -14,6 +14,7 @@ from pathlib import Path
 from shared.dx_server import DXBaseHandler, DXServer
 from shared.chat import ChatEngine
 from shared.paths import outputs_dir
+from shared.shell import ShellSpec
 
 DEFAULT_PORT = 8097
 BASE_DIR = Path(__file__).resolve().parent
@@ -71,12 +72,36 @@ def _check_bundled_dataset():
         print("  [Benchmark] Warning: bundled dataset.json not found at {}".format(DATASET_PATH))
 
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 기존 .top-bar + .main-tabs 구조가 그대로 shell 헤더 + 탭 행으로 들어온다.
+# 라벨은 영어 원문 = i18n 사전 키. 아이콘 id는 shared/static/dx-icons.svg.
+DX_BENCHMARK_PAGES = (
+    ("dashboard", "Dashboard", "dashboard"),
+    ("results", "Results", "folder"),
+    ("settings", "Settings", "setup"),
+)
+
+# EdgeGuide 버튼은 dx_benchmark 고유 컨트롤이라 공유 헤더의 .toolbar 슬롯 안에 둔다.
+_EDGEGUIDE_BTN = (
+    '<button id="edgeguideBtn" class="dx-toolbar-btn" title="DX EdgeGuide">'
+    '💰</button>'
+)
+
+DX_BENCHMARK_SHELL = ShellSpec(
+    module_key="bench",
+    pages=DX_BENCHMARK_PAGES,
+    active_page="dashboard",
+    toolbar_extra=_EDGEGUIDE_BTN,
+)
+
 class DXBenchmarkHandler(DXBaseHandler):
     """DX Benchmark HTTP 요청 핸들러."""
 
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_BENCHMARK_SHELL
     log_silent = True
 
     def route(self):

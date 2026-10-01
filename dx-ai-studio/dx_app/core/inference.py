@@ -17,8 +17,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dx_app.core import config
 from dx_app.core.config import (DX_APP_ROOT, CPP_DIR, PY_DIR, BUILD_DIR, ASSETS_DIR,
                     SAMPLE_DIR, OUTPUTS_DIR, SCRIPTS_DIR, CAT_IMAGE, CAT_VIDEO,
-                    _RUNTIME_PYTHON, _RUNTIME_PYTHONPATH)
+                    _RUNTIME_PYTHON, _RUNTIME_PYTHONPATH, resolve_model_path)
 from shared.runtime import ld_library_path
+from shared import dxrt
 from shared import debug_log
 from dx_app.core.dx_app_security import resolve_existing_file
 from dx_app.core.performance import _parse_perf, _cvt_video
@@ -85,6 +86,14 @@ def _video_has_frames(path) -> bool:
             return False
 
 
+def _model_default_input(category, model_name, kind):
+    """per-model layout 의 config.json 은 자기 기본 입력을 안다 (default_image / default_video) — task 표보다 정확하다
+    (예: classification 중 person_pair 를 쓰는 model)."""
+    from shared import dx_app_layout as _layout
+    spec = _layout.load_config(DX_APP_ROOT, category, model_name)
+    return (spec.get(f"default_{kind}") or "") if "variant" in spec else ""
+
+
 def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
                   input_type="image", image_path=None, video_path=None,
                   device_id=None, conf_threshold=None, nms_threshold=None,
@@ -106,8 +115,12 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
                     return _err("model_not_found", f"Model file not found: {arg}")
                 model_args[i] = str(mfp)
     else:
-        mp = DX_APP_ROOT / model_file
+        mp = resolve_model_path(model_file, DX_APP_ROOT)
         if not mp.exists(): return _err("model_not_found", f"Model file not found: {model_file}")
+        _need = dxrt.needs_for_file(mp)
+        if _need:
+            return _err("needs_dxrt", f"This model needs DX-RT {_need} or later (.dxnn container v9) — "
+                        f"the installed DX-RT reads up to v8.", needs_dxrt=_need)
     _b64_tmp = None
     if input_type == "image" and image_base64:
         try:
@@ -137,8 +150,10 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
             inp = resolve_existing_file(upload_path, RUN_UPLOAD_ROOTS, None)
         except ValueError as e:
             return _err("path_outside_allowed_roots", f"Path is outside allowed roots: {upload_path}")
-    elif input_type == "image": inp = DX_APP_ROOT / (image_path or CAT_IMAGE.get(category, "sample/img/sample_street.jpg"))
-    else: inp = DX_APP_ROOT / (video_path or CAT_VIDEO.get(category, "assets/videos/dance-group.mov"))
+    elif input_type == "image": inp = DX_APP_ROOT / (image_path or _model_default_input(category, model_name, "image")
+                                                      or CAT_IMAGE.get(category, "sample/img/sample_street.jpg"))
+    else: inp = DX_APP_ROOT / (video_path or _model_default_input(category, model_name, "video")
+                               or CAT_VIDEO.get(category, "assets/videos/dance-group.mov"))
     if not _is_live and not inp.exists(): return _err("input_not_found", f"Input not found: {inp}")
     # DXAPP_SAVE_IMAGE forces per-frame render even with --no-display; skip for video (perf + no still needed).
     res_img = None if input_type == "video" else tempfile.mktemp(suffix=".jpg", dir=_TMP)
@@ -151,7 +166,7 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
         tmp_config = tempfile.mktemp(suffix=".json", dir=_TMP)
         Path(tmp_config).write_text(json.dumps(merged_cfg))
     _ld = ld_library_path()
-    env = {**os.environ, "QT_QPA_PLATFORM": "offscreen", "LD_LIBRARY_PATH": _ld}
+    env = dxrt.run_env({**os.environ, "QT_QPA_PLATFORM": "offscreen", "LD_LIBRARY_PATH": _ld})
     if res_img:
         env["DXAPP_SAVE_IMAGE"] = res_img
     # dx_engine lives on PYTHONPATH (not pip-installed); the python_example subprocess needs it.
@@ -189,7 +204,10 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
     if run_lang == "cpp":
         bp = BUILD_DIR / f"{model_name}_{variant}"
         if not _is_executable_file(bp):
-            bp = _find_fallback_binary(category, variant, build_dir=BUILD_DIR)
+            # per-model layout: 예제가 있는 model 의 binary 는 그 model 전용이다 — 빌리지 않는다 (spec 2026-10-01)
+            from shared import dx_app_layout as _layout
+            _own = _layout.detect(DX_APP_ROOT) == _layout.PER_MODEL and _layout.find(DX_APP_ROOT, category, model_name)
+            bp = None if _own else _find_fallback_binary(category, variant, build_dir=BUILD_DIR)
             if not bp:
                 if _b64_tmp:
                     try: os.unlink(_b64_tmp)

@@ -51,9 +51,13 @@ const CardRenderer = {
     return '<span class="badge badge-confidence" data-confidence="' + key + '">' + shown + '</span>';
   },
 
+  // 순위는 숫자 원 — 1위만 금빛 (메달 이모지는 OS 마다 다르게 그려졌다, 아이콘 체계 단계 5).
   _rankBadge(i) {
-    const medals = ['🥇', '🥈', '🥉'];
-    return i < 3 ? medals[i] : String(i + 1);
+    return '<span class="rank-disc' + (i === 0 ? ' rank-disc--top' : '') + '">' + (i + 1) + '</span>';
+  },
+
+  _ico(name) {
+    return (typeof window.DXIcon === 'function') ? window.DXIcon(name) : '';
   },
 
   _buildCard(r, idx, inputs) {
@@ -73,10 +77,10 @@ const CardRenderer = {
     const chVal = this._formatChannels(r.maxChannels, r.boundaryFlag);
     const benchmarkMeta = this._benchmarkMeta(pid);
     const statusBadge = meets
-      ? '<span class="badge badge-meets">✅ <span class="ko">충족</span><span class="en">Meets</span><span class="ja">充足</span><span class="zh-CN">满足</span><span class="zh-TW">滿足</span></span>'
-      : '<span class="badge badge-insufficient">⚠️ <span class="ko">부족</span><span class="en">Insufficient</span><span class="ja">不足</span><span class="zh-CN">不足</span><span class="zh-TW">不足</span></span>';
+      ? '<span class="badge badge-meets">' + this._ico('check') + ' <span data-i18n="Meets">Meets</span></span>'
+      : '<span class="badge badge-insufficient">' + this._ico('alert') + ' <span data-i18n="Insufficient">Insufficient</span></span>';
     const featuredBadge = idx === 0
-      ? '<span class="badge badge-featured"><span class="ko">1순위</span><span class="en">Top pick</span><span class="ja">第1推奨</span><span class="zh-CN">首选</span><span class="zh-TW">首選</span><span class="es">#1</span></span>'
+      ? '<span class="badge badge-featured" data-i18n="Top pick">Top pick</span>'
       : '';
 
 
@@ -94,14 +98,14 @@ const CardRenderer = {
       '<div class="card-metrics">' +
         this._metric(String(Math.round(r.throughputFps)), 'FPS') +
         this._metric(chVal,
-          '<span class="ko">채널</span><span class="en">Ch</span><span class="ja">Ch</span><span class="zh-CN">通道</span><span class="zh-TW">通道</span>') +
+          '<span data-i18n="Ch">Ch</span>') +
         this._metric(r.platform.npu.tdp_w + 'W', 'TDP') +
       '</div>' +
       benchmarkMeta +
       '<div class="card-gauge"><canvas class="gauge-canvas" width="60" height="60"></canvas></div>' +
       '<div class="card-actions">' +
         '<button class="btn-detail" data-platform-id="' + pid + '">' +
-          '<span class="ko">상세 보기</span><span class="en">Details</span><span class="ja">詳細</span><span class="zh-CN">详情</span><span class="zh-TW">詳情</span>' +
+          '<span data-i18n="Details">Details</span>' +
         '</button>' +
       '</div>';
 

@@ -466,6 +466,28 @@ def _save_pids():
         pass
 
 
+def _is_our_sub_server(pid):
+    """pid 가 start_sub_server 가 띄운 모양(`python <STUDIO_DIR>/<module>/server.py ...`)인가.
+
+    확인할 수 없으면(/proc 없음, 권한 없음, 이미 종료) False — 모르면 죽이지 않는다.
+    """
+    try:
+        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except OSError:
+        return False
+    studio = Path(STUDIO_DIR).resolve()
+    for arg in raw.split(b"\0")[1:]:
+        if not arg.endswith(b"server.py"):
+            continue
+        try:
+            script = Path(os.fsdecode(arg)).resolve()
+        except (OSError, ValueError):
+            continue
+        if script.parent.parent == studio:
+            return True
+    return False
+
+
 def _cleanup_old_pids():
     """Kill sub-servers left behind by a previous crashed launcher."""
     if not _PIDFILE.exists():
@@ -475,19 +497,27 @@ def _cleanup_old_pids():
     except Exception:
         _PIDFILE.unlink(missing_ok=True)
         return
+    if not isinstance(data, dict):  # 손상된 파일이 launcher 시작을 막지 않게
+        _PIDFILE.unlink(missing_ok=True)
+        return
 
     for name, pid in data.items():
+        # 번호는 재사용된다(재부팅, 서버가 먼저 죽은 경우). 우리 하위 서버의 모양일 때만
+        # 종료한다. 계약: tests/launcher/test_cleanup_old_pids.py
+        if not isinstance(pid, int) or not _is_our_sub_server(pid):
+            continue
         try:
-            os.kill(pid, 0)  # check if alive
-            try:
-                os.killpg(os.getpgid(pid), signal.SIGTERM)
-            except (ProcessLookupError, PermissionError):
+            # start_sub_server 는 setsid 로 띄워 서버가 제 group 의 leader 다. 아니면 그 group
+            # 은 남의 것(launcher 를 띄운 셸 등)이므로 group 째 보내지 않는다.
+            if os.getpgid(pid) == pid:
+                os.killpg(pid, signal.SIGTERM)
+            else:
                 os.kill(pid, signal.SIGTERM)
             time.sleep(0.3)
-            # Force kill if still alive
+            # Force kill if still alive — 0.3초 사이 번호가 재사용됐을 수 있어 다시 확인한다
             try:
-                os.kill(pid, 0)
-                os.kill(pid, signal.SIGKILL)
+                if _is_our_sub_server(pid):
+                    os.kill(pid, signal.SIGKILL)
             except (ProcessLookupError, PermissionError):
                 pass
         except (ProcessLookupError, PermissionError):
@@ -827,7 +857,9 @@ def _proxy(handler, target_port, path, inject_widget=True):
         if is_html_inject:
             body = resp.read()
             if widget_cache:
-                body = _inject_before_body_close(body, widget_cache)
+                # the module page was hash-rewritten by its own server; this snippet was not
+                snippet = DXBaseHandler.version_sprite_refs(widget_cache.decode("utf-8", "ignore"))
+                body = _inject_before_body_close(body, snippet.encode("utf-8"))
             handler.send_header('Content-Length', len(body))
             handler.end_headers()
             handler.wfile.write(body)
@@ -922,31 +954,62 @@ class LauncherHandler(DXBaseHandler):
     _sdk_doc_paths_mtime: float | None = None
     _sdk_doc_paths_lock = threading.Lock()
 
+    _sdk_library_cache: tuple | None = None   # (json mtime, built at, augmented catalog)
+
+    @classmethod
+    def _sdk_library(cls):
+        """sdk-library-data.json + the suite's md on disk (live sizes, new docs, no duplicates —
+        launcher/sdk_library.py). Rebuilt when the JSON changes or every 30 s (a new md file)."""
+        from launcher import sdk_library as _lib
+        data_path = BASE_DIR / "static" / "sdk-library-data.json"
+        try:
+            mtime = data_path.stat().st_mtime
+        except Exception:
+            return None
+        with cls._sdk_doc_paths_lock:
+            c = cls._sdk_library_cache
+            if c is not None and c[0] == mtime and time.time() - c[1] < 30:
+                return c[2]
+            try:
+                data = json.loads(data_path.read_text(encoding="utf-8"))
+            except Exception:
+                return None
+            out = _lib.augment(data, BASE_DIR.parent.parent)
+            cls._sdk_library_cache = (mtime, time.time(), out)
+            return out
+
     @classmethod
     def _load_sdk_doc_paths(cls) -> set:
-        """Return the set of relative paths registered in sdk-library-data.json."""
+        """Return the set of relative paths the SDK Library lists (registered + picked up from disk)."""
+        from launcher import sdk_library as _lib
         data_path = BASE_DIR / "static" / "sdk-library-data.json"
         try:
             mtime = data_path.stat().st_mtime
         except Exception:
             return set()
+        data = cls._sdk_library()
+        if data is None:
+            return set()
         with cls._sdk_doc_paths_lock:
-            if cls._sdk_doc_paths_cache is not None and cls._sdk_doc_paths_mtime == mtime:
+            if cls._sdk_doc_paths_cache is not None and cls._sdk_doc_paths_mtime == (mtime, id(data)):
                 return cls._sdk_doc_paths_cache
-            try:
-                data = json.loads(data_path.read_text(encoding="utf-8"))
-            except Exception:
-                return set()
-            allowed = set()
-            for drawer in data.get("drawers", []):
-                for section in drawer.get("sections", []):
-                    for file_info in section.get("files", []):
-                        path = file_info.get("path")
-                        if isinstance(path, str) and path:
-                            allowed.add(path)
+            allowed = _lib.allowed_paths(data)
             cls._sdk_doc_paths_cache = allowed
-            cls._sdk_doc_paths_mtime = mtime
+            cls._sdk_doc_paths_mtime = (mtime, id(data))
             return allowed
+
+    def _serve_sdk_library(self):
+        data = self._sdk_library()
+        if data is None:
+            self.send_error(404, "Not found")
+            return
+        body = json.dumps(data, ensure_ascii=False).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def _serve_sdk_doc(self, parsed):
         """Serve a markdown file from dx-all-suite by relative path."""
@@ -1023,7 +1086,8 @@ class LauncherHandler(DXBaseHandler):
 
                 return _inc_re.sub(_repl, txt)
 
-            data = _expand(text, rel).encode("utf-8")
+            from launcher import sdk_library as _lib
+            data = _lib.expand_snippets(_expand(text, rel), rel, safe_root).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/plain; charset=utf-8")
             self.send_header("Content-Length", str(len(data)))
@@ -1257,22 +1321,23 @@ class LauncherHandler(DXBaseHandler):
         # Inject the live DX-AllSuite version (from release.ver) into the hub, instead of a
         # stale hard-coded string.
         html = html.replace("{{SDK_VERSION}}", _suite_sdk_version())
-        html = self.render_html_with_asset_hashes(
-            html,
-            asset_scope=None,
-            extra_static_roots=[BASE_DIR / "static"],
-        )
         # Inject the shared NPU Monitor float into the launcher shell so the launcher-native
         # views (About DEEPX, SDK Library) show the same collapsible monitor as the proxied
         # module pages. Visibility is gated client-side (setVisibleView adds .hw-native-visible
         # only on those views), so it never doubles up with a module iframe's own widget nor
-        # clutters the home splash.
+        # clutters the home splash. Injected before the hash rewrite so its asset and sprite
+        # URLs get the content hash too.
         widget = _get_widget_cache()
         if widget:
             snippet = widget.decode("utf-8", "ignore")
             low = html.lower()
             idx = low.rfind("</body>")
             html = (html[:idx] + snippet + html[idx:]) if idx != -1 else (html + snippet)
+        html = self.render_html_with_asset_hashes(
+            html,
+            asset_scope=None,
+            extra_static_roots=[BASE_DIR / "static"],
+        )
         self.send_html_no_cache(html)
 
     def _client_id(self) -> str:
@@ -1416,6 +1481,10 @@ class LauncherHandler(DXBaseHandler):
 
         if path == "/" or path == "/index.html" or path == "/sdk-library" or path == "/about":
             self._serve_index()
+        elif path == "/design-system":
+            # 살아있는 토큰/컴포넌트 카탈로그. 공유 파운데이션만 로드하므로
+            # 여기 보이는 것이 제품에서 보이는 것이다.
+            self._send_shell_asset(BASE_DIR.parent / "docs/design-system.html", "text/html")
         elif path == "/style.css":
             self._send_shell_asset(BASE_DIR / "static/style.css", "text/css")
         elif path == "/launcher.js":
@@ -1426,16 +1495,42 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/launcher-language.js", "application/javascript")
         elif path == "/launcher-splash.js":
             self._send_shell_asset(BASE_DIR / "static/launcher-splash.js", "application/javascript")
+        elif path == "/intro-stream.js":
+            self._send_shell_asset(BASE_DIR / "static/intro-stream.js", "application/javascript")
+        elif path == "/intro-app.js":
+            self._send_shell_asset(BASE_DIR / "static/intro-app.js", "application/javascript")
+        elif path == "/intro-compile.js":
+            self._send_shell_asset(BASE_DIR / "static/intro-compile.js", "application/javascript")
         elif path == "/platform-info.js":
             self._send_shell_asset(BASE_DIR / "static/platform-info.js", "application/javascript")
         elif path == "/launcher-app-frame.js":
             self._send_shell_asset(BASE_DIR / "static/launcher-app-frame.js", "application/javascript")
+        elif path == "/home-router.js":
+            self._send_shell_asset(BASE_DIR / "static/home-router.js", "application/javascript")
+        elif path == "/home-prompts.js":
+            self._send_shell_asset(BASE_DIR / "static/home-prompts.js", "application/javascript")
+        elif path == "/home-answer.js":
+            self._send_shell_asset(BASE_DIR / "static/home-answer.js", "application/javascript")
+        elif path == "/home-console.js":
+            self._send_shell_asset(BASE_DIR / "static/home-console.js", "application/javascript")
+        elif path == "/home-agent-setup.js":
+            self._send_shell_asset(BASE_DIR / "static/home-agent-setup.js", "application/javascript")
+        elif path == "/home-widgets.js":
+            self._send_shell_asset(BASE_DIR / "static/home-widgets.js", "application/javascript")
+        elif path == "/home-bar.js":
+            self._send_shell_asset(BASE_DIR / "static/home-bar.js", "application/javascript")
+        elif path == "/home-effects.js":
+            self._send_shell_asset(BASE_DIR / "static/home-effects.js", "application/javascript")
+        elif path == "/home-sections.js":
+            self._send_shell_asset(BASE_DIR / "static/home-sections.js", "application/javascript")
         elif path == "/tutorial.js":
             self._send_shell_asset(BASE_DIR / "static/tutorial.js", "application/javascript")
         elif path == "/about-deepx.css":
             self._send_shell_asset(BASE_DIR / "static/about-deepx.css", "text/css")
         elif path == "/about-deepx.js":
             self._send_shell_asset(BASE_DIR / "static/about-deepx.js", "application/javascript")
+        elif path == "/home-stage.css":
+            self._send_shell_asset(BASE_DIR / "static/home-stage.css", "text/css")
         elif path == "/sdk-library.css":
             self._send_shell_asset(BASE_DIR / "static/sdk-library.css", "text/css")
         elif path == "/sdk-library.js":
@@ -1444,6 +1539,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/sdk-tutorial.js", "application/javascript")
         elif path.startswith("/static/sdk-library-data"):
             self._send_contained_file(BASE_DIR / "static", path[len("/static/"):])
+        elif path == "/api/sdk-library":
+            self._serve_sdk_library()
         elif path == "/api/sdk-doc":
             self._serve_sdk_doc(parsed)
         elif path == "/api/sdk-doc-image":

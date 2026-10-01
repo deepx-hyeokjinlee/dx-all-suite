@@ -331,10 +331,10 @@ window._DX_MODELZOO_I18N_REGISTER({
   },
   'Use dxcom default settings.': {
     en: 'Use dxcom default settings.',
-    ko: '기본 dxcom 설정을 사용하세요.',
-    ja: 'dxcom のデフォルト設定を使用してください。',
+    ko: 'dxcom 기본 설정 사용.',
+    ja: 'dxcom のデフォルト設定を使用します。',
     'zh-CN': '使用 dxcom 默认设置。',
-    'zh-TW': '請使用 dxcom 預設設定。',
+    'zh-TW': '使用 dxcom 預設設定。',
     es: 'Use la configuración predeterminada de dxcom.',
   },
   'No demo code available.': {
@@ -448,6 +448,10 @@ window._DX_MODELZOO_I18N_REGISTER({
     'zh-CN': '产物',
     'zh-TW': '成品',
     es: 'Artefacto',
+  },
+  'Q-Master': {
+    en: 'Q-Master', ko: 'Q-Master', ja: 'Q-Master',
+    'zh-CN': 'Q-Master', 'zh-TW': 'Q-Master', es: 'Q-Master',
   },
   'Accuracy Matrix': {
     ko: '정확도 매트릭스',

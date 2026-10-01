@@ -5,7 +5,7 @@ const esc = s => { const d = document.createElement('div'); d.textContent = s; r
 function api(url, opts) { return fetch(url, opts).then(r => r.json()).catch(e => ({error: e.message})) }
 
 /* 온도 색상 */
-function tempColor(t) { return t < 40 ? _cv('--success') : t < 55 ? _cv('--warning') : _cv('--error') }
+function tempColor(t) { return t < 40 ? _cv('--status-ok') : t < 55 ? _cv('--status-warn') : _cv('--status-error') }
 
 /* 글로벌 상태 */
 const S = {
@@ -58,11 +58,22 @@ function statusClass(status) {
   return '';
 }
 
-/* 상태별 배지 이모지 */
-function statusEmoji(status) {
-  if (status === 'crit') return '🔴';
-  if (status === 'warn') return '⚠️';
-  if (status === 'ok') return '✅';
+/* 상태별 배지 아이콘 (sprite, 아이콘 체계 단계 5) — 모양 + 색 (색은 st-* 클래스). */
+function _mIco(name) {
+  return (typeof window !== 'undefined' && typeof window.DXIcon === 'function') ? window.DXIcon(name) : '';
+}
+/* 아이콘 + 글자. 실제 DOM 이 아니면 (테스트의 가짜 엘리먼트) 글자만. */
+function _mLabel(el, name, text) {
+  if (typeof window !== 'undefined' && window.DXIcon && window.DXIcon.label && el && el.appendChild && typeof document !== 'undefined' && document.createElementNS) {
+    return window.DXIcon.label(el, name, text);
+  }
+  el.textContent = text;
+  return el;
+}
+function statusIcon(status) {
+  if (status === 'crit') return _mIco('x');
+  if (status === 'warn') return _mIco('alert');
+  if (status === 'ok') return _mIco('check');
   return '';
 }
 

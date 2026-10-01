@@ -34,7 +34,26 @@ MODEL = SDK_ROOT / "dx_com" / "sample_models" / "onnx" / "MobileNetV2-1.onnx"
 BASE_CONFIG = SDK_ROOT / "dx_com" / "sample_models" / "json" / "MobileNetV2-1.json"
 CALIB = SDK_ROOT / "dx_com" / "calibration_dataset"
 
-pytestmark = pytest.mark.e2e
+# The module docstring promises "skips when unavailable", but only the
+# dx_com_info fixture actually guarded that: fast_config read BASE_CONFIG with no
+# check (FileNotFoundError at setup -> 9 collection ERRORs) and the /model/inspect
+# tests asserted 200 on a path that does not exist (-> 404). dx_com ships via
+# dx-compiler/install.sh and is absent from a plain checkout, so gate the whole
+# module on its assets instead of per-fixture.
+_DX_COM_ASSETS = (VENV_PY, MODEL, BASE_CONFIG)
+_MISSING_DX_COM = [str(p) for p in _DX_COM_ASSETS if not p.is_file()]
+
+pytestmark = [
+    pytest.mark.e2e,
+    pytest.mark.requires_dx_runtime,
+    pytest.mark.skipif(
+        bool(_MISSING_DX_COM),
+        reason=(
+            "dx_com venv / sample models not installed — run dx-compiler/install.sh "
+            f"(missing: {_MISSING_DX_COM})"
+        ),
+    ),
+]
 
 
 def _free_port() -> int:

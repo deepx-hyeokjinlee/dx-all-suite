@@ -75,7 +75,7 @@ a {
         
         /* 👇 연하고 얇은 회색 가로/세로 격자선 추가 */
         border: 0.5px solid #e2e8f0 !important; 
-        padding: 7px 5px !important;
+        padding: 8px 4px !important;
     }
 
     th {

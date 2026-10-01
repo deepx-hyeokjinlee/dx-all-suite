@@ -28,7 +28,6 @@ packages = [
 [tool.setuptools.package-data]
 "*" = ["templates/*", "templates/**/*", "static/**/*", "knowledge/*.md", "*.json"]
 
-[tool.pytest.ini_options]
-markers = [
-  "runtime_lifecycle: fixture-local Managed Runtime Host bootstrap, migration, and rollback scenarios",
-]
+# pytest configuration lives in pytest.ini (single source of truth).
+# pytest.ini takes precedence over pyproject.toml, so a [tool.pytest.ini_options]
+# block here would be dead config that silently drifts from the real one.

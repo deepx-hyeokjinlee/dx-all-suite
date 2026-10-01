@@ -46,8 +46,17 @@ def reference_js_source() -> str:
     return read_text(STREAM / "static" / "js" / "stream-reference.js")
 
 
+SHARED_COMPONENTS = ROOT / "shared" / "static" / "dx-components.css"
+
+
 def stream_css_source() -> str:
-    return read_text(STREAM / "static" / "css" / "stream.css")
+    """브라우저가 실제로 보는 CSS — 모듈 것 + 공유 컴포넌트.
+
+    Reference 화면(.ref-*)은 dx_app 과 dx_stream 이 통째로 복제하고 있다가
+    shared/static/dx-components.css 로 올라갔다. 모듈 파일만 읽으면
+    화면이 멀쩡히 렌더되는데도 셀렉터가 사라진 것처럼 보인다.
+    """
+    return read_text(STREAM / "static" / "css" / "stream.css") + "\n" + read_text(SHARED_COMPONENTS)
 
 
 def stream_demo_js_source() -> str:
@@ -55,7 +64,7 @@ def stream_demo_js_source() -> str:
 
 
 def app_css_source() -> str:
-    return read_text(APP / "static" / "css" / "style.css")
+    return read_text(APP / "static" / "css" / "style.css") + "\n" + read_text(SHARED_COMPONENTS)
 
 
 def normalized_rule(css: str, selector: str) -> str:
@@ -165,6 +174,10 @@ def test_demo_fullscreen_target_keeps_stop_controls_inside():
 
     assert "var target = DXStream.$('demo-video-section')" in src
     assert "requestFullscreen()" in src
+    # panel 은 전체 화면 밖이다 — Stop 이 영상 상자 안에도 있다
+    html = template_source()
+    box = html[html.index('id="demo-video-section"'):html.index('id="btn-demo-fullscreen"')]
+    assert 'class="dds-live-stop" onclick="DXStream.stopDemo()"' in box
 
 
 def test_demo_stop_exits_fullscreen_before_hiding_video_section():
@@ -178,7 +191,8 @@ def test_demo_stop_exits_fullscreen_before_hiding_video_section():
 
     assert "document.fullscreenElement" in src
     assert "document.exitFullscreen()" in src
-    assert src.index("document.exitFullscreen()") < src.index("videoSection.style.display = 'none'")
+    # 영상 상자를 무대에서 빼기 (숨은 자리로) 전에 전체 화면을 끝낸다 (spec 2026-10-01 demo stage)
+    assert src.index("document.exitFullscreen()") < src.index("_demoParkVideo()")
 
 
 def test_stream_reference_uses_event_delegation_not_inline_handlers():
@@ -317,3 +331,26 @@ def test_stream_reference_matches_dev_demo_surface():
     assert "Manage 16 DEEPX" in source
     assert "Object Detection(8)" in source
     assert "Depth(1)" not in source
+
+
+def test_reference_screen_has_exactly_one_definition():
+    """Reference 화면은 이제 한 곳에서만 정의된다.
+
+    dx_app 과 dx_stream 이 .ref-* 31개 rule 을 각자 갖고 있었고, 두 사본이
+    어긋나지 않는지 확인하려고 위의 visual-contract 테스트가 존재했다.
+    사본이 하나가 되면서 그 비교는 자명해졌고, 지켜야 할 것은 "다시 갈라지지
+    않는다"로 바뀐다.
+    """
+    shared = read_text(SHARED_COMPONENTS)
+    module_only = {
+        "dx_app": read_text(APP / "static" / "css" / "style.css"),
+        "dx_stream": read_text(STREAM / "static" / "css" / "stream.css"),
+    }
+    for selector in (".ref-layout", ".ref-grid", ".ref-topic-card", ".ref-tabs", ".chip"):
+        assert re.search(r"^\s*" + re.escape(selector) + r"\s*[,{]", shared, re.M), (
+            f"{selector} 가 공유 컴포넌트에 없다"
+        )
+        for mod, css in module_only.items():
+            assert not re.search(r"^\s*" + re.escape(selector) + r"\s*[,{]", css, re.M), (
+                f"{mod} 이 {selector} 를 다시 정의한다 — Reference 화면은 공유 정의 하나뿐이다"
+            )

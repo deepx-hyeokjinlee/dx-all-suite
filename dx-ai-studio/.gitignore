@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtualenvs — created by launcher.sh / run_ci.sh / i18n_browser_audit.sh
+.venv/
+.venv-i18n-audit/
+docs/.venv-docs/
+
+# launcher 가 실행 중에 쓰는 PID 파일. 커밋되면 다른 머신에서 무관한 프로세스를 죽인다
+# (tests/launcher/test_pidfile_is_not_tracked.py)
+launcher/.launcher_pids
+
+# Coverage
+.coverage
+coverage.xml
+htmlcov/
+
+# Studio runtime state (shared/paths.py: outputs_dir() / var_dir())
+outputs/
+var/
+var/log/
+
+# Agent-generated session output (CLAUDE.md Output Isolation)
+dx-agent-dev/
+
+# ModelZoo sync artifacts.
+# NOTE: dx_modelzoo/data/generated_catalog.json is a SHIPPED release artifact
+# (sync_release_catalog.sh) and must stay COMMITTED — the air-gapped build reads
+# official accuracy/fps/onnx URLs from that snapshot. Only the build-local
+# per-run cache and the sync report are ignored. See
+# tests/dx_modelzoo/test_server.py::test_sync_generated_artifacts_are_gitignored.
+dx_modelzoo/data/generated_catalog.cache.json
+dx_modelzoo/data/sync_report.json
+
+# Editors / OS
+.DS_Store
+*.swp
+
+# ModelZoo 썸네일/예제 **원본**. 브라우저가 실제로 받는 것은 data/optimized/ 이고
+# (catalog.js 가 .webp → .jpg → 원본 순으로 시도한다) 원본은 그 입력일 뿐이다.
+# 788개 전부 최적화본이 있음을 확인하고 뺐다 — 85MB.
+# 되살리려면 dx_app 서버 + .dxnn 모델 + NPU 가 필요하다:
+#   python -m dx_modelzoo.scripts.generate_thumbnails
+#   python -m dx_modelzoo.scripts.optimize_images --write
+# 원본 없이 optimize_images 를 돌리면 조용히 넘어가지 않고 실패한다
+# (tests/dx_modelzoo/test_optimize_images_needs_sources.py).
+dx_modelzoo/data/thumbnails/
+dx_modelzoo/data/examples/
+
+# 실행할 때마다 다시 쓰는 포트 기록 (launcher.sh 의 고정 포트 · 접속 URL, 하위 서버가 알리는 :0 포트).
+# 추적하면 테스트를 돌릴 때마다 작업 트리가 더러워진다.
+/.launcher-port
+/.launcher-url
+/launcher/.ports/

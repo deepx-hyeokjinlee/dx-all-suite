@@ -74,4 +74,7 @@ def test_dx_app_scan_categories_keeps_hardcoded_baseline(tmp_path, monkeypatch):
     categories = config._scan_categories()
 
     assert "object_detection" in categories
-    assert "face_alignment" in categories
+    # per-model checkout 에서는 baseline 도 새 이름 (face_alignment → face_landmark, spec 2026-10-01)
+    from shared.tasks import canonical
+    expected = canonical("face_alignment") if config.LAYOUT == config._layout.PER_MODEL else "face_alignment"
+    assert expected in categories

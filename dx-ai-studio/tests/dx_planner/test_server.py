@@ -84,17 +84,18 @@ def test_index_html_serves_html(server):
 def test_local_css_served(server):
     body, status = _get_raw("/static/css/style.css")
     assert status == 200
-    assert ".planner-topbar" in body
+    # .planner-topbar 는 통합 shell(dx-shell.css)로 옮겼다 — 모듈 CSS는 콘텐츠만 소유한다.
+    assert ".planner-main" in body
 
 
 def test_shared_foundation_css_served(server):
     body, status = _get_raw("/static/shared/dx-fonts.css")
     assert status == 200
-    assert "/static/shared/fonts/inter-v20-latin-regular.woff2" in body
+    assert "/static/shared/fonts/inter-4.1-var-latin.woff2" in body
 
 
 def test_shared_font_served(server):
-    data, status, content_type = _get_bytes("/static/shared/fonts/inter-v20-latin-regular.woff2")
+    data, status, content_type = _get_bytes("/static/shared/fonts/inter-4.1-var-latin.woff2")
     assert status == 200
     assert data[:4] == b"wOF2"
     assert len(data) > 100

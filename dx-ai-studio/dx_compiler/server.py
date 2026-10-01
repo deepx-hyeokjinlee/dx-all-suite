@@ -23,12 +23,22 @@ _STUDIO_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _STUDIO_DIR.parent
 
 
+class _Rejected(Exception):
+    """검증이 입력을 거부했고 400 응답이 이미 나갔다는 신호. route() 가 삼킨다."""
+
+
 class _ViewerDepsError(Exception):
     """ONNX viewer deps (numpy/onnx) unavailable in-process AND no venv to delegate to."""
 
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared.chat import ChatEngine
 
+from dx_compiler.core.validation import (
+    ValidationError, validate_calibration_method, validate_enhanced_scheme,
+    validate_enhanced_scheme_json, validate_file_extensions, validate_fs_path,
+    validate_node_names, validate_opt_level, validate_preprocessings,
+    validate_recalibration_method,
+)
 from dx_compiler.core.config import (
     SCRIPT_DIR, STATIC_DIR, TEMPLATES_DIR, UPLOAD_DIR,
     DEFAULT_PORT, SERVER_NAME, SUITE_ROOT, is_safe_path, static_version,
@@ -40,6 +50,8 @@ from dx_compiler.core.compiler_service import (
 )
 from dx_compiler.core.setup_service import setup_service
 from dx_compiler.core import fs_browse
+from shared import shell as _shell
+from shared.shell import ShellSpec
 
 # Replaces Jinja2 so DX AI Studio has ZERO third-party runtime dependencies.
 # Supports exactly the constructs the compiler templates use:
@@ -204,6 +216,12 @@ def _compiler_feature_status() -> dict:
     }
 
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 컴파일 워크플로 단일 화면이라 탭 행이 없다 — base.html 루트에
+# .dx-shell--no-tabs 를 붙였다.
+DX_COMPILER_SHELL = ShellSpec(module_key="compiler")
+
 class CompilerHandler(DXBaseHandler):
     """Route HTTP requests for DX Compiler GUI."""
 
@@ -217,10 +235,39 @@ class CompilerHandler(DXBaseHandler):
         # serve stale cached scripts until the process restarts (e.g. the sudo modal not
         # appearing). static_version() is a cheap hash of ~9 small files.
         ctx.setdefault("v", static_version())
+        # 통합 App Shell 주입. 이 모듈은 자체 미니 템플릿 엔진을 쓰고 그 변수
+        # 패턴이 {{DX_SHELL_*}} 와 겹치므로, 문자열 치환을 따로 돌리지 않고
+        # 렌더 컨텍스트로 넘겨 한 번에 채운다.
+        for key, markup in _shell.context(DX_COMPILER_SHELL).items():
+            ctx.setdefault(key, markup)
         return _render_template(template_name, ctx)
 
 
+    def _validated(self, fn, *args, **kwargs):
+        """검증자를 부르고 ValidationError 를 400 으로 바꾼다.
+
+        호출부마다 try 를 쓰지 않게 하는 한 곳. 여기가 이 서버에서 "사용자 입력
+        오류는 400" 이라는 규칙이 사는 자리다 — 500 은 우리 잘못을 뜻하므로
+        사용자가 보낸 값 때문에 나면 안 된다.
+
+        검증에 실패하면 400 을 보내고 ``_Rejected`` 를 던진다. 호출부는 잡지
+        않는다 — route() 가 잡아서 조용히 끝낸다(응답은 이미 나갔다).
+        """
+        try:
+            return fn(*args, **kwargs)
+        except ValidationError as exc:
+            self.send_error_json(400, str(exc))
+            raise _Rejected from None
+
     def route(self):
+        path = self.url_path
+
+        try:
+            return self._route_inner()
+        except _Rejected:
+            return  # 400 응답은 _validated 가 이미 보냈다
+
+    def _route_inner(self):
         path = self.url_path
 
         if self.handle_chat_routes(_chat_engine):
@@ -330,7 +377,7 @@ class CompilerHandler(DXBaseHandler):
         model_path = fields.get("model_path", "")
         config_path = fields.get("config_path", "")
         output_dir = fields.get("output_dir", "")
-        opt_level = int(fields.get("opt_level", "1"))
+        opt_level = self._validated(validate_opt_level, fields.get("opt_level"))
         aggressive_partitioning = fields.get("aggressive_partitioning", "false") == "true"
         gen_log = fields.get("gen_log", "false") == "true"
         quant_debug = fields.get("quant_debug", "false") == "true"
@@ -339,12 +386,11 @@ class CompilerHandler(DXBaseHandler):
         use_q_pro = fields.get("use_q_pro", "false") == "true"
         enhanced_scheme_raw = fields.get("enhanced_scheme", "")
 
-        parsed_scheme = None
-        if enhanced_scheme_raw:
-            try:
-                parsed_scheme = json.loads(enhanced_scheme_raw)
-            except json.JSONDecodeError:
-                parsed_scheme = None
+        parsed_scheme = self._validated(
+            validate_enhanced_scheme_json, enhanced_scheme_raw)
+        # resume 이 이미 하던 검사다. 새 규칙이 아니라, 여기서 안 부르고
+        # 있었을 뿐이다 — 그래서 DXQ-P99 가 /compile 로는 통과했다.
+        parsed_scheme = self._validated(validate_enhanced_scheme, parsed_scheme)
 
         if use_q_pro:
             parsed_scheme = None
@@ -385,8 +431,12 @@ class CompilerHandler(DXBaseHandler):
             return self.send_error_json(400, "Job is not paused")
 
         body = self.read_json_body()
-        job.selected_input_nodes = body.get("input_nodes", [])
-        job.selected_output_nodes = body.get("output_nodes", [])
+        # 둘 다 먼저 검증하고 나서 쓴다. 하나를 쓰고 다음에서 거부하면 job 이
+        # 반만 바뀐 채로 남는다.
+        input_nodes = self._validated(validate_node_names, body.get("input_nodes"), "input_nodes")
+        output_nodes = self._validated(validate_node_names, body.get("output_nodes"), "output_nodes")
+        job.selected_input_nodes = input_nodes
+        job.selected_output_nodes = output_nodes
         job.pause_event.set()
         self.send_json({"status": "resumed"})
 
@@ -399,39 +449,22 @@ class CompilerHandler(DXBaseHandler):
         except Exception:
             return self.send_error_json(400, "Invalid JSON body")
 
-        qxnn_path = (body.get("qxnn_path") or "").strip()
-        output_dir = (body.get("output_dir") or "").strip()
-        if not qxnn_path or not qxnn_path.lower().endswith(".qxnn"):
+        qxnn_path = self._validated(validate_fs_path, body.get("qxnn_path"), "qxnn_path")
+        output_dir = self._validated(validate_fs_path, body.get("output_dir"), "output_dir")
+        if not qxnn_path.lower().endswith(".qxnn"):
             return self.send_error_json(400, "qxnn_path must point to a .qxnn file")
-        if not output_dir:
-            return self.send_error_json(400, "output_dir is required")
 
-        recalibration_method = body.get("recalibration_method") or None
-        if recalibration_method == "":
-            recalibration_method = None
-        valid_recal = {"minmax", "ema", "iqr"}
-        if recalibration_method is not None and recalibration_method not in valid_recal:
-            return self.send_error_json(
-                400,
-                f"recalibration_method must be one of {sorted(valid_recal)}",
-            )
+        recalibration_method = self._validated(
+            validate_recalibration_method, body.get("recalibration_method"))
 
-        dataset_path = (body.get("dataset_path") or "").strip() or None
+        dataset_path = self._validated(
+            validate_fs_path, body.get("dataset_path"), "dataset_path", required=False) or None
         use_q_pro = bool(body.get("use_q_pro", False))
         enhanced_scheme = body.get("enhanced_scheme")
         if use_q_pro:
             enhanced_scheme = None
-        elif enhanced_scheme is not None:
-            if not isinstance(enhanced_scheme, dict):
-                return self.send_error_json(400, "enhanced_scheme must be a JSON object")
-            # Reject unknown DXQ keys before they reach dx_com.compile (parity with the
-            # reference ResumeRequest.validate_enhanced_scheme).
-            valid_dxq = {"DXQ-P0", "DXQ-P1", "DXQ-P2", "DXQ-P3", "DXQ-P4", "DXQ-P5"}
-            bad = [k for k in enhanced_scheme if k not in valid_dxq]
-            if bad:
-                return self.send_error_json(
-                    400, f"Unknown DXQ key(s): {bad}. Valid: {sorted(valid_dxq)}"
-                )
+        else:
+            enhanced_scheme = self._validated(validate_enhanced_scheme, enhanced_scheme)
         if use_q_pro and body.get("enhanced_scheme"):
             return self.send_error_json(400, "use_q_pro and enhanced_scheme are mutually exclusive")
 
@@ -484,8 +517,8 @@ class CompilerHandler(DXBaseHandler):
             return self.send_error_json(400, "No prepared graph available")
 
         body = self.read_json_body()
-        input_nodes = body.get("input_nodes", [])
-        output_nodes = body.get("output_nodes", [])
+        input_nodes = self._validated(validate_node_names, body.get("input_nodes"), "input_nodes")
+        output_nodes = self._validated(validate_node_names, body.get("output_nodes"), "output_nodes")
 
         if not input_nodes and not output_nodes:
             return self.send_json({
@@ -526,6 +559,10 @@ class CompilerHandler(DXBaseHandler):
                 "included_count": total - len(excluded_set),
                 "total_count": total,
             })
+        except ValueError as e:
+            # validate_target_nodes 가 "그런 노드가 없다" 로 던지는 것. 사용자가
+            # 이름을 잘못 쓴 것이므로 400 이다 — 500 은 우리 잘못을 뜻한다.
+            return self.send_error_json(400, str(e))
         except Exception as e:
             return self.send_error_json(500, str(e))
 
@@ -915,25 +952,72 @@ class CompilerHandler(DXBaseHandler):
         except Exception:
             return self.send_error_json(400, "Invalid JSON")
 
-        config = {"inputs": config_data.get("input_shapes", {})}
+        # SR-758: 이 한 줄이 무엇이 들어오든 그대로 복사했다. 바로 아래 calibration_num
+        # 은 int() 로 감싸고 400 을 내는데, inputs 만 지나쳤다 — 그래서 음수 차원이나
+        # 문자열이 config.json 까지 내려가 컴파일 단계에서야 터졌다.
+        # 유효 범위는 .deepx/toolsets/config-schema.md 가 정한다:
+        # "Dimensions: All must be positive integers (no -1, no 0)".
+        # batch 가 1 인지와 키가 ONNX 노드 이름과 맞는지는 여기서 보지 않는다 —
+        # 이 API 는 모델을 읽지 않으므로 알 수 없고, 알 수 없는 것을 막으면 모델을
+        # 아직 고르지 않은 마법사 단계의 정당한 입력까지 거부한다.
+        # 계약: tests/dx_compiler/test_config_input_shapes.py
+        input_shapes = config_data.get("input_shapes", {})
+        if not isinstance(input_shapes, dict):
+            return self.send_error_json(400, "Invalid input_shapes: expected an object")
+        for name, shape in input_shapes.items():
+            if not isinstance(shape, (list, tuple)):
+                return self.send_error_json(
+                    400, f"Invalid input_shapes for {name!r}: expected a list of dimensions")
+            for dim in shape:
+                # bool 을 먼저 거른다 — 파이썬에서 True 는 int 의 인스턴스다.
+                if isinstance(dim, bool) or not isinstance(dim, int) or dim < 1:
+                    return self.send_error_json(
+                        400,
+                        f"Invalid input_shapes for {name!r}: {dim!r} — "
+                        "dimensions must be positive integers")
+        config = {"inputs": input_shapes}
 
         if config_data.get("loader_mode") == "default":
             default_loader = {}
-            if config_data.get("dataset_path"):
-                default_loader["dataset_path"] = config_data["dataset_path"]
-            if config_data.get("file_extensions"):
-                default_loader["file_extensions"] = config_data["file_extensions"]
-            if config_data.get("preprocessings"):
-                default_loader["preprocessings"] = config_data["preprocessings"]
+            dataset_path = self._validated(
+                validate_fs_path, config_data.get("dataset_path"), "dataset_path",
+                required=False)
+            if dataset_path:
+                default_loader["dataset_path"] = dataset_path
+            file_extensions = self._validated(
+                validate_file_extensions, config_data.get("file_extensions"))
+            if file_extensions:
+                default_loader["file_extensions"] = file_extensions
+            preprocessings = self._validated(
+                validate_preprocessings, config_data.get("preprocessings"))
+            if preprocessings:
+                default_loader["preprocessings"] = preprocessings
             config["default_loader"] = default_loader
 
         if config_data.get("calibration_num"):
+            # 타입은 보고 범위는 보지 않았다 — int("-5") 는 통과한다. 프론트의
+            # validateCalibNum 은 n <= 0 을 막으므로 GUI 로는 보이지 않지만, API 를
+            # 직접 부르면 음수 표본 수가 config.json 까지 내려간다. 같은 규칙을 둔다.
+            raw_calib = config_data["calibration_num"]
+            if isinstance(raw_calib, bool):
+                # input_shapes 의 차원에서는 bool 을 막아 놓고 여기서는 안 막았다.
+                # int(True) 가 1 이라 `true` 가 표본 수 1 로 조용히 저장된다.
+                return self.send_error_json(
+                    400, f"Invalid calibration_num: {raw_calib!r} — expected a number")
             try:
-                config["calibration_num"] = int(config_data["calibration_num"])
+                calib_num = int(raw_calib)
             except (ValueError, TypeError):
                 return self.send_error_json(400, "Invalid calibration_num")
-        if config_data.get("calibration_method"):
-            config["calibration_method"] = config_data["calibration_method"]
+            if calib_num < 1:
+                return self.send_error_json(
+                    400,
+                    f"Invalid calibration_num: {calib_num} — "
+                    "must be a positive number of samples")
+            config["calibration_num"] = calib_num
+        calibration_method = self._validated(
+            validate_calibration_method, config_data.get("calibration_method"))
+        if calibration_method:
+            config["calibration_method"] = calibration_method
 
         config_dir = UPLOAD_DIR / "configs"
         config_dir.mkdir(parents=True, exist_ok=True)
@@ -990,9 +1074,7 @@ class CompilerHandler(DXBaseHandler):
         except Exception:
             return self.send_error_json(400, "Invalid JSON")
 
-        path = body.get("path", "").strip()
-        if not path:
-            return self.send_error_json(400, "Missing 'path' field")
+        path = self._validated(validate_fs_path, body.get("path"), "path")
         if not is_safe_path(path):
             return self.send_error_json(403, "Access denied")
         try:

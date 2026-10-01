@@ -31,7 +31,7 @@ function _renderPalette(grouped) {
         var icon = _catIcon(cat);
         return '<div class="palette-group" style="--cat-color:' + color + '">' +
             '<div class="palette-group-title">' +
-                '<span class="palette-cat-icon">' + icon + '</span>' +
+                '<span class="palette-cat-icon">' + ((typeof DXIcon === 'function') ? DXIcon(icon) : '') + '</span>' +
                 '<span>' + _catLabel(cat) + '</span>' +
                 '<span class="palette-cat-count">' + items.length + '</span>' +
             '</div>' +
@@ -578,6 +578,9 @@ function _canvasWheel(e) {
     _scheduleCanvasRefresh();
 }
 
+// sprite 를 다 읽으면 (DXIcon.draw 첫 호출이 읽기를 시작한다) 캔버스를 다시 그려 아이콘을 채운다.
+if (typeof window !== 'undefined') window.addEventListener('dx-icons-ready', function () { try { _refreshCanvas(); } catch (e) {} });
+
 function _refreshCanvas() {
     var canvas = DXStream.$('pipeline-canvas');
     if (!canvas) return;
@@ -669,10 +672,10 @@ function _drawNode(ctx, node, selected, connStatus) {
 
     ctx.save();
     if (connStatus === 'allow') {
-        ctx.shadowColor = _cv('--success');
+        ctx.shadowColor = _cv('--status-ok');
         ctx.shadowBlur = 16;
     } else if (connStatus === 'warn') {
-        ctx.shadowColor = _cv('--warning');
+        ctx.shadowColor = _cv('--status-warn');
         ctx.shadowBlur = 12;
     } else if (connStatus === 'block') {
         ctx.shadowColor = 'transparent';
@@ -713,13 +716,10 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.restore();
 
-    ctx.fillStyle = color;
-    ctx.font = '13px sans-serif';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(icon, x + 10, y + _NODE_H / 2);
+    // 분류 아이콘 — sprite 를 캔버스에 (DXIcon.draw). 아직 못 읽었으면 다 읽은 뒤 다시 그린다.
+    if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, icon, x + 8, y + _NODE_H / 2 - 7, 14, color);
 
-    ctx.fillStyle = '#E2E8F0';
+    ctx.fillStyle = '#f5f5f7';
     ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -737,7 +737,7 @@ function _drawNode(ctx, node, selected, connStatus) {
         ctx.fill();
         ctx.beginPath();
         ctx.arc(x, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-        ctx.fillStyle = '#0e1525';
+        ctx.fillStyle = '#1d1d1f';
         ctx.fill();
         ctx.strokeStyle = color;
         ctx.lineWidth = 1.5;
@@ -750,7 +750,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.beginPath();
     ctx.arc(x + _NODE_W, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-    ctx.fillStyle = '#0e1525';
+    ctx.fillStyle = '#1d1d1f';
     ctx.fill();
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.5;
@@ -759,10 +759,8 @@ function _drawNode(ctx, node, selected, connStatus) {
     // 차단 표시 (block 상태)
     if (connStatus === 'block') {
         ctx.globalAlpha = 1;
-        ctx.font = '18px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('🚫', x + _NODE_W / 2, y + _NODE_H / 2);
+        // 연결할 수 없는 노드 — x 아이콘 (sprite)
+        if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, 'x', x + _NODE_W / 2 - 10, y + _NODE_H / 2 - 10, 20, _cv('--status-error'));
     }
 
     // 외부 restore — globalAlpha 복원
@@ -776,9 +774,9 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
     ctx.bezierCurveTo(x1 + cpOff, y1, x2 - cpOff, y2, x2, y2);
 
     if (selected) {
-        ctx.strokeStyle = '#F85149';
+        ctx.strokeStyle = '#ff453a';
     } else if (warnEdge) {
-        ctx.strokeStyle = _cv('--warning');
+        ctx.strokeStyle = _cv('--status-warn');
     } else if (dashed) {
         ctx.strokeStyle = 'rgba(255,255,255,0.3)';
     } else if (fromColor && toColor) {
@@ -806,7 +804,7 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
         ctx.lineTo(-8, -4);
         ctx.lineTo(-8, 4);
         ctx.closePath();
-        ctx.fillStyle = warnEdge ? _cv('--warning') : (toColor || 'rgba(255,255,255,0.5)');
+        ctx.fillStyle = warnEdge ? _cv('--status-warn') : (toColor || 'rgba(255,255,255,0.5)');
         ctx.fill();
         ctx.restore();
     }
@@ -814,10 +812,8 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
     if (warnEdge) {
         var mx = (x1 + x2) / 2;
         var my = (y1 + y2) / 2;
-        ctx.font = '14px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('⚠️', mx, my - 10);
+        // 경고 연결 — alert 아이콘 (sprite)
+        if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, 'alert', mx - 8, my - 18, 16, _cv('--status-warn'));
     }
 }
 function _roundRect(ctx, x, y, w, h, r) {

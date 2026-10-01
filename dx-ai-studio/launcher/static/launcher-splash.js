@@ -2,83 +2,174 @@
 (function() {
   var ns = window.DXLauncher;
 
-  var _MODULE_ICONS = {
-    app: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="14" cy="10" r="1.5"/></svg>',
-    stream: '<svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="5"/><circle cx="12" cy="10" r="2"/><path d="M4 18 Q8 14 12 16 Q16 18 20 14"/></svg>',
-    zoo: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
-    compiler: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4 V8 M12 16 V20 M4 12 H8 M16 12 H20"/><circle cx="12" cy="12" r="3"/></svg>',
-    edgeguide: '<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="6" y1="2" x2="6" y2="6"/><line x1="18" y1="2" x2="18" y2="6"/><line x1="6" y1="18" x2="6" y2="22"/><line x1="18" y1="18" x2="18" y2="22"/><path d="M20 12 L23 12"/></svg>',
-    benchmark: '<svg viewBox="0 0 24 24"><path d="M12 2 A10 10 0 0 1 22 12"/><path d="M12 2 A10 10 0 0 0 2 12"/><line x1="12" y1="12" x2="17" y2="7"/><circle cx="12" cy="12" r="2"/></svg>',
-    monitor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="12" rx="2"/><path d="M8 19h8M12 15v4"/><path d="M7 9l3 3 4-4 3 3"/></svg>',
-    agent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/></svg>',
-  };
-  ns._MODULE_ICONS = _MODULE_ICONS;
+  /* 인트로.
+   *
+   * 앞선 시도들은 전부 장르를 빌려왔다 — 네온 회로, 그리고 강착원반을 두른
+   * 블랙홀. 레퍼런스를 "어떻게 판단할지"가 아니라 "무엇을 그릴지"로 받으면
+   * 매번 남의 영화 포스터를 제품 앞에 붙이게 된다.
+   *
+   * 그래서 애플과 구글 광고의 문법을 찾아 읽고 그대로 적용했다.
+   *
+   * 애플: hero reveal → detail → context shot(제품이 실제로 쓰이는 장면) → 주장
+   * 하나. 파는 것은 광고가 아니라 제품이다. 그리고:
+   *
+   *   · 피사체는 하나, 무대는 검은 여백 (요소 주변 최소 20%)
+   *   · 카메라는 한 번만 움직이고, 그 움직임이 무언가를 드러낸다
+   *   · transform 과 opacity 만 애니메이션한다 (compositor-friendly)
+   *   · 스프링: damping 1.0, response 0.3–0.4s. 급히 시작하거나 멈추지 않는다
+   *   · 큰 글자는 자간을 조이고(-0.02em), 타입은 마지막에 온다
+   *   · 시그니처는 표면을 훑고 지나가는 하드 스페큘러
+   *   · reduced motion 은 opacity 크로스페이드로 대체
+   *
+   * 구글 〈Parisian Love〉: 60초 전체를 배우도 대사도 그림도 없이, 제품의
+   * 입력창에 타이핑되는 문장들만으로 끌고 간다. 추론이 일을 한다.
+   *
+   * 두 레퍼런스가 같은 곳을 가리킨다. 이 제품의 전제가 "원하는 걸 말하면
+   * 만들어준다"이므로, 애플의 context shot 과 구글의 검색어 시퀀스는 같은
+   * 장면이다 — 제품이 일하는 장면. 그래서 인트로는 세 박자다:
+   *
+   *   1. hero    로고타입이 가공된 물체로 도착하고, 빛이 표면을 훑는다
+   *   2. work    프롬프트 셋이 타이핑되고, 스튜디오가 모듈로 답한다
+   *   3. close   프롬프트가 걷히고 마크가 이름과 함께 남는다
+   *
+   * 2번의 문구는 지어낸 카피가 아니다 — 홈의 Build 예시 칩에 이미 있고 이미
+   * 6개 언어로 번역돼 있는 실제 프롬프트다. 답은 그 요청을 실제로 맡는 모듈
+   * 이름이고, 모듈명은 고유명사라 번역이 필요 없다. 광고가 주장하는 것이
+   * 아니라 제품이 하는 일을 그대로 보여주는 것이다. */
+
+  /* 타이핑은 setTimeout 스케줄이지 프레임 루프가 아니다. 글자 수가 언어마다
+     다르므로 글자당 속도가 아니라 총 시간을 고정한다 — 한국어와 영어가 같은
+     박자로 끝나야 시퀀스가 어긋나지 않는다. */
+  var _TYPE_MS = 900;
+  var _BEAT = 1950;
+  /* 박자마다 길이가 다를 수 있다 — Stream 은 장면이 세 번 움직이므로 (box · pull-back · 물결)
+     길다 (intro-stream.js). answerAt 은 대답이 오는 때: 장면이 할 말을 다 한 뒤 — 그리고 대답을
+     읽을 시간을 준다. 처음 0.9s 는 "나오자마자 넘어간다", 2.4s 는 "넘어갈 때가 길다" 는 사용자
+     피드백이었다 — 지금은 약 1.7–1.8s. note 는 대답에
+     붙는 실측 한 줄 — img/intro/stream/MEASURED.md. 16 × 30 fps 는 NPU 로는 넘지만 이 host (N97)
+     의 end-to-end 는 채널당 약 18 fps 라서, 참인 NPU 수치로 말한다 (2026-09-30 사용자 결정). */
+  var _WORK = [
+    { ask: '16-channel CCTV object detection', by: 'Stream', note: '16 channels on one DX-M1 · 495 fps NPU',
+      ms: 4700, answerAt: 2600, scene: 'stream' },
+    { ask: 'segment a video file', by: 'App', note: 'segformer · 200 fps on one DX-M1',
+      ms: 4600, answerAt: 2650, scene: 'app' },
+    { ask: 'compile yolo26n to DXNN', by: 'Compiler', note: 'yolo26n → DXNN · 212 fps on DX-M1',
+      ms: 4600, answerAt: 2650, scene: 'compile' }
+  ];
+  /* 박자마다 화면을 채우는 장면 — 셋 다 prepare / play / stop 모양이다. 장면이 준비되지 않았으면
+     (느린 tunnel · 그림 없음) 박자는 prompt 만으로 간다. */
+  function _scene(name) {
+    return { stream: window.DXIntroStream, app: window.DXIntroApp, compile: window.DXIntroCompile }[name];
+  }
+  var _SCENES = ['stream', 'app', 'compile'];
+  function _ms(item) { return item.ms || _BEAT; }
+  var _WORK_MS = _WORK.reduce(function (sum, item) { return sum + _ms(item); }, 0);
+  /* hero 의 부제("AI Studio")는 CSS 가 1.9s 에 띄운다. work 는 그게 자리를
+     잡고 한 박자 쉰 다음에 시작해야 한다 — 처음엔 2.8s 로 잡았더니 부제가
+     250ms 만에 밀려나서, 있었는지도 모르게 지나갔다. */
+  var _WORK_IN  = 3400;
+  var _CLOSE    = _WORK_IN + _WORK_MS;         /* 17300 */
+  /* close 는 주장 하나로 닫는다. 읽을 시간이 필요하므로 hero 로 돌아오는
+     것보다 길게 잡는다 — 한 문장을 못 읽고 끝나면 없느니만 못하다. */
+  var _INTRO    = _CLOSE + 2600;              /* 19900 */
+
+  function _t(key) {
+    return (window.DXI18n && window.DXI18n.T) ? window.DXI18n.T(key) : key;
+  }
+
+  function _later(fn, ms) { ns._splashTimers.push(setTimeout(fn, ms)); }
+
+  function _type(el, text) {
+    var i = 0;
+    var step = Math.max(18, Math.round(_TYPE_MS / Math.max(text.length, 1)));
+    el.textContent = '';
+    (function tick() {
+      if (i >= text.length) return;
+      i += 1;
+      el.textContent = text.slice(0, i);
+      _later(tick, step);
+    })();
+  }
+
+  /* 한 박자: 요청이 타이핑되고, 스튜디오가 답하고, 둘 다 물러난다. */
+  function _beat(item, index, at) {
+    var cue = document.getElementById('splashCue');
+    var text = document.getElementById('splashCueText');
+    var answer = document.getElementById('splashCueAnswer');
+    if (!cue || !text || !answer) return;
+    _later(function () {
+      cue.classList.remove('is-answered', 'is-out');
+      cue.setAttribute('data-beat', String(index));
+      answer.textContent = item.note ? item.by + ' \u00b7 ' + _t(item.note) : item.by;
+      /* is-scene (prompt 를 아래로, logo 는 비킨다) 은 여기 한 곳이 박자마다 정한다. 장면이 각자
+         끄던 때는 앞 장면이 늦게 시작한 날 그 timer 가 다음 장면이 켠 뒤에 돌아, Compiler 도중
+         prompt 가 가운데로 튀어 칩과 겹쳤다 (간헐 — 여유가 9–15ms 였다). */
+      var ov = document.getElementById('splashOverlay');
+      var scene = item.scene && _scene(item.scene);
+      var played = !!(scene && scene.play(ov, _ms(item)));
+      if (ov) ov.classList.toggle('is-scene', played);
+      _type(text, _t(item.ask));
+    }, at);
+    _later(function () { cue.classList.add('is-answered'); }, at + (item.answerAt || _TYPE_MS + 260));
+    _later(function () { cue.classList.add('is-out'); }, at + _ms(item) - 260);
+  }
 
   function initSplashV2() {
     if (sessionStorage.getItem('dx-splash-seen')) {
-      var ov = document.getElementById('splashOverlay');
-      if (ov) ov.remove();
-      ns._splashActive = false;
+      var ov0 = document.getElementById('splashOverlay');
+      if (ov0) ov0.remove();
+      revealMainContent();
       return false;
     }
-
+    sessionStorage.setItem('dx-splash-seen', '1');
     ns._splashActive = true;
-    // Conceal (not remove) the gate under the full-screen splash so an early skip can
-    // re-show it while the studio is still booting instead of blanking the screen.
     if (typeof ns.hideStudioBootGate === 'function') ns.hideStudioBootGate({ conceal: true });
-    var isSmall = window.innerWidth < 400;
-    var totalDuration = isSmall ? 8500 : 17500;
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      ns._splashTimers.push(setTimeout(skipSplash, 2000));
+    var overlay = document.getElementById('splashOverlay');
+
+    /* 움직임을 줄여 달라고 한 사람에게는 크로스페이드. */
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!still) _SCENES.forEach(function (name) { var s = _scene(name); if (s) s.prepare(); });
+    if (still) {
+      if (overlay) overlay.classList.add('is-still');
+      ns._splashTimers.push(setTimeout(skipSplash, 700));
       return true;
     }
 
-    _createCircuitTraces();
-    _createParticles(isSmall ? 8 : 15);
+    /* 한 프레임 뒤에 시작해야 초기 상태가 실제로 칠해진 뒤 전환이 걸린다.
 
-    ns._splashTimers.push(setTimeout(function() {
-      var scanline = document.querySelector('.splash-scanline');
-      if (scanline) scanline.classList.add('visible');
-    }, 2500));
+       그리고 컷의 시계는 여기서, 시퀀스가 실제로 시작한 프레임에서 출발한다.
+       initSplashV2 가 불린 순간부터 재면 부팅이 메인 스레드를 붙잡고 있는 동안
+       예산이 흘러가 버린다 — 실측으로 첫 프레임까지 1.2초가 걸렸고, 3.6초짜리
+       인트로가 2.4초만에 잘렸다. 느린 기기일수록 더 잘린다. */
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (overlay) overlay.classList.add('is-running');
 
-    ns._splashTimers.push(setTimeout(function() { _animateLogoGlitch(); }, 500));
-    ns._splashTimers.push(setTimeout(function() { _animateLogoStabilize(); }, 1800));
-    ns._splashTimers.push(setTimeout(function() { _animateLogoLock(); }, 2400));
+        /* 2. work — 이름이 물러나고 그 자리에서 제품이 일한다. */
+        _later(function () { if (overlay) overlay.classList.add('is-working'); }, _WORK_IN - 400);
+        for (var i = 0, at = _WORK_IN; i < _WORK.length; at += _ms(_WORK[i]), i++) {
+          _beat(_WORK[i], i, at);
+        }
 
-    ns._splashTimers.push(setTimeout(function() {
-      var sub = document.getElementById('splashSubtitle');
-      if (sub) sub.classList.add('typing');
-    }, 2800));
+        /* 3. close — 프롬프트가 걷히고 마크가 이름과 함께 남는다. */
+        _later(function () {
+          if (!overlay) return;
+          overlay.classList.remove('is-working', 'is-scene');
+          overlay.classList.add('is-closed');
+        }, _CLOSE);
 
-    if (!isSmall) {
-      var beamSvg = document.getElementById('splashBeams');
-      if (beamSvg) beamSvg.setAttribute('viewBox', '0 0 ' + window.innerWidth + ' ' + window.innerHeight);
-      ns._SPLASH_MODULES.forEach(function(mod, i) {
-        ns._splashTimers.push(setTimeout(function() { _bootModule(mod, i); }, 4000 + i * 500));
+        /* 마지막: 앱을 켜고 마크째로 나간다 — 페이드가 아니라 컷이다. */
+        _later(function () {
+          if (typeof ns.completeLauncherBoot === 'function') {
+            ns.completeLauncherBoot({ revealAnimation: 'skip' });
+          }
+          if (overlay) overlay.classList.add('is-through');
+          _later(function () { skipSplash(); }, 300);
+        }, _INTRO);
       });
-    } else {
-      var area = document.getElementById('splashModulesArea');
-      if (area) {
-        ns._SPLASH_MODULES.forEach(function(mod, i) {
-          ns._splashTimers.push(setTimeout(function() {
-            var el = document.createElement('div');
-            el.className = 'splash-hud-frame';
-            var name = document.createElement('div');
-            name.className = 'splash-module-name';
-            name.textContent = mod.name;
-            name.style.width = 'auto';
-            el.appendChild(name);
-            area.appendChild(el);
-          }, 4000 + i * 200));
-        });
-      }
-    }
+    });
 
-    ns._splashTimers.push(setTimeout(_showEnergyGauge, isSmall ? 4000 : 8200));
-    ns._splashTimers.push(setTimeout(_activateCore, isSmall ? 4500 : 11000));
-    ns._splashTimers.push(setTimeout(_triggerWarpJump, isSmall ? 6000 : 14000));
-    ns._splashTimers.push(setTimeout(_showProceedPrompt, totalDuration));
     return true;
   }
 
@@ -89,6 +180,8 @@
 
     ns._splashTimers.forEach(function(id) { clearTimeout(id); });
     ns._splashTimers.length = 0;
+    ns._splashActive = false;
+    _SCENES.forEach(function (name) { var s = _scene(name); if (s) s.stop(); });
     if (ns._decodeRAF) { cancelAnimationFrame(ns._decodeRAF); ns._decodeRAF = null; }
     if (window._splashParticleCleanup) window._splashParticleCleanup();
 
@@ -117,25 +210,6 @@
     }, 800);
   }
 
-  function _showProceedPrompt() {
-    var ov   = document.getElementById('splashOverlay');
-    var skip = ov && ov.querySelector('.splash-skip');
-    if (!skip) return;
-
-    ov.setAttribute('onclick', 'skipSplash(false)');
-
-    skip.innerHTML =
-      '<span class="splash-skip-key">↵ ENTER</span>' +
-      '<span class="splash-skip-sep"> &nbsp;·&nbsp; </span>' +
-      '<span class="ko">클릭하여 시작</span>' +
-      '<span class="en">CLICK TO ENTER</span>' +
-      '<span class="ja">クリックして開始</span>' +
-      '<span class="zh-CN">点击进入</span>' +
-      '<span class="zh-TW">點擊進入</span>' +
-      '<span class="es">HAGA CLIC PARA ENTRAR</span>';
-    skip.classList.add('ready');
-  }
-
   function replaySplash() {
     var existing = document.getElementById('splashOverlay');
     if (existing) existing.remove();
@@ -147,491 +221,35 @@
     ov.id = 'splashOverlay';
     ov.setAttribute('onclick', 'skipSplash(true)');
     ov.innerHTML =
-      '<div class="splash-grid"></div>' +
-      '<div class="splash-scanline"></div>' +
-      '<div class="splash-vignette"></div>' +
-      '<div class="splash-ring splash-ring-sm"></div>' +
-      '<div class="splash-ring splash-ring-md"></div>' +
-      '<div class="splash-ring splash-ring-lg"></div>' +
-      '<svg class="splash-circuits" id="splashCircuits" preserveAspectRatio="xMidYMid meet">' +
-        '<defs>' +
-          '<filter id="glowFilter">' +
-            '<feGaussianBlur stdDeviation="3" result="blur"/>' +
-            '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
-          '</filter>' +
-        '</defs>' +
-      '</svg>' +
-      '<div class="splash-pulses" id="splashPulses"></div>' +
-      '<div class="splash-particles" id="splashParticles"></div>' +
-      '<div class="splash-logo-hud" id="splashLogoHud">' +
-        '<div class="splash-logo" id="splashLogo">' +
-          '<span class="logo-char" data-char="D">D</span><span class="logo-char" data-char="E">E</span><span class="logo-char" data-char="E">E</span><span class="logo-char" data-char="P">P</span><span class="logo-char" data-char="X">X</span>' +
-          '<div class="logo-scanline" id="logoScanline"></div>' +
-        '</div>' +
-        '<div class="splash-subtitle" id="splashSubtitle">AI Studio</div>' +
+      '<div class="mark" id="splashMark">' +
+        '<span class="mark-face" aria-hidden="true"></span>' +
+        '<span class="mark-sweep" aria-hidden="true">' +
+          '<span class="mark-shine"></span>' +
+        '</span>' +
+        '<span class="mark-floor" aria-hidden="true">' +
+          '<span class="mark-face"></span>' +
+        '</span>' +
+        '<span class="mark-a11y">DEEPX</span>' +
       '</div>' +
-      '<div class="splash-core-text" id="splashCoreText">' +
-        '<span class="ko">전체 시스템 가동</span>' +
-        '<span class="en">ALL SYSTEMS ONLINE</span>' +
-        '<span class="ja">全システム稼働中</span>' +
-        '<span class="zh-CN">全部系统已上线</span>' +
-        '<span class="zh-TW">全部系統已上線</span>' +
-        '<span class="es">TODOS LOS SISTEMAS EN LÍNEA</span>' +
+      '<div class="mark-slot">' +
+        '<p class="mark-sub" id="splashSubtitle">AI Studio</p>' +
+        '<blockquote class="mark-claim">' +
+          '<p class="claim-line">' +
+            '<span class="claim-a">\u201cThe center of gravity in AI is shifting</span> ' +
+            '<span class="claim-b">from the cloud to <em>the physical world</em>.\u201d</span>' +
+          '</p>' +
+          '<footer class="claim-by">Lokwon Kim \u00b7 Founder &amp; CEO, DEEPX \u00b7 CES 2026</footer>' +
+        '</blockquote>' +
+      '<div class="mark-cue" id="splashCue" aria-hidden="true">' +
+        '<span class="cue-line"><span class="cue-text" id="splashCueText"></span>' +
+        '<i class="cue-caret"></i></span>' +
+        '<span class="cue-answer" id="splashCueAnswer"></span>' +
       '</div>' +
-      '<svg class="splash-beams" id="splashBeams"></svg>' +
-      '<div class="splash-modules-area" id="splashModulesArea"></div>' +
-      '<div class="splash-burst" id="splashBurst"></div>' +
-      '<div class="splash-skip">' +
-        '<span class="ko">클릭하여 건너뛰기</span>' +
-        '<span class="en">Click to skip</span>' +
-        '<span class="ja">クリックでスキップ</span>' +
-        '<span class="zh-CN">点击跳过</span>' +
-        '<span class="zh-TW">點擊跳過</span>' +
-        '<span class="es">Clic para omitir</span>' +
-      '</div>';
+      '</div>' +
+      '<div class="splash-skip" data-i18n="Click to skip">Click to skip</div>';
     document.body.insertBefore(ov, document.body.firstChild);
     initSplashV2();
   }
-
-
-  function _createCircuitTraces() {
-    var svg = document.getElementById('splashCircuits');
-    if (!svg) return;
-    var w = window.innerWidth, h = window.innerHeight;
-    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-    var cx = w / 2, cy = h / 2;
-    var _tracePaths = [];
-
-    var moduleCount = Math.max(1, ns._SPLASH_MODULES.length);
-    var step = 360 / moduleCount;
-    var mainAngles = ns._SPLASH_MODULES.map(function(_mod, i) {
-      return 22.5 + i * step;
-    });
-    var hudClearance = 80;
-    mainAngles.forEach(function(deg, i) {
-      var rad = deg * Math.PI / 180;
-      var len = Math.min(w, h) * 0.45;
-      var sx = cx + hudClearance * Math.cos(rad), sy = cy + hudClearance * Math.sin(rad);
-      var ex = cx + len * Math.cos(rad), ey = cy + len * Math.sin(rad);
-      var mx = cx + len * 0.4 * Math.cos(rad + 0.1);
-      var my = cy + len * 0.4 * Math.sin(rad + 0.1);
-      _addTrace(svg, _tracePaths, 'M' + sx + ',' + sy + ' Q' + mx + ',' + my + ' ' + ex + ',' + ey, i * 0.08);
-
-      for (var b = 0; b < 2 + Math.floor(i % 3); b++) {
-        var branchStart = 0.3 + b * 0.25;
-        var bx = cx + len * branchStart * Math.cos(rad);
-        var by = cy + len * branchStart * Math.sin(rad);
-        var bAngle = rad + (b % 2 === 0 ? 0.5 : -0.5);
-        var bLen = len * 0.2;
-        var bex = bx + bLen * Math.cos(bAngle);
-        var bey = by + bLen * Math.sin(bAngle);
-        _addTrace(svg, _tracePaths, 'M' + bx + ',' + by + ' L' + bex + ',' + bey, i * 0.08 + 0.3 + b * 0.1);
-      }
-    });
-
-    requestAnimationFrame(function() {
-      var pending = [];
-      _tracePaths.forEach(function(item) {
-        if (!ns._TRACE_LENGTH_CACHE.has(item.d)) pending.push(item);
-      });
-
-      function applyTraceStyles() {
-        _tracePaths.forEach(function(item) {
-          var len = ns._TRACE_LENGTH_CACHE.get(item.d) || 300;
-          item.path.style.setProperty('--trace-len', len);
-          item.path.style.setProperty('--trace-delay', item.delay + 's');
-          item.path.style.strokeDasharray = len;
-          item.path.style.strokeDashoffset = len;
-        });
-      }
-
-      function appendCircuitNodes() {
-        var nodeContainer = document.getElementById('splashOverlay');
-        if (nodeContainer) {
-          var nodeRadius = Math.min(Math.min(w, h) * 0.22, 200);
-          var frag = document.createDocumentFragment();
-          mainAngles.forEach(function(deg) {
-            var rad = deg * Math.PI / 180;
-            var nx = cx + nodeRadius * Math.cos(rad);
-            var ny = cy + nodeRadius * Math.sin(rad);
-            var dot = document.createElement('div');
-            dot.className = 'splash-circuit-node';
-            dot.style.left = nx + 'px';
-            dot.style.top  = ny + 'px';
-            frag.appendChild(dot);
-          });
-          nodeContainer.appendChild(frag);
-        }
-      }
-
-      if (!pending.length) {
-        applyTraceStyles();
-        appendCircuitNodes();
-        return;
-      }
-
-      var idx = 0;
-      function measureChunk(deadline) {
-        var hasIdleBudget = deadline && typeof deadline.timeRemaining === 'function';
-        do {
-          var item = pending[idx++];
-          ns._TRACE_LENGTH_CACHE.set(item.d, item.path.getTotalLength());
-        } while (idx < pending.length && (!hasIdleBudget || deadline.timeRemaining() > 4));
-
-        if (idx < pending.length) {
-          _requestIdle(measureChunk);
-        } else {
-          requestAnimationFrame(function() {
-            applyTraceStyles();
-            appendCircuitNodes();
-          });
-        }
-      }
-
-      _requestIdle(measureChunk);
-    });
-  }
-
-  function _requestIdle(fn) {
-    if (window.requestIdleCallback) {
-      window.requestIdleCallback(fn, { timeout: 120 });
-    } else {
-      setTimeout(function() { fn({ timeRemaining: function() { return 8; } }); }, 0);
-    }
-  }
-
-  function _addTrace(svg, collector, d, delay) {
-    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', d);
-    svg.appendChild(path);
-    collector.push({ path: path, delay: delay, d: d });
-  }
-
-
-  function _createParticles(count) {
-    var container = document.getElementById('splashParticles');
-    if (!container) return;
-
-    var canvas = document.createElement('canvas');
-    canvas.className = 'splash-particle-canvas';
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    container.appendChild(canvas);
-
-    var ctx = canvas.getContext('2d');
-    var particles = [];
-
-    for (var i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: 2 + Math.random() * 6,
-        baseOpacity: 0.3 + Math.random() * 0.4,
-        speed: 0.3 + Math.random() * 0.5,
-        dy: -20 - Math.random() * 30,
-        dx: -15 + Math.random() * 30,
-        phase: Math.random() * Math.PI * 2,
-        period: 3 + Math.random() * 2
-      });
-    }
-
-    var startTime = performance.now();
-    var animId;
-
-    function draw(now) {
-      var elapsed = (now - startTime) / 1000;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      particles.forEach(function(p) {
-        var t = (elapsed / p.period + p.phase) % 1;
-        var easedT = Math.sin(t * Math.PI * 2) * 0.5 + 0.5;
-        var offsetX = p.dx * easedT;
-        var offsetY = p.dy * easedT;
-        var opacity = p.baseOpacity * (0.5 + 0.5 * Math.sin(elapsed * 1.5 + p.phase));
-
-        ctx.beginPath();
-        ctx.arc(p.x + offsetX, p.y + offsetY, p.size / 2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(99, 140, 255, ' + opacity + ')';
-        ctx.fill();
-      });
-
-      animId = requestAnimationFrame(draw);
-    }
-
-    animId = requestAnimationFrame(draw);
-
-    window._splashParticleCleanup = function() {
-      if (animId) cancelAnimationFrame(animId);
-    };
-  }
-
-
-  function _animateLogoGlitch() {
-    var logo = document.getElementById('splashLogo');
-    if (!logo) return;
-    var chars = logo.querySelectorAll('.logo-char');
-    var scanline = document.getElementById('logoScanline');
-    if (!chars.length) return;
-
-    chars.forEach(function(c) { c.classList.add('decoding'); });
-    if (scanline) scanline.classList.add('active');
-
-    var total = chars.length;
-    var cycleDuration = 1600;
-    var lockInterval = cycleDuration / total;
-    var startTime = performance.now();
-    var lockedCount = 0;
-    var lastDecodeUpdate = 0;
-
-    function tick(now) {
-      var elapsed = now - startTime;
-
-      var shouldLock = Math.min(total, Math.floor(elapsed / lockInterval));
-      while (lockedCount < shouldLock) {
-        var c = chars[lockedCount];
-        if (c.textContent !== c.dataset.char) c.textContent = c.dataset.char;
-        c.classList.remove('decoding');
-        c.classList.add('decoded');
-        lockedCount++;
-      }
-
-      if (now - lastDecodeUpdate >= ns._DECODE_FRAME_INTERVAL) {
-        for (var i = lockedCount; i < total; i++) {
-          var next = ns._DECODE_CHARS[Math.random() * ns._DECODE_CHARS.length | 0];
-          if (chars[i].textContent !== next) chars[i].textContent = next;
-        }
-        lastDecodeUpdate = now;
-      }
-
-      if (lockedCount < total) {
-        ns._decodeRAF = requestAnimationFrame(tick);
-      } else {
-        if (scanline) scanline.classList.remove('active');
-      }
-    }
-
-    ns._decodeRAF = requestAnimationFrame(tick);
-  }
-
-  function _animateLogoStabilize() {
-    var logo = document.getElementById('splashLogo');
-    if (!logo) return;
-    if (ns._decodeRAF) { cancelAnimationFrame(ns._decodeRAF); ns._decodeRAF = null; }
-    logo.querySelectorAll('.logo-char').forEach(function(c) {
-      c.textContent = c.dataset.char;
-      c.classList.remove('decoding');
-      c.classList.add('decoded');
-    });
-    logo.classList.remove('glitch');
-    logo.classList.add('stabilize');
-  }
-
-  function _animateLogoLock() {
-    var logo = document.getElementById('splashLogo');
-    var hud  = document.getElementById('splashLogoHud');
-    if (logo) { logo.classList.remove('stabilize'); logo.classList.add('locked'); }
-    if (hud)  { hud.classList.add('locked'); }
-  }
-
-
-  function _bootModule(mod, index) {
-    var area = document.getElementById('splashModulesArea');
-    var beamSvg = document.getElementById('splashBeams');
-    if (!area || !beamSvg) return;
-
-    var w = window.innerWidth, h = window.innerHeight;
-    var cx = w / 2, cy = h / 2;
-    var rad = (mod.angle - 90) * Math.PI / 180;
-    var radius = Math.max(Math.min(Math.min(w, h) * 0.42, 340), 200);
-    var mx = cx + radius * Math.cos(rad);
-    var my = cy + radius * Math.sin(rad);
-
-    var hudClearance = 80;
-    var bsx = cx + hudClearance * Math.cos(rad);
-    var bsy = cy + hudClearance * Math.sin(rad);
-    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', bsx);
-    line.setAttribute('y1', bsy);
-    line.setAttribute('x2', mx);
-    line.setAttribute('y2', my);
-    var beamLen = Math.sqrt(Math.pow(mx - bsx, 2) + Math.pow(my - bsy, 2));
-    line.style.setProperty('--beam-len', beamLen);
-    line.style.strokeDasharray = beamLen;
-    line.style.strokeDashoffset = beamLen;
-    beamSvg.appendChild(line);
-    requestAnimationFrame(function() { line.classList.add('fire'); });
-
-    ns._splashTimers.push(setTimeout(function() {
-      var shock = document.createElement('div');
-      shock.className = 'splash-shockwave';
-      shock.style.left = (mx - 60) + 'px';
-      shock.style.top = (my - 60) + 'px';
-      area.appendChild(shock);
-      setTimeout(function() { shock.remove(); }, 400);
-    }, 150));
-
-    ns._splashTimers.push(setTimeout(function() {
-      var frame = document.createElement('div');
-      frame.className = 'splash-hud-frame';
-      var isMobile = window.innerWidth < 600;
-      var halfW = isMobile ? 30 : 55;
-      var halfH = isMobile ? 24 : 42;
-      frame.style.left = (mx - halfW) + 'px';
-      frame.style.top = (my - halfH) + 'px';
-
-      var iconWrap = document.createElement('div');
-      iconWrap.className = 'splash-module-icon';
-      iconWrap.innerHTML = _MODULE_ICONS[mod.icon] || '';
-      frame.appendChild(iconWrap);
-
-      var nameEl = document.createElement('div');
-      nameEl.className = 'splash-module-name';
-      nameEl.textContent = mod.name;
-      nameEl.style.setProperty('--name-len', mod.name.length);
-      nameEl.style.setProperty('--name-width', (mod.name.length * 6.5) + 'px');
-      frame.appendChild(nameEl);
-
-      var status = document.createElement('div');
-      status.className = 'splash-module-status';
-      status.textContent = 'ONLINE';
-      frame.appendChild(status);
-
-      area.appendChild(frame);
-      requestAnimationFrame(function() {
-        frame.classList.add('appear');
-        iconWrap.classList.add('draw');
-      });
-
-      ns._splashTimers.push(setTimeout(function() { nameEl.classList.add('typing'); }, 100));
-      ns._splashTimers.push(setTimeout(function() { status.classList.add('online'); }, 250));
-    }, 200));
-  }
-
-
-  function _showEnergyGauge() {
-    var ov = document.getElementById('splashOverlay');
-    if (!ov) return;
-
-    var gauge = document.createElement('div');
-    gauge.className = 'energy-gauge';
-    gauge.innerHTML =
-      '<svg viewBox="0 0 80 80">' +
-        '<circle class="gauge-track" cx="40" cy="40" r="34"/>' +
-        '<circle class="gauge-fill" cx="40" cy="40" r="34"/>' +
-      '</svg>' +
-      '<span class="gauge-pct">0%</span>';
-    ov.appendChild(gauge);
-
-    var frames = document.querySelectorAll('.splash-hud-frame');
-    frames.forEach(function(frame) {
-      var dot = document.createElement('div');
-      dot.className = 'charge-dot charging';
-      frame.appendChild(dot);
-    });
-
-    var pctEl = gauge.querySelector('.gauge-pct');
-    var startTime = performance.now();
-    var duration = 2500;
-    function tick(now) {
-      var p = Math.min((now - startTime) / duration, 1);
-      var val = Math.round(p * 100);
-      if (pctEl) pctEl.textContent = val + '%';
-      if (p < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-
-
-  function _activateCore() {
-    var gauge = document.querySelector('.energy-gauge');
-    if (gauge) {
-      gauge.classList.add('fired');
-      setTimeout(function() { gauge.remove(); }, 400);
-    }
-
-    document.querySelectorAll('.charge-dot.charging').forEach(function(dot) {
-      dot.classList.remove('charging');
-      dot.classList.add('firing');
-      setTimeout(function() { dot.remove(); }, 400);
-    });
-
-    var textEl = document.getElementById('splashCoreText');
-    var beamSvg = document.getElementById('splashBeams');
-    if (!textEl) return;
-
-    var w = window.innerWidth, h = window.innerHeight;
-    var cy = h / 2;
-
-    var targetX = w - 120;
-    var targetY = cy;
-
-    var moduleFrames = document.querySelectorAll('.splash-hud-frame');
-    if (beamSvg && moduleFrames.length) {
-      moduleFrames.forEach(function(frame) {
-        var rect = frame.getBoundingClientRect();
-        var fx = rect.left + rect.width / 2;
-        var fy = rect.top + rect.height / 2;
-        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', fx);
-        line.setAttribute('y1', fy);
-        line.setAttribute('x2', targetX);
-        line.setAttribute('y2', targetY);
-        line.classList.add('core-laser');
-        var len = Math.sqrt(Math.pow(targetX - fx, 2) + Math.pow(targetY - fy, 2));
-        var segLen = Math.min(len * 0.15, 40);
-        line.style.setProperty('--beam-len', len);
-        line.style.strokeDasharray = segLen + ' ' + (len + segLen);
-        line.style.strokeDashoffset = len;
-        beamSvg.appendChild(line);
-      });
-      requestAnimationFrame(function() {
-        beamSvg.querySelectorAll('.core-laser').forEach(function(l) { l.classList.add('fire'); });
-      });
-    }
-
-    var _splLang = localStorage.getItem('dx-lang') || 'en';
-    var _splTexts = { en: 'ALL SYSTEMS ONLINE', ko: '전체 시스템 가동', ja: '全システム起動', 'zh-CN': '全系统启动', 'zh-TW': '全系統啟動', es: 'TODOS LOS SISTEMAS EN LÍNEA' };
-    var fullText = _splTexts[_splLang] || _splTexts.en;
-    textEl.innerHTML = '';
-    textEl.style.opacity = '1';
-    textEl.classList.add('typing');
-
-    var charIdx = 0;
-    ns._splashTimers.push(setTimeout(function typeChar() {
-      if (charIdx < fullText.length) {
-        textEl.textContent = fullText.substring(0, charIdx + 1);
-        charIdx++;
-        ns._splashTimers.push(setTimeout(typeChar, 100));
-      } else {
-        ns._splashTimers.push(setTimeout(function() {
-          textEl.classList.remove('typing');
-          textEl.classList.add('typed');
-        }, 400));
-      }
-    }, 300));
-  }
-
-  function _triggerWarpJump() {
-    var ov = document.getElementById('splashOverlay');
-    if (!ov) return;
-
-    ov.classList.add('warp-compress');
-
-    ns._splashTimers.push(setTimeout(function() {
-      ov.classList.add('dissolve-out');
-      sessionStorage.setItem('dx-splash-seen', '1');
-      ns._splashActive = false;
-      if (typeof ns.completeLauncherBoot === 'function') {
-        ns.completeLauncherBoot({ revealAnimation: 'normal' });
-      }
-    }, 700));
-
-    ns._splashTimers.push(setTimeout(function() {
-      ov.remove();
-      if (typeof ns.tryCompleteLauncherBoot === 'function') ns.tryCompleteLauncherBoot();
-    }, 1300));
-  }
-
 
   function showHeroSplash() {
     var hero = document.getElementById('heroSplash');

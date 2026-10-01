@@ -10,6 +10,7 @@ from pathlib import Path
 from shared.dx_server import DXBaseHandler, DXServer
 from shared.chat import ChatEngine
 from dx_planner.core.aggregator import aggregate_benchmarks as _aggregate
+from shared.shell import ShellSpec
 
 DEFAULT_PORT = 8096
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -35,12 +36,20 @@ _chat_engine = ChatEngine(
 )
 
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 워크스페이스 단일 화면이라 탭 행이 없다 — 템플릿 루트에 .dx-shell--no-tabs 를 붙였다.
+DX_PLANNER_SHELL = ShellSpec(
+    module_key="edge",
+)
+
 class DXPlannerHandler(DXBaseHandler):
     """DX EdgeGuide HTTP 요청 핸들러."""
 
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_PLANNER_SHELL
     log_silent = True
 
     def route(self):

@@ -23,6 +23,7 @@ from shared.runtime_profile import ContractCheck
 from shared.runtime_validation import validate_stream_pipeline
 from dx_stream.core import config, demos, elements, gst_env, models, setup, status
 from dx_stream.core.config import DEFAULT_PORT, STATIC_DIR, TEMPLATES_DIR, SERVER_NAME
+from shared.shell import ShellSpec
 
 log = logging.getLogger(__name__)
 WEBRTC_INITIAL_ERROR_TIMEOUT = 0.25
@@ -256,12 +257,46 @@ _chat_engine = ChatEngine(
 )
 
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 좌측 240px 사이드바를 없애고 페이지 8개를 상단 탭 행으로 올렸다.
+# 라벨은 영어 원문 = i18n 사전 키. 아이콘 id는 shared/static/dx-icons.svg.
+DX_STREAM_PAGES = (
+    ("setup", "Setup", "setup"),
+    ("dashboard", "Dashboard", "dashboard"),
+    ("demo", "Demo Launcher", "run"),
+    ("pipeline", "Pipeline Builder", "stream"),
+    ("models", "Model Catalog", "models"),
+    ("elements", "Element Reference", "puzzle"),
+    ("custom", "Custom Library", "wrench"),
+    ("reference", "Reference", "book"),
+)
+
+# 파이프라인 상태 배지는 dx_stream 고유 컨트롤이라 공유 헤더의 .toolbar 슬롯
+# 안으로 넣는다. 밖에 두면 DXToolbar가 만드는 버튼들과 정렬이 어긋난다.
+# 언어별 sibling span 은 레거시 i18n 경로 — Phase 7에서 data-i18n 으로 바뀐다.
+_PIPELINE_BADGE = (
+    '<span class="stream-badge" id="pipeline-status">'
+    '<span class="ko">대기</span><span class="en">Idle</span>'
+    '<span class="es">Inactivo</span><span class="ja">待機</span>'
+    '<span class="zh-CN">待机</span><span class="zh-TW">待機</span>'
+    "</span>"
+)
+
+DX_STREAM_SHELL = ShellSpec(
+    module_key="stream",
+    pages=DX_STREAM_PAGES,
+    active_page="dashboard",
+    toolbar_extra=_PIPELINE_BADGE,
+)
+
 class DXStreamHandler(DXBaseHandler):
     """DX Stream HTTP 요청 핸들러."""
 
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_STREAM_SHELL
     log_silent = True
 
     def _error(self, code: int, error: str, message: str, detail: str = ""):

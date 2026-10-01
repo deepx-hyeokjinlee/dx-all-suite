@@ -46,34 +46,27 @@ const DXStream = (() => {
     function nav(page) {
         _cleanupTimers();
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         const pageEl = $('page-' + page);
-        const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
         if (pageEl) pageEl.classList.add('active');
-        if (navEl) navEl.classList.add('active');
         S.currentPage = page;
-        const titleLabel = navEl ? navEl.querySelector('.nav-label') : null;
-        const title = titleLabel
-            ? (titleLabel.querySelector('.' + S.lang) || titleLabel.querySelector('.ko') || titleLabel.querySelector('.en') || titleLabel).textContent.trim()
-            : page;
-        const titleEl = $('topbar-title');
-        if (titleEl && titleLabel) {
-            const koSpan = titleLabel.querySelector('.ko');
-            const enSpan = titleLabel.querySelector('.en');
-            const jaSpan = titleLabel.querySelector('.ja');
-            const zhCNSpan = titleLabel.querySelector('.zh-CN');
-            const zhTWSpan = titleLabel.querySelector('.zh-TW');
-            if (koSpan && enSpan) {
-                titleEl.innerHTML = '<span class="ko">' + koSpan.textContent + '</span><span class="en">' + enSpan.textContent + '</span>'
-                    + (jaSpan ? '<span class="ja">' + jaSpan.textContent + '</span>' : '')
-                    + (zhCNSpan ? '<span class="zh-CN">' + zhCNSpan.textContent + '</span>' : '')
-                    + (zhTWSpan ? '<span class="zh-TW">' + zhTWSpan.textContent + '</span>' : '');
-            } else {
-                titleEl.textContent = title;
-            }
-        } else if (titleEl) {
-            titleEl.textContent = title;
-        }
+
+        // 통합 shell: 좌측 nav 대신 상단 탭 행. 활성 표시는 aria-current 로 간다
+        // (dx-shell.css 가 그걸로 스타일을 건다 — class="active" 가 아니다).
+        const tabs = document.querySelectorAll('.dx-tab');
+        tabs.forEach(t => {
+            if (t.dataset.page === page) t.setAttribute('aria-current', 'page');
+            else t.removeAttribute('aria-current');
+        });
+
+        // 헤더의 페이지명은 활성 탭 라벨을 그대로 쓴다. 탭은 data-i18n 사전을
+        // 타므로 헤더가 따로 언어 분기를 하면 둘이 어긋난다.
+        const label = document.querySelector('.dx-tab[data-page="' + page + '"] span');
+        const slot = $('dxShellPage');
+        if (slot && label) slot.textContent = label.textContent.trim();
+
+        // 활성 탭이 오버플로 메뉴에 있었다면 행으로 되돌려야 한다.
+        if (window.DXTabs) DXTabs.reflowAll();
+
         // 페이지별 init 함수 호출
         const initFn = page.replace(/-/g, '') + 'Init';
         if (typeof DXStream[initFn] === 'function') DXStream[initFn]();
@@ -87,9 +80,9 @@ const DXStream = (() => {
         }
     }
 
-    function toggleSidebar() {
-        $('sidebar').classList.toggle('collapsed');
-    }
+    // 통합 shell(Option A)에는 접을 사이드바가 없다 — 56px 레일은 항상 보인다.
+    // 외부 호출자가 남아 있을 수 있어 no-op으로 유지한다.
+    function toggleSidebar() { /* no sidebar in the unified shell */ }
 
     function toast(msg, type = 'info') {
         const c = $('toast-container');
@@ -121,9 +114,9 @@ const DXStream = (() => {
                     '<div class="modal-body"><p id="confirm-modal-msg"></p></div>' +
                     '<div class="modal-footer">' +
                         '<button class="btn btn-ghost btn-sm" id="confirm-modal-cancel">' +
-                            '<span class="ko">취소</span><span class="en">Cancel</span></button>' +
+                            '<span data-i18n="Cancel">Cancel</span></button>' +
                         '<button class="btn btn-primary btn-sm" id="confirm-modal-ok">' +
-                            '<span class="ko">확인</span><span class="en">OK</span></button>' +
+                            '<span data-i18n="OK">OK</span></button>' +
                     '</div></div>';
                 document.body.appendChild(overlay);
             }

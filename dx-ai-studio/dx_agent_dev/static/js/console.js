@@ -202,11 +202,11 @@
     }
     badge.removeAttribute('hidden');
     if (agent.authenticated === true) {
-      badge.textContent = '✓';
+      badge.innerHTML = (typeof DXIcon === 'function') ? DXIcon('check') : '';
       badge.className = 'agent-auth-badge ok';
       badge.title = T('Logged in');
     } else {
-      badge.textContent = '⚠';
+      badge.innerHTML = (typeof DXIcon === 'function') ? DXIcon('alert') : '';
       badge.className = 'agent-auth-badge warn';
       badge.title = T('Login required');
     }
@@ -642,29 +642,71 @@
         releaseRunLock();
         return;
       }
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          const frag = line.slice(6);
-          if (frag === '[DONE]') continue;
-          let evt;
-          try { evt = JSON.parse(frag); } catch (e) { continue; }
-          renderEvent(evt);
-        }
-      }
+      await _consumeStream(resp);
     } catch (e) {
       clearHeartbeat();
       appendError(String((e && e.message) || e));
       setBadge('Failed', 'failed');
       _turn = null;
+    } finally {
+      clearHeartbeat();
+      releaseRunLock();
+    }
+  }
+
+  /* SSE 본문을 읽어 화면에 흘린다. 실행을 시작할 때와 이미 도는 실행에 붙을 때가
+     같은 코드를 쓴다 — 붙는 쪽이 다르게 그리면 "이어받았다" 가 거짓말이 된다. */
+  async function _consumeStream(resp) {
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const frag = line.slice(6);
+        if (frag === '[DONE]') continue;
+        let evt;
+        try { evt = JSON.parse(frag); } catch (e) { continue; }
+        renderEvent(evt);
+      }
+    }
+  }
+
+  /* home 에서 시작한 실행을 여기서 이어받는 길. 예전에는 이 콘솔이 자기가 시작한
+     실행만 볼 수 있었고, 그래서 이동해 온 사용자에게는 아무 일도 일어나지 않았다. */
+  /* home 이 넘겨주는 요청 (/agent/#ask=…) — status 가 모를 때의 첫 줄 */
+  function _askFromHash() {
+    const m = /(?:^#|&)ask=([^&]*)/.exec(window.location.hash || '');
+    if (!m) return '';
+    try { return decodeURIComponent(m[1].replace(/\+/g, ' ')); } catch (e) { return ''; }
+  }
+
+  async function attachIfRunning(st) {
+    if (!st || !st.run_id || st.run_done || _running) return false;
+    _running = true;
+    setConsoleBusy(true);
+    setBadge('Running...', 'running');
+    startHeartbeat();
+    /* 대화 칸부터 — 없으면 message · command renderer 가 전부 `if (!_turn) return` 으로 버린다. 예전
+       이어받기는 stream 에는 붙었지만 이 칸을 만들지 않아서, home 에서 넘어온 사용자에게 실시간 출력이
+       보이지 않았다. 첫 줄은 그 실행의 요청 (status), 없으면 home 이 넘긴 #ask. 이어서 여기서 답하면
+       같은 대화로 간다 (conversation · mode). */
+    beginTurn(st.run_prompt || _askFromHash() || T('Resumed run'));
+    if (st.run_conversation_id) _conversationId = st.run_conversation_id;
+    const modeSel = $('mode-select');
+    if (modeSel && st.run_mode) modeSel.value = st.run_mode;
+    try {
+      const resp = await fetch('/api/agent/run/events?from=0');
+      if (!resp.ok || !resp.body) return false;
+      await _consumeStream(resp);
+      return true;
+    } catch (e) {
+      return false;
     } finally {
       clearHeartbeat();
       releaseRunLock();
@@ -799,6 +841,8 @@
     if (st && st.available) {
       setBadge('Ready', 'ok');
       fillAgentControls(st.agents);
+      /* 이미 도는 실행이 있으면 붙는다 — home 에서 넘어온 경우가 그것이다. */
+      if (st.run_id && !st.run_done) attachIfRunning(st);
     } else {
       showDegradedGallery(st);
     }

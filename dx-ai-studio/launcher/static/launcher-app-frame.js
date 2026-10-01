@@ -4,6 +4,10 @@
 
   var BOOT_GATE_POLL_MS = 250;
   var BOOT_GATE_MAX_WAIT_MS = 120000;
+  // Home 은 font · 아이콘 sprite 가 도착한 뒤에 연다 — 외부 <use> 는 sprite 전까지 빈칸이라, 먼저 열면
+  // 아이콘이 나중에 튀어나온다 (port-forward tunnel 너머에서 보였다). 무엇이 막혀도 문서 시작부터
+  // 이 시간이면 연다. spec: docs/superpowers/specs/2026-09-30-studio-boot-assets-design.md
+  var BOOT_ASSET_MAX_WAIT_MS = 3000;
   var _pendingRouteRestore = null;
   var _shellRevealInFlight = false;
 
@@ -87,8 +91,6 @@
     if (_shellRevealInFlight) return;
     _shellRevealInFlight = true;
 
-    if (typeof ns.scheduleOrbitalLayout === 'function') ns.scheduleOrbitalLayout();
-
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         document.documentElement.classList.remove('launcher-boot-pending');
@@ -138,6 +140,20 @@
     });
   }
 
+  function bootAssetsReady() {
+    var waits = [];
+    try {
+      if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
+    } catch (e) {}
+    if (window.DXIcon && typeof window.DXIcon.load === 'function') waits.push(window.DXIcon.load());
+    var elapsed = (window.performance && performance.now) ? performance.now() : 0;
+    var left = Math.max(0, BOOT_ASSET_MAX_WAIT_MS - elapsed);
+    return Promise.race([
+      Promise.all(waits).catch(function() {}),
+      new Promise(function(resolve) { setTimeout(resolve, left); }),
+    ]);
+  }
+
   function ensureStudioReady(options) {
     options = options || {};
     if (ns._studioReadyResolved) {
@@ -159,9 +175,16 @@
 
     ns._studioReadyPromise = new Promise(function(resolve) {
       var startedAt = Date.now();
+      var assets = bootAssetsReady();
 
       function finish(data) {
+        assets.then(function() { openShell(data); });
+      }
+
+      function openShell(data) {
         ns._studioReadyResolved = true;
+        /* home 의 agent 설정처럼 module 에 기대는 것들이 다시 물을 때 (home-agent-setup.js) */
+        try { window.dispatchEvent(new Event('dx-studio-ready')); } catch (e) {}
         if (showBootGate) hideStudioBootGate();
         if (!ns._launcherCoreStarted) ns._initLauncherCore();
         startSharedHwStream();   // one hw_stream for the whole session (see def)
@@ -366,6 +389,87 @@
     if (overlay) overlay.remove();
   }
 
+  /* ── 아이콘에서 열리고 아이콘으로 닫힌다 (spec 2026-09-23 §7 #8, §7.1) ──────────────
+     모듈 색의 빈 판 (.open-veil) 이 출발한 요소의 자리에서 frame 크기로 커진 뒤 걷힌다.
+     닫을 때는 frame 크기에서 그 모듈의 아이콘으로 줄어든다. 움직이는 것은 이 판 하나 —
+     iframe 을 확대하면 모듈 전체를 매 frame 다시 그린다. 출발점이 없거나 (직접 URL · 복원)
+     효과 줄이기면 예전의 fade 로 연다. */
+  var OPEN_MS = 420, CLOSE_MS = 360, VEIL_FADE_MS = 200;
+  var VEIL_EASE = 'cubic-bezier(.2, .8, .2, 1)';
+
+  function _veilStill() {
+    try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return true; }
+  }
+
+  function _tileFor(appKey) {
+    return document.querySelector('#studioGrid .orbital-card[data-app="' + appKey + '"] .mod-tile');
+  }
+
+  /* home 이 아직 보일 때 잰다 — frame 을 보이고 나면 출발점이 사라진다. */
+  function _veilSource(el, appKey) {
+    if (_veilStill() || !el || typeof el.getBoundingClientRect !== 'function') return null;
+    if (typeof document.body.animate !== 'function') return null;
+    var r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    var tile = _tileFor(appKey);
+    var tint = tile ? getComputedStyle(tile).getPropertyValue('--mod-tint').trim() : '';
+    return { rect: r, tint: tint };
+  }
+
+  /* frame 의 자리 (fixed: top bar 아래 전체). frame 이 숨어 있어도 계산할 수 있게 top bar 에서. */
+  function _frameBox() {
+    var bar = document.querySelector('.top-bar');
+    var top = bar ? bar.getBoundingClientRect().bottom : 0;
+    return { left: 0, top: top, width: window.innerWidth, height: window.innerHeight - top };
+  }
+
+  function _toRect(rect, box) {
+    return 'translate(' + (rect.left - box.left) + 'px, ' + (rect.top - box.top) + 'px) ' +
+      'scale(' + (rect.width / box.width) + ', ' + (rect.height / box.height) + ')';
+  }
+
+  function _makeVeil(tint) {
+    var veil = document.createElement('div');
+    veil.className = 'open-veil';
+    veil.setAttribute('aria-hidden', 'true');
+    if (tint) veil.style.setProperty('--veil-tint', tint);
+    document.body.appendChild(veil);
+    return veil;
+  }
+
+  function playOpen(src) {
+    var box = _frameBox();
+    if (!box.width || !box.height) return;
+    var veil = _makeVeil(src.tint);
+    var grow = veil.animate([
+      { transform: _toRect(src.rect, box), opacity: 0 },
+      { opacity: 1, offset: .18 },
+      { transform: 'none', opacity: 1 }
+    ], { duration: OPEN_MS, easing: VEIL_EASE });
+    grow.id = 'open';
+    grow.finished.then(function () {
+      var fade = veil.animate([{ opacity: 1 }, { opacity: 0 }],
+        { duration: VEIL_FADE_MS, easing: 'ease-out', fill: 'forwards' });
+      fade.finished.then(function () { veil.remove(); }, function () { veil.remove(); });
+    }, function () { veil.remove(); });
+  }
+
+  function playClose(appKey) {
+    if (_veilStill() || typeof document.body.animate !== 'function') return;
+    var tile = _tileFor(appKey);
+    var r = tile && tile.getBoundingClientRect();
+    if (!r || !r.width || !r.height) return;
+    var box = _frameBox();
+    var veil = _makeVeil(getComputedStyle(tile).getPropertyValue('--mod-tint').trim());
+    var shrink = veil.animate([
+      { transform: 'none', opacity: 1 },
+      { opacity: 1, offset: .7 },
+      { transform: _toRect(r, box), opacity: 0 }
+    ], { duration: CLOSE_MS, easing: VEIL_EASE, fill: 'forwards' });
+    shrink.id = 'close';
+    shrink.finished.then(function () { veil.remove(); }, function () { veil.remove(); });
+  }
+
   function animateIn(el) {
     if (!el) return;
     el.classList.remove('view-slide-in');
@@ -447,23 +551,22 @@
   function setVisibleView(viewName) {
     suspendAllTutorialChrome();
     resetLauncherUiBlockers();
-    _hideOrbitalTooltip();
     var landing   = document.getElementById('landing');
     var appFrame  = document.getElementById('appFrame');
     var aboutView = document.getElementById('about-view');
     var sdkView   = document.getElementById('sdk-library-view');
     var tutCard   = document.getElementById('dxt-tutorial-card');
     var rb        = document.getElementById('replayBtn');
-    var footer    = document.getElementById('deepxFooter');
 
     document.body.classList.toggle('app-frame-visible', viewName === 'app');
+    // 무대 조명 (home-stage.css body.home-visible) 은 home 에만 켠다 — spec 2026-09-23 §7 #2.
+    document.body.classList.toggle('home-visible', viewName === 'home');
     // The shared NPU Monitor float is injected into the launcher shell but should only show
     // on the launcher-native views (About, SDK Library) — module iframes carry their own, and
     // the home splash stays uncluttered.
     document.body.classList.toggle('hw-native-visible', viewName === 'about' || viewName === 'sdk-library');
 
     if (landing)   landing.style.display = 'none';
-    if (footer)    footer.style.display = 'none';   // resource bar is home-shell chrome
     if (appFrame)  appFrame.style.display = 'none';
     if (aboutView) aboutView.classList.remove('visible');
     // Hide SDK shell without tearing down viewer/search — state survives module switches.
@@ -479,7 +582,6 @@
 
     if (viewName === 'home') {
       if (landing) { landing.style.display = ''; animateIn(landing); }
-      if (footer)  footer.style.display = '';
       if (tutCard) tutCard.style.display = '';
       if (rb)      rb.style.display = '';
     } else if (viewName === 'about') {
@@ -521,9 +623,11 @@
     }
 
     function _showHome(opts) {
+      var closing = document.body.classList.contains('app-frame-visible') ? ns.currentApp : null;
       ns.currentApp = null;
       if (typeof ns.syncLangFromStorage === 'function') ns.syncLangFromStorage();
       setVisibleView('home');
+      if (closing) playClose(closing);
       _relocateToolbar('#launcherToolbar');
       updateNavTabs();
       _commitHistory(opts && opts.push ? 'push' : 'replace', {}, '/');
@@ -601,6 +705,7 @@
 
     function _showApp(appKey, opts) {
       opts = opts || {};
+      var veilFrom = opts.from ? _veilSource(opts.from, appKey) : null;
       ns.currentApp = appKey;
       clearModuleEntryState();
       var staleOverlay = document.getElementById('loadingOverlay');
@@ -614,6 +719,7 @@
       activateModuleIframe(iframe);
 
       setVisibleView('app');
+      if (veilFrom) playOpen(veilFrom);
       // Return the shared toolbar to the (CSS-hidden) global slot so it isn't stranded inside a
       // now-hidden SDK/About header; the module supplies its own lang+tutorial inside its iframe.
       _relocateToolbar('#launcherToolbar');
@@ -623,11 +729,13 @@
       if (opts.suffix) iframePath += opts.suffix;
       if (opts.query) iframePath += '?' + opts.query;
       else if (opts.rawQuery) iframePath += opts.rawQuery;
+      if (opts.hash) iframePath += opts.hash;   // #demo=N · #ask= — 답에서 여는 길 (P7)
 
       var historyUrl = '/' + appKey;
       if (opts.suffix) historyUrl += '/' + opts.suffix;
       if (opts.query) historyUrl += '?' + opts.query;
       else if (opts.rawQuery) historyUrl += opts.rawQuery;
+      if (opts.hash) historyUrl += opts.hash;
 
       if (!opts.skipHistory && opts.source !== 'popstate') {
         _commitHistory(opts.push ? 'push' : 'replace', { app: appKey }, historyUrl);
@@ -696,7 +804,7 @@
       if (target === 'about') return _showAbout(opts);
       if (target === 'sdk-library') return _showSdk(opts);
       if (target === 'app' && opts.app) {
-        return _showApp(opts.app, { push: true, query: opts.query });
+        return _showApp(opts.app, { push: true, query: opts.query, hash: opts.hash, from: opts.from });
       }
       _showApp(target, { push: true, query: opts.query });
     }
@@ -735,19 +843,29 @@
   function goHome() { LauncherRouter.navigate('home'); }
   function showAboutView() { LauncherRouter.navigate('about'); }
   function showSdkLibrary() { LauncherRouter.navigate('sdk-library'); }
-  function launch(app, query) { LauncherRouter.navigate('app', { app: app, query: query }); }
+  /* launch(app, 'k=v') — 예전 그대로 query. launch(app, { query, hash, from }) — from 은 누른 요소
+     (아이콘 · 경로 카드): 그 자리에서 열린다 (P7). */
+  function launch(app, arg) {
+    var o = (arg && typeof arg === 'object') ? arg : { query: arg };
+    LauncherRouter.navigate('app', { app: app, query: o.query, hash: o.hash, from: o.from });
+  }
 
+  /* 탭 라벨은 짧게. 이 스트립은 열한 칸이 1272px 을 요구하는데 473px 만 받고
+     있었다 — 절반 넘게가 가로 스크롤 뒤에 숨어, 모듈 목록이면서 모듈을 못 보여
+     줬다. 이모지가 칸당 22px, "DX " 접두어가 25px 을 먹었고 둘 다 정보가 아니다:
+     이 줄에 있는 것은 전부 DX 이고, 아이콘은 홈의 모듈 목록이 이미 제대로 쓴다.
+     빼고 나면 980px 로 줄어 1440 에서 스크롤 없이 들어간다. */
   var NAV_TAB_LABELS = {
-    app: '📱 DX App',
-    stream: '🎬 DX Stream',
-    zoo: '🦁 Model Zoo',
-    compiler: '⚙️ Compiler',
-    planner: '🗺️ EdgeGuide',
-    benchmark: '📊 Benchmark',
-    dx_monitor: '📡 Monitor',
-    agent: '🤖 Agent Dev',
-    'sdk-library': '📚 SDK Library',
-    about: '🔬 About DEEPX',
+    app: 'App',
+    stream: 'Stream',
+    zoo: 'Model Zoo',
+    compiler: 'Compiler',
+    planner: 'EdgeGuide',
+    benchmark: 'Benchmark',
+    dx_monitor: 'Monitor',
+    agent: 'Agent Dev',
+    'sdk-library': 'SDK Library',
+    about: 'About',
   };
   var NAV_TAB_CONFIG = [
     { app: 'app', label: NAV_TAB_LABELS.app, action: function() { launch('app'); }, activeClass: 'active' },
@@ -849,9 +967,18 @@
     var home = document.createElement('div');
     home.className = 'nav-tab home-btn';
     home.dataset.home = '1';
-    home.textContent = '🏠';
+    /* 이모지 하나가 전부였다. 이제 줄의 나머지가 전부 글자라 톤이 어긋나고,
+       무엇보다 접근 가능한 이름이 없어 스크린리더가 "집" 을 읽었다. 같은 획
+       굵기의 글리프로 바꾸고 이름을 붙인다 — 라벨은 사전이 번역한다. */
+    home.innerHTML = '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" ' +
+      'stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M2.2 6.6 8 2.2l5.8 4.4V13a.8.8 0 0 1-.8.8H3a.8.8 0 0 1-.8-.8Z"/>' +
+      '<path d="M6.4 13.8V9.4h3.2v4.4"/></svg>';
     home.setAttribute('tabindex', '0');
     home.setAttribute('role', 'button');
+    home.setAttribute('data-i18n-aria-label', 'Home');
+    home.setAttribute('aria-label',
+      (window.DXI18n && DXI18n.T) ? DXI18n.T('Home') : 'Home');
     home.addEventListener('click', goHome);
     home.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goHome(); }
@@ -1083,25 +1210,18 @@
     });
   }
 
+  /* 웹사이트는 "DX-M1 연결됨" 이라고 못 쓴다. 그 한 줄이 이게 브로슈어가
+     아니라는 증거다. 런처는 이미 monitor 모듈을 /monitor/ 로 프록시하므로
+     새 서버 코드 없이 그 모듈이 쓰는 엔드포인트를 그대로 부른다. */
+  /* 장치 표시 (칩 · 코어 · 온도) 는 home-widgets.js 가 startSharedHwStream 의 dx-hw-data 로
+     칠한다. 여기 있던 15초 poll 은 같은 장치를 한 번 더 물어 같은
+     칩을 번갈아 덮어썼다 — spec 2026-09-23 §5.5. */
+
   function checkHealth() {
     return fetch('/api/health').then(function(res) { return res.json(); }).then(function(data) {
       if (_maybeReloadForLauncherBoot(data)) return data;
       ns._healthStatus = data;
       ns._healthCheckedAt = Date.now();
-      setDot('dotApp',    data.app.alive);
-      setDot('dotStream', data.stream ? data.stream.alive : false);
-      setDot('dotZoo',    data.zoo ? data.zoo.alive : false);
-      setDot('dotCompiler', data.compiler ? data.compiler.alive : false);
-      setDot('dotPlanner',  data.planner ? data.planner.alive : false);
-      setDot('dotBenchmark', data.benchmark ? data.benchmark.alive : false);
-      setDot('dotMonitor',  data.monitor ? data.monitor.alive : false);
-      setDot('dotAgent',    data.agent ? data.agent.alive : false);
-      setStatus('statusApp',      data.app.alive);
-      setStatus('statusStream',   data.stream ? data.stream.alive : false);
-      setStatus('statusZoo',      data.zoo ? data.zoo.alive : false);
-      setStatus('statusCompiler', data.compiler ? data.compiler.alive : false);
-      setStatus('statusPlanner',  data.planner ? data.planner.alive : false);
-      setStatus('statusBenchmark', data.benchmark ? data.benchmark.alive : false);
       _setOrbStatus('orbStatusApp', data.app.alive);
       _setOrbStatus('orbStatusStream', data.stream ? data.stream.alive : false);
       _setOrbStatus('orbStatusZoo', data.zoo ? data.zoo.alive : false);
@@ -1114,21 +1234,6 @@
       updateModulePortLabels(data);
       return data;
     }).catch(function() {
-      setDot('dotApp', false);
-      setDot('dotStream', false);
-      setDot('dotZoo', false);
-      setDot('dotCompiler', false);
-      setDot('dotPlanner', false);
-      setDot('dotBenchmark', false);
-      setDot('dotMonitor', false);
-      setDot('dotAgent', false);
-      setStatus('statusApp', false);
-      setStatus('statusStream', false);
-      setStatus('statusZoo', false);
-      setStatus('statusCompiler', false);
-      setStatus('statusPlanner', false);
-      setStatus('statusBenchmark', false);
-      setStatus('statusMonitor', false);
       _setOrbStatus('orbStatusApp', false);
       _setOrbStatus('orbStatusStream', false);
       _setOrbStatus('orbStatusZoo', false);
@@ -1309,28 +1414,14 @@
     }
   }
 
-  function setDot(id, alive) {
-    var el = document.getElementById(id);
-    var targetClass = alive ? 'dot alive' : 'dot';
-    if (el && el.className !== targetClass) el.className = targetClass;
-  }
-
-  function setStatus(id, alive) {
-    var el = document.getElementById(id);
-    var targetClass = alive ? 'status-indicator alive' : 'status-indicator dead';
-    if (el && el.className !== targetClass) el.className = targetClass;
-  }
-
+  /* 건강 상태를 화면에 쓰는 유일한 경로. 예전에는 setDot()·setStatus() 가 같은 값을
+     두 번 더 썼는데, 그 대상(#dotApp, #statusApp …)은 홈 재설계에서 마크업이 사라진
+     뒤로 코드베이스 어디에도 존재하지 않아 15번의 조회가 매 폴링(5초)마다 헛돌았다.
+     테스트가 그 호출의 '존재'를 8곳에서 요구하고 있어 죽은 채로 남아 있었다. */
   function _setOrbStatus(id, alive) {
     var el = document.getElementById(id);
     var targetClass = alive ? 'orbital-status alive' : 'orbital-status dead';
     if (el && el.className !== targetClass) el.className = targetClass;
-  }
-
-
-  function scheduleOrbitalLayout() {
-    if (ns._orbitalResizeTimer) clearTimeout(ns._orbitalResizeTimer);
-    ns._orbitalResizeTimer = setTimeout(initOrbital, 120);
   }
 
   function activateOnEnterOrSpace(el, action) {
@@ -1367,180 +1458,6 @@
     }
   }
 
-  function initOrbital() {
-    var container = document.getElementById('orbitalContainer');
-    if (!container) return;
-    var cards = container.querySelectorAll('.orbital-card');
-    var svg = document.getElementById('orbitalSvg');
-    if (!svg) return;
-
-    var rect = container.getBoundingClientRect();
-    if (rect.width < 80 || rect.height < 80) {
-      container.classList.remove('orbital-ready');
-      scheduleOrbitalLayout();
-      return;
-    }
-
-    var cx = rect.width / 2;
-    var cy = rect.height / 2;
-    var radius = Math.min(cx, cy) * 0.72;
-
-    svg.innerHTML = '';
-    svg.setAttribute('viewBox', '0 0 ' + rect.width + ' ' + rect.height);
-
-    cards.forEach(function(card, i) {
-      var angle = parseFloat(card.dataset.angle);
-      var rad = (angle - 90) * Math.PI / 180;
-      var x = cx + radius * Math.cos(rad);
-      var y = cy + radius * Math.sin(rad);
-
-      card.style.setProperty('--orbit-x', x + 'px');
-      card.style.setProperty('--orbit-y', y + 'px');
-
-      var pos = _getDetailPosition(angle);
-      card.dataset.position = pos;
-
-      var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', cx);
-      line.setAttribute('y1', cy);
-      line.setAttribute('x2', x);
-      line.setAttribute('y2', y);
-      line.dataset.index = i;
-      line.id = 'orbital-line-' + i;
-      svg.appendChild(line);
-      card.dataset.lineId = line.id;
-
-      _bindOrbitalCardHover(card);
-    });
-    container.classList.add('orbital-ready');
-  }
-
-  function _ensureOrbitalResizeObserver() {
-    if (ns._orbitalResizeObs) return;
-    var container = document.getElementById('orbitalContainer');
-    if (!container || typeof ResizeObserver === 'undefined') return;
-    ns._orbitalResizeObs = new ResizeObserver(function() {
-      scheduleOrbitalLayout();
-    });
-    ns._orbitalResizeObs.observe(container);
-  }
-
-  function _clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
-  }
-
-  var _orbitalTooltipEl = null;
-
-  function _ensureOrbitalTooltipLayer() {
-    if (_orbitalTooltipEl) return _orbitalTooltipEl;
-    var layer = document.getElementById('orbitalTooltipLayer');
-    if (!layer) {
-      layer = document.createElement('div');
-      layer.id = 'orbitalTooltipLayer';
-      layer.className = 'orbital-tooltip-layer';
-      layer.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(layer);
-    }
-    _orbitalTooltipEl = document.createElement('div');
-    _orbitalTooltipEl.className = 'orbital-detail orbital-detail-flyout';
-    _orbitalTooltipEl.setAttribute('role', 'tooltip');
-    layer.appendChild(_orbitalTooltipEl);
-    return _orbitalTooltipEl;
-  }
-
-  function _hideOrbitalTooltip() {
-    if (!_orbitalTooltipEl) return;
-    _orbitalTooltipEl.classList.remove('visible');
-    _orbitalTooltipEl.innerHTML = '';
-    _orbitalTooltipEl.style.left = '';
-    _orbitalTooltipEl.style.top = '';
-    var layer = document.getElementById('orbitalTooltipLayer');
-    if (layer) layer.setAttribute('aria-hidden', 'true');
-  }
-
-  function _orbitalTopbarOffset() {
-    var raw = getComputedStyle(document.documentElement).getPropertyValue('--launcher-topbar-h');
-    var parsed = parseInt(raw, 10);
-    return isNaN(parsed) ? 48 : parsed;
-  }
-
-  function _positionOrbitalTooltip(card, tip) {
-    var rect = card.getBoundingClientRect();
-    var pos = card.dataset.position || 'bottom';
-    var gap = 10;
-    var pad = 8;
-    var topbar = _orbitalTopbarOffset();
-    var vw = window.innerWidth;
-    var vh = window.innerHeight;
-
-    tip.classList.remove('visible');
-    var tw = tip.offsetWidth;
-    var th = tip.offsetHeight;
-
-    var left = 0;
-    var top = 0;
-
-    if (pos === 'top') {
-      left = rect.left + rect.width / 2 - tw / 2;
-      top = rect.top - gap - th;
-    } else if (pos === 'bottom') {
-      left = rect.left + rect.width / 2 - tw / 2;
-      top = rect.bottom + gap;
-    } else if (pos === 'right') {
-      left = rect.right + gap;
-      top = rect.top + rect.height / 2 - th / 2;
-    } else {
-      left = rect.left - gap - tw;
-      top = rect.top + rect.height / 2 - th / 2;
-    }
-
-    left = _clamp(left, pad, Math.max(pad, vw - tw - pad));
-    top = _clamp(top, topbar + pad, Math.max(topbar + pad, vh - th - pad));
-
-    tip.style.left = left + 'px';
-    tip.style.top = top + 'px';
-    tip.classList.add('visible');
-  }
-
-  function _showOrbitalTooltip(card) {
-    if (window.matchMedia('(max-width: 768px)').matches) return;
-    var source = card.querySelector('.orbital-detail');
-    if (!source) return;
-    var tip = _ensureOrbitalTooltipLayer();
-    tip.innerHTML = source.innerHTML;
-    var layer = document.getElementById('orbitalTooltipLayer');
-    if (layer) layer.setAttribute('aria-hidden', 'false');
-    _positionOrbitalTooltip(card, tip);
-  }
-
-  function _bindOrbitalCardHover(card) {
-    if (card.dataset.hoverBound === '1') return;
-    card.addEventListener('mouseenter', _handleOrbitalCardMouseEnter);
-    card.addEventListener('mouseleave', _handleOrbitalCardMouseLeave);
-    card.dataset.hoverBound = '1';
-  }
-
-  function _handleOrbitalCardMouseEnter(e) {
-    var card = e.currentTarget;
-    var line = document.getElementById(card.dataset.lineId);
-    if (line) line.classList.add('highlight');
-    _showOrbitalTooltip(card);
-  }
-
-  function _handleOrbitalCardMouseLeave(e) {
-    var card = e.currentTarget;
-    var line = document.getElementById(card.dataset.lineId);
-    if (line) line.classList.remove('highlight');
-    _hideOrbitalTooltip();
-  }
-
-  function _getDetailPosition(angle) {
-    var a = ((angle % 360) + 360) % 360;
-    if (a >= 337 || a < 23) return 'bottom';
-    if (a >= 23 && a < 157) return 'right';
-    if (a >= 157 && a < 203) return 'bottom';
-    return 'left';
-  }
 
   function _updateToggleActive(groupId, activeVal) {
     var grp = document.getElementById(groupId);
@@ -1570,7 +1487,7 @@
       var card = e.target.closest('.orbital-card[data-app]');
       if (card && card.dataset.app) {
         e.preventDefault();
-        launch(card.dataset.app);
+        launch(card.dataset.app, { from: card });
         return;
       }
       var aboutCard = e.target.closest('.about-book-card');
@@ -1583,24 +1500,15 @@
     landing.dataset.clickRoutingBound = '1';
   }
 
-  // Core launcher init — must not wait for splash (orbital + routing + health).
+  // Core launcher init — must not wait for splash (routing + health).
   function _initLauncherCore() {
     if (ns._launcherCoreStarted) return;
     ns._launcherCoreStarted = true;
     ns._deferredLauncherWorkStarted = true;
     checkHealth();
     setInterval(checkHealth, 5000);
-    initOrbital();
     initOrbitalAccessibility();
     initHomeClickRouting();
-    _ensureOrbitalResizeObserver();
-    window.addEventListener('resize', scheduleOrbitalLayout);
-    window.addEventListener('scroll', _hideOrbitalTooltip, true);
-    if (document.readyState === 'complete') {
-      scheduleOrbitalLayout();
-    } else {
-      window.addEventListener('load', scheduleOrbitalLayout, { once: true });
-    }
     refreshLauncherChrome();
   }
 
@@ -1624,8 +1532,6 @@
   ns.launch = launch;
   ns.updateNavTabs = updateNavTabs;
   ns.checkHealth = checkHealth;
-  ns.initOrbital = initOrbital;
-  ns.scheduleOrbitalLayout = scheduleOrbitalLayout;
   ns.appFromPath = appFromPath;
   ns.setVisibleView = setVisibleView;
   ns._updateToggleActive = _updateToggleActive;

@@ -1,0 +1,127 @@
+# dx-all-suite/.github/workflows/dx-ai-studio-sonar.yml
+#
+# SonarQube analysis for dx-ai-studio.
+#
+# It is a deliberate NO-OP until someone adds the SONAR_HOST_URL / SONAR_TOKEN
+# secrets: the endpoint and credentials for the DEEPX SonarQube are not in any
+# repository, so hard-coding a guess here would produce a workflow that fails on
+# every PR. With the secrets absent every step after the check is skipped and the
+# job reports success.
+#
+# Advisory (continue-on-error) to match the staged rollout of the other quality
+# jobs — a first Sonar run on a codebase this size surfaces a large backlog, and
+# blocking merges on it before that backlog is triaged just teaches people to
+# ignore the gate.
+name: dx-ai-studio SonarQube
+run-name: dx-ai-studio SonarQube — ${{ github.event.pull_request.title || github.ref_name }}
+
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+    paths:
+      - 'dx-ai-studio/**'
+      - '.github/workflows/dx-ai-studio-sonar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dx-ai-studio-sonar-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sonar:
+    name: SonarQube analysis (advisory)
+    continue-on-error: true
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    env:
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # Pinned so a scanner release cannot change results under us.
+      SONAR_SCANNER_VERSION: '6.2.1.4610'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Sonar's new-code detection needs history, not a shallow clone.
+          fetch-depth: 0
+
+      - name: Are the SonarQube secrets configured?
+        id: check
+        run: |
+          if [ -z "${SONAR_HOST_URL:-}" ] || [ -z "${SONAR_TOKEN:-}" ]; then
+            echo "SONAR_HOST_URL / SONAR_TOKEN are not set — skipping analysis."
+            echo "Add them in repo or org settings to enable this job."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Provision test venv
+        if: steps.check.outputs.enabled == 'true'
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt pytest-cov
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Produce coverage.xml
+        if: steps.check.outputs.enabled == 'true'
+        # Sonar reads the Cobertura report this writes. The stanza measures from a
+        # single root, which is what keeps the module in each path — with the
+        # previous ten roots all nine `server.py` files collapsed into one XML
+        # entry and Sonar reported eight of them at 0%.
+        run: bash scripts/run_ci.sh --coverage
+
+      - name: Install sonar-scanner
+        if: steps.check.outputs.enabled == 'true'
+        # Plain CLI rather than the marketplace action: that action runs in Docker,
+        # which is not guaranteed on a self-hosted `sdk` runner. Cached under $HOME
+        # so it survives actions/checkout cleaning the workspace.
+        run: |
+          set -euo pipefail
+          DEST="$HOME/.cache/sonar-scanner"
+          BIN="$DEST/sonar-scanner-${SONAR_SCANNER_VERSION}-linux-x64/bin/sonar-scanner"
+          if [ ! -x "$BIN" ]; then
+            mkdir -p "$DEST"
+            curl -sSLo /tmp/sonar-scanner.zip \
+              "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux-x64.zip"
+            unzip -q -o /tmp/sonar-scanner.zip -d "$DEST"
+            rm -f /tmp/sonar-scanner.zip
+          fi
+          "$BIN" --version
+          echo "SONAR_SCANNER_BIN=$BIN" >> "$GITHUB_ENV"
+
+      - name: Run analysis
+        if: steps.check.outputs.enabled == 'true'
+        run: |
+          set -euo pipefail
+          # release.ver is the version SSOT; sonar-project.properties deliberately
+          # carries no copy of it.
+          "$SONAR_SCANNER_BIN" \
+            -Dsonar.host.url="$SONAR_HOST_URL" \
+            -Dsonar.token="$SONAR_TOKEN" \
+            -Dsonar.projectVersion="$(cat release.ver)" \
+            -Dsonar.scm.provider=git
+
+      - name: Upload coverage report
+        if: always() && steps.check.outputs.enabled == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar-coverage-xml
+          path: dx-ai-studio/coverage.xml
+          if-no-files-found: ignore
+          retention-days: 14

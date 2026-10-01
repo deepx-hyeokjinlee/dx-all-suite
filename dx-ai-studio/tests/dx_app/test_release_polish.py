@@ -31,6 +31,8 @@ ERROR_KEYS = (
     "failed_camera_mux",
     "live_mode_unsupported",
     "live_cpp_only",
+    "live_image_only",
+    "live_runner_failed",
     "invalid_payload",
 )
 
@@ -203,7 +205,8 @@ def test_continuous_grid_shows_waiting_copy_for_queued_slots():
     assert match, "contRenderGrid() not found"
     grid_body = match.group(1)
 
-    assert "T('⏳ Waiting…')" in grid_body, (
+    # 문구 앞의 표시는 sprite 아이콘 (아이콘 체계 단계 5) — key 는 말만.
+    assert "T('Waiting…')" in grid_body, (
         "contRenderGrid must show explicit Waiting copy while sequential inference is running"
     )
     assert "CONT.running" in grid_body, (

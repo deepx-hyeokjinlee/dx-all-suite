@@ -60,7 +60,7 @@ window._DX_MODELZOO_I18N_REGISTER({
   'Category': {
     en: 'Category',
     ko: '카테고리',
-    ja: 'カテゴリー',
+    ja: 'カテゴリ',
     'zh-CN': '类别',
     'zh-TW': '類別',
     es: 'Categoría',
@@ -153,6 +153,14 @@ window._DX_MODELZOO_I18N_REGISTER({
     'zh-TW': '不重複的模型',
     es: 'modelos únicos',
   },
+  'synced': {
+    ko: '동기화',
+    en: 'synced',
+    ja: '同期',
+    'zh-CN': '已同步',
+    'zh-TW': '已同步',
+    es: 'sincronizado',
+  },
   'View as cards': {
     ko: '카드로 보기',
     en: 'View as cards',
@@ -224,6 +232,17 @@ window._DX_MODELZOO_I18N_REGISTER({
     'zh-CN': '许可需审查',
     'zh-TW': '授權需審查',
     es: 'Licencia: revisar',
+  },
+  'Needs DX-RT': {
+    en: 'Needs DX-RT', ko: 'DX-RT 필요', ja: 'DX-RT が必要', 'zh-CN': '需要 DX-RT', 'zh-TW': '需要 DX-RT', es: 'Requiere DX-RT',
+  },
+  'This model is .dxnn container v9 — the installed DX-RT reads up to v8.': {
+    en: 'This model is .dxnn container v9 — the installed DX-RT reads up to v8.',
+    ko: '이 model 은 .dxnn container v9 입니다 — 설치된 DX-RT 는 v8 까지 읽습니다.',
+    ja: 'このモデルは .dxnn container v9 です — インストール済みの DX-RT は v8 までです。',
+    'zh-CN': '此模型为 .dxnn container v9 — 已安装的 DX-RT 仅支持到 v8。',
+    'zh-TW': '此模型為 .dxnn container v9 — 已安裝的 DX-RT 僅支援到 v8。',
+    es: 'Este modelo es .dxnn container v9: el DX-RT instalado lee hasta v8.',
   },
   'Commercial use prohibited': {
     en: 'Commercial use prohibited',

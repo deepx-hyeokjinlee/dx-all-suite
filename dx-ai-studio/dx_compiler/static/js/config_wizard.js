@@ -1,4 +1,11 @@
 /* Config Builder Wizard */
+
+/* 서버 오류를 표시 직전에 번역한다. shared/static/server-error-i18n.js 가
+   로드되지 않았으면 원문을 그대로 쓴다 — 조용히 비우지 않는다. */
+function _srvErr(msg) {
+  return (typeof window.translateServerError === 'function')
+    ? window.translateServerError(msg) : msg;
+}
 (function() {
     let currentStep = 1;
     const totalSteps = 4;
@@ -73,7 +80,7 @@
         document.getElementById('wiz-prev').style.display = step > 1 ? '' : 'none';
         const nextBtn = document.getElementById('wiz-next');
         if (step === totalSteps) {
-            nextBtn.textContent = T('✅ Use This Config');
+            DXIcon.label(nextBtn, 'check', T('Use This Config'));
             updateJsonPreview();
         } else {
             nextBtn.textContent = T('Next →');
@@ -105,9 +112,9 @@
             .then(r => r.json())
             .then(data => {
                 btn.disabled = false;
-                btn.textContent = T('🔍 Auto Detect from Model');
+                DXIcon.label(btn, 'search', T('Auto Detect from Model'));
                 if (data.error) {
-                    if (wizWarn) { wizWarn.style.display = ''; wizWarn.textContent = T('Auto-detect skipped:') + ' ' + data.error; }
+                    if (wizWarn) { wizWarn.style.display = ''; wizWarn.textContent = T('Auto-detect skipped:') + ' ' + _srvErr(data.error); }
                     return;
                 }
                 // Clear existing rows
@@ -157,7 +164,7 @@
             })
             .catch(err => {
                 btn.disabled = false;
-                btn.textContent = T('🔍 Auto Detect from Model');
+                DXIcon.label(btn, 'search', T('Auto Detect from Model'));
                 if (wizWarn) { wizWarn.style.display = ''; wizWarn.textContent = T('Auto-detect failed:') + ' ' + (err.message || String(err)); }
             });
     }
@@ -206,6 +213,73 @@
         el.textContent = msg;
     }
 
+    /* 차원에 대한 즉시 피드백. 생성 버튼을 누른 뒤 400 을 보는 것보다, 쓰는
+       순간 말하는 편이 낫다 — calibration_num 이 이미 그렇게 한다.
+       유효 범위는 .deepx/toolsets/config-schema.md: 모두 양의 정수, -1 과 0 불가.
+       batch 가 1인지는 여기서 보지 않는다 — 서버도 보지 않는다(모델을 모른다).
+       계약: tests/dx_compiler/test_config_wizard_shape_input.js 대응 파이썬 */
+    function validateInputShapes() {
+        const el = document.getElementById('wiz-shape-warning');
+        if (!el) return;
+        const bad = [];
+        document.querySelectorAll('.input-shape-row').forEach(row => {
+            const raw = (row.querySelector('.shape-dims').value || '').trim();
+            if (!raw) return;
+            raw.split(',').forEach(tok => {
+                const t = tok.trim();
+                if (t === '') return;
+                const n = Number(t);
+                if (!Number.isInteger(n) || n < 1) bad.push(t);
+            });
+        });
+        const msg = bad.length
+            ? T('Dimensions must be positive whole numbers: ') + bad.join(', ')
+            : '';
+        el.style.display = msg ? '' : 'none';
+        el.textContent = msg;
+    }
+
+    /* 전처리 값에 대한 즉시 피드백. validateInputShapes 와 같은 규칙·같은 자리.
+       서버(validation.validate_preprocessings)와 규칙이 같아야 한다 —
+       크기류(width/height/size/scale)는 양수, std 에 0 금지.
+       axis·x·pad_value 는 **보지 않는다**: 저장소의 실제 config 를 보면 스칼라도
+       리스트도 되고 axis 는 음수도 된다. 여기서 막으면 정당한 값이 막힌다. */
+    var PREP_POSITIVE = ['width', 'height', 'size', 'scale'];
+
+    function validatePreprocessings() {
+        const el = document.getElementById('wiz-prep-warning');
+        if (!el) return;
+        const problems = [];
+        document.querySelectorAll('.prep-item').forEach(item => {
+            const tName = item.dataset.transform;
+            item.querySelectorAll('.prep-input').forEach(inp => {
+                const key = inp.dataset.param;
+                const raw = (inp.value || '').trim();
+                if (raw === '') return;
+                if (PREP_POSITIVE.indexOf(key) !== -1) {
+                    const n = Number(raw);
+                    if (!isFinite(n) || n <= 0) {
+                        problems.push(tName + '.' + key + ' = ' + raw);
+                    }
+                    return;
+                }
+                if (key === 'std') {
+                    const parts = raw.split(',').map(t => t.trim()).filter(t => t !== '');
+                    parts.forEach(t => {
+                        const n = Number(t);
+                        if (!isFinite(n)) problems.push(tName + '.std = ' + t);
+                        else if (n === 0) problems.push(tName + '.std = 0');
+                    });
+                }
+            });
+        });
+        const msg = problems.length
+            ? T('Check these preprocessing values: ') + problems.join('; ')
+            : '';
+        el.style.display = msg ? '' : 'none';
+        el.textContent = msg;
+    }
+
     function addInputRow(name, shape) {
         name = name || '';
         shape = shape || [1, 3, 224, 224];
@@ -228,7 +302,7 @@
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'btn-remove';
-        removeBtn.textContent = '✕';
+        removeBtn.innerHTML = ((typeof DXIcon === 'function') ? DXIcon('x') : ''); removeBtn.setAttribute('aria-label', T('Remove'));
         removeBtn.addEventListener('click', function() { row.remove(); });
 
         row.appendChild(nameInput);
@@ -287,7 +361,7 @@
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'btn-remove';
-        removeBtn.textContent = '✕';
+        removeBtn.innerHTML = ((typeof DXIcon === 'function') ? DXIcon('x') : ''); removeBtn.setAttribute('aria-label', T('Remove'));
         removeBtn.addEventListener('click', function() { item.remove(); });
         header.appendChild(title);
         header.appendChild(removeBtn);
@@ -355,8 +429,13 @@
         const inputShapes = {};
         document.querySelectorAll('.input-shape-row').forEach(row => {
             const name = row.querySelector('.shape-name').value.trim();
+            /* 예전에는 `.filter(d => !isNaN(d))` 로 잘못 쓴 값을 조용히 버렸다.
+               `1,3,abc,224` 가 `[1,3,224]` 가 되어 4차원을 넣었는데 3차원이
+               전송되고, 아무도 그 사실을 말해주지 않았다. 그대로 실어 보내고
+               validateInputShapes 가 말하게 한다. 서버도 400 으로 막는다(SR-758). */
             const dims = row.querySelector('.shape-dims').value.trim()
-                .split(',').map(d => parseInt(d.trim())).filter(d => !isNaN(d));
+                .split(',').filter(t => t.trim() !== '')
+                .map(d => { const n = Number(d.trim()); return Number.isInteger(n) ? n : d.trim(); });
             if (name && dims.length) inputShapes[name] = dims;
         });
         config.input_shapes = inputShapes;
@@ -454,9 +533,9 @@
         .then(r => r.json())
         .then(data => {
             nextBtn.disabled = false;
-            nextBtn.textContent = T('✅ Use This Config');
+            DXIcon.label(nextBtn, 'check', T('Use This Config'));
             if (data.error) {
-                alert(T('Config generation failed: ') + data.error);
+                alert(T('Config generation failed: ') + _srvErr(data.error));
                 return;
             }
             // Set config_path and close wizard
@@ -466,7 +545,7 @@
         })
         .catch(err => {
             nextBtn.disabled = false;
-            nextBtn.textContent = T('✅ Use This Config');
+            DXIcon.label(nextBtn, 'check', T('Use This Config'));
             alert(T('Config generation failed: ') + err.message);
         });
     }
@@ -515,6 +594,20 @@
         if (calibNum) {
             calibNum.addEventListener('input', validateCalibNum);
             calibNum.addEventListener('change', validateCalibNum);
+        }
+        /* 차원 행은 동적으로 늘어나므로 목록에 위임한다 — 행마다 바인딩하면
+           나중에 추가된 행이 조용히 빠진다. */
+        const shapeList = document.getElementById('input-shapes-list');
+        if (shapeList) {
+            shapeList.addEventListener('input', validateInputShapes);
+            shapeList.addEventListener('change', validateInputShapes);
+        }
+        /* 전처리도 같은 이유로 컨테이너에 위임한다 — 전처리 항목은 추가·삭제로
+           계속 바뀌므로 개별 입력칸에 붙이면 나중에 추가된 것이 조용히 빠진다. */
+        const prepPipeline = document.getElementById('prep-pipeline');
+        if (prepPipeline) {
+            prepPipeline.addEventListener('input', validatePreprocessings);
+            prepPipeline.addEventListener('change', validatePreprocessings);
         }
     });
 

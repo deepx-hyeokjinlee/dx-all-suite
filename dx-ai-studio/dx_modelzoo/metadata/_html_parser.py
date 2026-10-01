@@ -15,6 +15,7 @@ from dx_modelzoo.metadata.normalization import canonical_model_id, normalize_sou
 _TABLE_FIELD_MAP = {
     "Task": "display.task",
     "Name": "display.name",
+    "Display Name": "display.name",       # 사람이 보는 이름 — Name (DenseNet121-1) 뒤 열이라 덮어쓴다
     "Class Name": "display.class_name",
     "Dataset": "specification.dataset",
     "Input Resolution": "specification.input_resolution",

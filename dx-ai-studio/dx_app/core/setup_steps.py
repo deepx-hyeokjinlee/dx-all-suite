@@ -245,11 +245,18 @@ def setup_status():
     gcc_ok=bool(shutil.which("gcc") or shutil.which("gcc-12") or shutil.which("g++"))
     ninja_ok=bool(shutil.which("ninja") or shutil.which("ninja-build"))
     r["dx-app-deps"]={"ok":cmake_ok and gcc_ok,
-        "detail":"cmake "+("✅" if cmake_ok else "❌")+"  gcc "+("✅" if gcc_ok else "❌")+"  ninja "+("✅" if ninja_ok else "❌")}
+        # 화면 (공용 단계 목록) 은 " · " 로 나눠 한 줄의 짧은 사실로 보인다 — 표시는 말로, 이모지 없이.
+        "detail":" · ".join([n for n, ok in (("cmake", cmake_ok), ("gcc", gcc_ok), ("ninja", ninja_ok)) if ok]
+                            + (["missing: " + ", ".join(n for n, ok in (("cmake", cmake_ok), ("gcc", gcc_ok), ("ninja", ninja_ok)) if not ok)]
+                               if not (cmake_ok and gcc_ok and ninja_ok) else []))}
     bdir=DX_APP_ROOT/"build_x86_64"
     bins=list(bdir.rglob("*_sync"))[:1] if bdir.exists() else []
+    # build.sh 가 설치하는 bin/ 도 빌드된 것이다 (prebuilt tree · per-model layout 의 --minimal build)
+    bin_dir=DX_APP_ROOT/"bin"
+    if not bins and bin_dir.is_dir():
+        bins=[p for p in bin_dir.glob("*_sync") if p.is_file()][:1]
     r["dx-app-build"]={"ok":bool(bins),
-        "detail":f"build_x86_64/ {'✅ found' if bdir.exists() else '❌ not found'}"}
+        "detail":f"build_x86_64/ {'found' if bdir.exists() else 'not found'}" + (" · bin/" if bin_dir.is_dir() else "")}
     mdir=ASSETS_DIR/"models";vdir=ASSETS_DIR/"videos"
     nm=len(list(mdir.glob("*.dxnn"))) if mdir.exists() else 0
     nv=len([f for f in vdir.iterdir() if f.is_file()]) if vdir.exists() else 0
@@ -269,14 +276,14 @@ def setup_status():
         "detail":", ".join(d.name for d in devs) if devs else "/dev/dxrt* or /dev/deepx* not found"}
     dxcom=_find_dxcom();ver=_dxcom_version()
     r["dx-compiler"]={"ok":dxcom is not None,
-        "detail":f"v{ver}" if ver else ("Install required" if not (DX_COMPILER_ROOT/"install.sh").exists() else "install.sh ✅"),
+        "detail":f"v{ver}" if ver else ("Install required" if not (DX_COMPILER_ROOT/"install.sh").exists() else "install.sh found"),
         "needs_credentials":True}
     # inference-venv (Option 1) — ok when the resolved inference interpreter has numpy+cv2+dx_engine.
     try:
         from shared.runtime import runtime_python, _has_numpy_cv2_dxengine
         _ip=runtime_python(); _iok=_has_numpy_cv2_dxengine(_ip)
         r["inference-venv"]={"ok":_iok,
-            "detail":("numpy+cv2+dx_engine ✅ ("+Path(_ip).name+")") if _iok else "no interpreter has numpy+cv2+dx_engine yet"}
+            "detail":("numpy · cv2 · dx_engine ("+Path(_ip).name+")") if _iok else "no interpreter has numpy+cv2+dx_engine yet"}
     except Exception as _e:
         r["inference-venv"]={"ok":False,"detail":f"probe failed: {_e}"}
     r["versions"] = {
@@ -320,7 +327,7 @@ def deep_diagnostics():
         lsmod=subprocess.check_output(["lsmod"],text=True,timeout=5).strip()
         has_dxrt="dxrt_driver" in lsmod
         checks.append({"id":"kmod_dxrt","label":{"ko":"커널 모듈 (dxrt_driver)","en":"Kernel Module (dxrt_driver)","ja":"カーネルモジュール (dxrt_driver)","zhCN":"内核模块 (dxrt_driver)","zhTW":"核心模組 (dxrt_driver)"},"ok":has_dxrt,
-            "detail":"Loaded ✅" if has_dxrt else "Not loaded",
+            "detail":"Loaded" if has_dxrt else "Not loaded",
             "fix":{"ko":"sudo modprobe dxrt_driver 또는 드라이버 재설치","en":"sudo modprobe dxrt_driver  OR  reinstall driver","ja":"sudo modprobe dxrt_driver または ドライバ再インストール","zhCN":"sudo modprobe dxrt_driver 或 重新安装驱动","zhTW":"sudo modprobe dxrt_driver 或 重新安裝驅動"}})
     except Exception as e:
         checks.append({"id":"kmod_dxrt","label":{"ko":"커널 모듈 (dxrt_driver)","en":"Kernel Module (dxrt_driver)","ja":"カーネルモジュール (dxrt_driver)","zhCN":"内核模块 (dxrt_driver)","zhTW":"核心模組 (dxrt_driver)"},"ok":False,"detail":str(e)})
@@ -329,7 +336,7 @@ def deep_diagnostics():
     try:
         has_dma="dx_dma" in lsmod
         checks.append({"id":"kmod_dma","label":{"ko":"커널 모듈 (dx_dma)","en":"Kernel Module (dx_dma)","ja":"カーネルモジュール (dx_dma)","zhCN":"内核模块 (dx_dma)","zhTW":"核心模組 (dx_dma)"},"ok":has_dma,
-            "detail":"Loaded ✅" if has_dma else "Not loaded",
+            "detail":"Loaded" if has_dma else "Not loaded",
             "fix":{"ko":"sudo modprobe dx_dma 또는 드라이버 재설치","en":"sudo modprobe dx_dma  OR  reinstall driver","ja":"sudo modprobe dx_dma または ドライバ再インストール","zhCN":"sudo modprobe dx_dma 或 重新安装驱动","zhTW":"sudo modprobe dx_dma 或 重新安裝驅動"}})
     except Exception:
         checks.append({"id":"kmod_dma","label":{"ko":"커널 모듈 (dx_dma)","en":"Kernel Module (dx_dma)","ja":"カーネルモジュール (dx_dma)","zhCN":"内核模块 (dx_dma)","zhTW":"核心模組 (dx_dma)"},"ok":False,"detail":"lsmod failed"})
@@ -353,7 +360,7 @@ def deep_diagnostics():
         r=subprocess.run(["systemctl","is-active","dxrt"],capture_output=True,text=True,timeout=5)
         active=r.stdout.strip()=="active"
         checks.append({"id":"dxrt_service","label":{"ko":"dxrt.service (systemd)","en":"dxrt.service (systemd)","ja":"dxrt.service (systemd)","zhCN":"dxrt.service (systemd)","zhTW":"dxrt.service (systemd)"},"ok":active,
-            "detail":"active ✅" if active else r.stdout.strip(),
+            "detail":"active" if active else r.stdout.strip(),
             "fix":{"ko":"sudo systemctl start dxrt && sudo systemctl enable dxrt","en":"sudo systemctl start dxrt && sudo systemctl enable dxrt","ja":"sudo systemctl start dxrt && sudo systemctl enable dxrt","zhCN":"sudo systemctl start dxrt && sudo systemctl enable dxrt","zhTW":"sudo systemctl start dxrt && sudo systemctl enable dxrt"}})
     except Exception:
         checks.append({"id":"dxrt_service","label":{"ko":"dxrt.service (systemd)","en":"dxrt.service (systemd)","ja":"dxrt.service (systemd)","zhCN":"dxrt.service (systemd)","zhTW":"dxrt.service (systemd)"},"ok":False,

@@ -17,14 +17,6 @@ const WizardController = {
   _recommendCallback: null,
   _changeCallbacks: [],
 
-  _TASKS: [
-    { id: 'object_detection', icon: '🎯', ko: '객체 탐지', en: 'Object Detection' },
-    { id: 'pose_estimation', icon: '🏃', ko: '자세 추정', en: 'Pose Estimation' },
-    { id: 'segmentation', icon: '🧩', ko: '분할', en: 'Segmentation' },
-    { id: 'oriented_bbox', icon: '📐', ko: '회전 박스', en: 'Oriented BBox' },
-    { id: 'classification', icon: '🏷️', ko: '분류', en: 'Classification' },
-  ],
-
   _SIZES: [
     { id: 'n', ko: '최고속', en: 'Fastest' },
     { id: 's', ko: '빠름', en: 'Fast' },

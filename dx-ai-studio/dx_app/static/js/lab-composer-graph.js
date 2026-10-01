@@ -202,7 +202,7 @@ window.LabComposerGraph = (function () {
     toolbar.appendChild(actionButton('− ' + text('zoomOut', 'Zoom out'), function () { zoomBy(0.85); }));
     toolbar.appendChild(actionButton('+ ' + text('zoomIn', 'Zoom in'), function () { zoomBy(1.15); }));
     toolbar.appendChild(actionButton('⊙ ' + text('fitView', 'Fit view'), function () { fitView(); }));
-    toolbar.appendChild(actionButton('✓ ' + text('validate', 'Validate graph'), function () { emitValidation(); }));
+    toolbar.appendChild(actionButton(text('validate', 'Validate graph'), function () { emitValidation(); }));
     toolbar.appendChild(status);
     root.appendChild(toolbar);
     root.appendChild(canvas);
@@ -424,7 +424,7 @@ window.LabComposerGraph = (function () {
         ctx.lineWidth = selected ? 3 : 1.5;
         roundRect(ctx, point.x, point.y, width, height, 10);
         ctx.fill(); ctx.stroke();
-        ctx.fillStyle = '#e2e8f0';
+        ctx.fillStyle = '#f5f5f7';
         ctx.font = '600 ' + Math.max(12, 16 * state.viewport.zoom) + 'px sans-serif';
         ctx.fillText(nodeName(id), point.x + 16 * state.viewport.zoom, point.y + 30 * state.viewport.zoom);
         ctx.fillStyle = '#94a3b8';

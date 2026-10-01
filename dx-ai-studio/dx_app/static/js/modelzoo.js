@@ -1,8 +1,25 @@
 // Browse DEEPX ModelZoo, add to cart, download Q-Lite / Q-Pro models
 
+// 티어 목록. 렌더러·카트·일괄선택이 전부 이 위에서 돈다 — 예전에는 세 군데가
+// 각각 qlite/qpro 를 손으로 나열해서, Q-Master 를 받을 수 있게 된 뒤에도 화면에서
+// 고를 방법이 없었다. 서버 쪽 같은 표: dx_app/core/modelzoo.py 의 _CHIP_DIRS.
+var MZ_CHIPS = [
+  { key: 'qlite',   label: 'Q-Lite',   col: 'mz-col-ql', chk: 'mz-chk-ql' },
+  { key: 'qpro',    label: 'Q-Pro',    col: 'mz-col-qp', chk: 'mz-chk-qp' },
+  { key: 'qmaster', label: 'Q-Master', col: 'mz-col-qm', chk: 'mz-chk-qm' },
+];
+
+function mzCartIsEmpty(entry) {
+  if (!entry) return true;
+  for (var i = 0; i < MZ_CHIPS.length; i++) {
+    if (entry[MZ_CHIPS[i].key]) return false;
+  }
+  return true;
+}
+
 const MZ = {
   models: [],
-  cart: {},           // { "AlexNet-1": { qlite: true, qpro: false } }
+  cart: {},           // { "AlexNet-1": { qlite: true, qpro: false, qmaster: false } }
   source: 'public',
   filter: { task: '', search: '' },
   loading: false,
@@ -99,53 +116,48 @@ function mzRenderTable() {
   if (MZ.loading) { mzRenderLoading(); return; }
 
   if (!list.length) {
-    tb.innerHTML = '<tr><td colspan="22" style="text-align:center;padding:30px;color:var(--text-4)">' + T('No models found') + '</td></tr>';
+    tb.innerHTML = '<tr><td colspan="26" style="text-align:center;padding:30px;color:var(--text-faint)">' + T('No models found') + '</td></tr>';
     $('mz-count').textContent = '0 / ' + MZ.models.length;
     return;
   }
 
   tb.innerHTML = list.map(function(m) {
     var cart = MZ.cart[m.name];
-    var qlInCart = cart && cart.qlite;
-    var qpInCart = cart && cart.qpro;
+    var anyInCart = false;
+    var chipCells = '';
 
-    var hasQL = m.qlite && m.qlite.dxnn_url;
-    var qlExists = hasQL && m.qlite.exists;
+    for (var ci = 0; ci < MZ_CHIPS.length; ci++) {
+      var chip = MZ_CHIPS[ci];
+      var tier = m[chip.key];
+      var inCart = !!(cart && cart[chip.key]);
+      if (inCart) anyInCart = true;
 
-    var hasQP = m.qpro && m.qpro.dxnn_url;
-    var qpExists = hasQP && m.qpro.exists;
+      var has = !!(tier && tier.dxnn_url);
+      var acc = has ? mzNl2br(esc(tier.accuracy || '–')) : '–';
+      var dxnn = has ? '<a href="' + esc(tier.dxnn_url) + '" target="_blank" class="txt-link txt-xs">' + DXIcon('models') + ' dxnn</a>' : '–';
+      var jsonL = (has && tier.json_url) ? '<a href="' + esc(tier.json_url) + '" target="_blank" class="txt-link txt-xs">' + DXIcon('file') + ' json</a>' : '–';
 
-    var qlAcc = hasQL ? mzNl2br(esc(m.qlite.accuracy || '–')) : '–';
-    var qlDxnn = hasQL ? '<a href="' + esc(m.qlite.dxnn_url) + '" target="_blank" class="txt-link txt-xs">📦 dxnn</a>' : '–';
-    var qlJson = (hasQL && m.qlite.json_url) ? '<a href="' + esc(m.qlite.json_url) + '" target="_blank" class="txt-link txt-xs">📄 json</a>' : '–';
-    var qlDL = '';
-    if (hasQL) {
-      if (qlExists && !qlInCart) {
-        qlDL = '<span class="badge b-ok txt-xs" title="'+T('Downloaded')+'">✅</span>';
-      } else {
-        qlDL = '<label class="mz-chk-wrap" title="'+T('Add Q-Lite to cart')+'"><input type="checkbox" onchange="mzToggleChip(\'' + esc(m.name) + '\',\'qlite\')"' + (qlInCart ? ' checked' : '') + '><span class="mz-chk mz-chk-ql"></span></label>';
+      var dl = '–';
+      if (has) {
+        if (tier.exists && !inCart) {
+          dl = '<span class="badge b-ok txt-xs" title="' + T('Downloaded') + '">' + DXIcon('check') + '</span>';
+        } else {
+          dl = '<label class="mz-chk-wrap" title="' + T('Add to cart') + ' — ' + chip.label + '">'
+             + '<input type="checkbox" onchange="mzToggleChip(\'' + esc(m.name) + '\',\'' + chip.key + '\')"'
+             + (inCart ? ' checked' : '') + '>'
+             + '<span class="mz-chk ' + chip.chk + '"></span></label>';
+        }
       }
-    } else {
-      qlDL = '–';
+
+      chipCells += '<td class="' + chip.col + ' txt-xs" style="white-space:normal">' + acc + '</td>'
+                 + '<td class="' + chip.col + '">' + dxnn + '</td>'
+                 + '<td class="' + chip.col + '">' + jsonL + '</td>'
+                 + '<td class="' + chip.col + '">' + dl + '</td>';
     }
 
-    var qpAcc = hasQP ? mzNl2br(esc(m.qpro.accuracy || '–')) : '–';
-    var qpDxnn = hasQP ? '<a href="' + esc(m.qpro.dxnn_url) + '" target="_blank" class="txt-link txt-xs">📦 dxnn</a>' : '–';
-    var qpJson = (hasQP && m.qpro.json_url) ? '<a href="' + esc(m.qpro.json_url) + '" target="_blank" class="txt-link txt-xs">📄 json</a>' : '–';
-    var qpDL = '';
-    if (hasQP) {
-      if (qpExists && !qpInCart) {
-        qpDL = '<span class="badge b-ok txt-xs" title="'+T('Downloaded')+'">✅</span>';
-      } else {
-        qpDL = '<label class="mz-chk-wrap" title="'+T('Add Q-Pro to cart')+'"><input type="checkbox" onchange="mzToggleChip(\'' + esc(m.name) + '\',\'qpro\')"' + (qpInCart ? ' checked' : '') + '><span class="mz-chk mz-chk-qp"></span></label>';
-      }
-    } else {
-      qpDL = '–';
-    }
+    var onnxLink = m.onnx_url ? '<a href="' + esc(m.onnx_url) + '" target="_blank" class="txt-link txt-xs">' + DXIcon('models') + ' onnx</a>' : '–';
 
-    var onnxLink = m.onnx_url ? '<a href="' + esc(m.onnx_url) + '" target="_blank" class="txt-link txt-xs">📦 onnx</a>' : '–';
-
-    var rowCls = (qlInCart || qpInCart) ? 'mz-row-selected' : '';
+    var rowCls = anyInCart ? 'mz-row-selected' : '';
 
     return '<tr class="' + rowCls + '">'
       + '<td><label class="mz-chk-wrap"><input type="checkbox" onchange="mzToggleCart(\'' + esc(m.name) + '\')"' + (cart ? ' checked' : '') + '><span class="mz-chk"></span></label></td>'
@@ -160,16 +172,8 @@ function mzRenderTable() {
       + '<td class="txt-dim txt-xs" style="white-space:normal">' + mzNl2br(esc(m.metric || '–')) + '</td>'
       + '<td class="txt-dim txt-xs" style="white-space:normal">' + mzNl2br(esc(m.raw_accuracy || '–')) + '</td>'
       + '<td>' + onnxLink + '</td>'
-      /* Q-Lite group */
-      + '<td class="mz-col-ql txt-xs" style="white-space:normal">' + qlAcc + '</td>'
-      + '<td class="mz-col-ql">' + qlDxnn + '</td>'
-      + '<td class="mz-col-ql">' + qlJson + '</td>'
-      + '<td class="mz-col-ql">' + qlDL + '</td>'
-      /* Q-Pro group */
-      + '<td class="mz-col-qp txt-xs" style="white-space:normal">' + qpAcc + '</td>'
-      + '<td class="mz-col-qp">' + qpDxnn + '</td>'
-      + '<td class="mz-col-qp">' + qpJson + '</td>'
-      + '<td class="mz-col-qp">' + qpDL + '</td>'
+      /* 티어 그룹 — MZ_CHIPS 순서 */
+      + chipCells
       /* Performance */
       + '<td class="txt-dim">' + esc(m.fps || '–') + '</td>'
       + '<td class="txt-dim">' + esc(m.fps_per_watt || '–') + '</td>'
@@ -188,11 +192,12 @@ function mzSearch() {
 function mzToggleChip(name, chip) {
   // Toggle a single Q-Lite or Q-Pro chip directly from the table DL column
   if (!MZ.cart[name]) {
-    MZ.cart[name] = { qlite: chip === 'qlite', qpro: chip === 'qpro' };
+    var fresh = {};
+    for (var i = 0; i < MZ_CHIPS.length; i++) fresh[MZ_CHIPS[i].key] = (MZ_CHIPS[i].key === chip);
+    MZ.cart[name] = fresh;
   } else {
     MZ.cart[name][chip] = !MZ.cart[name][chip];
-    // Remove from cart if nothing selected
-    if (!MZ.cart[name].qlite && !MZ.cart[name].qpro) {
+    if (mzCartIsEmpty(MZ.cart[name])) {
       delete MZ.cart[name];
     }
   }
@@ -206,15 +211,19 @@ function mzToggleCart(name) {
   } else {
     var m = MZ.models.find(function(x) { return x.name === name; });
     if (m) {
-      MZ.cart[name] = {
-        qlite: !!(m.qlite && m.qlite.dxnn_url && !m.qlite.exists),
-        qpro: !!(m.qpro && m.qpro.dxnn_url && !m.qpro.exists),
-      };
-      // If both are false (both downloaded), default enable qlite
-      if (!MZ.cart[name].qlite && !MZ.cart[name].qpro) {
-        if (m.qlite && m.qlite.dxnn_url) MZ.cart[name].qlite = true;
-        else if (m.qpro && m.qpro.dxnn_url) MZ.cart[name].qpro = true;
+      var entry = {};
+      for (var i = 0; i < MZ_CHIPS.length; i++) {
+        var t = m[MZ_CHIPS[i].key];
+        entry[MZ_CHIPS[i].key] = !!(t && t.dxnn_url && !t.exists);
       }
+      // 전부 이미 받아둔 상태면 담을 게 없어 보인다 — 받을 수 있는 첫 티어를 켠다.
+      if (mzCartIsEmpty(entry)) {
+        for (var j = 0; j < MZ_CHIPS.length; j++) {
+          var t2 = m[MZ_CHIPS[j].key];
+          if (t2 && t2.dxnn_url) { entry[MZ_CHIPS[j].key] = true; break; }
+        }
+      }
+      MZ.cart[name] = entry;
     }
   }
   mzRenderTable();
@@ -224,8 +233,7 @@ function mzToggleCart(name) {
 function mzCartChipToggle(name, chip) {
   if (!MZ.cart[name]) return;
   MZ.cart[name][chip] = !MZ.cart[name][chip];
-  // Remove from cart if nothing selected
-  if (!MZ.cart[name].qlite && !MZ.cart[name].qpro) {
+  if (mzCartIsEmpty(MZ.cart[name])) {
     delete MZ.cart[name];
     mzRenderTable();
   }
@@ -247,10 +255,12 @@ function mzCartClear() {
 function mzSelectAllVisible() {
   mzFiltered().forEach(function(m) {
     if (!MZ.cart[m.name]) {
-      MZ.cart[m.name] = {
-        qlite: !!(m.qlite && m.qlite.dxnn_url),
-        qpro: !!(m.qpro && m.qpro.dxnn_url),
-      };
+      var e = {};
+      for (var i = 0; i < MZ_CHIPS.length; i++) {
+        var t = m[MZ_CHIPS[i].key];
+        e[MZ_CHIPS[i].key] = !!(t && t.dxnn_url);
+      }
+      MZ.cart[m.name] = e;
     }
   });
   mzRenderTable();
@@ -259,10 +269,13 @@ function mzSelectAllVisible() {
 
 function mzSelectAllNew() {
   mzFiltered().forEach(function(m) {
-    var ql = !!(m.qlite && m.qlite.dxnn_url && !m.qlite.exists);
-    var qp = !!(m.qpro && m.qpro.dxnn_url && !m.qpro.exists);
-    if (ql || qp) {
-      MZ.cart[m.name] = { qlite: ql, qpro: qp };
+    var e = {};
+    for (var i = 0; i < MZ_CHIPS.length; i++) {
+      var t = m[MZ_CHIPS[i].key];
+      e[MZ_CHIPS[i].key] = !!(t && t.dxnn_url && !t.exists);
+    }
+    if (!mzCartIsEmpty(e)) {
+      MZ.cart[m.name] = e;
     }
   });
   mzRenderTable();
@@ -282,12 +295,12 @@ function mzDeselectAll() {
 function mzSelectChipAll(chip) {
   // Select only Q-Lite or Q-Pro for all visible models that have it
   mzFiltered().forEach(function(m) {
-    var has = chip === 'qlite'
-      ? (m.qlite && m.qlite.dxnn_url)
-      : (m.qpro && m.qpro.dxnn_url);
-    if (!has) return;
+    var tier = m[chip];
+    if (!tier || !tier.dxnn_url) return;
     if (!MZ.cart[m.name]) {
-      MZ.cart[m.name] = { qlite: chip === 'qlite', qpro: chip === 'qpro' };
+      var e = {};
+      for (var i = 0; i < MZ_CHIPS.length; i++) e[MZ_CHIPS[i].key] = (MZ_CHIPS[i].key === chip);
+      MZ.cart[m.name] = e;
     } else {
       MZ.cart[m.name][chip] = true;
     }
@@ -305,8 +318,9 @@ function mzCartFileCount() {
   var count = 0;
   Object.keys(MZ.cart).forEach(function(name) {
     var c = MZ.cart[name];
-    if (c.qlite) count += 2;  // dxnn + json
-    if (c.qpro) count += 2;
+    for (var i = 0; i < MZ_CHIPS.length; i++) {
+      if (c[MZ_CHIPS[i].key]) count += 2;  // dxnn + json
+    }
   });
   return count;
 }
@@ -319,6 +333,10 @@ function mzRenderCart() {
   var fileCount = mzCartFileCount();
 
   if (!names.length) {
+    /* 튜토리얼이 고정해 둔 시연 카트는 지우지 않는다. 카탈로그가 늦게 도착하면
+       이 함수가 다시 돌면서 방금 만든 시연을 display:none 으로 덮었다.
+       계약: tests/dx_app/test_modelzoo_cart_demo.py */
+    if (cartEl.dataset && cartEl.dataset.dxtPinned === '1') return;
     cartEl.style.display = 'none';
     return;
   }
@@ -326,14 +344,14 @@ function mzRenderCart() {
 
   var summaryHtml = '<div class="mz-cart-summary">'
     + '<div class="mz-cart-left">'
-    + '<span class="mz-cart-icon">🛒</span> '
+    + '<span class="mz-cart-icon">' + DXIcon('download') + '</span> '
     + '<strong>' + names.length + '</strong> ' + T('model(s)')
     + ' · <span class="txt-dim">' + fileCount + ' ' + T('files') + '</span>'
     + '</div>'
     + '<div class="mz-cart-right">'
-    + '<button class="btn btn-ghost btn-sm" onclick="mzToggleCartPanel()">' + (MZ.cartOpen ? '▼ ' + T('Hide') : '▲ ' + T('View Cart')) + '</button>'
-    + '<button class="btn btn-ghost btn-sm" onclick="mzCartClear()" title="' + T('Clear Cart') + '">🗑️</button>'
-    + '<button class="btn btn-acc btn-sm" onclick="mzStartDownload()" ' + (MZ.downloading ? 'disabled' : '') + '>📥 ' + T('Download All') + ' (' + fileCount + ')</button>'
+    + '<button class="btn btn-ghost btn-sm" onclick="mzToggleCartPanel()">' + (MZ.cartOpen ? '' + T('Hide') : '' + T('View Cart')) + '</button>'
+    + '<button class="btn btn-ghost btn-sm" onclick="mzCartClear()" title="' + T('Clear Cart') + '">' + DXIcon('trash') + '</button>'
+    + '<button class="btn btn-acc btn-sm" onclick="mzStartDownload()" ' + (MZ.downloading ? 'disabled' : '') + '>' + DXIcon('download') + ' ' + T('Download All') + ' (' + fileCount + ')</button>'
     + '</div></div>';
 
   var detailHtml = '';
@@ -343,29 +361,25 @@ function mzRenderCart() {
       var c = MZ.cart[name];
       var m = MZ.models.find(function(x) { return x.name === name; });
       var task = m ? m.task : '';
-      var hasQL = m && m.qlite && m.qlite.dxnn_url;
-      var hasQP = m && m.qpro && m.qpro.dxnn_url;
 
       detailHtml += '<div class="mz-cart-item">'
         + '<div class="mz-cart-item-info">'
-        + '<span class="mz-cart-item-name">📦 ' + esc(name) + '</span>'
+        + '<span class="mz-cart-item-name">' + DXIcon('models') + ' ' + esc(name) + '</span>'
         + '<span class="badge b-cat">' + esc(task) + '</span>'
         + '</div>'
         + '<div class="mz-cart-item-chips">';
 
-      if (hasQL) {
-        var qlCls = c.qlite ? 'mz-chip-on' : 'mz-chip-off';
-        var qlLabel = m.qlite.exists ? '✅ Q-Lite' : 'Q-Lite';
-        detailHtml += '<button class="mz-chip-toggle ' + qlCls + '" onclick="mzCartChipToggle(\'' + esc(name) + '\',\'qlite\')">' + qlLabel + '</button>';
-      }
-      if (hasQP) {
-        var qpCls = c.qpro ? 'mz-chip-on' : 'mz-chip-off';
-        var qpLabel = m.qpro.exists ? '✅ Q-Pro' : 'Q-Pro';
-        detailHtml += '<button class="mz-chip-toggle ' + qpCls + '" onclick="mzCartChipToggle(\'' + esc(name) + '\',\'qpro\')">' + qpLabel + '</button>';
+      for (var ci = 0; ci < MZ_CHIPS.length; ci++) {
+        var chip = MZ_CHIPS[ci];
+        var tier = m && m[chip.key];
+        if (!tier || !tier.dxnn_url) continue;
+        var cls = c[chip.key] ? 'mz-chip-on' : 'mz-chip-off';
+        var label = (tier.exists ? DXIcon('check') + ' ' : '') + chip.label;
+        detailHtml += '<button class="mz-chip-toggle ' + cls + '" onclick="mzCartChipToggle(\'' + esc(name) + '\',\'' + chip.key + '\')">' + label + '</button>';
       }
 
       detailHtml += '</div>'
-        + '<button class="mz-cart-remove" onclick="mzCartRemove(\'' + esc(name) + '\')" title="'+T('Remove')+'">✕</button>'
+        + '<button class="mz-cart-remove" onclick="mzCartRemove(\'' + esc(name) + '\')" title="'+T('Remove')+'"></button>'
         + '</div>';
     });
     detailHtml += '</div>';
@@ -383,11 +397,12 @@ async function mzStartDownload() {
     var m = MZ.models.find(function(x) { return x.name === name; });
     if (!m) return;
 
-    if (c.qlite && m.qlite && m.qlite.dxnn_url) {
-      items.push({ name: name, chip: 'qlite', dxnn_url: m.qlite.dxnn_url, json_url: m.qlite.json_url || null });
-    }
-    if (c.qpro && m.qpro && m.qpro.dxnn_url) {
-      items.push({ name: name, chip: 'qpro', dxnn_url: m.qpro.dxnn_url, json_url: m.qpro.json_url || null });
+    for (var i = 0; i < MZ_CHIPS.length; i++) {
+      var key = MZ_CHIPS[i].key;
+      var tier = m[key];
+      if (c[key] && tier && tier.dxnn_url) {
+        items.push({ name: name, chip: key, dxnn_url: tier.dxnn_url, json_url: tier.json_url || null });
+      }
     }
   });
 
@@ -426,9 +441,9 @@ async function mzPollProgress() {
     var errCount = (r.results || []).filter(function(x) { return x.status === 'error'; }).length;
 
     if (errCount > 0) {
-      toast('⚠️ ' + T('Downloaded') + ' ' + okCount + ', ' + T('errors') + ' ' + errCount, 'err');
+      toast(T('Downloaded') + ' ' + okCount + ', ' + T('errors') + ' ' + errCount, 'err');
     } else {
-      toast('✅ ' + T('Download complete —') + ' ' + okCount + ' ' + T('files'), 'ok');
+      toast(T('Download complete —') + ' ' + okCount + ' ' + T('files'), 'ok');
     }
 
     // Refresh model list (exists flags)
@@ -461,17 +476,17 @@ function mzRenderProgress(st) {
   var html = '<div class="mz-prog-header">'
     + '<div class="mz-prog-bar-wrap"><div class="mz-prog-bar" style="width:' + barW + '"></div></div>'
     + '<span class="mz-prog-pct">' + pct + '% (' + st.done + '/' + st.total + ')</span>'
-    + (st.running ? '<button class="btn btn-ghost btn-sm" onclick="mzStopDownload()">⏹ ' + T('Stop') + '</button>' : '')
+    + (st.running ? '<button class="btn btn-ghost btn-sm" onclick="mzStopDownload()">' + DXIcon('stop') + ' ' + T('Stop') + '</button>' : '')
     + '</div>';
 
   if (st.current && st.running) {
-    html += '<div class="mz-prog-current">⏳ ' + esc(st.current) + '</div>';
+    html += '<div class="mz-prog-current">' + DXIcon('spinner') + ' ' + esc(st.current) + '</div>';
   }
 
   if (st.results && st.results.length) {
     html += '<div class="mz-prog-log">';
     st.results.forEach(function(r) {
-      var icon = r.status === 'ok' ? '✅' : r.status === 'cancelled' ? '⏹' : '❌';
+      var icon = r.status === 'ok' ? DXIcon('check') : r.status === 'cancelled' ? DXIcon('stop') : DXIcon('x');
       var sizeStr = r.size ? mzFmtSize(r.size) : '';
       var detail = r.error ? '<span class="txt-dim"> — ' + esc(r.error) + '</span>' : '';
       html += '<div class="mz-prog-item">' + icon + ' ' + esc(r.file || '') + (r.chip ? ' <span class="badge b-blue">' + r.chip + '</span>' : '') + ' ' + sizeStr + detail + '</div>';
@@ -480,7 +495,7 @@ function mzRenderProgress(st) {
   }
 
   if (st.finished) {
-    html += '<div class="mt8 txt-sm" style="color:var(--success)">' + T('✅ All done!') + '</div>';
+    html += '<div class="mt8 txt-sm" style="color:var(--status-ok)">' + DXIcon('check')+' '+T('All done!') + '</div>';
   }
 
   el.innerHTML = html;

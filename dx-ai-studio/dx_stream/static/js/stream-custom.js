@@ -14,7 +14,7 @@
             grid.innerHTML = libs.map(function(lib) {
                 return '<div class="card">' +
                     '<div class="card-title">' + lib.name + '</div>' +
-                    '<span class="card-badge">' + (lib.built ? '✅ Built' : '⚠️ Not built') + '</span>' +
+                    '<span class="card-badge">' + (lib.built ? ((typeof DXIcon === 'function') ? DXIcon('check') : '') + ' Built' : ((typeof DXIcon === 'function') ? DXIcon('alert') : '') + ' Not built') + '</span>' +
                     (lib.has_meson && !lib.built ?
                         '<button class="btn btn-sm mt4" onclick="DXStream.custom.build(\'' + lib.name + '\')">' +
                         T('Build') + '</button>' : '') +
@@ -59,7 +59,7 @@
     DXStream.uploadModel = function() {
         var input = DXStream.$('model-upload-file');
         var statusEl = DXStream.$('model-upload-status');
-        var setStatus = function(msg) { if (statusEl) statusEl.textContent = msg; };
+        var setStatus = function(msg, icon) { if (!statusEl) return; if (icon && typeof DXIcon === 'function') DXIcon.label(statusEl, icon, msg); else statusEl.textContent = msg; };
         if (!input || !input.files.length) { setStatus(T('Select a .dxnn file first')); return; }
         var f = input.files[0];
         if (!/\.dxnn$/i.test(f.name)) { setStatus(T('Model file must be a .dxnn binary')); return; }
@@ -70,10 +70,10 @@
         .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, d: d }; }); })
         .then(function(res) {
             if (!res.ok || !res.d.uploaded) {
-                setStatus('❌ ' + ((res.d && res.d.error) || T('Upload failed')));
+                setStatus((res.d && res.d.error) || T('Upload failed'), 'x');
                 return;
             }
-            setStatus('✅ ' + res.d.name);
+            setStatus(res.d.name, 'check');
             // refresh asset lists so the model-path dropdown includes the new model
             if (typeof DXStream.api === 'function') {
                 DXStream.api('/api/pipeline/assets').then(function(a) {
@@ -81,7 +81,7 @@
                 });
             }
         })
-        .catch(function(e) { setStatus('❌ ' + e.message); });
+        .catch(function(e) { setStatus(e.message, 'x'); });
     };
 
     DXStream.custom.build = function(name) {

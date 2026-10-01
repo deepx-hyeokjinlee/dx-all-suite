@@ -262,3 +262,141 @@ class TestCatalogQueryPagination:
         assert result["pages"] == 2
         assert [m["id"] for m in result["models"]] == ["b"]
         assert result["has_next"] is True
+
+
+def test_a_v9_only_model_says_which_dx_rt_it_needs(monkeypatch):
+    """Model Zoo 2_5_0 만 있는 model 은 container v9 — DX-RT 3.4.2 에서는 받아도 돌지 않는다
+    (spec 2026-10-01 dx_app per-model layout 결정 5)."""
+    from dx_modelzoo.core.catalog import _enrich_model_entry
+    from shared import dxrt
+
+    new = {"artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/patchcore_224x224.dxnn"}}}
+    old = {"artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_4_0/yolo26-n_640x640.dxnn"}}}
+    monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 4, 2))
+    assert _enrich_model_entry({}, new)["requires_dxrt"] == "3.5.0"
+    assert "requires_dxrt" not in _enrich_model_entry({}, old)
+    monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 5, 0))
+    assert "requires_dxrt" not in _enrich_model_entry({}, new)
+
+
+def test_models_only_on_the_publish_page_are_listed(monkeypatch):
+    """curated catalog 에 없는 새 model (publish page · generated catalog 에만) 도 목록에 든다 — 예전에는 보강만
+    되고 목록에 들지 않았다 (spec 2026-10-01 dx_app per-model layout 결정 8)."""
+    from dx_modelzoo.core import catalog
+    from shared import dxrt
+
+    monkeypatch.setattr(dxrt, "runtime_version", lambda: (3, 4, 2))
+    monkeypatch.setattr(catalog, "load_generated_catalog", lambda: {"schema_version": "2.0", "models": [
+        # 어느 dx_app conf 에도 없는 model 이어야 한다 — per-model conf 에는 patchcore 가 이미 있다
+        {"id": "brandnew_224x224", "display": {"name": "Brand New", "task": "anomaly_detection"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/brandnew_224x224.dxnn"}},
+         "legal": {"source_url": "No Reference"}},
+        {"id": "mystery_x", "display": {"name": "X", "task": "Not A Task"}}]})
+    try:
+        models = {m["id"]: m for m in catalog.reload_catalog()["models"]}
+    finally:
+        monkeypatch.undo()
+        catalog.reload_catalog()   # 가짜 catalog 를 cache 에 남기지 않는다 — 뒤의 test 가 그것을 읽었다
+    pc = models["brandnew_224x224"]
+    assert pc["category"] == "anomaly_detection" and pc["publish_only"] is True
+    assert pc["model_file"] == "assets/models/brandnew_224x224.dxnn"
+    assert pc["requires_dxrt"] == "3.5.0"
+    assert pc["legal"]["source_url"] == "", "page 의 'No Reference' 를 출처처럼 두지 않는다"
+    assert "mystery_x" not in models, "모르는 task 는 목록에 넣지 않는다"
+
+
+def test_a_per_model_test_models_conf_lists_each_model_once(tmp_path, monkeypatch):
+    """per-model dx_app (teammate 8d0b748) 의 test_models.conf 는 family<TAB>task<TAB>model_file<TAB>variant —
+    1 열 (family) 을 id 로 읽으면 efficientad 가 세 번, yolo26_depth 가 다섯 번 나온다. variant (= .dxnn 이름) 가
+    model 이고, Model Zoo 는 같은 파일의 기존 id (yolo26n) 와 옛 task key 를 쓴다."""
+    from dx_modelzoo.core import catalog
+    from shared.catalog_sources import parse_test_models_conf
+
+    conf = tmp_path / "test_models.conf"
+    conf.write_text("# Format: family<TAB>task<TAB>model_file<TAB>variant\n"
+                    "yolo26\tobject_detection\tassets/models/yolo26-n_640x640.dxnn\tyolo26-n_640x640\n"
+                    "efficientad\tanomaly_detection\tassets/models/efficientad-m-student_256x256.dxnn\tefficientad-m-student_256x256\n"
+                    "efficientad\tanomaly_detection\tassets/models/efficientad-m-teacher_256x256.dxnn\tefficientad-m-teacher_256x256\n"
+                    "resnet\timage_classification\tassets/models/resnet50_224x224.dxnn\tresnet50_224x224\n")
+    rows = parse_test_models_conf(conf)
+    assert [r["id"] for r in rows] == ["yolo26-n_640x640", "efficientad-m-student_256x256",
+                                       "efficientad-m-teacher_256x256", "resnet50_224x224"]
+    assert rows[1]["family"] == "efficientad"
+
+    gen = {"schema_version": "2.0", "models": [
+        {"id": "yolo26n", "display": {"task": "object_detection"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-n_640x640.dxnn"}}},
+        {"id": "efficientad_m_student_256x256", "display": {"task": "anomaly_detection"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/efficientad-m-student_256x256.dxnn"}}}]}
+    ids = catalog.conf_ids_from_generated(rows, gen)
+    assert [r["id"] for r in ids] == ["yolo26n", "efficientad_m_student_256x256",
+                                      "efficientad-m-teacher_256x256", "resnet50_224x224"]
+    assert ids[3]["category"] == "classification", "Model Zoo 는 짝이 있는 task 를 옛 key 로 묶는다"
+
+
+def test_a_legacy_row_outside_the_curated_catalog_takes_the_id_of_its_file():
+    """main dx_app 의 3 열 줄 (yolo26_depth_n) 과 per-model dx_app 의 같은 model 이 다른 id 면 그림을 찾지 못한다.
+    curated catalog 의 id 는 그대로 (DeiT 처럼 자기 자료가 있다)."""
+    from dx_modelzoo.core import catalog
+
+    gen = {"models": [{"id": "yolo26_depth_n_768x768", "artifacts": {"qlite_dxnn": {
+        "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-depth-n_768x768.dxnn"}}},
+        {"id": "deitbase384", "artifacts": {"qlite_dxnn": {
+            "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/deit-b_384x384.dxnn"}}}]}
+    rows = [{"id": "yolo26_depth_n", "name": "yolo26_depth_n", "category": "depth_estimation",
+             "model_file": "assets/models/yolo26-depth-n_768x768.dxnn"},
+            {"id": "deit_base384_distilled", "name": "deit_base384_distilled", "category": "classification",
+             "model_file": "assets/models/deit-b_384x384.dxnn"}]
+    out = catalog.conf_ids_from_generated(rows, gen, curated_ids=["deit_base384_distilled"])
+    assert [r["id"] for r in out] == ["yolo26_depth_n_768x768", "deit_base384_distilled"]
+
+
+def test_a_per_model_row_takes_the_task_of_its_example_dir(tmp_path, monkeypatch):
+    """per-model dx_app 의 test_models.conf 는 repvgg-a0-reid 를 image_classification 이라 적지만 예제는
+    person_reid/ 에 있고 (registry 도 person_reid), 그 runner 는 query 한 장 + gallery 로 돈다. Model Zoo 가 conf 를
+    따르면 개 사진으로 분류를 돌렸다 — 돌아가는 방식을 정하는 예제 폴더의 task 를 쓴다 (2026-10-01)."""
+    import json
+    from dx_modelzoo.core import catalog
+    from shared import dx_app_layout as layout
+
+    root = tmp_path / "dx_app"
+    ex = root / "src/python_example/person_reid/repvgg_reid/repvgg-a0-reid_256x128"
+    ex.mkdir(parents=True)
+    (ex / "repvgg-a0-reid_256x128_sync.py").write_text("")
+    (ex / "config.json").write_text(json.dumps({"variant": "repvgg-a0-reid_256x128", "task": "person_reid"}))
+    (root / "src/python_example/common/runner").mkdir(parents=True)
+    conf = root / "config/test_models.conf"
+    conf.parent.mkdir(parents=True)
+    conf.write_text("repvgg_reid\timage_classification\tassets/models/repvgg-a0-reid_256x128.dxnn\trepvgg-a0-reid_256x128\n"
+                    "casvit\timage_classification\tassets/models/casvit-t_224x224.dxnn\tcasvit-t_224x224\n")
+    monkeypatch.setattr(catalog, "DX_APP_ROOT", root)
+    monkeypatch.setattr(catalog, "CONFIG_FILE", conf)
+    layout.clear_cache()
+    try:
+        rows = {r["id"]: r for r in catalog.parse_test_models_conf()}
+    finally:
+        layout.clear_cache()
+    assert rows["repvgg-a0-reid_256x128"]["category"] == "person_reid"
+    assert rows["casvit-t_224x224"]["category"] == "image_classification", "예제가 없으면 conf 그대로"
+
+
+def test_a_registry_alias_row_does_not_list_its_model_twice(tmp_path):
+    """per-model dx_app 의 registry 에는 alias 항목이 있다 (deit_base384_distilled → deit_base_distilled_2, 같은
+    variant). test_models.conf 를 만드는 스크립트가 alias 를 거르지 않아 같은 variant 가 두 줄이 되고, Model Zoo 에
+    deitbase384 가 두 번 나왔다 (teammate 2eb1350e 이후는 deit_base384_distilled 가). variant 하나에 한 줄."""
+    from shared.catalog_sources import parse_test_models_conf
+    conf = tmp_path / "test_models.conf"
+    conf.write_text(
+        "deit\timage_classification\tassets/models/deit-b_384x384.dxnn\tdeit-b_384x384\n"
+        "deit\timage_classification\tassets/models/deit-b_384x384_distilled.dxnn\tdeit-b_384x384_distilled\n"
+        "deit\timage_classification\tassets/models/deit-b_384x384_distilled.dxnn\tdeit-b_384x384_distilled\n")
+    rows = parse_test_models_conf(conf)
+    assert [r["id"] for r in rows] == ["deit-b_384x384", "deit-b_384x384_distilled"]
+
+
+def test_the_real_catalog_has_no_duplicate_ids():
+    import collections
+    from dx_modelzoo.core import catalog
+    ids = collections.Counter(m["id"] for m in catalog.get_catalog()["models"])
+    dups = [k for k, v in ids.items() if v > 1]
+    assert not dups, dups

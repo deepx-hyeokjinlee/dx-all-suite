@@ -110,7 +110,7 @@
         else if (isGraphInput) html += '<span class="tensor-kind-badge input-badge">IN</span>';
         else html += '<span class="tensor-kind-badge tensor-badge">T</span>';
         html += '<span class="tensor-name">' + escapeHtml(name) + '</span>';
-        if (clickAttr) html += '<span style="color:#94a3b8;font-size:10px;flex-shrink:0">\u2139</span>';
+        if (clickAttr) html += '<span style="color:#94a3b8;flex-shrink:0;display:inline-flex">' + ((typeof DXIcon === 'function') ? DXIcon('info') : '') + '</span>';
         html += '</div>';
 
         if (info && ((info.shape && info.shape.length > 0) || info.dtype)) {
@@ -465,7 +465,7 @@
 
         // Back button — return to previous detail view
         html += '<div data-back-action="true" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:4px 10px;margin-bottom:8px;border-radius:4px;background:#f1f5f9;color:#475569;font-size:12px;font-weight:500;transition:background .15s"'
-             +  ' onmouseover="this.style.background=\'#e2e8f0\'" onmouseout="this.style.background=\'#f1f5f9\'">'
+             +  ' onmouseover="this.style.background=\'#f5f5f7\'" onmouseout="this.style.background=\'#f1f5f9\'">'
              +  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>'
              +  'Back</div>';
 

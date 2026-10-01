@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 
@@ -69,16 +70,38 @@ def test_benchmark_canvas_resize_writes_only_on_dimension_changes():
 
 
 def test_safe_transition_contracts_avoid_transition_all_on_hot_controls():
+    """These controls must name the properties they animate, not use `all`.
+
+    The check used to pin the exact declaration text, easing curve and
+    duration included. That is a value assertion wearing a contract's clothes:
+    the day the studio's motion moved to the measured Apple curve, five of
+    these went red and the obvious "fix" would have been to paste the old
+    curve back in. What actually matters is the shape — named properties, no
+    `all`, on the controls that are hot enough for it to cost something.
+    """
     checks = [
-        (ROOT / "launcher/static/style.css", ".dot", "transition: background-color 0.5s, box-shadow 0.5s"),
-        (ROOT / "launcher/static/style.css", ".launch-card", "transition: background 0.3s cubic-bezier"),
-        (ROOT / "dx_app/static/css/style.css", ".chat-model-btn", "transition: background-color .15s, color .15s, border-color .15s, box-shadow .15s"),
-        (ROOT / "dx_stream/static/css/stream.css", ".palette-item", "transition: background-color .12s ease, color .12s ease"),
-        (ROOT / "dx_benchmark/static/css/style.css", ".edgeguide-link", "transition: box-shadow .18s ease, transform .18s ease"),
+        # .dot 이었다. 그 요소는 상단 바의 상태 점 묶음과 함께 사라졌고, 스타일만
+        # 남아 이 계약을 통과시키고 있었다 — 죽은 규칙을 지키는 계약이었다는 뜻이다.
+        # 상태 표시는 이제 모듈 카드의 .orbital-status 가 맡으므로 그쪽을 본다.
+        (ROOT / "launcher/static/style.css", ".orbital-status", ("background",)),
+        (ROOT / "launcher/static/style.css", ".launch-card", ("background", "transform")),
+        (ROOT / "dx_app/static/css/style.css", ".chat-model-btn",
+         ("background-color", "color", "border-color", "box-shadow")),
+        (ROOT / "dx_stream/static/css/stream.css", ".palette-item", ("background-color", "color")),
+        (ROOT / "dx_benchmark/static/css/style.css", ".edgeguide-link", ("box-shadow", "transform")),
     ]
-    for path, selector, expected in checks:
+    for path, selector, props in checks:
         source = _read(path)
-        start = source.index(selector)
+        # 규칙의 시작을 찾는다. 예전에는 source.index(selector) 로 첫 등장을 썼는데,
+        # 그러면 선택자를 언급한 주석이 먼저 걸려 엉뚱한 블록을 검사한다 —
+        # 실제로 그 선택자를 설명하는 주석 한 줄 때문에 이 계약이 붉어졌다.
+        m = re.search(rf"(?m)^\s*{re.escape(selector)}\s*(?:,[^{{]*)?\{{", source)
+        assert m, f"{selector} has no rule in {path.name}"
+        start = m.start()
         block = source[start:source.index("}", start)]
-        assert expected in block
-        assert "transition: all" not in block
+        assert "transition:" in block, f"{selector} lost its transition"
+        assert "transition: all" not in block, f"{selector} animates everything"
+        line = block[block.index("transition:"):]
+        line = line[:line.index(";")]
+        for prop in props:
+            assert prop in line, f"{selector} no longer names {prop}"

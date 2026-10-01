@@ -34,13 +34,23 @@ def test_model_image_override_wins_over_task_default():
     assert ms["yolov5pose_ppu"].get("sample_image") == "sample_people.jpg"
 
 
+def _per_model():
+    from core.config import DX_APP_ROOT
+    from shared import dx_app_layout as layout
+    return layout.detect(DX_APP_ROOT) == layout.PER_MODEL
+
+
 def test_pair_task_has_no_flat_sample():
     # reid (person_pair dir) / embedding (face_pair dir) cannot be a single flat file →
-    # sample_dir stays None so the UI honestly disables the tab. (casvit_t is a reid model;
-    # casvit_xs was removed from the staging catalog.)
+    # sample_dir stays None so the UI honestly disables the tab. (casvit_xs was removed from
+    # the staging catalog.)
     ms = _catalog_models()
-    assert ms["casvit_t"].get("sample_dir") is None
-    assert ms["casvit_t"].get("sample_image") is None
+    assert ms["arcface_r50"].get("sample_dir") is None
+    assert ms["arcface_r50"].get("sample_image") is None
+    if not _per_model():
+        # main 에서 casvit_t 는 reid 다. per-model dx_app (8d0b748) 은 image_classification 으로 옮겼다.
+        assert ms["casvit_t"].get("sample_dir") is None
+        assert ms["casvit_t"].get("sample_image") is None
 
 
 def test_demo_input_is_representative_image_for_file_tasks():
@@ -49,15 +59,27 @@ def test_demo_input_is_representative_image_for_file_tasks():
     ms = _catalog_models()
     assert ms["yolov7_w6"].get("demo_input") == "sample/img/sample_street.jpg"
     assert ms["scrfd500m_ppu"].get("demo_input") == "sample/img/sample_face.jpg"  # override
-    assert ms["yolo26n_obb"].get("demo_input") == "sample/dota8_test/P0284.png"   # cross-dir file
+    # dx_app 이 v3.2.0(680366d) 에서 dota8_test/ 10장(93MB)을 지우고
+    # sample_airport_satellite_view.png 로 교체했다. 자산이 사라진 것이 아니라 교체된
+    # 것이고, studio 의 SAMPLE_IMAGES 만 따라가지 못해 한 달 넘게 없는 파일을 가리켰다.
+    #
+    # 썸네일도 새 입력으로 재생성했다(2026-09-21). obb 5개 + super_resolution 6개를
+    # 실제 NPU 추론으로 다시 만들었으므로, 이 함수 이름이 약속하는 "썸네일과 같은
+    # 이미지" 가 다시 성립한다.
+    assert ms["yolo26n_obb"].get("demo_input") == "sample/img/sample_airport_satellite_view.png"
 
 
 def test_demo_input_is_pair_dir_for_reid_embedding():
     # reid/embedding demos take a directory of image pairs; the sync runner expands it
     # and renders the pair comparison, exactly like dx_app run_demo.sh.
     ms = _catalog_models()
-    assert ms["casvit_t"].get("demo_input") == "sample/img/person_pair"
     assert ms["arcface_r50"].get("demo_input") == "sample/img/face_pair"
+    if _per_model():
+        # per-model 의 person ReID 는 query 한 장 + gallery — 그 예제의 config.json default_image
+        assert ms["repvgg_a0_reid_256x128"]["category"] == "reid"
+        assert ms["repvgg_a0_reid_256x128"].get("demo_input") == "sample/reid/queries/sample_person_a2.jpg"
+    else:
+        assert ms["casvit_t"].get("demo_input") == "sample/img/person_pair"
 
 
 def test_js_reid_embedding_default_to_python_variant():

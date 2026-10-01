@@ -27,6 +27,7 @@ else:
 from shared.hardware import get_hw, get_sysinfo
 from shared.dx_server import DXBaseHandler, DXServer, _resolve_bind_host
 from shared.chat import ChatEngine
+from shared.shell import ShellSpec
 
 PORT = DEFAULT_PORT
 
@@ -48,10 +49,23 @@ _chat_engine = ChatEngine(
     ],
 )
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# NPU 목 데이터 배너는 dx_monitor 고유 컨트롤이라 공유 헤더의 .toolbar 슬롯 안에 둔다.
+_MOCK_BANNER = (
+    '<span id="mock-banner" class="mock-banner" style="display:none"></span>'
+)
+
+DX_MONITOR_SHELL = ShellSpec(
+    module_key="monitor",
+    toolbar_extra=_MOCK_BANNER,
+)
+
 class MonitorHandler(DXBaseHandler):
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_MONITOR_SHELL
     log_filter = ["/static/", "/api/hw", "/api/hb"]
 
     def _sse(self):

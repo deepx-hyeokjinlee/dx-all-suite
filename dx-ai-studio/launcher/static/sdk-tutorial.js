@@ -68,7 +68,7 @@
 
   var secWelcome = {
     id: 'welcome',
-    icon: '🏠',
+    icon: 'home',
     title: {
       ko: '환영합니다', en: 'Welcome', ja: 'ようこそ', 'zh-CN': '欢迎', 'zh-TW': '歡迎', es: 'Bienvenida'},
     steps: [
@@ -121,7 +121,7 @@
 
   var secViewModes = {
     id: 'view-modes',
-    icon: '🔄',
+    icon: 'refresh',
     title: {
       ko: '뷰 모드', en: 'View Modes', ja: 'ビューモード', 'zh-CN': '视图模式', 'zh-TW': '檢視模式', es: 'Modos de vista'},
     steps: [
@@ -171,7 +171,7 @@
 
   var secListNav = {
     id: 'list-navigation',
-    icon: '📋',
+    icon: 'clipboard',
     title: {
       ko: '리스트 탐색', en: 'List Navigation', ja: 'リストナビゲーション', 'zh-CN': '列表导航', 'zh-TW': '列表導航', es: 'Navegación en lista'},
     prerequisite: 'view-modes',
@@ -235,7 +235,7 @@
 
   var secCabinetDrawers = {
     id: 'cabinet-drawers',
-    icon: '🗄️',
+    icon: 'file',
     title: {
       ko: '캐비넷 서랍', en: 'Cabinet Drawers', ja: 'キャビネット引き出し', 'zh-CN': '文件柜抽屉', 'zh-TW': '文件櫃抽屜', es: 'Cajones del archivador'},
     prerequisite: 'view-modes',
@@ -294,7 +294,7 @@
 
   var secSearch = {
     id: 'search',
-    icon: '🔍',
+    icon: 'search',
     title: {
       ko: '검색', en: 'Search', ja: '検索', 'zh-CN': '搜索', 'zh-TW': '搜尋', es: 'Buscar'},
     steps: [
@@ -327,7 +327,7 @@
 
   var secDocViewer = {
     id: 'document-viewer',
-    icon: '📖',
+    icon: 'book',
     title: {
       ko: '문서 뷰어', en: 'Document Viewer', ja: 'ドキュメントビューア', 'zh-CN': '文档查看器', 'zh-TW': '文件檢視器', es: 'Visor de documentos'},
     beforeStart: function() {
@@ -381,7 +381,7 @@
 
   var secArchitecture = {
     id: 'architecture',
-    icon: '🏗️',
+    icon: 'file',
     title: {
       ko: '아키텍처', en: 'Architecture', ja: 'アーキテクチャ', 'zh-CN': '架构', 'zh-TW': '架構', es: 'Arquitectura'},
     beforeStart: function() { _closeDocViewer(); },
@@ -412,7 +412,7 @@
 
   var secToolbar = {
     id: 'toolbar',
-    icon: '⚙️',
+    icon: 'gear',
     title: {
       ko: '툴바', en: 'Toolbar', ja: 'ツールバー', 'zh-CN': '工具栏', 'zh-TW': '工具列', es: 'Barra de herramientas'},
     steps: [
@@ -430,7 +430,7 @@
         title: {
           ko: '튜토리얼 버튼', en: 'Tutorial Button', ja: 'チュートリアルボタン', 'zh-CN': '教程按钮', 'zh-TW': '教學按鈕', es: 'Botón del tutorial'},
         content: {
-          ko: '언제든지 <strong>🎓 튜토리얼 버튼</strong>을 클릭하면 이 목차가 다시 열리고 원하는 튜토리얼 섹션을 다시 볼 수 있습니다.', en: 'Click the <strong>🎓 tutorial button</strong> at any time to reopen this Table of Contents and revisit any tutorial section.', ja: 'いつでも<strong>🎓チュートリアルボタン</strong>をクリックすると、この目次が再表示され、任意のチュートリアルセクションを再訪できます。', 'zh-CN': '随时点击<strong>🎓教程按钮</strong>可重新打开此目录并重新查看任何教程章节。', 'zh-TW': '隨時點擊<strong>🎓教學按鈕</strong>可重新開啟此目錄並重新查看任何教學章節。', es: 'Haga clic en el <strong>botón 🎓 del tutorial</strong> en cualquier momento para reabrir este índice y revisar cualquier sección.'}
+          ko: '언제든지 <strong>{{i:graduation}} 튜토리얼 버튼</strong>을 클릭하면 이 목차가 다시 열리고 원하는 튜토리얼 섹션을 다시 볼 수 있습니다.', en: 'Click the <strong>{{i:graduation}} tutorial button</strong> at any time to reopen this Table of Contents and revisit any tutorial section.', ja: 'いつでも<strong>{{i:graduation}}チュートリアルボタン</strong>をクリックすると、この目次が再表示され、任意のチュートリアルセクションを再訪できます。', 'zh-CN': '随时点击<strong>{{i:graduation}}教程按钮</strong>可重新打开此目录并重新查看任何教程章节。', 'zh-TW': '隨時點擊<strong>{{i:graduation}}教學按鈕</strong>可重新開啟此目錄並重新查看任何教學章節。', es: 'Haga clic en el <strong>botón {{i:graduation}} del tutorial</strong> en cualquier momento para reabrir este índice y revisar cualquier sección.'}
       }
     ]
   };

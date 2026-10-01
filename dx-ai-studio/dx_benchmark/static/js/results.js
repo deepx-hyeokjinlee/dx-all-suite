@@ -64,7 +64,7 @@ var Results = {
     var cardsHtml = '';
     this.data.forEach(function(hw) {
       cardsHtml += '<div class="hw-card" role="button" tabindex="0" data-hw-id="' + _escAttr(hw.hw_id) + '">' +
-      '<div class="hw-card-icon">🖥️</div>' +
+      '<div class="hw-card-icon">' + ((typeof DXIcon === 'function') ? DXIcon('monitor') : '') + '</div>' +
       '<div class="hw-card-name">' + _escHtml(hw.hw_id) + '</div>' +
       '<div class="hw-card-runs">' + (hw.runs || []).length + ' runs</div>' +
       '</div>';
@@ -96,7 +96,7 @@ var Results = {
     hw.runs.forEach(function(run) {
       html += '<div class="run-item" role="button" tabindex="0" data-hw-id="' + _escAttr(hwId) + '" data-run-id="' + _escAttr(run.run_id) + '">' +
         '<span class="run-id">' + _escHtml(run.run_id) + '</span>' +
-        (run.has_report ? '<span class="badge badge-ok">📋</span>' : '') +
+        (run.has_report ? '<span class="badge badge-ok" title="Report">' + ((typeof DXIcon === 'function') ? DXIcon('clipboard', { label: 'Report' }) : '') + '</span>' : '') +
       '</div>';
     });
     html += '</div>';

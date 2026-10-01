@@ -18,3 +18,20 @@ class TestDemosPayload(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def test_the_payload_says_which_sample_media_is_on_disk(monkeypatch, tmp_path):
+    """Run Demo 는 받지 않은 sample 영상을 기본값으로 고르면 안 된다 (spec 2026-10-01 demo stage).
+    예전에는 assets/videos 가 없는 PC 에서 Video 가 기본이라 Run 이 곧바로 'File not found' 였다."""
+    from dx_app.core import demos
+
+    (tmp_path / "sample" / "img").mkdir(parents=True)
+    (tmp_path / "sample" / "img" / "street.jpg").write_bytes(b"x")
+    monkeypatch.setattr(demos, "_dx_app_root", lambda: tmp_path)
+    monkeypatch.setattr(demos, "list_demos", lambda: {"ok": True, "groups": ["Detection"], "demos": [{
+        "idx": 0, "label": "Object Detection (YOLOv7)", "group": "Detection", "model": "yolov7.dxnn",
+        "category": "object_detection", "model_name": "yolov7", "py_base": "yolov7", "cpp_base": "yolov7",
+        "default_video": "assets/videos/nope.mp4", "default_image": "sample/img/street.jpg",
+        "async_full": True, "image_only": False}]})
+    d = demos.build_demos_payload()["demos"][0]
+    assert d["media"] == {"video": False, "image": True}

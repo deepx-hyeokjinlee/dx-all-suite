@@ -10,9 +10,17 @@ JS = ROOT / "dx_modelzoo" / "static" / "js"
 def test_locallabel_falls_back_to_dict():
     # category data only ships label_en/label_ko; _localLabel must fall back to T(label_en)
     # so ja/zh/es categories translate (card + list + chips) instead of staying English.
-    src = (JS / "catalog.js").read_text(encoding="utf-8")
+    #
+    # 한 벌만 있어야 한다. detail.js 가 폴백 없는 동명 함수를 따로 선언하고 있었고,
+    # 나중에 로드되므로 이 폴백이 통째로 덮여 죽어 있었다 — 그래서 선언 위치까지
+    # 함께 고정한다 (전역 충돌 자체는 tests/shared/test_static_script_scope.py 가 본다).
+    src = (JS / "app.js").read_text(encoding="utf-8")
     body = src.split("function _localLabel(", 1)[1].split("function ", 1)[0]
     assert "T(en)" in body, "_localLabel must dict-fall-back via T() for missing languages"
+    for other in ("catalog.js", "detail.js"):
+        assert "function _localLabel(" not in (JS / other).read_text(encoding="utf-8"), (
+            f"{other} 가 _localLabel 을 다시 선언하면 app.js 의 폴백이 조용히 덮인다"
+        )
 
 
 def test_no_broken_zoo_transliteration():

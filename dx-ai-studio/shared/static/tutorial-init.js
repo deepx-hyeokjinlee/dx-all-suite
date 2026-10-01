@@ -91,9 +91,9 @@
             }
             return;
           }
-          // Launcher, first load with the tutorial on → auto-run the walkthrough so it opens
-          // on the "you can turn this off" toggle step. Afterwards (and for module tutorials)
-          // just open the table of contents.
+          // Launcher, first load with the tutorial on → auto-run the walkthrough. It opens on the
+          // ask box (spec 2026-09-23 §9); the "you can turn this off" switch is its tour-row step.
+          // Afterwards (and for module tutorials) just open the table of contents.
           if (engine.appId === 'launcher' &&
               !localStorage.getItem('dx-tutorial-launcher-autostarted')) {
             try { localStorage.setItem('dx-tutorial-launcher-autostarted', '1'); } catch (e) {}
@@ -195,7 +195,8 @@
 
         var menuBtn = document.createElement('button');
         menuBtn.className = 'btn-small tutorial-menu-btn';
-        menuBtn.innerHTML = '📖 Tutorial ▼';
+        var _ico = function (n) { return (typeof window.DXIcon === 'function') ? window.DXIcon(n) : ''; };
+        menuBtn.innerHTML = _ico('book') + ' Tutorial ' + _ico('chevd');
 
         var menuDropdown = document.createElement('div');
         menuDropdown.className = 'tutorial-menu-dropdown';
@@ -204,7 +205,10 @@
         tutorials.forEach(function(tut) {
           var item = document.createElement('div');
           item.className = 'tutorial-menu-item';
-          item.textContent = (tut.icon || '') + ' ' + tut.name;
+          // icon 은 sprite 이름 (아이콘 체계 단계 5). 예전 글자 icon 이 남아 있으면 글자 그대로.
+          if (tut.icon && /^[a-z0-9_-]+$/.test(tut.icon)) item.innerHTML = _ico(tut.icon) + ' ';
+          else if (tut.icon) item.textContent = tut.icon + ' ';
+          item.appendChild(document.createTextNode(tut.name));
           item.addEventListener('click', function() {
             menuDropdown.style.display = 'none';
             _startTutorial(tut, opts);

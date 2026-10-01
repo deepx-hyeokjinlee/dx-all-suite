@@ -68,7 +68,7 @@ function handleImageFallback(img) {
   placeholder.className = 'mz-img-placeholder' + (img.className ? ' ' + img.className : '');
   const icon = document.createElement('span');
   icon.className = 'mz-img-placeholder-icon';
-  icon.textContent = '🖼️';
+  icon.innerHTML = _mzIco('image');
   placeholder.appendChild(icon);
   if (img.alt) {
     const label = document.createElement('span');
@@ -79,31 +79,9 @@ function handleImageFallback(img) {
   img.replaceWith(placeholder);
 }
 
-function _escapeAttr(s) {
-  if (s == null) return '';
-  return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
 window.handleImageFallback = handleImageFallback;
 window.ModelZooImages = { optimizedImageCandidates, imageTagWithFallback, handleImageFallback };
 
-
-function _localLabel(obj, prefix) {
-  const lang = DXI18n.lang;
-  const direct = obj[prefix + '_' + lang] || obj[prefix + '_' + lang.split('-')[0]];
-  if (direct) return direct;
-  // The category data only ships label_en + label_ko. For ja/zh-CN/zh-TW/es fall back to
-  // the shared i18n dict (which has all 6 languages for the category names) keyed by the
-  // English label — otherwise the category column/chips stay English in those languages.
-  const en = obj[prefix + '_en'] || '';
-  return en ? T(en) : '';
-}
-
-function _localText(obj) {
-  if (!obj) return '';
-  const lang = DXI18n.lang;
-  return obj[lang] || obj[lang.split('-')[0]] || obj.en || '';
-}
 
 function _missingLabel(label) {
   return `<span class="mz-field-empty">${_escapeAttr(T(label))}</span>`;
@@ -140,6 +118,58 @@ function _bestAccuracyValue(m) {
   return legacyMetric || '';
 }
 
+/* ── 지표와 정확도 ────────────────────────────────────────────
+   정확도 숫자만 보여주면 비교할 수 없다. 이 테이블은 `3.499`(NME) 와
+   `98.667`(Top-1) 을 한 칸에 섞어 놓고 정렬까지 제공하고 있었는데, 서로 다른
+   지표 사이에는 순서가 존재하지 않는다.
+
+   방향도 지표마다 다르다 — Top1 은 클수록, RMSE 는 작을수록 좋다. 그래서 델타에
+   색을 칠하려면 어느 쪽인지 알아야 하고, 모르는 지표는 칠하지 않는다.
+   방향 표는 app.js 가 한 벌만 들고 있다 (METRIC_HIGHER_IS_BETTER /
+   METRIC_LOWER_IS_BETTER). 서버 쪽 같은 표: dx_modelzoo/core/metrics.py */
+function _metricName(m) {
+  const name = m.specification?.metric?.name;
+  if (name) return String(name);
+  // 옛 스냅샷은 metric 이 {mAP: 51.2} 같은 객체였다.
+  const legacy = m.specification?.metric;
+  if (legacy && typeof legacy === 'object') return Object.keys(legacy)[0] || '';
+  return '';
+}
+
+function _metricDirection(metric) {
+  if (!metric) return null;
+  if (METRIC_HIGHER_IS_BETTER.has(metric)) return 'higher';
+  if (METRIC_LOWER_IS_BETTER.has(metric)) return 'lower';
+  return null;
+}
+
+function _accuracyWithMetric(m) {
+  const value = _bestAccuracyValue(m);
+  if (value === '' || value == null) return '';
+  const metric = _metricName(m);
+  return metric ? metric + ' ' + value : String(value);
+}
+
+/* 같은 지표끼리만 비교한다. 다른 지표는 0 을 돌려 서로 순서를 만들지 않는다 —
+   정렬은 그 경우 원래 순서를 유지한다(안정 정렬). */
+function _compareAccuracy(a, b, metricOf) {
+  const ma = metricOf(a), mb = metricOf(b);
+  if (ma !== mb) return 0;
+  const va = parseFloat(_bestAccuracyValue(a));
+  const vb = parseFloat(_bestAccuracyValue(b));
+  if (isNaN(va) && isNaN(vb)) return 0;
+  if (isNaN(va)) return 1;
+  if (isNaN(vb)) return -1;
+  const dir = _metricDirection(ma);
+  // 작을수록 좋은 지표는 오름차순이 '좋은 순' 이다.
+  return dir === 'lower' ? va - vb : vb - va;
+}
+
+function _specNumber(m, key) {
+  const v = m.specification?.[key];
+  return (v === null || v === undefined || v === '') ? '' : String(v);
+}
+
 function _modelFpsText(m) {
   const performance = m.performance || {};
   const fps = performance.fps ?? m.specification?.fps;
@@ -170,34 +200,37 @@ function _computeUniqueModelCount(models) {
   return unique.size || (models || []).length;
 }
 
-function _artifactAvailable(m, artifactId) {
-  const artifact = (m.artifacts || {})[artifactId] || {};
-  if (artifact.available === false) return false;
-  return artifact.available === true ||
-    Boolean(artifact.download_endpoint || artifact.local_path || artifact.remote_url);
-}
-
-function _artifactBadge(m, artifactId, label) {
-  const available = _artifactAvailable(m, artifactId);
-  const status = available ? 'ready' : 'not-ready';
-  const icon = available ? '✅' : '⏳';
-  const title = available ? label : T('Artifact unavailable');
-  return `<span class="mz-download-badge ${status}" title="${_escapeAttr(title)}">${icon} ${_escapeAttr(label)}</span>`;
-}
-
 function _artifactBadges(m) {
   const qlite = _artifactAvailable(m, 'qlite_dxnn') || _artifactAvailable(m, 'qlite_json') ||
     m.downloaded_qlite || m.downloaded;
   const qpro = _artifactAvailable(m, 'qpro_dxnn') || _artifactAvailable(m, 'qpro_json') ||
     m.downloaded_qpro;
+  const qmaster = _artifactAvailable(m, 'qmaster_dxnn') || _artifactAvailable(m, 'qmaster_json') ||
+    m.downloaded_qmaster;
   const artifacts = {
     qlite_dxnn: qlite ? { available: true } : (m.artifacts || {}).qlite_dxnn,
     qpro_dxnn: qpro ? { available: true } : (m.artifacts || {}).qpro_dxnn,
+    qmaster_dxnn: qmaster ? { available: true } : (m.artifacts || {}).qmaster_dxnn,
   };
-  return [
+  const badges = [
     _artifactBadge({ artifacts }, 'qlite_dxnn', 'Q-Lite'),
     _artifactBadge({ artifacts }, 'qpro_dxnn', 'Q-Pro'),
-  ].join(' ');
+  ];
+  // Q-Master 는 공개 카탈로그 354개 중 15개뿐이다. 늘 그리면 대부분이 '없음'
+  // 이 되어 칩이 정보를 잃는다 — 있을 때만 자리를 차지한다.
+  if (artifacts.qmaster_dxnn) {
+    badges.push(_artifactBadge({ artifacts }, 'qmaster_dxnn', 'Q-Master'));
+  }
+  return badges.join(' ');
+}
+
+// 이 PC 의 DX-RT 가 못 읽는 model (Model Zoo 2_5_0 = .dxnn container v9) — 받아도 실행되지 않는다
+// (spec 2026-10-01 dx_app per-model layout 결정 5).
+function _dxrtBadge(m) {
+  if (!m.requires_dxrt) return '';
+  const label = T('Needs DX-RT') + ' ' + m.requires_dxrt;
+  const title = T('This model is .dxnn container v9 — the installed DX-RT reads up to v8.');
+  return `<span class="mz-license-badge restricted mz-dxrt-badge" title="${_escapeAttr(title)}">${_mzIco('alert')} ${_escapeAttr(label)}</span>`;
 }
 
 function _licenseBadge(m) {
@@ -207,7 +240,7 @@ function _licenseBadge(m) {
   const title = cu === 'non-commercial'
     ? T('Commercial use prohibited')
     : T('Commercial use requires license review');
-  return `<span class="mz-license-badge ${cu}" title="${_escapeAttr(title)}">⚠ ${_escapeAttr(label)}</span>`;
+  return `<span class="mz-license-badge ${cu}" title="${_escapeAttr(title)}">${_mzIco('alert')} ${_escapeAttr(label)}</span>`;
 }
 
 function _commitCatalogStateSave(state) {
@@ -272,6 +305,22 @@ const ModelZooVirtualCatalog = {
     };
     container.addEventListener('scroll', onScroll);
     window.addEventListener('scroll', onScroll);
+    // 스크롤러가 컨테이너도 window 도 아닐 수 있다. 앱 셸이 통합되면서 overflow 가
+    // 조상(main.dx-shell-main)으로 옮겨갔고, 그때부터 이 가상화는 스크롤을 한 번도
+    // 보지 못한 채 첫 화면 분량만 그리고 있었다. 특정 클래스를 박아 넣으면 셸이 또
+    // 바뀔 때 같은 자리에서 다시 깨지므로, 넘치는 조상을 전부 구독한다.
+    // (같은 방식의 선례: shared/static/tutorial-engine.js 의 _bindScrollRootsFor)
+    this._scrollRootSeen = this._scrollRootSeen || new WeakSet();
+    let node = container.parentElement;
+    while (node && node !== document.documentElement) {
+      const st = window.getComputedStyle ? window.getComputedStyle(node) : null;
+      const ov = st ? (st.overflow || '') + (st.overflowY || '') : '';
+      if (/auto|scroll|overlay/.test(ov) && !this._scrollRootSeen.has(node)) {
+        this._scrollRootSeen.add(node);
+        node.addEventListener('scroll', onScroll, { passive: true });
+      }
+      node = node.parentElement;
+    }
     window.addEventListener('resize', () => {
       this._measuredCardHeight = null;
       onScroll();
@@ -305,6 +354,20 @@ const ModelZooVirtualCatalog = {
     this._listSortBound = true;
   },
 
+  /** 컨테이너를 실제로 스크롤하는 조상. 없으면 null (= window 스크롤). */
+  _scrollRoot() {
+    let node = this._container && this._container.parentElement;
+    while (node && node !== document.documentElement) {
+      const st = window.getComputedStyle ? window.getComputedStyle(node) : null;
+      const ov = st ? (st.overflow || '') + (st.overflowY || '') : '';
+      if (/auto|scroll|overlay/.test(ov) && node.scrollHeight > node.clientHeight + 1) {
+        return node;
+      }
+      node = node.parentElement;
+    }
+    return null;
+  },
+
   _getEffectiveScrollTop() {
     const container = this._container;
     if (!container) return 0;
@@ -315,10 +378,19 @@ const ModelZooVirtualCatalog = {
         (overflowY === 'auto' || overflowY === 'scroll')) {
       return container.scrollTop || 0;
     }
-    // window 스크롤 모드: container의 문서 내 위치를 기준으로 계산
-    const rect = container.getBoundingClientRect();
-    const containerDocTop = rect.top + window.scrollY;
-    return Math.max(0, window.scrollY - containerDocTop);
+    // 그 외에는 스크롤 루트의 뷰포트 상단을 기준으로 컨테이너가 얼마나 위로
+    // 밀려났는지를 쓴다. 이 식 하나로 세 경우(컨테이너/조상/window 스크롤)를 덮는다.
+    //
+    // 예전 식 `window.scrollY - (rect.top + window.scrollY)` 도 전개하면 `-rect.top`
+    // 이라 조상 스크롤을 이미 따라가고 있었다 — 40장에서 멈춘 원인은 이 계산이 아니라
+    // renderViewport() 를 부르는 사람이 없었던 것이다(위 _bindScroll 참조). 여기서
+    // 달라지는 것은 rootTop 항 하나다: 스크롤러의 상단이 뷰포트 y=0 이 아니라 헤더
+    // 아래에 있으면 옛 식은 그 높이만큼 어긋난다. 오버스캔이 흡수해 눈에 띄지 않지만
+    // 맞는 값은 이쪽이다.
+    const root = this._scrollRoot();
+    const containerTop = container.getBoundingClientRect().top;
+    const rootTop = root ? root.getBoundingClientRect().top : 0;
+    return Math.max(0, rootTop - containerTop);
   },
 
   setViewMode(mode) {
@@ -556,14 +628,16 @@ const ModelZooVirtualCatalog = {
     const headers = [
       { key: 'name', label: T('Name') },
       { key: 'category', label: T('Category') },
-      { key: 'fps', label: 'FPS' },
-      { key: 'resolution', label: T('Input Resolution') },
+      { key: 'params', label: T('Params (M)') },
       { key: 'accuracy', label: T('Accuracy') },
+      { key: 'fps', label: 'FPS' },
+      { key: 'fps_per_watt', label: 'FPS / W' },
+      { key: 'resolution', label: T('Input Resolution') },
       { key: 'status', label: T('Status') },
     ];
     let html = '<table class="mz-list-table"><thead><tr>';
     headers.forEach(h => {
-      const arrow = _sortField === h.key ? (_sortDir === 'asc' ? ' ▲' : ' ▼') : '';
+      const arrow = _sortField === h.key ? (_sortDir === 'asc' ? ' ↑' : ' ↓') : '';
       html += `<th data-sort-key="${_escapeAttr(h.key)}">${_escapeAttr(h.label)}${arrow}</th>`;
     });
     html += '</tr></thead><tbody>';
@@ -572,11 +646,11 @@ const ModelZooVirtualCatalog = {
     const afterHeight = Math.max(0, models.length - end) * LIST_ROW_HEIGHT;
 
     if (beforeHeight > 0) {
-      html += `<tr class="mz-spacer"><td colspan="6" style="height:${beforeHeight}px;padding:0;border:none"></td></tr>`;
+      html += `<tr class="mz-spacer"><td colspan="8" style="height:${beforeHeight}px;padding:0;border:none"></td></tr>`;
     }
     visible.forEach(m => { html += this.renderListRow(m); });
     if (afterHeight > 0) {
-      html += `<tr class="mz-spacer"><td colspan="6" style="height:${afterHeight}px;padding:0;border:none"></td></tr>`;
+      html += `<tr class="mz-spacer"><td colspan="8" style="height:${afterHeight}px;padding:0;border:none"></td></tr>`;
     }
     html += '</tbody></table>';
     const savedScrollTop = container.scrollTop || 0;
@@ -596,11 +670,13 @@ const ModelZooVirtualCatalog = {
   renderCardItem(m) {
     const catInfo = _allCategories[m.category] || {};
     const catLabel = _localLabel(catInfo, 'label') || m.category;
-    const icon = _escapeAttr(catInfo.icon || '🤖');
-    const categoryIcon = _escapeAttr(catInfo.icon || '');
+    const icon = _taskIcon(catInfo, 'mz-thumb-ico');
+    const categoryIcon = catInfo.icon ? _taskIcon(catInfo) : '';
     const legacyFps = m.specification?.fps ? `<span class="mz-card-fps">${_escapeAttr(m.specification.fps)} FPS</span>` : '';
     const fps = `<span class="${_escapeAttr(_modelFpsClass(m))}">${_escapeAttr(_modelFpsText(m))}</span>` || legacyFps;
     const resolution = _modelInputResolution(m);
+    // 지표명을 함께 적는다. 숫자만 두면 NME 3.5 와 Top-1 98.6 이 같은 척도로 읽힌다.
+    const accuracy = _accuracyWithMetric(m);
     const missing = Array.isArray(m.missing) ? m.missing : [];
     const missingCount = missing.length;
     const summary = _localText(m.display?.summary) || _localText(m.content?.use_case) || '';
@@ -609,16 +685,17 @@ const ModelZooVirtualCatalog = {
       : '';
     return `
     <div class="mz-card" data-model-id="${_escapeAttr(m.id)}" data-help-id="model-card-${_escapeAttr(m.id)}">
-      <div class="mz-card-thumb">${icon}${thumbImg}</div>
+      <div class="mz-card-thumb${thumbImg ? '' : ' no-thumb'}">${icon}${thumbImg}</div>
       <div class="mz-card-body">
         <div class="mz-card-name" title="${_escapeAttr(m.id)}">${_escapeAttr(m.name)}</div>
         <div class="mz-card-cat">${categoryIcon} ${_escapeAttr(catLabel)}</div>
-        ${_licenseBadge(m)}
+        ${_licenseBadge(m)}${_dxrtBadge(m)}
         ${summary ? `<div class="mz-card-summary">${_escapeAttr(summary)}</div>` : ''}
         <div class="mz-card-meta">
           ${fps}
           <span>${resolution ? _escapeAttr(resolution) : _missingLabel('Not provided by source')}</span>
         </div>
+        ${accuracy ? `<div class="mz-card-acc">${_escapeAttr(accuracy)}</div>` : ''}
         <div class="mz-card-artifacts">${_artifactBadges(m)}</div>
         ${missingCount ? `<div class="mz-card-missing">${_escapeAttr(missingCount)} ${_escapeAttr(T('Not provided by source'))}</div>` : ''}
       </div>
@@ -628,7 +705,7 @@ const ModelZooVirtualCatalog = {
   renderListRow(m) {
     const catInfo = _allCategories[m.category] || {};
     const catLabel = _localLabel(catInfo, 'label') || m.category;
-    const categoryIcon = _escapeAttr(catInfo.icon || '');
+    const categoryIcon = catInfo.icon ? _taskIcon(catInfo) : '';
     const metric = m.specification?.metric;
     let accuracy = '';
     if (metric) {
@@ -640,7 +717,9 @@ const ModelZooVirtualCatalog = {
     const legacyFps = _escapeAttr(m.specification?.fps || '-');
     const fpsText = _modelFpsText(m) || legacyFps;
     const resolution = _modelInputResolution(m);
-    const accuracyText = _bestAccuracyValue(m) || accuracy;
+    const accuracyText = _accuracyWithMetric(m) || accuracy;
+    const params = _specNumber(m, 'parameters');
+    const fpsw = m.performance?.fps_per_watt != null ? String(m.performance.fps_per_watt) : '';
     let statusBadges = '—';
     if (m.artifacts || m.downloaded_qlite || m.downloaded_qpro || m.downloaded) {
       statusBadges = _artifactBadges(m);
@@ -650,10 +729,12 @@ const ModelZooVirtualCatalog = {
     return `<tr class="mz-list-row" data-model-id="${_escapeAttr(m.id)}" data-help-id="model-row-${_escapeAttr(m.id)}">
       <td>${_escapeAttr(m.name)}</td>
       <td><span class="mz-card-cat">${categoryIcon} ${_escapeAttr(catLabel)}</span></td>
-      <td>${_escapeAttr(fpsText)}</td>
-      <td>${resolution ? _escapeAttr(resolution) : _missingLabel('Not provided by source')}</td>
+      <td>${params ? _escapeAttr(params) : _missingLabel('Not provided by source')}</td>
       <td>${accuracyText ? _escapeAttr(String(accuracyText)) : _missingLabel('Not provided by source')}</td>
-      <td>${statusBadges}${_licenseBadge(m)}</td>
+      <td>${_escapeAttr(fpsText)}</td>
+      <td>${fpsw ? _escapeAttr(fpsw) : _missingLabel('Not provided by source')}</td>
+      <td>${resolution ? _escapeAttr(resolution) : _missingLabel('Not provided by source')}</td>
+      <td>${statusBadges}${_licenseBadge(m)}${_dxrtBadge(m)}</td>
     </tr>`;
   },
 
@@ -717,6 +798,24 @@ const ModelZooVirtualCatalog = {
 };
 
 
+/** 카탈로그가 만들어진 날짜(로컬 표기). 값이 없으면 빈 문자열 — 없는 것을
+    "알 수 없음" 으로 채우면 낡은 것과 구분되지 않는다. */
+function _catalogGeneratedAt() {
+  /* app.js 가 /api/catalog 응답을 _catalogData 에 담는다 (bundler 가 없으므로
+     classic script 들이 한 스코프를 공유한다 — 같은 이유로 이 저장소에서 const
+     충돌 사고가 있었다). */
+  var data = (typeof _catalogData !== 'undefined' && _catalogData) || null;
+  var at = (data && data.generated_at) || '';
+  if (!at) return '';
+  try {
+    var d = new Date(at);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString();
+  } catch (e) {
+    return '';
+  }
+}
+
 function updateCatalogHeading() {
   const titleEl = document.getElementById('catalogTitle');
   const subtitleEl = document.getElementById('catalogSubtitle');
@@ -736,7 +835,18 @@ function updateCatalogHeading() {
     }
   }
   if (subtitleEl) {
-    subtitleEl.textContent = `${variantCount} ${T('model variants')} · ${uniqueModelCount} ${T('unique models')}`;
+    /* 목록이 언제 만들어졌는지 함께 말한다. 개별 모델의 상세 화면은 이미 보여주지만,
+       "이 목록 전체가 낡았나" 를 묻는 자리는 여기다 — 그것을 말하지 않아 8일 묵은
+       카탈로그가 조용히 서빙된 적이 있다(2026-09-16).
+       언제 다시 동기화할지는 운영 판단이고, 여기서는 보이게만 한다.
+       계약: tests/dx_modelzoo/test_catalog_freshness.py */
+    var parts = [
+      `${variantCount} ${T('model variants')}`,
+      `${uniqueModelCount} ${T('unique models')}`,
+    ];
+    var synced = _catalogGeneratedAt();
+    if (synced) parts.push(`${T('synced')} ${synced}`);
+    subtitleEl.textContent = parts.join(' · ');
   }
   if (countEl) {
     countEl.textContent = `${variantCount} ${T('models found')}`;
@@ -785,7 +895,7 @@ function renderCategoryChips() {
     const catActive = _selectedCategories.includes(id);
     html += `<label class="mz-category-option${catActive ? ' active' : ''}">
       <input type="checkbox" data-cat="${_escapeAttr(id)}" ${catActive ? 'checked' : ''}>
-      <span class="mz-category-label">${_escapeAttr(info.icon || '')} ${_escapeAttr(label)}</span>
+      <span class="mz-category-label">${info.icon ? _taskIcon(info) : ''} ${_escapeAttr(label)}</span>
       <span class="chip-count">${_escapeAttr(count)}</span>
     </label>`;
   }
@@ -795,7 +905,7 @@ function renderCategoryChips() {
     const unkActive = _selectedCategories.includes('__unknown__');
     html += `<label class="mz-category-option${unkActive ? ' active' : ''}">
       <input type="checkbox" data-cat="__unknown__" ${unkActive ? 'checked' : ''}>
-      <span class="mz-category-label">❓ ${_escapeAttr(unknownLabel)}</span>
+      <span class="mz-category-label">${_mzIco('info')} ${_escapeAttr(unknownLabel)}</span>
       <span class="chip-count">${_escapeAttr(unknownCount)}</span>
     </label>`;
   }
@@ -894,6 +1004,24 @@ function sortModels(models) {
       va = parseFloat(a.performance?.fps ?? a.specification?.fps) || 0;
       vb = parseFloat(b.performance?.fps ?? b.specification?.fps) || 0;
       return (vb - va) * dir;
+    }
+    if (_sortField === 'fps_per_watt') {
+      va = parseFloat(a.performance?.fps_per_watt) || 0;
+      vb = parseFloat(b.performance?.fps_per_watt) || 0;
+      return (vb - va) * dir;
+    }
+    if (_sortField === 'params') {
+      va = parseFloat(a.specification?.parameters);
+      vb = parseFloat(b.specification?.parameters);
+      if (isNaN(va) && isNaN(vb)) return 0;
+      if (isNaN(va)) return 1;
+      if (isNaN(vb)) return -1;
+      return (va - vb) * dir;
+    }
+    if (_sortField === 'accuracy') {
+      // 지표가 다르면 0 — 서로 순서를 만들지 않는다. Array.sort 는 안정 정렬이라
+      // 그 경우 원래 순서가 유지된다.
+      return _compareAccuracy(a, b, _metricName) * dir;
     }
     return String(va).localeCompare(String(vb)) * dir;
   });

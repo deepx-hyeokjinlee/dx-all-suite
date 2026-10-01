@@ -1,3 +1,25 @@
+/* 공용 아이콘 (shared/static/dx-icon.js, spec 2026-09-29 아이콘 체계). 엔진은 모든 모듈에서 돌므로
+   DXIcon 이 없으면 (옛 문서) 빈 자리로 둔다. */
+function _dxtIcon(name) {
+  return (typeof window !== 'undefined' && typeof window.DXIcon === 'function') ? window.DXIcon(name) : '';
+}
+/* 구역 아이콘: sprite 이름 (task-object_detection 처럼 숫자 · 밑줄도) 이면 그 아이콘, 아니면 적힌 글자
+   그대로. 없으면 file. */
+var _DXT_ICON_NAME = /^[a-z0-9_-]+$/;
+function _dxtSectionIcon(icon) {
+  if (!icon) return _dxtIcon('file');
+  if (_DXT_ICON_NAME.test(icon)) return _dxtIcon(icon);
+  return String(icon);
+}
+/* 단계 본문 안의 아이콘: {{i:check}} → sprite 아이콘 (아이콘 체계 단계 5). 본문은 화면의 버튼 · 표시를
+   가리키므로 (예: "Ready 표시 {{i:check}}") 그 모양을 그대로 쓴다 — 이모지는 OS 마다 다르게 그려졌다. */
+function _dxtExpandIcons(html) {
+  return String(html || '').replace(/\{\{i:([a-z0-9_-]+)\}\}/g, function (m, name) {
+    return (typeof window !== 'undefined' && typeof window.DXIcon === 'function')
+      ? window.DXIcon(name, { cls: 'dxt-inline-ico' }) : '';
+  });
+}
+
 class DXTutorialEngine {
   static _UI = {
     'Tutorial Guide': { ko: '튜토리얼 가이드', ja: 'チュートリアルガイド', 'zh-CN': '教程指南', 'zh-TW': '教學指南',es:'Guía tutorial'},
@@ -337,8 +359,8 @@ class DXTutorialEngine {
     const tutSecs = this.sections.filter(s => !s.helpOnly);
 
     let html = '<div class="dxt-toc-header">' +
-      '<div class="dxt-toc-title">\uD83C\uDF93 ' + this._tl('Tutorial Guide') + '</div>' +
-      '<button class="dxt-toc-close" onclick="window._dxTutorial.hideTOC()">\u2715</button>' +
+      '<div class="dxt-toc-title">' + _dxtIcon('graduation') + ' ' + this._tl('Tutorial Guide') + '</div>' +
+      '<button class="dxt-toc-close" aria-label="Close" onclick="window._dxTutorial.hideTOC()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-toc-progress">' +
       '<div class="dxt-toc-pbar"><div class="dxt-toc-pfill" style="width:' + pct + '%"></div></div>' +
@@ -352,19 +374,19 @@ class DXTutorialEngine {
       var hasPrereq = !!this._checkPrereq(sec);
       html += '<div class="dxt-toc-item ' + (done ? 'done' : '') + ' ' + (hasPrereq ? 'has-prereq' : '') + '"' +
         ' onclick="window._dxTutorial.startSection(\'' + sec.id + '\')">' +
-        '<span class="dxt-toc-icon">' + (sec.icon || '\uD83D\uDCC4') + '</span>' +
+        '<span class="dxt-toc-icon">' + _dxtSectionIcon(sec.icon) + '</span>' +
         '<div class="dxt-toc-info">' +
         '<div class="dxt-toc-name">' + this._t(sec.title) + '</div>' +
         '<div class="dxt-toc-desc">' + (this._t(sec.description) || '') + '</div>' +
         '<div class="dxt-toc-meta">' + stepsDone + '/' + stepsTotal + ' ' + this._tl('steps') + '</div>' +
         '</div>' +
-        '<span class="dxt-toc-check">' + (done ? '\u2705' : hasPrereq ? '\uD83D\uDD12' : '\u25CB') + '</span>' +
+        '<span class="dxt-toc-check' + (done ? ' is-done' : hasPrereq ? ' is-locked' : '') + '">' + _dxtIcon(done ? 'check' : hasPrereq ? 'lock' : 'circle') + '</span>' +
         '</div>';
     }.bind(this));
 
     html += '</div><div class="dxt-toc-footer">' +
-      '<button class="dxt-toc-btn dxt-toc-btn-start" onclick="window._dxTutorial.startAll()">\u25B6 ' + this._tl('Start from Beginning') + '</button>' +
-      '<button class="dxt-toc-btn dxt-toc-btn-reset" onclick="window._dxTutorial._confirmReset()">\uD83D\uDD04 ' + this._tl('Reset') + '</button>' +
+      '<button class="dxt-toc-btn dxt-toc-btn-start" onclick="window._dxTutorial.startAll()">' + _dxtIcon('play') + ' ' + this._tl('Start from Beginning') + '</button>' +
+      '<button class="dxt-toc-btn dxt-toc-btn-reset" onclick="window._dxTutorial._confirmReset()">' + _dxtIcon('refresh') + ' ' + this._tl('Reset') + '</button>' +
       '</div>';
 
     this._tocEl.innerHTML = html;
@@ -392,7 +414,7 @@ class DXTutorialEngine {
     if (prereqMsg) {
       var lang = this.getLang();
       var proceed = await this._showConfirmModal(
-        '⚠️ ' + this._tl('Prerequisites Required'),
+        _dxtIcon('alert') + ' ' + this._tl('Prerequisites Required'),
         prereqMsg,
         [
           { label: this._tl('Proceed Anyway'), value: true },
@@ -450,6 +472,15 @@ class DXTutorialEngine {
       };
       var _vis = _isVisible(target);
       if (!_vis) {
+        // 폴링은 최대 2초다. 그동안 앞 스텝의 스포트라이트와 툴팁을 그대로 두면
+        // 사용자는 이미 지나간 스텝의 상자를 보게 되고, 그 사이 Next 를 또 누르면
+        // 이 함수는 _stepToken 가드에 걸려 아무것도 렌더하지 않고 빠져나간다 —
+        // 화면이 앞 스텝에 멈춘 채로 남는다. 그래서 기다리기 전에 새 스텝의
+        // 내용을 floating 으로 먼저 보여주고, 타깃이 나타나면 아래에서 anchored
+        // 로 승격한다. 첫 조회에 성공한 스텝은 이 경로를 타지 않는다.
+        // (계약: tests/test_tutorial_stale_step.py)
+        this._spotlight.classList.remove('active');
+        this._renderTooltipFloating(step);
         for (var _pw = 0; _pw < 20; _pw++) {
           await new Promise(function(r) { setTimeout(r, 100); });
           if (this._stepToken !== token || !this._curSection) return; // 중간에 중단됐으면 종료
@@ -538,14 +569,14 @@ class DXTutorialEngine {
       '<div class="dxt-tip-header">' +
       '<span class="dxt-tip-counter">' + (this._curStep + 1) + ' / ' + steps.length + '</span>' +
       '<span class="dxt-tip-section">' + this._t(this._curSection.title) + '</span>' +
-      '<button class="dxt-tip-close" onclick="window._dxTutorial.stop()">\u2715</button>' +
+      '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
-      '<div class="dxt-tip-body">' + this._t(step.content) + '</div>' +
+      '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
       '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
       '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' \u2713') : (this._tl('Next') + ' \u2192')) + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
       '</div>';
     this._tooltip.classList.add('active');
     this._positionTooltip(target);
@@ -562,14 +593,14 @@ class DXTutorialEngine {
       '<div class="dxt-tip-header">' +
       '<span class="dxt-tip-counter">' + (this._curStep + 1) + ' / ' + steps.length + '</span>' +
       '<span class="dxt-tip-section">' + this._t(this._curSection.title) + '</span>' +
-      '<button class="dxt-tip-close" onclick="window._dxTutorial.stop()">\u2715</button>' +
+      '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
-      '<div class="dxt-tip-body">' + this._t(step.content) + '</div>' +
+      '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
       '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
       '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' \u2713') : (this._tl('Next') + ' \u2192')) + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
       '</div>';
     this._tooltip.classList.add('active');
     this._tooltip.style.position = 'fixed';
@@ -725,13 +756,13 @@ class DXTutorialEngine {
       if (idx >= 0 && idx < tutSecs.length - 1) {
         var nextSec = tutSecs[idx + 1];
         action = await this._showConfirmModal(
-          '✅ ' + this._tl('Section Complete!'),
+          _dxtIcon('check') + ' ' + this._tl('Section Complete!'),
           '"' + this._t(curSec.title) + '" ' + this._tl('Complete') + '!\n' +
             (lang === 'en' ? 'Next: ' : this._tl('Next') + ': ') + this._t(nextSec.title),
           [
-            { label: '▶ ' + this._tl('Continue'), value: 'continue', primary: true },
-            { label: '📋 ' + this._tl('List'), value: 'toc' },
-            { label: '✕ ' + this._tl('Close'), value: 'close' }
+            { icon: 'play', label: this._tl('Continue'), value: 'continue', primary: true },
+            { icon: 'clipboard', label: this._tl('List'), value: 'toc' },
+            { icon: 'x', label: this._tl('Close'), value: 'close' }
           ]
         );
         this._curSection = null;
@@ -742,11 +773,11 @@ class DXTutorialEngine {
         else this.stop();
       } else if (idx >= 0) {
         action = await this._showConfirmModal(
-          '✅ ' + this._tl('Tutorial Complete!'),
+          _dxtIcon('check') + ' ' + this._tl('Tutorial Complete!'),
           '"' + this._t(curSec.title) + '" ' + this._tl('Complete') + '!',
           [
-            { label: '📋 ' + this._tl('List'), value: 'toc', primary: true },
-            { label: '✕ ' + this._tl('Close'), value: 'close' }
+            { icon: 'clipboard', label: this._tl('List'), value: 'toc', primary: true },
+            { icon: 'x', label: this._tl('Close'), value: 'close' }
           ]
         );
         this._curSection = null;
@@ -799,6 +830,7 @@ class DXTutorialEngine {
         const btn = document.createElement('button');
         btn.className = 'dxt-confirm-btn' + ((b.primary || i === 0) ? ' primary' : '');
         btn.textContent = b.label;
+        if (b.icon) btn.insertAdjacentHTML('afterbegin', _dxtIcon(b.icon) + ' ');
         btn.addEventListener('click', () => { cleanup(b.value); });
         btnWrap.appendChild(btn);
       });
@@ -814,7 +846,7 @@ class DXTutorialEngine {
 
   async _confirmReset() {
     var ok = await this._showConfirmModal(
-      '🔄 ' + this._tl('Confirm Reset'),
+      _dxtIcon('refresh') + ' ' + this._tl('Confirm Reset'),
       this._tl('Reset all progress?'),
       [
         { label: this._tl('Reset'), value: true },
@@ -944,7 +976,7 @@ class DXTutorialEngine {
     btn.className = 'dxt-toggle-btn';
     btn.id = 'dxt-toggle';
     btn.title = this._tl('Tutorial Guide');
-    btn.innerHTML = '\uD83C\uDF93';
+    btn.innerHTML = _dxtIcon('graduation');
     var self = this;
     btn.addEventListener('click', function() { self.toggleTOC(); });
     if (container) container.appendChild(btn);

@@ -172,6 +172,41 @@ def _scan_factory_postprocessor(category: str, model_id: str) -> str | None:
     return None
 
 
+@lru_cache(maxsize=4)
+def _processor_files(py_dir: str) -> dict[str, str]:
+    """common/processors 의 ``class Name`` → 그 파일 (dx_app/ 으로 시작하는 경로)."""
+    out: dict[str, str] = {}
+    proc = Path(py_dir) / "common" / "processors"
+    if not proc.is_dir():
+        return out
+    for f in sorted(proc.glob("*.py")):
+        try:
+            text = f.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for name in re.findall(r"^class\s+([A-Za-z_][A-Za-z0-9_]*)", text, re.M):
+            out.setdefault(name, f"dx_app/{f.relative_to(Path(py_dir).parent.parent).as_posix()}")
+    return out
+
+
+def _per_model_postprocessor(model: dict) -> str | None:
+    """per-model dx_app (8d0b748): family factory 가 ``<stem>/config.json`` 의 ``postprocessor.class`` 로 만든다 —
+    factory import 로는 보이지 않는다 (계약: test_postprocessor_paths.py)."""
+    from shared import dx_app_layout as layout
+    if not DX_APP_ROOT.exists() or layout.detect(DX_APP_ROOT) != layout.PER_MODEL:
+        return None
+    stem = Path(model.get("model_file") or "").stem or model.get("id") or ""
+    ex = next((e for e in layout.examples(DX_APP_ROOT) if e.name == stem and e.py_dir), None)
+    if ex is None:
+        return None
+    try:
+        spec = json.loads((ex.py_dir / "config.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    cls = ((spec.get("postprocessor") or {}) if isinstance(spec, dict) else {}).get("class")
+    return _processor_files(str(PY_DIR)).get(cls) if cls else None
+
+
 def _infer_stem(model_id: str, category: str) -> str | None:
     mid = (model_id or "").lower()
     cat = (category or "").lower()
@@ -195,6 +230,10 @@ def resolve_postprocessor_path(model: dict) -> str | None:
     """Best-effort postprocessor source path for a catalog model entry."""
     model_id = model.get("id") or ""
     category = model.get("category") or model.get("display", {}).get("task") or ""
+
+    per_model = _per_model_postprocessor(model)
+    if per_model:
+        return per_model
 
     mapped = _load_postprocessor_map().get(model_id)
     if mapped:

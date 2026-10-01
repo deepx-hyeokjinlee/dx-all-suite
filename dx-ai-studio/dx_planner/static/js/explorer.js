@@ -150,14 +150,14 @@ const ExplorerView = {
       '<div class="spec-grid">' +
         this._specItem('NPU', p.npu.model) +
         (topoLabel ? this._specItem(
-          '<span class="ko">벤치마크 구성</span><span class="en">Benchmark system</span><span class="ja">ベンチ構成</span><span class="zh-CN">基准系统</span><span class="zh-TW">基準系統</span>',
+          '<span data-i18n="Benchmark system">Benchmark system</span>',
           topoLabel
         ) : '') +
         this._specItem('TOPS', p.npu.tops) +
         this._specItem('TDP', p.npu.tdp_w + 'W') +
         this._specItem('DRAM', p.npu.dram) +
         this._specItem(
-          '<span class="ko">호스트</span><span class="en">Host</span><span class="ja">ホスト</span><span class="zh-CN">主机</span><span class="zh-TW">主機</span>',
+          '<span data-i18n="Host">Host</span>',
           p.host.name + ' (' + p.host.cpu + ')'
         ) +
       '</div>';
@@ -563,10 +563,10 @@ const ExplorerView = {
       '</p>' +
       '<div class="commerce-actions">' +
         '<a class="btn-commerce btn-commerce-primary" href="' + storeUrl + '" target="_blank" rel="noopener noreferrer">' +
-          '<span class="ko">제품 정보</span><span class="en">Product info</span><span class="ja">製品情報</span><span class="zh-CN">产品信息</span><span class="zh-TW">產品資訊</span><span class="es">Info del producto</span>' +
+          '<span data-i18n="Product info">Product info</span>' +
         '</a>' +
         '<a class="btn-commerce btn-commerce-secondary" href="' + inquiryUrl + '" target="_blank" rel="noopener noreferrer">' +
-          '<span class="ko">견적 문의</span><span class="en">Request quote</span><span class="ja">見積依頼</span><span class="zh-CN">询价</span><span class="zh-TW">詢價</span><span class="es">Solicitar cotización</span>' +
+          '<span data-i18n="Request quote">Request quote</span>' +
         '</a>' +
       '</div>';
 

@@ -164,7 +164,7 @@ window._DX_MODELZOO_I18N_REGISTER({
   'Run Inference': {
     en: 'Run Inference',
     ko: '추론 실행',
-    ja: '推論を実行',
+    ja: '推論実行',
     'zh-CN': '运行推理',
     'zh-TW': '執行推論',
     es: 'Ejecutar inferencia',
@@ -192,6 +192,22 @@ window._DX_MODELZOO_I18N_REGISTER({
     'zh-CN': 'DX App 未运行。运行推理需要 DX App 模块（端口 8080）— 启动 DX AI Studio（会自动启动 DX App），或直接启动 DX App 模块，然后重试。',
     'zh-TW': 'DX App 未執行。執行推論需要 DX App 模組（連接埠 8080）— 啟動 DX AI Studio（會自動啟動 DX App），或直接啟動 DX App 模組，然後重試。',
     es: 'DX App no está en ejecución. Ejecutar inferencia necesita el módulo DX App (puerto 8080): inicie DX AI Studio (que inicia DX App automáticamente) o inicie el módulo DX App directamente, y vuelva a intentarlo.',
+  },
+  'Params (M)': {
+    en: 'Params (M)',
+    ko: '파라미터 (M)',
+    ja: 'パラメータ (M)',
+    'zh-CN': '参数量 (M)',
+    'zh-TW': '參數量 (M)',
+    es: 'Parámetros (M)',
+  },
+  'Operations (GOPs)': {
+    en: 'Operations (GOPs)',
+    ko: '연산량 (GOPs)',
+    ja: '演算量 (GOPs)',
+    'zh-CN': '运算量 (GOPs)',
+    'zh-TW': '運算量 (GOPs)',
+    es: 'Operaciones (GOPs)',
   },
   'Input Resolution': {
     en: 'Input Resolution',

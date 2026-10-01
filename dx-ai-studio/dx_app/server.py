@@ -8,16 +8,21 @@ from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared import debug_log
 
 from dx_app.core import config
-from dx_app.core.config import (SCRIPT_DIR, DX_APP_ROOT, STATIC_DIR, TEMPLATES_DIR, SERVER_NAME, OUTPUTS_DIR,
+from dx_app.core.config import (resolve_model_path, SCRIPT_DIR, DX_APP_ROOT, STATIC_DIR, TEMPLATES_DIR, SERVER_NAME, OUTPUTS_DIR,
                     CATEGORIES, TASK_TYPES, POSTPROCESSORS,
                     _HEARTBEAT, _HB_TIMEOUT, ASSETS_DIR, SAMPLE_DIR)
 from dx_app.core.dx_app_security import (resolve_under, sanitize_filename, safe_content_disposition,
                              resolve_existing_file, resolve_existing_path, existing_onnx)
 
 ONNX_INPUT_ROOTS = (OUTPUTS_DIR,)
-MODEL_INPUT_ROOTS = (DX_APP_ROOT, ASSETS_DIR, ASSETS_DIR / "models", OUTPUTS_DIR)
+from shared.paths import SUITE_ROOT as _SUITE_FOR_MODELS
+_WORKSPACE_MODELS = _SUITE_FOR_MODELS / "workspace" / "res" / "models"
+MODEL_INPUT_ROOTS = (DX_APP_ROOT, ASSETS_DIR, ASSETS_DIR / "models", OUTPUTS_DIR, _WORKSPACE_MODELS)
 TEST_RUN_INPUT_ROOTS = (DX_APP_ROOT, SAMPLE_DIR, ASSETS_DIR, OUTPUTS_DIR)
 _SAFE_ID_RE = re.compile(r'^[A-Za-z0-9_]+$')
+# model 이름: per-model layout 의 stem 은 .dxnn 이름이라 '-' 와 '.' 이 들어간다 (3ddfa-v2_mobilenet-0.5_120x120).
+# 경로 구분자 · '..' · 앞의 '.' 은 여전히 막는다 (spec 2026-10-01 dx_app per-model layout).
+_MODEL_NAME_RE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.\-]*$')
 _RUN_LANGS = {"cpp", "python"}
 # *_cpp_postprocess variants run the Python app with the C++ dx_postprocess pybind
 # extension; they exist only as Python scripts (no C++ binary), so they're python-only.
@@ -39,19 +44,40 @@ def _validation_error_key(message):
     return "invalid_payload"
 
 
+def _task_defaults():
+    """task → 기본 입력 · image-only · 옛 key (JS 가 같은 표를 쓰게 — 예전에는 utils.js 의 CAT_IMG 가 서버 표와
+    어긋나 있었다). per-model layout 의 task key 도 옛 key 의 값을 찾는다 (shared/tasks.py)."""
+    from dx_app.core.config import CAT_IMAGE, CAT_VIDEO, IMAGE_ONLY_CATEGORIES
+    from shared.tasks import legacy
+    return {c: {"image": CAT_IMAGE.get(c, ""), "video": CAT_VIDEO.get(c, ""),
+                "image_only": c in IMAGE_ONLY_CATEGORIES, "legacy": legacy(c)} for c in CATEGORIES}
+
+
 def _require_category(category):
     """Validate category is a known value with no path traversal. Raises ValueError."""
     if not category or not isinstance(category, str):
         raise ValueError("category is required")
     if "/" in category or "\\" in category or ".." in category:
         raise ValueError(f"Invalid category: {category!r}")
-    if category not in CATEGORIES:
-        raise ValueError(f"Unknown category: {category!r}")
+    if category in CATEGORIES:
+        return category
+    # legacy ↔ per-model 짝 이름 (obb_detection ↔ oriented_object_detection …) — 예전 recent run · 링크 · client
+    # 는 다른 layout 의 이름으로 보낸다 (계약: tests/dx_app/test_category_alias.py)
+    from shared.tasks import canonical, legacy
+    for alt in (canonical(category), legacy(category)):
+        if alt != category and alt in CATEGORIES:
+            return alt
+    raise ValueError(f"Unknown category: {category!r}")
 
 
 def _require_safe_id(value, label):
     if not value or not isinstance(value, str) or not _SAFE_ID_RE.fullmatch(value):
         raise ValueError(f"Invalid {label}: {value!r}")
+
+
+def _require_model_name(value):
+    if not value or not isinstance(value, str) or not _MODEL_NAME_RE.fullmatch(value) or ".." in value:
+        raise ValueError(f"Invalid model_name: {value!r}")
 
 
 def _candidate_path(value):
@@ -74,7 +100,11 @@ def _require_model_file(model_file):
             if has_path_shape:
                 resolve_existing_file(_candidate_path(part), MODEL_INPUT_ROOTS, (".dxnn",))
         return
-    resolve_existing_file(_candidate_path(model_file), MODEL_INPUT_ROOTS, (".dxnn",))
+    # assets/models 에 없으면 suite 의 workspace/res/models 에서 찾는다 (config.resolve_model_path)
+    cand = _candidate_path(model_file)
+    if not Path(model_file).is_absolute() and not Path(cand).is_file():
+        cand = str(resolve_model_path(model_file, DX_APP_ROOT))
+    resolve_existing_file(cand, MODEL_INPUT_ROOTS, (".dxnn",))
 
 
 def _require_optional_input_path(value, label, allow_dir=False):
@@ -89,8 +119,8 @@ def _validate_inference_payload(data, live=False):
     if not isinstance(data, dict):
         return _error_payload("invalid_payload", "request must be an object"), 400
     try:
-        _require_category(data.get("category", ""))
-        _require_safe_id(data.get("model_name", ""), "model_name")
+        data["category"] = _require_category(data.get("category", ""))
+        _require_model_name(data.get("model_name", ""))
         _require_model_file(data.get("model_file", ""))
         lang = data.get("lang", "cpp")
         if lang not in _RUN_LANGS:
@@ -142,6 +172,7 @@ from dx_app.core.developer import (lab_session, lab_check, require_lab, _check_o
                        dev_delete, dev_git, dev_extract, extract_model_package,
                        dev_new_task, bug_report, save_capture)
 from dx_app.core.lab_portal import lab_capabilities, plan_add_model, plan_add_model_response, apply_add_model, smoke_add_model, plan_task_scaffold_response, apply_task_scaffold, generated_files_for_manifest, validate_lab_manifest_id, start_experiment_run, get_experiment_run, cancel_experiment_run, active_experiment_run_for_source, list_pending_manifests, change_summary_by_root, rollback_manifest, scoped_git_plan, plan_composer_quick_start, plan_composer_template, customize_composer_workflow, plan_composer_plugin_scaffold_response, apply_composer_plugin_scaffold, run_composer_workflow, export_composer_package, export_composer_recipe, import_composer_recipe
+from shared.shell import ShellSpec
 
 _modelzoo_gw = ModelZooGateway()
 
@@ -191,10 +222,42 @@ _chat_engine = ChatEngine(
     ]
 )
 
+
+# ── 통합 App Shell (Option A) ──────────────────────────────────
+# 좌측 240px 사이드바를 없애고 페이지 10개를 상단 탭 행으로 올렸다.
+# 라벨은 영어 원문 = i18n 사전 키. 아이콘 id는 shared/static/dx-icons.svg.
+DX_APP_PAGES = (
+    ("setup", "Setup", "setup"),
+    ("models", "Models", "models"),
+    ("run", "Run Inference", "run"),
+    ("rundemo", "Run Demo", "demo"),
+    ("bench", "Benchmark", "bench"),
+    ("compare", "A/B Compare", "compare"),
+    ("modelzoo", "ModelZoo", "download"),
+    ("lab", "Lab", "lab"),
+    ("outputs", "Outputs", "folder"),
+    ("reference", "Reference", "book"),
+)
+
+# 알림 벨은 dx_app 고유 컨트롤이라 공유 헤더의 .toolbar 슬롯 안으로 넣는다.
+_NOTIF_BELL = (
+    '<button class="notif-bell" onclick="toggleNotifDrawer()" title="Notifications"'
+    ' data-i18n-title="Notifications">\U0001F514'
+    '<span class="notif-badge" id="notif-badge" style="display:none"></span></button>'
+)
+
+DX_APP_SHELL = ShellSpec(
+    module_key="app",
+    pages=DX_APP_PAGES,
+    active_page="models",
+    toolbar_extra=_NOTIF_BELL,
+)
+
 class Handler(DXBaseHandler):
     server_name = SERVER_NAME
     static_dir = STATIC_DIR
     templates_dir = TEMPLATES_DIR
+    shell_spec = DX_APP_SHELL
     log_filter = ["/file/", "/static/"]
 
     def _mjpeg_stream(self):
@@ -274,6 +337,7 @@ class Handler(DXBaseHandler):
             if path=="/api/images":return self.send_json(get_images(self.read_query_param("category") or None))
             if path=="/api/videos":return self.send_json(get_videos(self.read_query_param("category") or None))
             if path=="/api/categories":return self.send_json(CATEGORIES)
+            if path=="/api/task_defaults":return self.send_json(_task_defaults())
             if path=="/api/recent_runs":
                 with config._history_lock:data=list(config._recent_runs)
                 return self.send_json(data)

@@ -3,12 +3,12 @@
 .dx-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 .dx-surface-raised {
-  background: var(--surface-raised-bg);
-  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
   box-shadow: var(--surface-raised-shadow);
 }
 .dx-surface-glass {
-  background: var(--glass-bg);
+  background: var(--surface-overlay);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
@@ -18,13 +18,67 @@
 .dx-text-glow { text-shadow: var(--text-glow-accent); }
 
 /* ═══ Diagnostics (shared by dx_app, dx_stream) ═══ */
-.diag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
-.diag-card{padding:12px 14px;border-radius:var(--radius);border:1px solid var(--border)}
+.diag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.diag-card{padding:12px 12px;border-radius:var(--radius);border:1px solid var(--border-subtle)}
 .diag-card-ok{background:rgba(63,185,80,.06);border-color:rgba(63,185,80,.2)}
 .diag-card-fail{background:rgba(248,81,73,.06);border-color:rgba(248,81,73,.2)}
 .diag-card-title{font-size:var(--fs-base);font-weight:600;margin-bottom:4px}
-.diag-card-detail{font-size:var(--fs-xs);color:var(--text-3);font-family:var(--mono);word-break:break-all}
-.diag-card-fix{font-size:var(--fs-xs);color:var(--warning);margin-top:6px;padding:6px 8px;background:rgba(210,153,34,.08);border-radius:var(--radius-sm);font-family:var(--mono)}
-.diag-summary-bar{padding:10px 16px;border-radius:var(--radius);font-size:var(--fs-base);margin-bottom:8px}
-.diag-pass{background:rgba(63,185,80,.1);color:var(--success);border:1px solid rgba(63,185,80,.25)}
-.diag-fail{background:rgba(248,81,73,.1);color:var(--error);border:1px solid rgba(248,81,73,.25)}
+.diag-card-detail{font-size:var(--fs-xs);color:var(--text-muted);font-family:var(--mono);word-break:break-all}
+.diag-card-fix{font-size:var(--fs-xs);color:var(--status-warn);margin-top:4px;padding:4px 8px;background:rgba(210,153,34,.08);border-radius:var(--radius-sm);font-family:var(--mono)}
+.diag-summary-bar{padding:8px 16px;border-radius:var(--radius);font-size:var(--fs-base);margin-bottom:8px}
+.diag-pass{background:rgba(63,185,80,.1);color:var(--status-ok);border:1px solid rgba(63,185,80,.25)}
+.diag-fail{background:rgba(248,81,73,.1);color:var(--status-error);border:1px solid rgba(248,81,73,.25)}
+
+
+/* ═══ Layout / text utilities ═══
+   dx_app · dx_stream · dx_monitor · dx_benchmark 가 같은 유틸리티를 각자 갖고
+   있었다. 값은 같았고 공백만 달랐다 — 어차피 같을 것을 네 번 적고 있었다. */
+.flex{display:flex}
+.hidden{display:none !important}
+.wrap{flex-wrap:wrap}
+.w100{width:100%}
+.mt8{margin-top:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--sp-4)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* dx_app / dx_monitor / dx_stream 이 같은 규칙을 각자 복제하고 있었다.
+   접히는 폭이 파일마다 갈리기 시작하면 같은 격자가 화면마다 다르게 접힌다. */
+@media(max-width:1200px){
+  .grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+}
+.txt-dim{color:var(--text-muted)}
+.tbl-wrap{overflow-x:auto}
+
+/* ═══ Status badges ═══
+   dx_stream 만 상태 토큰 대신 색을 직접 적고 있었다 — #34d399 #38bdf8 #fbbf24
+   #fb7185. 같은 "성공" 배지가 모듈에 따라 다른 초록이었다는 뜻이고, 테마를
+   바꾸면 그 모듈만 따라오지 않는다. 토큰 쪽으로 맞춘다. */
+.b-ok{background:rgba(63,185,80,.12);color:var(--status-ok);border:1px solid rgba(63,185,80,.2)}
+.b-no{background:rgba(148,163,184,.08);color:var(--text-faint);border:1px solid rgba(148,163,184,.1)}
+.b-cat{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(var(--accent-rgb),.15)}
+.b-blue{background:rgba(88,166,255,.1);color:var(--status-info);border:1px solid rgba(88,166,255,.15)}
+.b-warn{background:rgba(210,153,34,.1);color:var(--status-warn);border:1px solid rgba(210,153,34,.15)}
+.b-red{background:rgba(248,81,73,.1);color:var(--status-error);border:1px solid rgba(248,81,73,.15)}
+
+.gap8{gap:var(--sp-2)}
+.mt16{margin-top:16px}
+.txt-acc{color:var(--accent)}
+
+/* dx_app · dx_stream · dx_monitor · dx_benchmark 가 각자 갖고 있던 나머지 유틸리티. */
+.gap12{gap:var(--sp-3)}
+.mb8{margin-bottom:8px}
+.txt-sm{font-size:var(--fs-sm)}
+.font-mono{font-family:var(--mono)}
+.items-center{align-items:center}
+.text-center{text-align:center}
+.w-full{width:100%}
+.rel{position:relative}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--text-faint);border-top-color:var(--accent);border-radius:50%;animation:sp .6s linear infinite}
+
+.gap16{gap:var(--sp-4)}
+.mb16{margin-bottom:16px}
+.text-right{text-align:right}

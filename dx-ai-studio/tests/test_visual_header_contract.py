@@ -6,30 +6,32 @@ from pathlib import Path
 import re
 
 import pytest
+from tests.css_rules import css_rule as _css_rule
 
 ROOT = Path(__file__).resolve().parent.parent
 
 SURFACES = {
     "launcher": ("launcher/static/index.html", "launcher/static/style.css"),
-    "dx_app": ("dx_app/templates/index.html", "dx_app/static/css/style.css"),
-    "dx_stream": ("dx_stream/templates/index.html", "dx_stream/static/css/stream.css"),
-    "dx_compiler": ("dx_compiler/templates/base.html", "dx_compiler/static/css/style.css"),
-    "dx_monitor": ("dx_monitor/templates/index.html", "dx_monitor/static/css/style.css"),
-    "dx_planner": ("dx_planner/templates/index.html", "dx_planner/static/css/style.css"),
-    "dx_benchmark": ("dx_benchmark/templates/index.html", "dx_benchmark/static/css/style.css"),
-    "dx_modelzoo": ("dx_modelzoo/templates/index.html", "dx_modelzoo/static/css/style.css"),
+    # dx_app 은 통합 App Shell(Option A)로 이관되어 헤더를 dx-shell.css가 소유한다.
+    "dx_app": ("dx_app/templates/index.html", "shared/static/dx-shell.css"),
+    "dx_stream": ("dx_stream/templates/index.html", "shared/static/dx-shell.css"),
+    "dx_compiler": ("dx_compiler/templates/base.html", "shared/static/dx-shell.css"),
+    "dx_monitor": ("dx_monitor/templates/index.html", "shared/static/dx-shell.css"),
+    "dx_planner": ("dx_planner/templates/index.html", "shared/static/dx-shell.css"),
+    "dx_benchmark": ("dx_benchmark/templates/index.html", "shared/static/dx-shell.css"),
+    "dx_modelzoo": ("dx_modelzoo/templates/index.html", "shared/static/dx-shell.css"),
 }
 
 # 모듈별 topbar 셀렉터
 HEADER_SELECTORS = {
     "launcher": ".top-bar",
-    "dx_app": ".topbar",
-    "dx_stream": ".topbar",
-    "dx_compiler": "#header",
-    "dx_monitor": ".top-bar",
-    "dx_planner": ".planner-topbar",
-    "dx_benchmark": ".top-bar",
-    "dx_modelzoo": ".mz-topbar",
+    "dx_app": ".dx-shell-header",
+    "dx_stream": ".dx-shell-header",
+    "dx_compiler": ".dx-shell-header",
+    "dx_monitor": ".dx-shell-header",
+    "dx_planner": ".dx-shell-header",
+    "dx_benchmark": ".dx-shell-header",
+    "dx_modelzoo": ".dx-shell-header",
 }
 
 # DXBrand.mount를 사용하는 모듈 (launcher는 커스텀 .logo 허용)
@@ -49,15 +51,33 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def _css_rule(css: str, selector: str) -> str:
-    """selector에 해당하는 CSS 규칙 본문을 추출한다."""
-    escaped = re.escape(selector)
-    # 중첩되지 않은 단순 셀렉터 매칭
-    pattern = escaped + r"\s*\{([^}]+)\}"
-    matches = list(re.finditer(pattern, css))
-    assert matches, f"selector {selector!r} not found in CSS"
-    return matches[0].group(1)
+# 통합 App Shell(Option A)로 이관된 모듈 — 헤더/브랜드/툴바가 서버 렌더
+# 시점에 주입되므로 템플릿 파일만 읽으면 보이지 않는다. 이관할 때 한 줄 추가한다.
+MIGRATED_SHELL_MODULES = {
+    "dx_app": ("dx_app.server", "DX_APP_SHELL"),
+    "dx_stream": ("dx_stream.server", "DX_STREAM_SHELL"),
+    "dx_benchmark": ("dx_benchmark.server", "DX_BENCHMARK_SHELL"),
+    "dx_monitor": ("dx_monitor.server", "DX_MONITOR_SHELL"),
+    "dx_agent_dev": ("dx_agent_dev.server", "DX_AGENT_DEV_SHELL"),
+    "dx_modelzoo": ("dx_modelzoo.server", "DX_MODELZOO_SHELL"),
+    "dx_planner": ("dx_planner.server", "DX_PLANNER_SHELL"),
+    "dx_compiler": ("dx_compiler.server", "DX_COMPILER_SHELL"),
+}
 
+
+def surface_html(name: str) -> str:
+    """서버가 실제로 내보내는 HTML."""
+    template_rel, _ = SURFACES[name]
+    html = read_text(ROOT / template_rel)
+    if name not in MIGRATED_SHELL_MODULES:
+        return html
+
+    import importlib
+
+    mod_path, spec_name = MIGRATED_SHELL_MODULES[name]
+    from shared.shell import apply as apply_shell
+
+    return apply_shell(html, getattr(importlib.import_module(mod_path), spec_name))
 
 
 class TestSharedCSSLoadOrder:
@@ -105,8 +125,7 @@ class TestDXBrandSlot:
 
     @pytest.mark.parametrize("name", BRAND_MODULES)
     def test_brand_slot_has_id(self, name):
-        template_rel, _ = SURFACES[name]
-        html = read_text(ROOT / template_rel)
+        html = surface_html(name)
 
         assert 'id="dxBrand"' in html, (
             f"{name}: id='dxBrand' 슬롯이 반드시 존재해야 한다"
@@ -239,25 +258,29 @@ class TestLanguageDropdownStacking:
     def test_topbar_stacks_language_menu_between_content_and_popups(self, name):
         _, css_rel = SURFACES[name]
         css = read_text(ROOT / css_rel)
-        topbar = _css_rule(css, ".topbar")
-        toolbar_host = _css_rule(css, ".topbar-right")
+        header_sel = HEADER_SELECTORS[name]
+        host_sel = (
+            ".dx-shell-header-right" if header_sel == ".dx-shell-header" else ".topbar-right"
+        )
+        topbar = _css_rule(css, header_sel)
+        toolbar_host = _css_rule(css, host_sel)
 
         normalized_topbar = topbar.replace(" ", "")
         topbar_z = re.search(r"z-index\s*:\s*(\d+)\s*;", topbar)
         assert "position:relative" in normalized_topbar, (
-            f"{name}: .topbar must be positioned so z-index lifts "
+            f"{name}: {header_sel} must be positioned so z-index lifts "
             "the language dropdown above page cards"
         )
-        assert topbar_z, f"{name}: .topbar must declare explicit z-index"
+        assert topbar_z, f"{name}: {header_sel} must declare explicit z-index"
         topbar_z_value = int(topbar_z.group(1))
         assert topbar_z_value > self.CONTENT_LAYER_MAX, (
-            f"{name}: .topbar must stack above page content layers"
+            f"{name}: {header_sel} must stack above page content layers"
         )
         assert topbar_z_value < self.POPUP_LAYER_MIN, (
-            f"{name}: .topbar must stay below popup/modal layers"
+            f"{name}: {header_sel} must stay below popup/modal layers"
         )
         assert "overflow:visible" in normalized_topbar, (
-            f"{name}: .topbar must not clip the language dropdown menu"
+            f"{name}: {header_sel} must not clip the language dropdown menu"
         )
 
         normalized_host = toolbar_host.replace(" ", "")
@@ -271,35 +294,70 @@ class TestLanguageDropdownStacking:
 
 
 
-class TestMonitorZIndexLayerLadder:
-    """DX Monitor z-index layers must not conflict with shared toolbar popup layers."""
+class TestShellHeaderZIndexLayerLadder:
+    """공유 shell 헤더가 페이지 콘텐츠 위, 팝업/모달 아래에 놓인다.
+
+    구 버전은 모듈마다 z-index 사다리를 따로 세웠다(dx_monitor 는 .top-bar 를
+    1000 이상으로). 이제 헤더가 하나뿐이므로 사다리도 한 곳에서 검증한다.
+    """
 
     SHARED_POPUP_Z = 10000  # shared toolbar.css .dx-lang-menu
+    CONTENT_LAYER_MAX = 100
 
-    def test_monitor_topbar_below_shared_popup(self):
-        """Monitor .top-bar z-index must be < shared popup layer (10000)."""
-        _, css_rel = SURFACES["dx_monitor"]
-        css = read_text(ROOT / css_rel)
-        topbar = _css_rule(css, ".top-bar")
-        z = re.search(r"z-index\s*:\s*(\d+)", topbar)
-        assert z, ".top-bar must declare z-index"
-        val = int(z.group(1))
-        assert val < self.SHARED_POPUP_Z, (
-            f".top-bar z-index ({val}) must be below shared popup layer ({self.SHARED_POPUP_Z})"
-        )
-        assert val >= 1000, (
-            f".top-bar z-index ({val}) must be >= 1000 to stay above page content"
-        )
+    def _shell_header_z(self) -> int:
+        css = read_text(ROOT / "shared/static/dx-shell.css")
+        body = _css_rule(css, ".dx-shell-header")
+        z = re.search(r"z-index\s*:\s*(\d+)", body)
+        assert z, ".dx-shell-header must declare z-index"
+        return int(z.group(1))
 
-    def test_monitor_toolbar_does_not_tie_shared_popup(self):
-        """Monitor .toolbar z-index must not equal shared .dx-lang-menu popup (10000)."""
-        _, css_rel = SURFACES["dx_monitor"]
-        css = read_text(ROOT / css_rel)
-        toolbar = _css_rule(css, ".toolbar")
-        z = re.search(r"z-index\s*:\s*(\d+)", toolbar)
-        if z:
-            assert int(z.group(1)) != self.SHARED_POPUP_Z, (
-                ".toolbar z-index must not tie with shared popup layer"
+    def test_shell_header_sits_above_page_content(self):
+        assert self._shell_header_z() > self.CONTENT_LAYER_MAX
+
+    def test_shell_header_sits_below_the_shared_popup_layer(self):
+        """헤더가 팝업보다 높으면 언어 드롭다운이 헤더 뒤로 숨는다."""
+        assert self._shell_header_z() < self.SHARED_POPUP_Z
+
+    def test_shell_rail_sits_below_the_header(self):
+        """레일이 헤더보다 높으면 헤더의 드롭다운이 레일에 잘린다."""
+        css = read_text(ROOT / "shared/static/dx-shell.css")
+        rail = _css_rule(css, ".dx-shell-rail")
+        z = re.search(r"z-index\s*:\s*(\d+)", rail)
+        assert z, ".dx-shell-rail must declare z-index"
+        assert int(z.group(1)) < self._shell_header_z()
+
+    @pytest.mark.parametrize("name", sorted(MIGRATED_SHELL_MODULES))
+    def test_migrated_module_content_stays_below_the_shell_header(self, name):
+        """모듈 콘텐츠가 헤더보다 높으면 헤더를 덮는다.
+
+        오버레이(toast, modal, chat picker)는 헤더 위가 맞으므로 제외한다 —
+        본문 레이어만 본다.
+        """
+        module_css_rel = {
+            "dx_app": "dx_app/static/css/style.css",
+            "dx_stream": "dx_stream/static/css/stream.css",
+            "dx_benchmark": "dx_benchmark/static/css/style.css",
+            "dx_monitor": "dx_monitor/static/css/style.css",
+            "dx_agent_dev": "dx_agent_dev/static/css/console.css",
+            "dx_modelzoo": "dx_modelzoo/static/css/style.css",
+            "dx_planner": "dx_planner/static/css/style.css",
+            "dx_compiler": "dx_compiler/static/css/style.css",
+        }[name]
+        css = read_text(ROOT / module_css_rel)
+        header_z = self._shell_header_z()
+        # 헤더 위에 떠도 되는 것들: 팝업/모달류와, 화면 위를 떠다니는 위젯
+        # (채팅 FAB, NPU 모니터 float). 이들은 헤더를 "덮는" 게 의도된 동작이다.
+        overlay = re.compile(
+            r"toast|modal|overlay|picker|menu|dropdown|lightbox|tooltip|drawer|popup"
+            r"|chat|fab|float|widget|banner|spotlight|backdrop"
+        )
+        for m in re.finditer(r"([^{}]+)\{([^}]*z-index\s*:\s*(\d+)[^}]*)\}", css):
+            selector, _body, z = m.group(1).strip().splitlines()[-1], m.group(2), int(m.group(3))
+            if z <= header_z or overlay.search(selector.lower()):
+                continue
+            raise AssertionError(
+                f"{name}: {selector!r} has z-index {z} above the shell header "
+                f"({header_z}) but is not an overlay — it would cover the header"
             )
 
 
@@ -317,11 +375,15 @@ class TestKnownExceptions:
             f"--launcher-topbar-h must reference --dx-module-header-h, got: {val}"
         )
 
-    def test_compiler_hash_header_selector_allowed(self):
-        """compiler의 #header 셀렉터는 허용된다."""
+    def test_compiler_no_longer_needs_the_hash_header_exception(self):
+        """compiler 의 #header 예외는 shell 이관으로 해소됐다.
+
+        예외 목록은 남겨두면 다음 사람이 그대로 답습한다 — 근거가 사라지면 지운다.
+        """
         css = read_text(ROOT / "dx_compiler/static/css/style.css")
-        body = _css_rule(css, "#header")
-        assert "var(--dx-module-header-bg)" in body
+        assert not re.search(r"^\s*#header\s*\{", css, re.M), (
+            "#header 가 다시 생겼다 — 헤더는 shared/static/dx-shell.css 가 소유한다"
+        )
 
     def test_benchmark_responsive_88px_via_named_alias(self):
         """benchmark의 반응형 88px 동작은 명명된 로컬 별칭 또는 명시적 미디어 규칙을 통해서만 허용된다."""

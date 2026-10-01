@@ -286,7 +286,7 @@ window._DX_I18N_DICT = {
     es: 'Configuración de compilación',
   },
   'Output Directory *': {
-    ko: '출력 디렉토리 *',
+    ko: '출력 디렉터리 *',
     ja: '出力ディレクトリ *',
     'zh-CN': '输出目录 *',
     'zh-TW': '輸出目錄 *',
@@ -414,6 +414,20 @@ window._DX_I18N_DICT = {
     'zh-TW': '資料集路徑為空。預設載入器需要資料集目錄以進行真實校準。',
     es: 'La ruta del conjunto de datos está vacía. El cargador por defecto necesita un directorio de datos para una calibración realista.',
   },
+  'Check these preprocessing values: ': {
+    ko: '다음 전처리 값을 확인하세요: ',
+    ja: '次の前処理の値を確認してください: ',
+    'zh-CN': '请检查以下预处理值： ',
+    'zh-TW': '請檢查以下前處理值： ',
+    es: 'Compruebe estos valores de preprocesamiento: ',
+  },
+  'Dimensions must be positive whole numbers: ': {
+    ko: '차원은 양의 정수여야 합니다: ',
+    ja: '次元は正の整数である必要があります: ',
+    'zh-CN': '维度必须为正整数： ',
+    'zh-TW': '維度必須為正整數： ',
+    es: 'Las dimensiones deben ser enteros positivos: ',
+  },
   'Calibration samples should be a positive number; values <= 0 are invalid for calibration.': {
     ko: '보정 샘플 수는 양수여야 합니다. 0 이하 값은 보정에 유효하지 않습니다.',
     ja: 'キャリブレーションサンプル数は正の数である必要があります。0以下の値は無効です。',
@@ -470,19 +484,19 @@ window._DX_I18N_DICT = {
     'zh-TW': '下載 .dxnn',
     es: 'Descargar .dxnn',
   },
-  '✅ Re-quantization Complete': {
-    ko: '✅ 재양자화 완료',
-    ja: '✅ 再量子化完了',
-    'zh-CN': '✅ 重新量化完成',
-    'zh-TW': '✅ 重新量化完成',
-    es: '✅ Recuantización completada',
+  'Re-quantization Complete': {
+    ko: '재양자화 완료',
+    ja: '再量子化完了',
+    'zh-CN': '重新量化完成',
+    'zh-TW': '重新量化完成',
+    es: 'Recuantización completada',
   },
-  '❌ Re-quantization Failed': {
-    ko: '❌ 재양자화 실패',
-    ja: '❌ 再量子化失敗',
-    'zh-CN': '❌ 重新量化失败',
-    'zh-TW': '❌ 重新量化失敗',
-    es: '❌ Error en la recuantización',
+  'Re-quantization Failed': {
+    ko: '재양자화 실패',
+    ja: '再量子化失敗',
+    'zh-CN': '重新量化失败',
+    'zh-TW': '重新量化失敗',
+    es: 'Error en la recuantización',
   },
   'Quantization Diagnosis': {
     ko: '양자화 진단',
@@ -811,21 +825,21 @@ window._DX_I18N_DICT = {
     'zh-TW': '計算範圍',
     es: 'Calcular rango',
   },
-  '▶ Resume Compilation': {
-    ko: '▶ 컴파일 재개',
-    ja: '▶ コンパイルを再開',
-    'zh-CN': '▶ 恢复编译',
-    'zh-TW': '▶ 恢復編譯',
-    es: '▶ Reanudar compilación',
+  'Resume Compilation': {
+    ko: '컴파일 재개',
+    ja: 'コンパイルを再開',
+    'zh-CN': '恢复编译',
+    'zh-TW': '恢復編譯',
+    es: 'Reanudar compilación',
   },
 
   // Dynamic JS strings (config_wizard.js)
-  '✅ Use This Config': {
-    ko: '✅ 이 설정 사용',
-    ja: '✅ この設定を使用',
-    'zh-CN': '✅ 使用此配置',
-    'zh-TW': '✅ 使用此設定',
-    es: '✅ Usar esta configuración',
+  'Use This Config': {
+    ko: '이 설정 사용',
+    ja: 'この設定を使用',
+    'zh-CN': '使用此配置',
+    'zh-TW': '使用此設定',
+    es: 'Usar esta configuración',
   },
   'Next →': {
     ko: '다음 →',
@@ -848,12 +862,12 @@ window._DX_I18N_DICT = {
     'zh-TW': '偵測中...',
     es: 'Detectando...',
   },
-  '🔍 Auto Detect from Model': {
-    ko: '🔍 모델에서 자동 감지',
-    ja: '🔍 モデルから自動検出',
-    'zh-CN': '🔍 从模型自动检测',
-    'zh-TW': '🔍 從模型自動偵測',
-    es: '🔍 Detección automática desde el modelo',
+  'Auto Detect from Model': {
+    ko: '모델에서 자동 감지',
+    ja: 'モデルから自動検出',
+    'zh-CN': '从模型自动检测',
+    'zh-TW': '從模型自動偵測',
+    es: 'Detección automática desde el modelo',
   },
   'No parameters': {
     ko: '파라미터 없음',
@@ -936,12 +950,12 @@ window._DX_I18N_DICT = {
   },
 
   // Dynamic JS strings (index.html inline scripts)
-  '✅ Compilation Complete': {
-    ko: '✅ 컴파일 완료',
-    ja: '✅ コンパイル完了',
-    'zh-CN': '✅ 编译完成',
-    'zh-TW': '✅ 編譯完成',
-    es: '✅ Compilación completa',
+  'Compilation Complete': {
+    ko: '컴파일 완료',
+    ja: 'コンパイル完了',
+    'zh-CN': '编译完成',
+    'zh-TW': '編譯完成',
+    es: 'Compilación completa',
   },
   'Done': {
     ko: '완료',
@@ -957,12 +971,12 @@ window._DX_I18N_DICT = {
     'zh-TW': '編譯已成功完成。',
     es: 'Compilación finalizada exitosamente.',
   },
-  '❌ Compilation Failed': {
-    ko: '❌ 컴파일 실패',
-    ja: '❌ コンパイル失敗',
-    'zh-CN': '❌ 编译失败',
-    'zh-TW': '❌ 編譯失敗',
-    es: '❌ Compilación fallida',
+  'Compilation Failed': {
+    ko: '컴파일 실패',
+    ja: 'コンパイル失敗',
+    'zh-CN': '编译失败',
+    'zh-TW': '編譯失敗',
+    es: 'Compilación fallida',
   },
   'Error': {
     ko: '오류',
@@ -1015,6 +1029,22 @@ window._DX_I18N_DICT = {
     es: 'Especifique los nodos de entrada/salida en el gráfico visualizado en el Visor izquierdo para definir el rango de compilación. El rango final puede diferir de su selección debido al algoritmo interno de asignación de dispositivo. Actualmente no se admiten rangos múltiples.',
   },
 
+  // Setup 칸 (아이콘 체계 단계 2c) — 모두 끝났을 때의 한 줄 · Compile 이 잠긴 이유.
+  'Setup ready': { ko: '설치 완료', ja: 'セットアップ完了', 'zh-CN': '安装完成', 'zh-TW': '安裝完成', es: 'Instalación lista' },
+  '{n} sample models': {
+    ko: '샘플 모델 {n}개',
+    ja: 'サンプルモデル {n} 件',
+    'zh-CN': '{n} 个示例模型',
+    'zh-TW': '{n} 個範例模型',
+    es: '{n} modelos de ejemplo',
+  },
+  'Install the SDK first': {
+    ko: '먼저 SDK 를 설치하세요',
+    ja: '先に SDK をインストールしてください',
+    'zh-CN': '请先安装 SDK',
+    'zh-TW': '請先安裝 SDK',
+    es: 'Instale primero el SDK',
+  },
   'Setup Status': {
     ko: '설정 상태',
     ja: 'セットアップ状態',
@@ -1104,22 +1134,22 @@ window._DX_I18N_DICT = {
   'ONNX Compiler': { ko: 'ONNX 컴파일러', ja: 'ONNX コンパイラ', 'zh-CN': 'ONNX 编译器', 'zh-TW': 'ONNX 編譯器',es:'Compilador ONNX'},
   'Drag & drop .json config here, or type path below': {
     ko: '.json 설정 파일을 드래그하거나 아래에 경로를 입력하세요',
-    ja: '.json 設定ファイルをここにドラッグ＆ドロップ、または下にパスを入力',
-    'zh-CN': '将 .json 配置文件拖放至此，或在下方输入路径',
+    ja: '.json 設定ファイルをここにドラッグ＆ドロップするか、パスを入力してください',
+    'zh-CN': '将 .json 配置文件拖放到此处，或在下方输入路径',
     'zh-TW': '將 .json 設定檔拖放至此，或在下方輸入路徑',
     es: 'Arrastre y suelte el archivo .json de configuración aquí, o escriba la ruta abajo',
   },
   'Model inputs were auto-detected from the ONNX file. Edit if changes are needed.': {
     ko: '모델 입력이 ONNX 파일을 기반으로 자동 감지되었습니다. 변경이 필요하면 수정하세요.',
-    ja: 'モデル入力が ONNX ファイルから自動検出されました。変更が必要な場合は編集してください。',
+    ja: 'モデル入力がONNXファイルから自動検出されました。必要に応じて編集してください。',
     'zh-CN': '模型输入已从 ONNX 文件自动检测。如需更改请编辑。',
-    'zh-TW': '模型輸入已從 ONNX 檔案自動偵測。如需更改請編輯。',
+    'zh-TW': '模型輸入已從 ONNX 檔案自動偵測。如需變更請編輯。',
     es: 'Las entradas del modelo fueron auto-detectadas del archivo ONNX. Edite si se necesitan cambios.',
   },
   'Comma-separated list of image file extensions to include.': {
     ko: '포함할 이미지 파일 확장자를 쉼표로 구분하여 입력하세요.',
-    ja: '含める画像ファイル拡張子をカンマ区切りで入力してください。',
-    'zh-CN': '以逗号分隔的图片文件扩展名列表。',
+    ja: '含めるイメージファイル拡張子をカンマ区切りで入力してください。',
+    'zh-CN': '以逗号分隔的图像文件扩展名列表。',
     'zh-TW': '以逗號分隔的圖片檔案副檔名列表。',
     es: 'Lista de extensiones de archivo de imagen separadas por comas para incluir.',
   },
@@ -1353,7 +1383,150 @@ window._DX_I18N_DICT = {
     'zh-TW': '建議：為獲得最佳 harness following，請使用 Claude Sonnet 4.6+ 或 Opus 4.6+。',
     es: 'Recomendado: Claude Sonnet 4.6+ u Opus 4.6+ para el mejor harness following.',
   },
-
+  // ── 마크업 lang-span 에서 옮겨온 항목 ──
+  'Agent': {
+    ko: '에이전트',
+    ja: 'エージェント',
+    'zh-CN': '智能体',
+    'zh-TW': '智能體',
+    es: 'Agente',
+  },
+  'Auto (Q-PRO)': {
+    ko: '자동 (Q-PRO)',
+    ja: '自動 (Q-PRO)',
+    'zh-CN': '自动 (Q-PRO)',
+    'zh-TW': '自動 (Q-PRO)',
+    es: 'Automático (Q-PRO)',
+  },
+  'Auto Compile (interactive)': {
+    ko: '자동 컴파일 (대화형)',
+    ja: '自動コンパイル（対話型）',
+    'zh-CN': '自动编译（交互式）',
+    'zh-TW': '自動編譯（互動式）',
+    es: 'Compilar auto (interactivo)',
+  },
+  'Auto Compile (no interaction)': {
+    ko: '자동 컴파일 (질문 없음)',
+    ja: '自動コンパイル（質問なし）',
+    'zh-CN': '自动编译（无交互）',
+    'zh-TW': '自動編譯（無互動）',
+    es: 'Compilar auto (sin interacción)',
+  },
+  'Dataset Path (optional)': {
+    ko: '데이터셋 경로 (선택)',
+    ja: 'データセットパス (任意)',
+    'zh-CN': '数据集路径 (可选)',
+    'zh-TW': '資料集路徑 (選填)',
+    es: 'Ruta del dataset (opcional)',
+  },
+  'Effort': {
+    ko: '사고 강도',
+    ja: '推論強度',
+    'zh-CN': '推理强度',
+    'zh-TW': '推理強度',
+    es: 'Esfuerzo',
+  },
+  'If no ONNX, the agent downloads, converts, configures, compiles and verifies automatically.': {
+    ko: 'ONNX가 없으면 에이전트가 직접 받아 변환·설정·컴파일·검증까지 자동으로 진행합니다.',
+    ja: 'ONNX が無い場合、エージェントが取得・変換・設定・コンパイル・検証まで自動で行います。',
+    'zh-CN': '若无 ONNX，智能体会自动下载、转换、配置、编译并验证。',
+    'zh-TW': '若無 ONNX，智能體會自動下載、轉換、設定、編譯並驗證。',
+    es: 'Si no hay ONNX, el agente lo descarga, convierte, configura, compila y verifica automáticamente.',
+  },
+  'Model': {
+    ko: '모델',
+    ja: 'モデル',
+    'zh-CN': '模型',
+    'zh-TW': '模型',
+    es: 'Modelo',
+  },
+  'Model to compile (file path or name/ID/URL)': {
+    ko: '컴파일할 모델 (파일 경로 또는 이름·ID·URL)',
+    ja: 'コンパイルするモデル（パス または 名前・ID・URL）',
+    'zh-CN': '要编译的模型（路径 或 名称/ID/URL）',
+    'zh-TW': '要編譯的模型（路徑 或 名稱/ID/URL）',
+    es: 'Modelo a compilar (ruta o nombre/ID/URL)',
+  },
+  'New folder': {
+    ko: '새 폴더',
+    ja: '新規フォルダ',
+    'zh-CN': '新建文件夹',
+    'zh-TW': '新增資料夾',
+    es: 'Nueva carpeta',
+  },
+  'No dataset required — generates random input tensors based on the configured input shapes. <strong>Useful to quickly verify compilation and pipeline correctness.</strong>': {
+    ko: '데이터셋이 필요 없으며 설정된 입력 형상에 기반하여 랜덤 입력 텐서를 생성합니다. <strong>컴파일 및 파이프라인 정확성을 빠르게 검증하는 데 유용합니다.</strong>',
+    ja: 'データセット不要 — 設定された入力形状に基づいてランダムな入力テンソルを生成します。<strong>コンパイルとパイプラインの正確性を素早く検証するのに便利です。</strong>',
+    'zh-CN': '无需数据集 — 根据配置的输入形状生成随机输入张量。<strong>适合快速验证编译和流水线的正确性。</strong>',
+    'zh-TW': '無需資料集 — 根據設定的輸入形狀產生隨機輸入張量。<strong>適合快速驗證編譯和管線的正確性。</strong>',
+    es: 'No se requiere dataset: genera tensores de entrada aleatorios según las formas de entrada configuradas. <strong>Útil para verificar rápidamente la compilación y la corrección del pipeline.</strong>',
+  },
+  'Provide a dataset path and preprocessing steps (resize, normalize, etc.). Recommended for users <strong>who want realistic calibration data for better performance and accuracy.</strong>': {
+    ko: '데이터셋 경로와 전처리 단계(리사이즈, 정규화 등)를 제공합니다. 더 나은 성능과 정확도를 위해 실제 보정 데이터를 사용하려는 사용자에게 권장됩니다.',
+    ja: 'データセットパスと前処理手順（リサイズ、正規化など）を指定します。性能と精度を高めるために実データでキャリブレーションしたいユーザーに推奨されます。',
+    'zh-CN': '提供数据集路径和预处理步骤（调整大小、归一化等）。推荐给希望使用真实校准数据以获得更好性能和精度的用户。',
+    'zh-TW': '提供資料集路徑和前處理步驟（調整大小、正規化等）。建議給希望使用真實校準資料以獲得更好效能和精度的使用者。',
+    es: 'Proporcione una ruta de dataset y pasos de preprocesamiento (redimensionar, normalizar, etc.). Recomendado para usuarios <strong>que deseen datos de calibración realistas para mejorar el rendimiento y la precisión.</strong>',
+  },
+  'QXNN Path (.qxnn) *': {
+    ko: 'QXNN 경로 (.qxnn) *',
+    ja: 'QXNN パス (.qxnn) *',
+    'zh-CN': 'QXNN 路径 (.qxnn) *',
+    'zh-TW': 'QXNN 路徑 (.qxnn) *',
+    es: 'Ruta QXNN (.qxnn) *',
+  },
+  'Quant Diagnosis': {
+    ko: '양자화 진단',
+    ja: '量子化診断',
+    'zh-CN': '量化诊断',
+    'zh-TW': '量化診斷',
+    es: 'Diagnóstico cuant.',
+  },
+  'Re-quantize from an existing <code>.qxnn</code> artifact to produce a new <code>.dxnn</code>. Usable any time, with or without a prior compile job.': {
+    ko: '기존 <code>.qxnn</code> 아티팩트에서 재양자화하여 새 <code>.dxnn</code>을 생성합니다. 이전 컴파일 작업 없이도 사용할 수 있습니다.',
+    ja: '既存の <code>.qxnn</code> アーティファクトから再量子化して新しい <code>.dxnn</code> を生成します。',
+    'zh-CN': '从现有 <code>.qxnn</code> 工件重新量化以生成新的 <code>.dxnn</code>。',
+    'zh-TW': '從現有 <code>.qxnn</code> 工件重新量化以產生新的 <code>.dxnn</code>。',
+    es: 'Re-cuantice desde un artefacto <code>.qxnn</code> existente para producir un nuevo <code>.dxnn</code>.',
+  },
+  'Recalibration Method': {
+    ko: '재보정 방법',
+    ja: '再キャリブレーション方法',
+    'zh-CN': '重新校准方法',
+    'zh-TW': '重新校準方法',
+    es: 'Método de recalibración',
+  },
+  'Resume from QXNN': {
+    ko: 'QXNN에서 재개',
+    ja: 'QXNN から再開',
+    'zh-CN': '从 QXNN 恢复',
+    'zh-TW': '從 QXNN 恢復',
+    es: 'Reanudar desde QXNN',
+  },
+  'Select file': {
+    ko: '파일 선택',
+    ja: 'ファイルを選択',
+    'zh-CN': '选择文件',
+    'zh-TW': '選擇檔案',
+    es: 'Seleccionar archivo',
+  },
+  'Select folder': {
+    ko: '폴더 선택',
+    ja: 'フォルダを選択',
+    'zh-CN': '选择文件夹',
+    'zh-TW': '選擇資料夾',
+    es: 'Seleccionar carpeta',
+  },
+  'Select this folder': {
+    ko: '이 폴더 선택',
+    ja: 'このフォルダを選択',
+    'zh-CN': '选择此文件夹',
+    'zh-TW': '選擇此資料夾',
+    es: 'Elegir esta carpeta',
+  },
+  'Remove': {
+    ko: '제거', ja: '削除', 'zh-CN': '移除', 'zh-TW': '移除', es: 'Eliminar',
+  },
 };
 
 window._DX_I18N_PLACEHOLDERS = {

@@ -355,7 +355,8 @@ class TestServerRoutes:
         resp = urlopen(f"http://127.0.0.1:{TEST_PORT}/static/css/style.css")
         css = resp.read().decode()
         assert resp.status == 200
-        assert ".mz-topbar" in css
+        # .mz-topbar 는 통합 shell(dx-shell.css)로 옮겼다.
+        assert ".mz-explorer-shell" in css
         assert ".mz-card" in css
 
     def test_path_traversal_blocked(self, server):
@@ -374,7 +375,7 @@ class TestServerRoutes:
         assert 'tutorial.css' in html, "tutorial.css 태그 누락"
 
     def test_shared_font_served(self, server):
-        resp = urlopen(f"http://127.0.0.1:{TEST_PORT}/static/shared/fonts/inter-v20-latin-regular.woff2")
+        resp = urlopen(f"http://127.0.0.1:{TEST_PORT}/static/shared/fonts/inter-4.1-var-latin.woff2")
         data = resp.read()
         content_type = resp.headers.get("Content-Type", "").lower()
         assert resp.status == 200

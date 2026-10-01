@@ -45,18 +45,23 @@ def test_cursor_authenticated_reads_authinfo(monkeypatch, tmp_path):
     assert CursorAdapter(cli_path="/usr/bin/cursor-agent").is_authenticated() is True
 
 
-def test_copilot_authenticated_when_session_store_present(monkeypatch, tmp_path):
-    """로그인 후 생성되는 session-store.db 존재 시 True."""
+def test_copilot_authenticated_when_config_lists_a_user(monkeypatch, tmp_path):
+    """`copilot login` 은 token 을 keyring 에, 계정을 config.json 의 loggedInUsers 에 둔다. 예전 판정의
+    session-store.db 는 로그인해도 생기지 않았다 (CLI 1.0.89 실측) — 로그인해도 늘 "not signed in"."""
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path))
+    for var in ("COPILOT_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN"):
+        monkeypatch.delenv(var, raising=False)
     cdir = tmp_path / ".copilot"
     cdir.mkdir()
-    (cdir / "session-store.db").write_bytes(b"sqlite")
+    (cdir / "config.json").write_text('{"loggedInUsers": [{"host": "https://github.com", "login": "me"}]}')
     from core.adapters.copilot import CopilotAdapter
     assert CopilotAdapter(cli_path="/usr/bin/copilot").is_authenticated() is True
 
 
-def test_copilot_authenticated_false_when_no_session_store(monkeypatch, tmp_path):
+def test_copilot_authenticated_false_when_never_logged_in(monkeypatch, tmp_path):
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path))
+    for var in ("COPILOT_GITHUB_TOKEN", "GH_TOKEN", "GITHUB_TOKEN"):
+        monkeypatch.delenv(var, raising=False)
     from core.adapters.copilot import CopilotAdapter
     assert CopilotAdapter(cli_path="/usr/bin/copilot").is_authenticated() is False
 

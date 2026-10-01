@@ -69,7 +69,7 @@
 
     var iconSpan = document.createElement('span');
     iconSpan.className = 'dx-lang-icon';
-    iconSpan.textContent = '🌏';
+    iconSpan.appendChild(_icon('globe'));
 
     var codeSpan = document.createElement('span');
     codeSpan.className = 'dx-lang-code';
@@ -77,7 +77,7 @@
 
     var arrowSpan = document.createElement('span');
     arrowSpan.className = 'dx-lang-arrow';
-    arrowSpan.textContent = '▾';
+    arrowSpan.appendChild(_icon('chevd'));
 
     btn.appendChild(iconSpan);
     btn.appendChild(codeSpan);
@@ -165,11 +165,25 @@
     return wrap;
   }
 
-  function _makeIconBtn(emoji, title, onClick) {
+  /* 아이콘은 공용 sprite 에서 (spec 2026-09-29 아이콘 체계) — 이모지는 OS · 글꼴마다 다르게 그려졌다
+     (headless 에서 반쪽 원 기호가 "-" 로). DXIcon 이 없으면 (dx-icon.js 를 빠뜨린 문서) 빈 자리로 둔다. */
+  function _icon(name) {
+    if (window.DXIcon && window.DXIcon.el) return window.DXIcon.el(name);
+    return document.createTextNode('');
+  }
+
+  function _setIcon(btn, name) {
+    btn.textContent = '';
+    btn.appendChild(_icon(name));
+    btn.dataset.icon = name;
+  }
+
+  function _makeIconBtn(iconName, title, onClick) {
     var btn = document.createElement('button');
     btn.className = 'dx-toolbar-btn';
     btn.title = title;
-    btn.textContent = emoji;
+    btn.setAttribute('aria-label', title);
+    _setIcon(btn, iconName);
     btn.addEventListener('click', onClick);
     return btn;
   }
@@ -188,13 +202,29 @@
 
     toolbar.appendChild(_makeLangDropdown());
 
+    if (typeof DXTheme !== 'undefined') {
+      /* 세 상태가 그림으로 다르다: 밤 · 낮 · 시스템 (반쪽 원). title 도 지금 상태를 말한다. */
+      var THEME_ICON = { dark: 'moon', light: 'sun', system: 'theme' };
+      var THEME_TITLE = { dark: 'Theme: dark', light: 'Theme: light', system: 'Theme: system' };
+      var themeBtn = _makeIconBtn(THEME_ICON[DXTheme.getTheme()], THEME_TITLE[DXTheme.getTheme()], function () {
+        DXTheme.cycle();
+      });
+      themeBtn.id = 'dxToolbarTheme';
+      DXTheme.onThemeChange(function (t) {
+        _setIcon(themeBtn, THEME_ICON[t]);
+        themeBtn.title = THEME_TITLE[t];
+        themeBtn.setAttribute('aria-label', THEME_TITLE[t]);
+      });
+      toolbar.appendChild(themeBtn);
+    }
+
     if (_opts.tutorial) {
       _tutorialClickHandler = function () {
         if (_opts.tutorial && typeof _opts.tutorial.toggleTOC === 'function') {
           _opts.tutorial.toggleTOC();
         }
       };
-      var tutBtn = _makeIconBtn('🎓', 'Tutorial', _tutorialClickHandler);
+      var tutBtn = _makeIconBtn('graduation', 'Tutorial', _tutorialClickHandler);
       tutBtn.id = 'dxToolbarTutorial';
       toolbar.appendChild(tutBtn);
       if (_opts.tutorial._toggleBtnEl !== undefined) {
@@ -203,7 +233,7 @@
     }
 
     if (typeof _opts.onSettings === 'function') {
-      var settingsBtn = _makeIconBtn('⚙️', 'Settings', _opts.onSettings);
+      var settingsBtn = _makeIconBtn('gear', 'Settings', _opts.onSettings);
       settingsBtn.id = 'dxToolbarSettings';
       toolbar.appendChild(settingsBtn);
     }
@@ -272,7 +302,7 @@
       } else {
         var langDrop = document.getElementById('langToggle');
         var insertRef = langDrop ? langDrop.nextSibling : null;
-        tutBtn = _makeIconBtn('🎓', 'Tutorial', newTutHandler);
+        tutBtn = _makeIconBtn('graduation', 'Tutorial', newTutHandler);
         tutBtn.id = 'dxToolbarTutorial';
         if (insertRef) toolbar.insertBefore(tutBtn, insertRef);
         else toolbar.appendChild(tutBtn);

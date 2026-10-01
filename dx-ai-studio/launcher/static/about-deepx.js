@@ -1,6 +1,11 @@
 (function() {
   'use strict';
 
+  // 분야 · 상 · 링크 아이콘은 sprite 이름 (about-data.json, 아이콘 체계 단계 5). 옛 글자 icon 은 그대로.
+  function _aboutIco(name) {
+    if (/^[a-z0-9_-]+$/.test(name || '') && typeof window.DXIcon === 'function') return window.DXIcon(name);
+    return name || '';
+  }
   let _aboutData = null;
   let _aboutInitialized = false;
   let _scrollSpyObserver = null;
@@ -87,7 +92,7 @@
       <div class="about-action-grid">
         ${d.links.map(function (link) {
           return `<a class="about-action-card about-fade-in" href="${link.url}" target="_blank" rel="noopener noreferrer">
-            <span class="about-action-icon">${link.icon}</span>
+            <span class="about-action-icon">${_aboutIco(link.icon)}</span>
             <span class="about-action-label">${L(link.label)}</span>
             <span class="about-action-desc">${L(link.desc)}</span>
           </a>`;
@@ -151,7 +156,7 @@
           </div>
         `).join('')}
       </div>
-      <div class="about-scroll-hint">▼</div>
+      <div class="about-scroll-hint">${_aboutIco('chevd')}</div>
     `;
     container.appendChild(el);
   }
@@ -182,7 +187,7 @@
       <div class="about-values-grid">
         ${c.values.map(v => `
           <div class="about-value-card about-fade-in">
-            <div class="about-value-icon">${v.icon}</div>
+            <div class="about-value-icon">${_aboutIco(v.icon)}</div>
             <div class="about-value-title">${L(v.title)}</div>
             <div class="about-value-desc">${L(v.desc)}</div>
           </div>
@@ -414,7 +419,7 @@
       <div class="about-solutions-grid">
         ${p.useCases.map(function (uc) {
           return `<div class="about-solution-card about-fade-in">
-            <div class="about-solution-icon">${uc.icon}</div>
+            <div class="about-solution-icon">${_aboutIco(uc.icon)}</div>
             <div class="about-solution-title">${L(uc.title)}</div>
             <div class="about-solution-desc">${L(uc.desc)}</div>
           </div>`;
@@ -442,7 +447,7 @@
         ${inv.rounds.map(r => `
           <div class="about-round-card">
             <div class="about-round-name">${r.name}</div>
-            <div class="about-round-status">✓ ${L(r.status)}</div>
+            <div class="about-round-status">${_aboutIco('check')} ${L(r.status)}</div>
             ${r.detail ? `<div class="about-round-note">${L(r.detail)}</div>` : (r.note ? `<div class="about-round-note">${L(r.note)}</div>` : '')}
           </div>
         `).join('')}
@@ -452,7 +457,7 @@
       <div class="about-awards-grid">
         ${inv.awards.map(a => `
           <div class="about-award-card about-fade-in">
-            <div class="about-award-icon">${a.icon}</div>
+            <div class="about-award-icon">${_aboutIco(a.icon)}</div>
             <div class="about-award-info">
               <div class="about-award-name">${a.name}</div>
               <div class="about-award-year">${a.year}</div>
@@ -477,7 +482,7 @@
       <div class="about-solutions-grid">
         ${pt.solutions.map(s => `
           <div class="about-solution-card about-fade-in">
-            <div class="about-solution-icon">${s.icon}</div>
+            <div class="about-solution-icon">${_aboutIco(s.icon)}</div>
             <div class="about-solution-title">${L(s.title)}</div>
             <div class="about-solution-desc">${L(s.desc)}</div>
           </div>

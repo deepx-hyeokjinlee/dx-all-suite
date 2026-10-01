@@ -42,19 +42,39 @@ def test_body_allows_horizontal_scroll_on_zoom(module: str, css_path: Path):
     assert "overflow:hidden" not in css.replace(" ", "").split("overflow-x")[0] or "overflow-y:hidden" in css.replace(" ", "")
 
 
-@pytest.mark.parametrize("module,css_path", [("dx_app", ZOOM_SAFE_MODULES["dx_app"]), ("dx_stream", ZOOM_SAFE_MODULES["dx_stream"])])
-def test_app_shell_uses_percent_width_not_viewport(module: str, css_path: Path):
+# dx_app 은 통합 App Shell(Option A)로 이관되어 shell 루트가 .app 이 아니라
+# shared/static/dx-shell.css 의 .dx-shell 이다. 이관되는 모듈마다 여기서 옮긴다.
+SHELL_ROOTS = {
+    "dx_app": (ROOT / "shared/static/dx-shell.css", ".dx-shell"),
+    "dx_stream": (ROOT / "shared/static/dx-shell.css", ".dx-shell"),
+}
+
+# .modal-overlay 는 여덟 모듈이 같은 규칙을 각자 복제하고 있어서 공유 계층으로
+# 합쳤다. 계약은 그대로 살아 있어야 하므로, 모듈 CSS 에 없으면 공유 쪽을 본다.
+SHARED_COMPONENTS = ROOT / "shared/static/dx-components.css"
+
+
+def _owner_css(css_path: Path, selector: str) -> str:
     css = _read(css_path)
-    app_rule = re.search(r"\.app\s*\{(?P<body>[^}]*)\}", css, re.DOTALL)
-    assert app_rule is not None, f"{module} .app rule missing"
+    if re.search(r"(?m)^\s*" + re.escape(selector) + r"\s*[,{]", css):
+        return css
+    return _read(SHARED_COMPONENTS)
+
+
+@pytest.mark.parametrize("module", sorted(SHELL_ROOTS))
+def test_app_shell_uses_percent_width_not_viewport(module: str):
+    css_path, selector = SHELL_ROOTS[module]
+    css = _read(css_path)
+    app_rule = re.search(re.escape(selector) + r"\s*\{(?P<body>[^}]*)\}", css, re.DOTALL)
+    assert app_rule is not None, f"{module} {selector} rule missing"
     body = app_rule.group("body").replace(" ", "")
-    assert "width:100vw" not in body, f"{module} .app must not pin shell to 100vw"
+    assert "width:100vw" not in body, f"{module} {selector} must not pin shell to 100vw"
     assert "width:100%" in body
 
 
 @pytest.mark.parametrize("module,css_path", [("dx_app", ZOOM_SAFE_MODULES["dx_app"]), ("dx_stream", ZOOM_SAFE_MODULES["dx_stream"])])
 def test_modal_overlay_uses_percent_not_viewport(module: str, css_path: Path):
-    css = _read(css_path)
+    css = _owner_css(css_path, ".modal-overlay")
     overlay = re.search(r"\.modal-overlay\s*\{(?P<body>[^}]*)\}", css, re.DOTALL)
     assert overlay is not None, f"{module} .modal-overlay rule missing"
     body = overlay.group("body").replace(" ", "")

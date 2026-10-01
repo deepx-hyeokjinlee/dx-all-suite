@@ -1,5 +1,6 @@
 """아티팩트 검증 및 서버 엔드포인트 테스트."""
 import json
+import urllib.request
 import sys
 import pytest
 from pathlib import Path
@@ -232,15 +233,25 @@ class TestArtifactEndpoints:
         if not data["models"]:
             pytest.skip("No models loaded")
         model_id = data["models"][0]["id"]
+        # 리다이렉트를 따라가지 않는다. 원격 아티팩트면 서버가 CDN 으로 302 를 내는데,
+        # urlopen 은 그것을 따라가므로 인터넷이 없는 곳에서는 서버가 옳게 답했는데도
+        # 이 테스트가 죽는다 — 실제로 그렇게 오해한 적이 있다.
+        # 여기서 볼 것은 서버의 응답이지 CDN 에 닿는지가 아니다.
+        class _NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, *args, **kwargs):
+                return None
+
+        opener = urllib.request.build_opener(_NoRedirect)
         try:
-            urlopen(f"http://127.0.0.1:{TEST_PORT}/api/catalog/{model_id}/artifacts/onnx")
+            resp = opener.open(
+                f"http://127.0.0.1:{TEST_PORT}/api/catalog/{model_id}/artifacts/onnx")
+            assert resp.status in (200, 302)
         except HTTPError as e:
-            body = json.loads(e.read())
-            assert e.code == 404
-            assert body["error_code"] == "artifact_unavailable"
-        else:
-            # 만약 실제로 onnx가 있으면 성공해도 OK
-            pass
+            if e.code == 404:
+                body = json.loads(e.read())
+                assert body["error_code"] == "artifact_unavailable"
+            else:
+                assert e.code in (302, 303, 307), f"예상 밖 응답: {e.code}"
 
     def test_artifact_endpoint_rejects_traversal(self, server):
         try:

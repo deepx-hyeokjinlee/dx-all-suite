@@ -187,14 +187,19 @@ def dev_delete(tok,mn,lang="both",confirm=""):
         return {"error": "Delete confirmation required", "status": 400}
     deleted=[]
     bases={"cpp":[CPP_DIR],"python":[PY_DIR],"both":[CPP_DIR,PY_DIR]}.get(lang,[CPP_DIR,PY_DIR])
+    # 예제 폴더는 resolver 가 찾는다 — legacy <task>/<model>, per-model <task>/<family>/<stem> (shared/dx_app_layout.py)
+    from shared import dx_app_layout as _layout
+    _layout.clear_cache()
     for base in bases:
-        for cd in base.iterdir():
-            if not cd.is_dir() or cd.name in SKIP_CAT:continue
+        lang_key="cpp" if base==CPP_DIR else "python"
+        targets=[ex.dir(lang_key) for ex in _layout.examples(base.parent.parent) if ex.name==mn and ex.dir(lang_key)]
+        for tgt in targets:
             try:
-                t=resolve_under(str(cd/mn),(base,))
+                t=resolve_under(str(tgt),(base,))
             except ValueError:
                 continue
             if t.is_dir():shutil.rmtree(t);deleted.append(str(t.relative_to(DX_APP_ROOT)))
+    _layout.clear_cache()
     return{"ok":True,"deleted":deleted}
 
 def dev_git(tok,msg,push=False,confirm_push=""):

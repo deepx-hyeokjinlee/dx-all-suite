@@ -11,15 +11,36 @@ the function body (see below) so module-load time stays acyclic.
 import os, re, math, time, uuid, subprocess, tempfile, threading, atexit
 from pathlib import Path
 from dx_app.core import config
-from dx_app.core.config import DX_APP_ROOT, BUILD_DIR
+from dx_app.core.config import DX_APP_ROOT, BUILD_DIR, resolve_model_path
 from shared.runtime import ld_library_path
+from shared import dxrt
 from dx_app.core.performance import _parse_perf
 from dx_app.core.inference_exec import _err, _TMP
-from dx_app.core.camera import _start_cam_mux, _stop_cam_mux, _ensure_xvfb, _XVFB_BASE, _UDP_BASE_PORT
+from dx_app.core.camera import _start_cam_mux, _stop_cam_mux, _ensure_xvfb, _XVFB_BASE, _UDP_BASE_PORT, _XVFB_RES
 
 _live_jobs = {}              # job_id -> {proc, log_file, start_time, slot_idx, ...}
 _live_procs = {}             # slot_idx -> running inference proc
 _live_procs_lock = threading.Lock()
+
+
+def _video_frame_count(path):
+    """영상의 프레임 수 (ffprobe, 컨테이너의 값 → 없으면 packet 을 센다). 모르면 None. live 의 'Loop' 기준 하한에 쓴다 —
+    많은 runner (segmentation 등) 가 'Total frames' 를 찍지 않는다."""
+    import shutil
+    if not shutil.which("ffprobe") or not Path(path).is_file():
+        return None
+    for extra in ([], ["-count_packets"]):
+        field = "nb_read_packets" if extra else "nb_frames"
+        try:
+            out = subprocess.run(["ffprobe", "-v", "error", *extra, "-select_streams", "v:0",
+                                  "-show_entries", f"stream={field}", "-of", "csv=p=0", str(path)],
+                                 capture_output=True, text=True, timeout=15).stdout.strip().split(",")[0]
+            n = int(out)
+            if n > 0:
+                return n
+        except (ValueError, OSError, subprocess.SubprocessError):
+            continue
+    return None
 
 
 def run_inference_live(model_name, category, model_file, lang="cpp", variant="sync",
@@ -49,6 +70,12 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
     if _missing:
         return _err("live_deps_missing", "Live streaming requires: " + ", ".join(_missing))
 
+    # 영상을 받지 않는 runner (arcface · CLIP · ReID · VPR · DOPE · SFA3D …) 는 -v 를 거부하고 바로 끝난다 —
+    # 검은 화면만 남으므로 이유와 함께 거절한다 (연속 실행의 camera · RTSP 는 UI 가 막지 않는다)
+    if config.model_image_only(category, model_name):
+        return _err("live_image_only", "This model takes still images only — live (camera / RTSP / video) "
+                    "is not supported. Use Run Inference with an image.")
+
     is_multi_model = model_file.startswith("-")
     if is_multi_model:
         import shlex
@@ -60,7 +87,7 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
                     return _err("model_not_found", f"Model file not found: {arg}")
                 model_args[i] = str(mfp)
     else:
-        mp = DX_APP_ROOT / model_file
+        mp = resolve_model_path(model_file, DX_APP_ROOT)
         if not mp.exists():
             return _err("model_not_found", f"Model file not found: {model_file}")
 
@@ -109,8 +136,13 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
     _display = f":{_XVFB_BASE + slot_idx}"
     _loop = 999999  # effectively infinite until SIGTERM
     _ld = ld_library_path()
-    env = {**os.environ, "DISPLAY": _display, "LD_LIBRARY_PATH": _ld}
+    env = dxrt.run_env({**os.environ, "DISPLAY": _display, "LD_LIBRARY_PATH": _ld})
     env.pop("QT_QPA_PLATFORM", None)  # allow real X11 rendering
+    # 프레임 수를 runner 가 직접 알린다 ([PROGRESS], dx_app fix/studio-live-findings). dx_app 은 창을 화면의
+    # 절반으로 열므로 Xvfb 의 두 배를 화면이라 알려 창이 처음부터 Xvfb 를 채우게 한다 (창 맞추기는 그대로 둔다).
+    env["DXAPP_PROGRESS"] = "1"
+    _xw, _xh = (int(v) for v in _XVFB_RES.split("x")[:2])
+    env["DXAPP_SCREEN_W"], env["DXAPP_SCREEN_H"] = str(2 * _xw), str(2 * _xh)
 
     inf = "-v"
     if lang == "cpp":
@@ -121,6 +153,9 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
             cmd = [str(bp)] + model_args + [inf, _inp_str, "-l", str(_loop)]
         else:
             cmd = [str(bp), "-m", str(mp), inf, _inp_str, "-l", str(_loop)]
+        # runner 는 [DET] · [CLS] 같은 프레임별 줄을 --show-log 일 때만 찍는다 — 없으면 poll 이 frames 0 · FPS 0
+        # (main 01b7727 · per-model 8d0b748 의 모든 runner 가 받는다; 계약: tests/dx_app/test_live_display.py)
+        cmd.append("--show-log")
     else:
         return _err("live_cpp_only", "Live mode currently supports C++ only")
 
@@ -141,6 +176,7 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
         "proc": proc, "log_file": log_file,
         "start_time": time.time(), "model_name": model_name,
         "category": category, "slot_idx": slot_idx,
+        "total_frames": _video_frame_count(_inp_str) if input_type == "video" else None,
     }
     print(f"[LIVE] Started job {job_id} slot={slot_idx} PID={proc.pid} model={model_name}")
     return {"job_id": job_id, "status": "started", "slot_idx": slot_idx}
@@ -166,7 +202,8 @@ def _parse_detections(stdout_text):
     return dets
 
 
-_CLS_VERBOSE_RE = re.compile(r'^\s*(\d+)\.\s*\(class\s+(\d+)\)\s*:\s*([-\d.]+)', re.M)
+# 점수는 숫자 하나로 끝나야 한다 — async callback 들이 동시에 써서 섞인 줄 ('3.50273.5913') 은 건너뛴다
+_CLS_VERBOSE_RE = re.compile(r'^\s*(\d+)\.\s*\(class\s+(\d+)\)\s*:\s*(-?\d+(?:\.\d+)?)[ \t]*$', re.M)
 
 def _softmax(xs):
     if not xs:
@@ -199,6 +236,9 @@ def _parse_classification_frames(content):
         out.append([(idx, p) for (idx, _), p in zip(fr, probs)])
     return out
 
+_PER_OBJECT_TAGS = ("DET", "OBB", "ISEG")
+
+
 def _parse_task_tags(content):
     """Parse all task-specific stdout tags from C++ runner output.
     Returns dict: {tag: str, lines: list, frame_count: int, last_pred: list, summary: dict}
@@ -223,6 +263,18 @@ def _parse_task_tags(content):
     frame_count = len(tag_lines)
     if frame_count == 0:
         return {"tag": "", "lines": [], "frame_count": 0, "last_pred": [], "summary": {}}
+    if tag in _PER_OBJECT_TAGS:
+        # [DET] · [OBB] · [ISEG] 는 객체마다 한 줄이고 프레임 번호가 없다. 한 프레임의 객체는 신뢰도 내림차순이므로
+        # 신뢰도가 다시 오르는 곳이 새 프레임 (실측 yolov12-n 478/478 · RT-DETR 190/190 · OBB 621/621, ISEG 582/719).
+        # 객체 없는 프레임 · 객체 하나인 프레임이 이어지는 곳은 못 센다 — 하한.
+        confs = []
+        for tl in tag_lines:
+            try:
+                confs.append(float(tl.split()[2]))
+            except (IndexError, ValueError):
+                continue
+        if confs:
+            frame_count = 1 + sum(1 for a, b in zip(confs, confs[1:]) if b > a)
 
     # Build last_pred (human-readable, last 5 lines)
     last_pred = []
@@ -400,25 +452,37 @@ def poll_inference(job_id):
 
     is_det_mode = det_count > 0 and frame_markers == 0
     has_tag_mode = tag_frame_count > 0  # any task tag found
-    # check if inference started (for models that don't print per-frame logs)
-    has_started = "Starting" in content and src_fps > 0
 
-    if has_tag_mode:
-        # Tag-based frame counting (works for ALL task types)
-        est_frames = tag_frame_count
-        fps_est = round(est_frames / elapsed, 1) if elapsed > 0.5 else 0
-        display_frames = est_frames
-    elif frame_markers > 0:
-        fps_est = round(frame_markers / elapsed, 1) if elapsed > 0.5 else 0
-        display_frames = frame_markers
-    elif has_started and running:
-        # Models that don't print per-frame logs (restoration, embedding)
-        est_frames = int(elapsed * src_fps) if elapsed > 0.5 else 0
-        fps_est = round(est_frames / elapsed, 1) if elapsed > 0.5 else 0
-        display_frames = est_frames
+    # 영상이 한 바퀴 돌 때마다 찍히는 'Loop k/N' — 끝난 바퀴 × 총 프레임은 실제 처리한 프레임의 하한.
+    # 많은 runner (segmentation 등) 가 'Total frames' 를 찍지 않아 시작할 때 잰 영상 길이를 쓴다.
+    loops = [int(x) for x in re.findall(r"\bLoop (\d+)/\d+", content)]
+    m_total = re.search(r"\[INFO\] Total frames:\s*(\d+)", content)
+    total = int(m_total.group(1)) if m_total else job.get("total_frames")
+    done = (max(loops) - 1) if loops else 0
+    loop_frames = done * int(total) if total and done > 0 else None
+
+    # dx_app 의 runner 가 DXAPP_PROGRESS=1 로 찍는 '[PROGRESS] frames=N' 이 있으면 그것이 프레임 수다 —
+    # 아래 추정 (태그 · Loop) 은 그것이 없는 runner (main 01b7727) 를 위한 것
+    progress = [int(x) for x in re.findall(r"^\[PROGRESS\] frames=(\d+)", content, re.M)]
+
+    if progress:
+        frame_basis, display_frames = "progress", max(progress)
+    elif has_tag_mode or frame_markers > 0:
+        frame_basis = "tag"
+        display_frames = tag_frame_count if has_tag_mode else frame_markers
+        # 태그가 일부 프레임에만 찍히는 task (hand detector 는 손이 보일 때만) 는 Loop 쪽이 더 크다
+        if loop_frames and loop_frames > display_frames:
+            frame_basis, display_frames = "loop", loop_frames
+    elif loop_frames:
+        frame_basis, display_frames = "loop", loop_frames
     else:
-        fps_est = 0
-        display_frames = 0
+        # segmentation · depth · denoise · SR · matting · anomaly 의 runner 는 프레임별 줄이 없다. 예전에는
+        # '원본 FPS × 경과' 를 프레임이라 했다 (PP-Matting: 실제 0.2 FPS 가 24 FPS 로) — 모르면 모른다 (None).
+        frame_basis, display_frames = "none", None
+    if display_frames is None:
+        fps_est = None
+    else:
+        fps_est = round(display_frames / elapsed, 1) if elapsed > 0.5 else 0
 
     # ── Last prediction / detection (태스크 태그 기반) ──
     last_pred = task["last_pred"] if task["last_pred"] else []
@@ -450,7 +514,7 @@ def poll_inference(job_id):
                     class_counts[cls]["conf_sum"] += conf
                 except Exception: pass
 
-    return {"running": running, "frames": display_frames,
+    return {"running": running, "frames": display_frames, "frame_basis": frame_basis,
             "det_count": det_count, "class_counts": class_counts,
             "elapsed": round(elapsed, 1), "fps_est": fps_est,
             "src_fps": src_fps, "is_det_mode": is_det_mode,
@@ -568,6 +632,20 @@ def get_inference_result(job_id):
         for cls in det_summary:
             c = det_summary[cls]; c["conf_avg"] = round(c["conf_sum"] / c["count"], 3) if c["count"] else 0
 
+    # runner 가 스스로 끝났다 — 영상을 거부했거나 (config.json 과 C++ 예제가 다른 CLIP ViT-B/32 등) 죽었다.
+    # 'error' 는 API 오류 자리라 (UI 가 합성 결과로 덮는다) run_error 로 싣는다.
+    run_error_key = run_error = None
+    if "Interrupted by user" not in content and not perf.get("overall_fps") and not task["frame_count"]:
+        plain = re.sub(r"\x1b\[[0-9;]*m", "", content)
+        hint = next((l.strip() for l in plain.splitlines() if "image-only" in l or "supports image input only" in l), None)
+        err = next((l.strip() for l in plain.splitlines()
+                    if re.search(r"\[ERROR\]|does not exist|Abort|Segmentation|terminate called", l)), None)
+        if hint:
+            run_error_key, run_error = "live_image_only", hint
+        elif err or (proc.returncode not in (0, None)):
+            run_error_key = "live_runner_failed"
+            run_error = err or f"The example exited with code {proc.returncode}"
+
     result = {
         "job_id": job_id, "exit_code": proc.returncode,
         "model": job["model_name"], "category": job["category"],
@@ -584,6 +662,8 @@ def get_inference_result(job_id):
         "task_frames": task["frame_count"],
         "output": content[-4000:],
     }
+    if run_error_key:
+        result["run_error_key"], result["run_error"] = run_error_key, run_error
 
     slot = job.get("slot_idx", 0)
     try: os.unlink(job["log_file"])

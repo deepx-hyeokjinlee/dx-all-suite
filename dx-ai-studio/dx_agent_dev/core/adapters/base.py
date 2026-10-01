@@ -32,6 +32,27 @@ class AgentAdapter(ABC):
     def cancel(self) -> None: ...
 
 
+# 설치된 CLI 가 아니라 "설치할까요?" 를 묻는 안내 shim. VS Code 의 Copilot Chat 이 PATH 에
+# 넣는다 — 실행하면 "Cannot find GitHub Copilot CLI … Install? [y/N]" 에서 멈춘다. 설치된 것으로
+# 세면 agent 목록에 뜨고, 고르면 실행이 그 질문에서 멈춘다.
+_INSTALL_SHIMS = ("/github.copilot-chat/copilotCli/",)
+
+
+def _is_shim(path):
+    return any(s in str(path).replace(os.sep, "/") for s in _INSTALL_SHIMS)
+
+
+def find_cli(name):
+    """shutil.which 와 같되 설치 안내 shim 은 건너뛴다 (없으면 None). shim 이 먼저 걸리면 그 폴더를
+    뺀 PATH 로 다시 찾는다 — 진짜 CLI 가 뒤에 있을 수 있다 (`~/.local/bin/copilot`)."""
+    found = shutil.which(name)
+    if not found or not _is_shim(found):
+        return found
+    rest = [d for d in os.environ.get("PATH", "").split(os.pathsep)
+            if d and not _is_shim(os.path.join(d, name))]
+    return shutil.which(name, path=os.pathsep.join(rest)) if rest else None
+
+
 class SubprocessAdapter(AgentAdapter):
     """CLI subprocess 공통 구동. 서브클래스는 cli_bin·build_command·normalize만 정의.
 
@@ -49,7 +70,7 @@ class SubprocessAdapter(AgentAdapter):
     login_cmd_hint: str | None = None
 
     def __init__(self, cli_path: str = None, model: str = None, effort: str = None):
-        self._cli = cli_path or (shutil.which(self.cli_bin) if self.cli_bin else None)
+        self._cli = cli_path or (find_cli(self.cli_bin) if self.cli_bin else None)
         self.model = model
         self.effort = effort  # reasoning effort(지원 어댑터만 build_command에서 사용)
         self.name = None  # make_adapter가 주입(레지스트리 키)
@@ -57,6 +78,14 @@ class SubprocessAdapter(AgentAdapter):
 
     def is_available(self) -> bool:
         return bool(self._cli)
+
+    def _is_the_installed_cli(self) -> bool:
+        """이 adapter 가 PATH 에 설치된 진짜 agent CLI (copilot · claude · …) 를 가리키는가."""
+        from dx_agent_dev.core.agents_config import AGENTS
+        if self.cli_bin not in {cfg["cli_bin"] for cfg in AGENTS.values()}:
+            return False
+        installed = find_cli(self.cli_bin)
+        return bool(installed) and os.path.realpath(installed) == os.path.realpath(self._cli)
 
     def is_authenticated(self):
         """로그인 여부. True/False(확정) 또는 None(unknown, 값싼 판정 불가).
@@ -105,6 +134,10 @@ class SubprocessAdapter(AgentAdapter):
     def run(self, prompt, session_dir, harness_dirs, run_ctx=None):
         if not self.is_available():
             yield {"type": "error", "text": f"{self.cli_bin} CLI not found"}
+            return
+        if os.environ.get("DX_AGENT_NO_REAL_RUN") == "1" and self._is_the_installed_cli():
+            # test 가 진짜 agent 를 돌리면 계정의 요금이 든다 (tests/conftest.py)
+            yield {"type": "error", "text": f"real {self.cli_bin} runs are disabled under tests"}
             return
         cmd = self.build_command(prompt, session_dir, harness_dirs, run_ctx=run_ctx)
         cwd = self._resolve_cwd(session_dir, harness_dirs)
@@ -243,7 +276,13 @@ def _tool_arg_hint(args) -> str:
             v = args.get(k)
             if isinstance(v, str) and v:
                 return v.rsplit("/", 1)[-1]
-        for k in ("skill", "command", "cmd", "pattern", "query", "prompt", "url",
+        # command 는 다 보인다 — terminal 에 뜨는 것이 곧 이 줄이고, 50자로 자르면 칸의 절반만 찼다.
+        # 한 줄 상한은 호출부의 [:500] 이 지킨다. 나머지 key 는 짧은 힌트로 둔다 (JSON 폭주 방지).
+        for k in ("command", "cmd"):
+            v = args.get(k)
+            if isinstance(v, str) and v:
+                return " ".join(v.split())
+        for k in ("skill", "pattern", "query", "prompt", "url",
                   "subagent_type", "description"):
             v = args.get(k)
             if isinstance(v, str) and v:

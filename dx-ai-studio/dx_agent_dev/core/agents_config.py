@@ -1,34 +1,38 @@
 """에이전트별 CLI/모델 설정 테이블.
 
-verified 2026-07-19 against installed CLIs (claude/copilot/cursor-agent/opencode) + codex docs
-(codex CLI 미설치 → web-verified, 실행 미검증). 모델 목록은 각 벤더가 수시로 변경하므로
-**날짜에 민감**하다 — 이 테이블은 폴백일 뿐, 동적 조회(list_models)가 가능한 agent
-(cursor/opencode)는 항상 실 CLI 결과를 우선한다(environment.list_agent_models 참고).
-정기적으로(또는 배포마다) 일반망에서 재검증해 이 표를 갱신할 것.
-copilot/claude/codex는 CLI에 models-list 커맨드가 없어 정적 목록이 유일한 소스다.
+verified 2026-07-19 against installed CLIs (claude/copilot/cursor-agent/opencode) + codex docs;
+claude · copilot refreshed 2026-09-30. 모델 목록은 각 벤더가 수시로 변경하므로 **날짜에 민감**하다 —
+이 테이블은 폴백일 뿐, 동적 조회가 가능한 agent 는 항상 실 CLI 결과를 우선한다
+(environment.agent_model_info 참고):
+  cursor    `cursor-agent --list-models`
+  opencode  `opencode models`
+  copilot   ACP `session/new` — 이 계정이 쓸 수 있는 model (adapters/copilot.py). 여기 표는 폴백이자,
+            계정 목록에 없는 model 을 "보이되 고를 수 없게" 보여 줄 전체 목록이다.
+claude/codex 는 CLI 에 models-list 가 없어 정적 목록이 유일한 소스다 — claude 는 그래서 alias 를 맨
+앞에 둔다 (CLI 가 늘 최신으로 풀어 준다).
 """
 
 AGENTS = {
     "copilot": {
         "cli_bin": "copilot",
-        # copilot has no model-list command (only `--model` + BYOK `providers`); static set
-        # derived from the live GitHub Copilot catalog (the github-copilot/* provider that
-        # `opencode models` enumerates, prefix stripped — the copilot CLI accepts these bare).
-        # Default matches the original harness (.deepx/e2e/test.sh:
-        # DX_AGENT_E2E_COPILOT_MODEL=claude-sonnet-4.6).
+        # Fallback + "everything" list. The live list comes from ACP per account (adapters/copilot.py);
+        # this is that list as measured 2026-09-30 (copilot CLI 1.0.89, a company account) plus the
+        # older ids other accounts may still have. Default "auto": which models an account may use
+        # differs per plan and org policy — the old default claude-sonnet-4.6 was not offered to the
+        # measured account, so a default run failed. The live default (currentModelId) replaces it.
         "models": [
             "auto",
-            "claude-fable-5",
-            "claude-haiku-4.5",
-            "claude-opus-4.5", "claude-opus-4.6", "claude-opus-4.7", "claude-opus-4.8",
-            "claude-sonnet-4", "claude-sonnet-4.5", "claude-sonnet-4.6", "claude-sonnet-5",
-            "gpt-4.1", "gpt-5-mini", "gpt-5.2", "gpt-5.2-codex", "gpt-5.3-codex",
-            "gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.5",
-            "gpt-5.6-luna", "gpt-5.6-sol", "gpt-5.6-terra",
-            "gemini-2.5-pro", "gemini-3-flash-preview", "gemini-3.1-pro-preview", "gemini-3.5-flash",
-            "kimi-k2.7-code", "mai-code-1-flash-picker",
+            "claude-sonnet-5.5", "claude-sonnet-5", "claude-opus-5.5", "claude-opus-5",
+            "claude-opus-4.8", "claude-opus-4.7", "claude-haiku-4.5",
+            "claude-fable-5.1", "claude-fable-5", "claude-sonnet-4.6", "claude-opus-4.6",
+            "gpt-6.1-sol", "gpt-6-sol", "gpt-6-luna", "gpt-6-astra",
+            "gpt-5.6-terra", "gpt-5.6-luna", "gpt-5.6-sol", "gpt-5.5", "gpt-5.4", "gpt-5.4-mini",
+            "gpt-5.3-codex", "gpt-5-mini",
+            "gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.6-flash", "gemini-3.5-flash",
+            "grok-4.7", "grok-4.6", "grok-4.5",
+            "mai-code-1.1-flash",
         ],
-        "default_model": "claude-sonnet-4.6",
+        "default_model": "auto",
         "output_format": "text",
         # copilot CLI: `--effort/--reasoning-effort <level>` — verbatim from `copilot --help`:
         # none|low|medium|high|xhigh|max (previously missing "none").
@@ -49,16 +53,17 @@ AGENTS = {
     },
     "claude": {
         "cli_bin": "claude",
-        # claude CLI has no model-list command; `--model` accepts an alias ('opus','sonnet',
-        # 'haiku','fable') or a full name. Full current catalog (claude-api skill is authoritative,
-        # cross-checked against `claude --help`).
+        # claude CLI has no model-list command; `--model` accepts an alias ('opus','sonnet','fable',
+        # 'haiku') or a full name. The aliases come first: the CLI resolves them to the newest model
+        # of that family, so they stay current when this table does not. Full names as of
+        # 2026-09-30 (Fable 5.1 · Opus 5.5 · Sonnet 5.5 · Haiku 4.5), then the previous generation.
         "models": [
-            "claude-fable-5",
-            "claude-opus-5", "claude-opus-4-8", "claude-opus-4-7", "claude-opus-4-6",
-            "claude-sonnet-5", "claude-sonnet-4-6", "claude-sonnet-4-5",
-            "claude-haiku-4-5",
+            "opus", "sonnet", "fable", "haiku",
+            "claude-fable-5-1", "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-4-5",
+            "claude-fable-5", "claude-opus-5", "claude-sonnet-5",
+            "claude-opus-4-8", "claude-opus-4-7", "claude-sonnet-4-6",
         ],
-        "default_model": "claude-sonnet-4-6",
+        "default_model": "claude-sonnet-5-5",
         "output_format": "stream-json",
         # `claude --effort <level>` — verbatim from `claude --help`: low|medium|high|xhigh|max.
         "reasoning_efforts": ["low", "medium", "high", "xhigh", "max"],

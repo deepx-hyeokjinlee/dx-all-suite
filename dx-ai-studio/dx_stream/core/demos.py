@@ -243,6 +243,27 @@ DEMOS = [
         "required_files": ["tracker_config.json"],
         "required_videos": ["dance-group.mov"],
     },
+    {
+        "id": 11,
+        "name_ko": "깊이 추정",
+        "name_en": "Depth Estimation",
+        "category": "depth_estimation",
+        "model": "yolo26-depth-n_768x768.dxnn",
+        "description_ko": "YOLOv26n 기반 깊이 추정",
+        "description_en": "Depth estimation with YOLOv26n",
+        "pipeline_type": "standard",
+        "preprocess_id": 1,
+        # 768x768 (not the usual 640) — matches dx-runtime's
+        # pipelines/single_network/depth_estimation/run_yolo26n-depth.sh.
+        "resize": (768, 768),
+        # Matches the runtime script, which is the ONLY single_network pipeline that
+        # turns letterboxing off (dxpreprocess keep-ratio defaults to true).
+        "keep_ratio": False,
+        "postproc_lib": f"{_POSTPROC_LIB_DIR}/libpostprocess_yolo26depth.so",
+        "postproc_func": "PostProcess",
+        "runtime_script": "single_network/depth_estimation/run_yolo26n-depth.sh",
+        "required_videos": ["blackbox-city-road.mp4"],
+    },
 ]
 
 _DEMO_I18N = {
@@ -356,6 +377,16 @@ _DEMO_I18N = {
         "description_zh-CN": "主检测后的二次分类和人脸识别",
         "description_zh-TW": "主要偵測後的二次分類與人臉辨識",
     },
+    11: {
+        "name_ja": "深度推定",
+        "name_es": "Estimación de profundidad",
+        "name_zh-CN": "深度估计",
+        "name_zh-TW": "深度估計",
+        "description_ja": "YOLOv26nによる深度推定",
+        "description_es": "Estimación de profundidad con YOLOv26n",
+        "description_zh-CN": "基于 YOLOv26n 的深度估计",
+        "description_zh-TW": "基於 YOLOv26n 的深度估計",
+    },
 }
 
 for _demo in DEMOS:
@@ -385,9 +416,17 @@ def _standard_pipeline(demo: dict, encoder: dict, video_uri: str, webrtc_ok: boo
     w, h = demo["resize"]
     model_path = str(MODELS_DIR / _model_file(demo["model"]))
     sink = _get_sink(encoder, webrtc_ok)
+    # dxpreprocess keep-ratio defaults to TRUE (letterbox). A demo only sets this
+    # when it must differ — depth estimation stretches to the full square because a
+    # dense depth map covers the whole frame, so letterbox padding would misalign it
+    # against the source. Omitting the property keeps every other demo's pipeline
+    # string byte-identical to before.
+    keep_ratio = demo.get("keep_ratio")
+    keep_ratio_arg = "" if keep_ratio is None else f"keep-ratio={str(bool(keep_ratio)).lower()} "
     return (
         f"urisourcebin uri={video_uri} ! decodebin ! "
         f"dxpreprocess preprocess-id={demo['preprocess_id']} "
+        f"{keep_ratio_arg}"
         f"resize-width={w} resize-height={h} ! "
         f"queue max-size-buffers=1 ! "
         f"dxinfer preprocess-id={demo['preprocess_id']} "
@@ -687,5 +726,24 @@ def list_demo_entries() -> list[dict]:
             entry["model_file"] = _model_file(demo["model"])
         if demo.get("models"):
             entry["model_files"] = [_model_file(m) for m in demo["models"]]
+        entry["thumbnail"] = _demo_thumb(demo["id"])
         demo_list.append(entry)
     return demo_list
+
+
+# Card · stage preview: the demo's own model run on the official sample video on a DX-M1
+# (scripts/demo/bake_stream_thumbs.py, spec 2026-10-01 demo stage). ?v= is the content hash so a
+# re-bake reaches browsers that cached the old image.
+_THUMB_DIR = Path(__file__).resolve().parents[1] / "static" / "img" / "demo"
+_THUMB_CACHE: dict = {}
+
+
+def _demo_thumb(demo_id: int):
+    if demo_id not in _THUMB_CACHE:
+        p = _THUMB_DIR / f"{demo_id}.webp"
+        try:
+            import hashlib
+            _THUMB_CACHE[demo_id] = f"/static/img/demo/{demo_id}.webp?v=" + hashlib.sha1(p.read_bytes()).hexdigest()[:10]
+        except OSError:
+            _THUMB_CACHE[demo_id] = None
+    return _THUMB_CACHE[demo_id]

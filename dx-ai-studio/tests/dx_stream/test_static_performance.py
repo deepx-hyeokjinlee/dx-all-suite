@@ -585,12 +585,12 @@ def test_stream_setup_template_hides_split_download_options():
 
 
 def test_stream_demo_filters_match_dev_runtime_surface():
+    """Demo filter 는 고정된 막대가 아니라 /api/demos 의 category 에서 만든다 (spec 2026-10-01 demo
+    stage) — 없는 category (classification · obb_detection) 를 광고하지 않는다."""
     html = _read(STREAM_HTML)
-    demo_filter = html[html.index('id="demo-filter-bar"'):html.index('id="demo-grid"')]
-
-    assert 'data-cat="classification"' not in demo_filter
-    assert 'data-cat="obb_detection"' not in demo_filter
-    assert 'data-cat="secondary"' in demo_filter
+    js = _read(STREAM_JS / "stream-demo.js")
+    assert 'id="demo-filter-bar"' not in html
+    assert "cats.push(d.category)" in js
 
 
 def test_stream_model_filters_do_not_advertise_obb_manifest_absent_model():

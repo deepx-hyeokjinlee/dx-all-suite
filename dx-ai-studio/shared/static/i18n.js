@@ -64,22 +64,42 @@
     return null;
   }
 
+  /* 글자 교차 fade (launcher spec 2026-09-23 §7 #15). <html data-dx-fade> 로 고른 문서에서만 —
+     모듈은 그대로 즉시 바뀐다. _lang · 저장은 곧바로, 화면만 교차한다. 길이는 CSS 가
+     html[data-dx-fading="lang"] 로 정한다. dx-theme.js 의 _fade 와 같은 규칙. */
+  function _fade(kind, update) {
+    var root = document.documentElement;
+    var still = false;
+    try { still = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (_) { /* noop */ }
+    if (!kind || !root || !('dxFade' in root.dataset) || still || document.readyState !== 'complete'
+        || typeof document.startViewTransition !== 'function') {
+      update();
+      return;
+    }
+    root.dataset.dxFading = kind;
+    var done = function () { if (root.dataset.dxFading === kind) delete root.dataset.dxFading; };
+    document.startViewTransition(update).finished.then(done, done);
+  }
+
   function setLang(lang) {
     if (SUPPORTED_LANGS.indexOf(lang) === -1) return;
+    var changed = lang !== _lang;
     _lang = lang;
     localStorage.setItem(STORAGE_KEY, lang);
-    SUPPORTED_LANGS.forEach(function (l) {
-      document.body.classList.remove('lang-' + l);
+    _fade(changed ? 'lang' : null, function () {
+      SUPPORTED_LANGS.forEach(function (l) {
+        document.body.classList.remove('lang-' + l);
+      });
+      document.body.classList.add('lang-' + lang);
+      if (document.documentElement) document.documentElement.lang = lang;
+      _applyDOM();
+      var i;
+      for (i = 0; i < _callbacks.length; i++) _callbacks[i](lang);
+      for (i = 0; i < _initCallbacks.length; i++) _initCallbacks[i](lang);
+      try {
+        window.dispatchEvent(new CustomEvent('dx-lang-applied', { detail: { lang: lang } }));
+      } catch (_) { /* non-DOM environments */ }
     });
-    document.body.classList.add('lang-' + lang);
-    if (document.documentElement) document.documentElement.lang = lang;
-    _applyDOM();
-    var i;
-    for (i = 0; i < _callbacks.length; i++) _callbacks[i](lang);
-    for (i = 0; i < _initCallbacks.length; i++) _initCallbacks[i](lang);
-    try {
-      window.dispatchEvent(new CustomEvent('dx-lang-applied', { detail: { lang: lang } }));
-    } catch (_) { /* non-DOM environments */ }
   }
 
   function toggleLang() {
@@ -228,6 +248,27 @@
   function _translateEl(el) {
     if (!el.childNodes.length) return;
     if (el.querySelector('.ko, .en, .ja, .es, .zh-CN, .zh-TW')) return;
+    // 이 아래는 el.textContent 를 통째로 갈아끼운다 — 자식 엘리먼트가 같이
+    // 지워진다. 자기 key 를 든 자식이 있으면 번역의 주인은 그쪽이다.
+    // (.legend-item 은 색 점 span + 라벨 span 인데, 여기서 평평해지면
+    //  점이 사라진다.)
+    if (el.querySelector('[data-i18n], [data-i18n-html]')) return;
+    // 아이콘 + 글자 (DXIcon.label · 아이콘 체계 단계 5): 자식 엘리먼트가 아이콘뿐이면 글자 node 만 바꾼다 —
+    // textContent 로 통째 갈면 아이콘이 사라진다.
+    var kids = el.children;
+    if (kids.length && Array.prototype.every.call(kids, function (k) {
+      return k.tagName && k.tagName.toLowerCase() === 'svg' && k.classList.contains('dx-ico');
+    })) {
+      var texts = Array.prototype.filter.call(el.childNodes, function (n) { return n.nodeType === 3; });
+      var plain = texts.map(function (n) { return n.nodeValue; }).join('').trim();
+      if (!plain) return;
+      if (!el.dataset.i18nOrig) el.dataset.i18nOrig = plain;
+      var o = el.dataset.i18nOrig;
+      var tr = _lang === 'en' ? (_rev[plain] || o) : _lookup(o);
+      var out = (tr !== null && tr !== undefined) ? tr : o;
+      texts.forEach(function (n, i) { n.nodeValue = i === texts.length - 1 ? ' ' + out : ''; });
+      return;
+    }
     var text = el.textContent.trim();
     if (!text) return;
     if (!el.dataset.i18nOrig) el.dataset.i18nOrig = text;
@@ -270,8 +311,32 @@
     _init();
   }
 
+  /** 나중에 주입되는 조각이 자기 번역을 들고 올 수 있게 한다.
+   *
+   *  hw_widget 은 launcher 프록시가 호스트 페이지에 꽂는다. 사전은 모듈마다
+   *  따로라, 이 위젯의 라벨을 data-i18n 으로 쓰려면 여덟 모듈 사전에 같은
+   *  항목을 아홉 개씩 복사해야 했다 — 그래서 언어 span 아홉 벌로 남아 있었다.
+   *  이미 있는 key 는 덮지 않는다: 모듈이 정한 문구가 우선이다. */
+  function register(extra) {
+    if (!extra) return;
+    for (var key in extra) {
+      if (!Object.prototype.hasOwnProperty.call(extra, key)) continue;
+      if (Object.prototype.hasOwnProperty.call(_dict, key)) continue;
+      _dict[key] = extra[key];
+      var entry = extra[key];
+      if (typeof entry === 'string') _rev[entry] = key;
+      else if (typeof entry === 'object') {
+        for (var l in entry) {
+          if (Object.prototype.hasOwnProperty.call(entry, l) && entry[l]) _rev[entry[l]] = key;
+        }
+      }
+    }
+    _applyDOM();
+  }
+
   window.DXI18n = {
     T: T,
+    register: register,
     get lang() { return _lang; },
     setLang: setLang,
     toggleLang: toggleLang,
