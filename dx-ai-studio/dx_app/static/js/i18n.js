@@ -1998,6 +1998,16 @@ window._DX_I18N_DICT = {
     'zh-CN': '实时模式仅支持 camera/rtsp', 'zh-TW': '即時模式僅支援 camera/rtsp',
     es: 'El modo en vivo solo admite camera/rtsp',
   },
+  'live_image_only': {
+    ko: '정지 이미지 전용 모델 — 라이브 불가', ja: '静止画専用モデル — ライブ不可',
+    'zh-CN': '仅支持静态图像 — 无法实时运行', 'zh-TW': '僅支援靜態影像 — 無法即時執行',
+    es: 'Solo admite imágenes fijas',
+  },
+  'live_runner_failed': {
+    ko: '예제가 스스로 끝났습니다', ja: 'サンプルが自ら終了しました',
+    'zh-CN': '示例自行退出', 'zh-TW': '範例自行結束',
+    es: 'El ejemplo terminó por sí solo',
+  },
   'live_cpp_only': {
     ko: '라이브 모드는 현재 C++만 지원합니다', ja: 'ライブモードは現在 C++ のみ対応しています',
     'zh-CN': '实时模式目前仅支持 C++', 'zh-TW': '即時模式目前僅支援 C++',

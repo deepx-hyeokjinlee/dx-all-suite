@@ -116,6 +116,7 @@ def test_live_cpp_runs_print_per_frame_lines(tmp_path, monkeypatch):
     monkeypatch.setattr(live, "_ensure_xvfb", lambda s: None)
     monkeypatch.setattr(live.shutil if hasattr(live, "shutil") else shutil, "which", lambda n: "/usr/bin/" + n)
     monkeypatch.setattr(live.subprocess, "Popen", FakeProc)
+    monkeypatch.setattr(live, "_video_frame_count", lambda p: None)   # ffprobe 도 Popen 을 쓴다
     r = live.run_inference_live("demo", "object_detection", "m.dxnn", lang="cpp", variant="async",
                                 input_type="video", video_path=str(video), slot_idx=7)
     live._live_procs.pop(7, None)
@@ -136,3 +137,200 @@ def test_det_frames_are_counted_as_frames_not_detections():
     t = live._parse_task_tags(log)
     assert t["tag"] == "DET" and len(t["lines"]) == 6
     assert t["frame_count"] == 3
+
+
+# ── 모든 task 를 live 로 돌려 본 결과 (2026-10-01, 26 task) ───────────────────────────────────────────────
+
+def test_interleaved_classification_lines_never_break_the_poll(tmp_path):
+    """async callback 들이 stdout 에 동시에 써서 줄이 섞인다 ('3.50273.5913'). 예전에는 float() 가 터져
+    /api/live_poll 이 500 이었다 (resnet50 live)."""
+    from dx_app.core import live
+    log = "\n".join([
+        "[CLS]  4.8052  4.6978  4.3400  4.2734  4.2368",
+        "  1. (class 23): 4.8052", "  2. (class 7): 4.6978",
+        "[CLS]  4.5051  4.4895  4.3400  3.9384  3.7679",
+        "  1. (class 23): 3.50273.5913", "  2. (class 7): 4.4895",
+    ])
+    t = live._parse_task_tags(log)
+    assert t["tag"] == "CLS" and t["frame_count"] == 2
+    f = tmp_path / "x.log"
+    f.write_text(log)
+
+    class P:
+        def poll(self):
+            return None
+    live._live_jobs["t1"] = {"proc": P(), "log_file": str(f), "start_time": __import__("time").time() - 2,
+                             "model_name": "m", "category": "image_classification", "slot_idx": 0}
+    try:
+        r = live.poll_inference("t1")
+    finally:
+        live._live_jobs.pop("t1", None)
+    assert r["frames"] == 2 and "error" not in r
+
+
+def test_obb_and_instance_seg_frames_are_frames_not_objects():
+    """[OBB] · [ISEG] 도 [DET] 처럼 객체마다 한 줄 — OBB 가 1244 'FPS' (실제 38.8). 실측 OBB 621/621."""
+    from dx_app.core import live
+    obb = "\n".join(["[OBB] car 0.51 48.9", "[OBB] car 0.42 28.2", "[OBB] car 0.60 10.0", "[OBB] car 0.30 1.0"])
+    iseg = "\n".join(["[ISEG] dog 0.85 1 2 3 4", "[ISEG] dog 0.81 1 2 3 4", "[ISEG] cow 0.90 1 2 3 4"])
+    assert live._parse_task_tags(obb)["frame_count"] == 2
+    assert live._parse_task_tags(iseg)["frame_count"] == 2
+
+
+def _poll_with(tmp_path, log, elapsed=10.0):
+    import time
+    from dx_app.core import live
+    f = tmp_path / "u.log"
+    f.write_text(log)
+
+    class P:
+        def poll(self):
+            return None
+    live._live_jobs["u1"] = {"proc": P(), "log_file": str(f), "start_time": time.time() - elapsed,
+                             "model_name": "m", "category": "semantic_segmentation", "slot_idx": 0}
+    try:
+        return live.poll_inference("u1")
+    finally:
+        live._live_jobs.pop("u1", None)
+
+
+def test_untagged_tasks_do_not_invent_fps_from_the_source_rate(tmp_path):
+    """segmentation · depth · denoise · SR · matting · anomaly 의 runner 는 프레임별 줄을 찍지 않는다. 예전에는
+    '원본 FPS × 경과' 를 프레임이라 했다 — PP-Matting 은 실제 0.2 FPS 인데 24 FPS 로 보였다."""
+    head = ("[DXAPP] [INFO] Input source FPS: 24.00\n[DXAPP] [INFO] Total frames: 478\n"
+            "[DXAPP] [INFO] Starting async inference...\n[DXAPP] [INFO] Loop 1/999999\n")
+    r = _poll_with(tmp_path, head)
+    assert r["frames"] is None and r["fps_est"] is None and r["frame_basis"] == "none"
+    # 영상이 한 바퀴 돌 때마다 'Loop k/N' — 끝난 바퀴 × 총 프레임은 실제로 처리한 프레임의 하한
+    r = _poll_with(tmp_path, head + "[DXAPP] [INFO] Loop 2/999999\n[DXAPP] [INFO] Loop 3/999999\n", elapsed=10.0)
+    assert r["frames"] == 956 and r["frame_basis"] == "loop"
+    assert abs(r["fps_est"] - 95.6) < 0.2
+
+
+def test_tagged_tasks_say_their_basis(tmp_path):
+    r = _poll_with(tmp_path, "[POSE] 1 0.9\n[POSE] 1 0.8\n")
+    assert r["frames"] == 2 and r["frame_basis"] == "tag"
+
+
+def test_the_live_ui_shows_a_dash_when_frames_are_unknown():
+    from pathlib import Path
+    src = (Path(__file__).resolve().parents[2] / "dx_app/static/js/inference.js").read_text(encoding="utf-8")
+    body = src[src.index("function _updateSlotStats("):src.index("function _updateSlotStats(") + 2500]
+    assert "poll.frames==null" in body, "frames 를 모르면 '—' (null - n = -n 이 FPS 로 보였다)"
+    assert "frame_basis" in body, "Loop 기준이면 구간 FPS 대신 평균 (Loop 마다 계단으로 뛴다)"
+
+
+def test_live_refuses_an_image_only_model(tmp_path, monkeypatch):
+    """runner 가 -v 를 거부하고 (arcface · CLIP · ReID · VPR · DOPE · SFA3D · DeepMAR · CAS-ViT) 바로 끝나서 검은
+    화면만 남았다. 연속 실행의 camera · RTSP 는 UI 가 막지 않으므로 서버가 이유와 함께 거절한다."""
+    from dx_app.core import live
+    monkeypatch.setattr(live.config, "model_image_only", lambda cat, name: True)
+    r = live.run_inference_live("arcface_mobilefacenet_112x112", "face_recognition", "m.dxnn",
+                                input_type="camera", slot_idx=5)
+    assert r.get("error_key") == "live_image_only", r
+
+
+def test_image_only_comes_from_the_model_config_then_the_task():
+    from dx_app.core import config
+    from shared import dx_app_layout as layout
+    if layout.detect(config.DX_APP_ROOT) != layout.PER_MODEL:
+        pytest.skip("per-model checkout 에서 본다")
+    assert config.model_image_only("face_recognition", "arcface_mobilefacenet_112x112") is True
+    assert config.model_image_only("image_classification", "casvit-t_224x224") is True   # task 표에는 없다
+    assert config.model_image_only("image_classification", "resnet50_224x224") is False
+    assert config.model_image_only("embedding", "no_such_model") is True                  # legacy task 표
+
+
+def test_the_loop_basis_uses_the_video_length_when_the_runner_does_not_print_it(tmp_path):
+    """segmentation 등 많은 runner 는 'Total frames' 를 찍지 않는다 — studio 가 시작할 때 영상 길이를 재 둔다."""
+    import time
+    from dx_app.core import live
+    f = tmp_path / "s.log"
+    f.write_text("[DXAPP] [INFO] Loop 1/999999\n[DXAPP] [INFO] Loop 2/999999\n[DXAPP] [INFO] Loop 3/999999\n")
+
+    class P:
+        def poll(self):
+            return None
+    live._live_jobs["s1"] = {"proc": P(), "log_file": str(f), "start_time": time.time() - 10, "total_frames": 478,
+                             "model_name": "m", "category": "semantic_segmentation", "slot_idx": 0}
+    try:
+        r = live.poll_inference("s1")
+    finally:
+        live._live_jobs.pop("s1", None)
+    assert r["frames"] == 956 and r["frame_basis"] == "loop"
+
+
+@pytest.mark.skipif(not shutil.which("ffprobe"), reason="ffprobe 없음")
+def test_the_video_length_is_measured(tmp_path):
+    from dx_app.core import live
+    v = tmp_path / "v.mp4"
+    r = subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc=size=64x48:rate=10", "-frames:v", "37",
+                        "-pix_fmt", "yuv420p", str(v)], capture_output=True)
+    if r.returncode != 0:
+        pytest.skip("ffmpeg 로 시험 영상을 만들지 못했다")
+    assert live._video_frame_count(v) == 37
+    assert live._video_frame_count(tmp_path / "none.mp4") is None
+
+
+def _result_with(tmp_path, log, rc):
+    import time
+    from dx_app.core import live
+    f = tmp_path / "r.log"
+    f.write_text(log)
+
+    class P:
+        returncode = rc
+
+        def poll(self):
+            return rc
+
+        def wait(self, timeout=None):
+            return rc
+    live._live_jobs["r1"] = {"proc": P(), "log_file": str(f), "start_time": time.time() - 3,
+                             "model_name": "m", "category": "zero_shot_image_classification", "slot_idx": 3}
+    return live.get_inference_result("r1")
+
+
+def test_a_runner_that_refuses_video_is_reported_not_called_complete(tmp_path):
+    """CLIP ViT-B/32 zero-shot 은 config.json 이 image_only false 인데 C++ 예제는 -v 를 거부한다 (teammate 데이터
+    불일치). 미리 막을 수 없으니 runner 가 스스로 끝난 이유를 결과에 싣는다 — UI 는 '라이브 추론 완료' 라고 했다."""
+    r = _result_with(tmp_path, "Option 'v' does not exist\n[HINT] This example is image-only: video/camera/RTSP "
+                               "input (-v/--video, -c/--camera, -r/--rtsp) is not supported.\n", 1)
+    assert r["run_error_key"] == "live_image_only" and "image-only" in r["run_error"]
+    assert "error" not in r, "error 는 API 오류 자리 — UI 가 합성 결과로 덮는다"
+
+
+def test_a_runner_crash_is_reported(tmp_path):
+    r = _result_with(tmp_path, "[DXAPP] [INFO] Task: hand\n[DXAPP] [ERROR] Failed to load model: bad header\n", -6)
+    assert r["run_error_key"] == "live_runner_failed" and "Failed to load model" in r["run_error"]
+
+
+def test_a_stopped_run_is_not_an_error(tmp_path):
+    r = _result_with(tmp_path, "[DXAPP] [INFO] Interrupted by user (Ctrl+C)\n Overall FPS         :   9.8 FPS\n", 0)
+    assert not r.get("run_error_key")
+
+
+def test_frames_take_the_larger_of_the_tag_and_the_loop_count(tmp_path):
+    """hand detector 는 손이 보일 때만 [HAND] 를 찍는다 — 손이 드문 영상에서 1.6 FPS (실제 151.5)."""
+    import time
+    from dx_app.core import live
+    f = tmp_path / "h.log"
+    f.write_text("[HAND] 1 0.9\n" * 35 + "[DXAPP] [INFO] Loop 1/9\n[DXAPP] [INFO] Loop 2/9\n[DXAPP] [INFO] Loop 3/9\n")
+
+    class P:
+        def poll(self):
+            return None
+    live._live_jobs["h1"] = {"proc": P(), "log_file": str(f), "start_time": time.time() - 10, "total_frames": 478,
+                             "model_name": "m", "category": "hand_detection", "slot_idx": 0}
+    try:
+        r = live.poll_inference("h1")
+    finally:
+        live._live_jobs.pop("h1", None)
+    assert r["frames"] == 956 and r["frame_basis"] == "loop"
+
+
+def test_the_live_ui_reports_a_runner_that_ended_by_itself():
+    from pathlib import Path
+    src = (Path(__file__).resolve().parents[2] / "dx_app/static/js/inference.js").read_text(encoding="utf-8")
+    body = src[src.index("async function contFinishLiveSlot("):src.index("function contShowSummary(")]
+    assert "run_error_key" in body and "'err'" in body

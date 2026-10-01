@@ -163,6 +163,19 @@ IMAGE_ONLY_CATEGORIES=_TaskSet({"embedding","reid","attribute_recognition",
  "object_pose_estimation","3d_object_detection",
  # per-model layout 의 새 task 중 image-only (registry image_only, 8d0b748). 모델별 값은 config.json 이 더 정확하다.
  "image_retrieval","visual_place_recognition","face_attribute"})
+
+
+def model_image_only(category, model_name):
+    """이 model 의 runner 가 영상 (video · camera · RTSP) 을 거부하는가. per-model 예제의 config.json image_only 가
+    먼저 (CAS-ViT 처럼 task 표에 없는 model 도 있다), 없으면 task 표 (계약: tests/dx_app/test_live_display.py)."""
+    try:
+        cfg = _layout.load_config(DX_APP_ROOT, category, model_name) if model_name else {}
+    except Exception:
+        cfg = {}
+    if isinstance(cfg, dict) and "image_only" in cfg:
+        return bool(cfg["image_only"])
+    return category in IMAGE_ONLY_CATEGORIES
+
 _TASK_TYPES_EXCLUDE={"face_alignment","face_landmark","hand_landmark","object_detection_x_semantic_segmentation"}
 TASK_TYPES=[c for c in CATEGORIES if c not in _TASK_TYPES_EXCLUDE]
 POSTPROCESSORS={"object_detection":["yolov5","yolov7","yolov8","yolov9","yolov10","yolov11",

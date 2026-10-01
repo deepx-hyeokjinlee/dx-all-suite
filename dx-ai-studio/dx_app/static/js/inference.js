@@ -1098,12 +1098,18 @@ function _updateSlotStats(lslot,poll){
   var i=lslot.slotIdx;
   var now=Date.now()/1000;
   var wfps='—';
-  if(lslot.lastPollTime>0){
+  // 프레임별 줄이 없는 task 는 frames 를 모른다 (null) — '—'. 'Loop' 기준 (frame_basis 'loop') 은 영상 한 바퀴마다
+  // 계단으로 뛰므로 구간 FPS 대신 평균을 보인다 (계약: tests/dx_app/test_live_display.py)
+  if(poll.frames==null){
+    wfps='—';
+  }else if(poll.frame_basis==='loop'){
+    wfps=poll.fps_est!=null?String(poll.fps_est):'—';
+  }else if(lslot.lastPollTime>0){
     var dt=now-lslot.lastPollTime;
     var df=poll.frames-lslot.lastFrames;
     if(dt>0&&df>=0)wfps=(df/dt).toFixed(1);
   }
-  lslot.lastFrames=poll.frames;
+  lslot.lastFrames=poll.frames==null?0:poll.frames;
   lslot.lastPollTime=now;
   // Confidence sparkline for classification
   if(poll.last_pred&&poll.last_pred.length){
@@ -1119,9 +1125,9 @@ function _updateSlotStats(lslot,poll){
     }
   }
   function _u(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
-  _u('c-ls-frames-'+i,poll.frames);
+  _u('c-ls-frames-'+i,poll.frames==null?'—':poll.frames);
   _u('c-ls-fps-'+i,wfps);
-  _u('c-ls-avg-'+i,poll.fps_est);
+  _u('c-ls-avg-'+i,poll.fps_est==null?'—':poll.fps_est);
   _u('c-ls-ela-'+i,poll.elapsed+'s');
   _u('c-ls-fps-badge-'+i,wfps+' FPS');
   if(poll.last_pred&&poll.last_pred.length){
@@ -1215,11 +1221,17 @@ async function contFinishLiveSlot(lslot){
       _orig_error:lslot.result?lslot.result.error:null
     };
   }
+  // runner 가 스스로 끝났다 (영상을 거부한 image-only 예제 · 죽은 예제) — '완료' 가 아니다
+  // (계약: tests/dx_app/test_live_display.py)
+  if(lslot.result&&lslot.result.run_error_key){
+    lslot.failed=true;
+    toast(T('Slot ')+(lslot.slotIdx+1)+': '+translatedError({error_key:lslot.result.run_error_key,error:lslot.result.run_error}),'err');
+  }
   lslot.done=true;  // mark done AFTER result is collected
   if(LIVE.slots.every(function(s){return s.done;})){
     contShowSummary();
     contResetUI();
-    toast(T('Live inference complete'),'ok');
+    if(!LIVE.slots.every(function(s){return s.failed;}))toast(T('Live inference complete'),'ok');
   }
 }
 

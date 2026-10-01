@@ -31,6 +31,8 @@ ERROR_KEYS = (
     "failed_camera_mux",
     "live_mode_unsupported",
     "live_cpp_only",
+    "live_image_only",
+    "live_runner_failed",
     "invalid_payload",
 )
 
