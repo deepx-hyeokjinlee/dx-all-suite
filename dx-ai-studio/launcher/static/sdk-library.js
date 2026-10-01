@@ -667,8 +667,10 @@
       const grid = listContent.querySelector('.sdk-list-files-grid');
       hits.forEach(h => grid.appendChild(buildFileCard(h.file, h.drawer.color)));
     }
-    renderSearchSummary(q, hits.length);
-    if (!hits.length) _showEmptySearch(listContent);
+    const matchCount = hits.length;
+    const contentCardMatch = matchCount > 0;   // 빈 상태는 내용 칸의 카드로 정한다 (사이드바 일치가 아니라)
+    renderSearchSummary(q, matchCount);
+    if (!contentCardMatch) _showEmptySearch(listContent);
     else _clearEmptySearch(listContent);
   }
 
