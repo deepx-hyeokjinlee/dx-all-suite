@@ -265,7 +265,6 @@ class Handler(DXBaseHandler):
         self.send_response(200)
         self.send_header("Content-Type","multipart/x-mixed-replace; boundary=frame")
         self.send_header("Cache-Control","no-cache")
-        self.send_header("Access-Control-Allow-Origin","*")
         self.end_headers()
         try:
             while True:
@@ -312,8 +311,7 @@ class Handler(DXBaseHandler):
                 d=fp.read_bytes();self.send_response(200)
                 self.send_header("Content-Type",mimetypes.guess_type(str(fp))[0] or "image/jpeg")
                 self.send_header("Content-Length",len(d))
-                self.send_header("Cache-Control","public, max-age=86400")
-                self.send_header("Access-Control-Allow-Origin","*");self.end_headers();self.wfile.write(d)
+                self.send_header("Cache-Control","public, max-age=86400");self.end_headers();self.wfile.write(d)
                 return
             if path=="/api/asset-thumb":
                 # Downscaled preview for the composer asset grid (82x54px) — avoids
@@ -455,7 +453,6 @@ class Handler(DXBaseHandler):
                 self.send_header("Content-Type","application/octet-stream")
                 self.send_header("Content-Length",len(d))
                 self.send_header("Content-Disposition",safe_content_disposition("inline",op.name))
-                self.send_header("Access-Control-Allow-Origin","*")
                 self.send_header("Cache-Control","no-cache")
                 self.end_headers();self.wfile.write(d);return
             return self.route_legacy()

@@ -71,9 +71,13 @@ needed. Only Python changes require a restart.
 
 | Variable | Effect |
 |----------|--------|
-| `DX_BIND_LOCAL=1` | Bind servers to loopback (127.0.0.1) only |
-| `DX_BIND_HOST=<host>` | Explicit bind host |
-| `DX_API_TOKEN=<secret>` | Require `Authorization: Bearer <secret>` or `X-DX-Api-Token` |
+| `DX_BIND_LOCAL=1` | Bind the launcher to loopback (127.0.0.1) only — module servers always are |
+| `DX_BIND_HOST=<host>` | Explicit launcher bind host. A module run on its own and bound off loopback refuses to start without `DX_API_TOKEN` |
+| `DX_API_TOKEN=<secret>` | Lets remote API clients in with `Authorization: Bearer <secret>` or `X-DX-Api-Token`; local requests never need it |
+| `DX_PAIRING=off` | No browser pairing — remote access only with `DX_API_TOKEN` |
+| `DX_SESSION_DAYS=<n>` | How long a paired remote browser stays connected (default 30) |
+| `DX_ALLOWED_HOSTS=<a,b>` | Extra host names the servers answer to (IP hosts and localhost always do) |
+| `DX_COMPILER_ALLOWED_ROOTS=<dir:dir>` | Extra folders `/compile` may read from and write to |
 | `DX_<MODULE>_PORT` | Launcher proxy-map port override (see architecture port table) |
 | `DX_APP_ROOT` / `DX_COMPILER_ROOT` / `DX_RUNTIME_ROOT` / `DX_STREAM_ROOT` | SDK source-tree locations (default: sibling suite dirs) |
 | `DX_NO_BROWSER=1` | Suppress browser auto-open (also implied under SSH/VS Code remote) |

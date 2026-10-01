@@ -114,9 +114,10 @@ def test_devNewTask_handles_overwrite_confirm():
 
 
 def test_cors_preflight_uses_x_lab_token_not_x_dev_token():
-    """CORS preflight must allow X-Lab-Token, not X-Dev-Token."""
+    """The retired X-Dev-Token is never re-admitted by a CORS allow-list.
+
+    2026-10-01 (QA COM-A1): preflight is same-origin only and sends no allow-list at all
+    (tests/shared/test_remote_access.py), so X-Lab-Token travels as a same-origin header."""
     server_src = (ROOT / "shared" / "dx_server.py").read_text()
-    assert "X-Lab-Token" in server_src, "CORS must allow X-Lab-Token"
-    # X-Dev-Token should not appear in CORS allow-headers
-    assert 'X-Dev-Token' not in server_src.split("Access-Control-Allow-Headers")[1].split("\n")[0], \
-        "CORS preflight must not allow X-Dev-Token"
+    assert "Access-Control-Allow-Headers" not in server_src
+    assert "X-Dev-Token" not in server_src

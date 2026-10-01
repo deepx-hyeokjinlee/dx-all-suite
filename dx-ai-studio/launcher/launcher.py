@@ -19,6 +19,7 @@ from __future__ import annotations
 import http.client
 import json
 import os
+import secrets
 import signal
 import socket
 import subprocess
@@ -43,6 +44,7 @@ from shared.auth_policy import map_launcher_proxy
 from shared.chat import ChatEngine
 from shared.runtime_gate import module_start_policy as _runtime_module_start_policy
 from shared import debug_log
+from shared import remote_access as _ra
 
 # Ports are env-overridable so the studio can coexist with other services on a
 # shared host (defaults unchanged → release behavior + tests unaffected). Set e.g.
@@ -664,6 +666,16 @@ def _get_health_status():
         return _health_cache_data
 
 
+# 원격 접근 (QA COM-A1, spec 2026-10-01-studio-remote-auth-and-compile-paths): 페어링 코드 · 세션.
+# main() 이 만든다 — import 만으로 코드를 찍거나 ~/.config 에 쓰지 않게.
+REMOTE_ACCESS = None
+_PAIR_PAGE = Path(__file__).resolve().parent / "static" / "pair.html"
+# 모듈은 loopback 에만 열리고, launcher 가 중계한 요청에는 이 비밀이 X-DX-Proxy 로 실린다 (자식 env 로 전달).
+# launcher 자신의 env 에도 둔다 — 같은 프로세스에서 도는 모듈 (browser suite 의 tests/server_helpers) 도 같은 값을
+# 읽어야 하고, reload 해도 값이 바뀌지 않는다. 이 기계의 프로세스는 어차피 로컬로 신뢰되므로 권한이 늘지 않는다.
+PROXY_SECRET = os.environ.setdefault("DX_PROXY_SECRET", secrets.token_hex(32))
+
+
 def start_sub_server(name, directory, port=0, server_id=None):
     """Start a sub-server on an OS-assigned ephemeral port (:0) and discover it via the
     port-file handshake. The discovered port is stored in _LAUNCHER_PROXY_PORTS[server_id].
@@ -689,6 +701,10 @@ def start_sub_server(name, directory, port=0, server_id=None):
     # (repo root on PYTHONPATH). Its own package dir is already on sys.path via the script path.
     env["PYTHONPATH"] = _REPO_ROOT + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
     env["DX_PORT_FILE"] = pf
+    # 모듈은 항상 loopback — 사용자가 launcher 용으로 준 DX_BIND_HOST/LOCAL 을 물려주지 않는다 (QA COM-A1)
+    env.pop("DX_BIND_LOCAL", None)
+    env["DX_BIND_HOST"] = "127.0.0.1"
+    env["DX_PROXY_SECRET"] = PROXY_SECRET
     if server_id:
         env["DX_SERVER_ID"] = server_id
     # modelzoo's inference proxy reads DX_APP_PORT at import — feed it the already-discovered
@@ -803,7 +819,9 @@ def _proxy(handler, target_port, path, inject_widget=True):
         headers = {}
         skip = {"host", "connection", "transfer-encoding", "keep-alive",
                 "proxy-authenticate", "proxy-authorization", "te", "trailers",
-                "upgrade"}
+                "upgrade",
+                # 클라이언트가 위조해 보낸 값은 버린다 — 아래에서 launcher 가 정한 값만 싣는다
+                "x-dx-proxy", "x-forwarded-for"}
         for key, val in handler.headers.items():
             if key.lower() not in skip:
                 headers[key] = val
@@ -814,6 +832,7 @@ def _proxy(handler, target_port, path, inject_widget=True):
             headers["X-Forwarded-Host"] = handler.headers.get("Host", "")
         headers["Host"] = f"127.0.0.1:{target_port}"
         headers["X-Forwarded-For"] = handler.client_address[0]
+        headers["X-DX-Proxy"] = PROXY_SECRET   # 모듈: launcher 가 이미 인증한 요청 (shared/dx_server._is_local)
 
         conn.request(handler.command, path, body=body, headers=headers)
         resp = conn.getresponse()
@@ -1372,30 +1391,74 @@ class LauncherHandler(DXBaseHandler):
         resp = json.dumps(payload).encode()
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
-        origin = self.headers.get("Origin", "")
-        self.send_header("Vary", "Origin")
-        if origin and self._check_same_origin():
-            self.send_header("Access-Control-Allow-Origin", origin)
-            self.send_header("Access-Control-Allow-Credentials", "true")
+        self.send_header("Cache-Control", "no-store")
+        for c in getattr(self, "_set_cookies", ()):
+            self.send_header("Set-Cookie", c)
+        self._set_cookies = ()   # keep-alive 로 이어지는 다음 응답에 붙지 않게
         self.send_header("Content-Length", len(resp))
         self.end_headers()
         if self._is_head_request():
             return
         self.wfile.write(resp)
 
+    # ── 원격 접근 — 페어링 · 세션 (QA COM-A1) ─────────────────────────────────
+    def _remote(self):
+        return REMOTE_ACCESS
+
+    _AUTH_OPEN = {("GET", "/api/auth/status"), ("HEAD", "/api/auth/status"),
+                  ("POST", "/api/auth/unlock"), ("GET", "/favicon.ico")}
+
+    def _auth_exempt(self):
+        return (self.command, self.url_path) in self._AUTH_OPEN
+
+    def _send_unauthorized(self):
+        """원격 브라우저의 페이지 요청에는 페어링 화면, 그 밖에는 401 JSON."""
+        accept = self.headers.get("Accept", "")
+        if self.command in ("GET", "HEAD") and ("text/html" in accept or self.url_path == "/"):
+            body = _PAIR_PAGE.read_bytes() if _PAIR_PAGE.is_file() else b"<h1 id=\"dx-pair\">Pairing required</h1>"
+            self.send_response(401)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            if self.command != "HEAD":
+                self.wfile.write(body)
+            return
+        self._send_auth_json({"error": "Unauthorized", "pairing": REMOTE_ACCESS is not None}, 401)
+
+    def _cookie(self, value, max_age):
+        secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "").lower() == "https" else ""
+        return (f"{_ra.SESSION_COOKIE}={value}; Path=/; HttpOnly; SameSite=Strict; "
+                f"Max-Age={int(max_age)}{secure}")
+
     def _handle_auth_status(self):
+        local = self._is_local()
         self._send_auth_json({
             "ok": True,
-            "auth_enabled": False,
+            "auth_enabled": not local,
             "locked": False,
-            "authenticated": True,
+            "local": local,
+            "authenticated": local or getattr(self, "auth_kind", None) in ("token", "session")
+            or bool(self._session()),
+            "pairing": REMOTE_ACCESS is not None and REMOTE_ACCESS.pairing is not None,
         })
 
     def _handle_auth_unlock(self):
         body = self._read_json_body()
         if body is None:
             return
-        self._send_auth_json({"ok": True, "auth_enabled": False, "csrf": ""})
+        ra = REMOTE_ACCESS
+        if ra is None or ra.pairing is None:
+            return self._send_auth_json({"error": "Pairing is not available"}, 403)
+        result = ra.pairing.verify(body.get("code"))
+        if result == "locked":
+            return self._send_auth_json({"error": "Too many attempts — a new code is on the board console."}, 429)
+        if result != "ok":
+            return self._send_auth_json({"error": "Wrong code"}, 401)
+        token, sid = ra.sessions.create(user_agent=self.headers.get("User-Agent", ""), ip=self._peer_ip())
+        self._set_cookies = [self._cookie(token, ra.sessions.ttl)]
+        print(f"  [Launcher] Remote browser paired ({self._peer_ip()}).", flush=True)
+        self._send_auth_json({"ok": True, "id": sid})
 
     def _send_no_content(self):
         self.send_response(204)
@@ -1403,10 +1466,33 @@ class LauncherHandler(DXBaseHandler):
         self.end_headers()
 
     def _handle_auth_logout(self):
-        self._send_no_content()
+        ra = REMOTE_ACCESS
+        token = ra.cookie_value(self.headers.get("Cookie", "")) if ra is not None else ""
+        if not token:
+            return self._send_no_content()   # 세션이 없으면 예전처럼 204 (쿠키 없음)
+        ra.sessions.revoke_token(token)
+        self._set_cookies = [self._cookie("", 0)]
+        self._send_auth_json({"ok": True})
 
     def _handle_auth_relock(self):
-        self._send_no_content()
+        self._handle_auth_logout()
+
+    def _handle_auth_sessions(self):
+        ra = REMOTE_ACCESS
+        items = [] if ra is None else sorted(ra.sessions.list(), key=lambda v: -float(v.get("last_seen", 0)))
+        mine = (self._session() or {}).get("id")
+        self._send_auth_json({"sessions": [
+            {"id": v.get("id"), "created": v.get("created"), "last_seen": v.get("last_seen"),
+             "user_agent": v.get("user_agent", ""), "ip": v.get("ip", ""), "current": v.get("id") == mine}
+            for v in items]})
+
+    def _handle_auth_revoke(self):
+        body = self._read_json_body()
+        if body is None:
+            return
+        ra = REMOTE_ACCESS
+        ok = ra is not None and isinstance(body.get("id"), str) and ra.sessions.revoke(body["id"])
+        self._send_auth_json({"ok": bool(ok)}, 200 if ok else 404)
 
     def route(self):
         path = self.url_path
@@ -1420,6 +1506,10 @@ class LauncherHandler(DXBaseHandler):
             return self._handle_auth_logout()
         if path == "/api/auth/relock" and self.command == "POST":
             return self._handle_auth_relock()
+        if path == "/api/auth/sessions" and self.command in ("GET", "HEAD"):
+            return self._handle_auth_sessions()
+        if path == "/api/auth/sessions/revoke" and self.command == "POST":
+            return self._handle_auth_revoke()
 
         # Always serve launcher health for /api/health
         # (sub-app iframes have their own status endpoints)
@@ -1735,6 +1825,11 @@ def main():
     # Socket is now LISTENING (HTTPServer binds+listens in its constructor). Serve in a daemon
     # thread so the cosmetic boot below runs while the port already accepts connections.
     threading.Thread(target=srv.serve_forever, name="launcher-http", daemon=True).start()
+
+    # 원격 브라우저 페어링 (QA COM-A1) — loopback 에만 열렸으면 원격이 없으므로 만들지 않는다
+    global REMOTE_ACCESS
+    if not (_bind_host in ("127.0.0.1", "::1", "localhost")):
+        REMOTE_ACCESS = _ra.RemoteAccess()
 
     # Unmissable, now-LIVE URL banner — safe to surface here because the port is bound.
     _studio_url = f"http://localhost:{port}"

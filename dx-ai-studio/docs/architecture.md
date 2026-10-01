@@ -84,8 +84,11 @@ handle_chat_routes(_chat_engine)   # /api/chat* (SSE), config, local models
 
 `DXBaseHandler` provides: JSON/HTML/file/bytes responses, static serving with ETag +
 gzip + 304 + content-hash cache-busting (`render_html_with_asset_hashes`), multipart
-parsing, SSE helpers, optional `DX_API_TOKEN` auth, CORS/origin checks, and a
-corporate-TLS CA bridge. `DXServer` wraps CLI parsing, IPv6 dual-stack bind,
+parsing, SSE helpers, the remote-access gate (Host allowlist, same-origin checks for
+state-changing requests, no CORS; local requests pass, remote ones need `DX_API_TOKEN`
+or a paired-browser session from `shared/remote_access.py`), and a corporate-TLS CA
+bridge. Module servers bind 127.0.0.1 and trust the launcher's proxied requests by the
+per-run `DX_PROXY_SECRET` it puts in their env. `DXServer` wraps CLI parsing, the 127.0.0.1 default bind,
 port-collision retry, and ephemeral-port reporting via `DX_PORT_FILE`.
 
 - **`shared/chat/`** — `ChatEngine` powers the per-module "DX Chat" assistant.

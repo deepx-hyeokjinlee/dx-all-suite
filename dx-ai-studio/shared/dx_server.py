@@ -32,6 +32,7 @@ import email.utils
 import gzip
 import hashlib
 import hmac
+import ipaddress
 import io
 import json
 import math
@@ -78,15 +79,26 @@ _bridge_system_ca_trust()
 
 
 def _resolve_bind_host() -> str | None:
-    """Return explicit bind host, or None for dual-stack all interfaces (default).
+    """모듈 서버의 bind 주소 — 기본은 loopback (QA COM-A1, 2026-10-01).
 
-    DX_BIND_LOCAL=1 → 127.0.0.1 only (LAN exposure off).
-    DX_BIND_HOST=<host> → explicit override.
+    모듈 (dx_app · dx_compiler …) 은 launcher 가 127.0.0.1 로 중계하므로 밖에 열 이유가 없다. launcher 는 자식
+    env 에 DX_BIND_HOST=127.0.0.1 을 명시한다. 단독 실행에서 넓히려면 DX_BIND_HOST=<host> — 그때는 DX_API_TOKEN 이
+    있어야 시작한다 (`DXServer._create_server`). DX_BIND_LOCAL=1 은 예전처럼 127.0.0.1.
     """
     if os.environ.get("DX_BIND_LOCAL", "").strip().lower() in ("1", "true", "yes"):
         return "127.0.0.1"
     explicit = os.environ.get("DX_BIND_HOST", "").strip()
-    return explicit or None
+    return explicit or "127.0.0.1"
+
+
+def _is_loopback_host(host: str | None) -> bool:
+    h = (host or "").strip().strip("[]").lower()
+    if h == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(h).is_loopback
+    except ValueError:
+        return False
 
 
 def _configured_api_token() -> str | None:
@@ -302,7 +314,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", len(body))
-        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         if self._is_head_request():
             return
@@ -315,7 +326,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", len(html))
-        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         if self._is_head_request():
             return
@@ -331,7 +341,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", len(data))
-        self.send_header("Access-Control-Allow-Origin", "*")
         if filename:
             self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
         self.end_headers()
@@ -408,7 +417,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", cache_control)
             self.send_header("ETag", etag)
             self.send_header("Last-Modified", last_modified)
-            self.send_header("Access-Control-Allow-Origin", "*")
             if gzip_eligible:
                 self.send_header("Vary", "Accept-Encoding")
             self.end_headers()
@@ -423,7 +431,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
                     self.send_header("Cache-Control", cache_control)
                     self.send_header("ETag", etag)
                     self.send_header("Last-Modified", last_modified)
-                    self.send_header("Access-Control-Allow-Origin", "*")
                     if gzip_eligible:
                         self.send_header("Vary", "Accept-Encoding")
                     self.end_headers()
@@ -439,7 +446,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", cache_control)
         self.send_header("ETag", etag)
         self.send_header("Last-Modified", last_modified)
-        self.send_header("Access-Control-Allow-Origin", "*")
         if content_disposition:
             self.send_header("Content-Disposition", content_disposition)
         if gzip_eligible:
@@ -643,7 +649,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Cache-Control", "no-cache")
-        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         if self._is_head_request():
             return
@@ -656,7 +661,6 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "text/event-stream")
         self.send_header("Cache-Control", "no-cache")
         self.send_header("X-Accel-Buffering", "no")
-        self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Transfer-Encoding", "chunked")
         self.end_headers()
         self._sse_chunked = True
@@ -860,14 +864,16 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         return host in {"127.0.0.1", "localhost", "::1"}
 
     def do_OPTIONS(self):
-        """CORS preflight 204 응답."""
+        """preflight — same-origin 만 (QA COM-A1). 교차 Origin 은 403, CORS 허용 헤더는 보내지 않는다."""
         self._parse_request_url()
+        if not self._host_ok():
+            return self._refuse_host()
+        origin = self.headers.get("Origin", "")
+        if origin and not self._url_matches_effective_origin(origin):
+            return self._refuse_cross_origin()
         self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods",
-                         "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers",
-                         "Content-Type, X-Lab-Token, X-DX-Api-Token, Authorization")
+        self.send_header("Allow", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS")
+        self.send_header("Content-Length", "0")
         self.end_headers()
 
     def _check_same_origin(self) -> bool:
@@ -885,8 +891,67 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         # Origin/Referer 없음 (curl 등) → 허용
         return True
 
-    def _enforce_auth(self) -> bool:
-        """Optional API token gate when DX_API_TOKEN is set."""
+    # ── 원격 접근 (QA COM-A1, spec 2026-10-01) ────────────────────────────────
+    # launcher 가 shared.remote_access.RemoteAccess 를 둔다 (페어링 · 세션). 모듈 서버는 None.
+    remote_access = None
+
+    def _peer_ip(self) -> str:
+        try:
+            return self.client_address[0]
+        except (AttributeError, IndexError, TypeError):
+            return ""
+
+    @staticmethod
+    def _proxy_secret() -> str:
+        """launcher 가 자식 env 로만 넘기는 비밀 — 중계한 요청에 X-DX-Proxy 로 실린다."""
+        return os.environ.get("DX_PROXY_SECRET", "")
+
+    def _is_local(self) -> bool:
+        """이 기계 안에서 직접 온 요청 — 로컬 사용은 그대로 둔다 (사용자 결정).
+
+        loopback peer 이고 X-Forwarded-For 가 없어야 한다 (같은 기계의 reverse proxy 경유는 원격). launcher 가
+        중계한 요청은 X-Forwarded-For 가 붙지만 X-DX-Proxy 의 비밀이 맞으면 launcher 가 이미 인증한 것이다."""
+        ip = self._peer_ip().split("%", 1)[0]
+        try:
+            addr = ipaddress.ip_address(ip)
+            if getattr(addr, "ipv4_mapped", None):
+                addr = addr.ipv4_mapped
+            loopback = addr.is_loopback
+        except ValueError:
+            loopback = False
+        if not loopback:
+            return False
+        if self.headers.get("X-Forwarded-For") or self.headers.get("Forwarded"):
+            secret = self._proxy_secret()
+            return bool(secret) and hmac.compare_digest(
+                self.headers.get("X-DX-Proxy", "").encode("utf-8"), secret.encode("utf-8"))
+        return True
+
+    def _host_ok(self) -> bool:
+        """DNS rebinding 차단 — IP Host 는 허용, 이름은 localhost · 이 기계 · DX_ALLOWED_HOSTS."""
+        from shared.remote_access import host_allowed
+        return host_allowed(self.headers.get("Host", ""))
+
+    def _origin_ok(self, require: bool = False) -> bool:
+        """Origin (없으면 Referer) 이 same-origin 인가. 둘 다 없으면 ``not require``."""
+        origin = self.headers.get("Origin", "")
+        if origin:
+            return self._url_matches_effective_origin(origin)
+        referer = self.headers.get("Referer", "")
+        if referer:
+            return self._url_matches_effective_origin(referer)
+        return not require
+
+    def _refuse_host(self):
+        self.send_error_json(403, "Host not allowed")
+
+    def _refuse_cross_origin(self):
+        self.send_error_json(403, "Cross-origin request refused")
+
+    def _is_state_changing(self) -> bool:
+        return self.command in ("POST", "PUT", "PATCH", "DELETE")
+
+    def _token_ok(self) -> bool:
         token = _configured_api_token()
         if not token:
             return False
@@ -897,16 +962,57 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
 
         auth = self.headers.get("Authorization", "")
         if auth.startswith("Bearer ") and _eq(auth[7:].strip()):
-            return False
-        if _eq(self.headers.get("X-DX-Api-Token", "").strip()):
-            return False
-        self.send_error_json(401, "Unauthorized")
-        return True
+            return True
+        return _eq(self.headers.get("X-DX-Api-Token", "").strip())
 
+    def _remote(self):
+        return type(self).remote_access
+
+    def _session(self):
+        ra = self._remote()
+        if ra is None:
+            return None
+        token = ra.cookie_value(self.headers.get("Cookie", ""))
+        return ra.sessions.valid(token) if token else None
+
+    def _auth_exempt(self) -> bool:
+        """인증 없이 원격에서 닿아도 되는 경로 (launcher: 페어링 화면 · 코드 입력)."""
+        return False
+
+    def _send_unauthorized(self):
+        self.send_error_json(401, "Unauthorized")
+
+    def _enforce_auth(self) -> bool:
+        """막았으면 True. 로컬 → 통과, 원격 → DX_API_TOKEN 또는 페어링 세션 (쿠키) 이 있어야 한다."""
+        self.auth_kind = None
+        if self._is_local():
+            self.auth_kind = "local"
+            return False
+        if self._token_ok():
+            self.auth_kind = "token"
+            return False
+        session = self._session()
+        if session:
+            # 쿠키는 브라우저가 알아서 붙인다 — 상태를 바꾸는 요청은 Origin/Referer 가 반드시 같은 곳이어야 (CSRF)
+            if self._is_state_changing() and not self._origin_ok(require=True):
+                self._refuse_cross_origin()
+                return True
+            self.auth_kind = "session"
+            self.auth_session = session
+            return False
+        if self._auth_exempt():
+            return False
+        self._send_unauthorized()
+        return True
 
     def _dispatch_request(self):
         """URL 파싱 후 route() 호출."""
         self._parse_request_url()
+        if not self._host_ok():
+            return self._refuse_host()
+        # 상태를 바꾸는 교차 Origin 요청은 로컬이어도 거부 — 보드 안 브라우저의 악성 페이지가 127.0.0.1 로 보내는 CSRF
+        if self._is_state_changing() and not self._origin_ok():
+            return self._refuse_cross_origin()
         if self._enforce_auth():
             return
         try:
@@ -1241,6 +1347,11 @@ class DXServer:
     def _create_server(self, port: int, max_attempts: int = 5):
         """IPv6 듀얼스택 우선, 실패 시 IPv4 폴백. 포트 충돌 시 재시도."""
         bind_host = _resolve_bind_host()
+        if not _is_loopback_host(bind_host) and not _configured_api_token():
+            # 원격에 열면서 인증이 없으면 시작하지 않는다 (QA COM-A1). 모듈은 launcher 뒤 loopback 이 기본.
+            print(f"  [{self.name}] ERROR: refusing to listen on {bind_host} without DX_API_TOKEN "
+                  "(set DX_API_TOKEN, or use the launcher which pairs remote browsers).")
+            return None
         for attempt in range(max_attempts):
             # port 0 → OS picks a guaranteed-free port; never force-free / probe it.
             if port != 0 and (self._is_port_open(port) or attempt > 0):

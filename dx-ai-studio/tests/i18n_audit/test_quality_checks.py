@@ -198,7 +198,9 @@ class TestServerMessagesAreCounted:
     #
     # 그러므로 이 수를 0 으로 모는 것은 목표가 아니다. 새 메시지가 늘어나는
     # 것만 막는다 — 늘어나면 번역 패턴도 같이 늘려야 한다.
-    MAX_UNTRANSLATED_SERVER_MESSAGES = 92
+    # 2026-10-01 +2: 원격 접근 거절 ('Host not allowed' · 'Cross-origin request refused', QA COM-A1) —
+    # server-error-i18n.js 에 6개 언어 패턴을 같이 넣었다.
+    MAX_UNTRANSLATED_SERVER_MESSAGES = 94
 
     def test_the_extractor_exists(self):
         from tools.i18n_audit.extractors import extract_server_messages  # noqa: F401

@@ -17,6 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from shared.paths import var_dir
 from dx_compiler.core.config import SCRIPT_DIR
 from dx_compiler.core.log_capture import LogBuffer, LogCapture
+from dx_compiler.core import path_policy
 
 _log = logging.getLogger(__name__)
 
@@ -189,6 +190,11 @@ class CompilerService:
             raise ValueError("Invalid compiler job directory") from exc
         return path
 
+    @staticmethod
+    def _job_inputs(job: "CompileJob") -> list:
+        """게시가 덮으면 안 되는 이 작업의 입력 파일들."""
+        return [getattr(job, k, "") or "" for k in ("model_path", "config_path", "qxnn_checkpoint_path")]
+
     def _prepare_job_staging(
         self, job: CompileJob, requested_output_dir: Optional[str] = None
     ) -> bool:
@@ -327,6 +333,10 @@ class CompilerService:
             canonical = candidates[0]
             requested_dir = Path(job.requested_output_dir)
             destination = requested_dir / canonical.name
+            if path_policy.would_overwrite_input(destination, self._job_inputs(job)):
+                job.status = "error"
+                job.error = "The compiled artifact would overwrite an input file; choose another output folder."
+                return False
             temporary = requested_dir / f".{canonical.name}.{uuid.uuid4().hex}.tmp"
             try:
                 requested_dir.mkdir(parents=True, exist_ok=True)
@@ -557,6 +567,9 @@ class CompilerService:
             selected = selected.resolve()
             relative = selected.relative_to(work_dir)
             target = Path(job.requested_output_dir) / relative
+            if path_policy.would_overwrite_input(target, self._job_inputs(job)):
+                _log.warning("QXNN artifact for job %s would overwrite an input; not published", job.job_id)
+                return
             target.parent.mkdir(parents=True, exist_ok=True)
             temporary = target.parent / f".{target.name}.{uuid.uuid4().hex}.tmp"
             shutil.copyfile(selected, temporary)
@@ -671,6 +684,17 @@ class CompilerService:
         node_selection: bool = False,
         use_q_pro: bool = False,
     ) -> CompileJob:
+        # 실행 직전 검사 — HTTP 진입점과 이중 (QA COM-A2). 거부는 job · 폴더를 만들기 전에.
+        model_path = str(path_policy.check_input_file(model_path, "model_path"))
+        config_path = str(path_policy.check_input_file(config_path, "config_path"))
+        # config 가 가리키는 calibration 폴더도 compiler 가 읽는다 — 올린 config 로 밖을 읽지 않게
+        try:
+            loader = (json.loads(Path(config_path).read_text(encoding="utf-8")) or {}).get("default_loader") or {}
+        except (OSError, ValueError, AttributeError):
+            loader = {}
+        if isinstance(loader, dict) and loader.get("dataset_path"):
+            path_policy.check_input_dir(loader["dataset_path"], "dataset_path (in config)")
+        output_dir = str(path_policy.check_output_dir(output_dir))
         self.cleanup_completed_jobs()
         job_id = str(uuid.uuid4())
         job = CompileJob(
@@ -724,6 +748,10 @@ class CompilerService:
         dataset_path: Optional[str] = None,
     ) -> CompileJob:
         """Submit a QXNN resume (re-quantization) job."""
+        qxnn_path = str(path_policy.check_input_file(qxnn_path, "qxnn_path"))
+        output_dir = str(path_policy.check_output_dir(output_dir))
+        if dataset_path:
+            dataset_path = str(path_policy.check_input_dir(dataset_path, "dataset_path"))
         self.cleanup_completed_jobs()
         job_id = str(uuid.uuid4())
         job = CompileJob(

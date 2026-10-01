@@ -64,10 +64,9 @@ def validate_opt_level(raw) -> int:
 def validate_fs_path(raw, field: str, *, required: bool = True) -> str:
     """경로 필드가 문자열인지 본다.
 
-    경로가 **어디를 가리키는지** 는 보지 않는다. `is_safe_path` 는 파일 탐색기가
-    루트 전체를 훑지 않게 하는 UX 가드레일이지 보안 경계가 아니며, 컴파일 경로에
-    적용하면 `/media/usb/model.onnx` 같은 멀쩡한 모델이 막힌다. 근거와 전제는
-    `config.is_safe_path` 의 주석에 적어 두었다.
+    경로가 **어디를 가리키는지** 는 여기서 보지 않는다 — 그것은 `path_policy` 가 본다
+    (허용 루트 안의 실제 파일 · 폴더, QA COM-A2 2026-10-01). `/media/usb/model.onnx`
+    같은 외부 저장장치 모델은 허용 루트 (/media · /mnt) 안이라 그대로 된다.
 
     여기서 막는 것은 타입뿐이다. 문자열이 아니면 `.strip()` 이 AttributeError 로
     터져 500 이 됐다.
