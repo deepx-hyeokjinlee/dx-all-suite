@@ -50,6 +50,7 @@ from dx_compiler.core.compiler_service import (
 )
 from dx_compiler.core.setup_service import setup_service
 from dx_compiler.core import fs_browse
+from dx_compiler.core import path_policy
 from shared import shell as _shell
 from shared.shell import ShellSpec
 
@@ -243,6 +244,14 @@ class CompilerHandler(DXBaseHandler):
         return _render_template(template_name, ctx)
 
 
+    def _path_ok(self, fn, *args, **kwargs):
+        """compile 경로 정책 (path_policy) — 어기면 400 을 보내고 ``_Rejected`` (QA COM-A2)."""
+        try:
+            return fn(*args, **kwargs)
+        except path_policy.PathPolicyError as exc:
+            self.send_error_json(400, str(exc))
+            raise _Rejected from None
+
     def _validated(self, fn, *args, **kwargs):
         """검증자를 부르고 ValidationError 를 400 으로 바꾼다.
 
@@ -397,6 +406,10 @@ class CompilerHandler(DXBaseHandler):
 
         if not model_path or not config_path or not output_dir:
             return self.send_error_json(400, "model_path, config_path, and output_dir are required")
+        # 허용된 폴더 안의 실제 파일 · 폴더만 — submit · 읽기 · mkdir 전에 거부 (QA COM-A2)
+        model_path = str(self._path_ok(path_policy.check_input_file, model_path, "model_path"))
+        config_path = str(self._path_ok(path_policy.check_input_file, config_path, "config_path"))
+        output_dir = str(self._path_ok(path_policy.check_output_dir, output_dir))
 
         job = compiler_service.submit(
             model_path=model_path,
@@ -467,6 +480,10 @@ class CompilerHandler(DXBaseHandler):
             enhanced_scheme = self._validated(validate_enhanced_scheme, enhanced_scheme)
         if use_q_pro and body.get("enhanced_scheme"):
             return self.send_error_json(400, "use_q_pro and enhanced_scheme are mutually exclusive")
+        qxnn_path = str(self._path_ok(path_policy.check_input_file, qxnn_path, "qxnn_path"))
+        output_dir = str(self._path_ok(path_policy.check_output_dir, output_dir))
+        if dataset_path:
+            dataset_path = str(self._path_ok(path_policy.check_input_dir, dataset_path, "dataset_path"))
 
         job = compiler_service.submit_resume(
             qxnn_path=qxnn_path,
@@ -983,6 +1000,7 @@ class CompilerHandler(DXBaseHandler):
                 validate_fs_path, config_data.get("dataset_path"), "dataset_path",
                 required=False)
             if dataset_path:
+                dataset_path = str(self._path_ok(path_policy.check_input_dir, dataset_path, "dataset_path"))
                 default_loader["dataset_path"] = dataset_path
             file_extensions = self._validated(
                 validate_file_extensions, config_data.get("file_extensions"))

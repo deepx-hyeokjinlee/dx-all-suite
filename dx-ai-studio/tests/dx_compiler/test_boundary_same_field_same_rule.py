@@ -24,6 +24,7 @@ import urllib.request
 import uuid
 
 import pytest
+from tests.dx_compiler._compile_paths import compile_paths_not_under_test  # noqa: F401  (경로 정책은 이 시험의 대상이 아니다)
 
 from tests.server_helpers import start_module_server
 
