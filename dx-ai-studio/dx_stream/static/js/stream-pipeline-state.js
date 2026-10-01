@@ -38,7 +38,7 @@ function _cv(k) {
     return colors.raw[k];
 }
 
-/* 색 token 에 투명도를 준 canvas 색 ('#1d1d1f' · 'rgb(…)' → 'rgba(…, a)'). 모르는 모양이면 그대로. */
+/* 색 token 에 투명도를 준 canvas 색 (hex · rgb() → rgba(…, a)). 모르는 모양이면 그대로. */
 function _cvAlpha(k, a) {
     var c = _cv(k) || '';
     var m = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);

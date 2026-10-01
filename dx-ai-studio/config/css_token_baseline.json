@@ -88,7 +88,7 @@
   "dx_stream/static/js/stream-lang-refresh.js": 0,
   "dx_stream/static/js/stream-models.js": 0,
   "dx_stream/static/js/stream-pipeline-api.js": 1,
-  "dx_stream/static/js/stream-pipeline-renderer.js": 7,
+  "dx_stream/static/js/stream-pipeline-renderer.js": 2,
   "dx_stream/static/js/stream-pipeline-serialization.js": 0,
   "dx_stream/static/js/stream-pipeline-state.js": 11,
   "dx_stream/static/js/stream-pipeline.js": 0,

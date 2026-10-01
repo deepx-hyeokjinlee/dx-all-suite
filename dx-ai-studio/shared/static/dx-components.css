@@ -156,7 +156,7 @@
 .modal h2{margin-top:0;font-size:var(--fs-lg)}
 .modal-x{float:right;cursor:pointer;font-size:22px;color:var(--text-muted);background:none;border:none;line-height:1}
 .modal-x:hover{color:var(--text-primary);background:rgba(var(--accent-rgb),.08);border-radius:var(--radius-sm)}
-.modal-x .dx-ico{width:18px;height:18px}
+.modal-x svg{width:18px;height:18px}
 
 /* ═══ Stat tile ═══
    dx_monitor 만 --surface-raised-bg 대신 같은 값을 손으로 적고 그림자를 inset 만

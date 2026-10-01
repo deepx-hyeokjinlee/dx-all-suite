@@ -126,7 +126,7 @@
     var box = _el('div', 'modal ra-modal');
     var close = _el('button', 'modal-x');
     close.type = 'button';
-    close.innerHTML = '<svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg>';
+    close.innerHTML = (typeof window.DXIcon === 'function') ? window.DXIcon('x') : '&times;';
     close.setAttribute('aria-label', _t('Close'));
     close.addEventListener('click', function () { d.close(); });
     box.appendChild(close);
