@@ -606,6 +606,14 @@ window._DX_I18N_DICT = {
   '3D Object Detection': { ko: '3D 객체 탐지', ja: '3D物体検出', 'zh-CN': '3D目标检测', 'zh-TW': '3D物件偵測', es: 'Detección de objetos 3D' },
   'Attribute Recognition': { ko: '속성 인식', ja: '属性認識', 'zh-CN': '属性识别', 'zh-TW': '屬性辨識', es: 'Reconocimiento de atributos' },
   'Classification': { ko: '분류', ja: '分類', 'zh-CN': '分类', 'zh-TW': '分類', es: 'Clasificación' },
+  // Run Demo 의 묶음 (filter) 이름 — /api/demos 의 groups (release audit: 모든 언어에서 영어였다)
+  'Detection': { ko: '탐지', ja: '検出', 'zh-CN': '检测', 'zh-TW': '偵測', es: 'Detección' },
+  'Segmentation': { ko: '분할', ja: 'セグメンテーション', 'zh-CN': '分割', 'zh-TW': '分割', es: 'Segmentación' },
+  'Keypoint & Pose': { ko: '키포인트 · 자세', ja: 'キーポイント · 姿勢', 'zh-CN': '关键点 · 姿态', 'zh-TW': '關鍵點 · 姿態', es: 'Puntos clave y pose' },
+  'Pose & Landmark': { ko: '자세 · 랜드마크', ja: '姿勢 · ランドマーク', 'zh-CN': '姿态 · 关键点', 'zh-TW': '姿態 · 關鍵點', es: 'Pose y puntos de referencia' },
+  'Driving & 3D': { ko: '주행 · 3D', ja: '運転 · 3D', 'zh-CN': '驾驶 · 3D', 'zh-TW': '駕駛 · 3D', es: 'Conducción y 3D' },
+  'Image Restoration': { ko: '이미지 복원', ja: '画像復元', 'zh-CN': '图像复原', 'zh-TW': '影像復原', es: 'Restauración de imagen' },
+  'Recognition': { ko: '인식', ja: '認識', 'zh-CN': '识别', 'zh-TW': '辨識', es: 'Reconocimiento' },
   'Depth Estimation': { ko: '깊이 추정', ja: '深度推定', 'zh-CN': '深度估计', 'zh-TW': '深度估計', es: 'Estimación de profundidad' },
   'Embedding': { ko: '임베딩', ja: '埋め込み', 'zh-CN': '嵌入', 'zh-TW': '嵌入', es: 'Embedding' },
   'Face Alignment': { ko: '얼굴 정렬', ja: '顔アライメント', 'zh-CN': '人脸对齐', 'zh-TW': '人臉對齊', es: 'Alineación facial' },
@@ -2005,6 +2013,27 @@ window._DX_I18N_DICT = {
   },
   'Compare': {
     ko: '비교', ja: '比較', 'zh-CN': '对比', 'zh-TW': '比較', es: 'Comparar',
+  },
+  'Delete {name}?': {
+    ko: '{name} 파일을 삭제할까요?', ja: '{name} を削除しますか？',
+    'zh-CN': '删除 {name}？', 'zh-TW': '刪除 {name}？', es: '¿Eliminar {name}?',
+  },
+  'Deleted {name}': {
+    ko: '{name} 파일을 삭제했습니다', ja: '{name} を削除しました',
+    'zh-CN': '已删除 {name}', 'zh-TW': '已刪除 {name}', es: 'Se eliminó {name}',
+  },
+  'No files': {
+    ko: '파일이 없습니다', ja: 'ファイルがありません', 'zh-CN': '没有文件', 'zh-TW': '沒有檔案', es: 'No hay archivos',
+  },
+  'No files matching filter.': {
+    ko: '이 필터에 맞는 파일이 없습니다.', ja: 'このフィルターに一致するファイルはありません。',
+    'zh-CN': '没有符合筛选条件的文件。', 'zh-TW': '沒有符合篩選條件的檔案。', es: 'Ningún archivo coincide con el filtro.',
+  },
+  'Preview': {
+    ko: '미리 보기', ja: 'プレビュー', 'zh-CN': '预览', 'zh-TW': '預覽', es: 'Vista previa',
+  },
+  'Delete': {
+    ko: '삭제', ja: '削除', 'zh-CN': '删除', 'zh-TW': '刪除', es: 'Eliminar',
   },
   'runner_error': {
     ko: '예제가 오류를 보고했습니다 — 결과가 정확하지 않습니다', ja: 'サンプルがエラーを報告したため結果は信頼できません',
@@ -5046,13 +5075,15 @@ window._DX_I18N_PLACEHOLDERS = {
   },
 };
 
-/* ─── 5-language inline helper for JS runtime strings ─── */
-function _T5(ko, en, ja, zhCN, zhTW) {
+/* ─── inline helper for JS runtime strings (ko, en, ja, zh-CN, zh-TW, es) ───
+   이름은 _T5 그대로 — es 는 여섯째 인자 (예전에는 다섯 언어라 스페인어에서 영어가 보였다, release audit A-13). */
+function _T5(ko, en, ja, zhCN, zhTW, es) {
     var lang = (window.DXI18n && window.DXI18n.lang) || 'en';
     if (lang === 'ko') return ko || en;
     if (lang === 'ja') return ja || en;
     if (lang === 'zh-CN') return zhCN || en;
     if (lang === 'zh-TW') return zhTW || en;
+    if (lang === 'es') return es || en;
     return en;
 }
 

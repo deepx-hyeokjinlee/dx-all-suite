@@ -4,7 +4,8 @@ let _outView='grid';   // 'grid' | 'table'
 let _outFilter='all';  // 'all' | 'image' | 'video' | 'archive' | 'other'
 
 const _TYPE_ICON={image:DXIcon('image'),video:DXIcon('demo'),archive:DXIcon('models'),other:DXIcon('file')};
-const _TYPE_LABEL={all:T('All'),image:T('Images'),video:T('Videos'),archive:T('Archives'),other:T('Other')};
+// 그릴 때마다 번역한다 — 처음 읽을 때 한 번 번역하면 언어를 바꿔도 칩이 그대로였다 (A-8)
+const _TYPE_KEYS={all:'All',image:'Images',video:'Videos',archive:'Archives',other:'Other'};
 
 async function loadOutputs(){
   const data=await api('/api/outputs');
@@ -29,9 +30,9 @@ function _renderFilterChips(){
   _outFiles.forEach(f=>counts[f.type]=(counts[f.type]||0)+1);
   const el=$('out-filters');
   if(!el)return;
-  el.innerHTML=Object.keys(_TYPE_LABEL).map(k=>
+  el.innerHTML=Object.keys(_TYPE_KEYS).map(k=>
     '<button class="out-filter-chip'+(k===_outFilter?' active':'')+'" data-filter="'+k+'" onclick="setOutFilter(\''+k+'\')">'+
-    (_TYPE_ICON[k]||DXIcon('clipboard'))+' '+_TYPE_LABEL[k]+' <span class="chip-count">'+counts[k]+'</span></button>'
+    (_TYPE_ICON[k]||DXIcon('clipboard'))+' '+esc(T(_TYPE_KEYS[k]))+' <span class="chip-count">'+counts[k]+'</span></button>'
   ).join('');
 }
 
@@ -48,15 +49,15 @@ function _renderOutputs(){
   if(_outView==='table'&&tbl){
     tbl.querySelector('tbody').innerHTML=files.map(f=>{
       const icon=_TYPE_ICON[f.type]||DXIcon('file');
-      const preview=f.type==='image'?'<button class="btn btn-sm btn-ghost" onclick="openLightbox(\''+esc(f.name)+'\')">' + DXIcon('eye') + '</button>':'';
+      const preview=f.type==='image'?'<button class="btn btn-sm btn-ghost" title="'+esc(T('Preview'))+'" aria-label="'+esc(T('Preview'))+'" onclick="openLightbox(\''+esc(f.name)+'\')">' + DXIcon('eye') + '</button>':'';
       return '<tr><td>'+icon+' '+esc(f.name)+'</td>'
         +'<td class="txt-dim txt-sm">'+fmtBytes(f.size||0)+'</td>'
         +'<td class="txt-dim txt-sm">'+fmtTime(f.mtime)+'</td>'
         +'<td>'+preview
-        +(f.type==='image'&&f.src_image?'<button class="btn btn-sm btn-ghost" onclick="openCompare(\''+esc(f.name)+'\')">' + DXIcon('book') + '</button>':'')
-        +'<a class="btn btn-sm btn-ghost" href="'+f.url+'" download="'+f.name+'">' + DXIcon('download') + '</a>'
-        +'<button class="btn btn-sm btn-ghost txt-err" onclick="deleteOutput(\''+esc(f.name)+'\')">' + DXIcon('trash') + '</button></td></tr>';
-    }).join('')||'<tr><td colspan="4" class="txt-dim">No files</td></tr>';
+        +(f.type==='image'&&f.src_image?'<button class="btn btn-sm btn-ghost" title="'+esc(T('Compare'))+'" aria-label="'+esc(T('Compare'))+'" onclick="openCompare(\''+esc(f.name)+'\')">' + DXIcon('book') + '</button>':'')
+        +'<a class="btn btn-sm btn-ghost" href="'+f.url+'" download="'+esc(f.name)+'" title="'+esc(T('Download'))+'" aria-label="'+esc(T('Download'))+'">' + DXIcon('download') + '</a>'
+        +'<button class="btn btn-sm btn-ghost txt-err" title="'+esc(T('Delete'))+'" aria-label="'+esc(T('Delete'))+'" onclick="deleteOutput(\''+esc(f.name)+'\')">' + DXIcon('trash') + '</button></td></tr>';
+    }).join('')||'<tr><td colspan="4" class="txt-dim">'+esc(T('No files'))+'</td></tr>';
   }
 
   const grid=$('out-gallery');
@@ -70,7 +71,7 @@ function _renderOutputs(){
         ?'<video class="gal-thumb" src="'+f.url+'" muted preload="metadata" onclick="openLightbox(\''+esc(f.name)+'\')"></video>'
         :'<div class="gal-thumb gal-thumb-icon">'+icon+'</div>';
       const compareBtn=f.type==='image'&&f.src_image
-        ?'<button class="btn btn-xs btn-ghost" onclick="event.stopPropagation();openCompare(\''+esc(f.name)+'\')">' + DXIcon('book') + ' Compare</button>':'';
+        ?'<button class="btn btn-xs btn-ghost" onclick="event.stopPropagation();openCompare(\''+esc(f.name)+'\')">' + DXIcon('book') + ' '+esc(T('Compare'))+'</button>':'';
       return '<div class="gal-card" data-type="'+f.type+'">'
         +thumb
         +'<div class="gal-info">'
@@ -78,10 +79,10 @@ function _renderOutputs(){
         +'<span class="gal-meta txt-dim txt-xs">'+fmtBytes(f.size||0)+' · '+fmtTime(f.mtime)+'</span>'
         +'<div class="gal-actions">'
         +compareBtn
-        +'<a class="btn btn-xs btn-ghost" href="'+f.url+'" download="'+f.name+'" onclick="event.stopPropagation()">' + DXIcon('download') + '</a>'
-        +'<button class="btn btn-xs btn-ghost txt-err" onclick="event.stopPropagation();deleteOutput(\''+esc(f.name)+'\')">' + DXIcon('trash') + '</button>'
+        +'<a class="btn btn-xs btn-ghost" href="'+f.url+'" download="'+esc(f.name)+'" title="'+esc(T('Download'))+'" aria-label="'+esc(T('Download'))+'" onclick="event.stopPropagation()">' + DXIcon('download') + '</a>'
+        +'<button class="btn btn-xs btn-ghost txt-err" title="'+esc(T('Delete'))+'" aria-label="'+esc(T('Delete'))+'" onclick="event.stopPropagation();deleteOutput(\''+esc(f.name)+'\')">' + DXIcon('trash') + '</button>'
         +'</div></div></div>';
-    }).join('')||'<p class="txt-dim txt-sm">No files matching filter.</p>';
+    }).join('')||'<p class="txt-dim txt-sm">'+esc(T('No files matching filter.'))+'</p>';
   }
 }
 
@@ -124,10 +125,10 @@ function _updateCompareSlider(v){
 }
 
 async function deleteOutput(name){
-  if(!confirm(T('Delete ')+name+'?'))return;
+  if(!confirm(T('Delete {name}?').replace('{name}',name)))return;
   const r=await postJ('/api/outputs/delete',{name});
   if(r.error)return toast(r.error,'err');
-  toast(T('Deleted ')+name,'ok');
+  toast(T('Deleted {name}').replace('{name}',name),'ok');
   loadOutputs();
 }
 

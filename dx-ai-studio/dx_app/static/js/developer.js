@@ -92,7 +92,7 @@ async function devAddModel(){
 
 async function devDelModel(){
   const name=$('dd-name').value;if(!name){toast(T('Enter model name'),'warn');return}
-  if(!confirm(T('Delete ')+name+'?'))return;
+  if(!confirm(T('Delete {name}?').replace('{name}',name)))return;
   const confirmText='delete:'+name;
   const res=await postJ('/api/dev/delete_model',{model_name:name,lang:$('dd-lang').value,confirm:confirmText});
   $('dd-out').classList.remove('hidden');

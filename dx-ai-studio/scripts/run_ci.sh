@@ -105,6 +105,9 @@ BROWSER_TESTS=(
   tests/dx_compiler/test_setup_steps_browser.py
   tests/shared/test_task_icons_browser.py
   tests/dx_app/test_rundemo_cards_browser.py
+  tests/dx_app/test_outputs_lang_browser.py
+  tests/shared/test_toolbar_lang_a11y_browser.py
+  tests/shared/test_chat_widget_lang_browser.py
   tests/dx_stream/test_demo_cards_browser.py
   tests/shared/test_icon_label_browser.py
   tests/launcher/test_sdk_library_module_nav_browser.py
