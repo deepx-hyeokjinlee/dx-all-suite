@@ -752,6 +752,30 @@ def get_catalog():
         return _catalog_cache
 
 
+# 같은 모델이 다른 이름으로 찍혀 있는 그림 (BEiT-L/16 384 = beit_large_patch16). 다른 모델의 그림은 빌리지 않는다.
+_MEDIA_ALIAS = {"beit_l_p16_384x384": "beit_large_patch16"}
+
+
+def _settle_media(model):
+    """있는 그림만 가리킨다 — 없는 파일을 가리키면 목록을 열 때마다 모델마다 404 가 세 번 났다 (2026-10-02 Z-5).
+    그림이 없으면 카드는 task 아이콘, 상세는 'Run inference' 안내를 보인다."""
+    alias = _MEDIA_ALIAS.get(model.get("id"))
+    thumb = model.get("thumbnail")
+    if thumb and not (DATA_DIR / thumb).is_file():
+        alt = f"thumbnails/{alias}.jpg" if alias else None
+        model["thumbnail"] = alt if alt and (DATA_DIR / alt).is_file() else None
+    ex = model.get("example_images")
+    if isinstance(ex, dict):
+        for key in ("result", "original"):
+            path = ex.get(key)
+            if path and not (DATA_DIR / path).is_file():
+                alt = f"examples/{alias}_{key}.jpg" if alias else None
+                if alt and (DATA_DIR / alt).is_file():
+                    ex[key] = alt
+                else:
+                    ex.pop(key, None)
+
+
 def reload_catalog():
     """카탈로그 다시 로드. 생성된 카탈로그가 있으면 enriched 필드 추가."""
     global _catalog_cache
@@ -794,6 +818,8 @@ def reload_catalog():
         _enrich_input_shape(model)
         _enrich_postprocessor(model)
         _enrich_summary(model)
+    for model in merged:
+        _settle_media(model)
     next_cache = {
         "models": merged,
         "categories": CATEGORIES,
@@ -854,6 +880,7 @@ def apply_generated_catalog(generated_catalog):
             _enrich_input_shape(next_model)
             _enrich_postprocessor(next_model)
             _enrich_summary(next_model)
+            _settle_media(next_model)
             next_models.append(next_model)
         _catalog_cache = {
             **_catalog_cache,
