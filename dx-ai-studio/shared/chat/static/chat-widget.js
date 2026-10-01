@@ -298,6 +298,19 @@ const DXChat = (() => {
       }
     });
     _els.input.addEventListener('input', _autoResize);
+    /* Escape: 설정 → 창 순서로 닫는다. capture 라 launcher 의 Escape (모듈 닫기) 보다 먼저, 처리했으면 표시
+       (release audit X-1 — 채팅에서 Escape 를 누르면 모듈을 떠나고 답이 끊겼다). */
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      if (_els.settingsPanel && _els.settingsPanel.classList.contains('open')) {
+        _closeSettingsPanel();
+        e.preventDefault();
+      } else if (_open) {
+        toggle();
+        _els.fab.focus();
+        e.preventDefault();
+      }
+    }, true);
 
     win.querySelector('[data-action="close"]').addEventListener('click', toggle);
     win.querySelector('[data-action="clear"]').addEventListener('click', _clearHistory);

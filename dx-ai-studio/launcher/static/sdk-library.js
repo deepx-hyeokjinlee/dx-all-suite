@@ -557,6 +557,11 @@
       if (e.key === 'Enter') {
         clearTimeout(_searchUrlTimeout);
         requestSdkUrlUpdate({ q: input.value.trim() }, 'replace');
+      } else if (e.key === 'Escape' && input.value) {
+        // 튜토리얼이 약속한 대로 검색을 지운다 — 예전에는 launcher 가 받아 SDK Library 를 떠났다 (L-5)
+        input.value = '';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        e.preventDefault();
       }
     });
   }

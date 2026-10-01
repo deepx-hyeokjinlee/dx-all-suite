@@ -959,15 +959,16 @@ class DXTutorialEngine {
         return;
       }
       if (e.key === 'Escape') {
-        if (self._curSection) { self.stop(); return; }
-        if (self._tocEl && self._tocEl.classList.contains('open')) { self.hideTOC(); return; }
+        /* 처리했으면 표시한다 — launcher 의 Escape (모듈 닫기) 가 이것을 보고 멈춘다 (release audit X-1) */
+        if (self._curSection) { self.stop(); e.preventDefault(); return; }
+        if (self._tocEl && self._tocEl.classList.contains('open')) { self.hideTOC(); e.preventDefault(); return; }
         return;
       }
       if (!self._curSection) return;
       if (e.key === 'ArrowRight' || e.key === 'Enter') { self.next(); e.preventDefault(); }
       if (e.key === 'ArrowLeft') { self.prev(); e.preventDefault(); }
     };
-    document.addEventListener('keydown', this._keyHandler);
+    document.addEventListener('keydown', this._keyHandler, true);   // capture — 맨 위 층이 먼저
   }
 
   createToggleBtn(container) {
@@ -1003,7 +1004,7 @@ class DXTutorialEngine {
   destroy() {
     this.stop();
     if (this._keyHandler) {
-      document.removeEventListener('keydown', this._keyHandler);
+      document.removeEventListener('keydown', this._keyHandler, true);
       this._keyHandler = null;
     }
     if (this._messageHandler) {
