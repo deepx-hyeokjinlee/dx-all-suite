@@ -1008,10 +1008,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .rec-card--featured {
   border-color: var(--accent);
   box-shadow: var(--glow-accent);
+}
+/* 모든 카드가 접힌다 — 측정 정보 줄 (.card-release-meta, flex-basis 100%) 이 접히지 않는 줄에서 제목 칸을 0 px 로
+   눌러 2위부터 제목 · 순위 · badge 가 서로 겹쳤다. 예전에는 1위 (featured) 만 접혔다 (2026-10-02 release audit P-1). */
+.rec-card {
   flex-wrap: wrap;
   align-items: flex-start;
 }
-.rec-card--featured /* 순위 원 (cards.js _rankBadge) — 1위만 금빛 */
+/* 순위 원 (cards.js _rankBadge) — 1위만 금빛. 주석이 선택자 사이에 끼어 `.rec-card--featured .rank-disc` 가 되어
+   2위부터는 원이 없었다 (P-1). */
 .rank-disc { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
   font-size: var(--fs-md); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-secondary);
   background: color-mix(in srgb, var(--text-primary) 8%, transparent); }
@@ -1023,7 +1028,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .btn-methodology-icon .dx-ico { width: 20px; height: 20px; }
 .methodology-disclaimer-icon .dx-ico { width: 18px; height: 18px; }
 .card-rank { font-size: var(--fs-4xl); width: 48px; }
-.rec-card--featured .card-header h3 { white-space: normal; }
+.rec-card .card-header h3 { white-space: normal; }
 .card-badges {
   display: flex;
   flex-wrap: wrap;

@@ -5,7 +5,9 @@
    tab as values populated (--→numbers), the MOCK badge toggled, or a module's
    font fallback differed. A fixed width pins the outer box regardless of host CSS
    or content; slightly-long values just fit/wrap instead of widening it. */
-.hw-float{box-sizing:border-box;position:fixed;bottom:20px;right:20px;z-index:9000;
+/* 왼쪽 아래 · 접힌 채로 시작 — 오른쪽 아래는 채팅 버튼 자리이고, 펼친 위젯 (≈210×340) 이 버튼 · 표 · Run 단추를
+   가렸다 (2026-10-02 release audit M-1 · A-11 · L-23). 펼침/접힘과 끌어 놓은 자리는 기억한다. */
+.hw-float{box-sizing:border-box;position:fixed;bottom:20px;left:20px;z-index:9000;
   background:var(--surface-overlay);backdrop-filter:saturate(1.8) blur(20px);
   border:1px solid var(--border-subtle);border-radius:12px;
   padding:10px 14px;box-shadow:var(--shadow);
@@ -14,6 +16,7 @@
 .hw-float *{box-sizing:border-box}
 .hw-float.dragging{opacity:.85;transition:none;box-shadow:0 8px 32px rgba(0,0,0,.5)}
 .hw-float.minimized .hw-float-body{display:none}
+.hw-float.minimized{width:auto}
 .hw-float-header{display:flex;justify-content:space-between;align-items:center;
   cursor:grab;touch-action:none;padding:0;gap:8px}
 .hw-float-header:active{cursor:grabbing}
@@ -41,10 +44,10 @@
 .hf-v.warn{color:var(--status-warn)}.hf-v.crit{color:var(--status-error)}.hf-v.ok{color:var(--status-ok)}
 .hf-mock-badge{display:inline-block;margin-left:5px;padding:0 4px;border-radius:3px;background:var(--status-warn);color:#1a1a1a;font-size:8px;font-weight:700;letter-spacing:.4px;vertical-align:middle}
 </style>
-<div class="hw-float" id="hw-float">
+<div class="hw-float minimized" id="hw-float">
   <div class="hw-float-header" id="hw-float-drag">
     <span class="hw-float-title"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#menu"></use></svg> <span data-i18n="NPU Monitor">NPU Monitor</span></span>
-    <button class="hw-float-toggle" aria-label="Minimize" data-i18n-aria-label="Minimize" onclick="document.getElementById('hw-float').classList.toggle('minimized')"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chevd"></use></svg></button>
+    <button class="hw-float-toggle" aria-label="Minimize" data-i18n-aria-label="Minimize" onclick="_hwFloatToggle()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#chevd"></use></svg></button>
   </div>
   <div class="hw-float-body">
     <div id="hf-npu-selector" class="hw-npu-selector" hidden></div>
@@ -75,6 +78,13 @@
   /* ── Widget self-contained JS ── */
   var _hf = document.getElementById('hw-float');
   if (!_hf) return;
+  /* 펼침/접힘을 기억한다 — 처음에는 접힌 채 (M-1). 'hw-float-open' = '1' 이면 펼친다. */
+  var _OPEN_KEY = 'hw-float-open';
+  try { if (localStorage.getItem(_OPEN_KEY) === '1') _hf.classList.remove('minimized'); } catch (e) {}
+  window._hwFloatToggle = function () {
+    var minimized = _hf.classList.toggle('minimized');
+    try { localStorage.setItem(_OPEN_KEY, minimized ? '0' : '1'); } catch (e) {}
+  };
   var _drag = {active:false, ox:0, oy:0};
   var _sparkData = [], _sparkMode = 0;
   var _MODES = ['temp','volt','clock','ctemp','cpu','mem','dram','util'];
