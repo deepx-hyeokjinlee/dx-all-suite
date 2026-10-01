@@ -19,6 +19,7 @@ from dx_app.core.config import (DX_APP_ROOT, CPP_DIR, PY_DIR, BUILD_DIR, ASSETS_
                     SAMPLE_DIR, OUTPUTS_DIR, SCRIPTS_DIR, CAT_IMAGE, CAT_VIDEO,
                     _RUNTIME_PYTHON, _RUNTIME_PYTHONPATH, resolve_model_path)
 from shared.runtime import ld_library_path
+from shared import dxrt
 from shared import debug_log
 from dx_app.core.dx_app_security import resolve_existing_file
 from dx_app.core.performance import _parse_perf, _cvt_video
@@ -116,8 +117,7 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
     else:
         mp = resolve_model_path(model_file, DX_APP_ROOT)
         if not mp.exists(): return _err("model_not_found", f"Model file not found: {model_file}")
-        from shared import dxrt as _dxrt
-        _need = _dxrt.needs_for_file(mp)
+        _need = dxrt.needs_for_file(mp)
         if _need:
             return _err("needs_dxrt", f"This model needs DX-RT {_need} or later (.dxnn container v9) — "
                         f"the installed DX-RT reads up to v8.", needs_dxrt=_need)
@@ -166,7 +166,7 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
         tmp_config = tempfile.mktemp(suffix=".json", dir=_TMP)
         Path(tmp_config).write_text(json.dumps(merged_cfg))
     _ld = ld_library_path()
-    env = {**os.environ, "QT_QPA_PLATFORM": "offscreen", "LD_LIBRARY_PATH": _ld}
+    env = dxrt.run_env({**os.environ, "QT_QPA_PLATFORM": "offscreen", "LD_LIBRARY_PATH": _ld})
     if res_img:
         env["DXAPP_SAVE_IMAGE"] = res_img
     # dx_engine lives on PYTHONPATH (not pip-installed); the python_example subprocess needs it.

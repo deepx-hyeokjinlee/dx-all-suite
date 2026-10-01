@@ -61,3 +61,12 @@ def download_urls(url: str) -> list:
 
 def is_v9_only(url: str) -> bool:
     return bool(url) and "/2_5_0/" in url
+
+
+def run_env(base: dict) -> dict:
+    """dx_app 실행 env. graph 일부가 CPU task 인 model (RT-DETR r18 등) 은 그 task 가 thread 하나면 async 도
+    막힌다 — DX-RT 가 권하는 DXRT_DYNAMIC_CPU_THREAD=ON (C++ async 4.2 → 9.3 FPS). 이미 정한 값은 둔다.
+    계약: tests/dx_app/test_dxrt_cpu_thread.py"""
+    env = dict(base)
+    env.setdefault("DXRT_DYNAMIC_CPU_THREAD", "ON")
+    return env

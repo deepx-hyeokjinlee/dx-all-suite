@@ -13,6 +13,7 @@ from pathlib import Path
 from dx_app.core import config
 from dx_app.core.config import DX_APP_ROOT, BUILD_DIR, resolve_model_path
 from shared.runtime import ld_library_path
+from shared import dxrt
 from dx_app.core.performance import _parse_perf
 from dx_app.core.inference_exec import _err, _TMP
 from dx_app.core.camera import _start_cam_mux, _stop_cam_mux, _ensure_xvfb, _XVFB_BASE, _UDP_BASE_PORT
@@ -109,7 +110,7 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
     _display = f":{_XVFB_BASE + slot_idx}"
     _loop = 999999  # effectively infinite until SIGTERM
     _ld = ld_library_path()
-    env = {**os.environ, "DISPLAY": _display, "LD_LIBRARY_PATH": _ld}
+    env = dxrt.run_env({**os.environ, "DISPLAY": _display, "LD_LIBRARY_PATH": _ld})
     env.pop("QT_QPA_PLATFORM", None)  # allow real X11 rendering
 
     inf = "-v"
