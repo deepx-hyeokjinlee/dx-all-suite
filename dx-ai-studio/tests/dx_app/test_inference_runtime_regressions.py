@@ -455,3 +455,37 @@ def test_base64_upload_uses_atomic_tempfile_creation():
     source = (ROOT / "dx_app" / "core" / "inference.py").read_text(encoding="utf-8")
     assert "tempfile.mkstemp(prefix=\"dxapp_upload_\"" in source
     assert "tempfile.mktemp(prefix=\"dxapp_upload_\"" not in source
+
+
+def test_an_image_run_whose_runner_reported_an_error_is_not_shown_as_success(tmp_path, monkeypatch):
+    """C++ runner 가 `[DXAPP] [ERROR] Failed to align output tensors.` 를 찍고도 exit 0 으로 끝나면 결과 그림은
+    쓰레기다 (상자 수백 개 · 872950%) — 성공으로 보이지 않게 오류로 올린다 (2026-10-02 release audit Z-1)."""
+    inference, _ = _prepare_dx_app_runtime(tmp_path, monkeypatch)
+    (inference.DX_APP_ROOT / "input.jpg").write_bytes(b"input")
+
+    class FakeProc:
+        returncode = 0
+
+        def __init__(self, _cmd, stdout=None, **_kwargs):
+            Path(_kwargs["env"]["DXAPP_SAVE_IMAGE"]).write_bytes(b"result")
+            stdout.write("[INFO] loading\n\x1b[31m[DXAPP] [ERROR] Failed to align output tensors.\x1b[0m\n")
+            stdout.flush()
+
+        def wait(self, timeout=None):
+            return 0
+
+    monkeypatch.setattr(inference.subprocess, "Popen", FakeProc)
+    result = inference.run_inference("demo", "object_detection", "model.dxnn", input_type="image",
+                                     image_path="input.jpg", timeout=1, save_output=False)
+    assert result["error_key"] == "runner_error"
+    assert result["error"] == "Failed to align output tensors."
+    assert "\x1b" not in result["error"]
+
+
+def test_a_clean_image_run_carries_no_runner_error(tmp_path, monkeypatch):
+    inference, _ = _prepare_dx_app_runtime(tmp_path, monkeypatch)
+    (inference.DX_APP_ROOT / "input.jpg").write_bytes(b"input")
+    _fake_successful_image_run(monkeypatch, inference)
+    result = inference.run_inference("demo", "object_detection", "model.dxnn", input_type="image",
+                                     image_path="input.jpg", timeout=1, save_output=False)
+    assert "error" not in result and "runner_errors" not in result

@@ -122,6 +122,11 @@ def _validate_inference_payload(data, live=False):
         data["category"] = _require_category(data.get("category", ""))
         _require_model_name(data.get("model_name", ""))
         _require_model_file(data.get("model_file", ""))
+        # 부르는 쪽 이름 (Model Zoo 카탈로그 id 등) → 이 dx_app 의 예제 이름. 없으면 남의 binary 를 빌린다 (release audit Z-1)
+        if not str(data["model_file"]).startswith("-"):
+            from shared import dx_app_layout as _layout
+            data["model_name"] = _layout.example_name(DX_APP_ROOT, data["category"], data["model_name"],
+                                                      data["model_file"])
         lang = data.get("lang", "cpp")
         if lang not in _RUN_LANGS:
             raise ValueError(f"Invalid lang: {lang!r}")

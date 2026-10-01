@@ -125,6 +125,34 @@ def find(root, task: str, name: str) -> Optional[Example]:
     return ex
 
 
+def _registry_variants(root: str) -> dict:
+    reg = Path(root) / "config" / "model_registry.json"
+    try:
+        data = json.loads(reg.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    rows = data if isinstance(data, list) else list(data.values()) if isinstance(data, dict) else []
+    return {r["model_name"]: r["variant"] for r in rows
+            if isinstance(r, dict) and r.get("model_name") and r.get("variant")}
+
+
+def example_name(root, task: str, name: str, model_file: str = "") -> str:
+    """부르는 쪽이 쓴 이름 → 이 tree 의 예제 이름. 모르면 받은 이름 그대로.
+
+    Model Zoo 는 카탈로그 id (`rtdetr_r18vd_6x_640x640`) 로, 옛 client 는 registry 의 model_name (`yolo26n`) 으로
+    부른다. per-model 예제 이름은 .dxnn stem 이다. 순서: 받은 이름 → model_file 의 stem → registry 의 variant.
+    (계약: tests/dx_app/test_layout.py — 못 찾으면 dx_app 이 같은 task 의 남의 binary 를 빌렸다)"""
+    if find(root, task, name):
+        return name
+    stem = Path(model_file).name[: -len(".dxnn")] if str(model_file).endswith(".dxnn") else ""
+    if stem and stem != name and find(root, task, stem):
+        return stem
+    variant = _registry_variants(str(root)).get(name)
+    if variant and find(root, task, variant):
+        return variant
+    return name
+
+
 def example_dir(root, lang: str, task: str, name: str) -> Path:
     """예제 폴더. 모르는 예제는 legacy 모양의 경로를 돌려준다 (없는 경로 — 호출부의 '없음' 판정이 그대로)."""
     ex = find(root, task, name)

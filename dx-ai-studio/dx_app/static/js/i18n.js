@@ -2003,6 +2003,11 @@ window._DX_I18N_DICT = {
     'zh-CN': '仅支持静态图像 — 无法实时运行', 'zh-TW': '僅支援靜態影像 — 無法即時執行',
     es: 'Solo admite imágenes fijas',
   },
+  'runner_error': {
+    ko: '예제가 오류를 보고했습니다 — 결과가 정확하지 않습니다', ja: 'サンプルがエラーを報告したため結果は信頼できません',
+    'zh-CN': '示例报告了错误，结果不可信', 'zh-TW': '範例回報了錯誤，結果不可信',
+    es: 'El ejemplo informó de un error; el resultado no es fiable',
+  },
   'live_deps_missing': {
     ko: '라이브 실행에 필요한 패키지가 없습니다', ja: 'ライブ実行に必要なパッケージがありません',
     'zh-CN': '缺少实时运行所需的软件包', 'zh-TW': '缺少即時執行所需的套件',
