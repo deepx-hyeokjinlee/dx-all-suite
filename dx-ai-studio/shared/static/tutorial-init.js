@@ -94,6 +94,9 @@
           // Launcher, first load with the tutorial on → auto-run the walkthrough. It opens on the
           // ask box (spec 2026-09-23 §9); the "you can turn this off" switch is its tour-row step.
           // Afterwards (and for module tutorials) just open the table of contents.
+          // launcher 의 투어 · 목차는 홈에서만 — 모듈 · SDK Library · About 로 바로 들어왔으면 그 화면의 튜토리얼이 맡는다.
+          // 예전에는 'Launcher Home' 목차가 모듈 목차 위에 같이 열렸다 (2026-10-02 release audit X-3 / A-21 / L-3).
+          if (engine.appId === 'launcher' && window.DXLauncher && window.DXLauncher.currentApp) return;
           if (engine.appId === 'launcher' &&
               !localStorage.getItem('dx-tutorial-launcher-autostarted')) {
             try { localStorage.setItem('dx-tutorial-launcher-autostarted', '1'); } catch (e) {}

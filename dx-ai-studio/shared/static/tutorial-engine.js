@@ -64,6 +64,9 @@ class DXTutorialEngine {
   constructor(opts = {}) {
     this.options      = opts || {};
     this.appId        = opts.appId || 'app';
+    /* 버튼은 자기 engine 을 부른다 — 한 문서에 engine 이 둘 (launcher · SDK Library) 이면 window._dxTutorial 은 나중에
+       만든 쪽이라, SDK 목차의 'Start from Beginning' 이 launcher 투어를 시작했다 (2026-10-02 release audit L-3). */
+    if (typeof window !== 'undefined') (window._dxTutorials = window._dxTutorials || {})[this.appId] = this;
     this.sections     = opts.sections || [];
     this.getLang      = opts.getLang || (() => localStorage.getItem('dx-lang') || 'en');
     this.onNav        = opts.onNav || (() => {});
@@ -360,7 +363,7 @@ class DXTutorialEngine {
 
     let html = '<div class="dxt-toc-header">' +
       '<div class="dxt-toc-title">' + _dxtIcon('graduation') + ' ' + this._tl('Tutorial Guide') + '</div>' +
-      '<button class="dxt-toc-close" aria-label="Close" onclick="window._dxTutorial.hideTOC()">' + _dxtIcon('x') + '</button>' +
+      '<button class="dxt-toc-close" aria-label="Close" onclick="' + this._ref() + '.hideTOC()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-toc-progress">' +
       '<div class="dxt-toc-pbar"><div class="dxt-toc-pfill" style="width:' + pct + '%"></div></div>' +
@@ -373,7 +376,7 @@ class DXTutorialEngine {
       var stepsTotal = sec.steps.length;
       var hasPrereq = !!this._checkPrereq(sec);
       html += '<div class="dxt-toc-item ' + (done ? 'done' : '') + ' ' + (hasPrereq ? 'has-prereq' : '') + '"' +
-        ' onclick="window._dxTutorial.startSection(\'' + sec.id + '\')">' +
+        ' onclick="' + this._ref() + '.startSection(\'' + sec.id + '\')">' +
         '<span class="dxt-toc-icon">' + _dxtSectionIcon(sec.icon) + '</span>' +
         '<div class="dxt-toc-info">' +
         '<div class="dxt-toc-name">' + this._t(sec.title) + '</div>' +
@@ -385,11 +388,15 @@ class DXTutorialEngine {
     }.bind(this));
 
     html += '</div><div class="dxt-toc-footer">' +
-      '<button class="dxt-toc-btn dxt-toc-btn-start" onclick="window._dxTutorial.startAll()">' + _dxtIcon('play') + ' ' + this._tl('Start from Beginning') + '</button>' +
-      '<button class="dxt-toc-btn dxt-toc-btn-reset" onclick="window._dxTutorial._confirmReset()">' + _dxtIcon('refresh') + ' ' + this._tl('Reset') + '</button>' +
+      '<button class="dxt-toc-btn dxt-toc-btn-start" onclick="' + this._ref() + '.startAll()">' + _dxtIcon('play') + ' ' + this._tl('Start from Beginning') + '</button>' +
+      '<button class="dxt-toc-btn dxt-toc-btn-reset" onclick="' + this._ref() + '._confirmReset()">' + _dxtIcon('refresh') + ' ' + this._tl('Reset') + '</button>' +
       '</div>';
 
     this._tocEl.innerHTML = html;
+  }
+
+  _ref() {
+    return "window._dxTutorials['" + String(this.appId).replace(/[^\w-]/g, '') + "']";
   }
 
   startAll() {
@@ -569,14 +576,14 @@ class DXTutorialEngine {
       '<div class="dxt-tip-header">' +
       '<span class="dxt-tip-counter">' + (this._curStep + 1) + ' / ' + steps.length + '</span>' +
       '<span class="dxt-tip-section">' + this._t(this._curSection.title) + '</span>' +
-      '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
+      '<button class="dxt-tip-close" aria-label="Close" onclick="' + this._ref() + '.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
       '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
-      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="' + this._ref() + '.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-skip" onclick="' + this._ref() + '.stop()">' + this._tl('Skip') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-next" onclick="' + this._ref() + '.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
       '</div>';
     this._tooltip.classList.add('active');
     this._positionTooltip(target);
@@ -593,14 +600,14 @@ class DXTutorialEngine {
       '<div class="dxt-tip-header">' +
       '<span class="dxt-tip-counter">' + (this._curStep + 1) + ' / ' + steps.length + '</span>' +
       '<span class="dxt-tip-section">' + this._t(this._curSection.title) + '</span>' +
-      '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
+      '<button class="dxt-tip-close" aria-label="Close" onclick="' + this._ref() + '.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
       '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
-      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="' + this._ref() + '.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-skip" onclick="' + this._ref() + '.stop()">' + this._tl('Skip') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-next" onclick="' + this._ref() + '.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
       '</div>';
     this._tooltip.classList.add('active');
     this._tooltip.style.position = 'fixed';

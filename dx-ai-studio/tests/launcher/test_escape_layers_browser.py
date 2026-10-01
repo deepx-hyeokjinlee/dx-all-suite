@@ -64,13 +64,16 @@ def test_escape_in_the_chat_closes_the_chat_and_stays_in_the_view(port, browser)
 
 
 def test_escape_with_the_tutorial_guide_open_closes_the_guide_first(port, browser):
-    ctx, page = _open(browser, port, "zoo")
+    # 모듈 화면에서는 launcher toolbar 가 숨고 모듈이 iframe 안에 자기 toolbar 를 가진다 — launcher 자신의 화면
+    # (SDK Library) 에서 본다
+    ctx, page = _open(browser, port, "sdk-library")
     try:
+        page.wait_for_function("!!(window._dxTutorials && window._dxTutorials.sdk_library)", timeout=15000)
         page.evaluate("document.getElementById('dxToolbarTutorial').click()")
         page.wait_for_selector(".dxt-toc.open", timeout=10000)
         page.keyboard.press("Escape")
         page.wait_for_function("!document.querySelector('.dxt-toc.open')")
-        assert page.evaluate("DXLauncher.currentApp") == "zoo"
+        assert page.evaluate("DXLauncher.currentApp") == "sdk-library"
     finally:
         ctx.close()
 
@@ -109,5 +112,39 @@ def test_opening_the_sdk_library_does_not_add_a_second_chat_button(port, browser
         page.evaluate("DXLauncher.goHome()")
         page.evaluate("DXLauncher.showSdkLibrary()")
         assert page.evaluate("document.querySelectorAll('.dx-chat-fab').length") == 1
+    finally:
+        ctx.close()
+
+
+def _deep(browser, port, path):
+    ctx = browser.new_context(viewport={"width": 1440, "height": 900})
+    ctx.add_init_script("try{sessionStorage.setItem('dx-splash-seen','1');localStorage.setItem('dx-splash-seen','1');"
+                        "localStorage.setItem('dx-tutorial-launcher-autostarted','1');}catch(e){}")   # tutorial mode ON
+    page = ctx.new_page()
+    page.goto(f"http://127.0.0.1:{port}{path}", wait_until="domcontentloaded", timeout=60000)
+    page.wait_for_function("!!(window.DXLauncher && DXLauncher._studioReadyResolved)", timeout=30000)
+    page.wait_for_timeout(2500)   # 자동 목차는 500 ms 뒤 + 준비 대기
+    return ctx, page
+
+
+def test_a_deep_link_into_a_module_does_not_open_the_launcher_guide_over_it(port, browser):
+    """모듈 URL 로 바로 들어오면 'Launcher Home' 목차가 모듈 목차 위에 같이 열렸다 (release audit X-3 / A-21)."""
+    ctx, page = _deep(browser, port, "/zoo")
+    try:
+        assert page.evaluate("DXLauncher.currentApp") == "zoo"
+        assert page.locator(".dxt-toc.open").count() == 0
+    finally:
+        ctx.close()
+
+
+def test_the_sdk_library_guide_starts_the_sdk_tour_not_the_home_tour(port, browser):
+    """SDK Library 로 바로 들어오면 목차가 둘 열리고, SDK 목차의 Start from Beginning 이 홈 투어를 시작했다 (L-3)."""
+    ctx, page = _deep(browser, port, "/sdk-library")
+    try:
+        opened = page.locator(".dxt-toc.open")
+        assert opened.count() <= 1
+        if opened.count() == 1:
+            onclick = opened.locator(".dxt-toc-btn-start").get_attribute("onclick")
+            assert "sdk_library" in onclick, onclick
     finally:
         ctx.close()
