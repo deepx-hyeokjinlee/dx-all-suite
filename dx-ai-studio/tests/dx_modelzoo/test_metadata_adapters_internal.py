@@ -223,3 +223,14 @@ class TestAdaptersCompatibility:
         assert len(result) == 1
         cid = next(iter(result))
         assert result[cid]["display.name"] == "CompatModel"
+
+
+def test_the_display_name_column_is_the_name_people_see():
+    """publish page 는 'Name' (DenseNet121-1, 내부 이름) 과 'Display Name' (DenseNet-121) 을 따로 준다 —
+    Model Zoo · App > Models 가 내부 이름을 보이던 것 (2026-10-01)."""
+    from dx_modelzoo.metadata.adapters import parse_internal_table_html
+
+    html = """<table><thead><tr><th>Task</th><th>Name</th><th>Display Name</th><th>Input Resolution</th></tr></thead>
+    <tbody><tr><td>Image Classification</td><td>DenseNet121-1</td><td>DenseNet-121</td><td>224x224x3</td></tr></tbody></table>"""
+    models = parse_internal_table_html(html)["models"]
+    assert models and all(m["display.name"] == "DenseNet-121" for m in models.values()), models

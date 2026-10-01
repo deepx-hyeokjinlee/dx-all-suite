@@ -291,10 +291,60 @@ def test_models_only_on_the_publish_page_are_listed(monkeypatch):
          "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/patchcore_224x224.dxnn"}},
          "legal": {"source_url": "No Reference"}},
         {"id": "mystery_x", "display": {"name": "X", "task": "Not A Task"}}]})
-    models = {m["id"]: m for m in catalog.reload_catalog()["models"]}
+    try:
+        models = {m["id"]: m for m in catalog.reload_catalog()["models"]}
+    finally:
+        monkeypatch.undo()
+        catalog.reload_catalog()   # 가짜 catalog 를 cache 에 남기지 않는다 — 뒤의 test 가 그것을 읽었다
     pc = models["patchcore_224x224"]
     assert pc["category"] == "anomaly_detection" and pc["publish_only"] is True
     assert pc["model_file"] == "assets/models/patchcore_224x224.dxnn"
     assert pc["requires_dxrt"] == "3.5.0"
     assert pc["legal"]["source_url"] == "", "page 의 'No Reference' 를 출처처럼 두지 않는다"
     assert "mystery_x" not in models, "모르는 task 는 목록에 넣지 않는다"
+
+
+def test_a_per_model_test_models_conf_lists_each_model_once(tmp_path, monkeypatch):
+    """per-model dx_app (teammate 8d0b748) 의 test_models.conf 는 family<TAB>task<TAB>model_file<TAB>variant —
+    1 열 (family) 을 id 로 읽으면 efficientad 가 세 번, yolo26_depth 가 다섯 번 나온다. variant (= .dxnn 이름) 가
+    model 이고, Model Zoo 는 같은 파일의 기존 id (yolo26n) 와 옛 task key 를 쓴다."""
+    from dx_modelzoo.core import catalog
+    from shared.catalog_sources import parse_test_models_conf
+
+    conf = tmp_path / "test_models.conf"
+    conf.write_text("# Format: family<TAB>task<TAB>model_file<TAB>variant\n"
+                    "yolo26\tobject_detection\tassets/models/yolo26-n_640x640.dxnn\tyolo26-n_640x640\n"
+                    "efficientad\tanomaly_detection\tassets/models/efficientad-m-student_256x256.dxnn\tefficientad-m-student_256x256\n"
+                    "efficientad\tanomaly_detection\tassets/models/efficientad-m-teacher_256x256.dxnn\tefficientad-m-teacher_256x256\n"
+                    "resnet\timage_classification\tassets/models/resnet50_224x224.dxnn\tresnet50_224x224\n")
+    rows = parse_test_models_conf(conf)
+    assert [r["id"] for r in rows] == ["yolo26-n_640x640", "efficientad-m-student_256x256",
+                                       "efficientad-m-teacher_256x256", "resnet50_224x224"]
+    assert rows[1]["family"] == "efficientad"
+
+    gen = {"schema_version": "2.0", "models": [
+        {"id": "yolo26n", "display": {"task": "object_detection"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-n_640x640.dxnn"}}},
+        {"id": "efficientad_m_student_256x256", "display": {"task": "anomaly_detection"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/efficientad-m-student_256x256.dxnn"}}}]}
+    ids = catalog.conf_ids_from_generated(rows, gen)
+    assert [r["id"] for r in ids] == ["yolo26n", "efficientad_m_student_256x256",
+                                      "efficientad-m-teacher_256x256", "resnet50_224x224"]
+    assert ids[3]["category"] == "classification", "Model Zoo 는 짝이 있는 task 를 옛 key 로 묶는다"
+
+
+def test_a_legacy_row_outside_the_curated_catalog_takes_the_id_of_its_file():
+    """main dx_app 의 3 열 줄 (yolo26_depth_n) 과 per-model dx_app 의 같은 model 이 다른 id 면 그림을 찾지 못한다.
+    curated catalog 의 id 는 그대로 (DeiT 처럼 자기 자료가 있다)."""
+    from dx_modelzoo.core import catalog
+
+    gen = {"models": [{"id": "yolo26_depth_n_768x768", "artifacts": {"qlite_dxnn": {
+        "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/yolo26-depth-n_768x768.dxnn"}}},
+        {"id": "deitbase384", "artifacts": {"qlite_dxnn": {
+            "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/deit-b_384x384.dxnn"}}}]}
+    rows = [{"id": "yolo26_depth_n", "name": "yolo26_depth_n", "category": "depth_estimation",
+             "model_file": "assets/models/yolo26-depth-n_768x768.dxnn"},
+            {"id": "deit_base384_distilled", "name": "deit_base384_distilled", "category": "classification",
+             "model_file": "assets/models/deit-b_384x384.dxnn"}]
+    out = catalog.conf_ids_from_generated(rows, gen, curated_ids=["deit_base384_distilled"])
+    assert [r["id"] for r in out] == ["yolo26_depth_n_768x768", "deit_base384_distilled"]

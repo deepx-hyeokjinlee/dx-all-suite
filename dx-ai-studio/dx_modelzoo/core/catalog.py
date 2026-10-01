@@ -223,6 +223,50 @@ def parse_test_models_conf(conf_path=None):
     return _shared_parse_test_models_conf(conf_path)
 
 
+def conf_ids_from_generated(conf_models, generated, curated_ids=(), unpublished=()):
+    """per-model test_models.conf 의 줄 (id = variant = .dxnn 이름) 을 Model Zoo 의 id 로 — 같은 .dxnn 을 가리키는
+    generated catalog 항목의 id (curated id 또는 stem key). task 는 짝이 있으면 옛 key (Model Zoo 의 무리와 같이)."""
+    from shared.tasks import legacy
+
+    def key(name):   # 파일 이름의 stem → 비교용 key (확장자 · 대소문자 · 구분 기호를 접는다)
+        name = re.sub(r"\.(dxnn|onnx|json)$", "", str(name or "").rsplit("/", 1)[-1], flags=re.I)
+        return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+
+    by_key = {}
+    for gm in (generated or {}).get("models", []):
+        gid = gm.get("id")
+        for art in (gm.get("artifacts") or {}).values():      # .dxnn 이 없고 onnx 만 있는 model 도 (BEiT …)
+            url = (art or {}).get("remote_url") or ""
+            if url.endswith((".dxnn", ".onnx")):
+                by_key.setdefault(key(url), gid)
+        by_key.setdefault(key(gid), gid)
+    for cid in curated_ids:                                    # SCRFD500M_PPU.dxnn ↔ scrfd500m_ppu (page 에 없다)
+        by_key.setdefault(key(cid), cid)
+    curated = set(curated_ids)
+    out = []
+    for cm in conf_models:
+        if not cm.get("variant"):
+            # main 의 3 열 줄: curated catalog 에 없는 id (yolo26_depth_n …) 는 같은 .dxnn 의 id 로 — dx_app 판에 따라
+            # id 가 달라지면 그림 (thumbnails/<id>.jpg) 을 찾지 못한다
+            mid = by_key.get(key(cm.get("model_file"))) if cm["id"] not in curated else None
+            out.append(dict(cm, id=mid, name=mid) if mid else cm)
+            continue
+        if cm["variant"] in unpublished:                       # 아직 받을 수 없는 model (registry published:false)
+            continue
+        mid = by_key.get(key(cm.get("model_file"))) or cm["id"]
+        out.append(dict(cm, id=mid, name=mid if mid != cm["id"] else cm["name"], category=legacy(cm["category"])))
+    return out
+
+
+def _unpublished_variants():
+    """per-model dx_app registry 의 published:false (지금은 vit-l-p16_512x512_swag 하나)."""
+    try:
+        rows = json.loads((DX_APP_ROOT / "config" / "model_registry.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return set()
+    return {r.get("variant") for r in rows if isinstance(r, dict) and r.get("variant") and r.get("published") is False}
+
+
 def load_catalog_json(catalog_path=None):
     """model_catalog.json 로드. 없으면 빈 구조 반환."""
     catalog_path = Path(catalog_path or CATALOG_FILE)
@@ -652,10 +696,13 @@ def reload_catalog():
     conf_models = parse_test_models_conf()
     if not conf_models:
         conf_models = _catalog_models_as_conf(catalog_data)
+    generated = load_generated_catalog()
+    conf_models = conf_ids_from_generated(conf_models, generated,
+                                          curated_ids=[m.get("id") for m in catalog_data.get("models", [])],
+                                          unpublished=_unpublished_variants())
     merged = merge_conf_and_catalog(conf_models, catalog_data)
 
     # 생성된 카탈로그(schema 2.0) 로드 및 enriched 필드 병합
-    generated = load_generated_catalog()
     if generated is not None:
         gen_map = {m["id"]: m for m in generated.get("models", [])}
         metadata_source = _metadata_source_from_generated(generated)

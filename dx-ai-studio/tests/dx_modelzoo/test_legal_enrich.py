@@ -58,12 +58,14 @@ def test_license_text_is_canonical_reference():
 #
 # test_all_models_have_complete_legal_block 은 "비어 있지 않다" 만 본다. 다음 동기화가
 # 값을 비우거나 엉뚱한 저장소를 가리켜도 그 테스트는 통과하므로, 실제 값을 여기 고정한다.
+# id 는 publish page 의 .dxnn 이름 (yolo26-depth-n_768x768) — main 과 per-model dx_app 이 같은 id 를 쓰게
+# (spec 2026-10-01 dx_app per-model layout). 예전 id 는 yolo26_depth_n 이었다.
 _YOLO26_DEPTH_IDS = (
-    "yolo26_depth_n",
-    "yolo26_depth_s",
-    "yolo26_depth_m",
-    "yolo26_depth_l",
-    "yolo26_depth_x",
+    "yolo26_depth_n_768x768",
+    "yolo26_depth_s_768x768",
+    "yolo26_depth_m_768x768",
+    "yolo26_depth_l_768x768",
+    "yolo26_depth_x_768x768",
 )
 
 

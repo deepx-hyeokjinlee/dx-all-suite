@@ -34,6 +34,13 @@ def parse_test_models_conf(conf_path):
         model_name = parts[0].strip()
         category = parts[1].strip()
         model_file = parts[2].strip()
+        # per-model dx_app (teammate 8d0b748): family<TAB>task<TAB>model_file<TAB>variant — 1 열은 family (여러 줄이
+        # 같다) 이고 model 은 4 열의 variant (= .dxnn 이름) 다 (spec 2026-10-01 dx_app per-model layout).
+        variant = parts[3].strip() if len(parts) > 3 else ""
+        if variant:
+            models.append({"id": variant, "name": variant, "category": category, "model_file": model_file,
+                           "family": model_name, "variant": variant})
+            continue
         models.append({
             "id": model_name,
             "name": model_name,

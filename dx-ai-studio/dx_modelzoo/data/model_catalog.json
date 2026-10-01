@@ -1482,7 +1482,7 @@
         "zh-TW": "yolov5m_6_1 是針對 DEEPX NPU 最佳化的物件偵測模型。"
       },
       "specification": {
-        "input_resolution": "640x640x3",
+        "input_resolution": "1280x1280x3",
         "ops": "",
         "params": "",
         "dataset": "COCO",
@@ -4247,7 +4247,7 @@
         "zh-TW": "yolov5m6 是針對 DEEPX NPU 最佳化的物件偵測模型。"
       },
       "specification": {
-        "input_resolution": "1280x1280x3",
+        "input_resolution": "640x640x3",
         "ops": "",
         "params": "",
         "dataset": "COCO",

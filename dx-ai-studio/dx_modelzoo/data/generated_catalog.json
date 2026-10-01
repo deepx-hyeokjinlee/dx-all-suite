@@ -1,7 +1,7 @@
 {
   "schema_version": "2.0",
   "source_profile": "internal",
-  "generated_at": "2026-09-30T23:14:47.541708+00:00",
+  "generated_at": "2026-10-01T01:01:52.099973+00:00",
   "models": [
     {
       "id": "3ddfa_v2_mobilnet0_5_120x120",
@@ -1177,7 +1177,7 @@
     {
       "id": "beit_l_p16_384x384",
       "display": {
-        "name": "BeitLargePatch16-2",
+        "name": "BEiT-Large/16 (384x384)",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -2701,7 +2701,7 @@
     {
       "id": "clip_img_resnet50_224x224_openai",
       "display": {
-        "name": "clip_resnet50_image_encoder_224x224-1",
+        "name": "CLIP ResNet-50 (OpenAI)",
         "task": "zero_shot_image_classification",
         "summary": {
           "en": "AI model for zero_shot_image_classification tasks."
@@ -2726,8 +2726,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -2808,7 +2808,7 @@
     {
       "id": "clip_img_vit_b16_quickgelu_224x224_metaclip_fullcc",
       "display": {
-        "name": "ViT-B-16-quickgelu-metaclip_fullcc-1",
+        "name": "CLIP ViT-B/16 QuickGELU (MetaCLIP FullCC)",
         "task": "zero_shot_image_classification",
         "summary": {
           "en": "AI model for zero_shot_image_classification tasks."
@@ -2833,8 +2833,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -2915,7 +2915,7 @@
     {
       "id": "clip_text_resnet50_77x512_openai",
       "display": {
-        "name": "clip_resnet50_text_encoder_77x512-1",
+        "name": "CLIP ResNet-50 Text Encoder (OpenAI)",
         "task": "image_retrieval",
         "summary": {
           "en": "AI model for image_retrieval tasks."
@@ -2940,8 +2940,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -4212,7 +4212,7 @@
     {
       "id": "dark_hrnet_w32_256x192",
       "display": {
-        "name": "dark_hrnet_w32_256x192-1",
+        "name": "dark_hrnet_w32_256x192",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -4237,8 +4237,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -4319,7 +4319,7 @@
     {
       "id": "ddrnet23_1024x2048",
       "display": {
-        "name": "DDRNet23-1",
+        "name": "DDRNet23",
         "task": "semantic_segmentation",
         "summary": {
           "en": "Semantic segmentation model for pixel-level classification."
@@ -4344,8 +4344,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -4426,7 +4426,7 @@
     {
       "id": "ddrnet23_slim_1024x2048",
       "display": {
-        "name": "DDRNet23Slim-1",
+        "name": "DDRNet23-Slim",
         "task": "semantic_segmentation",
         "summary": {
           "en": "Semantic segmentation model for pixel-level classification."
@@ -4451,8 +4451,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -9344,7 +9344,7 @@
     {
       "id": "efficientad_m_autoencoder_256x256",
       "display": {
-        "name": "efficientad-m-autoencoder_256x256-1",
+        "name": "EfficientAD-M Autoencoder",
         "task": "anomaly_detection",
         "summary": {
           "en": "AI model for anomaly_detection tasks."
@@ -9369,8 +9369,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -9451,7 +9451,7 @@
     {
       "id": "efficientad_m_student_256x256",
       "display": {
-        "name": "efficientad-m-student_256x256-1",
+        "name": "EfficientAD-M Student",
         "task": "anomaly_detection",
         "summary": {
           "en": "AI model for anomaly_detection tasks."
@@ -9476,8 +9476,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -9558,7 +9558,7 @@
     {
       "id": "efficientad_m_teacher_256x256",
       "display": {
-        "name": "efficientad-m-teacher_256x256-1",
+        "name": "EfficientAD-M Teacher",
         "task": "anomaly_detection",
         "summary": {
           "en": "AI model for anomaly_detection tasks."
@@ -9583,8 +9583,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -16406,7 +16406,7 @@
     {
       "id": "levit_128s_224x224",
       "display": {
-        "name": "LeViT128S-1",
+        "name": "LeViT-128S",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -16493,7 +16493,7 @@
     {
       "id": "mask_rtdetr_hgnetv2_h_6x_640x640",
       "display": {
-        "name": "mask_rtdetr_hgnetv2_h_6x_coco_640x640-1",
+        "name": "mask_rtdetr_hgnetv2_h_6x_coco",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -16518,8 +16518,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -16600,7 +16600,7 @@
     {
       "id": "mask_rtdetr_hgnetv2_l_6x_640x640",
       "display": {
-        "name": "mask_rtdetr_hgnetv2_l_6x_coco_640x640-1",
+        "name": "mask_rtdetr_hgnetv2_l_6x_coco",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -16625,8 +16625,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -16707,7 +16707,7 @@
     {
       "id": "mask_rtdetr_hgnetv2_m_6x_640x640",
       "display": {
-        "name": "mask_rtdetr_hgnetv2_m_6x_coco_640x640-1",
+        "name": "mask_rtdetr_hgnetv2_m_6x_coco",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -16732,8 +16732,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -16814,7 +16814,7 @@
     {
       "id": "mask_rtdetr_hgnetv2_s_6x_640x640",
       "display": {
-        "name": "mask_rtdetr_hgnetv2_s_6x_coco_640x640-1",
+        "name": "mask_rtdetr_hgnetv2_s_6x_coco",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -16839,8 +16839,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -16921,7 +16921,7 @@
     {
       "id": "mask_rtdetr_hgnetv2_x_6x_640x640",
       "display": {
-        "name": "mask_rtdetr_hgnetv2_x_6x_coco_640x640-1",
+        "name": "mask_rtdetr_hgnetv2_x_6x_coco",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -16946,8 +16946,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -19192,7 +19192,7 @@
     {
       "id": "patchcore_224x224",
       "display": {
-        "name": "patchcore_224x224-1",
+        "name": "PatchCore 224x224",
         "task": "anomaly_detection",
         "summary": {
           "en": "AI model for anomaly_detection tasks."
@@ -19217,8 +19217,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -19430,7 +19430,7 @@
     {
       "id": "pp_liteseg_stdc1_camvid_10k_960x720",
       "display": {
-        "name": "pp_liteseg_stdc1_camvid_960x720_10k-1",
+        "name": "pp_liteseg_stdc1_camvid_960x720_10k",
         "task": "semantic_segmentation",
         "summary": {
           "en": "Semantic segmentation model for pixel-level classification."
@@ -19452,8 +19452,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -19531,7 +19531,7 @@
     {
       "id": "pp_shituv1_mainbody_detection_640x640",
       "display": {
-        "name": "pp-shituv1_mainbody_detection_640x640-1",
+        "name": "PP-ShiTuV1_mainbody_detection",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -19556,8 +19556,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -19638,7 +19638,7 @@
     {
       "id": "pp_shituv2_feature_extraction_224x224",
       "display": {
-        "name": "pp-shituv2_feature_extraction_224x224-1",
+        "name": "PP-ShiTuV2_feature_extraction",
         "task": "visual_place_recognition",
         "summary": {
           "en": "AI model for visual_place_recognition tasks."
@@ -19663,8 +19663,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -19745,7 +19745,7 @@
     {
       "id": "pp_shituv2_mainbody_detection_640x640",
       "display": {
-        "name": "pp-shituv2_mainbody_detection_640x640-1",
+        "name": "PP-ShiTuV2_mainbody_detection",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -19770,8 +19770,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -19852,7 +19852,7 @@
     {
       "id": "pphgnet_base_224x224",
       "display": {
-        "name": "pphgnet_base_224x224-1",
+        "name": "PPHGNet_base",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -19877,8 +19877,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -19959,7 +19959,7 @@
     {
       "id": "pphgnet_small_224x224",
       "display": {
-        "name": "pphgnet_small_224x224-1",
+        "name": "PPHGNet_small",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -19984,8 +19984,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20066,7 +20066,7 @@
     {
       "id": "pphgnet_tiny_224x224",
       "display": {
-        "name": "pphgnet_tiny_224x224-1",
+        "name": "PPHGNet_tiny",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20091,8 +20091,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20173,7 +20173,7 @@
     {
       "id": "pphgnetv2_b0_224x224",
       "display": {
-        "name": "pphgnetv2_b0_224x224-1",
+        "name": "PPHGNetV2_B0",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20198,8 +20198,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20280,7 +20280,7 @@
     {
       "id": "pphgnetv2_b1_224x224",
       "display": {
-        "name": "pphgnetv2_b1_224x224-1",
+        "name": "PPHGNetV2_B1",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20305,8 +20305,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20387,7 +20387,7 @@
     {
       "id": "pphgnetv2_b2_224x224",
       "display": {
-        "name": "pphgnetv2_b2_224x224-1",
+        "name": "PPHGNetV2_B2",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20412,8 +20412,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20494,7 +20494,7 @@
     {
       "id": "pphgnetv2_b3_224x224",
       "display": {
-        "name": "pphgnetv2_b3_224x224-1",
+        "name": "PPHGNetV2_B3",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20519,8 +20519,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20601,7 +20601,7 @@
     {
       "id": "pphgnetv2_b4_224x224",
       "display": {
-        "name": "pphgnetv2_b4_224x224-1",
+        "name": "PPHGNetV2_B4",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20626,8 +20626,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20708,7 +20708,7 @@
     {
       "id": "pphgnetv2_b5_224x224",
       "display": {
-        "name": "pphgnetv2_b5_224x224-1",
+        "name": "PPHGNetV2_B5",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20733,8 +20733,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20815,7 +20815,7 @@
     {
       "id": "pphgnetv2_b6_224x224",
       "display": {
-        "name": "pphgnetv2_b6_224x224-1",
+        "name": "PPHGNetV2_B6",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20840,8 +20840,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -20922,7 +20922,7 @@
     {
       "id": "pplcnetv2_base_224x224",
       "display": {
-        "name": "pplcnetv2_base_224x224-1",
+        "name": "PPLCNetV2_base",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -20947,8 +20947,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -21029,7 +21029,7 @@
     {
       "id": "pplcnetv2_large_224x224",
       "display": {
-        "name": "pplcnetv2_large_224x224-1",
+        "name": "PPLCNetV2_large",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -21054,8 +21054,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -21136,7 +21136,7 @@
     {
       "id": "pplcnetv2_small_224x224",
       "display": {
-        "name": "pplcnetv2_small_224x224-1",
+        "name": "PPLCNetV2_small",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -21161,8 +21161,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -21243,7 +21243,7 @@
     {
       "id": "ppmatting_hrnet_w48_composition_512x512",
       "display": {
-        "name": "ppmatting-hrnet_w48-composition_512x512-1",
+        "name": "ppmatting-hrnet_w48-composition",
         "task": "image_matting",
         "summary": {
           "en": "AI model for image_matting tasks."
@@ -21265,8 +21265,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -21344,7 +21344,7 @@
     {
       "id": "ppmatting_hrnet_w48_distinctions_512x512",
       "display": {
-        "name": "ppmatting-hrnet_w48-distinctions_512x512-1",
+        "name": "ppmatting-hrnet_w48-distinctions",
         "task": "image_matting",
         "summary": {
           "en": "AI model for image_matting tasks."
@@ -21366,8 +21366,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -21946,7 +21946,7 @@
     {
       "id": "regnet_x1_6gf_224x224_v2",
       "display": {
-        "name": "RegNetX1_6GF-1",
+        "name": "RegNetX-1.6GF (v2)",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -24865,7 +24865,7 @@
     {
       "id": "repvgg_a0_reid_256x128",
       "display": {
-        "name": "repvgg_a0_person_reid_512-1",
+        "name": "RepVGG-A0 Person ReID",
         "task": "reid",
         "summary": {
           "en": "AI model for reid tasks."
@@ -24890,8 +24890,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -27822,7 +27822,7 @@
     {
       "id": "rtdetr_hgnetv2_h_6x_640x640",
       "display": {
-        "name": "rtdetr_hgnetv2_h_6x_coco_640x640-1",
+        "name": "rtdetr_hgnetv2_h_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -27847,8 +27847,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -27929,7 +27929,7 @@
     {
       "id": "rtdetr_hgnetv2_l_6x_640x640",
       "display": {
-        "name": "rtdetr_hgnetv2_l_6x_coco_640x640-1",
+        "name": "rtdetr_hgnetv2_l_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -27954,8 +27954,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28036,7 +28036,7 @@
     {
       "id": "rtdetr_hgnetv2_x_6x_640x640",
       "display": {
-        "name": "rtdetr_hgnetv2_x_6x_coco_640x640-1",
+        "name": "rtdetr_hgnetv2_x_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28061,8 +28061,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28143,7 +28143,7 @@
     {
       "id": "rtdetr_r101vd_6x_640x640",
       "display": {
-        "name": "rtdetr_r101vd_6x_coco_640x640-1",
+        "name": "rtdetr_r101vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28168,8 +28168,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28250,7 +28250,7 @@
     {
       "id": "rtdetr_r18vd_6x_640x640",
       "display": {
-        "name": "rtdetr_r18vd_6x_coco_640x640-1",
+        "name": "rtdetr_r18vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28275,8 +28275,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28357,7 +28357,7 @@
     {
       "id": "rtdetr_r34vd_6x_640x640",
       "display": {
-        "name": "rtdetr_r34vd_6x_coco_640x640-1",
+        "name": "rtdetr_r34vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28382,8 +28382,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28464,7 +28464,7 @@
     {
       "id": "rtdetr_r50vd_6x_640x640",
       "display": {
-        "name": "rtdetr_r50vd_6x_coco_640x640-1",
+        "name": "rtdetr_r50vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28489,8 +28489,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28571,7 +28571,7 @@
     {
       "id": "rtdetr_r50vd_m_6x_640x640",
       "display": {
-        "name": "rtdetr_r50vd_m_6x_coco_640x640-1",
+        "name": "rtdetr_r50vd_m_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28596,8 +28596,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28678,7 +28678,7 @@
     {
       "id": "rtdetrv2_r101vd_6x_640x640",
       "display": {
-        "name": "rtdetrv2_r101vd_6x_coco_640x640-1",
+        "name": "rtdetrv2_r101vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28703,8 +28703,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28785,7 +28785,7 @@
     {
       "id": "rtdetrv2_r18vd_120e_640x640",
       "display": {
-        "name": "rtdetrv2_r18vd_120e_coco_640x640-1",
+        "name": "rtdetrv2_r18vd_120e_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28810,8 +28810,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28892,7 +28892,7 @@
     {
       "id": "rtdetrv2_r34vd_120e_640x640",
       "display": {
-        "name": "rtdetrv2_r34vd_120e_coco_640x640-1",
+        "name": "rtdetrv2_r34vd_120e_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -28917,8 +28917,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -28999,7 +28999,7 @@
     {
       "id": "rtdetrv2_r50vd_6x_640x640",
       "display": {
-        "name": "rtdetrv2_r50vd_6x_coco_640x640-1",
+        "name": "rtdetrv2_r50vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -29024,8 +29024,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -29106,7 +29106,7 @@
     {
       "id": "rtdetrv2_r50vd_m_7x_640x640",
       "display": {
-        "name": "rtdetrv2_r50vd_m_7x_coco_640x640-1",
+        "name": "rtdetrv2_r50vd_m_7x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -29131,8 +29131,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -29213,7 +29213,7 @@
     {
       "id": "rtdetrv3_r18vd_6x_640x640",
       "display": {
-        "name": "rtdetrv3_r18vd_6x_coco_640x640-1",
+        "name": "rtdetrv3_r18vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -29238,8 +29238,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -29320,7 +29320,7 @@
     {
       "id": "rtdetrv3_r50vd_6x_640x640",
       "display": {
-        "name": "rtdetrv3_r50vd_6x_coco_640x640-1",
+        "name": "rtdetrv3_r50vd_6x_coco",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -29345,8 +29345,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -32115,7 +32115,7 @@
     {
       "id": "stdc1_seg50_512x1024",
       "display": {
-        "name": "stdc1-model_maxmIOU50-1",
+        "name": "STDC1-Seg50",
         "task": "semantic_segmentation",
         "summary": {
           "en": "Semantic segmentation model for pixel-level classification."
@@ -32140,8 +32140,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -32222,7 +32222,7 @@
     {
       "id": "stdc1_seg75_768x1536",
       "display": {
-        "name": "stdc1-model_maxmIOU75-1",
+        "name": "STDC1-Seg75",
         "task": "semantic_segmentation",
         "summary": {
           "en": "Semantic segmentation model for pixel-level classification."
@@ -32247,8 +32247,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -32460,7 +32460,7 @@
     {
       "id": "stdc2_seg75_768x1536",
       "display": {
-        "name": "stdc2-model_maxmIOU75-1",
+        "name": "STDC2-Seg75",
         "task": "semantic_segmentation",
         "summary": {
           "en": "Semantic segmentation model for pixel-level classification."
@@ -32485,8 +32485,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -32698,7 +32698,7 @@
     {
       "id": "swin_b_224x224",
       "display": {
-        "name": "SwinB-1",
+        "name": "Swin-B 224x224",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -32723,8 +32723,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -35305,7 +35305,7 @@
     {
       "id": "vit_b_p16_384x384",
       "display": {
-        "name": "ViTBaseP16-3",
+        "name": "ViT-Base/16 (384x384)",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -35922,6 +35922,113 @@
       }
     },
     {
+      "id": "vit_l_p16_512x512_swag",
+      "display": {
+        "name": "vit-l-p16_512x512_swag",
+        "task": "classification",
+        "summary": {
+          "en": "Image classification model for visual recognition tasks."
+        },
+        "category_label": "Classification"
+      },
+      "specification": {
+        "dataset": "ILSVRC2012",
+        "input_resolution": "512x512x3",
+        "operations": "379.71",
+        "parameters": "305.17",
+        "metric": {
+          "name": "Top1 Accuracy"
+        }
+      },
+      "evaluation": {
+        "raw": {
+          "accuracy": "88.066"
+        },
+        "qlite": {
+          "accuracy": "80.818"
+        }
+      },
+      "performance": {
+        "fps": null,
+        "fps_per_watt": null,
+        "source_status": "benchmark_required"
+      },
+      "legal": {
+        "license": "BSD-3-Clause",
+        "source_url": "https://pytorch.org/vision/stable/models/generated/torchvision.models.vit_l_16.html#torchvision.models.vit_l_16"
+      },
+      "artifacts": {
+        "onnx": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/onnx/vit-l-p16_512x512_swag.onnx"
+        },
+        "qlite_dxnn": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/vit-l-p16_512x512_swag.dxnn"
+        },
+        "qlite_json": {
+          "remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/vit-l-p16_512x512_swag.json"
+        }
+      },
+      "processor": {
+        "supported_devices": [],
+        "status": "metadata_pending"
+      },
+      "missing": [
+        "performance.fps",
+        "performance.fps_per_watt",
+        "qpro_dxnn",
+        "qpro_json"
+      ],
+      "content": {
+        "use_case": {
+          "en": "Image classification model for visual recognition tasks."
+        }
+      },
+      "provenance": {
+        "display.task": {
+          "source": "internal_modelzoo"
+        },
+        "display.name": {
+          "source": "internal_modelzoo"
+        },
+        "specification.dataset": {
+          "source": "internal_modelzoo"
+        },
+        "specification.input_resolution": {
+          "source": "internal_modelzoo"
+        },
+        "specification.operations": {
+          "source": "internal_modelzoo"
+        },
+        "specification.parameters": {
+          "source": "internal_modelzoo"
+        },
+        "legal.license": {
+          "source": "internal_modelzoo"
+        },
+        "specification.metric.name": {
+          "source": "internal_modelzoo"
+        },
+        "legal.source_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.raw.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.onnx.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "evaluation.qlite.accuracy": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_dxnn.remote_url": {
+          "source": "internal_modelzoo"
+        },
+        "artifacts.qlite_json.remote_url": {
+          "source": "internal_modelzoo"
+        }
+      }
+    },
+    {
       "id": "vit_pose_small_bn",
       "display": {
         "name": "Vit Pose Small Bn",
@@ -36186,7 +36293,7 @@
     {
       "id": "vit_t_p16_224x224",
       "display": {
-        "name": "ViTTinyP16-1",
+        "name": "ViT-Tiny/16",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -36444,96 +36551,6 @@
         "postprocessor": "efficientnet",
         "config": {
           "top_k": 5
-        }
-      }
-    },
-    {
-      "id": "vitl16",
-      "display": {
-        "name": "ViTL16-1",
-        "task": "classification",
-        "summary": {
-          "en": "Image classification model for visual recognition tasks."
-        },
-        "category_label": "Classification"
-      },
-      "specification": {
-        "dataset": "ILSVRC2012",
-        "input_resolution": "512x512x3",
-        "operations": "379.71",
-        "parameters": "305.17",
-        "metric": {
-          "name": "Top1 Accuracy"
-        }
-      },
-      "evaluation": {
-        "raw": {
-          "accuracy": "88.066"
-        },
-        "qlite": {
-          "accuracy": "80.818"
-        }
-      },
-      "performance": {
-        "fps_per_watt": null,
-        "fps": null,
-        "source_status": "benchmark_required"
-      },
-      "legal": {
-        "license": "BSD-3-Clause",
-        "source_url": "https://pytorch.org/vision/stable/models/generated/torchvision.models.vit_l_16.html#torchvision.models.vit_l_16"
-      },
-      "processor": {
-        "supported_devices": [],
-        "status": "metadata_pending"
-      },
-      "missing": [
-        "performance.fps",
-        "performance.fps_per_watt",
-        "onnx",
-        "qlite_dxnn",
-        "qlite_json",
-        "qpro_dxnn",
-        "qpro_json"
-      ],
-      "content": {
-        "use_case": {
-          "en": "Image classification model for visual recognition tasks."
-        }
-      },
-      "provenance": {
-        "display.task": {
-          "source": "internal_modelzoo"
-        },
-        "display.name": {
-          "source": "internal_modelzoo"
-        },
-        "specification.dataset": {
-          "source": "internal_modelzoo"
-        },
-        "specification.input_resolution": {
-          "source": "internal_modelzoo"
-        },
-        "specification.operations": {
-          "source": "internal_modelzoo"
-        },
-        "specification.parameters": {
-          "source": "internal_modelzoo"
-        },
-        "legal.license": {
-          "source": "internal_modelzoo"
-        },
-        "specification.metric.name": {
-          "source": "internal_modelzoo"
-        },
-        "legal.source_url": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.raw.accuracy": {
-          "source": "internal_modelzoo"
-        },
-        "evaluation.qlite.accuracy": {
-          "source": "internal_modelzoo"
         }
       }
     },
@@ -37384,7 +37401,7 @@
     {
       "id": "yolo11_l_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-l_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-l (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -37409,8 +37426,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -37491,7 +37508,7 @@
     {
       "id": "yolo11_l_pose_640x640",
       "display": {
-        "name": "yolo11-l-pose-1",
+        "name": "Ultralytics YOLO11-l-pose",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -37514,8 +37531,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -37590,7 +37607,7 @@
     {
       "id": "yolo11_l_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-l-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO11-l-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -37615,8 +37632,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -37697,7 +37714,7 @@
     {
       "id": "yolo11_l_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-l-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-l-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -37722,8 +37739,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -37804,7 +37821,7 @@
     {
       "id": "yolo11_m_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-m_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-m (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -37829,8 +37846,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -37911,7 +37928,7 @@
     {
       "id": "yolo11_m_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-m-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO11-m-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -37936,8 +37953,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38018,7 +38035,7 @@
     {
       "id": "yolo11_m_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-m-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-m-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -38043,8 +38060,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38125,7 +38142,7 @@
     {
       "id": "yolo11_n_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-n_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-n (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -38150,8 +38167,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38232,7 +38249,7 @@
     {
       "id": "yolo11_n_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-n-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO11-n-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -38257,8 +38274,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38339,7 +38356,7 @@
     {
       "id": "yolo11_n_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-n-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-n-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -38364,8 +38381,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38446,7 +38463,7 @@
     {
       "id": "yolo11_s_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-s_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-s (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -38471,8 +38488,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38553,7 +38570,7 @@
     {
       "id": "yolo11_s_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-s-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO11-s-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -38578,8 +38595,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38660,7 +38677,7 @@
     {
       "id": "yolo11_s_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-s-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-s-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -38685,8 +38702,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38767,7 +38784,7 @@
     {
       "id": "yolo11_x_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-x_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-x (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -38792,8 +38809,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38874,7 +38891,7 @@
     {
       "id": "yolo11_x_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-x-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO11-x-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -38899,8 +38916,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -38981,7 +38998,7 @@
     {
       "id": "yolo11_x_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolo11-x-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLO11-x-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -39006,8 +39023,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -41272,7 +41289,7 @@
     {
       "id": "yolo26_l_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-l_640x640_ppu2-1",
+        "name": "Ultralytics YOLO26-l (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -41297,8 +41314,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -41379,7 +41396,7 @@
     {
       "id": "yolo26_l_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-l-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO26-l-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -41404,8 +41421,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -41486,7 +41503,7 @@
     {
       "id": "yolo26_m_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-m_640x640_ppu2-1",
+        "name": "Ultralytics YOLO26-m (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -41511,8 +41528,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -41593,7 +41610,7 @@
     {
       "id": "yolo26_m_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-m-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO26-m-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -41618,8 +41635,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -41700,7 +41717,7 @@
     {
       "id": "yolo26_n_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-n_640x640_ppu2-1",
+        "name": "Ultralytics YOLO26-n (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -41725,8 +41742,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -41807,7 +41824,7 @@
     {
       "id": "yolo26_n_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-n-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO26-n-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -41832,8 +41849,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -41914,7 +41931,7 @@
     {
       "id": "yolo26_s_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-s_640x640_ppu2-1",
+        "name": "Ultralytics YOLO26-s (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -41939,8 +41956,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -42021,7 +42038,7 @@
     {
       "id": "yolo26_s_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-s-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO26-s-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -42046,8 +42063,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -42128,7 +42145,7 @@
     {
       "id": "yolo26_x_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-x_640x640_ppu2-1",
+        "name": "Ultralytics YOLO26-x (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -42153,8 +42170,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -42235,7 +42252,7 @@
     {
       "id": "yolo26_x_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolo26-x-pose-pre-optimized-1",
+        "name": "Ultralytics YOLO26-x-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -42260,8 +42277,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -48925,7 +48942,7 @@
     {
       "id": "yolov12_cls_l_224x224",
       "display": {
-        "name": "yolov12-cls-l_224x224-1",
+        "name": "YOLOv12-l-cls",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -48950,8 +48967,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49032,7 +49049,7 @@
     {
       "id": "yolov12_cls_m_224x224",
       "display": {
-        "name": "yolov12-cls-m_224x224-1",
+        "name": "YOLOv12-m-cls",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -49057,8 +49074,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49139,7 +49156,7 @@
     {
       "id": "yolov12_cls_n_224x224",
       "display": {
-        "name": "yolov12-cls-n_224x224-1",
+        "name": "YOLOv12-n-cls",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -49164,8 +49181,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49246,7 +49263,7 @@
     {
       "id": "yolov12_cls_s_224x224",
       "display": {
-        "name": "yolov12-cls-s_224x224-1",
+        "name": "YOLOv12-s-cls",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -49271,8 +49288,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49353,7 +49370,7 @@
     {
       "id": "yolov12_cls_x_224x224",
       "display": {
-        "name": "yolov12-cls-x_224x224-1",
+        "name": "YOLOv12-x-cls",
         "task": "classification",
         "summary": {
           "en": "Image classification model for visual recognition tasks."
@@ -49378,8 +49395,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49460,7 +49477,7 @@
     {
       "id": "yolov12_l_640x640",
       "display": {
-        "name": "yolov12-l_640x640-1",
+        "name": "YOLOv12-l",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -49485,8 +49502,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49567,7 +49584,7 @@
     {
       "id": "yolov12_l_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-l_640x640_ppu2-1",
+        "name": "YOLOv12-l (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -49592,8 +49609,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49674,7 +49691,7 @@
     {
       "id": "yolov12_m_640x640",
       "display": {
-        "name": "yolov12-m_640x640-1",
+        "name": "YOLOv12-m",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -49699,8 +49716,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49781,7 +49798,7 @@
     {
       "id": "yolov12_m_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-m_640x640_ppu2-1",
+        "name": "YOLOv12-m (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -49806,8 +49823,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49888,7 +49905,7 @@
     {
       "id": "yolov12_n_640x640",
       "display": {
-        "name": "yolov12-n_640x640-1",
+        "name": "YOLOv12-n",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -49913,8 +49930,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -49995,7 +50012,7 @@
     {
       "id": "yolov12_n_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-n_640x640_ppu2-2",
+        "name": "YOLOv12-n (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -50020,8 +50037,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50102,7 +50119,7 @@
     {
       "id": "yolov12_s_640x640",
       "display": {
-        "name": "yolov12-s_640x640-1",
+        "name": "YOLOv12-s",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -50127,8 +50144,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50209,7 +50226,7 @@
     {
       "id": "yolov12_s_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-s_640x640_ppu2-1",
+        "name": "YOLOv12-s (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -50234,8 +50251,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50316,7 +50333,7 @@
     {
       "id": "yolov12_seg_l_640x640",
       "display": {
-        "name": "yolov12-seg-l_640x640-1",
+        "name": "YOLOv12-l-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -50341,8 +50358,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50423,7 +50440,7 @@
     {
       "id": "yolov12_seg_l_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-seg-l_640x640_ppu2-1",
+        "name": "YOLOv12-l-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -50448,8 +50465,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50530,7 +50547,7 @@
     {
       "id": "yolov12_seg_m_640x640",
       "display": {
-        "name": "yolov12-seg-m_640x640-1",
+        "name": "YOLOv12-m-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -50555,8 +50572,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50637,7 +50654,7 @@
     {
       "id": "yolov12_seg_m_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-seg-m_640x640_ppu2-1",
+        "name": "YOLOv12-m-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -50662,8 +50679,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50744,7 +50761,7 @@
     {
       "id": "yolov12_seg_n_640x640",
       "display": {
-        "name": "yolov12-seg-n_640x640-1",
+        "name": "YOLOv12-n-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -50769,8 +50786,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50851,7 +50868,7 @@
     {
       "id": "yolov12_seg_n_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-seg-n_640x640_ppu2-1",
+        "name": "YOLOv12-n-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -50876,8 +50893,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -50958,7 +50975,7 @@
     {
       "id": "yolov12_seg_s_640x640",
       "display": {
-        "name": "yolov12-seg-s_640x640-1",
+        "name": "YOLOv12-s-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -50983,8 +51000,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51065,7 +51082,7 @@
     {
       "id": "yolov12_seg_s_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-seg-s_640x640_ppu2-1",
+        "name": "YOLOv12-s-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -51090,8 +51107,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51172,7 +51189,7 @@
     {
       "id": "yolov12_seg_x_640x640",
       "display": {
-        "name": "yolov12-seg-x_640x640-1",
+        "name": "YOLOv12-x-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -51197,8 +51214,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51279,7 +51296,7 @@
     {
       "id": "yolov12_seg_x_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-seg-x_640x640_ppu2-1",
+        "name": "YOLOv12-x-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -51304,8 +51321,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51386,7 +51403,7 @@
     {
       "id": "yolov12_x_640x640",
       "display": {
-        "name": "yolov12-x_640x640-1",
+        "name": "YOLOv12-x",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -51411,8 +51428,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51493,7 +51510,7 @@
     {
       "id": "yolov12_x_640x640_pre_optimized",
       "display": {
-        "name": "yolov12-x_640x640_ppu2-1",
+        "name": "YOLOv12-x (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -51518,8 +51535,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51771,7 +51788,7 @@
     {
       "id": "yolov13_l_640x640",
       "display": {
-        "name": "yolov13-l_640x640-1",
+        "name": "YOLOv13-l",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -51796,8 +51813,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51878,7 +51895,7 @@
     {
       "id": "yolov13_l_640x640_pre_optimized",
       "display": {
-        "name": "yolov13-l_640x640_ppu2-1",
+        "name": "YOLOv13-l (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -51903,8 +51920,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -51985,7 +52002,7 @@
     {
       "id": "yolov13_n_640x640",
       "display": {
-        "name": "yolov13-n_640x640-1",
+        "name": "YOLOv13-n",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -52010,8 +52027,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -52092,7 +52109,7 @@
     {
       "id": "yolov13_n_640x640_pre_optimized",
       "display": {
-        "name": "yolov13-n_640x640_ppu2-1",
+        "name": "YOLOv13-n (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -52117,8 +52134,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -52199,7 +52216,7 @@
     {
       "id": "yolov13_s_640x640",
       "display": {
-        "name": "yolov13-s_640x640-1",
+        "name": "YOLOv13-s",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -52224,8 +52241,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -52306,7 +52323,7 @@
     {
       "id": "yolov13_s_640x640_pre_optimized",
       "display": {
-        "name": "yolov13-s_640x640_ppu2-1",
+        "name": "YOLOv13-s (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -52331,8 +52348,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -52413,7 +52430,7 @@
     {
       "id": "yolov13_x_640x640",
       "display": {
-        "name": "yolov13-x_640x640-1",
+        "name": "YOLOv13-x",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -52438,8 +52455,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -52520,7 +52537,7 @@
     {
       "id": "yolov13_x_640x640_pre_optimized",
       "display": {
-        "name": "yolov13-x_640x640_ppu2-1",
+        "name": "YOLOv13-x (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -52545,8 +52562,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -54637,7 +54654,7 @@
     {
       "id": "yolov5_n6_1280x1280_v6_1",
       "display": {
-        "name": "YOLOV5N6_61-1",
+        "name": "Ultralytics YOLOv5-n6 (v6.1)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -54930,7 +54947,7 @@
     {
       "id": "yolov5_s6_1280x1280_v6_1",
       "display": {
-        "name": "YOLOV5S6_61-1",
+        "name": "Ultralytics YOLOv5-s6 (v6.1)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -55743,7 +55760,7 @@
         "category_label": "Object Detection"
       },
       "specification": {
-        "input_resolution": "1280x1280x3",
+        "input_resolution": "640x640x3",
         "parameters": "21.27",
         "operations": "26.07",
         "input_width": 640,
@@ -55913,7 +55930,7 @@
         "category_label": "Object Detection"
       },
       "specification": {
-        "input_resolution": "640x640x3",
+        "input_resolution": "1280x1280x3",
         "parameters": "36.11",
         "operations": "106.41",
         "input_width": 1280,
@@ -59444,7 +59461,7 @@
     {
       "id": "yolov6_m6_1280x1280",
       "display": {
-        "name": "YOLOV6M6-1",
+        "name": "yolov6-m6_1280x1280",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -59469,8 +59486,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -63525,7 +63542,7 @@
     {
       "id": "yolov8_l_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-l_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-l (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -63550,8 +63567,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -63632,7 +63649,7 @@
     {
       "id": "yolov8_l_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-l-pose-pre-optimized-1",
+        "name": "Ultralytics YOLOv8-l-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -63657,8 +63674,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -63739,7 +63756,7 @@
     {
       "id": "yolov8_l_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-l-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-l-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -63764,8 +63781,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -63846,7 +63863,7 @@
     {
       "id": "yolov8_m_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-m_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-m (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -63871,8 +63888,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -63953,7 +63970,7 @@
     {
       "id": "yolov8_m_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-m-pose-pre-optimized-1",
+        "name": "Ultralytics YOLOv8-m-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -63978,8 +63995,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64060,7 +64077,7 @@
     {
       "id": "yolov8_m_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-m-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-m-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -64085,8 +64102,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64167,7 +64184,7 @@
     {
       "id": "yolov8_n_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-n_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-n (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -64192,8 +64209,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64274,7 +64291,7 @@
     {
       "id": "yolov8_n_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-n-pose-pre-optimized-1",
+        "name": "Ultralytics YOLOv8-n-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -64299,8 +64316,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64381,7 +64398,7 @@
     {
       "id": "yolov8_n_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-n-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-n-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -64406,8 +64423,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64488,7 +64505,7 @@
     {
       "id": "yolov8_s_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-s_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-s (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -64513,8 +64530,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64595,7 +64612,7 @@
     {
       "id": "yolov8_s_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-s-pose-pre-optimized-1",
+        "name": "Ultralytics YOLOv8-s-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -64620,8 +64637,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64702,7 +64719,7 @@
     {
       "id": "yolov8_s_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-s-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-s-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -64727,8 +64744,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64809,7 +64826,7 @@
     {
       "id": "yolov8_x_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-x_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-x (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -64834,8 +64851,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -64916,7 +64933,7 @@
     {
       "id": "yolov8_x_pose_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-x-pose-pre-optimized-1",
+        "name": "Ultralytics YOLOv8-x-pose (Pre-Optimized)",
         "task": "pose_estimation",
         "summary": {
           "en": "Pose estimation model for detecting body keypoints."
@@ -64941,8 +64958,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -65023,7 +65040,7 @@
     {
       "id": "yolov8_x_seg_640x640_pre_optimized",
       "display": {
-        "name": "yolov8-x-seg_640x640_ppu2-1",
+        "name": "Ultralytics YOLOv8-x-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -65048,8 +65065,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -68201,7 +68218,7 @@
     {
       "id": "yolov9_c_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-c_640x640_ppu2-1",
+        "name": "YOLOv9-c (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -68226,8 +68243,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -68308,7 +68325,7 @@
     {
       "id": "yolov9_e_640x640",
       "display": {
-        "name": "yolov9-e_640x640-1",
+        "name": "YOLOv9-e",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -68333,8 +68350,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -68415,7 +68432,7 @@
     {
       "id": "yolov9_e_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-e_640x640_ppu2-1",
+        "name": "YOLOv9-e (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -68440,8 +68457,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -68692,7 +68709,7 @@
     {
       "id": "yolov9_gelan_c_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-gelan-c_640x640_ppu2-1",
+        "name": "YOLOv9-gelan-c (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -68717,8 +68734,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -68799,7 +68816,7 @@
     {
       "id": "yolov9_m_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-m_640x640_ppu2-1",
+        "name": "YOLOv9-m (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -68824,8 +68841,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -68906,7 +68923,7 @@
     {
       "id": "yolov9_s_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-s_640x640_ppu2-1",
+        "name": "YOLOv9-s (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -68931,8 +68948,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -69013,7 +69030,7 @@
     {
       "id": "yolov9_seg_c_640x640",
       "display": {
-        "name": "yolov9-seg-c_640x640-1",
+        "name": "YOLOv9-c-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -69038,8 +69055,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -69120,7 +69137,7 @@
     {
       "id": "yolov9_seg_c_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-seg-c_640x640_ppu2-1",
+        "name": "YOLOv9-c-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -69145,8 +69162,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -69227,7 +69244,7 @@
     {
       "id": "yolov9_seg_e_640x640",
       "display": {
-        "name": "yolov9-seg-e_640x640-1",
+        "name": "YOLOv9-e-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -69252,8 +69269,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -69334,7 +69351,7 @@
     {
       "id": "yolov9_seg_e_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-seg-e_640x640_ppu2-1",
+        "name": "YOLOv9-e-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -69359,8 +69376,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -69441,7 +69458,7 @@
     {
       "id": "yolov9_seg_gelan_c_640x640",
       "display": {
-        "name": "yolov9-seg-gelan-c_640x640-1",
+        "name": "YOLOv9-gelan-c-seg",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -69466,8 +69483,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -69548,7 +69565,7 @@
     {
       "id": "yolov9_seg_gelan_c_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-seg-gelan-c_640x640_ppu2-1",
+        "name": "YOLOv9-gelan-c-seg (Pre-Optimized)",
         "task": "instance_segmentation",
         "summary": {
           "en": "Instance segmentation model for per-object pixel masks."
@@ -69573,8 +69590,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
@@ -69655,7 +69672,7 @@
     {
       "id": "yolov9_t_640x640_pre_optimized",
       "display": {
-        "name": "yolov9-t_640x640_ppu2-1",
+        "name": "YOLOv9-t (Pre-Optimized)",
         "task": "object_detection",
         "summary": {
           "en": "Object detection model for identifying and localizing objects."
@@ -69680,8 +69697,8 @@
         }
       },
       "performance": {
-        "fps_per_watt": null,
         "fps": null,
+        "fps_per_watt": null,
         "source_status": "benchmark_required"
       },
       "legal": {
