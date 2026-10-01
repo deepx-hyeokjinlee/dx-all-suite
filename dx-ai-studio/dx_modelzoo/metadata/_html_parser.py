@@ -155,6 +155,9 @@ class _TableParser(HTMLParser):
                 "rowspan": html_span(attrs_dict.get("rowspan")),
                 "colspan": html_span(attrs_dict.get("colspan")),
             }
+        elif tag == "br" and self._current_cell is not None:
+            # 한 칸에 줄을 나눠 둔 값 (PSNR<br>SSIM · 32.9<br>0.90) — 예전에는 붙어서 'PSNRSSIM' 이 됐다 (Z-3)
+            self._current_cell["text"] += "\u0000"
         elif tag == "a" and self._current_cell is not None:
             href = attrs_dict.get("href")
             if href and not self._current_cell.get("href"):
@@ -166,7 +169,8 @@ class _TableParser(HTMLParser):
         elif tag == "tbody":
             self._in_tbody = False
         elif tag == self._current_cell_tag and self._current_cell is not None:
-            self._current_cell["text"] = clean_cell_text(self._current_cell.get("text", ""))
+            parts = [clean_cell_text(t) for t in self._current_cell.get("text", "").split("\u0000")]
+            self._current_cell["text"] = " / ".join(t for t in parts if t)
             if tag == "th":
                 self.headers.append(self._current_cell["text"])
             self._current_row.append(self._current_cell)

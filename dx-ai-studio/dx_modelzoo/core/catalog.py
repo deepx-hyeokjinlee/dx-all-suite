@@ -3,6 +3,7 @@ import copy
 import json
 import re
 import threading
+import time
 from pathlib import Path
 from collections import defaultdict
 
@@ -695,12 +696,41 @@ _catalog_cache = None
 _catalog_lock = threading.RLock()
 
 
+_flags_checked_at = 0.0
+_FLAGS_TTL_S = 2.0
+
+
+def _model_on_disk(model_file):
+    if not model_file:
+        return False
+    try:
+        from shared.dx_app_layout import find_model
+        from shared.paths import SUITE_ROOT
+        return find_model(model_file, DX_APP_ROOT, SUITE_ROOT) is not None
+    except Exception:
+        return False
+
+
+def _refresh_download_flags(catalog):
+    """downloaded* 는 디스크를 따른다 — 예전에는 처음 읽을 때 한 번 계산해 영원히 캐시해서, 상세 화면에서 받은 모델이
+    다시 불러도 '먼저 다운로드' 로 남고 Run Inference 가 잠겨 있었다 (2026-10-02 release audit Z-2).
+    assets/models 와 workspace/res/models 를 dx_app 과 같은 규칙 (shared.dx_app_layout.find_model) 으로 본다."""
+    for m in (catalog or {}).get("models", []):
+        qlite = _model_on_disk(m.get("model_file"))
+        m["downloaded"] = m["downloaded_qlite"] = qlite
+        m["downloaded_qpro"] = _model_on_disk(m.get("model_file_qpro"))
+
+
 def get_catalog():
-    """캐시된 카탈로그 반환. 없으면 로드. RLock으로 동시 reload 방지."""
-    global _catalog_cache
+    """캐시된 카탈로그 반환. 없으면 로드. RLock으로 동시 reload 방지. 다운로드 여부는 2초마다 다시 본다."""
+    global _catalog_cache, _flags_checked_at
     with _catalog_lock:
         if _catalog_cache is None:
             reload_catalog()  # RLock은 재진입 가능 — 같은 스레드에서 안전
+        now = time.time()
+        if now - _flags_checked_at >= _FLAGS_TTL_S:
+            _flags_checked_at = now
+            _refresh_download_flags(_catalog_cache)
         return _catalog_cache
 
 
