@@ -16,7 +16,7 @@ from shared.runtime import ld_library_path
 from shared import dxrt
 from dx_app.core.performance import _parse_perf
 from dx_app.core.inference_exec import _err, _TMP
-from dx_app.core.camera import _start_cam_mux, _stop_cam_mux, _ensure_xvfb, _XVFB_BASE, _UDP_BASE_PORT
+from dx_app.core.camera import _start_cam_mux, _stop_cam_mux, _ensure_xvfb, _XVFB_BASE, _UDP_BASE_PORT, _XVFB_RES
 
 _live_jobs = {}              # job_id -> {proc, log_file, start_time, slot_idx, ...}
 _live_procs = {}             # slot_idx -> running inference proc
@@ -138,6 +138,11 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
     _ld = ld_library_path()
     env = dxrt.run_env({**os.environ, "DISPLAY": _display, "LD_LIBRARY_PATH": _ld})
     env.pop("QT_QPA_PLATFORM", None)  # allow real X11 rendering
+    # 프레임 수를 runner 가 직접 알린다 ([PROGRESS], dx_app fix/studio-live-findings). dx_app 은 창을 화면의
+    # 절반으로 열므로 Xvfb 의 두 배를 화면이라 알려 창이 처음부터 Xvfb 를 채우게 한다 (창 맞추기는 그대로 둔다).
+    env["DXAPP_PROGRESS"] = "1"
+    _xw, _xh = (int(v) for v in _XVFB_RES.split("x")[:2])
+    env["DXAPP_SCREEN_W"], env["DXAPP_SCREEN_H"] = str(2 * _xw), str(2 * _xh)
 
     inf = "-v"
     if lang == "cpp":
@@ -456,7 +461,13 @@ def poll_inference(job_id):
     done = (max(loops) - 1) if loops else 0
     loop_frames = done * int(total) if total and done > 0 else None
 
-    if has_tag_mode or frame_markers > 0:
+    # dx_app 의 runner 가 DXAPP_PROGRESS=1 로 찍는 '[PROGRESS] frames=N' 이 있으면 그것이 프레임 수다 —
+    # 아래 추정 (태그 · Loop) 은 그것이 없는 runner (main 01b7727) 를 위한 것
+    progress = [int(x) for x in re.findall(r"^\[PROGRESS\] frames=(\d+)", content, re.M)]
+
+    if progress:
+        frame_basis, display_frames = "progress", max(progress)
+    elif has_tag_mode or frame_markers > 0:
         frame_basis = "tag"
         display_frames = tag_frame_count if has_tag_mode else frame_markers
         # 태그가 일부 프레임에만 찍히는 task (hand detector 는 손이 보일 때만) 는 Loop 쪽이 더 크다

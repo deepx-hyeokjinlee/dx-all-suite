@@ -334,3 +334,51 @@ def test_the_live_ui_reports_a_runner_that_ended_by_itself():
     src = (Path(__file__).resolve().parents[2] / "dx_app/static/js/inference.js").read_text(encoding="utf-8")
     body = src[src.index("async function contFinishLiveSlot("):src.index("function contShowSummary(")]
     assert "run_error_key" in body and "'err'" in body
+
+
+# ── dx_app 이 [PROGRESS] 를 찍는다 (fix/studio-live-findings, 2026-10-01) ─────────────────────────────
+
+def test_progress_lines_are_the_frame_count_when_present(tmp_path):
+    """DXAPP_PROGRESS=1 이면 dx_app runner 가 '[PROGRESS] frames=N' 을 1 초마다 찍는다 — 추정 (태그 · Loop) 보다
+    먼저 그것을 쓴다. 없으면 (main 01b7727 의 runner) 지금의 추정."""
+    log = ("[DET] person 0.9 1 2 3 4 5 6\n[DET] person 0.8 1 2 3 4 5 6\n[PROGRESS] frames=120\n"
+           "[DET] person 0.9 1 2 3 4 5 6\n[PROGRESS] frames=95\n[PROGRESS] frames=240\n")
+    r = _poll_with(tmp_path, log)
+    assert r["frames"] == 240 and r["frame_basis"] == "progress"
+
+
+def test_live_runs_ask_for_progress_and_a_screen_the_window_fills(tmp_path, monkeypatch):
+    from dx_app.core import live
+    model = tmp_path / "m.dxnn"
+    model.write_bytes(b"DXNN")
+    video = tmp_path / "v.mp4"
+    video.write_bytes(b"v")
+    build = tmp_path / "build"
+    build.mkdir()
+    (build / "demo_async").write_text("")
+    captured = {}
+
+    class FakeProc:
+        pid = 1
+
+        def __init__(self, cmd, **kw):
+            captured["env"] = kw.get("env", {})
+
+        def poll(self):
+            return None
+
+    monkeypatch.setattr(live, "BUILD_DIR", build)
+    monkeypatch.setattr(live, "resolve_model_path", lambda f, r: model)
+    monkeypatch.setattr(live, "_ensure_xvfb", lambda s: None)
+    monkeypatch.setattr(live, "_video_frame_count", lambda p: None)
+    monkeypatch.setattr(shutil, "which", lambda n: "/usr/bin/" + n)
+    monkeypatch.setattr(live.subprocess, "Popen", FakeProc)
+    live.run_inference_live("demo", "object_detection", "m.dxnn", lang="cpp", variant="async",
+                            input_type="video", video_path=str(video), slot_idx=6)
+    live._live_procs.pop(6, None)
+    env = captured["env"]
+    assert env.get("DXAPP_PROGRESS") == "1"
+    # dx_app 은 창을 화면의 절반으로 연다 — Xvfb 의 두 배를 알려 주면 창이 Xvfb 를 채운다
+    from dx_app.core.camera import _XVFB_RES
+    w, h = (int(v) for v in _XVFB_RES.split("x")[:2])
+    assert (env.get("DXAPP_SCREEN_W"), env.get("DXAPP_SCREEN_H")) == (str(2 * w), str(2 * h))
