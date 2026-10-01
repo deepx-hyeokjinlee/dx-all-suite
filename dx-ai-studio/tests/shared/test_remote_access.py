@@ -427,3 +427,18 @@ def test_a_body_nobody_read_does_not_poison_the_next_request_on_the_connection(l
         assert r.status == 200, r.status
     finally:
         conn.close()
+
+
+def test_a_remote_browser_sees_only_itself_and_cannot_disconnect_others(launcher, monkeypatch):
+    """목록 · 다른 브라우저 해제는 보드에서만 (01_Installation "from the board"). 원격은 자기 행만, 해제는 logout 으로."""
+    base, access, _, handler = launcher
+    mine, my_id = access.sessions.create(user_agent="Laptop", ip=REMOTE_IP)
+    _, other_id = access.sessions.create(user_agent="Phone", ip="192.168.0.77")
+    monkeypatch.setattr(handler, "_peer_ip", lambda self: REMOTE_IP)
+    jar = {"Cookie": f"dx_session={mine}", "Origin": base}
+    rows = json.loads(_req(base + "/api/auth/sessions", headers=jar)[2])["sessions"]
+    assert [r["id"] for r in rows] == [my_id] and rows[0]["current"] is True
+    code, _, _ = _req(base + "/api/auth/sessions/revoke", "POST", {**jar, "Content-Type": "application/json"},
+                      {"id": other_id})
+    assert code == 403
+    assert any(s["id"] == other_id for s in access.sessions.list()), "다른 브라우저는 그대로"

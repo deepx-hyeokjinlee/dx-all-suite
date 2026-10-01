@@ -1518,6 +1518,9 @@ class LauncherHandler(DXBaseHandler):
         ra = REMOTE_ACCESS
         items = [] if ra is None else sorted(ra.sessions.list(), key=lambda v: -float(v.get("last_seen", 0)))
         mine = (self._session() or {}).get("id")
+        # 목록은 보드에서만 — 원격 브라우저는 자기 행만 본다 (다른 컴퓨터의 IP 를 서로 보지 않게)
+        if not self._is_local():
+            items = [v for v in items if v.get("id") == mine]
         self._send_auth_json({"sessions": [
             {"id": v.get("id"), "created": v.get("created"), "last_seen": v.get("last_seen"),
              "user_agent": v.get("user_agent", ""), "ip": v.get("ip", ""), "current": v.get("id") == mine}
@@ -1528,6 +1531,9 @@ class LauncherHandler(DXBaseHandler):
         if body is None:
             return
         ra = REMOTE_ACCESS
+        if not self._is_local():
+            # 다른 브라우저를 끊는 일은 보드에서만. 원격 브라우저는 자기 자신을 /api/auth/logout 으로 끊는다.
+            return self._send_auth_json({"error": "Only the studio computer can disconnect other browsers"}, 403)
         ok = ra is not None and isinstance(body.get("id"), str) and ra.sessions.revoke(body["id"])
         self._send_auth_json({"ok": bool(ok)}, 200 if ok else 404)
 
