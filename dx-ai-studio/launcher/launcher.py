@@ -670,6 +670,38 @@ def _get_health_status():
 # main() 이 만든다 — import 만으로 코드를 찍거나 ~/.config 에 쓰지 않게.
 REMOTE_ACCESS = None
 _PAIR_PAGE = Path(__file__).resolve().parent / "static" / "pair.html"
+
+
+def _lan_addresses():
+    """다른 컴퓨터가 이 보드에 닿는 IPv4 주소 — 연결된 브라우저 화면과 콘솔이 안내한다.
+
+    인터페이스마다 SIOCGIFADDR 로 읽는다 (패킷을 보내지 않는다 — 오프라인 계약). loopback · link-local ·
+    컨테이너/가상 bridge 는 뺀다. Linux 가 아니거나 읽지 못하면 빈 목록."""
+    import fcntl
+    import ipaddress
+    import struct
+    out = []
+    try:
+        names = [n for _, n in socket.if_nameindex()]
+    except (AttributeError, OSError):
+        return out
+    skip = ("lo", "docker", "br-", "veth", "virbr", "cni", "flannel", "tun", "tap")
+    for name in names:
+        if name.startswith(skip):
+            continue
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            packed = fcntl.ioctl(s.fileno(), 0x8915, struct.pack("256s", name[:15].encode()))  # SIOCGIFADDR
+            ip = ipaddress.ip_address(socket.inet_ntoa(packed[20:24]))
+        except OSError:
+            continue
+        finally:
+            s.close()
+        if ip.is_loopback or ip.is_link_local or ip.is_unspecified:
+            continue
+        if str(ip) not in out:
+            out.append(str(ip))
+    return out
 # 모듈은 loopback 에만 열리고, launcher 가 중계한 요청에는 이 비밀이 X-DX-Proxy 로 실린다 (자식 env 로 전달).
 # launcher 자신의 env 에도 둔다 — 같은 프로세스에서 도는 모듈 (browser suite 의 tests/server_helpers) 도 같은 값을
 # 읽어야 하고, reload 해도 값이 바뀌지 않는다. 이 기계의 프로세스는 어차피 로컬로 신뢰되므로 권한이 늘지 않는다.
@@ -1433,7 +1465,7 @@ class LauncherHandler(DXBaseHandler):
 
     def _handle_auth_status(self):
         local = self._is_local()
-        self._send_auth_json({
+        payload = {
             "ok": True,
             "auth_enabled": not local,
             "locked": False,
@@ -1441,7 +1473,12 @@ class LauncherHandler(DXBaseHandler):
             "authenticated": local or getattr(self, "auth_kind", None) in ("token", "session")
             or bool(self._session()),
             "pairing": REMOTE_ACCESS is not None and REMOTE_ACCESS.pairing is not None,
-        })
+        }
+        # 보드 자신에게만 — 다른 컴퓨터가 열 주소 (연결된 브라우저 화면). 코드는 넣지 않는다 (콘솔 전용).
+        if local and REMOTE_ACCESS is not None:
+            port = self.server.server_address[1]
+            payload["addresses"] = [f"http://{ip}:{port}" for ip in _lan_addresses()]
+        self._send_auth_json(payload)
 
     def _handle_auth_unlock(self):
         body = self._read_json_body()
@@ -1607,6 +1644,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/home-agent-setup.js", "application/javascript")
         elif path == "/home-widgets.js":
             self._send_shell_asset(BASE_DIR / "static/home-widgets.js", "application/javascript")
+        elif path == "/remote-access.js":
+            self._send_shell_asset(BASE_DIR / "static/remote-access.js", "application/javascript")
         elif path == "/home-bar.js":
             self._send_shell_asset(BASE_DIR / "static/home-bar.js", "application/javascript")
         elif path == "/home-effects.js":
@@ -1835,6 +1874,11 @@ def main():
     _studio_url = f"http://localhost:{port}"
     print("\n  ┌────────────────────────────────────────────────┐")
     print(f"  │  👉  OPEN THE STUDIO:  {_studio_url:<25} │")
+    if REMOTE_ACCESS is not None:
+        # 다른 컴퓨터에서 열 주소 — 처음 한 번 위의 원격 접속 코드를 묻는다
+        for _ip in _lan_addresses()[:3]:
+            _lan_url = f"http://{_ip}:{port}"
+            print(f"  │      other computers:  {_lan_url:<25} │")
     print("  └────────────────────────────────────────────────┘\n")
 
     show_logo(animate=not _fast)

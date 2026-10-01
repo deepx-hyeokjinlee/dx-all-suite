@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import os
 import stat
+from pathlib import Path
 import sys
 import threading
 import time
@@ -30,6 +31,7 @@ from shared import remote_access as ra  # noqa: E402
 from shared.dx_server import DXBaseHandler, DXServer, _resolve_bind_host  # noqa: E402
 
 REMOTE_IP = "192.168.0.99"
+ROOT = Path(__file__).resolve().parents[2]
 
 
 # ── Host (DNS rebinding) ──────────────────────────────────────────────────────
@@ -361,3 +363,67 @@ def test_a_module_in_the_launchers_own_process_trusts_what_the_launcher_proxies(
     from shared.dx_server import DXBaseHandler
     assert os.environ.get("DX_PROXY_SECRET") == lmod.PROXY_SECRET
     assert DXBaseHandler._proxy_secret() == lmod.PROXY_SECRET
+
+
+# ── 연결된 브라우저 화면 (spec 2026-10-02-studio-connected-browsers-ui-design) ─────────────────
+
+def test_the_board_is_told_where_other_computers_connect_but_a_remote_browser_is_not(launcher, monkeypatch):
+    base, access, _, handler = launcher
+    import launcher.launcher as lmod
+    monkeypatch.setattr(lmod, "_lan_addresses", lambda: ["192.168.0.152"])
+    st = json.loads(_req(base + "/api/auth/status")[2])
+    port = base.rsplit(":", 1)[1]
+    assert st["pairing"] is True and st["local"] is True
+    assert st["addresses"] == [f"http://192.168.0.152:{port}"]
+    assert access.pairing.code not in json.dumps(st), "코드는 콘솔에만"
+    token, _ = access.sessions.create(user_agent="Laptop", ip=REMOTE_IP)
+    monkeypatch.setattr(handler, "_peer_ip", lambda self: REMOTE_IP)
+    st = json.loads(_req(base + "/api/auth/status", headers={"Cookie": f"dx_session={token}"})[2])
+    assert st["authenticated"] is True and st["local"] is False and "addresses" not in st
+
+
+def test_lan_addresses_are_real_ipv4_and_never_loopback():
+    import ipaddress
+    import launcher.launcher as lmod
+    for a in lmod._lan_addresses():
+        ip = ipaddress.ip_address(a)
+        assert ip.version == 4 and not ip.is_loopback and not ip.is_link_local
+
+
+def test_the_launcher_page_loads_the_connected_browsers_script_and_its_words():
+    import re
+    from scripts.js_object_literal import parse_object_after
+    html = (ROOT / "launcher" / "static" / "index.html").read_text(encoding="utf-8")
+    assert '<script src="/remote-access.js"></script>' in html
+    assert 'path == "/remote-access.js"' in (ROOT / "launcher" / "launcher.py").read_text(encoding="utf-8")
+    js = (ROOT / "launcher" / "static" / "remote-access.js").read_text(encoding="utf-8")
+    keys = set(re.findall(r"_t\('([^']+)'\)", js))
+    assert {"Connected browsers", "Disconnect", "Last active {when}"} <= keys
+    words = parse_object_after(html, "window._DX_I18N_DICT =")
+    for k in keys:
+        assert k in words, f"{k!r} 가 _DX_I18N_DICT 에 없다"
+        for lang in ("ko", "ja", "zh-CN", "zh-TW", "es"):
+            assert words[k].get(lang), f"{k!r} 에 {lang} 이 없다"
+            for slot in re.findall(r"\{\w+\}", k):
+                assert slot in words[k][lang], f"{k!r} {lang} 번역이 {slot} 를 잃었다"
+
+
+def test_a_body_nobody_read_does_not_poison_the_next_request_on_the_connection(launcher):
+    """logout 은 본문을 읽지 않는다 — keep-alive 에 남은 `{}` 가 다음 요청 줄 앞에 붙어 `{}GET` 501 이 됐다
+    (원격 브라우저가 연결을 끊고 새로고침하면 페어링 화면 대신 오류). 401 · 403 거부도 본문을 읽지 않는다."""
+    import http.client
+    base, _, _, _ = launcher
+    host, port = base.rsplit("//", 1)[1].split(":")
+    conn = http.client.HTTPConnection(host, int(port), timeout=5)
+    try:
+        conn.request("POST", "/api/auth/logout", body=b"{}",
+                     headers={"Content-Type": "application/json", "Origin": base})
+        r = conn.getresponse()
+        r.read()
+        assert r.status in (200, 204)
+        conn.request("GET", "/api/health")
+        r = conn.getresponse()
+        r.read()
+        assert r.status == 200, r.status
+    finally:
+        conn.close()

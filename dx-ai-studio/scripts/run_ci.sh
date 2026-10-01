@@ -108,6 +108,7 @@ BROWSER_TESTS=(
   tests/dx_stream/test_demo_cards_browser.py
   tests/shared/test_icon_label_browser.py
   tests/launcher/test_sdk_library_module_nav_browser.py
+  tests/launcher/test_connected_browsers_browser.py
   tests/shared/test_browser_runtime.py
   tests/shared/test_font_rendering_browser.py
   tests/shared/test_demo_stage_browser.py

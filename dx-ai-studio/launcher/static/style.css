@@ -2817,3 +2817,23 @@ body {
   flex-wrap: wrap; margin-top: var(--sp-4);
 }
 .home-ask .ask-go { margin-left: auto; }
+
+/* ── Connected browsers (remote-access.js) ─────────────────────
+   공용 .modal 위에 목록만 얹는다. 폭이 좁으면 행이 스스로 접힌다 (breakpoint 없음). */
+.ra-modal { width: 560px; }
+.ra-modal h2 { margin-bottom: var(--sp-2); }
+.ra-lead { margin: 0 0 var(--sp-3); color: var(--text-muted); font-size: var(--fs-md); line-height: 1.6; }
+.ra-addrs { list-style: none; margin: 0 0 var(--sp-3); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.ra-addr { font-family: var(--mono); font-size: var(--fs-md); padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); user-select: all; overflow-wrap: anywhere; }
+.ra-list { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-4); }
+.ra-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); padding: var(--sp-3);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius); }
+.ra-info { flex: 1 1 240px; min-width: 0; }
+.ra-name { font-weight: 600; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.ra-tag { font-size: var(--fs-xs); font-weight: 500; padding: 0 var(--sp-2); border-radius: var(--radius-sm);
+  color: var(--accent); border: 1px solid var(--accent); }
+.ra-meta { color: var(--text-muted); font-size: var(--fs-sm); margin-top: var(--sp-1); overflow-wrap: anywhere; }
+.ra-empty { margin: 0; padding: var(--sp-4); text-align: center; color: var(--text-muted);
+  border: 1px dashed var(--border-subtle); border-radius: var(--radius); }
+.ra-error { color: var(--status-error); }

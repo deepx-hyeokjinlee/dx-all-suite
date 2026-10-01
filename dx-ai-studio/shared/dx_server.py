@@ -106,6 +106,37 @@ def _configured_api_token() -> str | None:
     return token or None
 
 
+class _BodyCounter:
+    """요청 하나 동안 rfile 을 감싸 handler 가 읽은 본문 바이트를 센다 (`DXBaseHandler._dispatch_request`)."""
+
+    def __init__(self, raw):
+        self.raw = raw
+        self.count = 0
+
+    def read(self, n=-1):
+        data = self.raw.read(n)
+        self.count += len(data)
+        return data
+
+    def read1(self, n=-1):
+        data = self.raw.read1(n)
+        self.count += len(data)
+        return data
+
+    def readline(self, limit=-1):
+        data = self.raw.readline(limit)
+        self.count += len(data)
+        return data
+
+    def readinto(self, b):
+        n = self.raw.readinto(b) or 0
+        self.count += n
+        return n
+
+    def __getattr__(self, name):
+        return getattr(self.raw, name)
+
+
 class RequestBodyError(Exception):
     """요청 body 파싱 실패를 HTTP status와 함께 전달한다."""
 
@@ -1006,7 +1037,53 @@ class DXBaseHandler(SimpleHTTPRequestHandler):
         return True
 
     def _dispatch_request(self):
-        """URL 파싱 후 route() 호출."""
+        """URL 파싱 후 route() 호출. 다 읽히지 않은 본문은 응답 뒤에 비운다 (`_BodyCounter`)."""
+        length, chunked = self._declared_body()
+        counter = None
+        if length > 0 and not chunked:
+            counter = self.rfile = _BodyCounter(self.rfile)
+        try:
+            self._dispatch_checked()
+        finally:
+            if counter is not None:
+                self.rfile = counter.raw
+                self._drain_unread(length - counter.count)
+            elif chunked or length < 0:
+                self.close_connection = True
+
+    def _declared_body(self):
+        te = (self.headers.get("Transfer-Encoding") or "").lower()
+        try:
+            length = int(self.headers.get("Content-Length") or 0)
+        except (TypeError, ValueError):
+            length = -1
+        return length, "chunked" in te
+
+    # 거부 (401 · 403) 와 본문을 쓰지 않는 handler (logout 등) 는 본문을 읽지 않는다. 그 바이트가 keep-alive 연결에
+    # 남으면 다음 요청 줄 앞에 붙어 (`{}GET / HTTP/1.1`) 501 이 된다 — 원격 브라우저가 연결을 끊고 새로고침하면
+    # 페어링 화면 대신 오류가 나왔다 (2026-10-02). handler 마다 고치는 대신 여기서 한 번에 비운다. 크면 (거절된
+    # 업로드) 읽지 않고 연결을 닫는다.
+    _DRAIN_MAX = 1024 * 1024
+
+    def _drain_unread(self, left: int) -> None:
+        if left <= 0:
+            return
+        if left > self._DRAIN_MAX:
+            self.close_connection = True
+            return
+        try:
+            while left > 0:
+                chunk = self.rfile.read(min(65536, left))
+                if not chunk:
+                    break
+                left -= len(chunk)
+        except OSError:
+            self.close_connection = True
+            return
+        if left > 0:
+            self.close_connection = True
+
+    def _dispatch_checked(self):
         self._parse_request_url()
         if not self._host_ok():
             return self._refuse_host()
