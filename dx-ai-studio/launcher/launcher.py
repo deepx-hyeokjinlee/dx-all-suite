@@ -954,31 +954,62 @@ class LauncherHandler(DXBaseHandler):
     _sdk_doc_paths_mtime: float | None = None
     _sdk_doc_paths_lock = threading.Lock()
 
+    _sdk_library_cache: tuple | None = None   # (json mtime, built at, augmented catalog)
+
+    @classmethod
+    def _sdk_library(cls):
+        """sdk-library-data.json + the suite's md on disk (live sizes, new docs, no duplicates —
+        launcher/sdk_library.py). Rebuilt when the JSON changes or every 30 s (a new md file)."""
+        from launcher import sdk_library as _lib
+        data_path = BASE_DIR / "static" / "sdk-library-data.json"
+        try:
+            mtime = data_path.stat().st_mtime
+        except Exception:
+            return None
+        with cls._sdk_doc_paths_lock:
+            c = cls._sdk_library_cache
+            if c is not None and c[0] == mtime and time.time() - c[1] < 30:
+                return c[2]
+            try:
+                data = json.loads(data_path.read_text(encoding="utf-8"))
+            except Exception:
+                return None
+            out = _lib.augment(data, BASE_DIR.parent.parent)
+            cls._sdk_library_cache = (mtime, time.time(), out)
+            return out
+
     @classmethod
     def _load_sdk_doc_paths(cls) -> set:
-        """Return the set of relative paths registered in sdk-library-data.json."""
+        """Return the set of relative paths the SDK Library lists (registered + picked up from disk)."""
+        from launcher import sdk_library as _lib
         data_path = BASE_DIR / "static" / "sdk-library-data.json"
         try:
             mtime = data_path.stat().st_mtime
         except Exception:
             return set()
+        data = cls._sdk_library()
+        if data is None:
+            return set()
         with cls._sdk_doc_paths_lock:
-            if cls._sdk_doc_paths_cache is not None and cls._sdk_doc_paths_mtime == mtime:
+            if cls._sdk_doc_paths_cache is not None and cls._sdk_doc_paths_mtime == (mtime, id(data)):
                 return cls._sdk_doc_paths_cache
-            try:
-                data = json.loads(data_path.read_text(encoding="utf-8"))
-            except Exception:
-                return set()
-            allowed = set()
-            for drawer in data.get("drawers", []):
-                for section in drawer.get("sections", []):
-                    for file_info in section.get("files", []):
-                        path = file_info.get("path")
-                        if isinstance(path, str) and path:
-                            allowed.add(path)
+            allowed = _lib.allowed_paths(data)
             cls._sdk_doc_paths_cache = allowed
-            cls._sdk_doc_paths_mtime = mtime
+            cls._sdk_doc_paths_mtime = (mtime, id(data))
             return allowed
+
+    def _serve_sdk_library(self):
+        data = self._sdk_library()
+        if data is None:
+            self.send_error(404, "Not found")
+            return
+        body = json.dumps(data, ensure_ascii=False).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def _serve_sdk_doc(self, parsed):
         """Serve a markdown file from dx-all-suite by relative path."""
@@ -1055,7 +1086,8 @@ class LauncherHandler(DXBaseHandler):
 
                 return _inc_re.sub(_repl, txt)
 
-            data = _expand(text, rel).encode("utf-8")
+            from launcher import sdk_library as _lib
+            data = _lib.expand_snippets(_expand(text, rel), rel, safe_root).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/plain; charset=utf-8")
             self.send_header("Content-Length", str(len(data)))
@@ -1507,6 +1539,8 @@ class LauncherHandler(DXBaseHandler):
             self._send_shell_asset(BASE_DIR / "static/sdk-tutorial.js", "application/javascript")
         elif path.startswith("/static/sdk-library-data"):
             self._send_contained_file(BASE_DIR / "static", path[len("/static/"):])
+        elif path == "/api/sdk-library":
+            self._serve_sdk_library()
         elif path == "/api/sdk-doc":
             self._serve_sdk_doc(parsed)
         elif path == "/api/sdk-doc-image":

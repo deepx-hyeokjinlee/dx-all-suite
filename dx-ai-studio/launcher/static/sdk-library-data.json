@@ -758,6 +758,12 @@
           "icon": "cpu",
           "files": [
             {
+              "path": "dx-runtime/README.md",
+              "title": "DX-Runtime README",
+              "size": 2897,
+              "type": "md"
+            },
+            {
               "path": "dx-runtime/dx_rt/docs/source/docs/01_DXNN_Runtime_Overview.md",
               "title": "01 DXNN Runtime Overview",
               "size": 4552
@@ -1190,11 +1196,6 @@
               "path": "dx-runtime/dx_stream/docs/source/docs/Appendix_Build_on_Windows.md",
               "title": "Appendix: Build on Windows",
               "size": 12918
-            },
-            {
-              "path": "dx-runtime/dx_stream/RELEASE_NOTES.md",
-              "title": "DX-STREAM Release Notes",
-              "size": 12362
             }
           ]
         },
@@ -1210,6 +1211,12 @@
           },
           "icon": "memory",
           "files": [
+            {
+              "path": "dx-runtime/dx_fw/README.md",
+              "title": "DX-FW README",
+              "size": 250,
+              "type": "md"
+            },
             {
               "path": "dx-runtime/dx_fw/RELEASE_NOTES.md",
               "title": "RELEASE_NOTES",

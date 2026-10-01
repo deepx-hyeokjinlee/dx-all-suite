@@ -171,7 +171,10 @@
     try {
       // cache: 'no-cache' → always revalidate with the server (ETag), so catalog
       // updates show up immediately instead of being masked by the max-age cache.
-      const res = await fetch('/static/sdk-library-data.json', { cache: 'no-cache' });
+      // /api/sdk-library = the curated catalog + the suite's md on disk (live sizes, new docs in the
+      // registered docs folders); the static JSON is the fallback (launcher/sdk_library.py).
+      let res = await fetch('/api/sdk-library', { cache: 'no-cache' }).catch(() => null);
+      if (!res || !res.ok) res = await fetch('/static/sdk-library-data.json', { cache: 'no-cache' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       _libData = await res.json();
       return _libData;
