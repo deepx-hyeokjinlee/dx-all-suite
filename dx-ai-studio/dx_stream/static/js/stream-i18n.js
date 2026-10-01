@@ -471,8 +471,15 @@ window._DX_I18N_DICT = {
     'zh-TW': '從其他 PC / SSH 通道遠端存取時 (H264 over HTTP, 隨處播放)',
     es: 'Acceso remoto desde otro PC / túnel SSH (H264 sobre HTTP, funciona en cualquier lugar)',
   },
-  'Run': {
+  'Run diagnostics': {
     ko: '진단 실행',
+    ja: '診断を実行',
+    'zh-CN': '运行诊断',
+    'zh-TW': '執行診斷',
+    es: 'Ejecutar diagnóstico',
+  },
+  'Run': {
+    ko: '실행',
     ja: '実行',
     'zh-CN': '运行',
     'zh-TW': '執行',

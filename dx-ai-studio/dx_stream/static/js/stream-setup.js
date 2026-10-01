@@ -484,7 +484,7 @@ DXStream.runDiagnostics = async function() {
     }
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = _setupIco('play') + ' <span data-i18n="Run">' + T('Run') + '</span>';
+        btn.innerHTML = _setupIco('play') + ' <span data-i18n="Run diagnostics">' + T('Run diagnostics') + '</span>';
     }
 };
 
