@@ -422,7 +422,7 @@
         title: {
           ko: '언어 선택', en: 'Language Selector', ja: '言語選択', 'zh-CN': '语言选择', 'zh-TW': '語言選擇', es: 'Selector de idioma'},
         content: {
-          ko: '<strong>언어 드롭다운</strong>을 사용하여 5개 지원 언어(English, 한국어, 日本語, 简体中文, 繁體中文) 간에 전환하세요.', en: 'Use the <strong>language dropdown</strong> to switch between 5 supported languages: English, 한국어, 日本語, 简体中文, and 繁體中文.', ja: '<strong>言語ドロップダウン</strong>を使って、5つの対応言語（English、한국어、日本語、简体中文、繁體中文）を切り替えられます。', 'zh-CN': '使用<strong>语言下拉菜单</strong>在5种支持的语言之间切换：English、한국어、日本語、简体中文和繁體中文。', 'zh-TW': '使用<strong>語言下拉選單</strong>在5種支援的語言之間切換：English、한국어、日本語、简体中文和繁體中文。', es: 'Use el <strong>menú desplegable de idioma</strong> para cambiar entre 5 idiomas: English, 한국어, 日本語, 简体中文 y 繁體中文.'}
+          ko: '<strong>언어 드롭다운</strong>을 사용하여 6개 지원 언어(English, 한국어, 日本語, Español, 简体中文, 繁體中文) 간에 전환하세요.', en: 'Use the <strong>language dropdown</strong> to switch between 6 supported languages: English, 한국어, 日本語, Español, 简体中文 and 繁體中文.', ja: '<strong>言語ドロップダウン</strong>を使って、6つの対応言語（English、한국어、日本語、Español、简体中文、繁體中文）を切り替えられます。', 'zh-CN': '使用<strong>语言下拉菜单</strong>在6种支持的语言之间切换：English、한국어、日本語、Español、简体中文和繁體中文。', 'zh-TW': '使用<strong>語言下拉選單</strong>在6種支援的語言之間切換：English、한국어、日本語、Español、简体中文和繁體中文。', es: 'Use el <strong>menú desplegable de idioma</strong> para cambiar entre 6 idiomas: English, 한국어, 日本語, Español, 简体中文 y 繁體中文.'}
       },
       {
         target: '#dxToolbarTutorial',

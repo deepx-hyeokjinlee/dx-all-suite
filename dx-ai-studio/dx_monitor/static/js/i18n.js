@@ -197,9 +197,9 @@ window._DX_I18N_DICT = {
   },
   'CPU Cores': {
     ko: 'CPU 코어',
-    ja: 'CPU コア',
-    'zh-CN': 'CPU 核心',
-    'zh-TW': 'CPU 核心',
+    ja: 'CPU コア数',
+    'zh-CN': 'CPU 核心数',
+    'zh-TW': 'CPU 核心數',
     es: 'Núcleos de CPU',
   },
   'Python': {
@@ -286,7 +286,7 @@ window._DX_I18N_DICT = {
   'CPU Cores (per-core)': { ko: 'CPU 코어별', ja: 'CPUコア別', 'zh-CN': 'CPU各核心', 'zh-TW': 'CPU各核心',es:'Núcleos de CPU'},
   'SDK Version': { ko: 'SDK 버전', ja: 'SDKバージョン', 'zh-CN': 'SDK 版本', 'zh-TW': 'SDK 版本',es:'Versión del SDK'},
   'Driver Version': { ko: '드라이버 버전', ja: 'ドライバーバージョン', 'zh-CN': '驱动版本', 'zh-TW': '驅動版本',es:'Versión del controlador'},
-  'PCIe Driver': { ko: 'PCIe 드라이버', ja: 'PCIe ドライバー', 'zh-CN': 'PCIe 驱动', 'zh-TW': 'PCIe 驅動',es:'Controlador PCIe'},
+  'PCIe Driver': { ko: 'PCIe 드라이버', ja: 'PCIe ドライバー', 'zh-CN': 'PCIe 驱动', 'zh-TW': 'PCIe 驅動程式',es:'Controlador PCIe'},
   'Uptime': { ko: '가동 시간', ja: '稼働時間', 'zh-CN': '运行时间', 'zh-TW': '運行時間',es:'Tiempo de actividad'},
   'Firmware': {
     ko: '펌웨어',

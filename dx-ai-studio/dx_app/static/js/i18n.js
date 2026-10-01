@@ -325,7 +325,7 @@ window._DX_I18N_DICT = {
   },
   'Hostname': {
     ko: '호스트명', ja: 'ホスト名',
-    'zh-CN': '主机名', 'zh-TW': '主機名',
+    'zh-CN': '主机名', 'zh-TW': '主機名稱',
     es: 'Nombre de host',
   },
   'CPU': {
@@ -697,7 +697,6 @@ window._DX_I18N_DICT = {
     'zh-CN': '级联 (阶段1 → 裁剪区域 → 阶段2)', 'zh-TW': '級聯 (階段1 → 裁剪區域 → 階段2)',
     es: 'Cascada (etapa-1 → regiones recortadas → etapa-2)',
   },
-  'Chain: each step\'s output image is fed as input to the next step.': '체인: 각 단계의 출력 이미지가 다음 단계의 입력으로 전달됩니다.',
 
   /* ==== Compiler ==== */
   'Presets': {

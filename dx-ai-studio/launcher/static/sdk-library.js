@@ -200,7 +200,7 @@
       <div class="sdk-topbar-center">
         <div class="sdk-topbar-search">
           <span class="sdk-topbar-search-icon">${_sdkIco('search')}</span>
-          <input type="text" id="sdkLibSearch" placeholder="${_t('Search documents…', '문서 검색…', 'ドキュメント検색…', '搜索文档…', '搜尋文件…', 'Buscar documentos…')}" autocomplete="off">
+          <input type="text" id="sdkLibSearch" placeholder="${_t('Search documents…', '문서 검색…', 'ドキュメントを検索…', '搜索文档…', '搜尋文件…', 'Buscar documentos…')}" autocomplete="off">
         </div>
       </div>
       <div class="sdk-topbar-right">

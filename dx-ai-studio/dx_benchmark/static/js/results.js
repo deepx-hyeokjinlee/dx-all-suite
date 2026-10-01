@@ -66,7 +66,7 @@ var Results = {
       cardsHtml += '<div class="hw-card" role="button" tabindex="0" data-hw-id="' + _escAttr(hw.hw_id) + '">' +
       '<div class="hw-card-icon">' + ((typeof DXIcon === 'function') ? DXIcon('monitor') : '') + '</div>' +
       '<div class="hw-card-name">' + _escHtml(hw.hw_id) + '</div>' +
-      '<div class="hw-card-runs">' + (hw.runs || []).length + ' runs</div>' +
+      '<div class="hw-card-runs">' + _escHtml(_t('{n} runs').replace('{n}', (hw.runs || []).length)) + '</div>' +
       '</div>';
     });
     container.innerHTML = this._buildShellHTML(

@@ -96,7 +96,7 @@
       meta.style.display = '';
       meta.setAttribute('data-dxt-mock', '1');
       var mt = document.getElementById('trendModelMetaTitle');
-      if (mt) mt.innerHTML = 'Benchmarked Models – Object Detection · run_demo' + _previewBadge();
+      if (mt) mt.innerHTML = escHtml(_t('Benchmarked Models') + ' – ' + _t('Object Detection')) + ' · run_demo' + _previewBadge();
       var sec = document.getElementById('trendModelMetaSection');
       if (sec) sec.innerHTML = '<table class="summary-table bench-table"><thead><tr><th>Model</th><th>Size</th><th>Input</th><th>NPU Mem (MB)</th><th>DXNN Format</th></tr></thead><tbody>' +
         '<tr><td>YOLOv5</td><td>S</td><td>640×640</td><td>28</td><td>6</td></tr>' +

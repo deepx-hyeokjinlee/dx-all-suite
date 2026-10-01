@@ -102,8 +102,13 @@ const PlannerWorkspace = {
     const platformCount = meta.platform_count != null ? meta.platform_count : DataLoader.getPlatforms().length;
     const generated = DataLoader.getGeneratedAt();
     const generatedText = generated ? generated.slice(0, 10) : 'N/A';
-    this.scopeBannerMeta.textContent =
-      platformCount + ' platforms · YOLO26 benchmark · updated ' + generatedText;
+    const tpl = (typeof T === 'function') ? T('{n} platforms · YOLO26 benchmark · updated {date}')
+      : '{n} platforms · YOLO26 benchmark · updated {date}';
+    this.scopeBannerMeta.textContent = tpl.replace('{n}', platformCount).replace('{date}', generatedText);
+    if (!this._metaLangHooked && typeof DXI18n !== 'undefined' && DXI18n.onLangChange) {
+      this._metaLangHooked = true;   // 언어를 바꾸면 다시 (release audit P-3: 늘 영어였다)
+      DXI18n.onLangChange(() => this.renderScopeBannerMeta());
+    }
   },
 
   _renderRecommendationVerdict(inputs, results) {

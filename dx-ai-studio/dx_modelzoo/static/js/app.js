@@ -75,6 +75,26 @@ function _localText(obj) {
   return obj[lang] || obj[lang.split('-')[0]] || obj.en || '';
 }
 
+/* 카드 · 상세의 요약. 생성기 (metadata/merge.py) 가 task 마다 영어 한 문장으로 채우므로, 고른 언어가 없으면 그
+   문장을 사전으로 번역하고, "AI model for <task> tasks." 꼴은 번역한 task 이름으로 말한다 (release audit Z-6:
+   요약이 모든 언어에서 영어였고, 일부는 "image_retrieval" 같은 slug 가 보였다). */
+function _summaryText(m) {
+  const s = (m && ((m.display && m.display.summary) || (m.content && m.content.use_case))) || null;
+  if (!s) return '';
+  const lang = DXI18n.lang;
+  if (lang === 'en' || s[lang] || s[lang.split('-')[0]]) return _localText(s);
+  const en = s.en || '';
+  const tr = T(en);
+  if (tr !== en) return tr;
+  const g = en.match(/^AI model for (\w+) tasks\.$/);
+  if (g) {
+    const cats = (typeof _allCategories === 'object' && _allCategories) || {};
+    const label = (m.category && cats[m.category] && _localLabel(cats[m.category], 'label')) || g[1].replace(/_/g, ' ');
+    return T('%s model.').replace('%s', label);
+  }
+  return en;
+}
+
 function _artifactAvailable(m, artifactId) {
   const artifact = (m.artifacts || {})[artifactId] || {};
   if (artifact.available === false) return false;

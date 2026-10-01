@@ -4,6 +4,8 @@
  * so the dict is initially empty. Add entries as needed.
  */
 window._DX_I18N_DICT = {
+  '{n} platforms · YOLO26 benchmark · updated {date}': { ko: '플랫폼 {n}개 · YOLO26 벤치마크 · {date} 갱신', ja: '{n} プラットフォーム · YOLO26 ベンチマーク · {date} 更新', 'zh-CN': '{n} 个平台 · YOLO26 基准测试 · {date} 更新', 'zh-TW': '{n} 個平台 · YOLO26 基準測試 · {date} 更新', es: '{n} plataformas · benchmark YOLO26 · actualizado el {date}' },
+  'Could not load the benchmark data.': { ko: '벤치마크 데이터를 불러올 수 없습니다.', ja: 'ベンチマークデータを読み込めません。', 'zh-CN': '无法加载基准测试数据。', 'zh-TW': '無法載入基準測試資料。', es: 'No se pudieron cargar los datos del benchmark.' },
   'Product Recommender': { ko: '최적 제품 추천', ja: '製品レコメンダー', 'zh-CN': '最优产品推荐', 'zh-TW': '最佳產品推薦',es:'Recomendador de productos'},
   'Requirements': { ko: '조건 설정', ja: '要件設定', es: 'Requisitos', 'zh-CN': '条件设置', 'zh-TW': '條件設定' },
   'Recommendations': { ko: '추천 결과', ja: '推奨結果', es: 'Recomendaciones', 'zh-CN': '推荐结果', 'zh-TW': '推薦結果' },

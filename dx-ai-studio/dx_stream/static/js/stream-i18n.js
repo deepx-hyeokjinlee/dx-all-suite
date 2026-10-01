@@ -1,4 +1,13 @@
 window._DX_I18N_DICT = {
+    // 재생 · 연결 알림 (release audit: 사전에 없어 모든 언어에서 영어였다)
+    'MSE init failed, using MJPEG: ': { ko: 'MSE 초기화 실패, MJPEG로 전환: ', ja: 'MSE の初期化に失敗、MJPEG に切り替え: ', 'zh-CN': 'MSE 初始化失败，改用 MJPEG：', 'zh-TW': 'MSE 初始化失敗，改用 MJPEG：', es: 'Falló la inicialización de MSE, se usa MJPEG: ' },
+    'fMP4 stream error: ': { ko: 'fMP4 스트림 오류: ', ja: 'fMP4 ストリームのエラー: ', 'zh-CN': 'fMP4 流错误：', 'zh-TW': 'fMP4 串流錯誤：', es: 'Error en el flujo fMP4: ' },
+    'Video decode stalled — switching to MJPEG': { ko: '영상 디코딩이 멈췄습니다 — MJPEG로 전환합니다', ja: '動画のデコードが止まりました — MJPEG に切り替えます', 'zh-CN': '视频解码停滞 — 改用 MJPEG', 'zh-TW': '影片解碼停滯 — 改用 MJPEG', es: 'La decodificación de video se detuvo — cambiando a MJPEG' },
+    'Demo playback stopped.': { ko: '데모 재생이 멈췄습니다.', ja: 'デモの再生が停止しました。', 'zh-CN': '演示播放已停止。', 'zh-TW': '示範播放已停止。', es: 'La reproducción de la demo se detuvo.' },
+    'WebRTC unavailable from here — switching to MJPEG…': { ko: '여기서는 WebRTC를 쓸 수 없습니다 — MJPEG로 전환합니다…', ja: 'ここでは WebRTC を使えません — MJPEG に切り替えます…', 'zh-CN': '此处无法使用 WebRTC — 改用 MJPEG…', 'zh-TW': '此處無法使用 WebRTC — 改用 MJPEG…', es: 'WebRTC no está disponible desde aquí — cambiando a MJPEG…' },
+    'failed': { ko: '실패', ja: '失敗', 'zh-CN': '失败', 'zh-TW': '失敗', es: 'falló' },
+    'Stream stalled — no video frames received. The pipeline may have failed.': { ko: '스트림이 멈췄습니다 — 영상 프레임이 오지 않습니다. 파이프라인이 실패했을 수 있습니다.', ja: 'ストリームが停止しました — 映像フレームが届きません。パイプラインが失敗した可能性があります。', 'zh-CN': '流已停滞 — 未收到视频帧。管道可能已失败。', 'zh-TW': '串流已停滯 — 未收到影像影格。管線可能已失敗。', es: 'El flujo se detuvo — no llegan fotogramas de video. Es posible que la canalización haya fallado.' },
+    'Dismiss': { ko: '닫기', ja: '閉じる', 'zh-CN': '关闭', 'zh-TW': '關閉', es: 'Descartar' },
     'started': { ko: '시작됨', ja: '開始済み', 'zh-CN': '已开始', 'zh-TW': '已開始',es:'iniciado'},
     'completed': { ko: '완료', ja: '完了', 'zh-CN': '已完成', 'zh-TW': '已完成',es:'completado'},
     'Build': { ko: '빌드', ja: 'ビルド', 'zh-CN': '构建', 'zh-TW': '建置',es:'Compilar'},
