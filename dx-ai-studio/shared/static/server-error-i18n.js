@@ -25,7 +25,7 @@
   var _SERVER_ERROR_PATTERNS = [
     {
       re: /^Invalid input_shapes for (.+?): (.+?) — dimensions must be positive integers$/,
-      ko: 'input_shapes 의 $1 차원 $2 을(를) 쓸 수 없습니다 — 차원은 양의 정수여야 합니다',
+      ko: 'input_shapes의 $1 차원 $2 을(를) 쓸 수 없습니다 — 차원은 양의 정수여야 합니다',
       ja: 'input_shapes の $1 の次元 $2 は使用できません — 次元は正の整数である必要があります',
       es: 'La dimensión $2 de $1 en input_shapes no es válida: las dimensiones deben ser enteros positivos',
       'zh-CN': 'input_shapes 中 $1 的维度 $2 无效 — 维度必须为正整数',
@@ -33,7 +33,7 @@
     },
     {
       re: /^Invalid input_shapes for (.+?): expected a list of dimensions$/,
-      ko: 'input_shapes 의 $1 은(는) 차원 목록이어야 합니다',
+      ko: 'input_shapes의 $1 은(는) 차원 목록이어야 합니다',
       ja: 'input_shapes の $1 は次元のリストである必要があります',
       es: '$1 en input_shapes debe ser una lista de dimensiones',
       'zh-CN': 'input_shapes 中的 $1 必须是维度列表',
@@ -41,7 +41,7 @@
     },
     {
       re: /^Invalid input_shapes: expected an object$/,
-      ko: 'input_shapes 는 객체여야 합니다',
+      ko: 'input_shapes는 객체여야 합니다',
       ja: 'input_shapes はオブジェクトである必要があります',
       es: 'input_shapes debe ser un objeto',
       'zh-CN': 'input_shapes 必须是对象',
@@ -49,7 +49,7 @@
     },
     {
       re: /^Invalid opt_level: empty — must be one of (.+)$/,
-      ko: 'opt_level 이 비어 있습니다 — $1 중 하나여야 합니다',
+      ko: 'opt_level이 비어 있습니다 — $1 중 하나여야 합니다',
       ja: 'opt_level が空です — $1 のいずれかである必要があります',
       es: 'opt_level está vacío: debe ser uno de $1',
       'zh-CN': 'opt_level 为空 — 必须是 $1 之一',
@@ -97,7 +97,7 @@
     },
     {
       re: /^recalibration_method must be one of (.+)$/,
-      ko: 'recalibration_method 는 $1 중 하나여야 합니다',
+      ko: 'recalibration_method는 $1 중 하나여야 합니다',
       ja: 'recalibration_method は $1 のいずれかである必要があります',
       es: 'recalibration_method debe ser uno de $1',
       'zh-CN': 'recalibration_method 必须是 $1 之一',
@@ -105,7 +105,7 @@
     },
     {
       re: /^Invalid file_extensions: expected a list, got a string\. Use (.+?), not (.+?)\.$/,
-      ko: 'file_extensions 는 목록이어야 합니다 — $2 대신 $1 처럼 적으세요',
+      ko: 'file_extensions는 목록이어야 합니다 — $2 대신 $1 처럼 적으세요',
       ja: 'file_extensions はリストである必要があります — $2 ではなく $1 のように書いてください',
       es: 'file_extensions debe ser una lista: use $1, no $2',
       'zh-CN': 'file_extensions 必须是列表 — 请用 $1，而不是 $2',
@@ -113,7 +113,7 @@
     },
     {
       re: /^Invalid file_extensions: expected a list, got (.+)$/,
-      ko: 'file_extensions 는 목록이어야 합니다 (받은 것: $1)',
+      ko: 'file_extensions는 목록이어야 합니다 (받은 것: $1)',
       ja: 'file_extensions はリストである必要があります（受け取った型: $1）',
       es: 'file_extensions debe ser una lista (se recibió $1)',
       'zh-CN': 'file_extensions 必须是列表（收到 $1）',
@@ -121,7 +121,7 @@
     },
     {
       re: /^Invalid file_extensions: (.+?) — extensions must be non-empty strings$/,
-      ko: 'file_extensions 의 $1 을(를) 쓸 수 없습니다 — 확장자는 비어 있지 않은 문자열이어야 합니다',
+      ko: 'file_extensions의 $1 을(를) 쓸 수 없습니다 — 확장자는 비어 있지 않은 문자열이어야 합니다',
       ja: 'file_extensions の $1 は使用できません — 拡張子は空でない文字列である必要があります',
       es: '$1 no es válido en file_extensions: las extensiones deben ser cadenas no vacías',
       'zh-CN': 'file_extensions 中的 $1 无效 — 扩展名必须是非空字符串',
@@ -129,7 +129,7 @@
     },
     {
       re: /^Invalid preprocessings: expected an array of operations, got (.+)$/,
-      ko: 'preprocessings 는 연산 배열이어야 합니다 (받은 것: $1)',
+      ko: 'preprocessings는 연산 배열이어야 합니다 (받은 것: $1)',
       ja: 'preprocessings は処理の配列である必要があります（受け取った型: $1）',
       es: 'preprocessings debe ser una matriz de operaciones (se recibió $1)',
       'zh-CN': 'preprocessings 必须是操作数组（收到 $1）',
@@ -137,7 +137,7 @@
     },
     {
       re: /^Invalid (.+?)\.std: contains 0 — normalization divides by std$/,
-      ko: '$1.std 에 0 이 있습니다 — 정규화는 std 로 나눕니다',
+      ko: '$1.std에 0이 있습니다 — 정규화는 std로 나눕니다',
       ja: '$1.std に 0 が含まれています — 正規化は std で除算します',
       es: '$1.std contiene 0: la normalización divide por std',
       'zh-CN': '$1.std 中包含 0 — 归一化需要除以 std',
@@ -145,7 +145,7 @@
     },
     {
       re: /^Invalid (.+?): mean has (.+?) channel\(s\) but std has (.+?) — they must describe the same channels$/,
-      ko: '$1 의 mean 은 $2 채널인데 std 는 $3 입니다 — 같은 채널을 가리켜야 합니다',
+      ko: '$1의 mean은 $2 채널인데 std는 $3 입니다 — 같은 채널을 가리켜야 합니다',
       ja: '$1 の mean は $2 チャンネルですが std は $3 です — 同じチャンネルを表す必要があります',
       es: 'En $1, mean tiene $2 canal(es) pero std tiene $3: deben describir los mismos canales',
       'zh-CN': '$1 的 mean 有 $2 个通道，但 std 有 $3 个 — 必须描述相同的通道',
@@ -161,7 +161,7 @@
     },
     {
       re: /^Invalid (.+?): (.+?) — channel values must be numbers$/,
-      ko: '$1 의 $2 을(를) 쓸 수 없습니다 — 채널 값은 숫자여야 합니다',
+      ko: '$1의 $2 을(를) 쓸 수 없습니다 — 채널 값은 숫자여야 합니다',
       ja: '$1 の $2 は使用できません — チャンネル値は数値である必要があります',
       es: '$2 no es válido en $1: los valores de canal deben ser números',
       'zh-CN': '$1 中的 $2 无效 — 通道值必须是数字',
@@ -169,7 +169,7 @@
     },
     {
       re: /^Invalid (.+?): expected exactly one transform per entry, got (.+?) \((.+?)\)\. Split them into separate entries\.$/,
-      ko: '$1 에는 항목마다 transform 이 하나여야 하는데 $2 개입니다 ($3). 항목을 나누세요',
+      ko: '$1 에는 항목마다 transform이 하나여야 하는데 $2 개입니다 ($3). 항목을 나누세요',
       ja: '$1 は項目ごとに transform が 1 つである必要がありますが $2 個あります（$3）。項目を分けてください',
       es: '$1 debe tener exactamente una transformación por entrada, pero tiene $2 ($3). Sepárelas en entradas distintas',
       'zh-CN': '$1 每个条目只能有一个 transform，但有 $2 个（$3）。请拆分为独立条目',
@@ -209,7 +209,7 @@
     },
     {
       re: /^Invalid (.+?): (.+?) — node names must be non-empty strings$/,
-      ko: '$1 의 $2 을(를) 쓸 수 없습니다 — 노드 이름은 비어 있지 않은 문자열이어야 합니다',
+      ko: '$1의 $2 을(를) 쓸 수 없습니다 — 노드 이름은 비어 있지 않은 문자열이어야 합니다',
       ja: '$1 の $2 は使用できません — ノード名は空でない文字列である必要があります',
       es: '$2 no es válido en $1: los nombres de nodo deben ser cadenas no vacías',
       'zh-CN': '$1 中的 $2 无效 — 节点名称必须是非空字符串',
@@ -225,7 +225,7 @@
     },
     {
       re: /^Invalid (.+?): (.+?) — must be a positive number$/,
-      ko: '$1 의 $2 을(를) 쓸 수 없습니다 — 양수여야 합니다',
+      ko: '$1의 $2 을(를) 쓸 수 없습니다 — 양수여야 합니다',
       ja: '$1 の $2 は使用できません — 正の数である必要があります',
       es: '$2 no es válido en $1: debe ser un número positivo',
       'zh-CN': '$1 中的 $2 无效 — 必须是正数',
@@ -233,7 +233,7 @@
     },
     {
       re: /^Invalid (.+?): not valid JSON — (.+)$/,
-      ko: '$1 이(가) 올바른 JSON 이 아닙니다 — $2',
+      ko: '$1 이(가) 올바른 JSON이 아닙니다 — $2',
       ja: '$1 が有効な JSON ではありません — $2',
       es: '$1 no es JSON válido: $2',
       'zh-CN': '$1 不是有效的 JSON — $2',
@@ -241,7 +241,7 @@
     },
     {
       re: /^Invalid JSON body$/,
-      ko: '요청 본문이 올바른 JSON 이 아닙니다',
+      ko: '요청 본문이 올바른 JSON이 아닙니다',
       ja: 'リクエスト本文が有効な JSON ではありません',
       es: 'El cuerpo de la solicitud no es JSON válido',
       'zh-CN': '请求正文不是有效的 JSON',
@@ -249,7 +249,7 @@
     },
     {
       re: /^Invalid JSON$/,
-      ko: '올바른 JSON 이 아닙니다',
+      ko: '올바른 JSON이 아닙니다',
       ja: '有効な JSON ではありません',
       es: 'JSON no válido',
       'zh-CN': '无效的 JSON',
@@ -273,7 +273,7 @@
     },
     {
       re: /^Access denied: dir must be under (.+)$/,
-      ko: '접근이 거부되었습니다 — dir 은 $1 아래여야 합니다',
+      ko: '접근이 거부되었습니다 — dir은 $1 아래여야 합니다',
       ja: 'アクセスが拒否されました — dir は $1 の下にある必要があります',
       es: 'Acceso denegado: dir debe estar bajo $1',
       'zh-CN': '拒绝访问 — dir 必须位于 $1 之下',
@@ -281,7 +281,7 @@
     },
     {
       re: /^model_path, config_path, and output_dir are required$/,
-      ko: 'model_path, config_path, output_dir 이 모두 필요합니다',
+      ko: 'model_path, config_path, output_dir이 모두 필요합니다',
       ja: 'model_path、config_path、output_dir がすべて必要です',
       es: 'Se requieren model_path, config_path y output_dir',
       'zh-CN': '必须提供 model_path、config_path 和 output_dir',
@@ -371,7 +371,7 @@
     },
     {
       re: /^temperature must be between (.+?) and (.+)$/,
-      ko: 'temperature 는 $1 과(와) $2 사이여야 합니다',
+      ko: 'temperature는 $1 과(와) $2 사이여야 합니다',
       ja: 'temperature は $1 から $2 の間である必要があります',
       es: 'temperature debe estar entre $1 y $2',
       'zh-CN': 'temperature 必须在 $1 和 $2 之间',
@@ -379,7 +379,7 @@
     },
     {
       re: /^temperature must be a number$/,
-      ko: 'temperature 는 숫자여야 합니다',
+      ko: 'temperature는 숫자여야 합니다',
       ja: 'temperature は数値である必要があります',
       es: 'temperature debe ser un número',
       'zh-CN': 'temperature 必须是数字',

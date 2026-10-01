@@ -558,7 +558,7 @@ window._DX_I18N_DICT = {
   // Setup 단계 목록 (아이콘 체계 단계 2b) — 버튼 말에서 이모지를 뺐다 (아이콘은 마크업이 그린다).
   'Set up the rest': { ko: '나머지 설치', ja: '残りをセットアップ', 'zh-CN': '安装其余项', 'zh-TW': '安裝其餘項目', es: 'Instalar el resto' },
   'Six steps get DX Stream running on this PC. What is done stays done.': {
-    ko: '여섯 단계면 이 PC 에서 DX Stream 이 돌아갑니다. 끝난 단계는 그대로 둡니다.',
+    ko: '여섯 단계면 이 PC에서 DX Stream이 돌아갑니다. 끝난 단계는 그대로 둡니다.',
     ja: '6 つのステップでこの PC で DX Stream が動きます。終わったステップはそのままです。',
     'zh-CN': '六个步骤即可让 DX Stream 在这台电脑上运行。已完成的步骤会保留。',
     'zh-TW': '六個步驟即可讓 DX Stream 在這台電腦上執行。已完成的步驟會保留。',
@@ -570,7 +570,7 @@ window._DX_I18N_DICT = {
   'Ready': { ko: '준비됨', ja: '準備完了', 'zh-CN': '就绪', 'zh-TW': '就緒', es: 'Listo' },
   'Needs setup': { ko: '설치 필요', ja: 'セットアップが必要', 'zh-CN': '需要安装', 'zh-TW': '需要安裝', es: 'Requiere instalación' },
   // 결과 무대 (spec 2026-10-01 demo stage)
-  'Install a model in Setup to run a demo.': { ko: 'Setup 에서 model 을 설치하면 데모를 실행할 수 있습니다.', ja: 'Setup でモデルをインストールするとデモを実行できます。', 'zh-CN': '在 Setup 中安装模型即可运行演示。', 'zh-TW': '在 Setup 中安裝模型即可執行示範。', es: 'Instale un modelo en Setup para ejecutar una demo.' },
+  'Install a model in Setup to run a demo.': { ko: 'Setup에서 모델을 설치하면 데모를 실행할 수 있습니다.', ja: 'Setup でモデルをインストールするとデモを実行できます。', 'zh-CN': '在 Setup 中安装模型即可运行演示。', 'zh-TW': '在 Setup 中安裝模型即可執行示範。', es: 'Instale un modelo en Setup para ejecutar una demo.' },
   'Terminal command': { ko: '터미널 명령', ja: 'ターミナルコマンド', 'zh-CN': '终端命令', 'zh-TW': '終端機命令', es: 'Comando de terminal' },
   'Resolution': { ko: '해상도', ja: '解像度', 'zh-CN': '分辨率', 'zh-TW': '解析度', es: 'Resolución' },
   'Model': { ko: '모델', ja: 'モデル', 'zh-CN': '模型', 'zh-TW': '模型', es: 'Modelo' },

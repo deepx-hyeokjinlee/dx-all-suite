@@ -238,7 +238,7 @@ window._DX_MODELZOO_I18N_REGISTER({
   },
   'This model is .dxnn container v9 — the installed DX-RT reads up to v8.': {
     en: 'This model is .dxnn container v9 — the installed DX-RT reads up to v8.',
-    ko: '이 model 은 .dxnn container v9 입니다 — 설치된 DX-RT 는 v8 까지 읽습니다.',
+    ko: '이 모델은 .dxnn container v9 입니다 — 설치된 DX-RT는 v8까지 읽습니다.',
     ja: 'このモデルは .dxnn container v9 です — インストール済みの DX-RT は v8 までです。',
     'zh-CN': '此模型为 .dxnn container v9 — 已安装的 DX-RT 仅支持到 v8。',
     'zh-TW': '此模型為 .dxnn container v9 — 已安裝的 DX-RT 僅支援到 v8。',

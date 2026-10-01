@@ -1039,7 +1039,7 @@ window._DX_I18N_DICT = {
     es: '{n} modelos de ejemplo',
   },
   'Install the SDK first': {
-    ko: '먼저 SDK 를 설치하세요',
+    ko: '먼저 SDK를 설치하세요',
     ja: '先に SDK をインストールしてください',
     'zh-CN': '请先安装 SDK',
     'zh-TW': '請先安裝 SDK',

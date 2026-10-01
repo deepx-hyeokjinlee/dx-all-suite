@@ -631,7 +631,7 @@ window._DX_I18N_DICT = {
     es: 'Instalar el resto',
   },
   'Six steps get DX App running on this PC. What is done stays done.': {
-    ko: '여섯 단계면 이 PC 에서 DX App 이 돌아갑니다. 끝난 단계는 그대로 둡니다.',
+    ko: '여섯 단계면 이 PC에서 DX App이 돌아갑니다. 끝난 단계는 그대로 둡니다.',
     ja: '6 つのステップでこの PC で DX App が動きます。終わったステップはそのままです。',
     'zh-CN': '六个步骤即可让 DX App 在这台电脑上运行。已完成的步骤会保留。',
     'zh-TW': '六個步驟即可讓 DX App 在這台電腦上執行。已完成的步驟會保留。',
@@ -1912,7 +1912,7 @@ window._DX_I18N_DICT = {
   // DX-RT 가 못 읽는 .dxnn (Model Zoo 2_5_0 = container v9, spec 2026-10-01 dx_app per-model layout)
   'needs_dxrt': {
     en: 'This model needs DX-RT 3.5.0 or later (.dxnn container v9). The installed DX-RT reads up to v8.',
-    ko: '이 model 은 DX-RT 3.5.0 이상이 필요합니다 (.dxnn container v9). 설치된 DX-RT 는 v8 까지 읽습니다.',
+    ko: '이 모델은 DX-RT 3.5.0 이상이 필요합니다 (.dxnn container v9). 설치된 DX-RT는 v8까지 읽습니다.',
     ja: 'このモデルには DX-RT 3.5.0 以降が必要です (.dxnn container v9)。インストール済みの DX-RT は v8 までです。',
     'zh-CN': '此模型需要 DX-RT 3.5.0 或更高版本 (.dxnn container v9)。已安装的 DX-RT 仅支持到 v8。',
     'zh-TW': '此模型需要 DX-RT 3.5.0 或更新版本 (.dxnn container v9)。已安裝的 DX-RT 僅支援到 v8。',
@@ -2616,7 +2616,7 @@ window._DX_I18N_DICT = {
   'Download failed to start': { ko: '다운로드를 시작하지 못했습니다', ja: 'ダウンロードを開始できませんでした', 'zh-CN': '下载启动失败', 'zh-TW': '下載啟動失敗', es: 'No se pudo iniciar la descarga'},
   'A model download is already in progress.': { ko: '이미 모델 다운로드가 진행 중입니다.', ja: 'すでにモデルのダウンロードが進行中です。', 'zh-CN': '已有模型正在下载中。', 'zh-TW': '已有模型正在下載中。', es: 'Ya hay una descarga de modelo en curso.'},
   'async_empty_video': {
-    ko: '이 async 예제는 영상 프레임을 저장하지 못했습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드로 전환하면 동일한 주석 영상이 나옵니다. 정확한 동작은 터미널에서 run_demo.sh 로 직접 실행해 확인하세요.',
+    ko: '이 async 예제는 영상 프레임을 저장하지 못했습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드로 전환하면 동일한 주석 영상이 나옵니다. 정확한 동작은 터미널에서 run_demo.sh로 직접 실행해 확인하세요.',
     en: 'This async example produced no video frames — a known limitation of some async runners, fix planned in a future update. Switch to Sync mode for the identical annotated video. To verify the real behavior, run it directly in a terminal via run_demo.sh.',
     ja: 'この async 例は映像フレームを保存できませんでした — 一部の async ランナーの既知の制限で、今後のアップデートで対応予定です。Sync モードに切り替えると同一の注釈付き映像が得られます。実際の動作はターミナルで run_demo.sh を直接実行して確認してください。',
     'zh-CN': '此 async 示例未生成视频帧 — 这是部分 async 运行器的已知限制，计划在后续更新中修复。切换到 Sync 模式可得到相同的标注视频。如需验证真实行为，请在终端通过 run_demo.sh 直接运行。',
@@ -2624,7 +2624,7 @@ window._DX_I18N_DICT = {
     es: 'Este ejemplo async no generó fotogramas de vídeo — una limitación conocida de algunos runners async, con corrección prevista en una futura actualización. Cambia al modo Sync para el mismo vídeo anotado. Para verificar el comportamiento real, ejecútalo directamente en una terminal con run_demo.sh.',
   },
   'async_video_stalled': {
-    ko: 'async 예제가 영상 처리 중 멈췄습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드를 사용하세요. 정확한 동작은 터미널에서 run_demo.sh 로 직접 실행해 확인하세요.',
+    ko: 'async 예제가 영상 처리 중 멈췄습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드를 사용하세요. 정확한 동작은 터미널에서 run_demo.sh로 직접 실행해 확인하세요.',
     en: 'The async example stalled while processing video — a known limitation of some async runners, fix planned in a future update. Please use Sync mode. To verify the real behavior, run it directly in a terminal via run_demo.sh.',
     ja: 'async 例が映像処理中に停止しました — 一部の async ランナーの既知の制限で、今後のアップデートで対応予定です。Sync モードをご使用ください。実際の動作はターミナルで run_demo.sh を直接実行して確認してください。',
     'zh-CN': 'async 示例在处理视频时卡住 — 这是部分 async 运行器的已知限制，计划在后续更新中修复。请使用 Sync 模式。如需验证真实行为，请在终端通过 run_demo.sh 直接运行。',
@@ -3631,7 +3631,7 @@ window._DX_I18N_PLACEHOLDERS = {
     es: ' paso(s)',
   },
   '" will be auto-selected': {
-    ko: '" 이 자동 선택됩니다', ja: '" が自動選択されます',
+    ko: '"이 자동 선택됩니다', ja: '" が自動選択されます',
     es: '" se seleccionará automáticamente',
     'zh-CN': '" 将被自动选择', 'zh-TW': '" 將被自動選擇'
   },

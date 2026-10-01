@@ -117,6 +117,7 @@
   "launcher/static/launcher-state.js": 0,
   "launcher/static/launcher.js": 0,
   "launcher/static/platform-info.js": 0,
+  "launcher/static/remote-access.js": 0,
   "launcher/static/sdk-library.css": 19,
   "launcher/static/sdk-library.js": 15,
   "launcher/static/sdk-tutorial.js": 0,
@@ -148,5 +149,5 @@
   "shared/static/toolbar.js": 0,
   "shared/static/tutorial-engine.js": 0,
   "shared/static/tutorial-init.js": 0,
-  "shared/static/tutorial.css": 59
+  "shared/static/tutorial.css": 52
 }

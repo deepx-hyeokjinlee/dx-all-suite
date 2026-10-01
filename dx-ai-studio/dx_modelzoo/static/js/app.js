@@ -131,7 +131,9 @@ async function loadAndInitCatalog() {
   const countEl = document.getElementById('modelCount');
   if (countEl && _catalogData) {
     const variantCount = Number.isFinite(_catalogData.variant_count) ? _catalogData.variant_count : _catalogData.count;
-    countEl.textContent = `${variantCount} ${T('models found')}`;
+    // 수량사 (개 · 件 · 个 · 個) 는 숫자에 붙인다 — "499개 모델" (release audit)
+    const found = T('models found');
+    countEl.textContent = /^[개件個个]/.test(found) ? `${variantCount}${found}` : `${variantCount} ${found}`;
   }
   if (typeof initCatalog === 'function') {
     initCatalog(_catalogData);
