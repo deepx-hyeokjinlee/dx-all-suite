@@ -378,3 +378,25 @@ def test_a_per_model_row_takes_the_task_of_its_example_dir(tmp_path, monkeypatch
         layout.clear_cache()
     assert rows["repvgg-a0-reid_256x128"]["category"] == "person_reid"
     assert rows["casvit-t_224x224"]["category"] == "image_classification", "예제가 없으면 conf 그대로"
+
+
+def test_a_registry_alias_row_does_not_list_its_model_twice(tmp_path):
+    """per-model dx_app 의 registry 에는 alias 항목이 있다 (deit_base384_distilled → deit_base_distilled_2, 같은
+    variant). test_models.conf 를 만드는 스크립트가 alias 를 거르지 않아 같은 variant 가 두 줄이 되고, Model Zoo 에
+    deitbase384 가 두 번 나왔다 (teammate 2eb1350e 이후는 deit_base384_distilled 가). variant 하나에 한 줄."""
+    from shared.catalog_sources import parse_test_models_conf
+    conf = tmp_path / "test_models.conf"
+    conf.write_text(
+        "deit\timage_classification\tassets/models/deit-b_384x384.dxnn\tdeit-b_384x384\n"
+        "deit\timage_classification\tassets/models/deit-b_384x384_distilled.dxnn\tdeit-b_384x384_distilled\n"
+        "deit\timage_classification\tassets/models/deit-b_384x384_distilled.dxnn\tdeit-b_384x384_distilled\n")
+    rows = parse_test_models_conf(conf)
+    assert [r["id"] for r in rows] == ["deit-b_384x384", "deit-b_384x384_distilled"]
+
+
+def test_the_real_catalog_has_no_duplicate_ids():
+    import collections
+    from dx_modelzoo.core import catalog
+    ids = collections.Counter(m["id"] for m in catalog.get_catalog()["models"])
+    dups = [k for k, v in ids.items() if v > 1]
+    assert not dups, dups
