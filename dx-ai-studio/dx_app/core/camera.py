@@ -159,7 +159,7 @@ def _ensure_xvfb(slot_idx=0):
 # ── Live 화면: 창 맞추기 · Qt 테두리 잘라내기 (계약: tests/dx_app/test_live_display.py) ──────────────
 # dx_app 의 C++ runner 는 OpenCV(Qt) 창을 기본 크기 (400x300) 로 띄운다. Xvfb 에는 window manager 가 없어 그대로
 # 왼쪽 위 구석에 작게 남고, 화면 전체를 찍으면 나머지가 검다. 창을 화면 크기로 늘리고, 찍은 그림에서 Qt 의
-# toolbar · status bar · 비율 여백 (회색) 을 잘라낸다. libX11 은 ctypes 로 — 새 의존성 없음 (mss 도 같은 방식).
+# toolbar · status bar · 비율 여백 (회색) 을 잘라낸다. libX11 은 ctypes 로 — 새 의존성 없음 (화면은 libxcb 로 찍는다, `_grab_screen`).
 _LIVE_FRAME_MAX = (960, 540)
 _QT_CHROME = (239, 239, 239)
 _FIT_EVERY_S = 1.0
@@ -168,19 +168,29 @@ _live_view = {}              # slot_idx -> {"fit_at": t, "box": (..)|None, "box_
 _XLIB = None
 
 
+def _load_lib(soname, short):
+    """soname 으로 먼저 연다 — find_library 는 ldconfig · gcc 를 띄운다. 그래도 없으면 find_library."""
+    import ctypes
+    try:
+        return ctypes.cdll.LoadLibrary(soname)
+    except OSError:
+        pass
+    import ctypes.util
+    name = ctypes.util.find_library(short)
+    try:
+        return ctypes.cdll.LoadLibrary(name) if name else None
+    except OSError:
+        return None
+
+
 def _xlib():
     """libX11 (ctypes) — 없으면 None."""
     global _XLIB
     if _XLIB is not None:
         return _XLIB or None
-    import ctypes, ctypes.util
-    name = ctypes.util.find_library("X11")
-    if not name:
-        _XLIB = False
-        return None
-    try:
-        x = ctypes.cdll.LoadLibrary(name)
-    except OSError:
+    import ctypes
+    x = _load_lib("libX11.so.6", "X11")
+    if x is None:
         _XLIB = False
         return None
     P, W, I, U = ctypes.c_void_p, ctypes.c_ulong, ctypes.c_int, ctypes.c_uint
@@ -199,6 +209,113 @@ def _xlib():
     x.XFree.argtypes = [P]
     _XLIB = x
     return x
+
+
+_ZPIXMAP = 2
+_ALL_PLANES = 0xFFFFFFFF
+
+
+_XCB = None
+_xcb_conns = {}              # display -> (conn, root, width, height)
+
+
+def _xcb():
+    """libxcb + libc (ctypes) — 없으면 None. Xlib 이 아니라 xcb 인 이유: Xlib 은 X 서버 연결이 끊기면 (Xvfb 가 죽으면)
+    기본 IO error handler 가 프로세스를 exit 시킨다 — dx_app 서버가 통째로 죽는다. xcb 는 오류를 돌려줄 뿐이다."""
+    global _XCB
+    if _XCB is not None:
+        return _XCB or None
+    import ctypes
+    x, libc = _load_lib("libxcb.so.1", "xcb"), _load_lib("libc.so.6", "c")
+    if x is None or libc is None:
+        _XCB = False
+        return None
+    P, I, U8, U16, U32 = ctypes.c_void_p, ctypes.c_int, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint32
+
+    class Cookie(ctypes.Structure):
+        _fields_ = [("sequence", ctypes.c_uint)]
+
+    class ScreenIter(ctypes.Structure):
+        _fields_ = [("data", P), ("rem", I), ("index", I)]
+
+    x.xcb_connect.restype, x.xcb_connect.argtypes = P, [ctypes.c_char_p, ctypes.POINTER(I)]
+    x.xcb_connection_has_error.restype, x.xcb_connection_has_error.argtypes = I, [P]
+    x.xcb_disconnect.argtypes = [P]
+    x.xcb_get_setup.restype, x.xcb_get_setup.argtypes = P, [P]
+    x.xcb_setup_roots_iterator.restype, x.xcb_setup_roots_iterator.argtypes = ScreenIter, [P]
+    x.xcb_screen_next.argtypes = [ctypes.POINTER(ScreenIter)]
+    x.xcb_get_image.restype = Cookie
+    x.xcb_get_image.argtypes = [P, U8, U32, ctypes.c_int16, ctypes.c_int16, U16, U16, U32]
+    x.xcb_get_image_reply.restype = P
+    x.xcb_get_image_reply.argtypes = [P, Cookie, ctypes.POINTER(P)]
+    x.xcb_get_image_data.restype, x.xcb_get_image_data.argtypes = ctypes.POINTER(ctypes.c_ubyte), [P]
+    x.xcb_get_image_data_length.restype, x.xcb_get_image_data_length.argtypes = I, [P]
+    libc.free.argtypes = [P]
+    x._libc = libc
+    _XCB = x
+    return x
+
+
+def _xcb_conn(display):
+    """display 의 (conn, root, width, height) — 연결은 다시 쓰고, 끊겼으면 새로 맺는다."""
+    import ctypes
+    x = _xcb()
+    if x is None:
+        return None
+    cached = _xcb_conns.get(display)
+    if cached and not x.xcb_connection_has_error(cached[0]):
+        return cached
+    if cached:
+        x.xcb_disconnect(cached[0])
+        _xcb_conns.pop(display, None)
+    num = ctypes.c_int(0)
+    conn = x.xcb_connect(display.encode(), ctypes.byref(num))
+    if not conn or x.xcb_connection_has_error(conn):
+        if conn:
+            x.xcb_disconnect(conn)
+        return None
+    it = x.xcb_setup_roots_iterator(x.xcb_get_setup(conn))
+    for _ in range(num.value):
+        x.xcb_screen_next(ctypes.byref(it))
+    if not it.data:
+        x.xcb_disconnect(conn)
+        return None
+    # xcb_screen_t: root (u32) · colormap · white · black · input masks (u32 ×4) · width (u16) · height (u16)
+    root = ctypes.c_uint32.from_address(it.data).value
+    width = ctypes.c_uint16.from_address(it.data + 20).value
+    height = ctypes.c_uint16.from_address(it.data + 22).value
+    _xcb_conns[display] = (conn, root, width, height)
+    return _xcb_conns[display]
+
+
+def _grab_screen(display):
+    """display 의 root 창 전체를 PIL RGB 그림으로 (xcb_get_image). 실패하면 None.
+
+    mss 대신 — mss 는 어디에도 선언되지 않은 의존성이라 새로 설치한 보드에서 라이브가 전부 막혔다
+    (계약: tests/dx_app/test_live_grab.py). Xvfb 는 24bit TrueColor · 32bpp · little-endian 이라 BGRX 그대로 읽는다.
+    호출하는 쪽 (capture_live_frame) 이 _display_env_lock 을 잡고 있어 연결을 동시에 쓰지 않는다."""
+    import ctypes
+    from PIL import Image
+    x = _xcb()
+    c = _xcb_conn(display) if x is not None else None
+    if c is None:
+        return None
+    conn, root, w, h = c
+    err = ctypes.c_void_p()
+    reply = x.xcb_get_image_reply(conn, x.xcb_get_image(conn, _ZPIXMAP, root, 0, 0, w, h, _ALL_PLANES),
+                                  ctypes.byref(err))
+    if err.value:
+        x._libc.free(err)
+    if not reply:
+        return None
+    try:
+        n = x.xcb_get_image_data_length(reply)
+        if n != w * h * 4:
+            return None
+        raw = ctypes.string_at(x.xcb_get_image_data(reply), n)
+    finally:
+        x._libc.free(reply)
+    return Image.frombuffer("RGB", (w, h), raw, "raw", "BGRX", w * 4, 1)
 
 
 def _fit_windows(display, width, height):
@@ -303,18 +420,15 @@ def capture_live_frame(slot_idx=0):
         old_display = os.environ.get("DISPLAY")
         os.environ["DISPLAY"] = display
         try:
-            import mss
-            from PIL import Image
             view = _live_view.setdefault(slot_idx, {"fit_at": 0.0, "box": None, "box_at": 0.0})
             now = time.time()
             if now - view["fit_at"] >= _FIT_EVERY_S:
                 view["fit_at"] = now
                 w, h = (int(v) for v in _XVFB_RES.split("x")[:2])
                 _fit_windows(display, w, h)
-            with (mss.MSS() if hasattr(mss, "MSS") else mss.mss()) as sct:
-                mon = sct.monitors[0]
-                img = sct.grab(mon)
-                pil = Image.frombytes("RGB", (img.width, img.height), img.rgb)
+            pil = _grab_screen(display)
+            if pil is None:
+                return None
             # 창을 막 늘린 직후의 한 장은 아직 작은 창이다 — 영상 영역을 못 찾았으면 곧 다시 본다
             if now - view["box_at"] >= (_BOX_EVERY_S if view["box"] else 0.5):
                 view["box_at"] = now
