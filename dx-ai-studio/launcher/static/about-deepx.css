@@ -19,16 +19,16 @@
      into the section below with no seam and no purple→blue hue jump at the boundary. */
   --about-hero-grad-3: var(--about-bg-alt);
 }
-/* 밝은 테마 — 글자는 이미 밝은 테마 색 (어두운 글자) 이라 hero 도 밝게. 어두운 보라 · 남색 위에 #1d1d1f 가
+/* 밝은 테마 — 글자는 이미 밝은 테마 색 (어두운 글자) 이라 hero 도 밝게. 어두운 보라 · 남색 위에 짙은 글자가
    올라 문구 · 통계 이름이 보이지 않았다 (2026-10-02 release audit L-6). */
 :root[data-theme="light"] #about-view {
-  --about-hero-grad-1: #efe7fb;
-  --about-hero-grad-2: #e7eefa;
+  --about-hero-grad-1: color-mix(in srgb, var(--accent) 12%, var(--surface-panel));
+  --about-hero-grad-2: color-mix(in srgb, var(--accent) 6%, var(--surface-panel));
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) #about-view {
-    --about-hero-grad-1: #efe7fb;
-    --about-hero-grad-2: #e7eefa;
+    --about-hero-grad-1: color-mix(in srgb, var(--accent) 12%, var(--surface-panel));
+    --about-hero-grad-2: color-mix(in srgb, var(--accent) 6%, var(--surface-panel));
   }
 }
 
