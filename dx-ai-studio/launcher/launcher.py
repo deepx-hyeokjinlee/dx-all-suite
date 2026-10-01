@@ -670,8 +670,10 @@ def _get_health_status():
 # main() 이 만든다 — import 만으로 코드를 찍거나 ~/.config 에 쓰지 않게.
 REMOTE_ACCESS = None
 _PAIR_PAGE = Path(__file__).resolve().parent / "static" / "pair.html"
-# 모듈은 loopback 에만 열리고, launcher 가 중계한 요청에는 이 비밀이 X-DX-Proxy 로 실린다 (자식 env 로만 전달).
-PROXY_SECRET = secrets.token_hex(32)
+# 모듈은 loopback 에만 열리고, launcher 가 중계한 요청에는 이 비밀이 X-DX-Proxy 로 실린다 (자식 env 로 전달).
+# launcher 자신의 env 에도 둔다 — 같은 프로세스에서 도는 모듈 (browser suite 의 tests/server_helpers) 도 같은 값을
+# 읽어야 하고, reload 해도 값이 바뀌지 않는다. 이 기계의 프로세스는 어차피 로컬로 신뢰되므로 권한이 늘지 않는다.
+PROXY_SECRET = os.environ.setdefault("DX_PROXY_SECRET", secrets.token_hex(32))
 
 
 def start_sub_server(name, directory, port=0, server_id=None):

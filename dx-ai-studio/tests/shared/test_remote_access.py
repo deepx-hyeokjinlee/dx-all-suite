@@ -352,3 +352,12 @@ def test_no_server_code_opens_cors_to_every_origin():
         if re.search(r'Access-Control-Allow-Origin["\']\s*,\s*["\']\*', text):
             hits.append(rel)
     assert not hits, hits
+
+
+def test_a_module_in_the_launchers_own_process_trusts_what_the_launcher_proxies():
+    """browser suites run modules in the launcher's process (tests/server_helpers) — the secret the proxy
+    sends must be the one those modules read, or every proxied call is a 401 (2026-10-01 --browser)."""
+    import launcher.launcher as lmod
+    from shared.dx_server import DXBaseHandler
+    assert os.environ.get("DX_PROXY_SECRET") == lmod.PROXY_SECRET
+    assert DXBaseHandler._proxy_secret() == lmod.PROXY_SECRET
