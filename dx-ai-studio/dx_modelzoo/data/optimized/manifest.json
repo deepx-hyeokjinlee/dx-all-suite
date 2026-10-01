@@ -307,6 +307,15 @@
       "jpg_bytes": 101957
     },
     {
+      "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/mediapipe_hand_detector_result.jpg",
+      "subdir": "examples",
+      "source_bytes": 360030,
+      "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/mediapipe_hand_detector_result-jpg.webp",
+      "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/examples/mediapipe_hand_detector_result-jpg.jpg",
+      "webp_bytes": 140864,
+      "jpg_bytes": 218692
+    },
+    {
       "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/examples/nanodet_repvgg_result.jpg",
       "subdir": "examples",
       "source_bytes": 179996,
@@ -3054,11 +3063,11 @@
     {
       "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mediapipe_hand_detector.jpg",
       "subdir": "thumbnails",
-      "source_bytes": 17957,
+      "source_bytes": 360030,
       "webp_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mediapipe_hand_detector-jpg.webp",
       "jpg_path": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/optimized/thumbnails/mediapipe_hand_detector-jpg.jpg",
-      "webp_bytes": 6140,
-      "jpg_bytes": 16799
+      "webp_bytes": 46122,
+      "jpg_bytes": 59895
     },
     {
       "source": "/home/deepx/hj_ws/dx-all-suite/dx-ai-studio/dx_modelzoo/data/thumbnails/mnasnet0_5.jpg",
@@ -6580,6 +6589,6 @@
       "jpg_bytes": 29238
     }
   ],
-  "total_source_bytes": 92189858,
-  "total_output_bytes": 67705728
+  "total_source_bytes": 92891961,
+  "total_output_bytes": 68148362
 }
