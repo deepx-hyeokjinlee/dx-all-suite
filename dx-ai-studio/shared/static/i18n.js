@@ -26,6 +26,13 @@
   var _placeholders = window._DX_I18N_PLACEHOLDERS || {};
   var _initCallbacks = window._DX_I18N_CALLBACKS || [];
 
+  // placeholder 사전에만 있는 항목도 T() · data-i18n 이 본다 — dx_app 은 사전을 일찍 닫아 일반 문구 ~370개가
+  // _DX_I18N_PLACEHOLDERS 에 들어가 있었고, 그래서 모든 언어에서 영어로 남았다 (2026-10-02 release audit A-3).
+  // 일반 사전이 이긴다 (같은 key 는 덮지 않는다).
+  for (var _pk in _placeholders) {
+    if (_placeholders.hasOwnProperty(_pk) && !_dict.hasOwnProperty(_pk)) _dict[_pk] = _placeholders[_pk];
+  }
+
   // Reverse dictionary: any-language-value → English key
   var _rev = {};
   for (var en in _dict) {
