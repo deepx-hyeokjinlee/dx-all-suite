@@ -310,7 +310,8 @@ def merge_conf_and_catalog(conf_models, catalog_data):
             "description": {"en": "", "ko": ""},
             "specification": {},
             "compile_guide": {},
-            "demo": _build_demo_info(cm["id"], cm["category"]),
+            "demo": _build_demo_info(cm["id"], cm["category"], cm.get("model_file", ""),
+                                     _representative_input(cm["id"], cm["category"])),
             "variants": _detect_inference_variants(cm["id"], cm["category"]),
             "legal": {},
             "thumbnail": f"thumbnails/{cm['id']}.jpg",
@@ -493,17 +494,34 @@ def _enrich_model_entry(base, enriched, metadata_source=None):
     return base
 
 
-def _build_demo_info(model_id, category):
-    """모델의 C++/Python 예제 경로 확인."""
-    cpp_path = f"src/cpp_example/{category}/{model_id}/"
-    py_path = f"src/python_example/{category}/{model_id}/"
-    cpp_exists = (DX_APP_ROOT / cpp_path).is_dir() if DX_APP_ROOT.exists() else False
-    py_exists = (DX_APP_ROOT / py_path).is_dir() if DX_APP_ROOT.exists() else False
-    return {
-        "cpp_example": cpp_path if cpp_exists else "",
-        "python_example": py_path if py_exists else "",
-        "cli_command": f"./{model_id}_sync -m {{}}/assets/models/{model_id}.dxnn -i sample/img/sample_street.jpg",
-    }
+def _build_demo_info(model_id, category, model_file="", demo_input=None):
+    """모델의 dx_app C++/Python 예제 경로와, 그대로 돌아가는 CLI 명령 (dx_app 폴더에서).
+
+    예전에는 카탈로그 id 로 './yolo26n_sync -m {}/assets/models/yolo26n.dxnn -i sample/img/sample_street.jpg'
+    를 모든 모델에 만들었다 — 글자 그대로의 '{}', 없는 binary · 모델 이름, 점구름 · ReID 모델에도 거리 사진
+    (2026-10-02 release audit Z-4). 예제를 layout resolver 로 찾고, 없으면 명령을 내지 않는다 (탭이 숨는다)."""
+    out = {"cpp_example": "", "python_example": "", "cli_command": ""}
+    if not DX_APP_ROOT.exists():
+        return out
+    from shared import dx_app_layout as _layout
+    name = _layout.example_name(DX_APP_ROOT, category, model_id, model_file)
+    ex = _layout.find(DX_APP_ROOT, category, name)
+    if ex is None:
+        hits = [e for e in _layout.examples(DX_APP_ROOT) if e.name == name]
+        ex = hits[0] if len(hits) == 1 else None
+    if ex is None:
+        return out
+    for lang, key in (("cpp", "cpp_example"), ("python", "python_example")):
+        d = ex.dir(lang)
+        if d is not None and d.is_dir():
+            out[key] = str(d.relative_to(DX_APP_ROOT)) + "/"
+    mf = model_file if str(model_file).startswith("assets/") else f"assets/models/{Path(model_file).name or ex.name + '.dxnn'}"
+    run = f"./bin/{ex.name}_sync -m {mf}" + (f" -i {demo_input}" if demo_input else "")
+    # bin/ 에 없을 수 있다 (build.sh --minimal 은 run_demo 대상만) — 그 모델만 빌드하는 줄을 먼저 보인다
+    out["cli_command"] = (f"cd dx-runtime/dx_app\n"
+                          f"./build.sh --target {ex.name}_sync   # once, if bin/ has no {ex.name}_sync\n"
+                          f"{run}")
+    return out
 
 
 # Python execution variants, in order, mapped to the run_inference `variant` suffix.
