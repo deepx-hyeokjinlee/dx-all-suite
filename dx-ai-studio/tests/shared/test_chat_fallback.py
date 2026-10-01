@@ -226,9 +226,9 @@ class TestFiveLanguageFallbackContracts(unittest.TestCase):
 class TestLocalizedSuggestionTriggers(unittest.TestCase):
     def test_localized_greeting_suggestions_trigger_greeting_rule(self):
         cases = {
-            "ja": ("こんにちは", "DeepX Edge AI"),
-            "zh-CN": ("你好", "DeepX Edge AI"),
-            "zh-TW": ("你好", "DeepX Edge AI"),
+            "ja": ("こんにちは", "DEEPX Edge AI"),
+            "zh-CN": ("你好", "DEEPX Edge AI"),
+            "zh-TW": ("你好", "DEEPX Edge AI"),
         }
         engine = FallbackEngine()
         for lang, (message, expected) in cases.items():

@@ -130,3 +130,16 @@ def test_the_intro_carries_no_module_list():
     # The home's own list is where the eight modules are named, and it stays.
     html = read("launcher/static/index.html")
     assert html.count('class="orbital-card"') == 8
+
+
+def test_the_offline_assistant_does_not_offer_the_excluded_sandbox():
+    """API 키 없이 쓰는 도움말 (FallbackEngine) 이 릴리즈에 없는 DX Sandbox 와 옛 모델 수 (340+) 를 말했다."""
+    src = (ROOT / "shared" / "chat" / "fallback.py").read_text(encoding="utf-8")
+    assert "Sandbox" not in src
+    assert "340" not in src
+    from shared.chat.fallback import COMMON_RULES
+    help_rule = COMMON_RULES[1][1]
+    for lang, text in help_rule.items():
+        for module in ("DX App", "DX Stream", "DX Model Zoo", "DX Compiler", "DX Benchmark", "DX Monitor",
+                       "DX EdgeGuide", "DX Agent Dev"):
+            assert module in text, f"{lang}: {module} 이 도움말에 없다"
