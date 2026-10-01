@@ -181,6 +181,9 @@ def _media_exists(rel) -> bool:
 # don't always equal a thumbnail filename (yolov7 → yolov7d6.jpg), so match by a normalized
 # key: exact first, then the shortest thumbnail whose name starts with the demo key.
 _THUMBS_DIR = Path(__file__).resolve().parents[2] / "dx_modelzoo" / "data" / "thumbnails"
+# 원본 폴더는 .gitignore 다 — clone 한 곳에는 Model Zoo 화면이 쓰는 저장소의 사본 (<stem>-jpg.webp) 만 있다
+# (계약: tests/dx_app/test_demo_thumbs_committed.py)
+_OPT_THUMBS_DIR = Path(__file__).resolve().parents[2] / "dx_modelzoo" / "data" / "optimized" / "thumbnails"
 _THUMB_INDEX = None
 
 
@@ -195,6 +198,8 @@ def _thumb_index() -> dict:
         try:
             for p in sorted(_THUMBS_DIR.glob("*.jpg")):
                 _THUMB_INDEX.setdefault(_thumb_norm(p.stem), p.name)
+            for p in sorted(_OPT_THUMBS_DIR.glob("*-jpg.webp")):
+                _THUMB_INDEX.setdefault(_thumb_norm(p.name[:-len("-jpg.webp")]), p.name)
         except OSError:
             _THUMB_INDEX = {}
     return _THUMB_INDEX
@@ -216,9 +221,12 @@ def _resolve_thumb(*names):
 def thumbnail_path(fname: str):
     """Resolve a requested thumbnail filename to a real file under the thumbnails dir, or None
     if it escapes the directory or does not exist (path-traversal safe)."""
-    try:
-        p = (_THUMBS_DIR / fname).resolve()
-        p.relative_to(_THUMBS_DIR.resolve())
-    except (ValueError, OSError):
-        return None
-    return p if (p.is_file() and p.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp")) else None
+    for base in (_THUMBS_DIR, _OPT_THUMBS_DIR):
+        try:
+            p = (base / fname).resolve()
+            p.relative_to(base.resolve())
+        except (ValueError, OSError):
+            continue
+        if p.is_file() and p.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp"):
+            return p
+    return None
