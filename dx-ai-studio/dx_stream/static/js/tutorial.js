@@ -245,6 +245,7 @@
                 description: 'Enter an RTSP stream URL (tutorial preview).',
                 placeholder: 'rtsp://192.168.1.10/stream',
                 defaultValue: '',
+                preview: true,
               });
             }
           } },

@@ -38,3 +38,13 @@ def test_loading_a_preset_updates_the_count_the_command_and_speaks_the_ui_langua
     load = ser[ser.index("DXStream.loadPreset = async function"):ser.index("function _demoToNodes")]
     assert "_scheduleCommandPreview();" in load
     assert "demo['name_' + lang]" in load and "demo.name_ko || demo.name_en" not in load
+
+
+def test_the_tutorial_previews_the_input_dialog_without_the_top_layer():
+    """showModal 은 dialog 를 top layer 로 올려 튜토리얼 말풍선 · Next 가 그 아래로 숨었다 (S-3)."""
+    root = Path(__file__).resolve().parents[2]
+    html = (root / "dx_stream/templates/index.html").read_text(encoding="utf-8")
+    tut = (root / "dx_stream/static/js/tutorial.js").read_text(encoding="utf-8")
+    assert "if (dlg && opts.preview && dlg.show) dlg.show();" in html
+    step = tut[tut.index("target: '#dx-input-modal'"):]
+    assert "preview: true" in step[:4000]

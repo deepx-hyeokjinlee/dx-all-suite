@@ -734,8 +734,11 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
 
         return new Promise(function(resolve) {
             _resolve = resolve;
-            if (dlg && dlg.showModal) dlg.showModal();
-            if (field) field.focus();
+            // preview (튜토리얼): top layer 가 아닌 일반 dialog 로 — showModal 은 튜토리얼 말풍선 · Next 를 그 아래로
+            // 숨겼다 (release audit S-3)
+            if (dlg && opts.preview && dlg.show) dlg.show();
+            else if (dlg && dlg.showModal) dlg.showModal();
+            if (field && !opts.preview) field.focus();
         });
     };
 
