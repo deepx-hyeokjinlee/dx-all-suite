@@ -50,7 +50,7 @@
     },
     {
       re: /^Invalid input_shapes for (.+?): (.+?) — dimensions must be positive integers$/,
-      ko: 'input_shapes의 $1 차원 $2 을(를) 쓸 수 없습니다 — 차원은 양의 정수여야 합니다',
+      ko: 'input_shapes의 $1 차원 $2을(를) 쓸 수 없습니다 — 차원은 양의 정수여야 합니다',
       ja: 'input_shapes の $1 の次元 $2 は使用できません — 次元は正の整数である必要があります',
       es: 'La dimensión $2 de $1 en input_shapes no es válida: las dimensiones deben ser enteros positivos',
       'zh-CN': 'input_shapes 中 $1 的维度 $2 无效 — 维度必须为正整数',
@@ -58,7 +58,7 @@
     },
     {
       re: /^Invalid input_shapes for (.+?): expected a list of dimensions$/,
-      ko: 'input_shapes의 $1 은(는) 차원 목록이어야 합니다',
+      ko: 'input_shapes의 $1은(는) 차원 목록이어야 합니다',
       ja: 'input_shapes の $1 は次元のリストである必要があります',
       es: '$1 en input_shapes debe ser una lista de dimensiones',
       'zh-CN': 'input_shapes 中的 $1 必须是维度列表',
@@ -82,7 +82,7 @@
     },
     {
       re: /^Invalid opt_level: (.+?) — must be one of (.+)$/,
-      ko: 'opt_level 값 $1 을(를) 쓸 수 없습니다 — $2 중 하나여야 합니다',
+      ko: 'opt_level 값 $1을(를) 쓸 수 없습니다 — $2 중 하나여야 합니다',
       ja: 'opt_level の値 $1 は使用できません — $2 のいずれかである必要があります',
       es: 'El valor $1 de opt_level no es válido: debe ser uno de $2',
       'zh-CN': 'opt_level 的值 $1 无效 — 必须是 $2 之一',
@@ -90,7 +90,7 @@
     },
     {
       re: /^Invalid calibration_num: (.+?) — must be a positive number of samples$/,
-      ko: 'calibration_num 값 $1 을(를) 쓸 수 없습니다 — 표본 수는 양수여야 합니다',
+      ko: 'calibration_num 값 $1을(를) 쓸 수 없습니다 — 표본 수는 양수여야 합니다',
       ja: 'calibration_num の値 $1 は使用できません — サンプル数は正の数である必要があります',
       es: 'El valor $1 de calibration_num no es válido: el número de muestras debe ser positivo',
       'zh-CN': 'calibration_num 的值 $1 无效 — 样本数必须为正数',
@@ -98,7 +98,7 @@
     },
     {
       re: /^Invalid calibration_num: (.+?) — expected a number$/,
-      ko: 'calibration_num 값 $1 을(를) 쓸 수 없습니다 — 숫자여야 합니다',
+      ko: 'calibration_num 값 $1을(를) 쓸 수 없습니다 — 숫자여야 합니다',
       ja: 'calibration_num の値 $1 は使用できません — 数値である必要があります',
       es: 'El valor $1 de calibration_num no es válido: debe ser un número',
       'zh-CN': 'calibration_num 的值 $1 无效 — 必须是数字',
@@ -114,7 +114,7 @@
     },
     {
       re: /^Invalid calibration_method: (.+?) — must be one of (.+)$/,
-      ko: 'calibration_method 값 $1 을(를) 쓸 수 없습니다 — $2 중 하나여야 합니다',
+      ko: 'calibration_method 값 $1을(를) 쓸 수 없습니다 — $2 중 하나여야 합니다',
       ja: 'calibration_method の値 $1 は使用できません — $2 のいずれかである必要があります',
       es: 'El valor $1 de calibration_method no es válido: debe ser uno de $2',
       'zh-CN': 'calibration_method 的值 $1 无效 — 必须是 $2 之一',
@@ -146,7 +146,7 @@
     },
     {
       re: /^Invalid file_extensions: (.+?) — extensions must be non-empty strings$/,
-      ko: 'file_extensions의 $1 을(를) 쓸 수 없습니다 — 확장자는 비어 있지 않은 문자열이어야 합니다',
+      ko: 'file_extensions의 $1을(를) 쓸 수 없습니다 — 확장자는 비어 있지 않은 문자열이어야 합니다',
       ja: 'file_extensions の $1 は使用できません — 拡張子は空でない文字列である必要があります',
       es: '$1 no es válido en file_extensions: las extensiones deben ser cadenas no vacías',
       'zh-CN': 'file_extensions 中的 $1 无效 — 扩展名必须是非空字符串',
@@ -178,7 +178,7 @@
     },
     {
       re: /^Invalid (.+?): expected a non-empty list of per-channel numbers, got (.+)$/,
-      ko: '$1 은(는) 채널별 숫자의 비어 있지 않은 목록이어야 합니다 (받은 것: $2)',
+      ko: '$1은(는) 채널별 숫자의 비어 있지 않은 목록이어야 합니다 (받은 것: $2)',
       ja: '$1 はチャンネルごとの数値の空でないリストである必要があります（受け取った値: $2）',
       es: '$1 debe ser una lista no vacía de números por canal (se recibió $2)',
       'zh-CN': '$1 必须是非空的逐通道数字列表（收到 $2）',
@@ -186,7 +186,7 @@
     },
     {
       re: /^Invalid (.+?): (.+?) — channel values must be numbers$/,
-      ko: '$1의 $2 을(를) 쓸 수 없습니다 — 채널 값은 숫자여야 합니다',
+      ko: '$1의 $2을(를) 쓸 수 없습니다 — 채널 값은 숫자여야 합니다',
       ja: '$1 の $2 は使用できません — チャンネル値は数値である必要があります',
       es: '$2 no es válido en $1: los valores de canal deben ser números',
       'zh-CN': '$1 中的 $2 无效 — 通道值必须是数字',
@@ -202,7 +202,7 @@
     },
     {
       re: /^Invalid (.+?): expected an object like (.+?), got (.+)$/,
-      ko: '$1 은(는) $2 같은 객체여야 합니다 (받은 것: $3)',
+      ko: '$1은(는) $2 같은 객체여야 합니다 (받은 것: $3)',
       ja: '$1 は $2 のようなオブジェクトである必要があります（受け取った型: $3）',
       es: '$1 debe ser un objeto como $2 (se recibió $3)',
       'zh-CN': '$1 必须是类似 $2 的对象（收到 $3）',
@@ -210,7 +210,7 @@
     },
     {
       re: /^Invalid (.+?): expected an object of parameters, got (.+)$/,
-      ko: '$1 은(는) 파라미터 객체여야 합니다 (받은 것: $2)',
+      ko: '$1은(는) 파라미터 객체여야 합니다 (받은 것: $2)',
       ja: '$1 はパラメータのオブジェクトである必要があります（受け取った型: $2）',
       es: '$1 debe ser un objeto de parámetros (se recibió $2)',
       'zh-CN': '$1 必须是参数对象（收到 $2）',
@@ -218,7 +218,7 @@
     },
     {
       re: /^Invalid (.+?): expected a list of node names, got a string\. A single node must still be a list — use (.+?), not (.+?)\.$/,
-      ko: '$1 은(는) 노드 이름 목록이어야 합니다. 노드가 하나여도 목록입니다 — $3 대신 $2 처럼 적으세요',
+      ko: '$1은(는) 노드 이름 목록이어야 합니다. 노드가 하나여도 목록입니다 — $3 대신 $2 처럼 적으세요',
       ja: '$1 はノード名のリストである必要があります。ノードが 1 つでもリストです — $3 ではなく $2 のように書いてください',
       es: '$1 debe ser una lista de nombres de nodo. Incluso un solo nodo va en lista: use $2, no $3',
       'zh-CN': '$1 必须是节点名称列表。即使只有一个节点也要用列表 — 请用 $2，而不是 $3',
@@ -226,7 +226,7 @@
     },
     {
       re: /^Invalid (.+?): expected a list of node names, got (.+)$/,
-      ko: '$1 은(는) 노드 이름 목록이어야 합니다 (받은 것: $2)',
+      ko: '$1은(는) 노드 이름 목록이어야 합니다 (받은 것: $2)',
       ja: '$1 はノード名のリストである必要があります（受け取った型: $2）',
       es: '$1 debe ser una lista de nombres de nodo (se recibió $2)',
       'zh-CN': '$1 必须是节点名称列表（收到 $2）',
@@ -234,7 +234,7 @@
     },
     {
       re: /^Invalid (.+?): (.+?) — node names must be non-empty strings$/,
-      ko: '$1의 $2 을(를) 쓸 수 없습니다 — 노드 이름은 비어 있지 않은 문자열이어야 합니다',
+      ko: '$1의 $2을(를) 쓸 수 없습니다 — 노드 이름은 비어 있지 않은 문자열이어야 합니다',
       ja: '$1 の $2 は使用できません — ノード名は空でない文字列である必要があります',
       es: '$2 no es válido en $1: los nombres de nodo deben ser cadenas no vacías',
       'zh-CN': '$1 中的 $2 无效 — 节点名称必须是非空字符串',
@@ -242,7 +242,7 @@
     },
     {
       re: /^Invalid (.+?): expected a path string, got (.+)$/,
-      ko: '$1 은(는) 경로 문자열이어야 합니다 (받은 것: $2)',
+      ko: '$1은(는) 경로 문자열이어야 합니다 (받은 것: $2)',
       ja: '$1 はパス文字列である必要があります（受け取った型: $2）',
       es: '$1 debe ser una cadena de ruta (se recibió $2)',
       'zh-CN': '$1 必须是路径字符串（收到 $2）',
@@ -250,7 +250,7 @@
     },
     {
       re: /^Invalid (.+?): (.+?) — must be a positive number$/,
-      ko: '$1의 $2 을(를) 쓸 수 없습니다 — 양수여야 합니다',
+      ko: '$1의 $2을(를) 쓸 수 없습니다 — 양수여야 합니다',
       ja: '$1 の $2 は使用できません — 正の数である必要があります',
       es: '$2 no es válido en $1: debe ser un número positivo',
       'zh-CN': '$1 中的 $2 无效 — 必须是正数',
@@ -258,7 +258,7 @@
     },
     {
       re: /^Invalid (.+?): not valid JSON — (.+)$/,
-      ko: '$1 이(가) 올바른 JSON이 아닙니다 — $2',
+      ko: '$1이(가) 올바른 JSON이 아닙니다 — $2',
       ja: '$1 が有効な JSON ではありません — $2',
       es: '$1 no es JSON válido: $2',
       'zh-CN': '$1 不是有效的 JSON — $2',
@@ -323,15 +323,15 @@
     // compile 경로 정책 (QA COM-A2, 2026-10-01 — dx_compiler/core/path_policy.py)
     {
       re: /^(.+?) is outside the allowed folders$/,
-      ko: '$1 이(가) 허용된 폴더 밖에 있습니다 (workspace · 홈 · /media · /mnt)',
-      ja: '$1 は許可されたフォルダーの外にあります (workspace · ホーム · /media · /mnt)',
-      es: '$1 está fuera de las carpetas permitidas (workspace · inicio · /media · /mnt)',
-      'zh-CN': '$1 不在允许的文件夹内 (workspace · 主目录 · /media · /mnt)',
-      'zh-TW': '$1 不在允許的資料夾內 (workspace · 主目錄 · /media · /mnt)',
+      ko: '$1이(가) 허용된 폴더 밖에 있습니다 (suite 폴더 · studio var · 홈 · /media · /mnt)',
+      ja: '$1 は許可されたフォルダーの外にあります (suite フォルダー · studio var · ホーム · /media · /mnt)',
+      es: '$1 está fuera de las carpetas permitidas (carpeta de la suite · var del studio · inicio · /media · /mnt)',
+      'zh-CN': '$1 不在允许的文件夹内 (suite 文件夹 · studio var · 主目录 · /media · /mnt)',
+      'zh-TW': '$1 不在允許的資料夾內 (suite 資料夾 · studio var · 主目錄 · /media · /mnt)',
     },
     {
       re: /^(.+?) does not exist$/,
-      ko: '$1 이(가) 없습니다',
+      ko: '$1이(가) 없습니다',
       ja: '$1 が存在しません',
       es: '$1 no existe',
       'zh-CN': '$1 不存在',
@@ -339,7 +339,7 @@
     },
     {
       re: /^(.+?) is not a file$/,
-      ko: '$1 은(는) 파일이 아닙니다',
+      ko: '$1은(는) 파일이 아닙니다',
       ja: '$1 はファイルではありません',
       es: '$1 no es un archivo',
       'zh-CN': '$1 不是文件',
@@ -347,7 +347,7 @@
     },
     {
       re: /^(.+?) is not a folder$/,
-      ko: '$1 은(는) 폴더가 아닙니다',
+      ko: '$1은(는) 폴더가 아닙니다',
       ja: '$1 はフォルダーではありません',
       es: '$1 no es una carpeta',
       'zh-CN': '$1 不是文件夹',
@@ -355,7 +355,7 @@
     },
     {
       re: /^(.+?) is not a valid path$/,
-      ko: '$1 은(는) 올바른 경로가 아닙니다',
+      ko: '$1은(는) 올바른 경로가 아닙니다',
       ja: '$1 は有効なパスではありません',
       es: '$1 no es una ruta válida',
       'zh-CN': '$1 不是有效路径',
@@ -363,7 +363,7 @@
     },
     {
       re: /^(.+?) cannot be a compiler job folder$/,
-      ko: '$1 은(는) 컴파일 작업 폴더로 지정할 수 없습니다',
+      ko: '$1은(는) 컴파일 작업 폴더로 지정할 수 없습니다',
       ja: '$1 にコンパイルジョブのフォルダーは指定できません',
       es: '$1 no puede ser una carpeta de trabajo del compilador',
       'zh-CN': '$1 不能是编译任务文件夹',
@@ -388,7 +388,7 @@
     },
     {
       re: /^(.+?) is required$/,
-      ko: '$1 이(가) 필요합니다',
+      ko: '$1이(가) 필요합니다',
       ja: '$1 が必要です',
       es: 'Se requiere $1',
       'zh-CN': '需要 $1',
@@ -396,7 +396,7 @@
     },
     {
       re: /^temperature must be between (.+?) and (.+)$/,
-      ko: 'temperature는 $1 과(와) $2 사이여야 합니다',
+      ko: 'temperature는 $1과(와) $2 사이여야 합니다',
       ja: 'temperature は $1 から $2 の間である必要があります',
       es: 'temperature debe estar entre $1 y $2',
       'zh-CN': 'temperature 必须在 $1 和 $2 之间',

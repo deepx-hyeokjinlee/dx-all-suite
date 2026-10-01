@@ -1301,7 +1301,9 @@ class TestValidatePathRoute:
         status, _ = _api("GET", "/validate/path?path=/etc/passwd&kind=file")
         assert status == 403
 
-    def test_existing_directory_has_no_warnings(self, server, tmp_path):
+    def test_existing_directory_has_no_warnings(self, server, tmp_path, monkeypatch):
+        # tmp_path 는 /tmp 아래라 compile 경로 정책 밖이다 — 이 시험은 '있는 폴더면 경고 없음' 만 본다
+        monkeypatch.setenv("DX_COMPILER_ALLOWED_ROOTS", str(tmp_path))
         status, body = _api("GET", f"/validate/path?path={tmp_path}&kind=dir")
         assert status == 200 and body["warnings"] == []
 

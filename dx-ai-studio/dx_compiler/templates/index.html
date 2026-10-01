@@ -439,6 +439,22 @@
 </div>
 
 <script>
+/* 실패한 compile · resume 요청 → 번역된 오류 상자. 예전에는 '{"error": "model_path is outside the allowed folders"}'
+   를 그대로 결과 칸에 쓰거나 (compile), JSON 따옴표째 '요청 실패:' 뒤에 붙였다 (resume). release audit C-1. */
+function _escErr(t) {
+    return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+}
+function _compileRequestError(r) {
+    return r.text().then(function (body) {
+        var msg = body;
+        try { var d = JSON.parse(body); msg = (d && (d.error || d.message)) || body; } catch (e) { /* HTML 그대로 */ }
+        if (typeof msg !== 'string') msg = JSON.stringify(msg);
+        var shown = (window.translateServerError ? window.translateServerError(msg) : msg);
+        return '<div class="result error"><p>' + DXIcon('x') + ' ' + T('Request failed:') + ' ' + _escErr(shown) + '</p></div>';
+    });
+}
+</script>
+<script>
 // Feature check: disable compile if dx_com not available on server
 window.addEventListener('load', function() {
     fetch('/feature-check').then(function(r) { return r.json(); }).then(function(data) {
@@ -534,7 +550,7 @@ document.getElementById('compile-form').addEventListener('submit', async functio
     }
 
     fetch('/compile', { method: 'POST', body: formData })
-        .then(r => r.text())
+        .then(r => r.ok ? r.text() : _compileRequestError(r))
         .then(html => {
             const resultEl = document.getElementById('result');
             resultEl.innerHTML = html;
@@ -1103,7 +1119,7 @@ document.getElementById('resume-form').addEventListener('submit', function(e) {
         body: JSON.stringify(payload),
     })
         .then(function(r) {
-            if (!r.ok) return r.json().then(function(d) { throw new Error(JSON.stringify(d.error || d)); });
+            if (!r.ok) return _compileRequestError(r).then(function (html) { throw Object.assign(new Error(''), { html: html }); });
             return r.text();
         })
         .then(function(html) {
@@ -1119,8 +1135,8 @@ document.getElementById('resume-form').addEventListener('submit', function(e) {
             }
         })
         .catch(function(err) {
-            document.getElementById('resume-result').innerHTML =
-                '<div class="result error"><p>' + DXIcon('x') + ' ' + T('Request failed:') + ' ' + err.message + '</p></div>';
+            document.getElementById('resume-result').innerHTML = err.html ||
+                ('<div class="result error"><p>' + DXIcon('x') + ' ' + T('Request failed:') + ' ' + _escErr(err.message) + '</p></div>');
             btn.disabled = false;
             btn.textContent = T('Resume');
         });

@@ -191,8 +191,12 @@ function _srvErr(msg) {
         fetch('/validate/path?kind=dir&path=' + encodeURIComponent(path))
             .then(r => r.json())
             .then(data => {
+                // 허용 폴더 밖 등 거절 (403 {error}) 도 보인다 — 예전에는 warnings 만 읽어 아무 말이 없었다 (release audit C-2)
+                const err = data && data.error;
                 const warnings = (data && data.warnings) || [];
-                showDatasetWarning(warnings.length ? warnings.join(' ') : '');
+                const msgs = (err ? [err] : []).concat(warnings)
+                    .map(m => (window.translateServerError ? window.translateServerError(m) : m));
+                showDatasetWarning(msgs.join(' '));
             })
             .catch(() => { /* best-effort, non-blocking */ });
     }

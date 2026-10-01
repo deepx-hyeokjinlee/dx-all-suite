@@ -800,6 +800,14 @@ class CompilerHandler(DXBaseHandler):
             warnings.append(f"Path is not a file: {path}")
         if kind == "file" and ext and not path.lower().endswith(ext.lower()):
             warnings.append(f"File does not end in {ext}: {path}")
+        # 탐색기가 보여도 compile 이 거절할 곳 (path_policy — 예: /tmp) 이면 미리 말한다 (release audit C-2)
+        if exists:
+            from dx_compiler.core import path_policy as _pp
+            try:
+                (_pp.check_input_dir if kind == "dir" else _pp.check_input_file)(path, "dataset_path" if kind == "dir" else "path")
+            except _pp.PathPolicyError as exc:
+                if "outside the allowed folders" in str(exc):
+                    warnings.append(str(exc))
         return self.send_json({"warnings": warnings})
 
     def _list_dir(self):
