@@ -104,3 +104,25 @@ def test_every_module_shell_survives_the_narrowest_width(module: str):
     finally:
         server.shutdown()
     assert not unreachable, f"{module} @ {min(WIDTHS)}px: 닿을 수 없는 컨트롤 {unreachable}"
+
+
+@pytest.mark.parametrize("width", (390, 360))
+def test_the_launcher_top_bar_fits_a_phone(width: int):
+    """390px 에서 launcher 상단 바의 테마 · 연결된 브라우저 · 튜토리얼 단추가 화면 밖 (x≈400–516) 이라 누를 수 없었다
+    (2026-10-02 release audit L-2)."""
+    server, port = start_module_server("launcher")
+    try:
+        with sync_playwright() as p:
+            browser = launch_browser(p, "chromium")
+            ctx = browser.new_context(viewport={"width": width, "height": 844})
+            ctx.add_init_script("try{sessionStorage.setItem('dx-splash-seen','1');localStorage.setItem('dx-splash-seen','1');"
+                                "localStorage.setItem('dx-tutorial-launcher-autostarted','1');}catch(e){}")
+            page = ctx.new_page()
+            page.goto(f"http://127.0.0.1:{port}/", wait_until="load", timeout=60000)
+            page.wait_for_timeout(2500)
+            unreachable = page.evaluate(_UNREACHABLE_JS)
+            ctx.close()
+            browser.close()
+    finally:
+        server.shutdown()
+    assert not unreachable, f"{width}px 에서 닿을 수 없는 launcher 컨트롤: {unreachable}"
