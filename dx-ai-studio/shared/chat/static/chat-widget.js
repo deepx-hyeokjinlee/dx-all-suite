@@ -172,6 +172,20 @@ const DXChat = (() => {
 
 
   function init(opts) {
+    /* 다시 부르면 (SDK Library 가 그렇다) 대상 앱 · 제목만 바꾼다 — 예전에는 위젯을 하나 더 만들어 같은 자리에
+       채팅 버튼이 두 개 겹쳤다 (2026-10-02 release audit). */
+    if (_els.fab && document.body.contains(_els.fab)) {
+      _appName = (opts && opts.appName) || _appName;
+      _headerTitle = (opts && opts.headerTitle)
+        || (window._DX_CHAT_HEADER_TITLES && window._DX_CHAT_HEADER_TITLES[_appName])
+        || _headerTitle;
+      var titleEl = _els.win && _els.win.querySelector('.dx-chat-header-title');
+      if (titleEl && _headerTitle) {
+        var lang = (typeof DXI18n !== 'undefined') ? DXI18n.lang : 'en';
+        titleEl.textContent = _headerTitle[lang] || _headerTitle.en || titleEl.textContent;
+      }
+      return;
+    }
     _appName = (opts && opts.appName) || 'dx_app';
     _headerTitle = (opts && opts.headerTitle)
       || (window._DX_CHAT_HEADER_TITLES && window._DX_CHAT_HEADER_TITLES[_appName])

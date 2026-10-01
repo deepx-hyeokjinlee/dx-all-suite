@@ -2837,3 +2837,8 @@ body {
 .ra-empty { margin: 0; padding: var(--sp-4); text-align: center; color: var(--text-muted);
   border: 1px dashed var(--border-subtle); border-radius: var(--radius); }
 .ra-error { color: var(--status-error); }
+
+/* 모듈 안에서는 모듈 자신의 채팅만 — launcher 의 버튼이 iframe 의 버튼을 같은 자리에서 덮어 모듈 전용 도움말을 열 수
+   없었다 (2026-10-02 release audit X-2). 열려 있던 launcher 채팅은 숨겨질 뿐 이어서 쓸 수 있다 (홈으로 오면 다시 보인다). */
+body.app-frame-visible .dx-chat-fab,
+body.app-frame-visible .dx-chat-window { display: none !important; }
