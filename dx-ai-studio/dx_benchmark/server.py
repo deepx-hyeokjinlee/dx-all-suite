@@ -68,8 +68,8 @@ DX_BENCHMARK_PAGES = (
 
 # EdgeGuide 버튼은 dx_benchmark 고유 컨트롤이라 공유 헤더의 .toolbar 슬롯 안에 둔다.
 _EDGEGUIDE_BTN = (
-    '<button id="edgeguideBtn" class="dx-toolbar-btn" title="DX EdgeGuide">'
-    '💰</button>'
+    '<button id="edgeguideBtn" class="dx-toolbar-btn" title="DX EdgeGuide" aria-label="DX EdgeGuide">'
+    '<svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#edge"></use></svg></button>'
 )
 
 DX_BENCHMARK_SHELL = ShellSpec(
