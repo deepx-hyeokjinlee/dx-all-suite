@@ -369,6 +369,37 @@ def get_model_info(name):
     return info
 
 
+_GENERATED_CATALOG = Path(__file__).resolve().parents[2] / "dx_modelzoo" / "data" / "generated_catalog.json"
+
+
+def _generated_catalog_rows():
+    """generated catalog → [{name, task (label), dxnn_url, json_url, class_name}] (없으면 [])."""
+    try:
+        data = json.loads(_GENERATED_CATALOG.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+    try:
+        from dx_modelzoo.core.config import CATEGORIES as _MZ_CATS
+    except Exception:
+        _MZ_CATS = {}
+    rows = []
+    for gm in data.get("models", []) if isinstance(data, dict) else []:
+        disp = gm.get("display") or {}
+        arts = gm.get("artifacts") or {}
+
+        def url(tier, kind):
+            u = ((arts.get(f"{tier}_{kind}") or {}).get("remote_url")) or None
+            return u if u and u not in ("-",) else None
+        from shared.tasks import legacy as _legacy_task
+        task = _legacy_task(disp.get("task") or "")     # Model Zoo 와 같은 무리 (image_classification → classification)
+        label = (_MZ_CATS.get(task) or {}).get("label_en") or task.replace("_", " ").title() or "Other"
+        rows.append({"name": disp.get("name") or gm.get("id"), "task": label,
+                     "dxnn_url": url("qlite", "dxnn") or url("qpro", "dxnn") or url("qmaster", "dxnn"),
+                     "json_url": url("qlite", "json") or url("qpro", "json"),
+                     "class_name": disp.get("class_name") or gm.get("id")})
+    return rows
+
+
 def get_catalog():
     """Full ModelZoo catalog for the Models page: every model on the ModelZoo homepage (the
     gateway list) PLUS the two PPU builds it omits — 352 + 2 = 354. Each entry merges local
@@ -428,15 +459,23 @@ def get_catalog():
                 ent[k] = lm.get(k, ent[k])
         return ent
 
-    # Catalog source: prefer the BAKED snapshot (offline-safe). ModelZoo's live listing is a
+    # Catalog source 1: the Model Zoo module's own catalog (dx_modelzoo/data/generated_catalog.json, synced
+    # from the internal publish page) — the same list the Model Zoo page shows, so App > Models no longer
+    # drifts from it (the baked public snapshot below stopped at 352 models on 2026-08-21; spec 2026-10-01
+    # dx_app per-model layout 결정 8). The snapshot / live listing remain the fallback.
+    out = []
+    gen_rows = _generated_catalog_rows()
+    for g in gen_rows:
+        out.append(mk(g["name"], g["task"], g["dxnn_url"], g["json_url"], g.get("class_name")))
+
+    # Catalog source 2: prefer the BAKED snapshot (offline-safe). ModelZoo's live listing is a
     # network fetch (developer.deepx.ai), so on an air-gapped / closed-network install the live
     # call times out and the Models page would collapse to almost nothing. A snapshot baked at
     # release time (scripts/modelzoo_catalog_public.json, refreshed by scripts/bake_modelzoo_catalog.py)
     # lets offline users still see the full catalog. Fall back to live only when no snapshot exists.
-    out = []
-    r = None
+    r = {"models": []} if gen_rows else None
     _baked = Path(__file__).resolve().parents[1] / "scripts" / "modelzoo_catalog_public.json"
-    if _baked.exists():
+    if r is None and _baked.exists():
         try:
             r = json.loads(_baked.read_text(encoding="utf-8"))
         except Exception:

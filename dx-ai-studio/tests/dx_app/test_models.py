@@ -194,3 +194,23 @@ def test_get_catalog_keeps_uninstalled_modelzoo_entry(tmp_path, monkeypatch):
 
     assert entry["model_exists"] is False
     assert entry["dxnn_url"]
+
+
+def test_the_models_page_follows_the_model_zoo_catalog(monkeypatch, tmp_path):
+    """App > Models 는 Model Zoo 와 같은 catalog (dx_modelzoo/data/generated_catalog.json) 를 읽는다 — 예전에는
+    2026-08-21 에 구운 공개 page 사본 (352) 이라 publish page 의 새 model 이 보이지 않았다."""
+    import models
+
+    gen = tmp_path / "generated_catalog.json"
+    gen.write_text(json.dumps({"schema_version": "2.0", "models": [
+        {"id": "patchcore_224x224", "display": {"name": "PatchCore", "task": "anomaly_detection", "class_name": "patchcore"},
+         "artifacts": {"qlite_dxnn": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-dxnn/2_5_0/patchcore_224x224.dxnn"},
+                       "qlite_json": {"remote_url": "https://sdk.deepx.ai/modelzoo/q-lite-json/2_5_0/patchcore_224x224.json"}}},
+        {"id": "vitl16", "display": {"name": "ViTL16-1", "task": "classification"}, "artifacts": {}}]}))
+    monkeypatch.setattr(models, "_GENERATED_CATALOG", gen)
+    monkeypatch.setattr(models, "get_models", lambda: [])
+    rows = {r["name"]: r for r in models.get_catalog()}
+    assert rows["PatchCore"]["category"] == "Anomaly Detection"
+    assert rows["PatchCore"]["dxnn_url"].endswith("/2_5_0/patchcore_224x224.dxnn")
+    assert rows["PatchCore"]["model_file"] == "assets/models/patchcore_224x224.dxnn"
+    assert rows["ViTL16-1"]["dxnn_url"] is None, "아직 받을 수 없는 model 도 목록에는 (받기 없이)"
