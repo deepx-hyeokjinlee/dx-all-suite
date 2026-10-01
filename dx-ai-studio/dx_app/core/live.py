@@ -122,6 +122,9 @@ def run_inference_live(model_name, category, model_file, lang="cpp", variant="sy
             cmd = [str(bp)] + model_args + [inf, _inp_str, "-l", str(_loop)]
         else:
             cmd = [str(bp), "-m", str(mp), inf, _inp_str, "-l", str(_loop)]
+        # runner 는 [DET] · [CLS] 같은 프레임별 줄을 --show-log 일 때만 찍는다 — 없으면 poll 이 frames 0 · FPS 0
+        # (main 01b7727 · per-model 8d0b748 의 모든 runner 가 받는다; 계약: tests/dx_app/test_live_display.py)
+        cmd.append("--show-log")
     else:
         return _err("live_cpp_only", "Live mode currently supports C++ only")
 
@@ -224,6 +227,17 @@ def _parse_task_tags(content):
     frame_count = len(tag_lines)
     if frame_count == 0:
         return {"tag": "", "lines": [], "frame_count": 0, "last_pred": [], "summary": {}}
+    if tag == "DET":
+        # [DET] 는 검출마다 한 줄이고 프레임 번호가 없다. 한 프레임의 검출은 신뢰도 내림차순이므로 신뢰도가 다시
+        # 오르는 곳이 새 프레임 (실측 yolov12-n 478/478 · RT-DETR 190/190). 검출 없는 프레임은 못 센다 — 하한.
+        confs = []
+        for tl in tag_lines:
+            try:
+                confs.append(float(tl.split()[2]))
+            except (IndexError, ValueError):
+                continue
+        if confs:
+            frame_count = 1 + sum(1 for a, b in zip(confs, confs[1:]) if b > a)
 
     # Build last_pred (human-readable, last 5 lines)
     last_pred = []
