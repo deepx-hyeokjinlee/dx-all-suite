@@ -174,9 +174,10 @@ tbody tr:hover td{background:var(--surface-hover)}
 .ab-result-pair img,.ab-result-pair video{max-width:100%;border-radius:var(--radius-sm)}
 .mt4{margin-top:4px}
 /*═══ Bench layout ═══*/
-.bench-layout{display:grid;grid-template-columns:280px 1fr;gap:14px;margin-bottom:14px}
+.bench-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:14px;margin-bottom:14px}
+.bench-left,.bench-right{min-width:0}
 .bench-left .card{position:sticky;top:10px}
-@media(max-width:900px){.bench-layout{grid-template-columns:1fr}}
+@media(max-width:900px){.bench-layout{grid-template-columns:minmax(0,1fr)}}
 /*═══ Bench detail btn ═══*/
 .bench-detail-btn{background:none;border:1px solid var(--border-subtle);color:var(--text-muted);border-radius:var(--radius-sm);padding:3px 8px;font-size:var(--fs-xs);cursor:pointer;transition:.15s var(--ease);font-family:inherit}
 .bench-detail-btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -429,7 +430,7 @@ tbody tr:hover td{background:var(--surface-hover)}
 .cont-badge.cb-status{color:var(--status-warn)}
 .cont-slot-cfg{display:flex;gap:6px;align-items:center;margin-bottom:8px}
 .cont-slot-cfg select{
-  flex:1;font-size:var(--fs-sm);padding:5px 8px;border-radius:var(--radius-sm);
+  flex:1;min-width:0;font-size:var(--fs-sm);padding:5px 8px;border-radius:var(--radius-sm);
   border:1px solid var(--border-subtle);background:var(--control-bg);color:var(--text-primary);font-family:var(--font);
 }
 .cont-slot-cfg .cont-x{
@@ -1155,3 +1156,8 @@ html[lang="zh-TW"] .zh-CN{display:none!important}
 /* 카드가 세로로 쌓이는 페이지 흐름. .card 자체는 여백을 갖지 않는다
    (shared/static/dx-components.css 참조) — 여백은 배치의 몫이다. */
 .page > .card{margin-bottom:var(--sp-4)}
+
+/* 폰 폭 (release audit A-10): Setup 로그 도구줄은 접히고, Lab 의 dev 탭 줄은 가로로 스크롤한다 */
+#page-setup .comp-section .flex.between{flex-wrap:wrap;gap:var(--sp-2)}
+.dev-tabs{overflow-x:auto}
+.dev-tab{flex-shrink:0}
