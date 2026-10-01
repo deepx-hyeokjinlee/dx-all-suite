@@ -60,16 +60,13 @@ def _active_stream_context() -> tuple[ContractResult, object | None]:
             required="resolved active runtime launch context",
             observed=str(exc),
             passed=False,
-            remediation="Complete Runtime Setup to repair the active runtime profile.",
+            remediation="Run the DX-Runtime Dependencies step in Setup, then try again.",
         ),)), None
 
 
 def _contract_failure_detail(failure: ContractCheck) -> str:
-    return "{}: {}; {}".format(
-        failure.check_id,
-        failure.observed,
-        failure.remediation,
-    )
+    # check_id 는 message 에 이미 있다 — 예전에는 'profile.context profile.context: …' 로 두 번 나왔다 (release audit S-7)
+    return " — ".join(p for p in (failure.observed, failure.remediation) if p)
 
 
 def _stream_launch_contract(demo: dict) -> tuple[ContractResult, object | None]:

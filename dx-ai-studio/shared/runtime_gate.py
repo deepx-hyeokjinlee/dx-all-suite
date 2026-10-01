@@ -56,6 +56,6 @@ def module_start_policy(
                 state.active_version or "missing",
             ),
             passed=False,
-            remediation="Complete Runtime Setup or restore a validated runtime profile before launching inference.",
+            remediation="Run the DX-Runtime Dependencies step in DX Stream Setup, then try again.",
         ),
     )

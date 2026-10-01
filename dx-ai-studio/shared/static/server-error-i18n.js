@@ -23,6 +23,31 @@
   // 순서가 중요하다. **더 구체적인 것이 먼저** 와야 한다 —
   // 'Invalid input_shapes for X' 가 'Invalid input_shapes:' 보다 앞이다.
   var _SERVER_ERROR_PATTERNS = [
+    // DX Stream 실행 계약 (release audit S-7)
+    {
+      re: /^Runtime contract failed: (\S+)$/,
+      ko: '런타임 점검을 통과하지 못했습니다 ($1)',
+      ja: 'ランタイムのチェックに通りませんでした ($1)',
+      es: 'El runtime no superó la comprobación ($1)',
+      'zh-CN': '运行时检查未通过 ($1)',
+      'zh-TW': '執行階段檢查未通過 ($1)',
+    },
+    {
+      re: /^Studio runtime profile is not active and validated\.$/,
+      ko: 'Studio 런타임 profile이 활성화 · 검증되지 않았습니다.',
+      ja: 'Studio のランタイムプロファイルが有効化・検証されていません。',
+      es: 'El perfil de runtime de Studio no está activo ni validado.',
+      'zh-CN': 'Studio 运行时配置未激活或未验证。',
+      'zh-TW': 'Studio 執行階段設定未啟用或未驗證。',
+    },
+    {
+      re: /^Run the DX-Runtime Dependencies step in (?:DX Stream )?Setup, then try again\.$/,
+      ko: 'Setup에서 DX-Runtime 종속성 설치 단계를 실행한 뒤 다시 시도하세요.',
+      ja: 'Setup で DX-Runtime 依存関係のステップを実行してから、もう一度お試しください。',
+      es: 'Ejecute el paso DX-Runtime Dependencies en Setup y vuelva a intentarlo.',
+      'zh-CN': '请在 Setup 中运行 DX-Runtime 依赖项步骤，然后重试。',
+      'zh-TW': '請在 Setup 中執行 DX-Runtime 相依套件步驟，然後再試一次。',
+    },
     {
       re: /^Invalid input_shapes for (.+?): (.+?) — dimensions must be positive integers$/,
       ko: 'input_shapes의 $1 차원 $2 을(를) 쓸 수 없습니다 — 차원은 양의 정수여야 합니다',

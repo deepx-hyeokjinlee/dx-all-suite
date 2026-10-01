@@ -138,6 +138,10 @@ class TestThePatternsActuallyMatchWhatTheServerSends:
     """
 
     SAMPLES = [
+        # DX Stream 실행 계약 (release audit S-7)
+        "Runtime contract failed: profile.context",
+        "Studio runtime profile is not active and validated.",
+        "Run the DX-Runtime Dependencies step in Setup, then try again.",
         "Invalid opt_level: 'abc' — must be one of [0, 1]",
         "Invalid opt_level: empty — must be one of [0, 1]",
         "Invalid calibration_num: -5 — must be a positive number of samples",
