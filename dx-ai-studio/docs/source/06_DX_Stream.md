@@ -1,20 +1,23 @@
 # DX Stream
 
 Build and run real-time GStreamer vision-AI pipelines on the DEEPX NPU from your browser,
-with live WebRTC playback.  
+with live playback — WebRTC on the board or LAN, MJPEG from another computer or a tunnel.  
 
 ![DX Stream — the dashboard: NPU device / GStreamer / plugin status, quick-launch demos, and performance metrics.](resources/stream.png)  
 
 ## Pages
 
-- **Setup** — one-click guided install of everything a pipeline needs (runtime deps, NPU
-  driver, the DX GStreamer plugin build, sample models/videos, WebRTC deps, GstShark). Run
-  a single component or **Run All**; an environment-check table shows what's ready.  
+- **Setup** — one-click guided install of everything a pipeline needs, in six steps: Build
+  Tools & Libraries, DX-Runtime Dependencies, NPU Linux Driver, GStreamer Plugin Build,
+  Model & Video Download, and WebRTC Dependencies. Run one step or **Set up the rest**; an
+  environment check and **Deep Diagnostics** show what's ready.  
 - **Dashboard** — module status, quick-launch demo cards, and live FPS / latency / NPU-util
   metrics with sparklines.  
-- **Demo** — start a preset pipeline by category (object / face detection, pose,
-  multi-stream, RTSP, …); the processed video plays live (WebRTC) with an optional
-  FPS/latency overlay and a collapsible GstShark performance panel. Stop or switch anytime.  
+- **Demo Launcher** — the preset pipelines by category (object / face detection, pose,
+  segmentation, depth, multi-stream, RTSP, …). The chosen demo opens on a stage: pick
+  **Playback — Local (WebRTC) / Remote (MJPEG)**, an RTSP URL where it applies, and
+  **Start**; FPS, resolution and model are shown beside the video, and **Terminal command ›**
+  gives the equivalent command line. Stop or switch anytime.  
 - **Pipeline Builder** — a drag-and-drop GStreamer editor: pick elements from a searchable
   palette, wire them on the canvas, edit properties, then Run/Stop with live playback.
   Save / load named pipelines, use the built-in presets, import/export JSON, and see the
@@ -22,8 +25,8 @@ with live WebRTC playback.
 - **Model Catalog** — browse, search, and download models for use in pipelines.  
 - **Element Reference** — browse DX Stream's GStreamer elements by category, with their
   properties and pads.  
-- **Custom Postprocess** — upload and build your own C post-processing library, with a
-  build log.  
+- **Custom Library** — upload and build your own C post-processing library (with a build
+  log), or upload a `.dxnn` model for DxInfer.  
 - **Reference** — searchable in-app documentation.  
 
 ## Notes

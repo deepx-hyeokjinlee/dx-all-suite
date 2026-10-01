@@ -2,6 +2,40 @@
 
 Notable changes to the DX-AI-Studio User Manual.
 
+## Unreleased (since v0.1.0)
+
+Changes since the v0.1.0 beta manual. The version number and date are set at release.
+
+**Hub and design**
+
+- New home: a prompt box (*Describe anything. Run it on DX-M1.*) that opens the right tool or
+  runs the coding agent in place, tool cards with live facts, a DX-M1 widget, a "Measured on
+  DX-M1" card and a DEEPX Developers link bar. It replaces the orbital launcher.
+- Light, dark and system themes; one icon set across all modules (no emoji in the UI); real
+  variable fonts with one CJK face per language.
+- A new intro built from real runs and real DX-M1 footage.
+- The NPU monitor float starts folded at the bottom left and remembers your choice.
+
+**Remote access & security**
+
+- Other computers pair once with a 6-digit code shown in the launcher terminal; the
+  **Connected browsers** button lists and disconnects them. Module servers listen on the
+  board only; no wildcard CORS; Host and Origin checks; compile paths are limited to allowed
+  folders.
+
+**Tools**
+
+- DX App: the per-model example layout, **Run Demo** (26 demos on a shared stage), live
+  Continuous runs with exact FPS, faster async runs (`DXRT_DYNAMIC_CPU_THREAD`), Model Zoo
+  inference that runs each model's own example, and runner errors reported as errors.
+- DX Stream: Demo Launcher on the same stage with WebRTC or remote MJPEG playback; Setup as a
+  step list; launches work on a board whose Stream contracts validate.
+- Model Zoo: nearly 500 models from the internal publish page, with real result images.
+- DX Compiler, DX App and DX Stream: Setup shows the next step and why a button is locked.
+- SDK Library follows the suite's documentation (190 documents, 6 shelves).
+- About 370 DX App strings that were translated but never shown now appear in every language;
+  Korean spacing follows Korean orthography; server errors are translated.
+
 ## v0.1.0 / 2026-07
 
 - Initial DX-AI-Studio User Manual (studio **v0.1.0**, beta): MkDocs (Material) site

@@ -17,8 +17,8 @@ Step 1. **Connect an agent** — the console detects installed coding CLIs. Five
 Step 2. **Set the run** using the console controls:  
   - **Agent picker** — which of the 5 CLIs to use.  
   - **Model picker** — a dropdown of that agent's models; for CLIs that support
-      listing them (Cursor, OpenCode) it's enumerated live from the CLI, otherwise it
-      falls back to a built-in list. A hint warns if the chosen model is too weak and
+      listing them (Copilot — the models this account may use —, Cursor, OpenCode) it's
+      enumerated live from the CLI, otherwise it falls back to a built-in list. A hint warns if the chosen model is too weak and
       suggests a stronger one.  
   - **Reasoning-effort picker** — the effort levels that agent's CLI supports.  
   - **Target workdir** — which repo the agent works in: Suite, dx-runtime, dx_app,
@@ -27,9 +27,12 @@ Step 2. **Set the run** using the console controls:
 
 Step 3. **Describe your task** in the prompt — the agent works and streams its progress live;
    an expandable **activity panel** shows each turn's shell / tool output next to the reply.
+   The generated app lands in `workspace/agent-sessions/` (the console shows the path).
+   The same run can also be started from the **prompt box on the hub home** and followed
+   there (activity, replies, resume).
 
 Step 4. **Chat** — the main console chat is for building NPU apps via the connected coding
-   agent. The **💬 button** (bottom-right) is a separate affordance: a general SDK Q&A
+   agent. The **chat button** (bottom-right) is a separate affordance: a general SDK Q&A
    assistant, not part of the Agent Console run.
 
 Step 5. **Showcases** — browse the gallery of example NPU apps for reference.
@@ -37,7 +40,7 @@ Step 5. **Showcases** — browse the gallery of example NPU apps for reference.
 ### If no CLI is available, or the harness isn't found
 
 - **No coding-agent CLI installed/authenticated** — install and log into one of the 5
-  above, then reload the page. (The 💬 chat still works — it doesn't need a CLI.)  
+  above, then reload the page. (The chat assistant still works — it doesn't need a CLI.)  
 - **`.deepx` harness directory not found** — the agent knowledge/skills directory is
   missing. Set the `DX_HARNESS_ROOT` environment variable to your dx-all-suite checkout,
   or run DX AI Studio from within the suite, then reload the page.  

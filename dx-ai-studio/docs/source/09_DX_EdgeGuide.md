@@ -14,15 +14,15 @@ where panels open as you go.
 
 ### 1. Describe the workload (Requirements panel)
 
-- Optionally click a **Quick scenario** chip (**CCTV / Retail / Pose**) to prefill.  
-- **AI task**: Object Detection / Pose Estimation / Segmentation / Oriented BBox /
+- Optionally click a **Quick scenario** chip (**4-ch CCTV OD / 8-ch retail cls / 2-ch pose 30FPS**) to prefill.  
+- **AI task**: Object Detection / Pose Estimation / Segmentation / OBB /
   Classification.  
 - **Model size**: n (fastest) → x (most accurate).  
 - **Operating requirements**: cameras / **channels**, **target FPS**, runtime
   (ONNX Runtime vs Native), **max latency**.  
-- Click **Next: priority**, choose a **ranking priority** — Most Channels / Best
+- Click **Next — choose ranking**, choose a **ranking priority** — Most Channels / Best
   Performance / Lowest Power — then **Get Recommendations**. (After the first run,
-  changing any input auto-refreshes the results.)  
+  changing any input auto-refreshes the results; **Start over** clears everything.)  
 
 ### 2. Read the recommendations
 

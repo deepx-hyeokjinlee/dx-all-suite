@@ -5,16 +5,18 @@ video, a camera or an RTSP stream, watch live results, and benchmark or compare 
 
 ## Using it
 
-The dashboard opens on a set of pages (top navigation):
+The module opens on a set of pages (top tabs):
 
 - **Setup** — guided environment check; run it first so the NPU/runtime is ready.
 - **Models** — browse the model registry by AI task (detection, classification,
   segmentation, pose, …); open a model to see its details.
-- **Run** — pick a model and an input (image / video / camera / RTSP), run inference, and
-  watch the annotated result live in the browser. Multiple streams can run at once.
-- **Bench** / **Compare** — measure a model’s throughput and compare models side by side.
-- **Model Zoo** — download additional models into the app.
-- **Lab** — scaffold a new model/task from a template (developer portal).
+- **Run Inference** — pick a model and an input and run it. **Single** runs one image or
+  video; **Continuous** streams video / camera / RTSP live, several slots side by side.
+- **Run Demo** — 26 ready-made demos in 12 groups on one stage (image or video, C++ or
+  Python, Sync or Async).
+- **Benchmark** / **A/B Compare** — measure a model’s throughput and compare models side by side.
+- **ModelZoo** — download additional models into the app.
+- **Lab** — DX App Composer, Add Model, Create Task, Experiment and Safety Center.
 - **Outputs** — browse and manage saved inference results.
 - **Reference** — SDK documentation.
 
