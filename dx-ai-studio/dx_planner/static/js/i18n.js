@@ -38,7 +38,7 @@ window._DX_I18N_DICT = {
   'Get Recommendations': { ko: '추천 받기', ja: '推奨を取得', 'zh-CN': '获取推荐', 'zh-TW': '獲取推薦',es:'Obtener recomendaciones'},
   'Performance Radar': { ko: '성능 레이더', ja: 'パフォーマンスレーダー', 'zh-CN': '性能雷达图', 'zh-TW': '效能雷達圖',es:'Radar de rendimiento'},
   'Back to Recommendations': { ko: '추천 목록으로', ja: '推奨一覧に戻る', 'zh-CN': '返回推荐列表', 'zh-TW': '返回推薦列表',es:'Volver a recomendaciones'},
-  'Details': { ko: '상세 보기', ja: '詳細', es: 'Detalles', 'zh-CN': '详情', 'zh-TW': '詳情' },
+  'Details': { ko: '상세 정보', ja: '詳細', es: 'Detalles', 'zh-CN': '详情', 'zh-TW': '詳情' },
   'Generated': { ko: '생성', ja: '生成', es: 'Generado', 'zh-CN': '生成时间', 'zh-TW': '產生時間' },
   'Benchmark': { ko: '벤치마크', ja: 'ベンチマーク', es: 'Benchmark', 'zh-CN': '基准测试', 'zh-TW': '基準測試' },
   'Benchmark stale': { ko: '벤치마크 오래됨', ja: 'ベンチマークが古い', es: 'Benchmark desactualizado', 'zh-CN': '基准测试已过期', 'zh-TW': '基準測試已過期' },

@@ -72,19 +72,20 @@ function filterModels(){
     var modes=[];
     if(dl&&(m.cpp_sync||m.py_sync))modes.push('<span class="badge b-ok">'+T('Sync')+'</span>');
     if(dl&&(m.cpp_async||m.py_async))modes.push('<span class="badge b-blue">'+T('Async')+'</span>');
-    var fileInfo=m.model_file?(m.model_exists?DXIcon('check'):DXIcon('x'))+'<span class="txt-dim"> '+m.model_file.split('/').pop()+'</span>':'\u2014';
+    var fileInfo=m.model_file?'<span class="m-file-row">'+(m.model_exists?DXIcon('check'):DXIcon('x'))+'<span class="txt-dim">'+esc(m.model_file.split('/').pop()).replace(/_/g,'_<wbr>').replace(/\./g,'<wbr>.')+'</span></span>':'\u2014';
     return '<tr>'
-      +'<td>'+esc(m.name)+'</td>'
+      +'<td>'+esc(m.name).replace(/_/g,'_<wbr>')+'</td>'
       +'<td><span class="badge b-cat">'+esc(catText(m.category))+'</span></td>'
       +'<td>'+(dl&&m.cpp?'<span class="badge b-ok">' + DXIcon('check') + '</span>':'<span class="badge b-no">\u2014</span>')+'</td>'
       +'<td>'+(dl&&m.python?'<span class="badge b-ok">' + DXIcon('check') + '</span>':'<span class="badge b-no">\u2014</span>')+'</td>'
       +'<td>'+modes.join(' ')+'</td>'
       +'<td>'+(meta.join(' ')||'\u2014')+'</td>'
-      +'<td style="font-size:11px;">'+fileInfo+'</td>'
-      +'<td class="m-actions"><button class="m-action-btn m-action-detail" onclick="event.stopPropagation();showDetail(\''+esc(m.name)+'\')" title="Details">' + DXIcon('search') + ' '+T('Detail')+'</button>'
-      +(_onnxGraphArg(m.model_file)&&m.model_exists?'<button class="m-action-btn" onclick="event.stopPropagation();openModelGraph(\''+esc(m.model_file)+'\')" title="View Graph">' + DXIcon('dashboard') + ' Graph</button>':'')
+      +'<td class="m-file">'+fileInfo+'</td>'
+      /* 버튼 줄은 칸 안의 div — td 자체를 flex 로 두면 표 칸이 아니게 되어 두 줄 행에서 칸 높이와 경계선이 어긋났다 */
+      +'<td class="m-actions-cell"><div class="m-actions"><button class="m-action-btn m-action-detail" onclick="event.stopPropagation();showDetail(\''+esc(m.name)+'\')" title="'+esc(T('Details'))+'">' + DXIcon('search') + ' '+T('Detail')+'</button>'
+      +(_onnxGraphArg(m.model_file)&&m.model_exists?'<button class="m-action-btn" onclick="event.stopPropagation();openModelGraph(\''+esc(m.model_file)+'\')" title="'+esc(T('View Graph'))+'">' + DXIcon('dashboard') + ' '+T('Graph')+'</button>':'')
       +(m.dxnn_url?'<button class="m-action-btn m-action-dl" data-name="'+esc(m.mz_name||m.name)+'" data-dxnn="'+esc(m.dxnn_url)+'" data-json="'+esc(m.json_url||'')+'" onclick="event.stopPropagation();mzQuickDownload(this)" title="'+(m.model_exists?T('Re-download the Q-Lite .dxnn from ModelZoo'):T('Download the Q-Lite .dxnn from ModelZoo'))+'">' + DXIcon('download') + ' '+(m.model_exists?T('Re-download'):T('Download'))+'</button>':'')
-      +(runnable?'<button class="m-action-btn m-action-run" onclick="event.stopPropagation();quickRun(\''+esc(runnable.name)+'\',\''+esc(runnable.category)+'\',\''+esc(runnable.model_file||'')+'\')">' + DXIcon('play') + ' '+T('Run')+'</button>':'')+'</td>'
+      +(runnable?'<button class="m-action-btn m-action-run" onclick="event.stopPropagation();quickRun(\''+esc(runnable.name)+'\',\''+esc(runnable.category)+'\',\''+esc(runnable.model_file||'')+'\')">' + DXIcon('play') + ' '+T('Run')+'</button>':'')+'</div></td>'
       +'</tr>';
   }).join('');
   $('m-count').textContent=list.length+' / '+src.length+T(' models');

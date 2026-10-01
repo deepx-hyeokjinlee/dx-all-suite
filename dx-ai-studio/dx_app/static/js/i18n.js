@@ -2013,6 +2013,9 @@ window._DX_I18N_DICT = {
   'Compare': {
     ko: '비교', ja: '比較', 'zh-CN': '对比', 'zh-TW': '比較', es: 'Comparar',
   },
+  'Details': { ko: '상세 정보', ja: '詳細', 'zh-CN': '详情', 'zh-TW': '詳情', es: 'Detalles' },
+  'View Graph': { ko: '그래프 보기', ja: 'グラフを表示', 'zh-CN': '查看图', 'zh-TW': '檢視圖', es: 'Ver grafo' },
+  'Graph': { ko: '그래프', ja: 'グラフ', 'zh-CN': '图', 'zh-TW': '圖', es: 'Grafo' },
   'Delete {name}?': {
     ko: '{name} 파일을 삭제할까요?', ja: '{name} を削除しますか？',
     'zh-CN': '删除 {name}？', 'zh-TW': '刪除 {name}？', es: '¿Eliminar {name}?',

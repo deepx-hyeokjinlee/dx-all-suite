@@ -258,7 +258,7 @@ window._DX_I18N_DICT = {
   'Pipeline bottleneck analysis': { ko: '파이프라인 병목 분석', ja: 'パイプラインボトルネック分析', 'zh-CN': '管道瓶颈分析', 'zh-TW': '管道瓶頸分析',es:'Análisis de cuello de botella de pipeline'},
   'Environment Check': { ko: '환경 점검', ja: '環境チェック', 'zh-CN': '环境检查', 'zh-TW': '環境檢查',es:'Verificación del entorno'},
   'Item': { ko: '항목', ja: '項目', 'zh-CN': '项目', 'zh-TW': '項目',es:'Elemento'},
-  'Details': { ko: '세부사항', ja: '詳細', 'zh-CN': '详情', 'zh-TW': '詳情',es:'Detalles'},
+  'Details': { ko: '상세 정보', ja: '詳細', 'zh-CN': '详情', 'zh-TW': '詳情',es:'Detalles'},
   'Custom Plugins': { ko: '커스텀 플러그인', ja: 'カスタムプラグイン', 'zh-CN': '自定义插件', 'zh-TW': '自訂外掛程式',es:'Plugins personalizados'},
   'Model Files': { ko: '모델 파일', ja: 'モデルファイル', 'zh-CN': '模型文件', 'zh-TW': '模型檔案',es:'Archivos de modelo'},
   'Custom Postprocess Libraries': { ko: '커스텀 후처리 라이브러리', ja: 'カスタム後処理ライブラリ', 'zh-CN': '自定义后处理库', 'zh-TW': '自訂後處理函式庫',es:'Bibliotecas de post-procesamiento personalizadas'},
