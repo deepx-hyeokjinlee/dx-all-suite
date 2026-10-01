@@ -170,6 +170,7 @@ def _json_bool(value, default=False):
     return bool(value)
 
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from dx_app.core.modelzoo_gateway import ModelZooGateway
 from dx_app.core.filesystem import fs_list
 from dx_app.core.setup_steps import SETUP_STEPS, setup_status, setup_run, deep_diagnostics, setup_log, setup_input, quick_start_plan
@@ -215,16 +216,7 @@ def _hb_touch():
 _chat_engine = ChatEngine(
     app_name="dx_app",
     context_callback=lambda: {"models": [m.get("name","") for m in get_models()[:20]]},
-    fallback_rules=[
-        (["yolo", "detection", "객체", "검출"], {
-            "ko": "Object Detection 탭에서 YOLO 모델을 실행할 수 있습니다.",
-            "en": "You can run YOLO models in the Object Detection tab.",
-        }),
-        (["sdk", "python", "c++"], {
-            "ko": "DX Runtime SDK 사용법은 Developer 탭을 참조하세요.",
-            "en": "See the Developer tab for DX Runtime SDK usage.",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_app")
 )
 
 

@@ -22,18 +22,14 @@ from dx_agent_dev.core.adapters import make_adapter
 from dx_agent_dev.core.showcases import load_showcases
 from shared.dx_server import DXBaseHandler
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from shared.shell import ShellSpec
 
 PORT = DEFAULT_PORT
 
 _chat_engine = ChatEngine(
     app_name="dx_agent_dev",
-    fallback_rules=[
-        (["agent", "console", "build", "에이전트", "콘솔", "빌드"], {
-            "ko": "DX Agent Dev 콘솔에 자연어로 요청하면 NPU 앱을 만들어 줍니다.",
-            "en": "Describe what you want in the DX Agent Dev console and it builds an NPU app.",
-        }),
-    ],
+    fallback_rules=_module_fallbacks.rules("dx_agent_dev"),
 )
 
 

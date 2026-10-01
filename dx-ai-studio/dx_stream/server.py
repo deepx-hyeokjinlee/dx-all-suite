@@ -15,6 +15,7 @@ from pathlib import Path
 
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from shared.runtime_context import RuntimeContextError, resolve_active_runtime_context
 from shared.runtime_contract import ContractResult, validate_stream_contract
 from shared.runtime_environment import build_child_environment
@@ -232,29 +233,7 @@ def _try_start_webrtc_pipeline(pipeline_str: str, extra_env: dict | None = None)
 
 _chat_engine = ChatEngine(
     app_name="dx_stream",
-    fallback_rules=[
-        (["element", "elements", "엘리먼트", "エレメント", "元素", "DxInfer"], {
-            "ko": "Elements 탭에서 사용 가능한 GStreamer 엘리먼트 목록을 확인하세요.",
-            "en": "Check available GStreamer elements in the Elements tab.",
-            "ja": "Elements タブで利用可能な GStreamer エレメント一覧を確認してください。",
-            "zh-CN": "请在 Elements 选项卡中查看可用的 GStreamer 元素列表。",
-            "zh-TW": "請在 Elements 分頁中查看可用的 GStreamer 元素清單。",
-        }),
-        (["pipeline", "pipelines", "파이프라인", "パイプライン", "管道", "管線", "gstreamer"], {
-            "ko": "Pipeline Builder 탭에서 드래그 & 드롭으로 파이프라인을 구성할 수 있습니다.",
-            "en": "Build pipelines with drag & drop in the Pipeline Builder tab.",
-            "ja": "Pipeline Builder タブでドラッグ & ドロップしてパイプラインを構成できます。",
-            "zh-CN": "可在 Pipeline Builder 选项卡中通过拖放构建管道。",
-            "zh-TW": "可在 Pipeline Builder 分頁中透過拖放建置管線。",
-        }),
-        (["webrtc", "webrtcbin", "streaming", "스트리밍", "ストリーミング", "流媒体", "串流"], {
-            "ko": "Demo 탭에서 WebRTC 스트리밍을 바로 시작할 수 있습니다.",
-            "en": "Start WebRTC streaming directly in the Demo tab.",
-            "ja": "Demo タブから WebRTC ストリーミングを直接開始できます。",
-            "zh-CN": "可在 Demo 选项卡中直接启动 WebRTC 流媒体。",
-            "zh-TW": "可在 Demo 分頁中直接啟動 WebRTC 串流。",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_stream")
 )
 
 

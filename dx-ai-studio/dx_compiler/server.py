@@ -32,6 +32,7 @@ class _ViewerDepsError(Exception):
 
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 
 from dx_compiler.core.validation import (
     ValidationError, validate_calibration_method, validate_enhanced_scheme,
@@ -106,20 +107,7 @@ def _safe_download_stem(value: str | None) -> str:
 
 _chat_engine = ChatEngine(
     app_name="dx_compiler",
-    fallback_rules=[
-        (["compile", "컴파일", "onnx", "dxnn"], {
-            "ko": "컴파일 폼에서 ONNX 파일을 업로드하고 옵션을 설정한 후 Submit을 누르세요.",
-            "en": "Upload an ONNX file in the compile form, set options, and click Submit.",
-        }),
-        (["graph", "그래프", "시각화"], {
-            "ko": "왼쪽 패널에서 컴파일 단계별 그래프 변화를 실시간으로 확인할 수 있습니다.",
-            "en": "View real-time graph changes per compilation phase in the left panel.",
-        }),
-        (["quantization", "양자화", "INT8"], {
-            "ko": "DXQ 설정에서 P0~P5 프리셋과 weight/activation dtype을 선택할 수 있습니다.",
-            "en": "Select P0–P5 presets and weight/activation dtypes in the DXQ settings.",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_compiler")
 )
 
 

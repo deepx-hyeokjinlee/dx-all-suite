@@ -9,6 +9,7 @@ from pathlib import Path
 
 from shared.dx_server import DXBaseHandler, DXServer
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from dx_planner.core.aggregator import aggregate_benchmarks as _aggregate
 from shared.shell import ShellSpec
 
@@ -19,20 +20,7 @@ SERVER_NAME = "DX EdgeGuide"
 
 _chat_engine = ChatEngine(
     app_name="dx_planner",
-    fallback_rules=[
-        (["tco", "비용", "cost"], {
-            "ko": "TCO 계산기를 사용하여 엣지 AI와 클라우드 비용을 비교할 수 있습니다.",
-            "en": "Use the TCO calculator to compare edge AI and cloud costs.",
-        }),
-        (["planner", "플래너"], {
-            "ko": "DX EdgeGuide는 워크로드에 맞는 최적의 DEEPX Edge AI 제품을 추천합니다.",
-            "en": "DX EdgeGuide recommends the optimal DEEPX Edge AI product for your workload.",
-        }),
-        (["deepx", "m1", "h1", "npu"], {
-            "ko": "DEEPX DX-M1은 25 TOPS, 3W TDP의 팬리스 M.2 NPU입니다.",
-            "en": "DEEPX DX-M1 is a fanless M.2 NPU with 25 TOPS and 3W TDP.",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_planner")
 )
 
 

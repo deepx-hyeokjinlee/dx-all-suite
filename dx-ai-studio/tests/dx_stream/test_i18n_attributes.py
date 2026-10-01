@@ -444,10 +444,11 @@ def _load_stream_server():
 @pytest.mark.parametrize(
     ("message", "lang", "expected", "forbidden"),
     [
-        ("GStreamer elements", "en", "Elements tab", "Pipeline Builder"),
-        ("GStreamer エレメント", "ja", "Elements タブ", "Pipeline Builder"),
-        ("GStreamer 元素", "zh-CN", "Elements 选项卡", "Pipeline Builder"),
-        ("GStreamer 元素", "zh-TW", "Elements 分頁", "Pipeline Builder"),
+        ("GStreamer elements", "en", "Element Reference tab", "Pipeline Builder"),
+        ("GStreamer エレメント", "ja", "Element Reference タブ", "Pipeline Builder"),
+        ("GStreamer 元素", "zh-CN", "Element Reference 选项卡", "Pipeline Builder"),
+        ("GStreamer 元素", "zh-TW", "Element Reference 分頁", "Pipeline Builder"),
+        ("elementos GStreamer", "es", "Element Reference", "Pipeline Builder"),
     ],
 )
 def test_stream_fallback_routes_element_queries_to_elements_response(message, lang, expected, forbidden):
@@ -464,9 +465,10 @@ def test_stream_fallback_routes_element_queries_to_elements_response(message, la
         ("パイプライン", "ja", "Pipeline Builder タブ"),
         ("管道", "zh-CN", "Pipeline Builder 选项卡"),
         ("管線", "zh-TW", "Pipeline Builder 分頁"),
-        ("ストリーミング", "ja", "WebRTC ストリーミング"),
-        ("流媒体", "zh-CN", "WebRTC 流媒体"),
-        ("串流", "zh-TW", "WebRTC 串流"),
+        ("ストリーミング", "ja", "Demo Launcher"),
+        ("流媒体", "zh-CN", "Demo Launcher"),
+        ("串流", "zh-TW", "Demo Launcher"),
+        ("demostración", "es", "Demo Launcher"),
     ],
 )
 def test_stream_fallback_routes_localized_app_keywords(message, lang, expected):
@@ -476,10 +478,15 @@ def test_stream_fallback_routes_localized_app_keywords(message, lang, expected):
 
 
 def test_stream_server_app_fallback_rules_cover_all_supported_languages():
+    # 규칙은 shared/chat/module_fallbacks.py 한 곳에 (6개 언어 — tests/shared/test_module_fallbacks.py)
     source = read_text(STREAM / "server.py")
-    fallback_block = source[source.index("fallback_rules=["):source.index("class DXStreamHandler")]
-    for marker in ('"ko":', '"en":', '"ja":', '"zh-CN":', '"zh-TW":'):
-        assert fallback_block.count(marker) >= 3, marker
+    assert 'fallback_rules=_module_fallbacks.rules("dx_stream")' in source
+    from shared.chat import module_fallbacks
+    rules = module_fallbacks.rules("dx_stream")
+    assert len(rules) >= 3
+    for _, answer in rules:
+        for lang in ("ko", "en", "ja", "zh-CN", "zh-TW", "es"):
+            assert answer.get(lang), lang
     shared_fallback = read_text(ROOT / "shared" / "chat" / "fallback.py")
     assert 'response.get(lang, response["en"])' not in shared_fallback
 

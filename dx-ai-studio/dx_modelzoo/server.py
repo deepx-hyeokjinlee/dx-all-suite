@@ -6,6 +6,7 @@ from pathlib import Path
 
 from shared.dx_server import DXBaseHandler, DXServer
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from dx_modelzoo.core.config import (DEFAULT_PORT, STATIC_DIR, TEMPLATES_DIR, DATA_DIR,
                          DX_APP_ROOT, CPP_DIR, PY_DIR, SERVER_NAME,
                          SAMPLE_IMG_DIR, SAMPLE_IMAGES, MODEL_IMAGE_OVERRIDE)
@@ -67,20 +68,7 @@ _sync_running = False
 
 _chat_engine = ChatEngine(
     app_name="dx_modelzoo",
-    fallback_rules=[
-        (["catalog", "카탈로그", "모델", "model"], {
-            "ko": "카탈로그 페이지에서 340+ 모델을 카테고리별로 검색할 수 있습니다.",
-            "en": "Browse 340+ models by category on the catalog page.",
-        }),
-        (["download", "다운로드", "설치"], {
-            "ko": "모델 상세 페이지에서 다운로드할 수 있습니다.",
-            "en": "Download models from the model detail page.",
-        }),
-        (["inference", "추론", "demo"], {
-            "ko": "모델 상세 페이지의 Demo 탭에서 추론을 실행할 수 있습니다. DX App이 실행 중이어야 합니다.",
-            "en": "Run inference in the Demo tab of the model detail page. DX App must be running.",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_modelzoo")
 )
 
 
