@@ -148,7 +148,9 @@ DXStream.loadPreset = async function (demoId) {
 
     _updateElementCount();
     DXStream.pipelineFitView();
-    DXStream.toast(T('Preset loaded: ') + (demo.name_ko || demo.name_en), 'success');
+    _scheduleCommandPreview();   // 명령 상자가 'gst-launch-1.0 ...' 로 남아 있었다 (S-5)
+    var lang = (window.DXI18n && DXI18n.lang) || 'en';
+    DXStream.toast(T('Preset loaded: ') + (demo['name_' + lang] || demo.name_en || demo.name_ko), 'success');
 };
 
 function _demoToNodes(demo) {

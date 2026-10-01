@@ -26,3 +26,15 @@ def test_the_pipeline_run_button_and_the_diagnostics_button_say_different_things
     assert "'Run diagnostics': {" in i18n
     diag_line = next(l for l in html.splitlines() if 'id="stream-diag-run-btn"' in l)
     assert 'data-i18n="Run diagnostics"' in diag_line
+
+
+def test_loading_a_preset_updates_the_count_the_command_and_speaks_the_ui_language():
+    """Preset 을 불러도 'Elements: 0' · 'gst-launch-1.0 ...' 그대로, toast 는 영어 화면에서 한국어였다 (S-5)."""
+    root = Path(__file__).resolve().parents[2]
+    renderer = (root / "dx_stream/static/js/stream-pipeline-renderer.js").read_text(encoding="utf-8")
+    ser = (root / "dx_stream/static/js/stream-pipeline-serialization.js").read_text(encoding="utf-8")
+    assert "el.textContent = T('Elements') + ': ' + n;" in renderer
+    assert "querySelector('.ko')" not in renderer
+    load = ser[ser.index("DXStream.loadPreset = async function"):ser.index("function _demoToNodes")]
+    assert "_scheduleCommandPreview();" in load
+    assert "demo['name_' + lang]" in load and "demo.name_ko || demo.name_en" not in load

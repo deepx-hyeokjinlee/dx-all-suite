@@ -136,10 +136,13 @@ function _updateElementCount() {
     var el = DXStream.$('pipeline-element-count');
     if (!el) return;
     var n = DXStream._pipeState.nodes.length;
-    var ko = el.querySelector('.ko');
-    var en = el.querySelector('.en');
-    if (ko) ko.textContent = '\uc5d8\ub9ac\uba3c\ud2b8: ' + n;
-    if (en) en.textContent = 'Elements: ' + n;
+    /* 예전에는 템플릿에 없는 .ko / .en span 에 써서 preset 을 불러도 'Elements: 0' 그대로였다 (release audit S-5).
+       살아 있는 숫자라 사전 key 가 아니다 — 언어가 바뀌면 다시 그린다 (아래 onLangChange). */
+    el.removeAttribute('data-i18n');
+    el.textContent = T('Elements') + ': ' + n;
+}
+if (window.DXI18n && DXI18n.onLangChange) {
+    DXI18n.onLangChange(function () { if (DXStream._pipeState) _updateElementCount(); });
 }
 
 function _initCanvas() {
