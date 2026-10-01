@@ -148,3 +148,17 @@ def test_the_sdk_library_guide_starts_the_sdk_tour_not_the_home_tour(port, brows
             assert "sdk_library" in onclick, onclick
     finally:
         ctx.close()
+
+
+def test_the_sdk_list_view_search_finds_documents(port, browser):
+    """List 보기 (기본) 검색이 사이드바 이름과 이미 그려진 카드만 보아 'quick start' · 'compiler' 가 0 건이었다
+    (Cabinet 보기는 찾았다). 2026-10-02 release audit L-4."""
+    ctx, page = _open(browser, port, "sdk-library")
+    try:
+        page.wait_for_selector("#sdkListContent", timeout=15000)
+        page.fill("#sdkLibSearch", "compiler")
+        page.wait_for_function("document.querySelectorAll('#sdkListContent .file-card').length > 0", timeout=5000)
+        page.fill("#sdkLibSearch", "")
+        page.wait_for_selector("#sdkListContent .sdk-list-empty", timeout=5000)
+    finally:
+        ctx.close()

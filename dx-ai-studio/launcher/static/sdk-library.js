@@ -187,6 +187,7 @@
   let _viewMode = 'list'; // 'cabinet' | 'list' — list is default
   let _selectedDrawer = null;
   let _selectedSection = null;
+  let _listData = null;   // List 보기가 그린 data — 검색이 전체 문서를 찾는다 (searchListView)
 
   function buildModuleHeader() {
     const header = document.createElement('header');
@@ -325,7 +326,12 @@
     renderListContent(data, drawer, section);
   }
 
+  function _listPrompt() {
+    return '<div class="sdk-list-empty">' + _t('← Select a category from the left', '← 좌측에서 카테고리를 선택하세요', '← 左側からカテゴリを選択してください', '← 请从左侧选择分类', '← 請從左側選擇分類', '← Seleccione una categoría de la izquierda') + '</div>';
+  }
+
   function renderListView(data, container) {
+    _listData = data;
     const layout = document.createElement('div');
     layout.className = 'sdk-list-layout';
 
@@ -384,7 +390,7 @@
     const content = document.createElement('div');
     content.className = 'sdk-list-content';
     content.id = 'sdkListContent';
-    content.innerHTML = '<div class="sdk-list-empty">' + _t('← Select a category from the left', '← 좌측에서 카테고리를 선택하세요', '← 左側からカテゴリを選択してください', '← 请从左侧选择分类', '← 請從左側選擇分類', '← Seleccione una categoría de la izquierda') + '</div>';
+    content.innerHTML = _listPrompt();
 
     layout.appendChild(sidebar);
     layout.appendChild(content);
@@ -605,6 +611,8 @@
     else _clearEmptySearch(cabinet);
   }
 
+  /* List 보기 검색 — 문서 목록 전체에서 찾아 결과를 내용 칸에 카드로 그린다. 예전에는 사이드바 구역 이름과 이미 그려진
+     카드만 보아서 'quick start' · 'compiler' 가 0 건이었다 (Cabinet 보기는 2 건). 2026-10-02 release audit L-4. */
   function searchListView(q) {
     const listContent = document.getElementById('sdkListContent');
     const groups = document.querySelectorAll('.sdk-sidebar-group');
@@ -613,38 +621,54 @@
       clearSearchSummary();
       groups.forEach(g => {
         g.classList.remove('search-hidden');
-        g.querySelectorAll('.sdk-sidebar-section').forEach(s => s.classList.remove('search-hidden'));
-        g.classList.remove('expanded');
+        g.querySelectorAll('.sdk-sidebar-section').forEach(sec => sec.classList.remove('search-hidden'));
       });
-      document.querySelectorAll('.sdk-list-files-grid .file-card').forEach(c => c.classList.remove('search-hidden'));
+      // 고르던 구역으로 돌아간다
+      const drawer = _listData && _listData.drawers.find(d => d.id === _selectedDrawer);
+      const section = drawer && drawer.sections.find(sec => sec.id === _selectedSection);
+      if (drawer && section) renderListContent(_listData, drawer, section);
+      else if (listContent) listContent.innerHTML = _listPrompt();
       return;
     }
-    let matchCount = 0;
-    groups.forEach(g => {
-      let groupHasMatch = false;
-      const sections = g.querySelectorAll('.sdk-sidebar-section');
-      if (sections.length) {
-        sections.forEach(sec => {
-          const label = sec.querySelector('.sdk-sidebar-sec-label').textContent.toLowerCase();
-          if (label.includes(q)) { sec.classList.remove('search-hidden'); groupHasMatch = true; }
-          else sec.classList.add('search-hidden');
-        });
-      } else {
-        const labelEl = g.querySelector('.sdk-sidebar-label');
-        if (labelEl && labelEl.textContent.toLowerCase().includes(q)) groupHasMatch = true;
+    const hits = [];
+    const hitSections = new Set();
+    for (const drawer of ((_listData && _listData.drawers) || [])) {
+      for (const section of drawer.sections) {
+        for (const file of section.files) {
+          const title = String(file.title || '').toLowerCase();
+          const path = String(file.path || '').toLowerCase();
+          if (title.includes(q) || path.includes(q)) {
+            hits.push({ file, drawer });
+            hitSections.add(drawer.id + '/' + section.id);
+          }
+        }
       }
+    }
+    groups.forEach(g => {
+      const id = g.dataset.drawerId;
+      const sections = g.querySelectorAll('.sdk-sidebar-section');
+      let groupHasMatch = false;
+      sections.forEach(sec => {
+        const match = hitSections.has(id + '/' + sec.dataset.sectionId);
+        sec.classList.toggle('search-hidden', !match);
+        if (match) groupHasMatch = true;
+      });
+      if (!sections.length) groupHasMatch = Array.from(hitSections).some(k => k.indexOf(id + '/') === 0);
       g.classList.toggle('search-hidden', !groupHasMatch);
-      if (groupHasMatch && sections.length) { g.classList.add('expanded'); }
+      if (groupHasMatch && sections.length) g.classList.add('expanded');
     });
-    // Filter content panel cards — tracked separately for empty state
-    let contentCardMatch = false;
-    document.querySelectorAll('.sdk-list-files-grid .file-card').forEach(c => {
-      const match = c.dataset.title.includes(q) || c.dataset.path.includes(q);
-      c.classList.toggle('search-hidden', !match);
-      if (match) { contentCardMatch = true; matchCount++; }
-    });
-    renderSearchSummary(q, matchCount);
-    if (!contentCardMatch) _showEmptySearch(listContent);
+    if (listContent) {
+      listContent.innerHTML = `
+        <div class="sdk-list-content-header">
+          <span class="sdk-list-breadcrumb">${_sdkIco('search')} ${escHtml(_t('Search results', '검색 결과', '検索結果', '搜索结果', '搜尋結果', 'Resultados de búsqueda'))}</span>
+          <span class="sdk-list-file-count">${hits.length}${_t(' files', '개 파일', ' ファイル', ' 个文件', ' 個檔案', ' archivos')}</span>
+        </div>
+        <div class="sdk-list-files-grid"></div>`;
+      const grid = listContent.querySelector('.sdk-list-files-grid');
+      hits.forEach(h => grid.appendChild(buildFileCard(h.file, h.drawer.color)));
+    }
+    renderSearchSummary(q, hits.length);
+    if (!hits.length) _showEmptySearch(listContent);
     else _clearEmptySearch(listContent);
   }
 
