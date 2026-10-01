@@ -4,7 +4,7 @@ import shutil
 import subprocess
 
 from dx_stream.core.gst_env import gi_capable_python
-from shared.runtime_context import RuntimeContextError, resolve_active_runtime_context
+from shared.runtime_context import RuntimeContextError, resolve_launch_context
 from shared.runtime_environment import RuntimeEnvironmentError, build_child_environment
 from shared.runtime_validation import validate_stream_pipeline
 
@@ -187,7 +187,7 @@ def _check_gst_plugin():
     # GST_PLUGIN_PATH points at the installed plugin dir — matching how the Stream pipeline
     # is actually launched. Fall back to the inherited env if no active profile is resolved.
     try:
-        env = build_child_environment(resolve_active_runtime_context())
+        env = build_child_environment(resolve_launch_context("dx_stream"))
     except (RuntimeContextError, RuntimeEnvironmentError):
         env = None
     rc, _, _ = _run(["gst-inspect-1.0", "--exists", "dxinfer"], env=env)
@@ -203,7 +203,7 @@ def _check_gst_plugin():
 
 def _check_gst_pipeline():
     try:
-        context = resolve_active_runtime_context()
+        context = resolve_launch_context("dx_stream")
         result = validate_stream_pipeline(
             _DXINFER_PARSE_PROBE,
             python_executable=gi_capable_python(context.python_executable),

@@ -51,7 +51,8 @@ def _active_stream_context() -> tuple[ContractResult, object | None]:
         assert policy.reason is not None
         return ContractResult((policy.reason,)), None
     try:
-        return ContractResult(()), resolve_active_runtime_context()
+        # degraded 허용 (Stream 계약이 지금 통과) 이면 journal 이 ACTIVE 가 아니어도 같은 사실로 context 를 만든다 (S-1)
+        return ContractResult(()), resolve_active_runtime_context(allow_unjournaled=policy.degraded)
     except RuntimeContextError as exc:
         return ContractResult((ContractCheck(
             check_id="profile.context",
