@@ -80,7 +80,7 @@
 
     { id: 'controls', icon: 'agent',
       title: { ko: '에이전트 & 모델', en: 'Agent & Model', ja: 'エージェント & モデル', 'zh-CN': '智能体与模型', 'zh-TW': '代理程式與模型', es: 'Agente y modelo' },
-      description: { ko: '코딩 에이전트와 모델을 선택', en: 'Select the coding agent and model', ja: 'コーディングエージェントとモデルを選択', 'zh-CN': '选择编码智能体和模型', 'zh-TW': '選擇編碼代理程式和模型', es: 'Selecciona el agente de codificación y el modelo' },
+      description: { ko: '코딩 에이전트와 모델을 선택', en: 'Select the coding agent and model', ja: 'コーディングエージェントとモデルを選択', 'zh-CN': '选择编码智能体和模型', 'zh-TW': '選擇編碼代理程式和模型', es: 'Seleccione el agente de codificación y el modelo' },
       prerequisite: 'console',
       prerequisiteMessage: { ko: '먼저 콘솔 섹션을 완료하세요.', en: 'Complete the Console section first.', ja: '先にコンソールセクションを完了してください。', 'zh-CN': '请先完成控制台部分。', 'zh-TW': '請先完成主控台部分。', es: 'Complete primero la sección de consola.' },
       steps: [

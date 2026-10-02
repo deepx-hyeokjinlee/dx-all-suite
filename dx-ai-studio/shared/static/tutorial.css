@@ -629,6 +629,10 @@ body.dxt-help-active .dxt-help-badge { pointer-events: auto; }
 
 /* Tutorial-only overlays: non-modal dialogs stay below tooltip (99995) */
 dialog.dxt-tutorial-dialog {
+  /* show() 로 연 (non-modal) dialog 는 문서 흐름 속 absolute 라 긴 페이지에서 화면 밖에 떴다 — 화면에 고정한다
+     (release audit S-19: Stream 투어의 모델 상세 창이 y≈1000–3000 에 열렸다) */
+  position: fixed;
+  inset: 0;
   z-index: 99992;
   margin: auto;
   max-width: min(720px, 92vw);

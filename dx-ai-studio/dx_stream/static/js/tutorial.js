@@ -185,7 +185,7 @@
       steps: [
         { target: '#dash-stats', position: 'bottom',
           title: { ko: '시스템 상태 카드', en: 'Status Cards', ja: 'システム状態カード', 'zh-CN': '系统状态卡片', 'zh-TW': '系統狀態卡片', es: 'Tarjetas de estado' },
-          content: { ko: '<strong>NPU, GStreamer, 모델, 비디오, 빌드</strong> 5개 상태를 카드로 한눈에 확인합니다. {{i:check}}=정상, {{i:alert}}=경고.', en: 'View <strong>NPU, GStreamer, Models, Videos, Build</strong> status at a glance. {{i:check}}=OK, {{i:alert}}=warning.', ja: '<strong>NPU, GStreamer, モデル, ビデオ, ビルド</strong>の5つの状態をカードで一目で確認できます。{{i:check}}=正常, {{i:alert}}=警告。', 'zh-CN': '一目了然地查看<strong>NPU、GStreamer、模型、视频、构建</strong>5个状态卡片。{{i:check}}=正常, {{i:alert}}=警告。', 'zh-TW': '一目了然地查看<strong>NPU, GStreamer, 模型, 影片, 建構</strong>5個狀態卡片。{{i:check}}=正常, {{i:alert}}=警告。', es: 'Consulte de un vistazo el estado de <strong>NPU, GStreamer, modelos, vídeos y compilación</strong>. {{i:check}}=OK, {{i:alert}}=advertencia.' } },
+          content: { ko: '<strong>NPU, GStreamer, 모델, 비디오, 빌드</strong> 5개 상태를 카드로 한눈에 확인합니다. {{i:check}}=정상, {{i:alert}}=경고.', en: 'View <strong>NPU, GStreamer, Models, Videos, Build</strong> status at a glance. {{i:check}}=OK, {{i:alert}}=warning.', ja: '<strong>NPU, GStreamer, モデル, ビデオ, ビルド</strong>の5つの状態をカードで一目で確認できます。{{i:check}}=正常, {{i:alert}}=警告。', 'zh-CN': '一目了然地查看<strong>NPU、GStreamer、模型、视频、构建</strong>5个状态卡片。{{i:check}}=正常, {{i:alert}}=警告。', 'zh-TW': '一目了然地查看<strong>NPU, GStreamer, 模型, 影片, 建構</strong>5個狀態卡片。{{i:check}}=正常, {{i:alert}}=警告。', es: 'Consulte de un vistazo el estado de <strong>NPU, GStreamer, modelos, videos y compilación</strong>. {{i:check}}=OK, {{i:alert}}=advertencia.' } },
         { target: '#stat-npu', position: 'bottom',
           title: { ko: 'NPU 상태', en: 'NPU Status', ja: 'NPU状態', 'zh-CN': 'NPU状态', 'zh-TW': 'NPU狀態', es: 'Estado del NPU' },
           content: { ko: 'DeepX NPU 디바이스의 <strong>감지 상태</strong>입니다. {{i:check}}이면 정상 동작, {{i:alert}}이면 드라이버 설치가 필요합니다.', en: 'DeepX NPU <strong>detection status</strong>. {{i:check}} = working, {{i:alert}} = driver installation needed.', ja: 'DeepX NPUデバイスの<strong>検出状態</strong>です。{{i:check}}=正常動作、{{i:alert}}=ドライバーのインストールが必要です。', 'zh-CN': 'DeepX NPU设备的<strong>检测状态</strong>。{{i:check}}=正常运行，{{i:alert}}=需要安装驱动程序。', 'zh-TW': 'DeepX NPU設備的<strong>偵測狀態</strong>。{{i:check}}=正常運作，{{i:alert}}=需要安裝驅動程式。', es: '<strong>Estado de detección</strong> del NPU DeepX. {{i:check}} = operativo, {{i:alert}} = requiere instalación del controlador.' } },
@@ -213,7 +213,7 @@
 
     { id: 'demo', icon: 'demo',
       title: { ko: '데모 런처', en: 'Demo Launcher', ja: 'デモランチャー', 'zh-CN': '演示启动器', 'zh-TW': '示範啟動器', es: 'Lanzador de demos' },
-      description: { ko: 'AI 데모 실행 및 실시간 영상', en: 'Run AI demos and view real-time video', ja: 'AIデモの実行とリアルタイム映像', 'zh-CN': '运行AI演示并查看实时视频', 'zh-TW': '執行AI示範並查看即時影像', es: 'Ejecute demos de IA y vea vídeo en tiempo real' },
+      description: { ko: 'AI 데모 실행 및 실시간 영상', en: 'Run AI demos and view real-time video', ja: 'AIデモの実行とリアルタイム映像', 'zh-CN': '运行AI演示并查看实时视频', 'zh-TW': '執行AI示範並查看即時影像', es: 'Ejecute demos de IA y vea video en tiempo real' },
       // 무대가 그려질 때까지 기다렸다가 demo 하나를 연다 — 아무것도 설치되지 않은 PC 에서도 둘러볼 수 있게.
       beforeStart: function () {
         goPage('demo');
@@ -252,7 +252,7 @@
         // Start (준비 안 된 demo 는 Set up) 는 무대의 actions 자리 (spec 2026-10-01 demo stage).
         { target: '#demo-root .dds-stage .dds-actions', position: 'left',
           title: { ko: '데모 시작', en: 'Start Demo', ja: 'デモ開始', 'zh-CN': '启动演示', 'zh-TW': '啟動示範', es: 'Iniciar demo' },
-          content: { ko: '{{i:play}} <strong>Start</strong>를 누르면 파이프라인이 시작되고 영상이 무대의 같은 자리에서 재생됩니다. 도는 데모의 카드에는 <strong>Running</strong>이 표시됩니다.', en: 'Click {{i:play}} <strong>Start</strong> to start the pipeline — the video plays in the same place on the stage. The running demo&rsquo;s card shows <strong>Running</strong>.', ja: '{{i:play}} <strong>Start</strong>を押すとパイプラインが開始し、映像がステージの同じ場所で再生されます。実行中のデモのカードには<strong>Running</strong>が表示されます。', 'zh-CN': '点击{{i:play}} <strong>Start</strong>即可启动管道，视频会在舞台的同一位置播放。运行中演示的卡片会显示<strong>Running</strong>。', 'zh-TW': '點擊{{i:play}} <strong>Start</strong>即可啟動管線，影片會在舞台的同一位置播放。執行中示範的卡片會顯示<strong>Running</strong>。', es: 'Haga clic en {{i:play}} <strong>Start</strong> para iniciar el pipeline: el vídeo se reproduce en el mismo lugar del escenario. La tarjeta de la demo en ejecución muestra <strong>Running</strong>.' },
+          content: { ko: '{{i:play}} <strong>Start</strong>를 누르면 파이프라인이 시작되고 영상이 무대의 같은 자리에서 재생됩니다. 도는 데모의 카드에는 <strong>Running</strong>이 표시됩니다.', en: 'Click {{i:play}} <strong>Start</strong> to start the pipeline — the video plays in the same place on the stage. The running demo&rsquo;s card shows <strong>Running</strong>.', ja: '{{i:play}} <strong>Start</strong>を押すとパイプラインが開始し、映像がステージの同じ場所で再生されます。実行中のデモのカードには<strong>Running</strong>が表示されます。', 'zh-CN': '点击{{i:play}} <strong>Start</strong>即可启动管道，视频会在舞台的同一位置播放。运行中演示的卡片会显示<strong>Running</strong>。', 'zh-TW': '點擊{{i:play}} <strong>Start</strong>即可啟動管線，影片會在舞台的同一位置播放。執行中示範的卡片會顯示<strong>Running</strong>。', es: 'Haga clic en {{i:play}} <strong>Start</strong> para iniciar el pipeline: el video se reproduce en el mismo lugar del escenario. La tarjeta de la demo en ejecución muestra <strong>Running</strong>.' },
           beforeStep: function () {
             if (window.DXStream && typeof DXStream._inputModalCancel === 'function') {
               DXStream._inputModalCancel();
@@ -261,8 +261,8 @@
             if (stage) stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
           } },
         { target: '#demo-root .dds-stage .dds-media', position: 'right',
-          title: { ko: '영상', en: 'Video', ja: '映像', 'zh-CN': '视频', 'zh-TW': '影片', es: 'Vídeo' },
-          content: { ko: '데모 실행 시 <strong>실시간 영상</strong>이 무대 왼쪽에 표시됩니다. AI 추론 결과(바운딩 박스 등)가 오버레이됩니다.', en: 'When a demo runs, the <strong>real-time video</strong> plays on the left of the stage with AI inference overlays (bounding boxes, etc.).', ja: 'デモ実行時、<strong>リアルタイム映像</strong>がステージ左側に表示されます。AI推論結果（バウンディングボックス等）がオーバーレイされます。', 'zh-CN': '演示运行时，<strong>实时视频</strong>会显示在舞台左侧，并叠加 AI 推理结果（边界框等）。', 'zh-TW': '示範執行時，<strong>即時影像</strong>會顯示在舞台左側，並疊加 AI 推論結果（邊界框等）。', es: 'Cuando una demo se ejecuta, el <strong>vídeo en tiempo real</strong> se reproduce a la izquierda del escenario con las superposiciones de inferencia (cuadros delimitadores, etc.).' },
+          title: { ko: '영상', en: 'Video', ja: '映像', 'zh-CN': '视频', 'zh-TW': '影片', es: 'Video' },
+          content: { ko: '데모 실행 시 <strong>실시간 영상</strong>이 무대 왼쪽에 표시됩니다. AI 추론 결과(바운딩 박스 등)가 오버레이됩니다.', en: 'When a demo runs, the <strong>real-time video</strong> plays on the left of the stage with AI inference overlays (bounding boxes, etc.).', ja: 'デモ実行時、<strong>リアルタイム映像</strong>がステージ左側に表示されます。AI推論結果（バウンディングボックス等）がオーバーレイされます。', 'zh-CN': '演示运行时，<strong>实时视频</strong>会显示在舞台左侧，并叠加 AI 推理结果（边界框等）。', 'zh-TW': '示範執行時，<strong>即時影像</strong>會顯示在舞台左側，並疊加 AI 推論結果（邊界框等）。', es: 'Cuando una demo se ejecuta, el <strong>video en tiempo real</strong> se reproduce a la izquierda del escenario con las superposiciones de inferencia (cuadros delimitadores, etc.).' },
           beforeStep: function () { _mockDemoVideoPreview(); } },
         { target: '#demo-root .dds-stage .dds-metrics', position: 'left',
           title: { ko: '실시간 수치', en: 'Live Numbers', ja: 'リアルタイム数値', 'zh-CN': '实时数值', 'zh-TW': '即時數值', es: 'Cifras en vivo' },
@@ -270,7 +270,7 @@
           beforeStep: function () { _mockDemoVideoPreview(); } },
         { target: '#btn-demo-fullscreen', position: 'left',
           title: { ko: '전체화면', en: 'Fullscreen', ja: 'フルスクリーン', 'zh-CN': '全屏', 'zh-TW': '全螢幕', es: 'Pantalla completa' },
-          content: { ko: '비디오를 <strong>전체화면</strong>으로 전환합니다. Esc로 나갈 수 있습니다.', en: 'Switch video to <strong>fullscreen</strong>. Press Esc to exit.', ja: 'ビデオを<strong>フルスクリーン</strong>に切り替えます。Escで終了できます。', 'zh-CN': '将视频切换为<strong>全屏</strong>模式。按Esc退出。', 'zh-TW': '將影片切換為<strong>全螢幕</strong>模式。按Esc退出。', es: 'Cambie el vídeo a <strong>pantalla completa</strong>. Pulse Esc para salir.' },
+          content: { ko: '비디오를 <strong>전체화면</strong>으로 전환합니다. Esc로 나갈 수 있습니다.', en: 'Switch video to <strong>fullscreen</strong>. Press Esc to exit.', ja: 'ビデオを<strong>フルスクリーン</strong>に切り替えます。Escで終了できます。', 'zh-CN': '将视频切换为<strong>全屏</strong>模式。按Esc退出。', 'zh-TW': '將影片切換為<strong>全螢幕</strong>模式。按Esc退出。', es: 'Cambie el video a <strong>pantalla completa</strong>. Pulse Esc para salir.' },
           beforeStep: function () { _mockDemoVideoPreview(); } },
         { target: '#demo-root .dds-stage #btn-demo-stop', position: 'left',
           title: { ko: '데모 중지', en: 'Stop Demo', ja: 'デモ停止', 'zh-CN': '停止演示', 'zh-TW': '停止示範', es: 'Detener demo' },
@@ -451,11 +451,11 @@
           beforeStep: function () { _openSetupStep('build'); _scrollToTarget('button[onclick*="build"]'); } },
         { target: '#setup-badge-download', position: 'bottom',
           title: { ko: '모델 다운로드 상태', en: 'Model Download Status', ja: 'モデルダウンロード状態', 'zh-CN': '模型下载状态', 'zh-TW': '模型下載狀態', es: 'Estado de descarga de modelos' },
-          content: { ko: '5번 카드의 <strong>다운로드 상태</strong> 배지입니다. {{i:check}}이면 모델과 샘플 비디오가 준비된 것입니다.', en: 'The <strong>download status</strong> badge on card 5. {{i:check}} means models and sample videos are ready.', ja: '5番カードの<strong>ダウンロード状態</strong>バッジです。{{i:check}}ならモデルとサンプルビデオの準備が完了しています。', 'zh-CN': '5号卡片的<strong>下载状态</strong>徽章。{{i:check}}表示模型和示例视频已就绪。', 'zh-TW': '5號卡片的<strong>下載狀態</strong>徽章。{{i:check}}表示模型和範例影片已就緒。', es: 'La insignia de <strong>estado de descarga</strong> en la tarjeta 5. {{i:check}} indica que modelos y vídeos de muestra están listos.' },
+          content: { ko: '5번 카드의 <strong>다운로드 상태</strong> 배지입니다. {{i:check}}이면 모델과 샘플 비디오가 준비된 것입니다.', en: 'The <strong>download status</strong> badge on card 5. {{i:check}} means models and sample videos are ready.', ja: '5番カードの<strong>ダウンロード状態</strong>バッジです。{{i:check}}ならモデルとサンプルビデオの準備が完了しています。', 'zh-CN': '5号卡片的<strong>下载状态</strong>徽章。{{i:check}}表示模型和示例视频已就绪。', 'zh-TW': '5號卡片的<strong>下載狀態</strong>徽章。{{i:check}}表示模型和範例影片已就緒。', es: 'La insignia de <strong>estado de descarga</strong> en la tarjeta 5. {{i:check}} indica que modelos y videos de muestra están listos.' },
           beforeStep: function () { _scrollToTarget('#setup-badge-download'); } },
         { target: 'button[onclick*="download-models"]', position: 'bottom',
-          title: { ko: '모델/비디오 다운로드', en: 'Download Models & Videos', ja: 'モデル/ビデオダウンロード', 'zh-CN': '下载模型和视频', 'zh-TW': '下載模型和影片', es: 'Descargar modelos y vídeos' },
-          content: { ko: '추론에 필요한 <strong>모델과 샘플 비디오</strong>를 다운로드합니다.', en: 'Download <strong>models and sample videos</strong> required for inference.', ja: '推論に必要な<strong>モデルとサンプルビデオ</strong>をダウンロードします。', 'zh-CN': '下载推理所需的<strong>模型和示例视频</strong>。', 'zh-TW': '下載推論所需的<strong>模型和範例影片</strong>。', es: 'Descargue <strong>modelos y vídeos de muestra</strong> necesarios para la inferencia.' },
+          title: { ko: '모델/비디오 다운로드', en: 'Download Models & Videos', ja: 'モデル/ビデオダウンロード', 'zh-CN': '下载模型和视频', 'zh-TW': '下載模型和影片', es: 'Descargar modelos y videos' },
+          content: { ko: '추론에 필요한 <strong>모델과 샘플 비디오</strong>를 다운로드합니다.', en: 'Download <strong>models and sample videos</strong> required for inference.', ja: '推論に必要な<strong>モデルとサンプルビデオ</strong>をダウンロードします。', 'zh-CN': '下载推理所需的<strong>模型和示例视频</strong>。', 'zh-TW': '下載推論所需的<strong>模型和範例影片</strong>。', es: 'Descargue <strong>modelos y videos de muestra</strong> necesarios para la inferencia.' },
           beforeStep: function () { _openSetupStep('download-models'); _scrollToTarget('button[onclick*="download-models"]'); } },
         { target: '#setup-badge-webrtc-deps', position: 'bottom',
           title: { ko: 'WebRTC 상태', en: 'WebRTC Status', ja: 'WebRTC状態', 'zh-CN': 'WebRTC状态', 'zh-TW': 'WebRTC狀態', es: 'Estado de WebRTC' },
@@ -467,7 +467,7 @@
           beforeStep: function () { _openSetupStep('webrtc-deps'); _scrollToTarget('button[onclick*="webrtc-deps"]'); } },
         { target: '#setup-env-tbody', position: 'top',
           title: { ko: '환경 점검', en: 'Environment Check', ja: '環境チェック', 'zh-CN': '环境检查', 'zh-TW': '環境檢查', es: 'Comprobación del entorno' },
-          content: { ko: '모든 설치가 끝난 뒤 <strong>6개 항목</strong>(NPU, GStreamer, 모델, 비디오, 플러그인, 런타임)의 상태를 확인합니다. {{i:refresh}} 재점검 버튼으로 최신 상태를 갱신하세요.', en: 'After all installs, check status of <strong>6 items</strong> (NPU, GStreamer, models, videos, plugins, runtime). Click {{i:refresh}} to refresh.', ja: 'すべてのインストール後、<strong>6項目</strong>(NPU、GStreamer、モデル、ビデオ、プラグイン、ランタイム)の状態を確認します。{{i:refresh}} 再確認ボタンで最新状態を更新してください。', 'zh-CN': '全部安装完成后，检查<strong>6个项目</strong>（NPU、GStreamer、模型、视频、插件、运行时）的状态。点击{{i:refresh}}刷新。', 'zh-TW': '全部安裝完成後，檢查<strong>6個項目</strong>（NPU、GStreamer、模型、影片、外掛程式、執行時期）的狀態。點擊{{i:refresh}}重新整理。', es: 'Tras todas las instalaciones, compruebe el estado de <strong>6 elementos</strong> (NPU, GStreamer, modelos, vídeos, plugins y runtime). Haga clic en {{i:refresh}} para actualizar.' },
+          content: { ko: '모든 설치가 끝난 뒤 <strong>6개 항목</strong>(NPU, GStreamer, 모델, 비디오, 플러그인, 런타임)의 상태를 확인합니다. {{i:refresh}} 재점검 버튼으로 최신 상태를 갱신하세요.', en: 'After all installs, check status of <strong>6 items</strong> (NPU, GStreamer, models, videos, plugins, runtime). Click {{i:refresh}} to refresh.', ja: 'すべてのインストール後、<strong>6項目</strong>(NPU、GStreamer、モデル、ビデオ、プラグイン、ランタイム)の状態を確認します。{{i:refresh}} 再確認ボタンで最新状態を更新してください。', 'zh-CN': '全部安装完成后，检查<strong>6个项目</strong>（NPU、GStreamer、模型、视频、插件、运行时）的状态。点击{{i:refresh}}刷新。', 'zh-TW': '全部安裝完成後，檢查<strong>6個項目</strong>（NPU、GStreamer、模型、影片、外掛程式、執行時期）的狀態。點擊{{i:refresh}}重新整理。', es: 'Tras todas las instalaciones, compruebe el estado de <strong>6 elementos</strong> (NPU, GStreamer, modelos, videos, plugins y runtime). Haga clic en {{i:refresh}} para actualizar.' },
           beforeStep: function () { _scrollToTarget('#setup-env-tbody'); } },
       ]
     },

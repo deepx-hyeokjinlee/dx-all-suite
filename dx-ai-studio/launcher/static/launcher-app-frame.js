@@ -604,6 +604,11 @@
         window.LauncherTutorial.connectToolbar();
       }
     }
+    /* About 에는 자기 투어가 없다 — 단추가 홈 투어를 열어 About 을 떠나 홈으로 갔다 (release audit L-18). 홈 투어에
+       이어 붙인 뒤 'launcher' 연결을 끊어 단추를 "튜토리얼 없음" 으로 둔다. 홈으로 돌아오면 위에서 다시 이어진다. */
+    if (viewName === 'about' && typeof DXToolbar !== 'undefined' && typeof DXToolbar.disconnectTutorial === 'function') {
+      DXToolbar.disconnectTutorial('launcher');
+    }
   }
 
   var LauncherRouter = (function() {

@@ -118,7 +118,7 @@ class DXTutorialEngine {
         var style = window.getComputedStyle(node);
         if (style.display === 'none' || style.visibility === 'hidden') continue;
         var r = node.getBoundingClientRect();
-        if (r.width > 0 || r.height > 0) return node;
+        if (r.width > 0 && r.height > 0) return node;   // 높이 0 인 띠는 보이는 대상이 아니다 (release audit E-2)
       }
       return null;
     };
@@ -455,9 +455,15 @@ class DXTutorialEngine {
     if (!step) { this.stop(); return; }
 
     if (step.beforeStep) {
-      var beforeResult = step.beforeStep.call(step);
-      if (beforeResult && typeof beforeResult.then === 'function') {
-        await beforeResult;
+      // 준비가 실패해도 투어는 이 스텝을 그린다 — 예전에는 예외가 나면 앞 스텝의 상자가 남고 Next 가 먹지 않았다
+      // (release audit E-3: Benchmark 투어가 그렇게 멈췄다)
+      try {
+        var beforeResult = step.beforeStep.call(step);
+        if (beforeResult && typeof beforeResult.then === 'function') {
+          await beforeResult;
+        }
+      } catch (err) {
+        console.warn('[DXTutorial] beforeStep failed:', err);
       }
     }
     if (step.beforeStep) await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
@@ -475,7 +481,7 @@ class DXTutorialEngine {
         if (!el) return false;
         if (el.tagName === 'DIALOG' && !el.open) return false;
         var r = el.getBoundingClientRect();
-        return r.width > 0 || r.height > 0;
+        return r.width > 0 && r.height > 0;
       };
       var _vis = _isVisible(target);
       if (!_vis) {
@@ -676,25 +682,40 @@ class DXTutorialEngine {
       tip.style.left = clampX(parseFloat(tip.style.left)) + 'px';
     };
 
-    place(chosen);
-
-    // Try alternate sides until tooltip fits (explicit position + auto)
+    /* 대상을 가리지 않는 쪽을 고른다 (release audit E-1). 예전에는 화면 안으로 밀어 넣은 뒤 '잘렸는가' 만 보았는데,
+       밀어 넣었으니 늘 안 잘린 것으로 보여 다른 쪽을 시도하지 않았고 — 좁은 화면에서 툴팁이 대상 위에 앉았다.
+       명시한 위치를 먼저, 그 반대, 그 다음 옆쪽. 600px 보다 좁으면 위 · 아래만. 어느 쪽도 비지 않으면 대상에서 먼 쪽
+       가장자리에 붙인다 (가리는 넓이가 가장 작은 곳). */
     var flip = { bottom: 'top', top: 'bottom', right: 'left', left: 'right' };
-    var tryOrder = pos === 'auto'
-      ? ['bottom', 'top', 'right', 'left']
-      : [pos, flip[pos], flip[flip[pos]], flip[flip[flip[pos]]]].filter(function(v, i, a) {
-          return v && a.indexOf(v) === i;
-        });
-    for (var ti = 0; ti < tryOrder.length; ti++) {
-      chosen = tryOrder[ti];
-      tip.setAttribute('data-pos', chosen);
-      place(chosen);
-      var tr2 = tip.getBoundingClientRect();
-      var clipped = tr2.top < 4 || tr2.left < 4
-        || tr2.bottom > window.innerHeight - 4
-        || tr2.right > window.innerWidth - 4;
-      if (!clipped) break;
+    var side = { bottom: ['right', 'left'], top: ['right', 'left'], right: ['bottom', 'top'], left: ['bottom', 'top'] };
+    var first = (pos === 'auto' || !flip[pos]) ? chosen : pos;
+    var order = [first, flip[first]].concat(side[first]);
+    if (window.innerWidth < 600) order = order.filter(function(p) { return p === 'top' || p === 'bottom'; });
+    var overlap = function(a) {
+      var w = Math.max(0, Math.min(a.right, rect.right) - Math.max(a.left, rect.left));
+      var h = Math.max(0, Math.min(a.bottom, rect.bottom) - Math.max(a.top, rect.top));
+      return w * h;
+    };
+    var best = null, bestArea = Infinity;
+    for (var ti = 0; ti < order.length; ti++) {
+      place(order[ti]);
+      var area = overlap(tip.getBoundingClientRect());
+      if (area < bestArea) { bestArea = area; best = order[ti]; }
+      if (area === 0) break;
     }
+    if (bestArea > 0) {
+      // 가장자리에 붙이기: 대상의 가운데가 화면 위쪽이면 아래 가장자리, 아니면 위 가장자리
+      var dockBottom = (rect.top + rect.bottom) / 2 < window.innerHeight / 2;
+      tip.style.top = (dockBottom ? window.innerHeight - tipRect.height - 8 : 8) + 'px';
+      tip.style.left = clampX(rect.left + rect.width / 2 - tipRect.width / 2) + 'px';
+      if (overlap(tip.getBoundingClientRect()) < bestArea) {
+        tip.setAttribute('data-pos', 'dock');
+        return;
+      }
+    }
+    chosen = best;
+    tip.setAttribute('data-pos', chosen);
+    place(chosen);
   }
 
   _hideStepChrome() {

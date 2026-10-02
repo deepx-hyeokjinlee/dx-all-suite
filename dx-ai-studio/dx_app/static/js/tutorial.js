@@ -169,6 +169,22 @@
     return list;
   }
 
+  /* 연속 실행 요약의 투어용 미리보기 (실제 요약과 같은 perf-grid). 투어 중 언어를 바꾸면 다시 그린다. */
+  function _contSummaryMock(el) {
+    el.setAttribute('data-dxt-mock', '1');
+    el.innerHTML = '<div class="perf-grid">' +
+      '<div class="pcard"><div class="pv txt-acc">' + DXIcon('check') + '</div><div class="pk">yolov8n</div></div>' +
+      '<div class="pcard"><div class="pv txt-acc">58.3</div><div class="pk">FPS</div></div>' +
+      '<div class="pcard"><div class="pv">17.2ms</div><div class="pk">' + T('Latency') + '</div></div>' +
+      '<div class="pcard"><div class="pv">12.0s</div><div class="pk">' + T('Elapsed') + '</div></div></div>';
+  }
+  if (window.DXI18n && typeof DXI18n.onLangChange === 'function') {
+    DXI18n.onLangChange(function () {
+      var el = document.getElementById('c-summary');
+      if (el && el.getAttribute('data-dxt-mock') === '1') _contSummaryMock(el);
+    });
+  }
+
   function _showSegParams() {
     var sel = document.getElementById('r-cat');
     if (sel) {
@@ -291,10 +307,19 @@
           title:{ ko: 'NMS IoU 임계값', en: 'NMS IoU Threshold', ja: 'NMS IoU しきい値', 'zh-CN': 'NMS IoU 阈值', 'zh-TW': 'NMS IoU 閾值', es: 'Umbral NMS IoU' },
           content:{ ko: '<strong>Non-Maximum Suppression</strong>의 IoU 임계값입니다. 겹치는 바운딩 박스를 제거하는 기준으로, 값이 낮을수록 더 공격적으로 중복을 제거합니다. Detection 전용 파라미터입니다.', en: '<strong>Non-Maximum Suppression</strong> IoU threshold. Controls overlapping bounding box removal. Lower = more aggressive dedup. Detection only.', ja: '<strong>Non-Maximum Suppression</strong>のIoUしきい値。重複するバウンディングボックスの除去を制御します。値が低いほど積極的に重複を除去します。Detection専用パラメータです。', 'zh-CN': '<strong>Non-Maximum Suppression</strong> IoU阈值。控制重叠边界框的去除。值越低去重越积极。仅用于Detection。', 'zh-TW': '<strong>Non-Maximum Suppression</strong> IoU閾值。控制重疊邊界框的去除。值越低去重越積極。僅用於Detection。', es: 'Umbral IoU de <strong>Non-Maximum Suppression</strong>. Controla la eliminación de cajas delimitadoras superpuestas. Un valor más bajo = deduplicación más agresiva. Solo Detection.' },
           beforeStep: function() { _showDetectParams(); } },
-        { target:'#r-topk', optionalTarget:true,  // 추론 결과가 있을 때만 크기를 갖는다 position:'right',
+        /* Top-K 줄은 분류 카테고리를 고를 때만 보인다. 카테고리 목록은 설치된 모델로 만들므로 분류 모델이 없으면
+           'classification' 을 고를 수 없었다 — 줄을 직접 보인다 (release audit A-20). 주석이 position 을 삼키고 있었다. */
+        { target:'#r-topk', optionalTarget:true, position:'right',
           title:{ ko: 'Top-K 결과 수', en: 'Top-K Results', ja: 'Top-K 結果数', 'zh-CN': 'Top-K 结果数', 'zh-TW': 'Top-K 結果數', es: 'Resultados Top-K' },
           content:{ ko: '<strong>Classification</strong> 카테고리 선택 시 표시되는 슬라이더입니다. 상위 <strong>K개의 분류 결과</strong>를 표시합니다. 값이 클수록 더 많은 후보 클래스가 결과에 포함됩니다 (기본값: 5).', en: 'Slider shown when <strong>Classification</strong> category is selected. Displays the top <strong>K classification results</strong>. Higher values include more candidate classes (default: 5).', ja: '<strong>Classification</strong>カテゴリ選択時に表示されるスライダーです。上位<strong>K個の分類結果</strong>を表示します。値が大きいほどより多くの候補クラスが含まれます（デフォルト：5）。', 'zh-CN': '选择<strong>Classification</strong>分类时显示的滑块。显示前<strong>K个分类结果</strong>。值越大包含的候选类别越多（默认：5）。', 'zh-TW': '選擇<strong>Classification</strong>分類時顯示的滑桿。顯示前<strong>K個分類結果</strong>。值越大包含的候選類別越多（預設：5）。', es: 'Control deslizante que aparece al seleccionar la categoría <strong>Classification</strong>. Muestra los <strong>K mejores resultados de clasificación</strong>. Valores más altos incluyen más clases candidatas (predeterminado: 5).' },
-          beforeStep: function() { var sel = document.getElementById('r-cat'); if(sel) { sel.value='classification'; sel.dispatchEvent(new Event('change')); } } },
+          beforeStep: function() {
+            var sel = document.getElementById('r-cat');
+            if (sel && [].some.call(sel.options, function(o) { return o.value === 'classification'; })) {
+              sel.value = 'classification'; sel.dispatchEvent(new Event('change'));
+            }
+            var row = document.getElementById('r-params-classify');
+            if (row) row.classList.remove('hidden');
+          } },
         { target:'#r-alpha', position:'right',
           title:{ ko: '오버레이 투명도 (Alpha)', en: 'Overlay Alpha', ja: 'オーバーレイ透明度（Alpha）', 'zh-CN': '叠加透明度（Alpha）', 'zh-TW': '疊加透明度（Alpha）', es: 'Alpha de superposición' },
           content:{ ko: '<strong>Segmentation</strong> 카테고리 선택 시 표시되는 슬라이더입니다. 분할 <strong>마스크 오버레이의 투명도</strong>(0~1)를 조절합니다. 0이면 투명, 1이면 불투명합니다 (기본값: 0.6).', en: 'Slider shown when <strong>Segmentation</strong> category is selected. Adjusts <strong>mask overlay transparency</strong> (0-1). 0 = transparent, 1 = opaque (default: 0.6).', ja: '<strong>Segmentation</strong>カテゴリ選択時に表示されるスライダーです。<strong>マスクオーバーレイの透明度</strong>（0〜1）を調整します。0=透明、1=不透明（デフォルト：0.6）。', 'zh-CN': '选择<strong>Segmentation</strong>分类时显示的滑块。调整<strong>蒙版叠加透明度</strong>（0-1）。0=透明，1=不透明（默认：0.6）。', 'zh-TW': '選擇<strong>Segmentation</strong>分類時顯示的滑桿。調整<strong>遮罩疊加透明度</strong>（0-1）。0=透明，1=不透明（預設：0.6）。', es: 'Control deslizante que aparece al seleccionar la categoría <strong>Segmentation</strong>. Ajusta la <strong>transparencia de la máscara superpuesta</strong> (0-1). 0 = transparente, 1 = opaco (predeterminado: 0.6).' },
@@ -364,7 +389,17 @@
         { target:'#c-summary', position:'top',
           title:{ ko: '성능 요약', en: 'Performance Summary', ja: '性能サマリー', 'zh-CN': '性能摘要', 'zh-TW': '效能摘要', es: 'Resumen de rendimiento' },
           content:{ ko: '연속 추론 종료 후 각 슬롯의 <strong>평균 FPS, 총 프레임 수, 처리 시간</strong> 등의 성능 요약이 표시됩니다.', en: 'After stopping, shows <strong>average FPS, total frames, processing time</strong> summary for each slot.', ja: '停止後、各スロットの<strong>平均FPS、総フレーム数、処理時間</strong>のサマリーが表示されます。', 'zh-CN': '停止后显示各槽位的<strong>平均FPS、总帧数、处理时间</strong>摘要。', 'zh-TW': '停止後顯示各插槽的<strong>平均FPS、總幀數、處理時間</strong>摘要。', es: 'Al detener, muestra un resumen de <strong>FPS promedio, fotogramas totales y tiempo de procesamiento</strong> por ranura.' },
-          beforeStep: function() { var el = document.getElementById('c-summary'); if (el) el.style.display = ''; } },
+          /* 요약은 연속 실행을 멈춘 뒤에야 채워진다 — 비어 있으면 투어 동안만 모양을 보인다 (release audit A-20) */
+          beforeStep: function() {
+            var el = document.getElementById('c-summary');
+            if (!el) return;
+            if (!el.innerHTML.trim()) _contSummaryMock(el);
+            el.style.display = '';
+          },
+          afterStep: function() {
+            var el = document.getElementById('c-summary');
+            if (el && el.getAttribute('data-dxt-mock') === '1') { el.removeAttribute('data-dxt-mock'); el.innerHTML = ''; el.style.display = 'none'; }
+          } },
         { target:'#c-stop-btn', position:'right',
           title:{ ko: '연속 추론 중단', en: 'Stop Continuous', ja: '連続推論中断', 'zh-CN': '停止连续推理', 'zh-TW': '停止連續推論', es: 'Detener Continuous' },
           content:{ ko: '연속 추론 실행 중 이 버튼을 클릭하면 <strong>모든 슬롯의 추론을 즉시 중단</strong>합니다. 중단 후 성능 요약이 표시됩니다.', en: 'Click to <strong>stop inference on all slots immediately</strong>. Performance summary is shown after stopping.', ja: 'クリックして<strong>全スロットの推論を即座に中断</strong>します。停止後に性能サマリーが表示されます。', 'zh-CN': '点击以<strong>立即停止所有槽位的推理</strong>。停止后显示性能摘要。', 'zh-TW': '點擊以<strong>立即停止所有插槽的推論</strong>。停止後顯示效能摘要。', es: 'Haga clic para <strong>detener de inmediato la inferencia en todas las ranuras</strong>. Tras detener, se muestra el resumen de rendimiento.' },
@@ -612,7 +647,7 @@
      ════════════════════════════════════════════════════════════ */
   var referenceDocs = [
     { id:'ref-setup', icon:'setup', title:{ ko: '환경 설정 & 설치', en: 'Setup & Install', ja: 'セットアップ & インストール', 'zh-CN': '设置与安装', 'zh-TW': '設定與安裝', es: 'Configuración e instalación' },
-      body:{ ko: '<p>6단계 초기 설정 (DX-COM Compiler는 Launcher Compiler 탭):</p><ul><li><strong>1</strong> DX-APP Dependencies — cmake, gcc, ninja, OpenCV 등</li><li><strong>2</strong> DX-Runtime Dependencies — ONNX Runtime 등</li><li><strong>3</strong> DX-Runtime Build — dx_rt + dx_engine 설치</li><li><strong>4</strong> NPU Driver — sudo 필요</li><li><strong>5</strong> DX-APP Build — C++ Release (dx_rt 링크)</li><li><strong>6</strong> Sample Assets — 모델(.dxnn) + 데모 비디오</li></ul><p>위→아래, 왼→오른쪽 순서. 런타임(23)과 드라이버(4)를 먼저, 그 뒤 DX-APP 빌드(5). 로그창에서 실시간 확인.</p>', en: '<p>6-step setup (DX-COM Compiler is in the Launcher Compiler tab):</p><ul><li><strong>1</strong> DX-APP Dependencies</li><li><strong>2</strong> DX-Runtime Dependencies</li><li><strong>3</strong> DX-Runtime Build — dx_rt + dx_engine</li><li><strong>4</strong> NPU Driver (sudo)</li><li><strong>5</strong> DX-APP Build — C++ Release (links dx_rt)</li><li><strong>6</strong> Sample Assets</li></ul><p>Runtime (23) and driver (4) first, then DX-APP Build (5).</p>', ja: '<p>6ステップのセットアップ（DX-COM CompilerはLauncher Compilerタブ）:</p><ul><li><strong>1</strong> DX-APP 依存関係</li><li><strong>2</strong> DX-Runtime 依存関係</li><li><strong>3</strong> DX-Runtime ビルド — dx_rt + dx_engine</li><li><strong>4</strong> NPUドライバ（sudo必要）</li><li><strong>5</strong> DX-APP ビルド — C++ Release（dx_rtリンク）</li><li><strong>6</strong> サンプルアセット</li></ul><p>ランタイム（23）とドライバ（4）を先に、その後DX-APPビルド（5）。</p>', 'zh-CN': '<p>6步设置（DX-COM Compiler 在 Launcher Compiler 标签）:</p><ul><li><strong>1</strong> DX-APP 依赖项</li><li><strong>2</strong> DX-Runtime 依赖项</li><li><strong>3</strong> DX-Runtime 构建 — dx_rt + dx_engine</li><li><strong>4</strong> NPU驱动（需sudo）</li><li><strong>5</strong> DX-APP 构建 — C++ Release（链接 dx_rt）</li><li><strong>6</strong> 示例资源</li></ul><p>先运行时（23）和驱动（4），再 DX-APP 构建（5）。</p>', 'zh-TW': '<p>6步設定（DX-COM Compiler 在 Launcher Compiler 標籤）:</p><ul><li><strong>1</strong> DX-APP 依賴項</li><li><strong>2</strong> DX-Runtime 依賴項</li><li><strong>3</strong> DX-Runtime 建置 — dx_rt + dx_engine</li><li><strong>4</strong> NPU驅動（需sudo）</li><li><strong>5</strong> DX-APP 建置 — C++ Release（連結 dx_rt）</li><li><strong>6</strong> 範例資源</li></ul><p>先執行環境（23）和驅動（4），再 DX-APP 建置（5）。</p>', es: '<p>Configuración en 6 pasos (DX-COM Compiler está en la pestaña Compiler del Launcher):</p><ul><li><strong>1</strong> Dependencias DX-APP</li><li><strong>2</strong> Dependencias DX-Runtime</li><li><strong>3</strong> Compilación DX-Runtime — dx_rt + dx_engine</li><li><strong>4</strong> Controlador NPU (sudo)</li><li><strong>5</strong> Compilación DX-APP — C++ Release (enlaza dx_rt)</li><li><strong>6</strong> Recursos de muestra</li></ul><p>Primero runtime (23) y controlador (4), luego DX-APP Build (5).</p>' } },
+      body:{ ko: '<p>6단계 초기 설정 (DX-COM Compiler는 Launcher Compiler 탭):</p><ul><li><strong>1</strong> DX-APP Dependencies — cmake, gcc, ninja, OpenCV 등</li><li><strong>2</strong> DX-Runtime Dependencies — ONNX Runtime 등</li><li><strong>3</strong> DX-Runtime Build — dx_rt + dx_engine 설치</li><li><strong>4</strong> NPU Driver — sudo 필요</li><li><strong>5</strong> DX-APP Build — C++ Release (dx_rt 링크)</li><li><strong>6</strong> Sample Assets — 모델(.dxnn) + 데모 비디오</li></ul><p>위→아래, 왼→오른쪽 순서. 런타임(2–3)과 드라이버(4)를 먼저, 그 뒤 DX-APP 빌드(5). 로그창에서 실시간 확인.</p>', en: '<p>6-step setup (DX-COM Compiler is in the Launcher Compiler tab):</p><ul><li><strong>1</strong> DX-APP Dependencies</li><li><strong>2</strong> DX-Runtime Dependencies</li><li><strong>3</strong> DX-Runtime Build — dx_rt + dx_engine</li><li><strong>4</strong> NPU Driver (sudo)</li><li><strong>5</strong> DX-APP Build — C++ Release (links dx_rt)</li><li><strong>6</strong> Sample Assets</li></ul><p>Runtime (2–3) and driver (4) first, then DX-APP Build (5).</p>', ja: '<p>6ステップのセットアップ（DX-COM CompilerはLauncher Compilerタブ）:</p><ul><li><strong>1</strong> DX-APP 依存関係</li><li><strong>2</strong> DX-Runtime 依存関係</li><li><strong>3</strong> DX-Runtime ビルド — dx_rt + dx_engine</li><li><strong>4</strong> NPUドライバ（sudo必要）</li><li><strong>5</strong> DX-APP ビルド — C++ Release（dx_rtリンク）</li><li><strong>6</strong> サンプルアセット</li></ul><p>ランタイム（23）とドライバ（4）を先に、その後DX-APPビルド（5）。</p>', 'zh-CN': '<p>6步设置（DX-COM Compiler 在 Launcher Compiler 标签）:</p><ul><li><strong>1</strong> DX-APP 依赖项</li><li><strong>2</strong> DX-Runtime 依赖项</li><li><strong>3</strong> DX-Runtime 构建 — dx_rt + dx_engine</li><li><strong>4</strong> NPU驱动（需sudo）</li><li><strong>5</strong> DX-APP 构建 — C++ Release（链接 dx_rt）</li><li><strong>6</strong> 示例资源</li></ul><p>先运行时（23）和驱动（4），再 DX-APP 构建（5）。</p>', 'zh-TW': '<p>6步設定（DX-COM Compiler 在 Launcher Compiler 標籤）:</p><ul><li><strong>1</strong> DX-APP 依賴項</li><li><strong>2</strong> DX-Runtime 依賴項</li><li><strong>3</strong> DX-Runtime 建置 — dx_rt + dx_engine</li><li><strong>4</strong> NPU驅動（需sudo）</li><li><strong>5</strong> DX-APP 建置 — C++ Release（連結 dx_rt）</li><li><strong>6</strong> 範例資源</li></ul><p>先執行環境（23）和驅動（4），再 DX-APP 建置（5）。</p>', es: '<p>Configuración en 6 pasos (DX-COM Compiler está en la pestaña Compiler del Launcher):</p><ul><li><strong>1</strong> Dependencias DX-APP</li><li><strong>2</strong> Dependencias DX-Runtime</li><li><strong>3</strong> Compilación DX-Runtime — dx_rt + dx_engine</li><li><strong>4</strong> Controlador NPU (sudo)</li><li><strong>5</strong> Compilación DX-APP — C++ Release (enlaza dx_rt)</li><li><strong>6</strong> Recursos de muestra</li></ul><p>Primero runtime (2–3) y controlador (4), luego DX-APP Build (5).</p>' } },
     { id:'ref-run', icon:'run', title:{ ko: '추론 실행', en: 'Run Inference', ja: '推論実行', 'zh-CN': '运行推理', 'zh-TW': '執行推論', es: 'Ejecutar inferencia' },
       body:{ ko: '<ul><li><strong>Single</strong> — 이미지/비디오 1개 추론</li><li><strong>Continuous</strong> — 비디오/카메라/RTSP 연속 추론, 최대 8슬롯</li><li>파라미터: Confidence, NMS IoU, Top-K, Alpha</li><li>Export Package로 소스+모델 패키징</li></ul>', en: '<ul><li><strong>Single</strong> — one image/video</li><li><strong>Continuous</strong> — video/camera/RTSP, up to 8 slots</li><li>Params: Confidence, NMS, Top-K, Alpha</li><li>Export Package</li></ul>', ja: '<ul><li><strong>Single</strong> — 画像/ビデオ1件</li><li><strong>Continuous</strong> — ビデオ/カメラ/RTSP、最大8スロット</li><li>パラメータ：Confidence、NMS、Top-K、Alpha</li><li>エクスポートパッケージ</li></ul>', 'zh-CN': '<ul><li><strong>Single</strong> — 单张图片/视频</li><li><strong>Continuous</strong> — 视频/摄像头/RTSP，最多8个槽位</li><li>参数：Confidence、NMS、Top-K、Alpha</li><li>导出包</li></ul>', 'zh-TW': '<ul><li><strong>Single</strong> — 單張圖片/影片</li><li><strong>Continuous</strong> — 影片/攝影機/RTSP，最多8個插槽</li><li>參數：Confidence、NMS、Top-K、Alpha</li><li>匯出套件</li></ul>', es: '<ul><li><strong>Single</strong> — una imagen/video</li><li><strong>Continuous</strong> — video/cámara/RTSP, hasta 8 ranuras</li><li>Parámetros: Confidence, NMS, Top-K, Alpha</li><li>Exportar paquete</li></ul>' } },
     { id:'ref-bench', icon:'bench', title:{ ko: '벤치마크', en: 'Benchmark', ja: 'ベンチマーク', 'zh-CN': '基准测试', 'zh-TW': '基準測試', es: 'Prueba de rendimiento' },
