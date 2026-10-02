@@ -113,7 +113,7 @@ class ChatEngine:
             "en": "Please check API settings in **chat settings** (⚙️ in the chat header).",
             "ko": "**채팅 설정**(채팅창 상단의 ⚙️)에서 API 설정을 확인해주세요.",
             "ja": "チャットヘッダーの⚙️にある**チャット設定**でAPI設定を確認してください。",
-            "es": "Comprueba la configuración de API en la **configuración del chat** (⚙️ en el encabezado del chat).",
+            "es": "Compruebe la configuración de API en la **configuración del chat** (⚙️ en el encabezado del chat).",
             "zh-CN": "请在聊天标题栏的⚙️中检查**聊天设置**里的 API 设置。",
             "zh-TW": "請在聊天標題列的⚙️中檢查**聊天設定**裡的 API 設定。",
         }

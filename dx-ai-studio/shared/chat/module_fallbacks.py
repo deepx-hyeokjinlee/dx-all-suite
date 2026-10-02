@@ -25,7 +25,7 @@ _RULES = {
                      "请在 Run Inference 中选择类别、模型和输入。",
             "zh-TW": "Run Demo 為每個任務提供可直接執行的示範(影像或影片，C++ 或 Python)。要用自己的輸入執行任意模型，"
                      "請在 Run Inference 中選擇類別、模型與輸入。",
-            "es": "Run Demo tiene demos listas para cada tarea (imagen o vídeo, C++ o Python). Para ejecutar cualquier "
+            "es": "Run Demo tiene demos listas para cada tarea (imagen o video, C++ o Python). Para ejecutar cualquier "
                   "modelo con su propia entrada, abra Run Inference y elija una categoría, un modelo y una entrada.",
         }),
         (["sdk", "python", "c++", "api", "code", "example", "코드", "예제", "コード", "サンプル", "代码", "示例",

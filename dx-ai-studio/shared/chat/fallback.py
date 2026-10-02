@@ -89,7 +89,7 @@ COMMON_RULES: list[tuple[list[str], dict[str, str]]] = [
                      "- **DX Agent Dev** — 用自然語言建立 NPU 應用程式",
             "es": "Funciones principales de **DX AI Studio**:\n"
                   "- **DX App** — inferencia NPU en tiempo real, demos y comparación de modelos\n"
-                  "- **DX Stream** — pipelines de vídeo GStreamer y demos\n"
+                  "- **DX Stream** — pipelines de video GStreamer y demos\n"
                   "- **DX Model Zoo** — catálogo de casi 500 modelos DEEPX\n"
                   "- **DX Compiler** — compilación ONNX → DXNN\n"
                   "- **DX Benchmark** — rendimiento medido por placa\n"

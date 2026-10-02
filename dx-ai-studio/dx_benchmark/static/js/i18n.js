@@ -343,7 +343,7 @@ window._DX_I18N_DICT = {
     ja: 'ビデオディレクトリ',
     'zh-CN': '视频目录',
     'zh-TW': '影片目錄',
-    es: 'Directorio de vídeo',
+    es: 'Directorio de video',
   },
   'Results Directory': {
     ko: '결과 디렉토리',
