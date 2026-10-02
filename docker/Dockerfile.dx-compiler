@@ -344,17 +344,11 @@ WORKDIR /deepx/dx-compiler/dx_com
 ARG FILE_DXCOM
 ADD ${FILE_DXCOM} /deepx/dx-compiler/dx_com
 
-# Copy dx_tron (Ubuntu/Debian only - .deb and AppImage not supported on RHEL family)
-WORKDIR /deepx/dx-compiler/dx_tron
-ARG FILE_DXTRON
-ADD ${FILE_DXTRON} /deepx/dx-compiler/dx_tron
-
-# COPY 'scripts', 'getting-started', 'dx-compiler/example', 'dx-compiler/scripts', and 'dx-compiler/run_dxtron_web.sh'
+# COPY 'scripts', 'getting-started', 'dx-compiler/example', and 'dx-compiler/scripts'
 COPY scripts /deepx/scripts
 COPY getting-started /deepx/getting-started
 COPY dx-compiler/example /deepx/dx-compiler/example
 COPY dx-compiler/scripts /deepx/dx-compiler/scripts
-COPY dx-compiler/run_dxtron_web.sh /deepx/dx-compiler/run_dxtron_web.sh
 ENV DX_CONTAINER_MODE=true
 RUN /deepx/getting-started/compiler-clean.sh
 
@@ -439,25 +433,6 @@ RUN set -ex; \
         pip3 install https://files.pythonhosted.org/packages/1b/74/02cb1f6fcbadc094c98c49aff8571e7c576bdb4015c01507c385285b5bed/onnxruntime-1.18.0-cp38-cp38-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl; \
     fi; \
     pip3 install "$MATCHING_WHEEL"
-
-# Install DX-Tron package
-# - Debian/Ubuntu: install .deb package
-# - Red Hat family: skip .deb install (web variant only, use run_dxtron_web.sh)
-RUN set -x && \
-    OS_FAM=$(cat /tmp/.os_family) && \
-    if [ "$OS_FAM" = "debian" ]; then \
-        ARCH=$(dpkg --print-architecture 2>/dev/null || uname -m) && \
-        case "$ARCH" in \
-            amd64|x86_64) ARCH="amd64" ;; \
-            arm64|aarch64) ARCH="arm64" ;; \
-        esac && \
-        echo "Detected architecture: ${ARCH}" && \
-        apt-get update && \
-        apt install -y /deepx/dx-compiler/dx_tron/dxtron_*_${ARCH}.deb; \
-    elif [ "$OS_FAM" = "rhel" ]; then \
-        echo "Red Hat family detected - DX-Tron web variant only (use run_dxtron_web.sh)" && \
-        rm -f /deepx/dx-compiler/dx_tron/*.deb /deepx/dx-compiler/dx_tron/*.AppImage; \
-    fi
 
 USER $TARGET_USER
 WORKDIR $TARGET_HOME

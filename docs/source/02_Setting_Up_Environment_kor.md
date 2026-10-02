@@ -311,7 +311,7 @@ DX-RT v3.2.0
 
 **DX-AllSuite**를 **호스트 OS**에 직접 설치하면 하드웨어 성능을 극대화하고 모든 소프트웨어 모듈 간의 원활한 호환성을 보장할 수 있습니다. 이 방법은 프로덕션 환경 및 고급 성능 벤치마킹에 권장됩니다.  
 
-### DX-Compiler Installation (DX-COM, DX-TRON)
+### DX-Compiler Installation (DX-COM)
 
 DX-Compiler(DX-COM)는 지원되는 Linux 배포판에서 CLI 도구 또는 Python 모듈로 사용할 수 있습니다.  
 
@@ -369,21 +369,12 @@ dxcom -h
     - `./dx-compiler/example/1-download_sample_models.sh` (모델 데이터)  
     - `./dx-compiler/example/2-download_sample_calibration_dataset.sh` (교정 데이터)  
 
-#### D. DX-TRON (GUI 시각화)
-**DX-TRON**은 모델 구조와 작업 부하 분산을 검사하기 위한 시각적 분석 도구입니다. 환경에 맞는 실행 모드를 선택하십시오.   
-
-- **로컬 실행 (데스크톱)**: 터미널에 `dxtron`을 입력하거나 다음 스크립트를 실행하십시오.  
+#### D. 모델 시각화
+**DX-TRON은 DX-Compiler v2.5.0부터 제거되었습니다.** 컴파일된 모델 구조와 CPU/NPU 작업 부하 분산을 확인하려면 DX-COM으로 인터랙티브 HTML **Compilation Summary Report**를 생성하십시오.  
 ```bash
-./dx-compiler/run_dxtron_appimage.sh
+dxcom -m model.onnx -c config.json -o output/ --export_html
 ```
-
-- **웹 서버 실행 (원격/Docker)**: 웹 서버 스크립트를 실행하고 포트를 지정하십시오.  
-```bash 
-./dx-compiler/run_dxtron_web.sh --port=8080
-```
-그 후, 브라우저에서 [**http://localhost:8080**](http://localhost:8080)으로 접속하십시오.  
-
-- **Windows 사용자**: [**DEEPX Developer Portal**](https://developer.deepx.ai)에서 전용 Windows 설치 프로그램을 직접 다운로드할 수 있습니다.  
+그 후, 브라우저에서 `output/<model_name>_summary.html`을 여십시오.  
 
 ### DX-Runtime Installation (RT, Driver, FW, App, Stream)
 

@@ -43,15 +43,7 @@ else
     exit 1
 fi
 
-if [ -n "${TRON_VERSION}" ]; then
-    print_colored_v2 "INFO" "dx_tron version(${TRON_VERSION}) is set."
-else
-    print_colored_v2 "ERROR" "'dx_tron' version is not specified in ${VERSION_FILE}."
-    exit 1
-fi
-
 FILE_DXCOM="archives/dx_com_M1_v${COM_VERSION}.tar.gz"
-FILE_DXTRON="archives/dxtron_${TRON_VERSION}.tar.gz"
 HOST_UID=$(id -u)
 HOST_GID=$(id -g)
 TARGET_USER=deepx
@@ -137,7 +129,6 @@ docker_build_impl()
     export TAG_NAME=${TAG_NAME:-${OS_VERSION}}
     export IMAGE_TAG_SUFFIX=${IMAGE_TAG_SUFFIX:-${BASE_IMAGE_NAME}-${OS_VERSION}}
     export FILE_DXCOM=${FILE_DXCOM}
-    export FILE_DXTRON=${FILE_DXTRON}
     export HOST_UID=${HOST_UID}
     export HOST_GID=${HOST_GID}
     export TARGET_USER=${TARGET_USER}
@@ -205,9 +196,8 @@ archive_dx-compiler()
     print_colored_v2 "INFO" "Archiving dx-compiler"
 
     # Internal mode: archive runs pip/requests on the HOST (venv setup upgrades
-    # setuptools/wheel from PyPI; downloader.py fetches dx-tron tarball). pip uses
-    # certifi (not the OS trust store), so it can't verify the FortiGate MITM cert
-    # on inspected hosts (pypi.org). But some hosts are NOT MITM'd and serve a real
+    # setuptools/wheel from PyPI). pip uses certifi (not the OS trust store), so it
+    # can't verify the FortiGate MITM cert on inspected hosts (pypi.org). But some hosts are NOT MITM'd and serve a real
     # public cert (sdk.deepx.ai -> Amazon CA), so pointing at the lone FortiGate cert
     # breaks those. The OS trust bundle already contains BOTH the FortiGate CA (IT
     # installed it) and the public roots, so build a combined bundle from the OS
@@ -294,19 +284,13 @@ archive_dx-compiler()
     
     # Extract archived file paths from output
     ARCHIVED_COM=$(echo "$ARCHIVE_OUTPUT" | grep "^ARCHIVED_COM_FILE=" | tail -1 | cut -d'=' -f2)
-    ARCHIVED_TRON=$(echo "$ARCHIVE_OUTPUT" | grep "^ARCHIVED_TRON_FILE=" | tail -1 | cut -d'=' -f2)
     
-    # Update FILE_DXCOM and FILE_DXTRON if archived files were found
+    # Update FILE_DXCOM if archived files were found
     if [ -n "$ARCHIVED_COM" ] && [ -f "$ARCHIVED_COM" ]; then
         FILE_DXCOM="${ARCHIVED_COM#${DX_AS_PATH}/}"  # Remove DX_AS_PATH prefix for relative path
         print_colored_v2 "INFO" "Updated FILE_DXCOM to: $FILE_DXCOM"
     fi
     
-    if [ -n "$ARCHIVED_TRON" ] && [ -f "$ARCHIVED_TRON" ]; then
-        FILE_DXTRON="${ARCHIVED_TRON#${DX_AS_PATH}/}"  # Remove DX_AS_PATH prefix for relative path
-        print_colored_v2 "INFO" "Updated FILE_DXTRON to: $FILE_DXTRON"
-    fi
-
     print_colored_v2 "SUCCESS" "Archiving dx-compiler is done."
     return 0
 }
@@ -331,18 +315,6 @@ docker_build_dx-compiler()
     if [ ! -f "${DX_AS_PATH}/${FILE_DXCOM}" ]; then
         print_colored_v2 "ERROR" "Archive file not found: ${FILE_DXCOM}. Please run archive step first."
         return 1
-    fi
-    if [ ! -f "${DX_AS_PATH}/${FILE_DXTRON}" ]; then
-        # For non-Debian (Fedora/RHEL/CentOS), DX-Tron .deb is not supported.
-        # Create a dummy empty archive so Docker ADD doesn't fail.
-        if [ "${BASE_IMAGE_NAME}" != "ubuntu" ] && [ "${BASE_IMAGE_NAME}" != "debian" ]; then
-            print_colored_v2 "INFO" "DX-Tron not supported on ${BASE_IMAGE_NAME}. Creating dummy archive."
-            mkdir -p "$(dirname "${DX_AS_PATH}/${FILE_DXTRON}")"
-            tar czf "${DX_AS_PATH}/${FILE_DXTRON}" -T /dev/null
-        else
-            print_colored_v2 "ERROR" "Archive file not found: ${FILE_DXTRON}. Please run archive step first."
-            return 1
-        fi
     fi
 
     local docker_compose_args="-f docker/docker-compose.yml"
@@ -460,7 +432,6 @@ main() {
     print_colored_v2 "INFO" "OS_VERSION($OS_VERSION) is set."
     print_colored_v2 "INFO" "TARGET_ENV($TARGET_ENV) is set."
     print_colored_v2 "INFO" "FILE_DXCOM($FILE_DXCOM) is set."
-    print_colored_v2 "INFO" "FILE_DXTRON($FILE_DXTRON) is set."
     print_colored_v2 "INFO" "HOST_UID($HOST_UID) is set."
     print_colored_v2 "INFO" "HOST_GID($HOST_GID) is set."
     print_colored_v2 "INFO" "TARGET_USER($TARGET_USER) is set."
@@ -595,7 +566,7 @@ while [ $# -gt 0 ]; do
             fi
             ;;
         --pypi=*)
-            # Select dx-com/dx-tron source: true=public PyPI (default), false=DEEPX
+            # Select dx-com source: true=public PyPI (default), false=DEEPX
             # release index (e.g. for staging versions not yet published to PyPI).
             PYPI_ARGS="--pypi=${1#*=}"
             ;;
