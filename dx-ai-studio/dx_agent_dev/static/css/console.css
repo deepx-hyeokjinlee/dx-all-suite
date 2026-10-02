@@ -387,7 +387,8 @@
   white-space: pre-wrap;
 }
 
-#console-form { display: flex; gap: var(--sp-2); padding: 12px 0 0; flex-shrink: 0; position: relative; z-index: 5; }
+/* 오른쪽은 채팅 단추 (56px) 자리 — 그 아래에 Send 가 숨었다 (release audit L-24) */
+#console-form { display: flex; gap: var(--sp-2); padding: var(--sp-3) calc(var(--sp-7) + var(--sp-5)) 0 0; flex-shrink: 0; position: relative; z-index: 5; }
 #console-input {
   flex: 1;
   padding: 8px 12px;
@@ -582,7 +583,7 @@
 .model-quality-hint {
   font-size: var(--fs-sm);
   line-height: 1.45;
-  color: var(--warning-light, var(--status-warn));
+  color: var(--status-warn);   /* --warning-light 는 밝은 테마의 베이지 위에서 1.16:1 이었다 (release audit G-3) */
   padding: var(--sp-1) var(--sp-2);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--status-warn) 10%, transparent);

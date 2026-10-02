@@ -64,6 +64,9 @@ class DXTutorialEngine {
   constructor(opts = {}) {
     this.options      = opts || {};
     this.appId        = opts.appId || 'app';
+    /* 버튼은 자기 engine 을 부른다 — 한 문서에 engine 이 둘 (launcher · SDK Library) 이면 window._dxTutorial 은 나중에
+       만든 쪽이라, SDK 목차의 'Start from Beginning' 이 launcher 투어를 시작했다 (2026-10-02 release audit L-3). */
+    if (typeof window !== 'undefined') (window._dxTutorials = window._dxTutorials || {})[this.appId] = this;
     this.sections     = opts.sections || [];
     this.getLang      = opts.getLang || (() => localStorage.getItem('dx-lang') || 'en');
     this.onNav        = opts.onNav || (() => {});
@@ -115,7 +118,7 @@ class DXTutorialEngine {
         var style = window.getComputedStyle(node);
         if (style.display === 'none' || style.visibility === 'hidden') continue;
         var r = node.getBoundingClientRect();
-        if (r.width > 0 || r.height > 0) return node;
+        if (r.width > 0 && r.height > 0) return node;   // 높이 0 인 띠는 보이는 대상이 아니다 (release audit E-2)
       }
       return null;
     };
@@ -360,7 +363,7 @@ class DXTutorialEngine {
 
     let html = '<div class="dxt-toc-header">' +
       '<div class="dxt-toc-title">' + _dxtIcon('graduation') + ' ' + this._tl('Tutorial Guide') + '</div>' +
-      '<button class="dxt-toc-close" aria-label="Close" onclick="window._dxTutorial.hideTOC()">' + _dxtIcon('x') + '</button>' +
+      '<button class="dxt-toc-close" aria-label="Close" onclick="' + this._ref() + '.hideTOC()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-toc-progress">' +
       '<div class="dxt-toc-pbar"><div class="dxt-toc-pfill" style="width:' + pct + '%"></div></div>' +
@@ -373,7 +376,7 @@ class DXTutorialEngine {
       var stepsTotal = sec.steps.length;
       var hasPrereq = !!this._checkPrereq(sec);
       html += '<div class="dxt-toc-item ' + (done ? 'done' : '') + ' ' + (hasPrereq ? 'has-prereq' : '') + '"' +
-        ' onclick="window._dxTutorial.startSection(\'' + sec.id + '\')">' +
+        ' onclick="' + this._ref() + '.startSection(\'' + sec.id + '\')">' +
         '<span class="dxt-toc-icon">' + _dxtSectionIcon(sec.icon) + '</span>' +
         '<div class="dxt-toc-info">' +
         '<div class="dxt-toc-name">' + this._t(sec.title) + '</div>' +
@@ -385,11 +388,15 @@ class DXTutorialEngine {
     }.bind(this));
 
     html += '</div><div class="dxt-toc-footer">' +
-      '<button class="dxt-toc-btn dxt-toc-btn-start" onclick="window._dxTutorial.startAll()">' + _dxtIcon('play') + ' ' + this._tl('Start from Beginning') + '</button>' +
-      '<button class="dxt-toc-btn dxt-toc-btn-reset" onclick="window._dxTutorial._confirmReset()">' + _dxtIcon('refresh') + ' ' + this._tl('Reset') + '</button>' +
+      '<button class="dxt-toc-btn dxt-toc-btn-start" onclick="' + this._ref() + '.startAll()">' + _dxtIcon('play') + ' ' + this._tl('Start from Beginning') + '</button>' +
+      '<button class="dxt-toc-btn dxt-toc-btn-reset" onclick="' + this._ref() + '._confirmReset()">' + _dxtIcon('refresh') + ' ' + this._tl('Reset') + '</button>' +
       '</div>';
 
     this._tocEl.innerHTML = html;
+  }
+
+  _ref() {
+    return "window._dxTutorials['" + String(this.appId).replace(/[^\w-]/g, '') + "']";
   }
 
   startAll() {
@@ -448,9 +455,15 @@ class DXTutorialEngine {
     if (!step) { this.stop(); return; }
 
     if (step.beforeStep) {
-      var beforeResult = step.beforeStep.call(step);
-      if (beforeResult && typeof beforeResult.then === 'function') {
-        await beforeResult;
+      // 준비가 실패해도 투어는 이 스텝을 그린다 — 예전에는 예외가 나면 앞 스텝의 상자가 남고 Next 가 먹지 않았다
+      // (release audit E-3: Benchmark 투어가 그렇게 멈췄다)
+      try {
+        var beforeResult = step.beforeStep.call(step);
+        if (beforeResult && typeof beforeResult.then === 'function') {
+          await beforeResult;
+        }
+      } catch (err) {
+        console.warn('[DXTutorial] beforeStep failed:', err);
       }
     }
     if (step.beforeStep) await new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
@@ -468,7 +481,7 @@ class DXTutorialEngine {
         if (!el) return false;
         if (el.tagName === 'DIALOG' && !el.open) return false;
         var r = el.getBoundingClientRect();
-        return r.width > 0 || r.height > 0;
+        return r.width > 0 && r.height > 0;
       };
       var _vis = _isVisible(target);
       if (!_vis) {
@@ -569,14 +582,14 @@ class DXTutorialEngine {
       '<div class="dxt-tip-header">' +
       '<span class="dxt-tip-counter">' + (this._curStep + 1) + ' / ' + steps.length + '</span>' +
       '<span class="dxt-tip-section">' + this._t(this._curSection.title) + '</span>' +
-      '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
+      '<button class="dxt-tip-close" aria-label="Close" onclick="' + this._ref() + '.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
       '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
-      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="' + this._ref() + '.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-skip" onclick="' + this._ref() + '.stop()">' + this._tl('Skip') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-next" onclick="' + this._ref() + '.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
       '</div>';
     this._tooltip.classList.add('active');
     this._positionTooltip(target);
@@ -593,14 +606,14 @@ class DXTutorialEngine {
       '<div class="dxt-tip-header">' +
       '<span class="dxt-tip-counter">' + (this._curStep + 1) + ' / ' + steps.length + '</span>' +
       '<span class="dxt-tip-section">' + this._t(this._curSection.title) + '</span>' +
-      '<button class="dxt-tip-close" aria-label="Close" onclick="window._dxTutorial.stop()">' + _dxtIcon('x') + '</button>' +
+      '<button class="dxt-tip-close" aria-label="Close" onclick="' + this._ref() + '.stop()">' + _dxtIcon('x') + '</button>' +
       '</div>' +
       '<div class="dxt-tip-title">' + this._t(step.title) + '</div>' +
       '<div class="dxt-tip-body">' + _dxtExpandIcons(this._t(step.content)) + '</div>' +
       '<div class="dxt-tip-nav">' +
-      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="window._dxTutorial.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-skip" onclick="window._dxTutorial.stop()">' + this._tl('Skip') + '</button>' +
-      '<button class="dxt-tip-btn dxt-tip-next" onclick="window._dxTutorial.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-prev" ' + (isFirst ? 'disabled' : '') + ' onclick="' + this._ref() + '.prev()">\u2190 ' + this._tl('Prev') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-skip" onclick="' + this._ref() + '.stop()">' + this._tl('Skip') + '</button>' +
+      '<button class="dxt-tip-btn dxt-tip-next" onclick="' + this._ref() + '.next()">' + (isLast ? (this._tl('Done') + ' ' + _dxtIcon('check')) : (this._tl('Next') + ' \u2192')) + '</button>' +
       '</div>';
     this._tooltip.classList.add('active');
     this._tooltip.style.position = 'fixed';
@@ -669,25 +682,40 @@ class DXTutorialEngine {
       tip.style.left = clampX(parseFloat(tip.style.left)) + 'px';
     };
 
-    place(chosen);
-
-    // Try alternate sides until tooltip fits (explicit position + auto)
+    /* 대상을 가리지 않는 쪽을 고른다 (release audit E-1). 예전에는 화면 안으로 밀어 넣은 뒤 '잘렸는가' 만 보았는데,
+       밀어 넣었으니 늘 안 잘린 것으로 보여 다른 쪽을 시도하지 않았고 — 좁은 화면에서 툴팁이 대상 위에 앉았다.
+       명시한 위치를 먼저, 그 반대, 그 다음 옆쪽. 600px 보다 좁으면 위 · 아래만. 어느 쪽도 비지 않으면 대상에서 먼 쪽
+       가장자리에 붙인다 (가리는 넓이가 가장 작은 곳). */
     var flip = { bottom: 'top', top: 'bottom', right: 'left', left: 'right' };
-    var tryOrder = pos === 'auto'
-      ? ['bottom', 'top', 'right', 'left']
-      : [pos, flip[pos], flip[flip[pos]], flip[flip[flip[pos]]]].filter(function(v, i, a) {
-          return v && a.indexOf(v) === i;
-        });
-    for (var ti = 0; ti < tryOrder.length; ti++) {
-      chosen = tryOrder[ti];
-      tip.setAttribute('data-pos', chosen);
-      place(chosen);
-      var tr2 = tip.getBoundingClientRect();
-      var clipped = tr2.top < 4 || tr2.left < 4
-        || tr2.bottom > window.innerHeight - 4
-        || tr2.right > window.innerWidth - 4;
-      if (!clipped) break;
+    var side = { bottom: ['right', 'left'], top: ['right', 'left'], right: ['bottom', 'top'], left: ['bottom', 'top'] };
+    var first = (pos === 'auto' || !flip[pos]) ? chosen : pos;
+    var order = [first, flip[first]].concat(side[first]);
+    if (window.innerWidth < 600) order = order.filter(function(p) { return p === 'top' || p === 'bottom'; });
+    var overlap = function(a) {
+      var w = Math.max(0, Math.min(a.right, rect.right) - Math.max(a.left, rect.left));
+      var h = Math.max(0, Math.min(a.bottom, rect.bottom) - Math.max(a.top, rect.top));
+      return w * h;
+    };
+    var best = null, bestArea = Infinity;
+    for (var ti = 0; ti < order.length; ti++) {
+      place(order[ti]);
+      var area = overlap(tip.getBoundingClientRect());
+      if (area < bestArea) { bestArea = area; best = order[ti]; }
+      if (area === 0) break;
     }
+    if (bestArea > 0) {
+      // 가장자리에 붙이기: 대상의 가운데가 화면 위쪽이면 아래 가장자리, 아니면 위 가장자리
+      var dockBottom = (rect.top + rect.bottom) / 2 < window.innerHeight / 2;
+      tip.style.top = (dockBottom ? window.innerHeight - tipRect.height - 8 : 8) + 'px';
+      tip.style.left = clampX(rect.left + rect.width / 2 - tipRect.width / 2) + 'px';
+      if (overlap(tip.getBoundingClientRect()) < bestArea) {
+        tip.setAttribute('data-pos', 'dock');
+        return;
+      }
+    }
+    chosen = best;
+    tip.setAttribute('data-pos', chosen);
+    place(chosen);
   }
 
   _hideStepChrome() {
@@ -959,15 +987,16 @@ class DXTutorialEngine {
         return;
       }
       if (e.key === 'Escape') {
-        if (self._curSection) { self.stop(); return; }
-        if (self._tocEl && self._tocEl.classList.contains('open')) { self.hideTOC(); return; }
+        /* 처리했으면 표시한다 — launcher 의 Escape (모듈 닫기) 가 이것을 보고 멈춘다 (release audit X-1) */
+        if (self._curSection) { self.stop(); e.preventDefault(); return; }
+        if (self._tocEl && self._tocEl.classList.contains('open')) { self.hideTOC(); e.preventDefault(); return; }
         return;
       }
       if (!self._curSection) return;
       if (e.key === 'ArrowRight' || e.key === 'Enter') { self.next(); e.preventDefault(); }
       if (e.key === 'ArrowLeft') { self.prev(); e.preventDefault(); }
     };
-    document.addEventListener('keydown', this._keyHandler);
+    document.addEventListener('keydown', this._keyHandler, true);   // capture — 맨 위 층이 먼저
   }
 
   createToggleBtn(container) {
@@ -1003,7 +1032,7 @@ class DXTutorialEngine {
   destroy() {
     this.stop();
     if (this._keyHandler) {
-      document.removeEventListener('keydown', this._keyHandler);
+      document.removeEventListener('keydown', this._keyHandler, true);
       this._keyHandler = null;
     }
     if (this._messageHandler) {

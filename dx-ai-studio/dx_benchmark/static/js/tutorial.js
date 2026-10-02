@@ -96,7 +96,10 @@
       meta.style.display = '';
       meta.setAttribute('data-dxt-mock', '1');
       var mt = document.getElementById('trendModelMetaTitle');
-      if (mt) mt.innerHTML = 'Benchmarked Models – Object Detection · run_demo' + _previewBadge();
+      if (mt) {   // escHtml 은 dashboard.js 안쪽 함수라 여기서는 없다 — 글자는 textContent 로 (release audit B-1)
+        mt.textContent = _t('Benchmarked Models') + ' – ' + _t('Object Detection') + ' · run_demo';
+        mt.insertAdjacentHTML('beforeend', _previewBadge());
+      }
       var sec = document.getElementById('trendModelMetaSection');
       if (sec) sec.innerHTML = '<table class="summary-table bench-table"><thead><tr><th>Model</th><th>Size</th><th>Input</th><th>NPU Mem (MB)</th><th>DXNN Format</th></tr></thead><tbody>' +
         '<tr><td>YOLOv5</td><td>S</td><td>640×640</td><td>28</td><td>6</td></tr>' +
@@ -308,7 +311,7 @@
         { target:'#detailTables', position:'top',
           title:{ko:'태스크별 테이블', en:'Per-Task Tables', ja:'タスク別テーブル', 'zh-CN':'按任务分类的表格', 'zh-TW':'按任務分類的表格', es:'Tablas por tarea'},
           content:{ko:'각 AI 태스크별로 분리된 테이블에서 <strong>NPU Throughput, E2E FPS, Latency</strong> 수치를 확인합니다. 열 헤더를 클릭하여 정렬할 수 있습니다.', en:'Check <strong>NPU Throughput, E2E FPS, Latency</strong> values in separate tables per AI task. Click column headers to sort.', ja:'各AIタスク別に分離されたテーブルで<strong>NPU Throughput、E2E FPS、Latency</strong>の数値を確認します。列ヘッダーをクリックしてソートできます。', 'zh-CN':'在按各AI任务分开的表格中查看<strong>NPU吞吐量、E2E FPS、延迟</strong>数值。点击列标题可进行排序。', 'zh-TW':'在按各AI任務分開的表格中查看<strong>NPU吞吐量、E2E FPS、延遲</strong>數值。點擊欄位標題可進行排序。', es:'Consulte los valores de <strong>NPU Throughput, E2E FPS, Latency</strong> en tablas separadas por tarea de IA. Haga clic en los encabezados de columna para ordenar.'} },
-        { target:null, position:'left',
+        { target:'#detailTables .cell-best', optionalTarget:true, position:'left',   // 데이터가 있으면 그 칸을 가리킨다
           title:{ko:'Best 값 강조', en:'Best Value Highlight', ja:'Best値ハイライト', 'zh-CN':'最佳值高亮', 'zh-TW':'最佳值醒目提示', es:'Resaltado del mejor valor'},
           content:{ko:'데이터가 로드되면 각 메트릭에서 <strong>가장 좋은 값</strong>이 자동으로 강조 표시됩니다. 테이블에서 <strong class="cell-best">초록색 강조</strong>된 셀을 확인하세요.', en:'When data is loaded, the <strong>best value</strong> for each metric is automatically highlighted. Look for <strong class="cell-best">green highlighted</strong> cells in the table.', ja:'データがロードされると各メトリクスで<strong>最も良い値</strong>が自動的にハイライト表示されます。テーブルの<strong class="cell-best">緑色でハイライト</strong>されたセルを確認してください。', 'zh-CN':'数据加载后，各指标中的<strong>最佳值</strong>会自动高亮显示。请查看表格中<strong class="cell-best">绿色高亮</strong>的单元格。', 'zh-TW':'資料載入後，各指標中的<strong>最佳值</strong>會自動醒目提示顯示。請查看表格中<strong class="cell-best">綠色醒目提示</strong>的儲存格。', es:'Al cargar los datos, el <strong>mejor valor</strong> de cada métrica se resalta automáticamente. Busque celdas <strong class="cell-best">resaltadas en verde</strong> en la tabla.'} },
         { target:'#detailTables', position:'top',

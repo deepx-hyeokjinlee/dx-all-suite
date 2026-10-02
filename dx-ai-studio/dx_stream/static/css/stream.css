@@ -55,7 +55,7 @@ table{width:100%;border-collapse:collapse;font-size:var(--fs-base)}
 th{text-align:left;color:var(--text-muted);font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border-bottom:2px solid var(--accent);background:var(--surface-panel);position:sticky;top:0;z-index:2}
 td{padding:8px 12px;border-bottom:1px solid var(--border-subtle);vertical-align:middle}
 tbody tr{transition:background .12s}
-tbody tr:nth-child(even) td{background:rgba(14,21,37,.3)}
+tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--text-primary) 4%,transparent)}
 tbody tr:hover td{background:var(--surface-hover)}
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -294,7 +294,16 @@ tbody tr:hover td{background:var(--surface-hover)}
 }
 
 /* Dashboard helper */
+/* 모델 카드의 파일 · 분류 — 규칙이 없어 "x.dxnnobject detection" 처럼 붙어 보였다 (release audit S-10) */
+.demo-card-meta{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin-top:8px;font-size:var(--fs-xs);color:var(--text-muted)}
+.demo-card-meta>span{min-width:0;overflow-wrap:anywhere}
+.demo-card-cat{padding:0 8px;border-radius:var(--radius-pill);background:var(--surface-raised);color:var(--text-secondary)}
 .pipeline-placeholder{padding:32px 16px;text-align:center;border:2px dashed var(--border-subtle);border-radius:var(--radius);color:var(--text-faint)}
+/* 실행 중인 파이프라인 (release audit S-15) */
+.pipe-live{display:flex;align-items:center;gap:var(--sp-3);padding:16px;border:1px solid var(--border-subtle);border-radius:var(--radius)}
+.pipe-live-dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--status-ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--status-ok) 25%,transparent)}
+.pipe-live-text{flex:1;min-width:0}
+.pipe-live-name{font-weight:600;color:var(--text-primary);overflow-wrap:anywhere}
 /* Element detail card */
 .element-detail-card{
   background:var(--control-bg);border:1px solid var(--accent);border-radius:var(--radius-lg);

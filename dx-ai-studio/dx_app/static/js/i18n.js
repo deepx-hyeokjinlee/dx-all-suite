@@ -325,7 +325,7 @@ window._DX_I18N_DICT = {
   },
   'Hostname': {
     ko: '호스트명', ja: 'ホスト名',
-    'zh-CN': '主机名', 'zh-TW': '主機名',
+    'zh-CN': '主机名', 'zh-TW': '主機名稱',
     es: 'Nombre de host',
   },
   'CPU': {
@@ -419,7 +419,7 @@ window._DX_I18N_DICT = {
   'Video': {
     ko: '동영상', ja: '動画',
     'zh-CN': '视频', 'zh-TW': '影片',
-    es: 'Vídeo',
+    es: 'Video',
   },
   'Sample Image': {
     ko: '샘플 이미지', ja: 'サンプル画像',
@@ -429,7 +429,7 @@ window._DX_I18N_DICT = {
   'Video File': {
     ko: '동영상 파일', ja: '動画ファイル',
     'zh-CN': '视频文件', 'zh-TW': '影片檔案',
-    es: 'Archivo de vídeo',
+    es: 'Archivo de video',
   },
   'Device ID': {
     ko: '디바이스 ID', ja: 'デバイス ID',
@@ -606,6 +606,14 @@ window._DX_I18N_DICT = {
   '3D Object Detection': { ko: '3D 객체 탐지', ja: '3D物体検出', 'zh-CN': '3D目标检测', 'zh-TW': '3D物件偵測', es: 'Detección de objetos 3D' },
   'Attribute Recognition': { ko: '속성 인식', ja: '属性認識', 'zh-CN': '属性识别', 'zh-TW': '屬性辨識', es: 'Reconocimiento de atributos' },
   'Classification': { ko: '분류', ja: '分類', 'zh-CN': '分类', 'zh-TW': '分類', es: 'Clasificación' },
+  // Run Demo 의 묶음 (filter) 이름 — /api/demos 의 groups (release audit: 모든 언어에서 영어였다)
+  'Detection': { ko: '탐지', ja: '検出', 'zh-CN': '检测', 'zh-TW': '偵測', es: 'Detección' },
+  'Segmentation': { ko: '분할', ja: 'セグメンテーション', 'zh-CN': '分割', 'zh-TW': '分割', es: 'Segmentación' },
+  'Keypoint & Pose': { ko: '키포인트 · 자세', ja: 'キーポイント · 姿勢', 'zh-CN': '关键点 · 姿态', 'zh-TW': '關鍵點 · 姿態', es: 'Puntos clave y pose' },
+  'Pose & Landmark': { ko: '자세 · 랜드마크', ja: '姿勢 · ランドマーク', 'zh-CN': '姿态 · 关键点', 'zh-TW': '姿態 · 關鍵點', es: 'Pose y puntos de referencia' },
+  'Driving & 3D': { ko: '주행 · 3D', ja: '運転 · 3D', 'zh-CN': '驾驶 · 3D', 'zh-TW': '駕駛 · 3D', es: 'Conducción y 3D' },
+  'Image Restoration': { ko: '이미지 복원', ja: '画像復元', 'zh-CN': '图像复原', 'zh-TW': '影像復原', es: 'Restauración de imagen' },
+  'Recognition': { ko: '인식', ja: '認識', 'zh-CN': '识别', 'zh-TW': '辨識', es: 'Reconocimiento' },
   'Depth Estimation': { ko: '깊이 추정', ja: '深度推定', 'zh-CN': '深度估计', 'zh-TW': '深度估計', es: 'Estimación de profundidad' },
   'Embedding': { ko: '임베딩', ja: '埋め込み', 'zh-CN': '嵌入', 'zh-TW': '嵌入', es: 'Embedding' },
   'Face Alignment': { ko: '얼굴 정렬', ja: '顔アライメント', 'zh-CN': '人脸对齐', 'zh-TW': '人臉對齊', es: 'Alineación facial' },
@@ -631,7 +639,7 @@ window._DX_I18N_DICT = {
     es: 'Instalar el resto',
   },
   'Six steps get DX App running on this PC. What is done stays done.': {
-    ko: '여섯 단계면 이 PC 에서 DX App 이 돌아갑니다. 끝난 단계는 그대로 둡니다.',
+    ko: '여섯 단계면 이 PC에서 DX App이 돌아갑니다. 끝난 단계는 그대로 둡니다.',
     ja: '6 つのステップでこの PC で DX App が動きます。終わったステップはそのままです。',
     'zh-CN': '六个步骤即可让 DX App 在这台电脑上运行。已完成的步骤会保留。',
     'zh-TW': '六個步驟即可讓 DX App 在這台電腦上執行。已完成的步驟會保留。',
@@ -662,7 +670,7 @@ window._DX_I18N_DICT = {
   'Input Video': {
     ko: '입력 동영상', ja: '入力動画',
     'zh-CN': '输入视频', 'zh-TW': '輸入影片',
-    es: 'Vídeo de entrada',
+    es: 'Video de entrada',
   },
   'Pipeline Mode': {
     ko: '파이프라인 모드', ja: 'パイプラインモード',
@@ -689,7 +697,6 @@ window._DX_I18N_DICT = {
     'zh-CN': '级联 (阶段1 → 裁剪区域 → 阶段2)', 'zh-TW': '級聯 (階段1 → 裁剪區域 → 階段2)',
     es: 'Cascada (etapa-1 → regiones recortadas → etapa-2)',
   },
-  'Chain: each step\'s output image is fed as input to the next step.': '체인: 각 단계의 출력 이미지가 다음 단계의 입력으로 전달됩니다.',
 
   /* ==== Compiler ==== */
   'Presets': {
@@ -1100,7 +1107,7 @@ window._DX_I18N_DICT = {
     ja: 'GDPR/プライバシー法: クラウドは不適 — 国境を越えた映像転送が制限されます',
     'zh-CN': 'GDPR/隐私法：云端不适用——跨境视频传输受限',
     'zh-TW': 'GDPR/隱私法：雲端不適用——跨境影像傳輸受限',
-    es: 'Ley GDPR/de privacidad: la nube no es adecuada: transferencia de vídeo transfronteriza restringida',
+    es: 'Ley GDPR/de privacidad: la nube no es adecuada: transferencia de video transfronteriza restringida',
   },
   'Edge AI: offline operation supported — works even without internet': {
     ko: '엣지 AI: 오프라인 운영 지원 — 인터넷 없이도 동작',
@@ -1912,7 +1919,7 @@ window._DX_I18N_DICT = {
   // DX-RT 가 못 읽는 .dxnn (Model Zoo 2_5_0 = container v9, spec 2026-10-01 dx_app per-model layout)
   'needs_dxrt': {
     en: 'This model needs DX-RT 3.5.0 or later (.dxnn container v9). The installed DX-RT reads up to v8.',
-    ko: '이 model 은 DX-RT 3.5.0 이상이 필요합니다 (.dxnn container v9). 설치된 DX-RT 는 v8 까지 읽습니다.',
+    ko: '이 모델은 DX-RT 3.5.0 이상이 필요합니다 (.dxnn container v9). 설치된 DX-RT는 v8까지 읽습니다.',
     ja: 'このモデルには DX-RT 3.5.0 以降が必要です (.dxnn container v9)。インストール済みの DX-RT は v8 までです。',
     'zh-CN': '此模型需要 DX-RT 3.5.0 或更高版本 (.dxnn container v9)。已安装的 DX-RT 仅支持到 v8。',
     'zh-TW': '此模型需要 DX-RT 3.5.0 或更新版本 (.dxnn container v9)。已安裝的 DX-RT 僅支援到 v8。',
@@ -2003,6 +2010,45 @@ window._DX_I18N_DICT = {
     'zh-CN': '仅支持静态图像 — 无法实时运行', 'zh-TW': '僅支援靜態影像 — 無法即時執行',
     es: 'Solo admite imágenes fijas',
   },
+  'Compare': {
+    ko: '비교', ja: '比較', 'zh-CN': '对比', 'zh-TW': '比較', es: 'Comparar',
+  },
+  'Nothing generated yet. Add a model or create a task first.': { ko: '아직 생성된 파일이 없습니다. 먼저 모델을 추가하거나 태스크를 만드세요.', ja: 'まだ生成されたファイルはありません。先にモデルを追加するかタスクを作成してください。', 'zh-CN': '尚无生成的文件。请先添加模型或创建任务。', 'zh-TW': '尚無產生的檔案。請先新增模型或建立任務。', es: 'Aún no hay archivos generados. Primero añada un modelo o cree una tarea.' },
+  'Show files': { ko: '파일 보기', ja: 'ファイルを表示', 'zh-CN': '查看文件', 'zh-TW': '檢視檔案', es: 'Ver archivos' },
+  'Details': { ko: '상세 정보', ja: '詳細', 'zh-CN': '详情', 'zh-TW': '詳情', es: 'Detalles' },
+  'View Graph': { ko: '그래프 보기', ja: 'グラフを表示', 'zh-CN': '查看图', 'zh-TW': '檢視圖', es: 'Ver grafo' },
+  'Graph': { ko: '그래프', ja: 'グラフ', 'zh-CN': '图', 'zh-TW': '圖', es: 'Grafo' },
+  'Delete {name}?': {
+    ko: '{name} 파일을 삭제할까요?', ja: '{name} を削除しますか？',
+    'zh-CN': '删除 {name}？', 'zh-TW': '刪除 {name}？', es: '¿Eliminar {name}?',
+  },
+  'Deleted {name}': {
+    ko: '{name} 파일을 삭제했습니다', ja: '{name} を削除しました',
+    'zh-CN': '已删除 {name}', 'zh-TW': '已刪除 {name}', es: 'Se eliminó {name}',
+  },
+  'No files': {
+    ko: '파일이 없습니다', ja: 'ファイルがありません', 'zh-CN': '没有文件', 'zh-TW': '沒有檔案', es: 'No hay archivos',
+  },
+  'No files matching filter.': {
+    ko: '이 필터에 맞는 파일이 없습니다.', ja: 'このフィルターに一致するファイルはありません。',
+    'zh-CN': '没有符合筛选条件的文件。', 'zh-TW': '沒有符合篩選條件的檔案。', es: 'Ningún archivo coincide con el filtro.',
+  },
+  'Preview': {
+    ko: '미리 보기', ja: 'プレビュー', 'zh-CN': '预览', 'zh-TW': '預覽', es: 'Vista previa',
+  },
+  'Delete': {
+    ko: '삭제', ja: '削除', 'zh-CN': '删除', 'zh-TW': '刪除', es: 'Eliminar',
+  },
+  'runner_error': {
+    ko: '예제가 오류를 보고했습니다 — 결과가 정확하지 않습니다', ja: 'サンプルがエラーを報告したため結果は信頼できません',
+    'zh-CN': '示例报告了错误，结果不可信', 'zh-TW': '範例回報了錯誤，結果不可信',
+    es: 'El ejemplo informó de un error; el resultado no es fiable',
+  },
+  'live_deps_missing': {
+    ko: '라이브 실행에 필요한 패키지가 없습니다', ja: 'ライブ実行に必要なパッケージがありません',
+    'zh-CN': '缺少实时运行所需的软件包', 'zh-TW': '缺少即時執行所需的套件',
+    es: 'Faltan paquetes necesarios para la ejecución en vivo',
+  },
   'live_runner_failed': {
     ko: '예제가 스스로 끝났습니다', ja: 'サンプルが自ら終了しました',
     'zh-CN': '示例自行退出', 'zh-TW': '範例自行結束',
@@ -2065,7 +2111,7 @@ window._DX_I18N_DICT = {
   'Select an image or video': {
     ko: '이미지 또는 비디오를 선택하세요', ja: '画像または動画を選択してください',
     'zh-CN': '请选择图像或视频', 'zh-TW': '請選擇影像或影片',
-    es: 'Seleccione una imagen o vídeo',
+    es: 'Seleccione una imagen o video',
   },
   'Select at least one model': {
     ko: '최소 하나의 모델을 선택하세요', ja: '少なくとも1つのモデルを選択してください',
@@ -2531,7 +2577,7 @@ window._DX_I18N_DICT = {
   'None': { ko: '해제', ja: 'なし', 'zh-CN': '无', 'zh-TW': '無',es:'Ninguno'},
   'Latency(ms)': { ko: '지연시간(ms)', ja: 'レイテンシ(ms)', 'zh-CN': '延迟(ms)', 'zh-TW': '延遲(ms)',es:'Latencia (ms)'},
   'Slots:': { ko: '슬롯:', ja: 'スロット:', 'zh-CN': '槽位:', 'zh-TW': '插槽:',es:'Ranuras:'},
-  'Shared Input (Image / Video)': { ko: '공유 입력 (이미지 / 동영상)', ja: '共有入力 (画像 / 動画)', 'zh-CN': '共享输入 (图像 / 视频)', 'zh-TW': '共用輸入 (影像 / 影片)',es:'Entrada compartida (Imagen / Vídeo)'},
+  'Shared Input (Image / Video)': { ko: '공유 입력 (이미지 / 동영상)', ja: '共有入力 (画像 / 動画)', 'zh-CN': '共享输入 (图像 / 视频)', 'zh-TW': '共用輸入 (影像 / 影片)',es:'Entrada compartida (Imagen / Video)'},
   'Camera': { ko: '카메라', ja: 'カメラ', 'zh-CN': '摄像头', 'zh-TW': '攝影機',es:'Cámara'},
   'Browse the DEEPX ModelZoo — select models and download Q-Lite / Q-Pro / Q-Master DXNN files directly.': {
     ko: 'DEEPX 모델 저장소를 탐색하세요 — 모델을 선택하고 Q-Lite / Q-Pro / Q-Master DXNN 파일을 직접 다운로드합니다.',
@@ -2606,20 +2652,20 @@ window._DX_I18N_DICT = {
   'Download failed to start': { ko: '다운로드를 시작하지 못했습니다', ja: 'ダウンロードを開始できませんでした', 'zh-CN': '下载启动失败', 'zh-TW': '下載啟動失敗', es: 'No se pudo iniciar la descarga'},
   'A model download is already in progress.': { ko: '이미 모델 다운로드가 진행 중입니다.', ja: 'すでにモデルのダウンロードが進行中です。', 'zh-CN': '已有模型正在下载中。', 'zh-TW': '已有模型正在下載中。', es: 'Ya hay una descarga de modelo en curso.'},
   'async_empty_video': {
-    ko: '이 async 예제는 영상 프레임을 저장하지 못했습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드로 전환하면 동일한 주석 영상이 나옵니다. 정확한 동작은 터미널에서 run_demo.sh 로 직접 실행해 확인하세요.',
+    ko: '이 async 예제는 영상 프레임을 저장하지 못했습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드로 전환하면 동일한 주석 영상이 나옵니다. 정확한 동작은 터미널에서 run_demo.sh로 직접 실행해 확인하세요.',
     en: 'This async example produced no video frames — a known limitation of some async runners, fix planned in a future update. Switch to Sync mode for the identical annotated video. To verify the real behavior, run it directly in a terminal via run_demo.sh.',
     ja: 'この async 例は映像フレームを保存できませんでした — 一部の async ランナーの既知の制限で、今後のアップデートで対応予定です。Sync モードに切り替えると同一の注釈付き映像が得られます。実際の動作はターミナルで run_demo.sh を直接実行して確認してください。',
     'zh-CN': '此 async 示例未生成视频帧 — 这是部分 async 运行器的已知限制，计划在后续更新中修复。切换到 Sync 模式可得到相同的标注视频。如需验证真实行为，请在终端通过 run_demo.sh 直接运行。',
     'zh-TW': '此 async 範例未產生影格 — 這是部分 async 執行器的已知限制，計畫於後續更新中修復。切換到 Sync 模式可獲得相同的標註影片。如需驗證實際行為，請在終端機透過 run_demo.sh 直接執行。',
-    es: 'Este ejemplo async no generó fotogramas de vídeo — una limitación conocida de algunos runners async, con corrección prevista en una futura actualización. Cambia al modo Sync para el mismo vídeo anotado. Para verificar el comportamiento real, ejecútalo directamente en una terminal con run_demo.sh.',
+    es: 'Este ejemplo async no generó fotogramas de video — una limitación conocida de algunos runners async, con corrección prevista en una futura actualización. Cambie al modo Sync para el mismo video anotado. Para verificar el comportamiento real, ejecútelo directamente en una terminal con run_demo.sh.',
   },
   'async_video_stalled': {
-    ko: 'async 예제가 영상 처리 중 멈췄습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드를 사용하세요. 정확한 동작은 터미널에서 run_demo.sh 로 직접 실행해 확인하세요.',
+    ko: 'async 예제가 영상 처리 중 멈췄습니다 — 일부 async 러너의 알려진 제한이며 업데이트 예정입니다. Sync 모드를 사용하세요. 정확한 동작은 터미널에서 run_demo.sh로 직접 실행해 확인하세요.',
     en: 'The async example stalled while processing video — a known limitation of some async runners, fix planned in a future update. Please use Sync mode. To verify the real behavior, run it directly in a terminal via run_demo.sh.',
     ja: 'async 例が映像処理中に停止しました — 一部の async ランナーの既知の制限で、今後のアップデートで対応予定です。Sync モードをご使用ください。実際の動作はターミナルで run_demo.sh を直接実行して確認してください。',
     'zh-CN': 'async 示例在处理视频时卡住 — 这是部分 async 运行器的已知限制，计划在后续更新中修复。请使用 Sync 模式。如需验证真实行为，请在终端通过 run_demo.sh 直接运行。',
     'zh-TW': 'async 範例在處理影片時卡住 — 這是部分 async 執行器的已知限制，計畫於後續更新中修復。請使用 Sync 模式。如需驗證實際行為，請在終端機透過 run_demo.sh 直接執行。',
-    es: 'El ejemplo async se bloqueó al procesar vídeo — una limitación conocida de algunos runners async, con corrección prevista en una futura actualización. Usa el modo Sync. Para verificar el comportamiento real, ejecútalo directamente en una terminal con run_demo.sh.',
+    es: 'El ejemplo async se bloqueó al procesar video — una limitación conocida de algunos runners async, con corrección prevista en una futura actualización. Use el modo Sync. Para verificar el comportamiento real, ejecútelo directamente en una terminal con run_demo.sh.',
   },
   'This will permanently delete model source files from disk.': {
     ko: '디스크에서 모델 소스 파일이 영구적으로 삭제됩니다.',
@@ -2838,7 +2884,7 @@ window._DX_I18N_DICT = {
     ja: '実行可能なモデルを選ぶとワークフローを作成して実行できます。',
     'zh-CN': '选择一个可运行的模型即可创建并运行工作流。',
     'zh-TW': '選擇一個可執行的模型即可建立並執行工作流程。',
-    es: 'Elige un modelo ejecutable para crear y ejecutar un flujo de trabajo.',
+    es: 'Elija un modelo ejecutable para crear y ejecutar un flujo de trabajo.',
   },
   'Graph blocked': {
     ko: '그래프가 차단됨', ja: 'グラフがブロックされています', 'zh-CN': '图形已阻止', 'zh-TW': '圖形已封鎖', es: 'Grafo bloqueado',
@@ -3621,7 +3667,7 @@ window._DX_I18N_PLACEHOLDERS = {
     es: ' paso(s)',
   },
   '" will be auto-selected': {
-    ko: '" 이 자동 선택됩니다', ja: '" が自動選択されます',
+    ko: '"이 자동 선택됩니다', ja: '" が自動選択されます',
     es: '" se seleccionará automáticamente',
     'zh-CN': '" 将被自动选择', 'zh-TW': '" 將被自動選擇'
   },
@@ -4031,7 +4077,7 @@ window._DX_I18N_PLACEHOLDERS = {
   'No result video was generated': {
     ko: '결과 비디오가 생성되지 않았습니다', ja: '結果ビデオが生成されませんでした',
     'zh-CN': '未生成结果视频', 'zh-TW': '未產生結果影片',
-    es: 'No se generó vídeo de resultado',
+    es: 'No se generó video de resultado',
   },
   'Waiting…': {
     ko: '대기 중…', ja: '待機中…',
@@ -4649,7 +4695,7 @@ window._DX_I18N_PLACEHOLDERS = {
   'Videos': {
     ko: '비디오', ja: '動画',
     'zh-CN': '视频', 'zh-TW': '影片',
-    es: 'Vídeos',
+    es: 'Videos',
   },
 
   ' detected region(s)': {
@@ -4701,7 +4747,7 @@ window._DX_I18N_PLACEHOLDERS = {
   'Input I/O — reading image/video from disk or camera': {
     ko: 'Input I/O — 디스크 또는 카메라에서 이미지/비디오 읽기', ja: 'Input I/O — ディスクまたはカメラからの画像/動画読み取り',
     'zh-CN': 'Input I/O — 从磁盘或摄像头读取图像/视频', 'zh-TW': 'Input I/O — 從磁碟或攝影機讀取影像/影片',
-    es: 'E/S de entrada — lectura de imagen/vídeo desde disco o cámara',
+    es: 'E/S de entrada — lectura de imagen/video desde disco o cámara',
   },
   'NPU compute — neural network inference on the NPU chip': {
     ko: 'NPU 연산 — NPU 칩에서의 신경망 추론', ja: 'NPU 演算 — NPU チップ上でのニューラルネットワーク推論',
@@ -4711,7 +4757,7 @@ window._DX_I18N_PLACEHOLDERS = {
   'Output I/O — writing result image/video to disk': {
     ko: 'Output I/O — 결과 이미지/비디오를 디스크에 기록', ja: 'Output I/O — 結果画像/動画のディスクへの書き込み',
     'zh-CN': 'Output I/O — 将结果图像/视频写入磁盘', 'zh-TW': 'Output I/O — 將結果影像/影片寫入磁碟',
-    es: 'E/S de salida — escritura de imagen/vídeo de resultado en disco',
+    es: 'E/S de salida — escritura de imagen/video de resultado en disco',
   },
   'PCIe transfer — data transfer between CPU and NPU': {
     ko: 'PCIe 전송 — CPU와 NPU 간 데이터 전송', ja: 'PCIe 転送 — CPU と NPU 間のデータ転送',
@@ -5033,13 +5079,15 @@ window._DX_I18N_PLACEHOLDERS = {
   },
 };
 
-/* ─── 5-language inline helper for JS runtime strings ─── */
-function _T5(ko, en, ja, zhCN, zhTW) {
+/* ─── inline helper for JS runtime strings (ko, en, ja, zh-CN, zh-TW, es) ───
+   이름은 _T5 그대로 — es 는 여섯째 인자 (예전에는 다섯 언어라 스페인어에서 영어가 보였다, release audit A-13). */
+function _T5(ko, en, ja, zhCN, zhTW, es) {
     var lang = (window.DXI18n && window.DXI18n.lang) || 'en';
     if (lang === 'ko') return ko || en;
     if (lang === 'ja') return ja || en;
     if (lang === 'zh-CN') return zhCN || en;
     if (lang === 'zh-TW') return zhTW || en;
+    if (lang === 'es') return es || en;
     return en;
 }
 

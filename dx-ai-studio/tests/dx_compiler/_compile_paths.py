@@ -11,6 +11,12 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
+def compile_jobs_outside_var(monkeypatch, tmp_path):
+    """이 시험들이 띄우는 compiler 는 작업 폴더를 tmp 에 — 진짜 var/compiler/jobs 에 빈 폴더를 남기지 않는다."""
+    monkeypatch.setenv("DX_COMPILER_JOB_ROOT", str(tmp_path / "compiler-jobs"))
+
+
+@pytest.fixture(autouse=True)
 def compile_paths_not_under_test(monkeypatch):
     pp = importlib.import_module("dx_compiler.core.path_policy")
     monkeypatch.setattr(pp, "check_input_file", lambda raw, field: Path(raw))

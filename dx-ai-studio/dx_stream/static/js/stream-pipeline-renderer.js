@@ -136,10 +136,13 @@ function _updateElementCount() {
     var el = DXStream.$('pipeline-element-count');
     if (!el) return;
     var n = DXStream._pipeState.nodes.length;
-    var ko = el.querySelector('.ko');
-    var en = el.querySelector('.en');
-    if (ko) ko.textContent = '\uc5d8\ub9ac\uba3c\ud2b8: ' + n;
-    if (en) en.textContent = 'Elements: ' + n;
+    /* 예전에는 템플릿에 없는 .ko / .en span 에 써서 preset 을 불러도 'Elements: 0' 그대로였다 (release audit S-5).
+       살아 있는 숫자라 사전 key 가 아니다 — 언어가 바뀌면 다시 그린다 (아래 onLangChange). */
+    el.removeAttribute('data-i18n');
+    el.textContent = T('Elements') + ': ' + n;
+}
+if (window.DXI18n && DXI18n.onLangChange) {
+    DXI18n.onLangChange(function () { if (DXStream._pipeState) _updateElementCount(); });
 }
 
 function _initCanvas() {
@@ -594,7 +597,7 @@ function _refreshCanvas() {
     ctx.fillRect(0, 0, w, h);
 
     var step = 20 * st.zoom;
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.strokeStyle = _cvAlpha('--text-primary', 0.06);
     ctx.lineWidth = 1;
     ctx.beginPath();
     for (var x = ((st.offsetX % step) + step) % step; x < w; x += step) {
@@ -606,7 +609,7 @@ function _refreshCanvas() {
     ctx.stroke();
 
     if (st.nodes.length === 0) {
-        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillStyle = _cvAlpha('--text-primary', 0.4);
         ctx.font = '14px sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText(T('Drag elements from the palette'), w / 2, h / 2);
@@ -695,7 +698,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.restore();
 
-    ctx.strokeStyle = selected ? '#fff' : 'rgba(' + r + ',' + g + ',' + b + ',0.6)';
+    ctx.strokeStyle = selected ? _cv('--text-primary') : 'rgba(' + r + ',' + g + ',' + b + ',0.6)';
     ctx.lineWidth = selected ? 2 : 1;
     _roundRect(ctx, x, y, _NODE_W, _NODE_H, 10);
     ctx.stroke();
@@ -719,7 +722,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     // 분류 아이콘 — sprite 를 캔버스에 (DXIcon.draw). 아직 못 읽었으면 다 읽은 뒤 다시 그린다.
     if (typeof DXIcon === 'function' && DXIcon.draw) DXIcon.draw(ctx, icon, x + 8, y + _NODE_H / 2 - 7, 14, color);
 
-    ctx.fillStyle = '#f5f5f7';
+    ctx.fillStyle = _cv('--text-primary');
     ctx.font = 'bold 11px sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -737,7 +740,7 @@ function _drawNode(ctx, node, selected, connStatus) {
         ctx.fill();
         ctx.beginPath();
         ctx.arc(x, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-        ctx.fillStyle = '#1d1d1f';
+        ctx.fillStyle = _themeColor('bg0');
         ctx.fill();
         ctx.strokeStyle = color;
         ctx.lineWidth = 1.5;
@@ -750,7 +753,7 @@ function _drawNode(ctx, node, selected, connStatus) {
     ctx.fill();
     ctx.beginPath();
     ctx.arc(x + _NODE_W, y + _NODE_H / 2, _PORT_R, 0, Math.PI * 2);
-    ctx.fillStyle = '#1d1d1f';
+    ctx.fillStyle = _themeColor('bg0');
     ctx.fill();
     ctx.strokeStyle = color;
     ctx.lineWidth = 1.5;
@@ -774,18 +777,18 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
     ctx.bezierCurveTo(x1 + cpOff, y1, x2 - cpOff, y2, x2, y2);
 
     if (selected) {
-        ctx.strokeStyle = '#ff453a';
+        ctx.strokeStyle = _cv('--status-error');
     } else if (warnEdge) {
         ctx.strokeStyle = _cv('--status-warn');
     } else if (dashed) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.strokeStyle = _cvAlpha('--text-primary', 0.3);
     } else if (fromColor && toColor) {
         var grad = ctx.createLinearGradient(x1, y1, x2, y2);
         grad.addColorStop(0, fromColor);
         grad.addColorStop(1, toColor);
         ctx.strokeStyle = grad;
     } else {
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.strokeStyle = _cvAlpha('--text-primary', 0.5);
     }
     ctx.lineWidth = selected ? 3 : 2;
     if (dashed) ctx.setLineDash([6, 4]);
@@ -804,7 +807,7 @@ function _drawEdge(ctx, x1, y1, x2, y2, dashed, selected, fromColor, toColor, wa
         ctx.lineTo(-8, -4);
         ctx.lineTo(-8, 4);
         ctx.closePath();
-        ctx.fillStyle = warnEdge ? _cv('--status-warn') : (toColor || 'rgba(255,255,255,0.5)');
+        ctx.fillStyle = warnEdge ? _cv('--status-warn') : (toColor || _cvAlpha('--text-primary', 0.5));
         ctx.fill();
         ctx.restore();
     }
@@ -843,7 +846,7 @@ function _hidePropertyPanel() {
 }
 
 /* 속성 드롭다운 옵션 생성 — 모델/비디오/라이브러리/설정 */
-function _getDropdownOptions(propName, nodeType) {
+function _getDropdownOptions(propName, nodeType, props) {
     var a = DXStream._pipeAssets;
     if (!a) return null;
 
@@ -853,14 +856,17 @@ function _getDropdownOptions(propName, nodeType) {
         });
     }
     if (propName === 'library-file-path') {
-        return (a.libraries || []).map(function (lib) {
+        // 후처리 요소에는 후처리 라이브러리만, 메시지 변환 요소에는 메시지 변환 라이브러리만 보인다.
+        var prefix = nodeType === 'DxPostprocess' ? 'libpostprocess_' : nodeType === 'DxMsgConv' ? 'libdx_msgconv' : '';
+        return (a.libraries || []).filter(function (lib) { return !prefix || lib.indexOf(prefix) === 0; }).map(function (lib) {
             return { value: a.libs_dir + '/' + lib, label: lib.replace('libpostprocess_', '').replace('.so', '') };
         });
     }
     if (propName === 'function-name') {
-        return [
-            { value: 'PostProcess', label: 'PostProcess' },
-        ];
+        // 고른 라이브러리가 내보내는 함수들 (서버가 .so 의 .dynsym 에서 읽는다, S-18). 모르면 PostProcess.
+        var lib = String((props || {})['library-file-path'] || '').split('/').pop();
+        var fns = (a.functions && a.functions[lib] && a.functions[lib].length) ? a.functions[lib] : ['PostProcess'];
+        return fns.map(function (f) { return { value: f, label: f }; });
     }
     if (propName === 'config-file-path') {
         var items = [];
@@ -921,7 +927,7 @@ DXStream._showPropertyPanel = function (node) {
             var typeHint = meta.type ? '<span class=\"prop-type-hint\">' + meta.type + '</span>' : '';
 
             // 드롭다운 대상: model-path, library-file-path, function-name, config-file-path, uri
-            var dropdown = _getDropdownOptions(entry[0], node.type);
+            var dropdown = _getDropdownOptions(entry[0], node.type, node.properties);
             if (dropdown) {
                 var curVal = entry[1] != null ? String(entry[1]) : '';
                 var opts = '<option value="">' + (placeholder || T('Select...')) + '</option>';
@@ -963,6 +969,8 @@ DXStream._updateNodeProp = function (nodeId, key, value) {
     if (node && node.properties) {
         node.properties[key] = value;
         _pushHistory();
+        // 라이브러리를 바꾸면 function-name 후보도 바뀐다 — 속성 패널을 다시 그린다.
+        if (key === 'library-file-path' && typeof DXStream._showPropertyPanel === 'function') DXStream._showPropertyPanel(node);
     }
 };
 
@@ -1004,10 +1012,10 @@ function _drawMinimap(st, canvasW, canvasH) {
     var scale = Math.min(mw / bw, mh / bh);
 
     mmCtx.clearRect(0, 0, mw, mh);
-    mmCtx.fillStyle = 'rgba(0,0,0,0.5)';
+    mmCtx.fillStyle = _cvAlpha('--surface-page', 0.85);
     mmCtx.fillRect(0, 0, mw, mh);
 
-    mmCtx.strokeStyle = 'rgba(255,255,255,0.25)';
+    mmCtx.strokeStyle = _cvAlpha('--text-primary', 0.25);
     mmCtx.lineWidth = 1;
     st.edges.forEach(function (ed) {
         var fn = nodeMap[ed.from];

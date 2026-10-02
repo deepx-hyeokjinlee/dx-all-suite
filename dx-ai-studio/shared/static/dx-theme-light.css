@@ -15,6 +15,7 @@
 
 :root[data-theme="light"]{
   color-scheme:light;
+  --vpu:var(--npu);   /* 자홍 (#e879f9) 은 밝은 배경에서 2.4:1 — 진한 남보라로 (release audit M-4) */
 
   --surface-page:#f5f5f7;
   --surface-panel:#FFFFFF;
@@ -69,6 +70,7 @@
 @media (prefers-color-scheme: light){
   :root:not([data-theme="dark"]){
     color-scheme:light;
+  --vpu:var(--npu);   /* 자홍 (#e879f9) 은 밝은 배경에서 2.4:1 — 진한 남보라로 (release audit M-4) */
 
     --surface-page:#f5f5f7;
     --surface-panel:#FFFFFF;

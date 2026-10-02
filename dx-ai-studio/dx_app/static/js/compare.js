@@ -16,7 +16,7 @@ function filterABModels(i){
   if(acList&&q.length>0){
     acList.innerHTML=filtered.slice(0,15).map(function(m){
       return '<div class="ac-item" data-name="'+m.name+'" onclick="pickABModel('+i+',\''+m.name+'\')">'+
-        esc(m.name)+'<span class="ac-cat">'+m.category.replace(/_/g,' ')+'</span></div>';
+        esc(m.name)+'<span class="ac-cat">'+esc(catText(m.category))+'</span></div>';
     }).join('')||'<div class="ac-item txt-dim">'+T('No matches')+'</div>';
     acList.classList.add('open');
   }else if(acList){acList.classList.remove('open');}
@@ -42,14 +42,14 @@ function setABCols(n){
   grid.innerHTML='';
   const slots=['A','B','C','D','E','F','G','H'];
   const cats=[...new Set(S.models.map(function(m){return m.category}))].sort();
-  const catOpts='<option value="">'+T('All Tasks')+'</option>'+cats.map(function(c){return '<option>'+c+'</option>'}).join('');
+  const catOpts='<option value="">'+T('All Tasks')+'</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(catText(c))+'</option>'}).join('');
   const opts=S.models.map(function(m){return '<option value="'+m.name+'">'+m.name+'</option>'}).join('');
   for(var i=0;i<n;i++){
     grid.innerHTML+='<div class="ab-panel" id="abp-'+i+'">'
       +'<div class="ab-panel-hdr"><span class="ab-slot-badge">'+T('Slot ')+slots[i]+'</span></div>'
       +'<div class="ab-panel-body">'
       +'<div class="fg"><label>'+T('Task Filter')+'</label><select class="input" id="ab-cat-'+i+'" onchange="filterABModels('+i+')">'+catOpts+'</select></div>'
-      +'<div class="fg"><label>'+T('Search')+'</label><div class="ac-wrap"><input type="text" class="input" id="ab-search-'+i+'" placeholder="Type model name..." oninput="filterABModels('+i+')" onfocus="filterABModels('+i+')" autocomplete="off"><div class="ac-list" id="ab-ac-'+i+'"></div></div></div>'
+      +'<div class="fg"><label>'+T('Search')+'</label><div class="ac-wrap"><input type="text" class="input" id="ab-search-'+i+'" placeholder="'+esc(T('Search model name…'))+'" oninput="filterABModels('+i+')" onfocus="filterABModels('+i+')" autocomplete="off"><div class="ac-list" id="ab-ac-'+i+'"></div></div></div>'
       +'<div class="fg"><label>Model</label><select class="input" id="ab-model-'+i+'"><option value="">'+T('— Select Model —')+'</option>'+opts+'</select></div>'
       +'<div class="fg"><label>Language</label><select class="input" id="ab-lang-'+i+'"><option value="cpp">C++ (Compiled)</option><option value="python">Python</option></select></div>'
       +'<div class="ab-res-area"><div id="ab-res-'+i+'" class="txt-dim txt-sm">'+T('Select a model and click Run All')+'</div></div>'

@@ -39,7 +39,7 @@ _EMBEDDED_MODELS = [
     {"name": "YOLOV5Pose PPU", "file": "YOLOV5Pose_PPU.dxnn", "category": "pose_estimation",
      "description_ko": "YOLOV5Pose 하드웨어 후처리", "description_en": "YOLOV5Pose with PPU"},
     {"name": "YOLOv26n Seg", "file": "yolo26n-seg.dxnn", "category": "segmentation",
-     "description_ko": "YOLOv26n 시맨틱 세그멘테이션", "description_en": "YOLOv26n semantic segmentation"},
+     "description_ko": "YOLOv26n 인스턴스 세그멘테이션", "description_en": "YOLOv26n instance segmentation"},
     {"name": "EfficientNet Lite0", "file": "EfficientNet_Lite0.dxnn", "category": "classification",
      "description_ko": "EfficientNet Lite0 분류", "description_en": "EfficientNet Lite0 classification"},
     {"name": "YOLO26n OBB", "file": "yolo26n-obb.dxnn", "category": "obb_detection",

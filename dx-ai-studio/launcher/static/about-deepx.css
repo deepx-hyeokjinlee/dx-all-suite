@@ -19,6 +19,18 @@
      into the section below with no seam and no purple→blue hue jump at the boundary. */
   --about-hero-grad-3: var(--about-bg-alt);
 }
+/* 밝은 테마 — 글자는 이미 밝은 테마 색 (어두운 글자) 이라 hero 도 밝게. 어두운 보라 · 남색 위에 짙은 글자가
+   올라 문구 · 통계 이름이 보이지 않았다 (2026-10-02 release audit L-6). */
+:root[data-theme="light"] #about-view {
+  --about-hero-grad-1: color-mix(in srgb, var(--accent) 12%, var(--surface-panel));
+  --about-hero-grad-2: color-mix(in srgb, var(--accent) 6%, var(--surface-panel));
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) #about-view {
+    --about-hero-grad-1: color-mix(in srgb, var(--accent) 12%, var(--surface-panel));
+    --about-hero-grad-2: color-mix(in srgb, var(--accent) 6%, var(--surface-panel));
+  }
+}
 
 /* ── 2. View Layout (matches SDK Library shell offset) ── */
 #about-view {
@@ -80,7 +92,8 @@
   flex: 1 1 auto;
   min-width: 0;
   gap: var(--sp-1);
-  justify-content: flex-end;
+  /* safe — 넘치면 왼쪽부터 보인다. 그냥 flex-end 면 넘친 앞쪽 (Company) 이 왼쪽 밖으로 나가 스크롤로도 못 닿았다 (release audit L-25) */
+  justify-content: safe flex-end;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -341,7 +354,9 @@
 }
 .about-hero-stats {
   display: flex;
-  gap: var(--sp-7);
+  flex-wrap: wrap;            /* 좁은 화면에서 양 끝이 잘렸다 (L-7) */
+  justify-content: center;
+  gap: var(--sp-5) var(--sp-7);
   position: relative;
   z-index: 1;
 }
@@ -1240,3 +1255,9 @@ ul.about-timeline-list li::before {
 .about-action-icon .dx-ico { width: 22px; height: 22px; color: var(--accent); }
 .about-scroll-hint .dx-ico { width: 20px; height: 20px; }
 .about-round-status .dx-ico { width: 14px; height: 14px; vertical-align: -2px; }
+
+/* 폰 폭: 목차가 0px 로 눌려 사라졌다 — 다음 줄로 내려 가로로 스크롤한다 (release audit L-25) */
+@media (max-width: 600px) {
+  .about-topbar { flex-wrap: wrap; height: auto; padding: var(--sp-2) var(--sp-4); }
+  .about-nav { order: 3; flex: 1 0 100%; overflow-x: auto; justify-content: flex-start; }
+}

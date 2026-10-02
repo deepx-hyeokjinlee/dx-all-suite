@@ -132,7 +132,7 @@ class TestTheRealRepositoryIsMeasured:
     # 남은 254건은 제품 결정이 필요하다 — '작업' vs '태스크' 처럼 어느 쪽으로
     # 통일할지는 내가 정할 일이 아니다. /path/to/*.json 같은 placeholder 경로를
     # 번역할지도 마찬가지다.
-    MAX_TERMINOLOGY_DRIFT = 254
+    MAX_TERMINOLOGY_DRIFT = 245
     # 23 -> 22 (2026-09-21). **0 을 목표로 삼지 않는다.**
     # 23건을 하나씩 읽어 보니 대부분 정당한 번역이었다:
     #   'Inference timed out' -> 'La inferencia agotó el tiempo de espera'
@@ -142,7 +142,9 @@ class TestTheRealRepositoryIsMeasured:
     # 를 덧붙이고 있었다(다른 다섯 언어는 전부 한 낱말). dashboard.js:563 의
     # 메트릭 라벨이다.
     # 이 검사의 값은 0 으로 모는 데 있지 않고, **볼 만한 것을 골라 주는 데** 있다.
-    MAX_LENGTH_OVERFLOW = 22
+    # 2026-10-02 +2: 'runner_error' · 'live_deps_missing' (dx_app i18n.js) — 'process_exit' 처럼 영어 쪽이
+    # 문장이 아니라 오류 key 라 key 길이와 비교된다. 번역은 한 문장 오류 메시지다.
+    MAX_LENGTH_OVERFLOW = 24
     MAX_PLACEHOLDER_MISMATCH = 0
 
     def test_terminology_drift_does_not_grow(self):

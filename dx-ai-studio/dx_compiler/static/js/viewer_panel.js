@@ -457,8 +457,8 @@ function _srvErr(msg) {
 
     function updateZoomDisplay() {
         var sz = document.getElementById('status-zoom');
-        if (!sz || !zoomPanState) return;
-        var t = zoomPanState.getTransform();
+        if (!sz) return;
+        var t = zoomPanState ? zoomPanState.getTransform() : { scale: 1 };
         sz.textContent = tr('Zoom') + ': ' + Math.round(t.scale * 100) + '%';
     }
 
@@ -754,8 +754,11 @@ function _srvErr(msg) {
         return fallback;
     }
 
+    var lastCapabilities = null;   // 언어를 바꾸면 안내 문구를 다시 단다 (release audit C-3)
+
     function applyCompilerCapabilities(data) {
         if (!data || !data.capabilities) return;
+        lastCapabilities = data;
         var nodeSelection = document.getElementById('node-selection');
         if (!nodeSelection) return;
         var unsupported = data.capabilities.node_selection === false;
@@ -1562,6 +1565,8 @@ function _srvErr(msg) {
         if (lastSearchCount !== null) {
             updateStatusSearchCount(lastSearchCount);
         }
+        updateZoomDisplay();
+        if (lastCapabilities) applyCompilerCapabilities(lastCapabilities);
         if (nodeSelectionMode) {
             hideNodeSelectionUI();
             showNodeSelectionUI();

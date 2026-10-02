@@ -109,3 +109,38 @@ def test_the_list_fits_one_screen(browser, server):
         assert bottom <= 800, bottom
     finally:
         ctx.close()
+
+
+DIAG = {"all_ok": False, "passed": 1, "total": 2, "checks": [
+    {"id": "kmod_dxrt", "ok": True, "detail": "Loaded",
+     "label": {"ko": "커널 모듈 (dxrt_driver)", "en": "Kernel Module (dxrt_driver)", "ja": "カーネルモジュール (dxrt_driver)",
+               "zhCN": "内核模块 (dxrt_driver)", "zhTW": "核心模組 (dxrt_driver)", "es": "Módulo del kernel (dxrt_driver)"}},
+    {"id": "disk", "ok": False, "detail": "3.2 GB free / 512 GB total",
+     "label": {"en": "Disk Space (≥5GB free)", "es": "Espacio en disco (≥5 GB libres)"},
+     "fix": {"en": "Free up disk space (clear build artifacts, logs, etc.)",
+             "es": "Libere espacio en disco (artefactos de compilación, registros, etc.)"}}]}
+
+
+def test_server_facts_and_diagnostics_speak_the_language(browser, server):
+    """release audit A-13: Setup 의 사실 칩 ("11 model(s), 0 video(s)") 과 진단 (label · detail · fix) 이 스페인어에서
+    영어였다 — 진단 label 사전에 es 가 없었고 _T5 는 다섯 언어뿐이었다. 언어를 바꾸면 진단도 다시 그린다."""
+    ctx, page = _open(browser, server, _status())
+    page.route("**/api/setup/diagnostics", lambda route, *_: route.fulfill(
+        status=200, content_type="application/json", body=json.dumps(DIAG)))
+    try:
+        page.evaluate("() => DXI18n.setLang('es')")
+        page.wait_for_function("() => document.getElementById('setup-steps').innerText.includes('11 modelos, 0 videos')",
+                               timeout=8000)
+        assert "build_x86_64/ encontrado" in page.inner_text("#setup-steps")
+        page.evaluate("() => runDiagnostics()")
+        page.wait_for_selector("#diag-results .diag-card", timeout=8000)
+        txt = page.inner_text("#diag-results")
+        assert "Módulo del kernel (dxrt_driver)" in txt and "Cargado" in txt
+        assert "3.2 GB libres / 512 GB en total" in txt and "Libere espacio en disco" in txt
+        assert "comprobaciones superadas" in page.inner_text("#diag-summary")
+        page.evaluate("() => DXI18n.setLang('ja')")
+        page.wait_for_function("() => document.getElementById('diag-results').innerText.includes('ロード済み')", timeout=5000)
+        assert "カーネルモジュール (dxrt_driver)" in page.inner_text("#diag-results")
+    finally:
+        page.evaluate("() => DXI18n.setLang('en')")
+        ctx.close()

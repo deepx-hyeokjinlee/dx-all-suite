@@ -18,45 +18,74 @@
   'use strict';
 
   /* Task vocabulary. The words on the left are what people type; the ids on the
-     right are what the demos and the catalogue already call these tasks. */
+     right are what the demos and the catalogue already call these tasks.
+     The studio speaks six languages, so the words do too (release audit L-15: a
+     Korean or Japanese sentence matched nothing and always went to the agent).
+     The longest word that appears wins — "face detection" is a face, not the
+     "detection" of the first row. */
   var TASKS = [
-    { id: 'object_detection', words: ['object detection', 'detection', 'detect', 'cctv', 'people', 'person', 'yolo'] },
-    { id: 'pose_estimation',  words: ['pose estimation', 'pose', 'keypoint', 'skeleton', 'push-up', 'pushup'] },
-    { id: 'segmentation',     words: ['segmentation', 'segment', 'mask', 'masking'] },
-    { id: 'face_detection',   words: ['face detection', 'face'] },
-    { id: 'classification',   words: ['classification', 'classify', 'label'] }
+    { id: 'object_detection', words: ['object detection', 'detection', 'detect', 'cctv', 'people', 'person', 'yolo',
+      '객체 탐지', '물체 탐지', '사람 탐지', '탐지', '검출', '사람', '物体検出', '検出', '人物', '目标检测', '物件偵測',
+      '检测', '偵測', '行人', 'detección de objetos', 'detección', 'detectar', 'personas'] },
+    { id: 'pose_estimation',  words: ['pose estimation', 'pose', 'keypoint', 'skeleton', 'push-up', 'pushup',
+      '자세 추정', '포즈', '자세', '팔굽혀펴기', '姿勢推定', '姿勢', 'ポーズ', '腕立て', '姿态估计', '姿態估計', '姿态', '姿態',
+      '俯卧撑', '伏地挺身', 'estimación de pose', 'postura', 'flexiones'] },
+    { id: 'segmentation',     words: ['segmentation', 'segment', 'mask', 'masking',
+      '세그멘테이션', '분할', 'セグメンテーション', '分割', 'segmentación', 'segmentar'] },
+    { id: 'face_detection',   words: ['face detection', 'face',
+      '얼굴 탐지', '얼굴', '顔検出', '顔', '人脸检测', '人臉偵測', '人脸', '人臉', 'detección de rostros', 'rostro'] },
+    { id: 'classification',   words: ['classification', 'classify', 'label',
+      '분류', '分類', '分类', 'clasificación', 'clasificar'] }
   ];
 
   /* Verbs that name a destination on their own. */
   var VERBS = [
-    { id: 'compile', module: 'compiler', words: ['compile', 'quantize', 'dxnn', 'onnx', 'dxcom'] },
-    { id: 'benchmark', module: 'benchmark', words: ['benchmark', 'fps compare', 'q-lite vs', 'q-pro vs'] },
-    { id: 'monitor', module: 'monitor', words: ['temperature', 'npu usage', 'utilisation', 'utilization', 'telemetry'] }
+    { id: 'compile', module: 'compiler', words: ['compile', 'quantize', 'dxnn', 'onnx', 'dxcom',
+      '컴파일', '양자화', 'コンパイル', '量子化', '编译', '編譯', '量化', 'compilar', 'cuantizar'] },
+    { id: 'benchmark', module: 'benchmark', words: ['benchmark', 'fps compare', 'q-lite vs', 'q-pro vs',
+      '벤치마크', 'ベンチマーク', '基准测试', '基準測試', 'comparativa de rendimiento'] },
+    { id: 'monitor', module: 'monitor', words: ['temperature', 'npu usage', 'utilisation', 'utilization', 'telemetry',
+      '온도', '사용률', '温度', '使用率', '溫度', 'temperatura'] }
   ];
 
   var SOURCES = [
-    { id: 'webcam', words: ['webcam', 'camera', 'usb cam'] },
-    { id: 'video',  words: ['video file', 'video', 'mp4', 'file'] },
-    { id: 'rtsp',   words: ['rtsp', 'ip camera', 'cctv'] }
+    { id: 'webcam', words: ['webcam', 'camera', 'usb cam', '웹캠', '카메라', 'カメラ', 'ウェブカメラ', '摄像头', '攝影機',
+      '相机', '相機', 'cámara'] },
+    { id: 'video',  words: ['video file', 'video', 'mp4', 'file', '영상', '동영상', '비디오', '動画', 'ビデオ', '视频', '影片',
+      'vídeo'] },
+    { id: 'rtsp',   words: ['rtsp', 'ip camera', 'cctv', 'ip 카메라', 'ip カメラ', '网络摄像机', '網路攝影機', 'cámara ip'] }
   ];
 
   function _norm(text) {
     return String(text || '').toLowerCase();
   }
 
+  /* The entry whose longest word appears in the sentence (ties: the earlier row). */
   function _firstMatch(table, hay) {
+    var best = null, bestLen = 0;
     for (var i = 0; i < table.length; i++) {
       var entry = table[i];
       for (var j = 0; j < entry.words.length; j++) {
-        if (hay.indexOf(entry.words[j]) !== -1) return entry;
+        var w = entry.words[j];
+        if (w.length > bestLen && hay.indexOf(w) !== -1) { best = entry; bestLen = w.length; }
       }
     }
-    return null;
+    return best;
+  }
+
+  /* The Model Zoo catalogue calls the task "category"; older lists call it "task". */
+  function _taskOf(entry) {
+    return (entry && (entry.task || entry.category)) || null;
+  }
+
+  /* "segmentation" covers the zoo's semantic_ and instance_segmentation. */
+  function _sameTask(have, want) {
+    return !!have && (have === want || have.slice(-(want.length + 1)) === '_' + want);
   }
 
   /* "4-channel", "4 ch", "4ch", "2-ch" — all the ways people write a count. */
   function _channels(hay) {
-    var m = hay.match(/(\d+)\s*[- ]?\s*(?:channel|ch\b|cameras?|streams?)/);
+    var m = hay.match(/(\d+)\s*[- ]?\s*(?:channel|ch\b|cameras?|streams?|채널|대|チャンネル|ch|路|通道|canal(?:es)?|cámaras)/);
     return m ? parseInt(m[1], 10) : null;
   }
 
@@ -75,7 +104,7 @@
         var name = _norm(names[j]);
         if (!name || name.length < 4) continue;
         if (hay.indexOf(name) !== -1 && (!best || name.length > best._len)) {
-          best = { name: entry.name || entry.id, task: entry.task, _len: name.length };
+          best = { name: entry.name || entry.id, task: _taskOf(entry), _len: name.length };
         }
       }
     }
@@ -92,7 +121,7 @@
   function _countModels(task, catalog) {
     var n = 0;
     for (var i = 0; i < (catalog || []).length; i++) {
-      if (catalog[i].task === task) n++;
+      if (_sameTask(_taskOf(catalog[i]), task)) n++;
     }
     return n;
   }
@@ -139,6 +168,8 @@
           demo: demo.id,
           model: model ? model.name : null,
           title: demo.name_en || demo.category,
+          task: parsed.task,
+          channels: parsed.channels || null,
           why: parsed.channels ? parsed.channels + '-channel' : null
         });
       }

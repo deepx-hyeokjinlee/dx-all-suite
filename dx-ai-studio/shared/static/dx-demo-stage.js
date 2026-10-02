@@ -20,7 +20,7 @@
      });
      ctl.stage.setMedia(nodeOrHtml) · setMetrics([{value, label, accent, id}]) · setBars([{label, ms}])
      ctl.stage.setState(kind, label)      // kind: ready · running · done · failed · unready
-     ctl.setRunning(id | null) · ctl.select(id) · ctl.current()
+     ctl.setRunning(id | null) · ctl.select(id) · ctl.current() · ctl.relabel({labels, items})   // 언어 전환
 
    계약: tests/shared/test_demo_stage_browser.py */
 (function () {
@@ -224,6 +224,32 @@
       });
     }
 
+    /* 언어가 바뀌면 글자만 그 자리에서 — card 를 다시 그리면 고른 설정 · 결과 · 번역 속성이 사라진다.
+       next: {labels, items} (items 는 같은 id 의 새 글자). 열린 준비된 demo 의 panel 은 module 이 다시 채운다. */
+    function relabel(next) {
+      next = next || {};
+      if (next.labels) L = next.labels;
+      (next.items || []).forEach(function (n) {
+        var it = _find(n.id);
+        if (it) { it.reason = n.reason; it.reasonTitle = n.reasonTitle; }
+      });
+      Array.prototype.forEach.call(el.grid.children, function (c) {
+        var it = _find(c.dataset.id);
+        if (!it) return;
+        var r = c.querySelector('.dds-reason');
+        if (r) { r.textContent = it.reason || ''; r.title = it.reasonTitle || it.reason || ''; }
+        var todo = c.querySelector('.dds-cstate.is-todo > span');
+        if (todo) todo.textContent = L.unready || 'Needs setup';
+        var run = c.querySelector('.dds-cstate.is-running');
+        if (run) run.textContent = L.running || 'Running';
+        var b = c.querySelector('.dds-setup');
+        if (b) b.innerHTML = _esc(L.setup || 'Set up') + _ico('chev');
+      });
+      var cur = _find(selected);
+      if (!cur) { if (selected == null) _openNone(); }
+      else if (!cur.ready) select(cur.id);       // 준비 안 된 demo 는 무대에 결과가 없다
+    }
+
     if (el.filter) {
       el.filter.innerHTML = opts.filters.map(function (f) {
         return '<button type="button" class="dds-fbtn" data-key="' + _esc(f.key) + '">' + _esc(f.label) + '</button>';
@@ -267,6 +293,7 @@
       stage: stage,
       select: select,
       setRunning: setRunning,
+      relabel: relabel,
       current: function () { return _find(selected); },
       setFilter: function (key) { filterKey = key || 'all'; _applyFilter(); },
     };

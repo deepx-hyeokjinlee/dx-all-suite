@@ -172,21 +172,39 @@ function rundemoRender(demos, groups) {
   RUNDEMO.ctl = window.DXDemoStage.mount(root, {
     items: list.map(_rundemoItem),
     filters: [{ key: 'all', label: 'All' }].concat(order.map(function (g) { return { key: g, label: g }; })),
-    labels: {
-      setup: _T6('설정하기', 'Set up', 'セットアップ', '去设置', '前往設定', 'Configurar'),
-      none: _T6('Setup 에서 model 을 설치하면 데모를 실행할 수 있습니다.', 'Install a model in Setup to run a demo.',
-        'Setup でモデルをインストールするとデモを実行できます。', '在 Setup 中安装模型即可运行演示。',
-        '在 Setup 中安裝模型即可執行示範。', 'Instale un modelo en Setup para ejecutar una demo.'),
-      ready: _T6('준비됨', 'Ready', '準備完了', '就绪', '就緒', 'Listo'),
-      running: _T6('실행 중', 'Running', '実行中', '运行中', '執行中', 'En ejecución'),
-      unready: _T6('설치 필요', 'Needs setup', 'セットアップが必要', '需要安装', '需要安裝', 'Requiere instalación')
-    },
+    labels: _rundemoLabels(),
     onSelect: function (item, stage) { _rundemoOpen(+item.id, stage); },
     onSetup: function () { if (typeof nav === 'function') nav('setup'); },
     onRender: _rundemoTranslate
   });
 }
 if (typeof window !== 'undefined') window.rundemoRender = rundemoRender;
+
+function _rundemoLabels() {
+  return {
+    setup: _T6('설정하기', 'Set up', 'セットアップ', '去设置', '前往設定', 'Configurar'),
+    none: _T6('Setup 에서 model 을 설치하면 데모를 실행할 수 있습니다.', 'Install a model in Setup to run a demo.',
+      'Setup でモデルをインストールするとデモを実行できます。', '在 Setup 中安装模型即可运行演示。',
+      '在 Setup 中安裝模型即可執行示範。', 'Instale un modelo en Setup para ejecutar una demo.'),
+    ready: _T6('준비됨', 'Ready', '準備完了', '就绪', '就緒', 'Listo'),
+    running: _T6('실행 중', 'Running', '実行中', '运行中', '執行中', 'En ejecución'),
+    unready: _T6('설치 필요', 'Needs setup', 'セットアップが必要', '需要安装', '需要安裝', 'Requiere instalación')
+  };
+}
+
+// 언어가 바뀌면 card 의 글자와 열린 demo 의 panel 만 다시 — 고른 설정 · 결과는 RUNDEMO 에 남아 있다 (A-8)
+if (typeof registerLangRefresher === 'function') {
+  registerLangRefresher(function refreshRunDemoLanguage() {
+    if (!RUNDEMO.ctl) return;
+    RUNDEMO.ctl.relabel({ labels: _rundemoLabels(), items: RUNDEMO.demos.map(_rundemoItem) });
+    var cur = RUNDEMO.ctl.current();
+    var d = cur && cur.ready && RUNDEMO.stage ? _rundemoDemo(+cur.id) : null;
+    if (!d) return;
+    RUNDEMO.stage.opts.innerHTML = _rundemoOptsHtml(d);
+    _rundemoUpdateBlockUI(d);
+    _rundemoPaint(d.idx);
+  });
+}
 
 // One card/stage item per demo. The reason is one short line; the file name and the fix go to
 // the tooltip (사용자 결정 2026-10-01 #6).
@@ -362,8 +380,9 @@ function _rundemoPreview(d, dim) {
   return d.thumbnail ? '<img class="dds-preview' + (dim ? ' is-dim' : '') + '" src="' + esc(d.thumbnail) + '" alt="">' : '';
 }
 
+// 비동기 실행은 프레임별 NPU 지연을 재지 않아 "0.00" 을 돌려준다. 0 은 측정값이 아니므로 — 로 보인다 (release audit A-17).
 function _rundemoNum(v, unit) {
-  return (v === undefined || v === null || v === '' || v === 0) ? '—' : (v + (unit ? ' ' + unit : ''));
+  return (v === undefined || v === null || v === '' || !(parseFloat(v) > 0)) ? '—' : (v + (unit ? ' ' + unit : ''));
 }
 
 // Paint the stage for demo idx: running (progress over the preview) · a finished result · ready.
@@ -411,7 +430,7 @@ function _rundemoPaint(idx) {
   var pipe = (r.perf && r.perf.pipeline) || [];
   st.setBars(pipe.map(function (p) { return { label: p.step, ms: p.latency_ms }; }));
   var ok = r.exit_code === 0;
-  st.setState(ok ? 'done' : 'failed', ok ? _T6('완료', 'Done', '完了', '完成', '完成', 'Listo')
+  st.setState(ok ? 'done' : 'failed', ok ? _T6('완료', 'Done', '完了', '完成', '完成', 'Completado')
     : _T6('비정상 종료', 'Exited', '異常終了', '异常退出', '異常結束', 'Salida anómala') + ' (' + r.exit_code + ')');
   var x = '';
   if (r.video_note && !r.result_video_url) {

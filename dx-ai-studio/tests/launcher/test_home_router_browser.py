@@ -115,3 +115,46 @@ def test_understanding_the_task_is_not_the_same_as_having_a_preset(route):
 def test_each_hero_chip_resolves(route, chip):
     got = json.loads(route(chip, CATALOG, DEMOS))
     assert got["routes"], f"the hero offers {chip!r} and the router cannot honour it"
+
+
+ZOO = [  # the Model Zoo's own catalogue calls the task "category"
+    {"id": "yolo26n", "name": "YOLO26n", "category": "object_detection"},
+    {"id": "scrfd500m", "name": "SCRFD500M", "category": "face_detection"},
+    {"id": "yolov8n_seg", "name": "YOLOv8n-seg", "category": "instance_segmentation"},
+    {"id": "bisenetv2", "name": "BiSeNetV2", "category": "semantic_segmentation"},
+]
+
+
+@pytest.mark.parametrize("text, task", [
+    ("face detection on a webcam", "face_detection"),       # 'detection' 이 먼저 있어도 더 긴 말이 이긴다
+    ("카메라로 사람 탐지", "object_detection"),
+    ("웹캠으로 얼굴 탐지", "face_detection"),
+    ("カメラで姿勢推定", "pose_estimation"),
+    ("摄像头 目标检测", "object_detection"),
+    ("segmentación de video", "segmentation"),
+])
+def test_the_router_reads_the_six_languages(route, text, task):
+    """release audit L-15: 한국어 · 일본어 문장은 아무것도 못 읽어 늘 agent 로 갔다."""
+    got = json.loads(route(text, ZOO, DEMOS))
+    assert got["parsed"]["task"] == task, got
+
+
+def test_a_korean_source_word_is_read(route):
+    got = json.loads(route("웹캠으로 얼굴 탐지", ZOO, DEMOS))
+    assert got["parsed"]["source"] == "webcam"
+    got = json.loads(route("IP カメラで物体検出", ZOO, DEMOS))
+    assert got["parsed"]["source"] == "rtsp", "더 긴 'ip カメラ' 가 'カメラ' 를 이긴다"
+
+
+def test_the_zoo_catalogue_counts_by_category(route):
+    """Model Zoo 의 catalog 는 task 를 category 로 준다 — 예전에는 늘 0 개라 'Pick a model' 이 나오지 않았다."""
+    got = json.loads(route("segmentation", ZOO, DEMOS))
+    models = [r for r in got["routes"] if r["kind"] == "models"]
+    assert models and models[0]["count"] == 2, got["routes"]
+    got = json.loads(route("face detection", ZOO, DEMOS))
+    assert [r["count"] for r in got["routes"] if r["kind"] == "models"] == [1]
+
+
+@pytest.mark.parametrize("text", ["4채널 CCTV 사람 탐지", "4 チャンネルで物体検出", "4路 目标检测", "4 canales detección"])
+def test_a_channel_count_is_read_in_every_language(route, text):
+    assert json.loads(route(text, ZOO, DEMOS))["parsed"]["channels"] == 4

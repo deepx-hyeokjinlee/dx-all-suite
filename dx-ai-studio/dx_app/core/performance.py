@@ -74,3 +74,20 @@ def _cvt_video(src,dst):
             import shutil
             shutil.copy2(src,dst);return True
         except Exception:return False
+
+
+_ANSI_RE = __import__("re").compile(r"\x1b\[[0-9;]*[A-Za-z]")
+
+
+def runner_errors(stdout):
+    """dx_app runner 가 찍은 `[DXAPP] [ERROR] …` 줄 (색 코드 · 접두어 뺀 본문). exit 0 이어도 결과를 못 믿는 경우다
+    — 입력 없음 · 출력 tensor 정렬 실패 · 후처리 오류 (dx_app src 의 [ERROR] 는 전부 그런 것)."""
+    out = []
+    for line in (stdout or "").splitlines():
+        clean = _ANSI_RE.sub("", line).strip()
+        if "[DXAPP] [ERROR]" in clean:
+            msg = clean.split("[DXAPP] [ERROR]", 1)[1].strip()
+            if msg and msg not in out:
+                out.append(msg)
+    return out
+

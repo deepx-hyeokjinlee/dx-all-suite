@@ -22,7 +22,7 @@ from shared.runtime import ld_library_path
 from shared import dxrt
 from shared import debug_log
 from dx_app.core.dx_app_security import resolve_existing_file
-from dx_app.core.performance import _parse_perf, _cvt_video
+from dx_app.core.performance import _parse_perf, _cvt_video, runner_errors
 from shared.hardware import get_hw
 from dx_app.core.run_config import build_run_config
 
@@ -406,6 +406,14 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
         if proc.returncode != 0 and not res.get("fps"):
                 res["error"] = f"Process exited with code {proc.returncode}: {(res.get('output') or '')[-200:].strip()}"
                 res["error_key"] = "process_exit"
+        # exit 0 이어도 runner 가 [ERROR] 를 찍었으면 결과를 못 믿는다 — 이미지 한 장의 결과는 오류로 (release audit Z-1),
+        # 영상은 FPS 가 남으므로 경고로만
+        _runner_errs = runner_errors(stdout)
+        if _runner_errs:
+            res["runner_errors"] = _runner_errs[:5]
+            if input_type == "image" and not res.get("error"):
+                res["error"] = _runner_errs[0]
+                res["error_key"] = "runner_error"
         with config._history_lock:
             config._recent_runs.appendleft({"model": model_name, "category": category, "lang": lang,
              "variant": variant, "input_type": input_type, "fps": res["fps"], "latency": res["latency"],

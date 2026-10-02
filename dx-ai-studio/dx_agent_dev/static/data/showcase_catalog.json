@@ -62,7 +62,7 @@
       "category": "paddlepaddle",
       "media": "media/dx-agent-dev-paddleocr-gameplay.gif",
       "url": "https://github.com/DEEPX-AI/dx-all-suite/blob/staging/dx-agent-dev-showcase/paddleocr-video-ocr/README.md",
-      "title": {"en": "Video / Webcam OCR (PP-OCRv5)", "ko": "영상 / 웹캠 OCR (PP-OCRv5)", "ja": "動画 / ウェブカメラ OCR (PP-OCRv5)", "es": "OCR de vídeo / webcam (PP-OCRv5)", "zh-CN": "视频 / 网络摄像头 OCR (PP-OCRv5)", "zh-TW": "影片 / 網路攝影機 OCR (PP-OCRv5)"},
+      "title": {"en": "Video / Webcam OCR (PP-OCRv5)", "ko": "영상 / 웹캠 OCR (PP-OCRv5)", "ja": "動画 / ウェブカメラ OCR (PP-OCRv5)", "es": "OCR de video / webcam (PP-OCRv5)", "zh-CN": "视频 / 网络摄像头 OCR (PP-OCRv5)", "zh-TW": "影片 / 網路攝影機 OCR (PP-OCRv5)"},
       "tagline": {"en": "PaddleOCR PP-OCRv5 on the NPU", "ko": "NPU에서 실행하는 PaddleOCR PP-OCRv5", "ja": "NPUで動くPaddleOCR PP-OCRv5", "es": "PaddleOCR PP-OCRv5 en la NPU", "zh-CN": "在 NPU 上运行 PaddleOCR PP-OCRv5", "zh-TW": "在 NPU 上運行 PaddleOCR PP-OCRv5"}
     },
     {

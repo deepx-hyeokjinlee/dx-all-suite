@@ -50,7 +50,7 @@ Step 4. **Preview** — review the generated JSON, then **Use This Config**.
 Set **Output Directory** and **Optimization Level**. Optional toggles: **Aggressive
 Partitioning** (more nodes on the NPU), **Generate Log**, **Quant Diagnosis**, **Compile
 Range Selection**. Under **Advanced Options → DXQ Enhancement Scheme**, enable
-quantization presets **DXQ-P0…P5** (each with its own parameters) or **Auto (Q-Pro)** for
+quantization presets **DXQ-P0…P5** (each with its own parameters) or **Auto (Q-PRO)** for
 automatic tuning (Auto is mutually exclusive with the manual presets).
 
 ### 5. Compile
@@ -75,9 +75,9 @@ downloads an HTML report of the compile.
 - **Graph Viewer** — pan / zoom, **Fit**, **Collapse / Expand All**, `Ctrl+F` node
   search, click a node / tensor for details; a color-coded **Legend** by node category.  
 - **Agentic Auto Compile** — give a model name / path / URL, pick an agent (with LLM model
-  and reasoning-effort), and it downloads, converts, configures, compiles, and verifies
+  and reasoning-effort; only the agents installed on this machine are listed), and it downloads, converts, configures, compiles, and verifies
   automatically — either fully hands-off or **interactive** (you can reply mid-run).  
-- **Sample-model picker** — a 📦 dropdown fills the Model Path from an already-downloaded
+- **Sample-model picker** — the **Select Sample Model** button fills the Model Path from an already-downloaded
   sample.  
 - **AI Assistant** chat (floating button) explains errors and settings.  
 

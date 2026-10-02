@@ -4,6 +4,8 @@
  * so the dict is initially empty. Add entries as needed.
  */
 window._DX_I18N_DICT = {
+  '{n} platforms · YOLO26 benchmark · updated {date}': { ko: '플랫폼 {n}개 · YOLO26 벤치마크 · {date} 갱신', ja: '{n} プラットフォーム · YOLO26 ベンチマーク · {date} 更新', 'zh-CN': '{n} 个平台 · YOLO26 基准测试 · {date} 更新', 'zh-TW': '{n} 個平台 · YOLO26 基準測試 · {date} 更新', es: '{n} plataformas · benchmark YOLO26 · actualizado el {date}' },
+  'Could not load the benchmark data.': { ko: '벤치마크 데이터를 불러올 수 없습니다.', ja: 'ベンチマークデータを読み込めません。', 'zh-CN': '无法加载基准测试数据。', 'zh-TW': '無法載入基準測試資料。', es: 'No se pudieron cargar los datos del benchmark.' },
   'Product Recommender': { ko: '최적 제품 추천', ja: '製品レコメンダー', 'zh-CN': '最优产品推荐', 'zh-TW': '最佳產品推薦',es:'Recomendador de productos'},
   'Requirements': { ko: '조건 설정', ja: '要件設定', es: 'Requisitos', 'zh-CN': '条件设置', 'zh-TW': '條件設定' },
   'Recommendations': { ko: '추천 결과', ja: '推奨結果', es: 'Recomendaciones', 'zh-CN': '推荐结果', 'zh-TW': '推薦結果' },
@@ -36,7 +38,7 @@ window._DX_I18N_DICT = {
   'Get Recommendations': { ko: '추천 받기', ja: '推奨を取得', 'zh-CN': '获取推荐', 'zh-TW': '獲取推薦',es:'Obtener recomendaciones'},
   'Performance Radar': { ko: '성능 레이더', ja: 'パフォーマンスレーダー', 'zh-CN': '性能雷达图', 'zh-TW': '效能雷達圖',es:'Radar de rendimiento'},
   'Back to Recommendations': { ko: '추천 목록으로', ja: '推奨一覧に戻る', 'zh-CN': '返回推荐列表', 'zh-TW': '返回推薦列表',es:'Volver a recomendaciones'},
-  'Details': { ko: '상세 보기', ja: '詳細', es: 'Detalles', 'zh-CN': '详情', 'zh-TW': '詳情' },
+  'Details': { ko: '상세 정보', ja: '詳細', es: 'Detalles', 'zh-CN': '详情', 'zh-TW': '詳情' },
   'Generated': { ko: '생성', ja: '生成', es: 'Generado', 'zh-CN': '生成时间', 'zh-TW': '產生時間' },
   'Benchmark': { ko: '벤치마크', ja: 'ベンチマーク', es: 'Benchmark', 'zh-CN': '基准测试', 'zh-TW': '基準測試' },
   'Benchmark stale': { ko: '벤치마크 오래됨', ja: 'ベンチマークが古い', es: 'Benchmark desactualizado', 'zh-CN': '基准测试已过期', 'zh-TW': '基準測試已過期' },
@@ -117,7 +119,7 @@ window._DX_I18N_DICT = {
     ja: '8ch 小売分類',
     'zh-CN': '8路零售分类',
     'zh-TW': '8路零售分類',
-    es: '8 canales retail cls',
+    es: '8 canales retail (clasificación)',
   },
   'After the first recommendation, changes update the results automatically.': {
     ko: '첫 추천 이후 조건 변경은 자동으로 결과에 반영됩니다.',
@@ -273,6 +275,11 @@ window._DX_I18N_DICT = {
     'zh-TW': '在滿足相同 YOLO26 條件的板卡之間如何排序。',
     es: 'Cómo ordenar placas que cumplen la misma carga YOLO26.',
   },
+  'Task': { ko: '작업', ja: 'タスク', 'zh-CN': '任务', 'zh-TW': '任務', es: 'Tarea' },
+  'Model': { ko: '모델', ja: 'モデル', 'zh-CN': '模型', 'zh-TW': '模型', es: 'Modelo' },
+  'Channels': { ko: '채널', ja: 'チャンネル', 'zh-CN': '通道', 'zh-TW': '通道', es: 'Canales' },
+  'Stability': { ko: '안정성', ja: '安定性', 'zh-CN': '稳定性', 'zh-TW': '穩定性', es: 'Estabilidad' },
+  '{n} DXRT devices': { ko: 'DXRT 장치 {n}개', ja: 'DXRT デバイス {n} 台', 'zh-CN': '{n} 个 DXRT 设备', 'zh-TW': '{n} 個 DXRT 裝置', es: '{n} dispositivos DXRT' },
   'Insufficient': {
     ko: '부족',
     ja: '不足',
@@ -447,6 +454,12 @@ window._DX_I18N_SELECTORS = '';
 window._DX_I18N_PLACEHOLDERS = {};
 window._DX_I18N_CALLBACKS = [];
 window.__plannerLangRefreshers = window.__plannerLangRefreshers || [];
+/* 작업 slug (object_detection …) 는 데이터 값이다. 화면에는 고른 언어의 작업 이름으로 보인다 (release audit P-3). */
+window.plannerTaskLabel = function (task) {
+  var en = { object_detection: 'Object Detection', pose_estimation: 'Pose Estimation', segmentation: 'Segmentation',
+    oriented_bbox: 'OBB', classification: 'Classification' }[task];
+  return en ? (typeof T === 'function' ? T(en) : en) : (task || '-');
+};
 window.registerPlannerLangRefresher = function (fn) {
   if (typeof fn === 'function') window.__plannerLangRefreshers.push(fn);
 };

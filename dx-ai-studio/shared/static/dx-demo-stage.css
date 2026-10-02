@@ -311,8 +311,9 @@
   padding: var(--sp-2) var(--sp-3) var(--sp-3);
   min-width: 0;
 }
-.dds-crow { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); min-width: 0; }
-.dds-crow .dds-task { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+/* 상태 배지가 길면 ("Requiere instalación") 작업 이름이 "Detección de o…" 로 잘렸다 — 줄을 넘긴다 (release audit A-32) */
+.dds-crow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-1) var(--sp-2); min-width: 0; }
+.dds-crow .dds-task { flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .dds-ctitle {
   font-weight: 600;
   font-size: var(--fs-base);

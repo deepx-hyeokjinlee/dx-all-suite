@@ -186,3 +186,23 @@ def test_a_sample_video_that_is_not_downloaded_is_not_the_default(page):
     assert video.is_disabled()
     assert "not downloaded" in (video.get_attribute("title") or "")
     assert "is-on" in page.get_attribute(".dds-stage [data-axis='input'][data-val='image']", "class")
+
+
+def test_the_stage_and_card_words_follow_the_language(page):
+    """언어를 바꾸면 무대의 옵션 · Run · 상태 · 수치 이름과 준비 안 된 card 의 이유도 바뀐다 — card 는 다시 그리지
+    않고 무대의 결과도 남는다 (release audit A-8: 예전에는 task 이름만 바뀌었다)."""
+    page.click(".dds-card[data-id='0']")            # 앞 test 의 결과 (Done) 가 있는 demo
+    page.evaluate("() => { document.querySelector(\".dds-card[data-id='1']\").dataset.probe = '1'; DXI18n.setLang('ko'); }")
+    page.wait_for_timeout(300)
+    try:
+        assert page.inner_text(".dds-stage .dds-opt-label >> nth=0").strip() == "입력"
+        assert page.inner_text(".dds-stage .dds-run").strip() == "실행"
+        assert page.inner_text(".dds-stage .dds-state").strip() == "완료"
+        assert "NPU 지연" in page.inner_text(".dds-metrics")
+        assert page.evaluate("document.querySelector('.dds-media img').src.startsWith('data:image')"), "결과가 남는다"
+        assert page.inner_text(".dds-card[data-id='1'] .dds-reason").strip() == "모델 미설치"
+        assert page.inner_text(".dds-card[data-id='1'] .dds-cstate").strip() == "설치 필요"
+        assert page.inner_text(".dds-card[data-id='1'] .dds-setup").strip() == "설정하기"
+        assert page.get_attribute(".dds-card[data-id='1']", "data-probe") == "1", "card 를 다시 그렸다"
+    finally:
+        page.evaluate("() => DXI18n.setLang('en')")

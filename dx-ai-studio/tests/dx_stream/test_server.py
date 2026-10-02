@@ -261,7 +261,8 @@ def test_demo_start_returns_contract_failure_before_pipeline_creation(monkeypatc
 
     assert sent["code"] == 424
     assert sent["payload"]["error"] == "contract_failed"
-    assert "profile.active" in sent["payload"]["detail"]
+    assert "profile.active" in sent["payload"]["message"]
+    assert "profile.active" not in sent["payload"]["detail"], "check id 는 message 에 한 번만 (release audit S-7)"
 
 
 def test_demo_start_returns_sanitized_structured_launch_error(monkeypatch):
@@ -322,7 +323,8 @@ def test_pipeline_run_returns_contract_failure_before_conversion(monkeypatch):
 
     assert sent["code"] == 424
     assert sent["payload"]["error"] == "contract_failed"
-    assert "profile.active" in sent["payload"]["detail"]
+    assert "profile.active" in sent["payload"]["message"]
+    assert "profile.active" not in sent["payload"]["detail"], "check id 는 message 에 한 번만 (release audit S-7)"
 
 
 def _pipeline_handler(server_mod, body):

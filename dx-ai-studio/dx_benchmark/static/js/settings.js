@@ -35,11 +35,11 @@ var Settings = {
           _t('Thermal and benchmark parameters are deployment-fixed. Adjust via configuration files before starting the server.') +
         '</p>' +
         '<div class="setting-row">' +
-          '<label>Cooldown Threshold (°C)</label>' +
+          '<label data-i18n="Cooldown Threshold (°C)">' + _t('Cooldown Threshold (°C)') + '</label>' +
           '<input type="number" id="settCooldownTemp" value="55" readonly class="setting-input">' +
         '</div>' +
         '<div class="setting-row">' +
-          '<label>Wait Interval (s)</label>' +
+          '<label data-i18n="Wait Interval (s)">' + _t('Wait Interval (s)') + '</label>' +
           '<input type="number" id="settWaitInterval" value="10" readonly class="setting-input">' +
         '</div>' +
       '</div>' +

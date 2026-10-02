@@ -13,6 +13,7 @@ from pathlib import Path
 
 from shared.dx_server import DXBaseHandler, DXServer
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from shared.paths import outputs_dir
 from shared.shell import ShellSpec
 
@@ -45,24 +46,7 @@ def iter_result_dirs():
 
 _chat_engine = ChatEngine(
     app_name="dx_benchmark",
-    fallback_rules=[
-        (["benchmark", "벤치마크", "run", "실행"], {
-            "ko": "벤치마크 실행은 독립 실행형 dx-benchmark CLI에서 수행합니다: `cd dx-benchmark && ./run.sh run`. 웹 UI는 Dashboard/Results에서 결과를 조회하는 뷰어입니다.",
-            "en": "Run benchmarks from the standalone dx-benchmark CLI: `cd dx-benchmark && ./run.sh run`. This web UI is a viewer for the Dashboard/Results tabs only.",
-        }),
-        (["result", "결과", "report", "리포트", "대시보드", "dashboard"], {
-            "ko": "Dashboard 탭에서 집계된 차트를, Results 탭에서 개별 실행 결과와 REPORT.md를 확인할 수 있습니다.",
-            "en": "View aggregated charts in the Dashboard tab, and individual run results with REPORT.md in the Results tab.",
-        }),
-        (["yolo", "model", "모델", "YOLO26"], {
-            "ko": "YOLO26 계열 모델(n/s/m/l)의 NPU 성능을 하드웨어별로 비교 측정합니다.",
-            "en": "Compares NPU performance of YOLO26 models (n/s/m/l) across different hardware.",
-        }),
-        (["hardware", "하드웨어", "보드", "board", "device"], {
-            "ko": "AI Box, ROCK5B+, OrangePi5+, Raspberry Pi, BIOSTAR 등 다양한 하드웨어를 지원합니다.",
-            "en": "Supports various hardware including AI Box, ROCK5B+, OrangePi5+, Raspberry Pi, BIOSTAR, etc.",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_benchmark")
 )
 
 
@@ -84,8 +68,8 @@ DX_BENCHMARK_PAGES = (
 
 # EdgeGuide 버튼은 dx_benchmark 고유 컨트롤이라 공유 헤더의 .toolbar 슬롯 안에 둔다.
 _EDGEGUIDE_BTN = (
-    '<button id="edgeguideBtn" class="dx-toolbar-btn" title="DX EdgeGuide">'
-    '💰</button>'
+    '<button id="edgeguideBtn" class="dx-toolbar-btn" title="DX EdgeGuide" aria-label="DX EdgeGuide">'
+    '<svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#edge"></use></svg></button>'
 )
 
 DX_BENCHMARK_SHELL = ShellSpec(

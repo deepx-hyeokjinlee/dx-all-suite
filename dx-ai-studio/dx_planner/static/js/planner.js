@@ -262,7 +262,7 @@ async function initConfigurator() {
     await DataLoader.load();
   } catch (e) {
     const panel = document.getElementById('requirementsPanel');
-    if (panel) panel.innerHTML = '<p style="color:var(--status-error);padding:2rem;">' + ((typeof DXIcon === 'function') ? DXIcon('alert') : '') + ' 벤치마크 데이터를 로드할 수 없습니다.</p>';
+    if (panel) panel.innerHTML = '<p style="color:var(--status-error);padding:2rem;">' + ((typeof DXIcon === 'function') ? DXIcon('alert') : '') + ' ' + ((typeof T === 'function') ? T('Could not load the benchmark data.') : 'Could not load the benchmark data.') + '</p>';
     return;
   }
 
@@ -357,3 +357,10 @@ async function initConfigurator() {
 }
 
 document.addEventListener('DOMContentLoaded', initConfigurator);
+
+// 조건 · 결과 요약 칩은 추천을 돌릴 때만 그려져, 언어를 바꿔도 이전 언어로 남았다 (release audit P-3).
+if (typeof registerPlannerLangRefresher === 'function') {
+  registerPlannerLangRefresher(function() {
+    if (_lastInputs && _lastResults) PlannerWorkspace.renderRecommendationSummary(_lastInputs, _lastResults);
+  });
+}

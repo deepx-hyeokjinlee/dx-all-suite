@@ -450,7 +450,7 @@
         <div class="fg" style="margin:0;width:160px"><label data-i18n="RTSP Server">RTSP Server</label><input type="text" id="ab-rtsp-ip" class="input" value="" style="font-size:12px"></div>
         <div class="fg" style="margin:0;width:100px"><label data-i18n="Stream">Stream</label><select id="ab-rtsp-stream" class="input" style="font-size:12px"></select></div>
       </div>
-      <div class="fg" style="margin:0;width:90px" id="ab-frames-pick" class="hidden"><label data-i18n="Frames">Frames</label><input type="number" id="ab-frames" class="input" value="30" min="1" max="10000" style="width:80px;font-size:12px"></div>
+      <div class="fg hidden" style="margin:0;width:90px" id="ab-frames-pick"><label data-i18n="Frames">Frames</label><input type="number" id="ab-frames" class="input" value="30" min="1" max="10000" style="width:80px;font-size:12px"></div>
       <button class="btn btn-acc" id="ab-run-btn" onclick="doABRun()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run All">Run All</span></button>
     </div>
   </div>
@@ -689,9 +689,9 @@
     <div class="lb-header">
       <span id="lb-title" class="lb-title"></span>
       <div class="lb-header-actions">
-        <button id="lb-compare" class="btn btn-sm btn-ghost" style="display:none"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#compare"></use></svg> Compare</button>
+        <button id="lb-compare" class="btn btn-sm btn-ghost" style="display:none"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#compare"></use></svg> <span data-i18n="Compare">Compare</span></button>
         <a id="lb-download" class="btn btn-sm btn-ghost" href="#" download><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#download"></use></svg> <span data-i18n="Download">Download</span></a>
-        <button class="btn btn-sm btn-ghost" onclick="closeLightbox()"></button>
+        <button class="btn btn-sm btn-ghost" onclick="closeLightbox()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
       </div>
     </div>
     <div id="lb-body" class="lb-body"></div>
@@ -703,7 +703,7 @@
   <div class="lb-content cmp-content">
     <div class="lb-header">
       <span id="cmp-title" class="lb-title"></span>
-      <button class="btn btn-sm btn-ghost" onclick="closeCompare()"></button>
+      <button class="btn btn-sm btn-ghost" onclick="closeCompare()" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
     </div>
     <div id="cmp-wrap" class="cmp-wrap" style="--split:50%">
       <img id="cmp-after" class="cmp-img cmp-after" src="" alt="After">

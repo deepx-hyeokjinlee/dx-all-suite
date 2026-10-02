@@ -3,6 +3,7 @@ import copy
 import json
 import re
 import threading
+import time
 from pathlib import Path
 from collections import defaultdict
 
@@ -309,7 +310,8 @@ def merge_conf_and_catalog(conf_models, catalog_data):
             "description": {"en": "", "ko": ""},
             "specification": {},
             "compile_guide": {},
-            "demo": _build_demo_info(cm["id"], cm["category"]),
+            "demo": _build_demo_info(cm["id"], cm["category"], cm.get("model_file", ""),
+                                     _representative_input(cm["id"], cm["category"])),
             "variants": _detect_inference_variants(cm["id"], cm["category"]),
             "legal": {},
             "thumbnail": f"thumbnails/{cm['id']}.jpg",
@@ -492,17 +494,34 @@ def _enrich_model_entry(base, enriched, metadata_source=None):
     return base
 
 
-def _build_demo_info(model_id, category):
-    """모델의 C++/Python 예제 경로 확인."""
-    cpp_path = f"src/cpp_example/{category}/{model_id}/"
-    py_path = f"src/python_example/{category}/{model_id}/"
-    cpp_exists = (DX_APP_ROOT / cpp_path).is_dir() if DX_APP_ROOT.exists() else False
-    py_exists = (DX_APP_ROOT / py_path).is_dir() if DX_APP_ROOT.exists() else False
-    return {
-        "cpp_example": cpp_path if cpp_exists else "",
-        "python_example": py_path if py_exists else "",
-        "cli_command": f"./{model_id}_sync -m {{}}/assets/models/{model_id}.dxnn -i sample/img/sample_street.jpg",
-    }
+def _build_demo_info(model_id, category, model_file="", demo_input=None):
+    """모델의 dx_app C++/Python 예제 경로와, 그대로 돌아가는 CLI 명령 (dx_app 폴더에서).
+
+    예전에는 카탈로그 id 로 './yolo26n_sync -m {}/assets/models/yolo26n.dxnn -i sample/img/sample_street.jpg'
+    를 모든 모델에 만들었다 — 글자 그대로의 '{}', 없는 binary · 모델 이름, 점구름 · ReID 모델에도 거리 사진
+    (2026-10-02 release audit Z-4). 예제를 layout resolver 로 찾고, 없으면 명령을 내지 않는다 (탭이 숨는다)."""
+    out = {"cpp_example": "", "python_example": "", "cli_command": ""}
+    if not DX_APP_ROOT.exists():
+        return out
+    from shared import dx_app_layout as _layout
+    name = _layout.example_name(DX_APP_ROOT, category, model_id, model_file)
+    ex = _layout.find(DX_APP_ROOT, category, name)
+    if ex is None:
+        hits = [e for e in _layout.examples(DX_APP_ROOT) if e.name == name]
+        ex = hits[0] if len(hits) == 1 else None
+    if ex is None:
+        return out
+    for lang, key in (("cpp", "cpp_example"), ("python", "python_example")):
+        d = ex.dir(lang)
+        if d is not None and d.is_dir():
+            out[key] = str(d.relative_to(DX_APP_ROOT)) + "/"
+    mf = model_file if str(model_file).startswith("assets/") else f"assets/models/{Path(model_file).name or ex.name + '.dxnn'}"
+    run = f"./bin/{ex.name}_sync -m {mf}" + (f" -i {demo_input}" if demo_input else "")
+    # bin/ 에 없을 수 있다 (build.sh --minimal 은 run_demo 대상만) — 그 모델만 빌드하는 줄을 먼저 보인다
+    out["cli_command"] = (f"cd dx-runtime/dx_app\n"
+                          f"./build.sh --target {ex.name}_sync   # once, if bin/ has no {ex.name}_sync\n"
+                          f"{run}")
+    return out
 
 
 # Python execution variants, in order, mapped to the run_inference `variant` suffix.
@@ -695,13 +714,66 @@ _catalog_cache = None
 _catalog_lock = threading.RLock()
 
 
+_flags_checked_at = 0.0
+_FLAGS_TTL_S = 2.0
+
+
+def _model_on_disk(model_file):
+    if not model_file:
+        return False
+    try:
+        from shared.dx_app_layout import find_model
+        from shared.paths import SUITE_ROOT
+        return find_model(model_file, DX_APP_ROOT, SUITE_ROOT) is not None
+    except Exception:
+        return False
+
+
+def _refresh_download_flags(catalog):
+    """downloaded* 는 디스크를 따른다 — 예전에는 처음 읽을 때 한 번 계산해 영원히 캐시해서, 상세 화면에서 받은 모델이
+    다시 불러도 '먼저 다운로드' 로 남고 Run Inference 가 잠겨 있었다 (2026-10-02 release audit Z-2).
+    assets/models 와 workspace/res/models 를 dx_app 과 같은 규칙 (shared.dx_app_layout.find_model) 으로 본다."""
+    for m in (catalog or {}).get("models", []):
+        qlite = _model_on_disk(m.get("model_file"))
+        m["downloaded"] = m["downloaded_qlite"] = qlite
+        m["downloaded_qpro"] = _model_on_disk(m.get("model_file_qpro"))
+
+
 def get_catalog():
-    """캐시된 카탈로그 반환. 없으면 로드. RLock으로 동시 reload 방지."""
-    global _catalog_cache
+    """캐시된 카탈로그 반환. 없으면 로드. RLock으로 동시 reload 방지. 다운로드 여부는 2초마다 다시 본다."""
+    global _catalog_cache, _flags_checked_at
     with _catalog_lock:
         if _catalog_cache is None:
             reload_catalog()  # RLock은 재진입 가능 — 같은 스레드에서 안전
+        now = time.time()
+        if now - _flags_checked_at >= _FLAGS_TTL_S:
+            _flags_checked_at = now
+            _refresh_download_flags(_catalog_cache)
         return _catalog_cache
+
+
+# 같은 모델이 다른 이름으로 찍혀 있는 그림 (BEiT-L/16 384 = beit_large_patch16). 다른 모델의 그림은 빌리지 않는다.
+_MEDIA_ALIAS = {"beit_l_p16_384x384": "beit_large_patch16"}
+
+
+def _settle_media(model):
+    """있는 그림만 가리킨다 — 없는 파일을 가리키면 목록을 열 때마다 모델마다 404 가 세 번 났다 (2026-10-02 Z-5).
+    그림이 없으면 카드는 task 아이콘, 상세는 'Run inference' 안내를 보인다."""
+    alias = _MEDIA_ALIAS.get(model.get("id"))
+    thumb = model.get("thumbnail")
+    if thumb and not (DATA_DIR / thumb).is_file():
+        alt = f"thumbnails/{alias}.jpg" if alias else None
+        model["thumbnail"] = alt if alt and (DATA_DIR / alt).is_file() else None
+    ex = model.get("example_images")
+    if isinstance(ex, dict):
+        for key in ("result", "original"):
+            path = ex.get(key)
+            if path and not (DATA_DIR / path).is_file():
+                alt = f"examples/{alias}_{key}.jpg" if alias else None
+                if alt and (DATA_DIR / alt).is_file():
+                    ex[key] = alt
+                else:
+                    ex.pop(key, None)
 
 
 def reload_catalog():
@@ -746,6 +818,8 @@ def reload_catalog():
         _enrich_input_shape(model)
         _enrich_postprocessor(model)
         _enrich_summary(model)
+    for model in merged:
+        _settle_media(model)
     next_cache = {
         "models": merged,
         "categories": CATEGORIES,
@@ -806,6 +880,7 @@ def apply_generated_catalog(generated_catalog):
             _enrich_input_shape(next_model)
             _enrich_postprocessor(next_model)
             _enrich_summary(next_model)
+            _settle_media(next_model)
             next_models.append(next_model)
         _catalog_cache = {
             **_catalog_cache,

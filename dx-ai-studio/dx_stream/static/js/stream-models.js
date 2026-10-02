@@ -28,6 +28,7 @@ DXStream.modelsInit = async function () {
     DXStream._allModels = models;
     DXStream._filteredModels = DXStream._allModels;
     _renderModelCards(DXStream._allModels);
+    _renderModelFilters(DXStream._allModels);
 
     // 검색
     var search = DXStream.$('models-search');
@@ -43,10 +44,42 @@ DXStream.modelsInit = async function () {
     }
 };
 
+/* 분류 버튼은 받은 목록에 있는 분류로 만든다. 목록은 manifest 에서 오고 (깊이 추정은 있고 OBB 는 없다) 매니페스트가
+   없으면 내장 목록이라, 고정 버튼은 있는 model 을 못 고르거나 빈 분류를 보여줬다 (release audit S-16). */
+function _renderModelFilters(models) {
+    var bar = DXStream.$('models-filter-bar');
+    if (!bar) return;
+    var cats = [];
+    (models || []).forEach(function (m) {
+        if (m.category && cats.indexOf(m.category) === -1) cats.push(m.category);
+    });
+    var order = ['object_detection', 'classification', 'segmentation', 'pose_estimation', 'face_detection',
+        'depth_estimation', 'obb_detection'];
+    cats.sort(function (x, y) {
+        var a = order.indexOf(x), b = order.indexOf(y);
+        return (a === -1 ? 99 : a) - (b === -1 ? 99 : b);
+    });
+    var cur = DXStream._modelFilterCat || 'all';
+    if (cats.indexOf(cur) === -1) cur = 'all';
+    DXStream._modelFilterCat = cur;
+    bar.innerHTML = ['all'].concat(cats).map(function (c) {
+        return '<button type="button" class="btn btn-ghost btn-sm' + (c === cur ? ' active' : '') + '" data-cat="'
+            + DXStream.escHtml(c) + '">' + DXStream.escHtml(c === 'all' ? T('All') : _modelCat(c)) + '</button>';
+    }).join('');
+    bar.onclick = function (e) {
+        var b = e.target.closest('[data-cat]');
+        if (b) DXStream.filterModels(b.getAttribute('data-cat'), b);
+    };
+    if (cur !== 'all') DXStream.filterModels(cur);
+}
+
 DXStream.filterModels = function (cat, btn) {
+    DXStream._modelFilterCat = cat;
     var bar = DXStream.$('models-filter-bar');
     if (bar) {
         bar.querySelectorAll('.btn').forEach(function (b) { b.classList.remove('active'); });
+        // onclick 은 버튼을 넘기지 않는다 — 분류로 찾아야 첫 클릭 뒤에도 고른 버튼이 강조된다 (release audit S-16).
+        btn = btn || bar.querySelector('[data-cat="' + cat + '"]');
         if (btn) btn.classList.add('active');
     }
     if (!DXStream._allModels) return;
@@ -57,12 +90,23 @@ DXStream.filterModels = function (cat, btn) {
             return m.category === cat;
         });
     }
-    _renderModelCards(DXStream._filteredModels);
-
-    // 검색 입력 리셋
+    // 검색어는 지우지 않고 새 분류에 다시 적용한다 (S-16).
     var search = DXStream.$('models-search');
-    if (search) search.value = '';
+    if (search && search.value && search.oninput) search.oninput.call(search);
+    else _renderModelCards(DXStream._filteredModels);
 };
+
+/* 설명은 고른 언어로 (서버는 ko · en 만 준다 — 다른 언어는 en), 분류는 번역한 이름으로. 예전에는 ko · en <span> 만 있어
+   ja · zh · es 에서는 설명이 비었고, 분류는 "object detection" 같은 slug 였다 (release audit S-10). */
+function _modelDesc(m) {
+    var lang = (window.DXI18n && DXI18n.lang) || 'en';
+    return m['description_' + lang] || (lang === 'ko' ? m.description_ko : m.description_en) || m.description_en || '';
+}
+function _modelCat(c) {
+    var label = String(c || '').replace(/_/g, ' ').replace(/\b\w/g, function (x) { return x.toUpperCase(); })
+        .replace(/^Obb /, 'OBB ');
+    return label ? T(label) : '';
+}
 
 function _renderModelCards(models) {
     var grid = DXStream.$('models-grid');
@@ -75,13 +119,10 @@ function _renderModelCards(models) {
     grid.innerHTML = models.map(function (m) {
         return '<div class="card" style="cursor:pointer" onclick="DXStream.showModelDetail(\'' + m.name.replace(/'/g, "\\'") + '\')">' +
             '<h3>' + DXStream.escHtml(m.name) + '</h3>' +
-            '<p class="txt-dim txt-sm">' +
-            '<span class="ko">' + DXStream.escHtml(m.description_ko || '') + '</span>' +
-            '<span class="en">' + DXStream.escHtml(m.description_en || '') + '</span>' +
-            '</p>' +
+            '<p class="txt-dim txt-sm">' + DXStream.escHtml(_modelDesc(m)) + '</p>' +
             '<div class="demo-card-meta">' +
             '<span>' + ((typeof DXIcon === 'function') ? DXIcon('file') : '') + ' ' + DXStream.escHtml(m.file || '--') + '</span>' +
-            '<span class="demo-card-cat">' + DXStream.escHtml((m.category || '').replace(/_/g, ' ')) + '</span>' +
+            '<span class="demo-card-cat">' + DXStream.escHtml(_modelCat(m.category)) + '</span>' +
             '</div>' +
             (m.installed
                 ? '<span class="card-badge" style="background:var(--surface-raised);color:var(--status-ok)">' + ((typeof DXIcon === 'function') ? DXIcon('check') : '') + ' ' + T('Installed') + '</span>'
@@ -112,13 +153,17 @@ DXStream.loadModelMetadata = function(modelFile) {
         .then(function(r) { return r.json(); })
         .then(function(data) {
             if (data.error) {
-                container.innerHTML = '<pre class="metadata-error">' + data.error + '</pre>';
+                /* 서버의 오류 코드 ('not_found') 를 그대로 보이지 않는다 — 모델 파일이 없을 때가 대부분이다 */
+                var msg = data.error === 'not_found'
+                    ? T('Download this model to see its metadata.')
+                    : (data.message || data.error);
+                container.innerHTML = '<p class="metadata-error txt-dim">' + DXStream.escHtml(msg) + '</p>';
                 return;
             }
-            var html = '<pre class="metadata-raw">' + (data.raw_output || 'No output') + '</pre>';
+            var html = '<pre class="metadata-raw">' + DXStream.escHtml(data.raw_output || T('No output')) + '</pre>';
             if (data.graph_info) {
                 html += '<h4>' + T('Graph Info') + '</h4>';
-                html += '<pre>' + JSON.stringify(data.graph_info, null, 2) + '</pre>';
+                html += '<pre>' + DXStream.escHtml(JSON.stringify(data.graph_info, null, 2)) + '</pre>';
             }
             container.innerHTML = html;
         })

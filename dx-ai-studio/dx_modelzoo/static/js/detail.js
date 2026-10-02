@@ -229,7 +229,7 @@ function renderDetail(container, model) {
   _currentDetailModel = model;
   const catInfo = (_catalogData?.categories || {})[model.category] || {};
   const catLabel = _localLabel(catInfo, 'label') || model.category;
-  const summary = _localText(model.display?.summary) || _localText(model.content?.use_case) || T('Metadata pending');
+  const summary = _summaryText(model) || T('Metadata pending');
 
   container.innerHTML = `
     <button class="mz-back-btn" onclick="location.hash=''">← ${T('Back to Catalog')}</button>
@@ -818,7 +818,7 @@ function _buildModelCardHtml(m, imgDataUrl) {
   const tech = m.technical || {};
   const title = (m.display && m.display.name) || m.name || (m.display && m.display.class_name) || m.id || 'Model';
   const task = (m.display && m.display.category_label) || m.category || '';
-  const summary = _localText(m.display && m.display.summary) || _localText(m.content && m.content.use_case) || '';
+  const summary = _summaryText(m);
 
   // Description (full use-case text) — model.description is curated in all 6 languages.
   const description = _localText(m.description) || _localText(m.content && m.content.use_case) || '';

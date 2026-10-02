@@ -28,7 +28,7 @@ shared/static/       ← i18n, toolbar, tutorial engine, design tokens
 ## The proxy model
 
 The launcher is both a **process supervisor** and a **reverse proxy**
-(`launcher/launcher.py`, ~1470 lines):
+(`launcher/launcher.py`):
 
 1. **Spawn** — on boot it starts each module as a detached subprocess
    (`python3 <module>/server.py --port 0 --no-browser`, `preexec_fn=os.setsid`).
@@ -92,8 +92,8 @@ per-run `DX_PROXY_SECRET` it puts in their env. `DXServer` wraps CLI parsing, th
 port-collision retry, and ephemeral-port reporting via `DX_PORT_FILE`.
 
 - **`shared/chat/`** — `ChatEngine` powers the per-module "DX Chat" assistant.
-  Providers: OpenAI, Anthropic, Google (Gemini), a local OpenAI-compatible endpoint,
-  and an `agent-cli` backend. Rule-based `FallbackEngine` answers when no key is set.
+  Providers: OpenAI, Anthropic, Google (Gemini), GitHub Models, a Custom OpenAI-compatible
+  endpoint, a local (Ollama-compatible) server, and an `agent-cli` backend. Rule-based `FallbackEngine` answers when no key is set.
   Module knowledge lives in `shared/chat/knowledge/*.md` and is auto-synced from the
   suite docs — no manual regen. The launcher pre-syncs it once, unconditionally, at
   boot (single writer, before any module starts); `ChatEngine.stream()` also does a
@@ -113,8 +113,8 @@ port-collision retry, and ephemeral-port reporting via `DX_PORT_FILE`.
 streams their output into the browser console. Five CLI adapters live under
 `dx_agent_dev/core/adapters/`: `claude.py`, `copilot.py`, `codex.py`, `cursor.py`,
 `opencode.py` (plus a `mock.py` used under `DX_AGENT_ADAPTER=mock` for closed-net/CI
-runs). Cursor and OpenCode enumerate models dynamically (`cursor-agent
---list-models`, `opencode models`); both fall back to a static table in
+runs). Copilot (the account's models, over ACP), Cursor and OpenCode enumerate models
+dynamically (`cursor-agent --list-models`, `opencode models`); all fall back to a static table in
 `dx_agent_dev/core/agents_config.py` when the dynamic call fails or times out. It
 depends on the `.deepx` harness (agent knowledge/skills) resolved via
 `DX_HARNESS_ROOT` — see [`development.md`](development.md#environment-variables).

@@ -24,12 +24,20 @@ The **About DEEPX** page introduces the company behind the studio — the "AI fo
 year founded), and a **Developer Hub** with quick links to the model catalog, SDK,
 hardware, and support.
 
+
+The **About DEEPX** page presents company and product information down one scrolling page
+with a sticky section nav (scroll-spy): a **Developer** section (dev-resource cards, CTAs,
+and distribution channels), a **Company** section (vision, milestones timeline, global
+offices), a **Technology** section (the DXNN SDK full-stack architecture), and **Products**, **Partners**,
+**Awards**, and **News** sections — plus a shortcut to the DEEPX store. Available in all
+six UI languages.  
+
 ![About DEEPX — the company overview: mission statement, key figures, and the Developer Hub links.](resources/about.png)
 
 ## Chat / AI Assistant
 
-The **💬 assistant** is available in every DX AI Studio module (not just this one). Click
-it anytime to ask about DeepX models, the SDK, the compiler, or how any module works — it
+The **chat assistant** (bottom-right button) is available in every DX AI Studio module (not just this one). Click
+it anytime to ask about DEEPX models, the SDK, the compiler, or how any module works — it
 draws on bundled DEEPX SDK knowledge to answer.  
 
 In chat settings (⚙️) you can pick from **seven providers**:  
@@ -46,12 +54,3 @@ SDK knowledge with the latest `.deepx` docs.
 
 The in-app tutorial's chatbot walkthrough (providers, offline options, refresh knowledge)
 is now centralized in the launcher's onboarding tour, rather than repeated per-module.  
-
-## About DEEPX
-
-The **About DEEPX** page presents company and product information down one scrolling page
-with a sticky section nav (scroll-spy): a **Developer** section (dev-resource cards, CTAs,
-and distribution channels), a **Company** section (vision, milestones timeline, global
-offices), the DXNN SDK **full-stack architecture**, and **Products**, **Partners**,
-**Awards**, and **News** sections — plus a shortcut to the DEEPX store. Available in all
-six UI languages.  

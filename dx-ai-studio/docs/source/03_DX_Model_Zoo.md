@@ -1,6 +1,6 @@
 # DX Model Zoo
 
-Browse the DEEPX model catalog (340+ models) — search and filter by AI task, open a
+Browse the DEEPX model catalog (nearly 500 models across 28 tasks) — search and filter by AI task, open a
 model to see its details (accuracy, input, license / source), and use it in the other
 studio tools.
 
@@ -29,7 +29,7 @@ Step 5. Or pull the model into **[DX App](05_DX_App.md)** or **[DX Compiler](04_
 
 ## Key features
 
-- **340+ models** across many vision-AI tasks, with per-category filtering, search, sort,
+- **Nearly 500 models** across 28 vision-AI tasks, with per-category filtering, search, sort,
   and card/list views.  
 - **In-browser inference demo** and one-click artifact **downloads** from the detail view.  
 - **Rich detail view** — accuracy, license / source / copyright, copyable demo code

@@ -565,6 +565,10 @@
     // on the launcher-native views (About, SDK Library) — module iframes carry their own, and
     // the home splash stays uncluttered.
     document.body.classList.toggle('hw-native-visible', viewName === 'about' || viewName === 'sdk-library');
+    // 홈 · About 의 채팅은 studio 전체 도움말 — SDK Library 가 바꿔 둔 대상을 되돌린다
+    if ((viewName === 'home' || viewName === 'about') && typeof DXChat !== 'undefined' && DXChat.init) {
+      DXChat.init({ appName: 'launcher' });
+    }
 
     if (landing)   landing.style.display = 'none';
     if (appFrame)  appFrame.style.display = 'none';
@@ -599,6 +603,11 @@
       if (window.LauncherTutorial && typeof window.LauncherTutorial.connectToolbar === 'function') {
         window.LauncherTutorial.connectToolbar();
       }
+    }
+    /* About 에는 자기 투어가 없다 — 단추가 홈 투어를 열어 About 을 떠나 홈으로 갔다 (release audit L-18). 홈 투어에
+       이어 붙인 뒤 'launcher' 연결을 끊어 단추를 "튜토리얼 없음" 으로 둔다. 홈으로 돌아오면 위에서 다시 이어진다. */
+    if (viewName === 'about' && typeof DXToolbar !== 'undefined' && typeof DXToolbar.disconnectTutorial === 'function') {
+      DXToolbar.disconnectTutorial('launcher');
     }
   }
 

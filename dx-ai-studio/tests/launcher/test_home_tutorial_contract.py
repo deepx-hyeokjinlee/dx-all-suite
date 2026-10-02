@@ -22,7 +22,7 @@ ORDER = [
     "#homeTour",
     ".dx-chat-fab",
     ".dx-chat-settings-provider",
-    ".dx-chat-suggestions",
+    ".dx-chat-window.open",
 ]
 GONE = [".top-bar", "#launcherToolbar", "#deepxLinks", "#dxt-tutorial-card", "#replayBtn"]
 

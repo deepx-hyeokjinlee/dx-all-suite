@@ -172,7 +172,10 @@ class CompilerService:
     def __init__(self, job_root: Optional[Path] = None):
         self.jobs: Dict[str, CompileJob] = {}
         self._direct_compile_lock = threading.Lock()
-        self.job_root = Path(job_root) if job_root is not None else var_dir("compiler", "jobs")
+        # DX_COMPILER_JOB_ROOT: 작업 폴더를 var/ 밖에 — 시험이 쓴다 (path_policy._jobs_root 와 같은 값)
+        env_root = os.environ.get("DX_COMPILER_JOB_ROOT", "").strip()
+        self.job_root = (Path(job_root) if job_root is not None
+                         else Path(env_root) if env_root else var_dir("compiler", "jobs"))
         self.job_root.mkdir(parents=True, exist_ok=True)
         self.job_root = self.job_root.resolve()
         self.cleanup_completed_jobs()

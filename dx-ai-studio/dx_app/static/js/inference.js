@@ -194,7 +194,7 @@ function initRunPage(){
     input.addEventListener('change',function(){_cancelPendingQuickRunForUserInput(pair[1]);});
   });
   var cats=[...new Set(S.models.map(function(m){return m.category}))].sort();
-  $('r-cat').innerHTML='<option value="">'+T('— Select Category —')+'</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('');
+  $('r-cat').innerHTML='<option value="">'+T('— Select Category —')+'</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(catText(c))+'</option>'}).join('');
   // 모델이 없으면 고를 것도 없다. 빈 드롭다운만 두면 고장으로 읽히므로 어디서
   // 모델을 받는지 말해 주고, 그동안 고를 수 없는 컨트롤은 잠가 둔다.
   _setRunEmptyState(cats.length === 0);
@@ -797,10 +797,10 @@ function contRenderSlots(){
   var h='';
   CONT.slots.forEach(function(sl,i){
     var cats=[...new Set(S.models.map(function(m){return m.category}))].sort();
-    var catOpts='<option value="">\u2014 Category \u2014</option>'+cats.map(function(c){
-      return '<option'+(c===sl.cat?' selected':'')+'>'+c+'</option>';
+    var catOpts='<option value="">\u2014 '+T('Category')+' \u2014</option>'+cats.map(function(c){
+      return '<option value="'+esc(c)+'"'+(c===sl.cat?' selected':'')+'>'+esc(catText(c))+'</option>';
     }).join('');
-    var modOpts='<option value="">\u2014 Model \u2014</option>';
+    var modOpts='<option value="">\u2014 '+T('Model')+' \u2014</option>';
     if(sl.cat){
       var mods=S.models.filter(function(m){return m.category===sl.cat});
       modOpts+=mods.map(function(m){return '<option'+(m.name===sl.model?' selected':'')+'>'+m.name+'</option>'}).join('');
@@ -822,7 +822,8 @@ function contOnCat(idx,val){
   CONT.slots[idx].cat=val;CONT.slots[idx].model='';
   contRenderSlots();
 }
-function contOnModel(idx,val){CONT.slots[idx].model=val}
+// 고른 모델을 슬롯 화면의 이름표에 바로 보인다 — 예전에는 시작할 때까지 "(no model selected)" 였다 (release audit A-16)
+function contOnModel(idx,val){CONT.slots[idx].model=val;if(!CONT.running)contRenderGrid()}
 
 function toggleContInput(){
   var t=$('c-input-type').value;
@@ -868,6 +869,8 @@ async function contStart(){
   if(!valid){toast(T('Please select Category and Model for all slots'),'warn');return}
   var cInputType=$('c-input-type')?$('c-input-type').value:'video';
   if(cInputType==='video'&&!$('c-video').value){toast(T('Please select a video'),'warn');return}
+  // 카메라가 없으면 시작하지 않는다 — 예전에는 runner 를 띄웠다가 "카메라를 열 수 없음" 으로 끝났다 (A-16)
+  if(cInputType==='camera'&&!$('c-camera').value){toast(T('No cameras found'),'warn');return}
   for(var i=0;i<CONT.slots.length;i++){
     var m=findModel(CONT.slots[i].model);
     if(!m){toast(T('Model not found: ')+CONT.slots[i].model,'err');return}
@@ -875,6 +878,7 @@ async function contStart(){
     if(m.model_exists===false){toast(T('Model file not found: ')+CONT.slots[i].model,'err');return}
   }
   CONT.running=true;
+  CONT.stopped=false;
   $('c-start-btn').classList.add('hidden');
   $('c-stop-btn').classList.remove('hidden');
   document.querySelectorAll('#run-cont-tab select, #c-add-btn').forEach(function(el){el.disabled=true});
@@ -913,10 +917,12 @@ async function contStart(){
     if(cInputType==='camera'){body.camera_id=parseInt($('c-camera').value)||0;body.loop=parseInt($('c-cam-frames').value)||300}
     if(cInputType==='rtsp'){body.rtsp_url=buildRTSPUrl('c-rtsp-ip','c-rtsp-stream')}
     var res=await postJ('/api/run',body);
+    if(!CONT.running)break;   // 멈춘 slot 의 (죽인) 결과는 요약에 넣지 않는다
     allResults.push(res);
-    if(!CONT.running)break;
     contShowResult(i,res,sl.model);
   }
+  // Stop 이 이미 UI 를 정리했다 — '완료' toast · 요약을 또 내지 않는다 (release audit A-5)
+  if(CONT.stopped)return;
   contFinish(allResults);
 }
 
@@ -1001,6 +1007,7 @@ async function contStop(){
     return;
   }
   CONT.running=false;
+  CONT.stopped=true;
   await postJ('/api/stop',{});
   clearInterval(CONT.timerInt);
   $('c-timer').classList.remove('active');
@@ -1016,6 +1023,13 @@ async function contStop(){
     if(statusEl&&statusEl.textContent.trim()===T('Processing...'))DXIcon.label(statusEl,'stop',T('Stopped'));
     var slot=$('c-slot-'+i);
     if(slot&&slot.classList.contains('processing')){slot.className='cont-slot'}
+    /* 아직 끝나지 않은 slot 의 spinner ('… running inference…' · 'Waiting…') 를 멈춤 표시로 (A-5) */
+    var phEl=$('c-ph-'+i);
+    var finished=slot&&(slot.classList.contains('done')||slot.classList.contains('error'));
+    if(phEl&&!finished){
+      phEl.innerHTML='<p class="txt-dim mt8">'+DXIcon('stop')+' '+T('Stopped')+'</p>';
+      if(statusEl)DXIcon.label(statusEl,'stop',T('Stopped'));
+    }
   });
   toast(T('Continuous inference stopped'),'info');
 }

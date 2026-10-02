@@ -2402,6 +2402,8 @@ body {
    full-width on top and stops being sticky. */
 @media (max-width: 1200px) {
   .eco-hero { position: static; flex-basis: auto; width: 100%; max-width: 520px; margin: 0 auto; }
+  /* 탭에 자리를 준다 — 1024px 에서 "Agent Dev" 가 "Ag" 로 잘렸다 (release audit L-26) */
+  .logo-text, .studio-beta-badge { display: none; }
 }
 .eco-head h2 {
   font-size: var(--fs-lg);
@@ -2616,7 +2618,7 @@ body {
 .pm-desc { color: var(--text-muted); font-size: var(--fs-xs); line-height: 1.2; }
 .platform-values {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(72px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(132px, 100%), 1fr));   /* 72px 로는 "ONNX→DXNN Compile" 같은 배지가 잘렸다 (L-21) */
   gap: 4px;
   margin-bottom: 5px;
   width: 100%;
@@ -2787,10 +2789,12 @@ body {
    흐려 "더 있다"고 말하게 한다. 잘린 글자는 사고처럼 보이고 페이드는
    안내처럼 보인다. */
 @media (max-width: 1440px) {
+  /* 왼쪽도 흐린다 — 활성 탭을 보이려 스크롤하면 잘린 탭 끝이 로고에 붙어 "DEEPXller" 처럼 읽혔다 (release audit L-26) */
   .top-bar-center {
-    -webkit-mask-image: linear-gradient(90deg,
+    padding-left: var(--sp-4);
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) var(--sp-4),
       rgba(0, 0, 0, 1) calc(100% - 28px), rgba(0, 0, 0, 0));
-    mask-image: linear-gradient(90deg,
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) var(--sp-4),
       rgba(0, 0, 0, 1) calc(100% - 28px), rgba(0, 0, 0, 0));
   }
 }
@@ -2817,3 +2821,39 @@ body {
   flex-wrap: wrap; margin-top: var(--sp-4);
 }
 .home-ask .ask-go { margin-left: auto; }
+
+/* ── Connected browsers (remote-access.js) ─────────────────────
+   공용 .modal 위에 목록만 얹는다. 폭이 좁으면 행이 스스로 접힌다 (breakpoint 없음). */
+.ra-modal { width: 560px; }
+.ra-modal h2 { margin-bottom: var(--sp-2); }
+.ra-lead { margin: 0 0 var(--sp-3); color: var(--text-muted); font-size: var(--fs-md); line-height: 1.6; }
+.ra-addrs { list-style: none; margin: 0 0 var(--sp-3); padding: 0; display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.ra-addr { font-family: var(--mono); font-size: var(--fs-md); padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); user-select: all; overflow-wrap: anywhere; }
+.ra-list { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-4); }
+.ra-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); padding: var(--sp-3);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius); }
+.ra-info { flex: 1 1 240px; min-width: 0; }
+.ra-name { font-weight: 600; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.ra-tag { font-size: var(--fs-xs); font-weight: 500; padding: 0 var(--sp-2); border-radius: var(--radius-sm);
+  color: var(--accent); border: 1px solid var(--accent); }
+.ra-meta { color: var(--text-muted); font-size: var(--fs-sm); margin-top: var(--sp-1); overflow-wrap: anywhere; }
+.ra-empty { margin: 0; padding: var(--sp-4); text-align: center; color: var(--text-muted);
+  border: 1px dashed var(--border-subtle); border-radius: var(--radius); }
+.ra-error { color: var(--status-error); }
+
+/* 모듈 안에서는 모듈 자신의 채팅만 — launcher 의 버튼이 iframe 의 버튼을 같은 자리에서 덮어 모듈 전용 도움말을 열 수
+   없었다 (2026-10-02 release audit X-2). 열려 있던 launcher 채팅은 숨겨질 뿐 이어서 쓸 수 있다 (홈으로 오면 다시 보인다). */
+body.app-frame-visible .dx-chat-fab,
+body.app-frame-visible .dx-chat-window { display: none !important; }
+
+/* 폰 폭 — 로고 · 'AI Studio' · beta 배지 (≈230px) 와 toolbar (≈248px) 가 390px 에 다 들어가지 않아 테마 · 연결된 브라우저 ·
+   튜토리얼 단추가 화면 밖으로 밀려 누를 수 없었다 (2026-10-02 release audit L-2). 이 폭에서는 이름 글자 · 배지를 숨기고
+   간격을 줄인다 (600 은 breakpoint scale 값 — scripts/breakpoint_gate.py). */
+@media (max-width: 600px) {
+  .top-bar { padding: 0 var(--sp-3); }
+  .top-bar .logo-text,
+  .top-bar .studio-beta-badge { display: none; }
+  .top-bar-right { gap: var(--sp-2); margin-left: var(--sp-2); }
+  .top-bar-right .dx-toolbar { gap: var(--sp-1); }
+}

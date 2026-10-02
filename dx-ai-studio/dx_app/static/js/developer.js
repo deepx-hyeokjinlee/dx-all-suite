@@ -26,7 +26,7 @@ function _devInitSelects(){
   });
   // Populate category filters for delete/extract
   var cats=[...new Set(S.models.map(function(m){return m.category}))].sort();
-  var catOpts='<option value="">All Categories</option>'+cats.map(function(c){return'<option value="'+c+'">'+c+'</option>'}).join('');
+  var catOpts='<option value="">'+T('All Categories')+'</option>'+cats.map(function(c){return'<option value="'+esc(c)+'">'+esc(catText(c))+'</option>'}).join('');
   if($('dd-cat'))$('dd-cat').innerHTML=catOpts;
   if($('de-cat'))$('de-cat').innerHTML=catOpts;
   filterDelModels();
@@ -92,7 +92,7 @@ async function devAddModel(){
 
 async function devDelModel(){
   const name=$('dd-name').value;if(!name){toast(T('Enter model name'),'warn');return}
-  if(!confirm(T('Delete ')+name+'?'))return;
+  if(!confirm(T('Delete {name}?').replace('{name}',name)))return;
   const confirmText='delete:'+name;
   const res=await postJ('/api/dev/delete_model',{model_name:name,lang:$('dd-lang').value,confirm:confirmText});
   $('dd-out').classList.remove('hidden');

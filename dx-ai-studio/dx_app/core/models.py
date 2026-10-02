@@ -7,6 +7,7 @@ from dx_app.core.config import (BUILD_DIR, CPP_DIR, PY_DIR, ASSETS_DIR, CONFIG_F
                     TASK_TYPES, POSTPROCESSORS, DX_APP_ROOT, resolve_model_path)
 from dx_app.core.inference_exec import _find_fallback_binary, _is_executable_file, _python_runtime_ready
 from shared import dx_app_layout as _layout
+from shared.paths import SUITE_ROOT as _SUITE_ROOT
 from shared.tasks import canonical as _canonical_task
 from shared.catalog_sources import parse_test_models_conf as _shared_parse_test_models_conf
 
@@ -342,30 +343,48 @@ def _download_index() -> dict:
     _DL_URLS = idx
     return _DL_URLS
 
+def _find_example(name, model_file=""):
+    """name (registry model_name · 예제 이름 · 카탈로그 이름) → 이 tree 의 예제. task 는 모른다."""
+    stem = Path(model_file).name[:-5] if str(model_file).endswith(".dxnn") else ""
+    _variants = _layout._registry_variants(str(DX_APP_ROOT))
+    variant = _variants.get(name) or next((v for k, v in _variants.items() if k.lower() == str(name).lower()), "")
+    for cand in (name, stem, variant):
+        if not cand:
+            continue
+        hits = [e for e in _layout.examples(DX_APP_ROOT) if e.name == cand]
+        if hits:
+            return hits[0]
+    return None
+
+
 def get_model_info(name):
-    info={"name":name,"files":{},"postprocessors":{}};reg=_REG.get(name,{})
+    """Models 표의 Detail 대화상자 — 어느 layout 이든 (shared.dx_app_layout). 예전에는 옛 평평한 layout 만 걷고 모델 파일도
+    DX_APP_ROOT/<file> 에서만 찾아 per-model tree 에서 category · 파일 · 'Model File' 이 비었다 (2026-10-02 release audit A-4)."""
+    info={"name":name,"files":{},"postprocessors":{}}
+    # 카탈로그 이름 (SCRFD10G) 은 registry key (scrfd10g) 와 대소문자만 다르다
+    reg=_REG.get(name) or next((v for k,v in _REG.items() if k.lower()==str(name).lower()),{})
     mf=reg.get("file","")
     if mf.startswith("-"):
         import shlex as _shlex
-        _args=_shlex.split(mf)
-        _mexists=all((DX_APP_ROOT/a).exists() for a in _args if not a.startswith("-") and a.endswith(".dxnn"))
+        _args=[a for a in _shlex.split(mf) if not a.startswith("-") and a.endswith(".dxnn")]
+        _mexists=bool(_args) and all(_layout.find_model(a,DX_APP_ROOT,_SUITE_ROOT) is not None for a in _args)
     else:
-        _mexists=bool(mf)and(DX_APP_ROOT/mf).exists()
+        _mexists=bool(mf) and _layout.find_model(mf,DX_APP_ROOT,_SUITE_ROOT) is not None
     info.update({"model_file":mf,"model_exists":_mexists})
-    for lang,base in[("cpp",CPP_DIR),("python",PY_DIR)]:
-        for cd in base.iterdir():
-            if not cd.is_dir() or cd.name in SKIP_CAT:continue
-            md=cd/name
-            if not md.is_dir():continue
-            info["category"]=cd.name;info["category_label"]=CAT_LABEL.get(cd.name,cd.name)
-            lk="cpp" if lang=="cpp" else "python"
-            info["files"][lk]=[str(f.relative_to(DX_APP_ROOT)) for f in sorted(md.rglob("*")) if f.is_file()]
-            cf=md/"config.json"
-            if cf.exists():
-                try:info["config"]=json.loads(cf.read_text())
-                except Exception:info["config"]={}
-            pp=_pp_info(lk,cd.name,name)
-            if pp["name"]:info["postprocessors"][lk]=pp
+    ex=_find_example(name, mf if not mf.startswith("-") else "")
+    if ex is None:
+        return info
+    info["category"]=ex.task;info["category_label"]=CAT_LABEL.get(ex.task,ex.task)
+    for lk in ("cpp","python"):
+        d=ex.dir(lk)
+        if d is None or not d.is_dir():
+            continue
+        info["files"][lk]=[str(f.relative_to(DX_APP_ROOT)) for f in sorted(d.rglob("*")) if f.is_file()]
+        pp=_pp_info(lk,ex.task,ex.name)
+        if pp["name"]:info["postprocessors"][lk]=pp
+    cfg=_layout.load_config(DX_APP_ROOT,ex.task,ex.name)
+    if cfg:
+        info["config"]=cfg
     return info
 
 
@@ -504,4 +523,26 @@ def get_catalog():
                 out.append(mk(e.get("name"), e.get("category") or "PPU", e.get("dxnn_url"), e.get("json_url")))
     except Exception:
         pass
+    return out
+
+
+_LANGS = ("en", "ko", "ja", "zh-CN", "zh-TW", "es")
+
+
+def category_labels():
+    """slug → {언어: 이름} — 화면에 snake_case 를 그대로 보이지 않게 (2026-10-02 release audit A-12).
+
+    이름은 Model Zoo 의 카테고리 표 (6개 언어) 에서 — 두 모듈이 같은 task 를 같은 말로 부른다. dx_app 의 slug 가
+    다르게 불리면 (legacy ↔ per-model, shared.tasks) 짝을 찾고, 그래도 없으면 slug 를 사람 말로 펼친 영어."""
+    try:
+        from dx_modelzoo.core.config import CATEGORIES as _MZ
+    except Exception:
+        _MZ = {}
+    from shared.tasks import canonical, legacy
+    out = {}
+    for slug in sorted(set(CATEGORIES) | set(_MZ)):
+        info = _MZ.get(slug) or _MZ.get(canonical(slug)) or _MZ.get(legacy(slug)) or {}
+        en = info.get("label_en") or " ".join(w.upper() if w in ("ppu", "obb", "3d") else w.capitalize()
+                                             for w in slug.split("_"))
+        out[slug] = {lang: info.get(f"label_{lang}") or en for lang in _LANGS}
     return out

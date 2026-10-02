@@ -646,7 +646,8 @@ def test_demo_start_rejects_unconstructible_selected_pipeline_before_playback(mo
 
     assert sent["code"] == 424
     assert sent["payload"]["error"] == "contract_failed"
-    assert "gst.selected_pipeline" in sent["payload"]["detail"]
+    assert "gst.selected_pipeline" in sent["payload"]["message"]
+    assert "gst.selected_pipeline" not in sent["payload"]["detail"], "check id 는 message 에 한 번만 (release audit S-7)"
     assert len(calls) == 1
     assert calls[0][0] == "preflight"
     assert calls[0][1] == "unknownsource ! fakesink"
@@ -681,7 +682,8 @@ def test_pipeline_run_rejects_unconstructible_graph_before_stopping_playback(mon
 
     assert sent["code"] == 424
     assert sent["payload"]["error"] == "contract_failed"
-    assert "gst.selected_pipeline" in sent["payload"]["detail"]
+    assert "gst.selected_pipeline" in sent["payload"]["message"]
+    assert "gst.selected_pipeline" not in sent["payload"]["detail"], "check id 는 message 에 한 번만 (release audit S-7)"
     assert [call[0] for call in calls] == ["preflight"]
 
 

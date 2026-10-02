@@ -196,12 +196,13 @@ const DXStream = (() => {
     function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
     return { S, $, api, postJ, nav, toggleLang, toggleSidebar, toast, confirmModal, _base, escHtml,
-        _L: function(ko, en, ja, zhCN, zhTW) {
-            return '<span class="ko">' + ko + '</span>'
-                 + '<span class="en">' + en + '</span>'
-                 + '<span class="ja">' + ja + '</span>'
-                 + '<span class="zh-CN">' + zhCN + '</span>'
-                 + '<span class="zh-TW">' + zhTW + '</span>';
+        /* 고른 언어의 글자 하나 (ko, en, ja, zh-CN, zh-TW, es). 예전에는 언어별 <span> 다섯 개를 돌려주고 CSS 로
+           하나만 보였는데, toast · 확인 창은 textContent 로 넣으므로 날 HTML 이 그대로 보였고, 스페인어에는
+           span 이 없어 빈칸이었다 (release audit S-8). */
+        _L: function(ko, en, ja, zhCN, zhTW, es) {
+            var lang = (window.DXI18n && DXI18n.lang) || S.lang || 'en';
+            var v = { ko: ko, en: en, ja: ja, 'zh-CN': zhCN, 'zh-TW': zhTW, es: es }[lang];
+            return v || en;
         }
     };
 })();

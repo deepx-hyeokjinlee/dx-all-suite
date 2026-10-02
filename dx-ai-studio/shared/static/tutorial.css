@@ -110,13 +110,13 @@
   background: none; border: none; color: var(--dxt-text-dim);
   cursor: pointer; font-size: var(--fs-lg); line-height: 1; padding: 0 2px;
 }
-.dxt-tip-close:hover { color: #fff; }
+.dxt-tip-close:hover { color: var(--dxt-text); }
 
 .dxt-tip-title {
   padding: 12px 12px 4px;
   font-size: 15px;
   font-weight: 700;
-  color: #fff;
+  color: var(--dxt-text);
 }
 .dxt-tip-body {
   padding: 4px 12px 12px;
@@ -223,13 +223,13 @@
   border-bottom: 1px solid var(--dxt-border);
 }
 .dxt-toc-title {
-  font-size: var(--fs-xl); font-weight: 700; color: #fff;
+  font-size: var(--fs-xl); font-weight: 700; color: var(--dxt-text);
 }
 .dxt-toc-close {
   background: none; border: none; color: var(--dxt-text-dim);
   cursor: pointer; font-size: var(--fs-2xl); line-height: 1;
 }
-.dxt-toc-close:hover { color: #fff; }
+.dxt-toc-close:hover { color: var(--dxt-text); }
 
 /* Progress bar */
 .dxt-toc-progress {
@@ -278,7 +278,7 @@
 .dxt-toc-icon { font-size: 22px; flex-shrink: 0; }
 .dxt-toc-info { flex: 1; min-width: 0; }
 .dxt-toc-name {
-  font-size: var(--fs-base); font-weight: 600; color: #fff;
+  font-size: var(--fs-base); font-weight: 600; color: var(--dxt-text);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .dxt-toc-desc {
@@ -403,7 +403,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 .dxt-help-popover-title {
-  font-size: var(--fs-base); font-weight: 700; color: #fff;
+  font-size: var(--fs-base); font-weight: 700; color: var(--dxt-text);
   margin-bottom: 4px;
 }
 .dxt-help-popover-content {
@@ -442,7 +442,7 @@ body.dxt-help-active .dxt-help-badge { pointer-events: auto; }
   flex: 1;
 }
 .dxt-launcher-card .dxt-lc-title {
-  font-size: var(--fs-md); font-weight: 700; color: #fff;
+  font-size: var(--fs-md); font-weight: 700; color: var(--dxt-text);
 }
 .dxt-launcher-card .dxt-lc-desc {
   font-size: var(--fs-sm); color: var(--dxt-text-dim, #888);
@@ -629,6 +629,10 @@ body.dxt-help-active .dxt-help-badge { pointer-events: auto; }
 
 /* Tutorial-only overlays: non-modal dialogs stay below tooltip (99995) */
 dialog.dxt-tutorial-dialog {
+  /* show() 로 연 (non-modal) dialog 는 문서 흐름 속 absolute 라 긴 페이지에서 화면 밖에 떴다 — 화면에 고정한다
+     (release audit S-19: Stream 투어의 모델 상세 창이 y≈1000–3000 에 열렸다) */
+  position: fixed;
+  inset: 0;
   z-index: 99992;
   margin: auto;
   max-width: min(720px, 92vw);

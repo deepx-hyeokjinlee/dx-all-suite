@@ -263,19 +263,16 @@ class TestCSSLanguageMarkers:
             "shared/i18n.js does not add lang- classes to body"
         )
 
-    def test_dx_stream_relies_on_shared_css_markers(self):
-        """dx_stream uses CSS language spans — shared i18n must provide markers."""
-        source = _read("dx_stream/static/js/stream-app.js")
-        # Module uses language-specific spans like '.ko', '.en'
-        has_lang_spans = (
-            "'.ko'" in source or '".ko"' in source
-            or "'.en'" in source or '".en"' in source
-            or "class=\"ko\"" in source or "class='ko'" in source
-        )
-        assert has_lang_spans, (
-            "dx_stream does not appear to use CSS language spans (.ko/.en)"
-        )
+    def test_dx_stream_language_helper_returns_plain_text(self):
+        """DXStream._L 은 고른 언어의 글자 하나를 돌려준다 (release audit S-8).
 
+        예전에는 언어별 <span class="ko">… 다섯 개를 돌려주고 CSS 로 하나만 보였는데, toast 와 확인 창은
+        textContent 로 넣으므로 날 HTML 이 그대로 보였고, 스페인어 span 은 없어 빈칸이었다."""
+        source = _read("dx_stream/static/js/stream-app.js")
+        body = source[source.index("_L: function("):]
+        body = body[: body.index("}") + 1]
+        assert "class=\"ko\"" not in body and "<span" not in body
+        assert "es" in body.split(")")[0], "_L 은 여섯째 인자로 스페인어를 받는다"
 
 
 class TestNoHardcodedCriticalText:

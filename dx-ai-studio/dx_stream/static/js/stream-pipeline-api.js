@@ -266,10 +266,12 @@ DXStream.pipelineRun = async function () {
         }
         // Prefer the human-readable message (e.g. "Model not installed: … Download from
         // Setup") over the bare error code so a missing-asset run isn't a cryptic toast.
-        var message = resp.message || resp.error;
-        if (resp.detail) message += ' ' + resp.detail;
-        if (resp.remediation) message += ' ' + resp.remediation;
-        DXStream.toast(message, 'error');
+        // 부분마다 번역한다 (shared/static/server-error-i18n.js) — 예전에는 모든 언어에서 영어 원문이 이어 붙었다 (S-7)
+        var _tr = function (t) { return (window.translateServerError && t) ? window.translateServerError(t) : t; };
+        var parts = [resp.message || resp.error];
+        String(resp.detail || '').split(' — ').forEach(function (d) { if (d) parts.push(d); });
+        if (resp.remediation) parts.push(resp.remediation);
+        DXStream.toast(parts.map(_tr).join(' — '), 'error');
         return;
     }
     DXStream.toast(T('Pipeline started'), 'success');

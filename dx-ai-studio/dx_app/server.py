@@ -122,6 +122,11 @@ def _validate_inference_payload(data, live=False):
         data["category"] = _require_category(data.get("category", ""))
         _require_model_name(data.get("model_name", ""))
         _require_model_file(data.get("model_file", ""))
+        # 부르는 쪽 이름 (Model Zoo 카탈로그 id 등) → 이 dx_app 의 예제 이름. 없으면 남의 binary 를 빌린다 (release audit Z-1)
+        if not str(data["model_file"]).startswith("-"):
+            from shared import dx_app_layout as _layout
+            data["model_name"] = _layout.example_name(DX_APP_ROOT, data["category"], data["model_name"],
+                                                      data["model_file"])
         lang = data.get("lang", "cpp")
         if lang not in _RUN_LANGS:
             raise ValueError(f"Invalid lang: {lang!r}")
@@ -165,6 +170,7 @@ def _json_bool(value, default=False):
     return bool(value)
 
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from dx_app.core.modelzoo_gateway import ModelZooGateway
 from dx_app.core.filesystem import fs_list
 from dx_app.core.setup_steps import SETUP_STEPS, setup_status, setup_run, deep_diagnostics, setup_log, setup_input, quick_start_plan
@@ -210,16 +216,7 @@ def _hb_touch():
 _chat_engine = ChatEngine(
     app_name="dx_app",
     context_callback=lambda: {"models": [m.get("name","") for m in get_models()[:20]]},
-    fallback_rules=[
-        (["yolo", "detection", "객체", "검출"], {
-            "ko": "Object Detection 탭에서 YOLO 모델을 실행할 수 있습니다.",
-            "en": "You can run YOLO models in the Object Detection tab.",
-        }),
-        (["sdk", "python", "c++"], {
-            "ko": "DX Runtime SDK 사용법은 Developer 탭을 참조하세요.",
-            "en": "See the Developer tab for DX Runtime SDK usage.",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_app")
 )
 
 
@@ -335,6 +332,9 @@ class Handler(DXBaseHandler):
             if path=="/api/images":return self.send_json(get_images(self.read_query_param("category") or None))
             if path=="/api/videos":return self.send_json(get_videos(self.read_query_param("category") or None))
             if path=="/api/categories":return self.send_json(CATEGORIES)
+            if path=="/api/category_labels":
+                from dx_app.core.models import category_labels
+                return self.send_json(category_labels())
             if path=="/api/task_defaults":return self.send_json(_task_defaults())
             if path=="/api/recent_runs":
                 with config._history_lock:data=list(config._recent_runs)

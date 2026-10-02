@@ -1,57 +1,73 @@
 # The Hub
 
-The **hub** is the landing page that ties the studio together. Every tool is launched
-from here; you normally reach each one through the hub, which proxies them under a single
-address.
+The **hub** is the home page that ties the studio together. Every tool opens from here and
+runs under the hub's single address; the hub proxies each module, so one URL is all you
+need (and all you can reach from another computer — module ports listen on the board only).
 
-![The hub's orbital launcher — the eight tools orbit the central DEEPX mark, each showing its online status.](resources/hub.png)
+![The hub home — the prompt box, the eight tool cards with SDK Library and About DEEPX, the DX-M1 widget and the "Measured on DX-M1" card.](resources/hub.png)
 
 ## Layout
 
-- **Orbital launcher** — the eight tools orbit the central DEEPX mark. Click a tile to
-  open that tool; the shell swaps to the module while the hub chrome stays in place.
-- **Live status** — a status dot on each tile (and the top-bar row) shows whether that
-  module is online; the hub polls health every few seconds and flags a module that's
-  starting, unavailable, or crashed. Each tile also shows the module's `:port`, which you
-  can click to open that module directly in a new tab.
-- **Top bar** — 6-language switcher, the guided-tutorial toggle, a **Platform Info**
-  overview, and a shortcut to the DEEPX store / "Buy now".
-- **Global AI assistant** — a floating help button (bottom-right) opens **DX AI Studio
-  Help**, an assistant available across the whole studio; set or clear its API key from
-  the panel. It supports multiple providers, including fully offline options (a local
-  server or a signed-in coding CLI) — see
-  [SDK Library & About](11_SDK_Library_and_About.md) for the full provider list.
-- **Hub views** — besides the eight tools, the hub hosts the **SDK Library** (in-app
-  DEEPX documentation and brochures) and the **About DEEPX** page. See
-  [SDK Library & About](11_SDK_Library_and_About.md).
+- **Prompt box** — *Describe anything. Run it on DX-M1.* Write what you want in plain words
+  and click **Build it**. The hub either opens the module that already does it (for example,
+  "compile yolo26n to DXNN" opens DX Compiler), or runs DX Agent Dev right on the home page,
+  where you follow its activity and answer its questions. Example chips under the box fill in
+  a ready-made request; the **Agent** row picks the coding agent, model, effort and mode.
+- **Tool cards** — the eight tools plus **SDK Library** and **About DEEPX**. Cards show live
+  facts where a module can count them (for example *26 demos · 12 groups* for DX App, the
+  catalogue size for Model Zoo). Click a card to open the tool; the hub chrome stays in
+  place.
+- **DX-M1 widget** (left) — the NPU in this computer: cores, temperature, clock and power.
+  Click it to open DX Monitor.
+- **Measured on DX-M1** (right) — a model's FPS measured on this device, and how many models
+  and tasks were measured. Click it to open DX Benchmark.
+- **Go deeper at DEEPX Developers** — the bar at the bottom links to Get Started, S/W
+  Download, Tech Docs, Documents, Model Zoo, GitHub and deepx.ai.
+- **Explore DX AI Studio** and **Physical AI ecosystem** — the two chips under the heading
+  open the platform overview (every module at a glance) and the DEEPX ecosystem page.
 
-If a module fails to start, its tile shows an **unavailable / crashed** state with a
-**Retry** action. The intro animation can be replayed any time via **Replay Intro**.
+If a module is not up yet, opening it shows a loading state; the hub keeps retrying for
+about 30 seconds, then shows **Module unavailable** with **Retry**.
 
-## Guided tutorial
+## Top bar
 
-**Tutorial Mode** is on by default: opening a module starts an interactive, step-through
-walkthrough (coach marks with **Prev / Skip / Next**). Toggle it from the top bar to turn
-the automatic tutorials off — or on — at any time.
+From left to right on the right side:
 
-![The guided tutorial overlay on the hub — step-through coach marks, with Tutorial Mode toggled from the top bar.](resources/tutorial.png)
+- **Buy** — the DEEPX store.
+- **Language** — the six languages (see below).
+- **Theme** — cycles dark → light → system.
+- **Connected browsers** — appears when the studio is reachable from the network. It lists
+  the browsers paired from other computers (browser, IP, last active, paired date) with
+  **Disconnect**; on the board it also shows the address other computers open. See
+  [Remote access & security](01_Installation_and_Launch.md#remote-access-security).
+- **Tutorial** — opens the tutorial contents for the current view.
+
+The global **DX AI Studio Help** assistant is the round chat button at the bottom right of
+every view; set or clear its API key from its settings. It supports several providers,
+including fully offline ones (a local server or a signed-in coding CLI) — see
+[SDK Library & About](11_SDK_Library_and_About.md). Its header also links to the web
+**DEEPX Agent**.
+
+## Guided tutorials
+
+**Tutorial Mode** (the switch at the top right of the home, next to **Replay Intro**) is on
+by default. With it on, the first visit to the home runs a short walkthrough, and opening a
+tool opens that tool's tutorial contents — pick a section or **Start from Beginning**. Steps
+have **Prev / Skip / Next** (arrow keys work too); **Esc** ends the tour. The **Tutorial**
+button in the top bar opens the contents at any time.
+
+![The guided tutorial on the home — a step-through coach mark with Prev / Skip / Next.](resources/tutorial.png)
 
 ## Navigating
 
-- Click any orbital tile to enter a tool; use the top navigation or the browser **Back**
-  button to return to the hub.
-- The current tool and its view are reflected in the **URL**, so links are shareable and
-  reload-safe (for example, a DX EdgeGuide recommendation or an SDK Library document can
-  be linked directly).
-- **Keyboard shortcuts** — `Alt`+`1`…`8` jump straight to a tool; `Esc` backs out of a
-  tool or closes an open panel.
+- Click a card to enter a tool; use the logo or the browser **Back** button to return home.
+- The current tool and view are reflected in the **URL**, so links are shareable and
+  reload-safe (for example, a DX EdgeGuide recommendation or an SDK Library document).
+- **Keyboard shortcuts** — `Alt`+`1`…`8` open a tool directly. `Esc` closes the topmost
+  thing first — the chat, the tutorial, a search, a dialog — and only then leaves the tool.
 
 ## Language
 
 The entire studio is available in **6 languages** — English, 한국어, 日本語, 简体中文,
-繁體中文, Español. Switch from the top bar at any time; the choice persists.
-
-## Guided tutorials
-
-Several tools ship an in-app guided tutorial. Toggle tutorial mode from the top bar to
-get step-by-step callouts over the live UI. Tutorials are optional and can be replayed.
+繁體中文, Español. Switch from the top bar at any time; every open tool follows, and the
+choice persists.

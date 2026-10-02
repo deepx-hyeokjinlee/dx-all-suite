@@ -81,7 +81,7 @@
 /* Topbar toggle & buttons */
 .sdk-topbar-toggle {
   display: flex; gap: 2px;
-  background: rgba(0,0,0,0.3);
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent);   /* 검은 반투명은 밝은 테마에서 1.97:1 이었다 */
   border-radius: var(--radius-sm); padding: 2px;
 }
 .sdk-toggle-btn {
@@ -527,8 +527,8 @@
   white-space: nowrap;
 }
 .sdk-sidebar-count {
-  font-size: var(--fs-2xs); color: var(--text-faint);
-  background: rgba(0,0,0,0.3);
+  font-size: var(--fs-2xs); color: var(--text-muted);
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
   padding: 1px 6px; border-radius: var(--radius);
 }
 .sdk-sidebar-section {

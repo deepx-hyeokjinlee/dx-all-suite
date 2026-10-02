@@ -32,6 +32,34 @@
     return (window.DXI18n && window.DXI18n.T) ? window.DXI18n.T(key) : key;
   }
 
+  function _esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  /* 문장 하나를 통째로 번역한다 — 조각을 이어 붙이면 어순이 다른 언어 (ko · ja) 에서 문장이 깨졌다
+     (release audit L-15: "선택 에 맞는 모델을 object detection"). {x} 는 값, **…** 는 굵게. */
+  function _tpl(key, vals) {
+    var out = _esc(_t(key)).replace(/\{(\w+)\}/g, function (_, k) { return _esc((vals || {})[k]); });
+    return out.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  }
+
+  /* 라우터의 task id → 화면의 이름. 모르는 id 는 사람이 읽는 모양으로. */
+  var TASK_NAME = {
+    object_detection: 'Object Detection', pose_estimation: 'Pose Estimation', segmentation: 'Segmentation',
+    face_detection: 'Face Detection', classification: 'Classification',
+    instance_segmentation: 'Instance Segmentation', semantic_segmentation: 'Semantic Segmentation'
+  };
+  function _taskName(id) {
+    if (!id) return '';
+    var key = TASK_NAME[id] || String(id).replace(/_/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    return _t(key);
+  }
+  var SOURCE_NAME = { webcam: 'Webcam', video: 'Video file', rtsp: 'RTSP stream' };
+  function _sourceName(id) { return id ? _t(SOURCE_NAME[id] || id) : ''; }
+  var VERB_NAME = { compile: 'DX Compiler', benchmark: 'DX Benchmark', monitor: 'DX Monitor' };
+
   /* One fetch per session, not per keystroke. A failure is not fatal: an empty
      catalogue just means the router has fewer terms to match against. */
   function _ensureData() {
@@ -58,19 +86,24 @@
       if (value === null || value === undefined || value === '') return;
       out.push('<span class="read-chip"><b>' + label + '</b>' + value + '</span>');
     }
-    add(_t('task'), parsed.task ? parsed.task.replace(/_/g, ' ') : null);
-    add(_t('model'), parsed.model);
+    add(_t('task'), parsed.task ? _esc(_taskName(parsed.task)) : null);
+    add(_t('model'), parsed.model ? _esc(parsed.model) : null);
     add(_t('channels'), parsed.channels);
     add(_t('target'), parsed.fps ? parsed.fps + ' FPS' : null);
-    add(_t('input'), parsed.source);
+    add(_t('input'), parsed.source ? _esc(_sourceName(parsed.source)) : null);
     return out.join('');
   }
 
   function _routeCard(route, isFirst) {
     var kind = _t(KIND_LABEL[route.kind] || 'Open');
-    var name = route.title ? String(route.title).replace(/_/g, ' ') : route.module;
+    var name = route.kind === 'verb' ? (VERB_NAME[route.title] || route.title)
+      : route.kind === 'models' && route.task ? _taskName(route.task)
+      : route.kind === 'run' && route.task ? _taskName(route.task)
+      : (route.title ? String(route.title).replace(/_/g, ' ') : route.module);
     var why = route.kind === 'models' && route.count
-      ? route.count + ' ' + _t('models')
+      ? _t('{n} models').replace('{n}', route.count)
+      : route.kind === 'run' && route.channels
+      ? _t('{n}-channel').replace('{n}', route.channels)
       : (route.why || route.model || '');
     var btn = document.createElement('button');
     btn.type = 'button';
@@ -78,9 +111,9 @@
     btn.dataset.module = route.module;
     if (route.demo !== undefined && route.demo !== null) btn.dataset.demo = route.demo;
     btn.innerHTML =
-      '<span class="route-kind">' + kind + '</span>' +
-      '<span class="route-name">' + name + '</span>' +
-      '<span class="route-why">' + why + '</span>' +
+      '<span class="route-kind">' + _esc(kind) + '</span>' +
+      '<span class="route-name">' + _esc(name) + '</span>' +
+      '<span class="route-why">' + _esc(why) + '</span>' +
       '<span class="route-go">' + _t('Open') + ' →</span>';
     return btn;
   }
@@ -89,16 +122,12 @@
      the router understood, so it is never a generic four lines. */
   function _planSteps(parsed) {
     var steps = [];
-    if (parsed.task) {
-      steps.push('<b>' + _t('Pick') + '</b> ' +
-        _t('a model for') + ' ' + parsed.task.replace(/_/g, ' '));
-    } else {
-      steps.push('<b>' + _t('Find') + '</b> ' + _t('the closest model in the zoo'));
-    }
-    steps.push('<b>' + _t('Generate') + '</b> ' + _t('an app in a new session folder'));
-    steps.push('<b>' + _t('Wire') + '</b> ' +
-      (parsed.source ? parsed.source : _t('the input')) + ' ' + _t('and the logic you described'));
-    steps.push('<b>' + _t('Run') + '</b> ' + _t('it and show you the output'));
+    if (parsed.task) steps.push(_tpl('**Pick** a model for {task}', { task: _taskName(parsed.task) }));
+    else steps.push(_tpl('**Find** the closest model in the zoo'));
+    steps.push(_tpl('**Generate** an app in a new session folder'));
+    steps.push(_tpl('**Wire** {input} and the logic you described',
+      { input: parsed.source ? _sourceName(parsed.source) : _t('the input') }));
+    steps.push(_tpl('**Run** it and show you the output'));
     return steps.map(function (s) { return '<li>' + s + '</li>'; }).join('');
   }
 
@@ -125,7 +154,7 @@
     var plan = $('answerAgentPlan');
     if (!matched) {
       $('answerAgentSteps').innerHTML = _planSteps(result.parsed);
-      $('answerAgentEta').textContent = '~3–6 min';
+      $('answerAgentEta').textContent = _t('about 3–6 min');
     }
     _show(plan, !matched);
     _show(panel, true);

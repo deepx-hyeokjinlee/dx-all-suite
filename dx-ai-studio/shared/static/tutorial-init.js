@@ -23,12 +23,17 @@
   window.registerSharedLangRefresher = function (fn) {
     if (typeof fn === 'function') window.__sharedLangRefreshers.push(fn);
   };
-  if (typeof DXI18n !== 'undefined' && typeof DXI18n.onLangChange === 'function') {
-    DXI18n.onLangChange(function () {
-      window.__sharedLangRefreshers.forEach(function (fn) {
-        try { fn(); } catch (e) { console.error('[shared-lang-refresh]', e); }
-      });
+  function _runSharedRefreshers() {
+    window.__sharedLangRefreshers.forEach(function (fn) {
+      try { fn(); } catch (e) { console.error('[shared-lang-refresh]', e); }
     });
+  }
+  if (typeof DXI18n !== 'undefined' && typeof DXI18n.onLangChange === 'function') {
+    DXI18n.onLangChange(_runSharedRefreshers);
+  } else {
+    /* launcher 는 이 파일을 i18n.js 보다 먼저 읽는다 — 그때는 DXI18n 이 없어 구독이 걸리지 않았고, 투어 중 언어를
+       바꿔도 툴팁 · 목차가 그대로였다 (release audit E-4 / L-11). i18n.js 가 언어를 바꿀 때마다 쏘는 사건으로 듣는다. */
+    window.addEventListener('dx-lang-applied', _runSharedRefreshers);
   }
 
   window.DXTutorial = {
@@ -94,6 +99,9 @@
           // Launcher, first load with the tutorial on → auto-run the walkthrough. It opens on the
           // ask box (spec 2026-09-23 §9); the "you can turn this off" switch is its tour-row step.
           // Afterwards (and for module tutorials) just open the table of contents.
+          // launcher 의 투어 · 목차는 홈에서만 — 모듈 · SDK Library · About 로 바로 들어왔으면 그 화면의 튜토리얼이 맡는다.
+          // 예전에는 'Launcher Home' 목차가 모듈 목차 위에 같이 열렸다 (2026-10-02 release audit X-3 / A-21 / L-3).
+          if (engine.appId === 'launcher' && window.DXLauncher && window.DXLauncher.currentApp) return;
           if (engine.appId === 'launcher' &&
               !localStorage.getItem('dx-tutorial-launcher-autostarted')) {
             try { localStorage.setItem('dx-tutorial-launcher-autostarted', '1'); } catch (e) {}

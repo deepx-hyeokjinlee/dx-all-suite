@@ -34,7 +34,8 @@ def _default_roots() -> list[Path]:
 
 
 def _jobs_root() -> Path:
-    return STUDIO_ROOT / "var" / "compiler" / "jobs"
+    env_root = os.environ.get("DX_COMPILER_JOB_ROOT", "").strip()   # compiler_service 와 같은 값
+    return Path(env_root) if env_root else STUDIO_ROOT / "var" / "compiler" / "jobs"
 
 
 def allowed_roots() -> list[Path]:

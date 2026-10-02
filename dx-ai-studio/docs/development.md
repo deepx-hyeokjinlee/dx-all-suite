@@ -23,14 +23,14 @@ python3 -m venv .venv
 
 ```bash
 ./launcher.sh                 # http://localhost:8890 (sticky port; auto-bumps if busy)
-./launcher.sh --port 9000     # pin a launcher port
+./launcher.sh --port 9000     # preferred launcher port (still bumps if busy)
 ./launcher.sh --no-browser    # do not auto-open a browser
 ./launcher.sh --fast          # skip the cosmetic boot animation
 ./launcher.sh --no-kill       # do not kill our own stale servers first
 ```
 
 `launcher.sh` kills only *our own* stale `launcher.py` / `dx_*/server.py` processes,
-picks a free launcher port (remembered in `launcher/.launcher-port`), then execs
+picks a free launcher port (remembered in `dx-ai-studio/.launcher-port`), then execs
 `python3 launcher/launcher.py`. The launcher spawns all eight modules on ephemeral
 ports and reverse-proxies them — you only ever touch the one launcher port.
 
@@ -121,9 +121,11 @@ via Playwright (`bash scripts/run_ci.sh --browser`).
   logic in `core/`.
 - Front-end: vanilla JavaScript, no framework. Module-local CSS loads last, after the
   shared `dx-tokens/base/utilities` foundation in `shared/static/`.
-- The product is **dark-mode only** (light mode was removed).
+- Themes: dark, light and system (`shared/static/dx-theme.js`, default `system`). Colours come from
+  tokens (`dx-tokens.css`, `dx-theme-light.css`); a new raw hex fails the CSS-token ratchet.
 - Do not stage runtime artifacts (`launcher/.ports/`, `*.launcher-*`, generated
   catalogs); see `.gitignore`.
-- Gotcha: avoid `Path.is_relative_to()` (3.9+) — the studio supports Python 3.8, so
+- Gotcha: avoid `Path.is_relative_to()` and `str.removeprefix/removesuffix` (3.9+) —
+  `tests/shared/test_python_floor.py` guards the string ones. The studio supports Python 3.8, so
   use `path.resolve().relative_to(root.resolve())` and catch `ValueError` instead
   (see `dx_modelzoo/server.py`).

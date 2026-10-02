@@ -129,8 +129,6 @@
           </thead>
           <tbody>
             <tr><td>FPS</td><td id="perf-fps-current">--</td><td id="perf-fps-avg">--</td><td id="perf-fps-max">--</td></tr>
-            <tr><td data-i18n="Inference Latency">Inference Latency</td><td id="perf-latency-current">-- ms</td><td id="perf-latency-avg">-- ms</td><td id="perf-latency-max">-- ms</td></tr>
-            <tr><td data-i18n="E2E Latency">E2E Latency</td><td id="perf-e2e-current">-- ms</td><td id="perf-e2e-avg">-- ms</td><td id="perf-e2e-max">-- ms</td></tr>
             <tr><td data-i18n="NPU Utilization">NPU Utilization</td><td id="perf-npu-current">--%</td><td id="perf-npu-avg">--%</td><td id="perf-npu-max">--%</td></tr>
           </tbody>
         </table>
@@ -209,6 +207,7 @@
       <option value="8" data-i18n="Demo 8 — Multi-Stream">Demo 8 — Multi-Stream</option>
       <option value="9" data-i18n="Demo 9 — RTSP Stream">Demo 9 — RTSP Stream</option>
       <option value="10" data-i18n="Demo 10 — Secondary Inference">Demo 10 — Secondary Inference</option>
+      <option value="11" data-i18n="Demo 11 — Depth Estimation">Demo 11 — Depth Estimation</option>
     </select>
     <span class="txt-xs txt-dim" id="pipeline-element-count" data-i18n="Elements: 0">Elements: 0</span>
   </div>
@@ -271,12 +270,7 @@
 
   <!-- Category Filter -->
   <div class="filter-bar" id="models-filter-bar">
-    <button class="btn btn-ghost btn-sm active" data-cat="all" onclick="DXStream.filterModels('all')" data-i18n="All">All</button>
-    <button class="btn btn-ghost btn-sm" data-cat="object_detection" onclick="DXStream.filterModels('object_detection')" data-i18n="Object Detection">Object Detection</button>
-    <button class="btn btn-ghost btn-sm" data-cat="classification" onclick="DXStream.filterModels('classification')" data-i18n="Classification">Classification</button>
-    <button class="btn btn-ghost btn-sm" data-cat="segmentation" onclick="DXStream.filterModels('segmentation')" data-i18n="Segmentation">Segmentation</button>
-    <button class="btn btn-ghost btn-sm" data-cat="pose_estimation" onclick="DXStream.filterModels('pose_estimation')" data-i18n="Pose Estimation">Pose Estimation</button>
-    <button class="btn btn-ghost btn-sm" data-cat="face_detection" onclick="DXStream.filterModels('face_detection')" data-i18n="Face">Face</button>
+    <button class="btn btn-ghost btn-sm active" data-cat="all" data-i18n="All">All</button>
   </div>
 
   <!-- Model Search -->
@@ -575,7 +569,7 @@
   <div class="card mt16">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between">
       <h2><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#search"></use></svg> <span data-i18n="Deep Diagnostics">Deep Diagnostics</span></h2>
-      <button class="btn btn-sm" id="stream-diag-run-btn" onclick="DXStream.runDiagnostics()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run">Run</span></button>
+      <button class="btn btn-sm" id="stream-diag-run-btn" onclick="DXStream.runDiagnostics()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Run diagnostics">Run diagnostics</span></button>
     </div>
     <div id="stream-diag-summary" style="display:none"></div>
     <div id="stream-diag-results" class="diag-grid"></div>
@@ -734,8 +728,11 @@ document.querySelectorAll('.dx-tab').forEach(function (t) {
 
         return new Promise(function(resolve) {
             _resolve = resolve;
-            if (dlg && dlg.showModal) dlg.showModal();
-            if (field) field.focus();
+            // preview (튜토리얼): top layer 가 아닌 일반 dialog 로 — showModal 은 튜토리얼 말풍선 · Next 를 그 아래로
+            // 숨겼다 (release audit S-3)
+            if (dlg && opts.preview && dlg.show) dlg.show();
+            else if (dlg && dlg.showModal) dlg.showModal();
+            if (field && !opts.preview) field.focus();
         });
     };
 

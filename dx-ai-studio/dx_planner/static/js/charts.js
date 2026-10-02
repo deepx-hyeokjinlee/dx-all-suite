@@ -291,7 +291,7 @@ const RadarChart = {
     const cy = size / 2;
     const radius = size * 0.35;
     const axes = 5;
-    const labels = ['FPS', 'Channels', 'TOPS/W', 'Stability', 'TOPS'];
+    const labels = ['FPS', 'Channels', 'TOPS/W', 'Stability', 'TOPS'].map(l => (typeof T === 'function' ? T(l) : l));
 
     // 각 플랫폼에 대해 5축 값 계산
     function calcMetrics(pid) {

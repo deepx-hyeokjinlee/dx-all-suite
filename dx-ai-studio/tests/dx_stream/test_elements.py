@@ -181,3 +181,35 @@ class TestConnectionValidation:
         assert "element_overrides" in rules
         assert "semantic_warnings" in rules
         assert "auto_converter_rules" in rules
+
+
+# ── 속성 이름 · 기본값은 설치된 플러그인과 맞아야 한다 (release audit S-17) ──
+import shutil
+import subprocess
+
+from core.elements import _ELEMENTS, _GST_DEFAULTS
+
+
+def test_gst_defaults_only_name_listed_properties():
+    for name, defaults in _GST_DEFAULTS.items():
+        listed = {p["name"] for p in get_element_by_name(name)["properties"]}
+        assert set(defaults) <= listed, (name, set(defaults) - listed)
+
+
+def test_element_detail_carries_default_for_table():
+    props = {p["name"]: p for p in get_element_by_name("DxPreprocess")["properties"]}
+    assert props["keep-ratio"]["default"] == "true"
+    assert props["target-class-id"]["default"] == "-1"
+
+
+@pytest.mark.skipif(not shutil.which("gst-inspect-1.0"), reason="GStreamer not installed")
+def test_dx_element_properties_exist_in_installed_plugin():
+    for e in _ELEMENTS:
+        if not e["name"].startswith("Dx"):
+            continue
+        out = subprocess.run(["gst-inspect-1.0", e["name"].lower()], capture_output=True, text=True, timeout=30).stdout
+        if "Element Properties" not in out:
+            continue  # 이 PC 에 없는 플러그인 (DxVnpu*)
+        body = out.split("Element Properties:", 1)[1]
+        for prop in e.get("properties", []):
+            assert f"\n  {prop['name']} " in body, (e["name"], prop["name"])

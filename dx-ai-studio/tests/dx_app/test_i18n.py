@@ -123,12 +123,14 @@ def test_app_dictionary_entries_cover_target_languages():
 
 def test_app_global_t5_defaults_to_en_and_keeps_legacy_order():
     source = i18n_source()
-    assert "function _T5(ko, en, ja, zhCN, zhTW)" in source
+    # 다섯 언어 순서는 그대로, 스페인어는 여섯째 인자 (release audit A-13)
+    assert "function _T5(ko, en, ja, zhCN, zhTW, es)" in source
     body = _extract_braced_body(source, "function _T5")
     assert "|| 'en'" in body
     assert "|| 'ko'" not in body
     assert "if (lang === 'ko') return ko || en;" in body
     assert "if (lang === 'ja') return ja || en;" in body
+    assert "if (lang === 'es') return es || en;" in body
 
 
 def test_app_no_visible_locale_formatting_is_pinned_to_ko_kr():

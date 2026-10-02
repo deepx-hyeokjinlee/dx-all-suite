@@ -19,22 +19,22 @@ COMMON_RULES: list[tuple[list[str], dict[str, str]]] = [
         ["안녕", "hello", "hi", "hey", "반가", "こんにちは", "你好"],
         {
             "ko": "안녕하세요! 🤖 **DX Assistant**입니다.\n"
-                  "DeepX Edge AI 플랫폼에 대해 무엇이든 물어보세요!\n\n"
+                  "DEEPX Edge AI 플랫폼에 대해 무엇이든 물어보세요!\n\n"
                   "💡 AI 응답을 사용하려면 채팅 설정(⚙️)에서 API 키를 설정하세요.",
             "en": "Hello! 🤖 I'm **DX Assistant**.\n"
-                  "Ask me anything about the DeepX Edge AI platform!\n\n"
+                  "Ask me anything about the DEEPX Edge AI platform!\n\n"
                   "💡 To use AI responses, open chat settings (⚙️) and set your API key.",
             "ja": "こんにちは! 🤖 **DX Assistant** です。\n"
-                  "DeepX Edge AI プラットフォームについて何でも質問してください!\n\n"
+                  "DEEPX Edge AI プラットフォームについて何でも質問してください!\n\n"
                   "💡 AI 応答を使用するには、チャット設定(⚙️)で API キーを設定してください。",
             "zh-CN": "你好！🤖 我是 **DX Assistant**。\n"
-                     "欢迎询问任何有关 DeepX Edge AI 平台的问题！\n\n"
+                     "欢迎询问任何有关 DEEPX Edge AI 平台的问题！\n\n"
                      "💡 要使用 AI 响应，请在聊天设置(⚙️)中设置 API 密钥。",
             "zh-TW": "你好！🤖 我是 **DX Assistant**。\n"
-                     "歡迎詢問任何關於 DeepX Edge AI 平台的問題！\n\n"
+                     "歡迎詢問任何關於 DEEPX Edge AI 平台的問題！\n\n"
                      "💡 若要使用 AI 回應，請在聊天設定(⚙️)中設定 API 金鑰。",
             "es": "¡Hola! 🤖 Soy **DX Assistant**.\n"
-                  "Pregúnteme lo que desee sobre la plataforma DeepX Edge AI.\n\n"
+                  "Pregúnteme lo que desee sobre la plataforma DEEPX Edge AI.\n\n"
                   "💡 Para usar respuestas de IA, abra la configuración del chat (⚙️) y establezca su clave API.",
         },
     ),
@@ -43,41 +43,59 @@ COMMON_RULES: list[tuple[list[str], dict[str, str]]] = [
          "what does this app do", "이 앱", "このアプリ", "这个应用", "這個應用"],
         {
             "ko": "**DX AI Studio** 주요 기능:\n"
-                  "- 📊 **DX App** — AI 모델 추론, 하드웨어 모니터링\n"
-                  "- 🎬 **DX Stream** — 비디오 스트리밍 파이프라인\n"
-                  "- 🗂️ **DX Model Zoo** — 340+ 모델 카탈로그\n"
-                  "- ⚙️ **DX Compiler** — ONNX → NPU 컴파일\n"
-                  "- 🧪 **DX Sandbox** — 하드웨어 시뮬레이션",
+                  "- **DX App** — NPU 실시간 추론, 데모 실행, 모델 비교\n"
+                  "- **DX Stream** — GStreamer 영상 파이프라인 · 데모\n"
+                  "- **DX Model Zoo** — 약 500개 DEEPX 모델 카탈로그\n"
+                  "- **DX Compiler** — ONNX → DXNN 컴파일\n"
+                  "- **DX Benchmark** — 보드별 실측 성능\n"
+                  "- **DX Monitor** — NPU · 시스템 실시간 상태\n"
+                  "- **DX EdgeGuide** — 작업에 맞는 보드 · 호스트 추천\n"
+                  "- **DX Agent Dev** — 자연어로 NPU 앱 만들기",
             "en": "**DX AI Studio** key features:\n"
-                  "- 📊 **DX App** — AI model inference, hardware monitoring\n"
-                  "- 🎬 **DX Stream** — Video streaming pipeline\n"
-                  "- 🗂️ **DX Model Zoo** — 340+ model catalog\n"
-                  "- ⚙️ **DX Compiler** — ONNX → NPU compilation\n"
-                  "- 🧪 **DX Sandbox** — Hardware simulation",
+                  "- **DX App** — real-time NPU inference, demos, model comparison\n"
+                  "- **DX Stream** — GStreamer video pipelines and demos\n"
+                  "- **DX Model Zoo** — catalog of nearly 500 DEEPX models\n"
+                  "- **DX Compiler** — ONNX → DXNN compilation\n"
+                  "- **DX Benchmark** — measured performance per board\n"
+                  "- **DX Monitor** — live NPU and system status\n"
+                  "- **DX EdgeGuide** — board and host recommendation for a workload\n"
+                  "- **DX Agent Dev** — build NPU apps in natural language",
             "ja": "**DX AI Studio** の主な機能:\n"
-                  "- 📊 **DX App** — AI モデル推論、ハードウェア監視\n"
-                  "- 🎬 **DX Stream** — ビデオストリーミングパイプライン\n"
-                  "- 🗂️ **DX Model Zoo** — 340+ モデルカタログ\n"
-                  "- ⚙️ **DX Compiler** — ONNX → NPU コンパイル\n"
-                  "- 🧪 **DX Sandbox** — ハードウェアシミュレーション",
+                  "- **DX App** — NPU リアルタイム推論、デモ実行、モデル比較\n"
+                  "- **DX Stream** — GStreamer 映像パイプラインとデモ\n"
+                  "- **DX Model Zoo** — 約 500 の DEEPX モデルカタログ\n"
+                  "- **DX Compiler** — ONNX → DXNN コンパイル\n"
+                  "- **DX Benchmark** — ボードごとの実測性能\n"
+                  "- **DX Monitor** — NPU とシステムのリアルタイム状態\n"
+                  "- **DX EdgeGuide** — ワークロードに合うボードとホストの推奨\n"
+                  "- **DX Agent Dev** — 自然言語で NPU アプリを作成",
             "zh-CN": "**DX AI Studio** 主要功能:\n"
-                     "- 📊 **DX App** — AI 模型推理、硬件监控\n"
-                     "- 🎬 **DX Stream** — 视频流管道\n"
-                     "- 🗂️ **DX Model Zoo** — 340+ 模型目录\n"
-                     "- ⚙️ **DX Compiler** — ONNX → NPU 编译\n"
-                     "- 🧪 **DX Sandbox** — 硬件仿真",
+                     "- **DX App** — NPU 实时推理、演示运行、模型对比\n"
+                     "- **DX Stream** — GStreamer 视频管道与演示\n"
+                     "- **DX Model Zoo** — 近 500 个 DEEPX 模型目录\n"
+                     "- **DX Compiler** — ONNX → DXNN 编译\n"
+                     "- **DX Benchmark** — 各开发板的实测性能\n"
+                     "- **DX Monitor** — NPU 与系统实时状态\n"
+                     "- **DX EdgeGuide** — 按工作负载推荐开发板与主机\n"
+                     "- **DX Agent Dev** — 用自然语言构建 NPU 应用",
             "zh-TW": "**DX AI Studio** 主要功能:\n"
-                     "- 📊 **DX App** — AI 模型推論、硬體監控\n"
-                     "- 🎬 **DX Stream** — 影片串流管線\n"
-                     "- 🗂️ **DX Model Zoo** — 340+ 模型目錄\n"
-                     "- ⚙️ **DX Compiler** — ONNX → NPU 編譯\n"
-                     "- 🧪 **DX Sandbox** — 硬體模擬",
+                     "- **DX App** — NPU 即時推論、示範執行、模型比較\n"
+                     "- **DX Stream** — GStreamer 影像管線與示範\n"
+                     "- **DX Model Zoo** — 近 500 個 DEEPX 模型目錄\n"
+                     "- **DX Compiler** — ONNX → DXNN 編譯\n"
+                     "- **DX Benchmark** — 各開發板的實測效能\n"
+                     "- **DX Monitor** — NPU 與系統即時狀態\n"
+                     "- **DX EdgeGuide** — 依工作負載推薦開發板與主機\n"
+                     "- **DX Agent Dev** — 用自然語言建立 NPU 應用程式",
             "es": "Funciones principales de **DX AI Studio**:\n"
-                  "- 📊 **DX App** — Inferencia de modelos de IA, monitoreo de hardware\n"
-                  "- 🎬 **DX Stream** — Pipeline de transmisión de vídeo\n"
-                  "- 🗂️ **DX Model Zoo** — Catálogo de más de 340 modelos\n"
-                  "- ⚙️ **DX Compiler** — Compilación ONNX → NPU\n"
-                  "- 🧪 **DX Sandbox** — Simulación de hardware",
+                  "- **DX App** — inferencia NPU en tiempo real, demos y comparación de modelos\n"
+                  "- **DX Stream** — pipelines de video GStreamer y demos\n"
+                  "- **DX Model Zoo** — catálogo de casi 500 modelos DEEPX\n"
+                  "- **DX Compiler** — compilación ONNX → DXNN\n"
+                  "- **DX Benchmark** — rendimiento medido por placa\n"
+                  "- **DX Monitor** — estado en vivo de la NPU y del sistema\n"
+                  "- **DX EdgeGuide** — recomendación de placa y host para una carga de trabajo\n"
+                  "- **DX Agent Dev** — cree apps para NPU en lenguaje natural",
         },
     ),
 ]
@@ -106,22 +124,22 @@ SETUP_BANNER = {
 DEFAULT_RESPONSE = {
     "ko": "죄송합니다, 현재 AI 모델이 연결되어 있지 않아 자세한 답변이 어렵습니다.\n\n"
           "**채팅 설정**(⚙️)에서 API 키를 설정하시면 더 정확한 답변을 받을 수 있습니다.\n\n"
-          "**지원 프로바이더:** OpenAI, Anthropic (Claude), Google (Gemini)",
+          "**지원 프로바이더:** OpenAI, Anthropic (Claude), Google (Gemini), GitHub Models, local (Ollama 호환), agent-cli, Custom",
     "en": "Sorry, no AI model is currently connected for detailed responses.\n\n"
           "Set your API key in **chat settings** (⚙️) for more accurate answers.\n\n"
-          "**Supported providers:** OpenAI, Anthropic (Claude), Google (Gemini)",
+          "**Supported providers:** OpenAI, Anthropic (Claude), Google (Gemini), GitHub Models, local (Ollama-compatible), agent-cli, Custom",
     "ja": "申し訳ありません。現在 AI モデルが接続されていないため、詳細な回答はできません。\n\n"
           "**チャット設定**(⚙️)で API キーを設定すると、より正確な回答を利用できます。\n\n"
-          "**対応プロバイダー:** OpenAI, Anthropic (Claude), Google (Gemini)",
+          "**対応プロバイダー:** OpenAI, Anthropic (Claude), Google (Gemini), GitHub Models, local (Ollama 互換), agent-cli, Custom",
     "zh-CN": "抱歉，当前未连接 AI 模型，无法提供详细回答。\n\n"
              "请在**聊天设置**(⚙️)中设置 API 密钥，以获得更准确的回答。\n\n"
-             "**支持的提供商:** OpenAI, Anthropic (Claude), Google (Gemini)",
+             "**支持的提供商:** OpenAI, Anthropic (Claude), Google (Gemini), GitHub Models, local (兼容 Ollama), agent-cli, Custom",
     "zh-TW": "抱歉，目前未連接 AI 模型，無法提供詳細回答。\n\n"
              "請在**聊天設定**(⚙️)中設定 API 金鑰，以取得更準確的回答。\n\n"
-             "**支援的提供者:** OpenAI, Anthropic (Claude), Google (Gemini)",
+             "**支援的提供者:** OpenAI, Anthropic (Claude), Google (Gemini), GitHub Models, local (相容 Ollama), agent-cli, Custom",
     "es": "Lo sentimos, actualmente no hay un modelo de IA conectado para respuestas detalladas.\n\n"
           "Establezca su clave API en la **configuración del chat** (⚙️) para obtener respuestas más precisas.\n\n"
-          "**Proveedores compatibles:** OpenAI, Anthropic (Claude), Google (Gemini)",
+          "**Proveedores compatibles:** OpenAI, Anthropic (Claude), Google (Gemini), GitHub Models, local (compatible con Ollama), agent-cli, Custom",
 }
 
 # Keyword lists for identifying match type

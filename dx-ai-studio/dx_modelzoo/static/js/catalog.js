@@ -679,7 +679,7 @@ const ModelZooVirtualCatalog = {
     const accuracy = _accuracyWithMetric(m);
     const missing = Array.isArray(m.missing) ? m.missing : [];
     const missingCount = missing.length;
-    const summary = _localText(m.display?.summary) || _localText(m.content?.use_case) || '';
+    const summary = _summaryText(m);
     const thumbImg = m.thumbnail
       ? imageTagWithFallback(m.thumbnail, m.name)
       : '';

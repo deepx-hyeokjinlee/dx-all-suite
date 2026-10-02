@@ -15,6 +15,11 @@ except Exception:
     _IMAGE_ONLY_CATEGORIES = {"embedding", "reid", "attribute_recognition",
                               "object_pose_estimation", "3d_object_detection"}
 
+def _drop_suffix(text: str, suffix: str) -> str:
+    """str.removesuffix 는 3.9+ — pyproject 는 3.8 부터 (tests/shared/test_python_floor.py)."""
+    return text[: -len(suffix)] if suffix and text.endswith(suffix) else text
+
+
 def _demo_image_only(category, curated):
     """image-only iff the category's runner truly rejects video (config is the single
     source of truth). Ignores the stale curated column for correctness."""
@@ -62,7 +67,7 @@ def parse_run_demo(run_demo_path: Path) -> list[dict]:
             category, _, model_name = py_dir.partition("/")
             family = None
             if per_model:
-                family, model_name = model_name, cols["DEMO_MODEL"][i].rsplit("/", 1)[-1].removesuffix(".dxnn")
+                family, model_name = model_name, _drop_suffix(cols["DEMO_MODEL"][i].rsplit("/", 1)[-1], ".dxnn")
             demos.append({
                 "idx": i,
                 "label": cols["DEMO_LABELS"][i],

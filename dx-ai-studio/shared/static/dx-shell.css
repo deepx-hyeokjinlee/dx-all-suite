@@ -133,6 +133,7 @@
   font-family:var(--mono);font-size:11.5px;color:var(--text-muted);
   background:none;border:none;cursor:pointer;
 }
+.dx-tab-overflow[hidden]{display:none}   /* display:flex 가 hidden 을 이겨 '+0 ···' 이 늘 보였다 (release audit A-14) */
 .dx-tab-overflow:hover{color:var(--text-primary)}
 .dx-tab-overflow svg{width:16px;height:16px;display:block}
 .dx-tab-menu{
@@ -165,6 +166,17 @@
   .dx-tab-menu{right:var(--sp-4)}
 }
 
+/* 폰 폭: 머리글에는 모듈 이름과 오른쪽 단추만 — 부제 · 경로 · 상태 알약까지 넣으면 이름이 몇 글자로 줄었다
+   (release audit H-1). 페이지 이름은 바로 아래 탭 행이 이미 보인다. */
+@media (max-width:600px){
+  .dx-shell-header .dx-brand-subtitle,
+  .dx-shell-header .dx-shell-sep,
+  .dx-shell-header .dx-shell-page,
+  .dx-shell-header #pipeline-status{display:none}
+  .dx-shell-header-right,
+  .dx-shell-header .toolbar{gap:var(--sp-2)}
+}
+
 /* ═══ 페이지 전환 ═══
    탭 행과 짝을 이루는 계약: 활성 페이지만 보인다. dx_app / dx_stream 이 같은
    정의를 각자 갖고 있었고, dx_benchmark 는 같은 이름을 정반대 뜻으로
@@ -172,3 +184,6 @@
    benchmark 화면이 통째로 사라진다. benchmark 쪽은 .benchmark-workspace 로 옮겼다. */
 .page{display:none;animation:dx-fade-in .25s ease;min-width:0;max-width:100%}
 .page.active{display:block}
+/* 오른쪽 아래의 채팅 단추 (56px, 24px 띄움) 가 페이지 맨 아래의 단추를 덮지 않도록, 끝까지 내리면 그만큼 비운다
+   (release audit L-24). 화면 높이를 꽉 채우는 페이지에는 쓰지 않는다 — 그런 페이지는 .page 가 아니다. */
+.dx-shell-main > .page{padding-bottom:calc(var(--sp-7) + var(--sp-5))}

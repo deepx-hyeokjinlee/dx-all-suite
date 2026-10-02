@@ -105,12 +105,24 @@ BROWSER_TESTS=(
   tests/dx_compiler/test_setup_steps_browser.py
   tests/shared/test_task_icons_browser.py
   tests/dx_app/test_rundemo_cards_browser.py
+  tests/dx_app/test_outputs_lang_browser.py
+  tests/shared/test_toolbar_lang_a11y_browser.py
+  tests/shared/test_chat_widget_lang_browser.py
+  tests/dx_stream/test_pipeline_canvas_theme_browser.py
+  tests/dx_app/test_reference_browser.py
+  tests/dx_stream/test_reference_browser.py
+  tests/dx_stream/test_dashboard_live_browser.py
+  tests/test_tutorial_placement_browser.py
   tests/dx_stream/test_demo_cards_browser.py
   tests/shared/test_icon_label_browser.py
   tests/launcher/test_sdk_library_module_nav_browser.py
+  tests/launcher/test_connected_browsers_browser.py
+  tests/shared/test_i18n_placeholder_merge_browser.py
+  tests/launcher/test_escape_layers_browser.py
   tests/shared/test_browser_runtime.py
   tests/shared/test_font_rendering_browser.py
   tests/shared/test_demo_stage_browser.py
+  tests/dx_planner/test_lang_summary_browser.py
   tests/test_catalog_virtual_scroll_browser.py
   tests/test_iframe_lang_sync_browser.py
   tests/test_toolbar_reachable_when_narrow.py

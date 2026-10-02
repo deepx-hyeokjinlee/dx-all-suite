@@ -1,6 +1,6 @@
 # DX Model Zoo
 
-Browse the DEEPX model catalog (340+ models, synced from the public Model Zoo) — search and filter by AI task, open a
+Browse the DEEPX model catalog (nearly 500 models, synced from the public Model Zoo) — search and filter by AI task, open a
 model to see its details (accuracy, input, license/source), and use it in the other
 Studio tools.
 
@@ -14,7 +14,7 @@ Studio tools.
 
 ## Key features
 
-- **340+ models** (342 in DX AI Studio; 358 on the public Model Zoo) across many vision AI tasks, with per-category filtering, search, and
+- **Nearly 500 models** across 28 vision AI tasks, with per-category filtering, search, and
   pagination.
 - **Rich detail view** per model — including license/source/copyright, kept up to date
   from the public DEEPX model catalog.

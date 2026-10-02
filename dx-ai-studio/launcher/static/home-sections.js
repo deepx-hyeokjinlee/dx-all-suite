@@ -103,12 +103,20 @@
       if (!card) return;
       card.removeAttribute('data-i18n');   // a live number is not a dictionary key
       card.textContent = parts.map(function (p) {
-        return p[1] ? p[0] + ' ' + _t(p[1]) : String(p[0]);
+        return p[1] ? _count(p[0], p[1]) : String(p[0]);
       }).join(' \u00B7 ');
     });
   }
 
   function _paintCount() { _paintFacts(); }
+
+  /* 숫자 + 단위. 단위가 수량사 (개 · 件 · 個 · 个 · 類 · 类) 로 시작하면 붙여 쓴다 — "354개", "28件" (release audit
+     L-12 · L-28). 그 밖 (models · グループ …) 은 띄운다. */
+  function _count(n, unitKey) {
+    var unit = _t(unitKey);
+    return String(n) + (/^[개件個个类類]/.test(unit) ? '' : ' ') + unit;
+  }
+  ns._countLabel = _count;
 
   function _fmt(n) {
     return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -125,8 +133,7 @@
       if (d.task) tasks[d.task] = 1;
       if ((m.performance || {}).fps) measured += 1;
     });
-    note.textContent = _fmt(measured) + ' ' + _t('measured') + ' · ' +
-      Object.keys(tasks).length + ' ' + _t('tasks');
+    note.textContent = _count(_fmt(measured), 'measured') + ' · ' + _count(Object.keys(tasks).length, 'tasks');
   }
 
   function loadCatalogueSize() {

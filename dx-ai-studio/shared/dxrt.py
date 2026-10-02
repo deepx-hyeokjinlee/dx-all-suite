@@ -66,7 +66,15 @@ def is_v9_only(url: str) -> bool:
 def run_env(base: dict) -> dict:
     """dx_app 실행 env. graph 일부가 CPU task 인 model (RT-DETR r18 등) 은 그 task 가 thread 하나면 async 도
     막힌다 — DX-RT 가 권하는 DXRT_DYNAMIC_CPU_THREAD=ON (C++ async 4.2 → 9.3 FPS). 이미 정한 값은 둔다.
+    opencv-python 이 import 때 넣는 Qt 경로 (cv2/qt/...) 는 뺀다 — 시스템 Qt5 로 링크된 runner 가 그 플러그인을
+    싣다 abort 한다 (라이브 화면이 검다). 다른 곳을 가리키는 Qt 경로는 사용자가 정한 것이니 둔다.
     계약: tests/dx_app/test_dxrt_cpu_thread.py"""
     env = dict(base)
     env.setdefault("DXRT_DYNAMIC_CPU_THREAD", "ON")
+    for key in _CV2_QT_VARS:
+        if Path(env.get(key) or "/").parent.parent.name == "cv2":
+            env.pop(key)
     return env
+
+
+_CV2_QT_VARS = ("QT_QPA_PLATFORM_PLUGIN_PATH", "QT_QPA_FONTDIR", "QT_PLUGIN_PATH")

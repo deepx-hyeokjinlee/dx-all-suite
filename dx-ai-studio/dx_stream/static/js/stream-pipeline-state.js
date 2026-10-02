@@ -38,6 +38,31 @@ function _cv(k) {
     return colors.raw[k];
 }
 
+/* 색 token 에 투명도를 준 canvas 색 (hex · rgb() → rgba(…, a)). 모르는 모양이면 그대로. */
+function _cvAlpha(k, a) {
+    var c = _cv(k) || '';
+    var m = c.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (m) {
+        var h = m[1].length === 3 ? m[1].replace(/./g, function (x) { return x + x; }) : m[1];
+        return 'rgba(' + parseInt(h.slice(0, 2), 16) + ',' + parseInt(h.slice(2, 4), 16) + ',' +
+            parseInt(h.slice(4, 6), 16) + ',' + a + ')';
+    }
+    m = c.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+    return m ? 'rgba(' + m[1] + ',' + m[2] + ',' + m[3] + ',' + a + ')' : c;
+}
+
+/* 테마가 바뀌면 (사용자 · 시스템) 색을 다시 읽고 다시 그린다 — 예전에는 처음 읽은 색이 끝까지 남아, 밝은 테마로
+   바꿔도 캔버스는 어두운 색 (흰 글자 · 흰 격자) 그대로였다 (release audit S-6). */
+if (window.DXTheme && typeof DXTheme.onThemeChange === 'function') {
+    DXTheme.onThemeChange(function () {
+        _pipelineThemeColors = null;
+        requestAnimationFrame(function () {   // CSS 가 새 테마를 먼저 입게
+            _pipelineThemeColors = null;
+            if (typeof _refreshCanvas === 'function') { try { _refreshCanvas(); } catch (e) { /* 캔버스 없음 */ } }
+        });
+    });
+}
+
 function _scheduleCanvasRefresh() {
     if (_canvasRefreshRaf) return;
     _canvasRefreshRaf = requestAnimationFrame(function () {

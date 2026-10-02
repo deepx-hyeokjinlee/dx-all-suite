@@ -131,15 +131,15 @@
         title: {
           ko: '뷰 모드 전환', en: 'View Mode Toggle', ja: 'ビューモード切替', 'zh-CN': '视图模式切换', 'zh-TW': '檢視模式切換', es: 'Alternar modo de vista'},
         content: {
-          ko: '이 <strong>토글</strong>을 사용하여 List 뷰와 Cabinet 뷰 사이를 전환하세요. 각 뷰는 문서를 탐색하는 다른 방법을 제공합니다.', en: 'Use this <strong>toggle</strong> to switch between List view and Cabinet view. Each view provides a different way to browse your documents.', ja: 'この<strong>トグル</strong>を使って、リストビューとキャビネットビューを切り替えます。各ビューはドキュメントを閲覧する異なる方法を提供します。', 'zh-CN': '使用此<strong>切换按钮</strong>在列表视图和文件柜视图之间切换。每种视图提供不同的文档浏览方式。', 'zh-TW': '使用此<strong>切換按鈕</strong>在列表檢視和文件櫃檢視之間切換。每種檢視提供不同的文件瀏覽方式。', es: 'Use este <strong>interruptor</strong> para alternar entre la vista de lista y la de archivador. Cada vista ofrece una forma distinta de explorar sus documentos.'}
+          ko: '이 <strong>토글</strong>을 사용하여 목록 보기와 캐비닛 보기 사이를 전환하세요. 각 뷰는 문서를 탐색하는 다른 방법을 제공합니다.', en: 'Use this <strong>toggle</strong> to switch between List view and Cabinet view. Each view provides a different way to browse your documents.', ja: 'この<strong>トグル</strong>を使って、リストビューとキャビネットビューを切り替えます。各ビューはドキュメントを閲覧する異なる方法を提供します。', 'zh-CN': '使用此<strong>切换按钮</strong>在列表视图和文件柜视图之间切换。每种视图提供不同的文档浏览方式。', 'zh-TW': '使用此<strong>切換按鈕</strong>在列表檢視和文件櫃檢視之間切換。每種檢視提供不同的文件瀏覽方式。', es: 'Use este <strong>interruptor</strong> para alternar entre la vista de lista y la de archivador. Cada vista ofrece una forma distinta de explorar sus documentos.'}
       },
       {
         target: '[data-mode="list"]',
         position: 'bottom',
         title: {
-          ko: 'List 뷰', en: 'List View', ja: 'リストビュー', 'zh-CN': '列表视图', 'zh-TW': '列表檢視', es: 'Vista de lista'},
+          ko: '목록 보기', en: 'List View', ja: 'リストビュー', 'zh-CN': '列表视图', 'zh-TW': '列表檢視', es: 'Vista de lista'},
         content: {
-          ko: '<strong>List 뷰</strong>는 사이드바-콘텐츠 레이아웃으로 문서를 표시합니다. 왼쪽에 카테고리가 나열되고, 오른쪽에 파일 카드가 나타납니다.', en: '<strong>List view</strong> displays documents in a sidebar-content layout. Categories are listed on the left, and file cards appear on the right.', ja: '<strong>リストビュー</strong>は、サイドバー・コンテンツレイアウトでドキュメントを表示します。左側にカテゴリが一覧表示され、右側にファイルカードが表示されます。', 'zh-CN': '<strong>列表视图</strong>以侧边栏-内容布局显示文档。左侧列出分类，右侧显示文件卡片。', 'zh-TW': '<strong>列表檢視</strong>以側邊欄-內容佈局顯示文件。左側列出分類，右側顯示檔案卡片。', es: 'La <strong>vista de lista</strong> muestra documentos en un diseño de barra lateral y contenido. Las categorías aparecen a la izquierda y las tarjetas de archivo a la derecha.'},
+          ko: '<strong>목록 보기</strong>는 사이드바-콘텐츠 레이아웃으로 문서를 표시합니다. 왼쪽에 카테고리가 나열되고, 오른쪽에 파일 카드가 나타납니다.', en: '<strong>List view</strong> displays documents in a sidebar-content layout. Categories are listed on the left, and file cards appear on the right.', ja: '<strong>リストビュー</strong>は、サイドバー・コンテンツレイアウトでドキュメントを表示します。左側にカテゴリが一覧表示され、右側にファイルカードが表示されます。', 'zh-CN': '<strong>列表视图</strong>以侧边栏-内容布局显示文档。左侧列出分类，右侧显示文件卡片。', 'zh-TW': '<strong>列表檢視</strong>以側邊欄-內容佈局顯示文件。左側列出分類，右側顯示檔案卡片。', es: 'La <strong>vista de lista</strong> muestra documentos en un diseño de barra lateral y contenido. Las categorías aparecen a la izquierda y las tarjetas de archivo a la derecha.'},
         beforeStep: function() {
           if (window._sdkLib) window._sdkLib.switchView('list');
         }
@@ -148,9 +148,9 @@
         target: '[data-mode="cabinet"]',
         position: 'bottom',
         title: {
-          ko: 'Cabinet 뷰', en: 'Cabinet View', ja: 'キャビネットビュー', 'zh-CN': '文件柜视图', 'zh-TW': '文件櫃檢視', es: 'Vista de archivador'},
+          ko: '캐비닛 보기', en: 'Cabinet View', ja: 'キャビネットビュー', 'zh-CN': '文件柜视图', 'zh-TW': '文件櫃檢視', es: 'Vista de archivador'},
         content: {
-          ko: '<strong>Cabinet 뷰</strong>는 문서를 카테고리별 컬러 코딩된 서랍으로 정리합니다. 서랍을 클릭하면 확장하여 내용을 탐색할 수 있습니다.', en: '<strong>Cabinet view</strong> organizes documents into color-coded drawers by category. Click a drawer to expand and browse its contents.', ja: '<strong>キャビネットビュー</strong>は、ドキュメントをカテゴリ別の色分けされた引き出しに整理します。引き出しをクリックして展開し、内容を閲覧できます。', 'zh-CN': '<strong>文件柜视图</strong>将文档按分类整理到带颜色标记的抽屉中。点击抽屉可展开浏览其内容。', 'zh-TW': '<strong>文件櫃檢視</strong>將文件按分類整理到帶顏色標記的抽屜中。點擊抽屜可展開瀏覽其內容。', es: 'La <strong>vista de archivador</strong> organiza los documentos en cajones codificados por color según la categoría. Haga clic en un cajón para expandirlo y explorar su contenido.'},
+          ko: '<strong>캐비닛 보기</strong>는 문서를 카테고리별 컬러 코딩된 서랍으로 정리합니다. 서랍을 클릭하면 확장하여 내용을 탐색할 수 있습니다.', en: '<strong>Cabinet view</strong> organizes documents into color-coded drawers by category. Click a drawer to expand and browse its contents.', ja: '<strong>キャビネットビュー</strong>は、ドキュメントをカテゴリ別の色分けされた引き出しに整理します。引き出しをクリックして展開し、内容を閲覧できます。', 'zh-CN': '<strong>文件柜视图</strong>将文档按分类整理到带颜色标记的抽屉中。点击抽屉可展开浏览其内容。', 'zh-TW': '<strong>文件櫃檢視</strong>將文件按分類整理到帶顏色標記的抽屜中。點擊抽屜可展開瀏覽其內容。', es: 'La <strong>vista de archivador</strong> organiza los documentos en cajones codificados por color según la categoría. Haga clic en un cajón para expandirlo y explorar su contenido.'},
         beforeStep: function() {
           if (window._sdkLib) window._sdkLib.switchView('cabinet');
         }
@@ -237,7 +237,7 @@
     id: 'cabinet-drawers',
     icon: 'file',
     title: {
-      ko: '캐비넷 서랍', en: 'Cabinet Drawers', ja: 'キャビネット引き出し', 'zh-CN': '文件柜抽屉', 'zh-TW': '文件櫃抽屜', es: 'Cajones del archivador'},
+      ko: '캐비닛 서랍', en: 'Cabinet Drawers', ja: 'キャビネット引き出し', 'zh-CN': '文件柜抽屉', 'zh-TW': '文件櫃抽屜', es: 'Cajones del archivador'},
     prerequisite: 'view-modes',
     prerequisiteMessage: {
       ko: '먼저 뷰 모드를 완료하세요', en: 'Complete View Modes first', ja: '先にビューモードを完了してください', 'zh-CN': '请先完成视图模式', 'zh-TW': '請先完成檢視模式', es: 'Complete primero los modos de vista'},
@@ -251,7 +251,7 @@
         title: {
           ko: '카테고리 서랍', en: 'Category Drawers', ja: 'カテゴリ引き出し', 'zh-CN': '分类抽屉', 'zh-TW': '分類抽屜', es: 'Cajones por categoría'},
         content: {
-          ko: '캐비넷에는 <strong>5개의 카테고리 서랍</strong>이 있으며, 각각 색상으로 구분되어 쉽게 식별할 수 있습니다. 아무 서랍이나 클릭하면 확장하여 문서를 볼 수 있습니다.', en: 'The cabinet contains <strong>5 category drawers</strong>, each color-coded for easy identification. Click any drawer to expand and view its documents.', ja: 'キャビネットには<strong>5つのカテゴリ引き出し</strong>があり、それぞれ色分けされて簡単に識別できます。引き出しをクリックして展開し、ドキュメントを表示できます。', 'zh-CN': '文件柜包含<strong>5个分类抽屉</strong>，每个都用颜色标记以便于识别。点击任何抽屉可展开查看其文档。', 'zh-TW': '文件櫃包含<strong>5個分類抽屜</strong>，每個都用顏色標記以便於識別。點擊任何抽屜可展開查看其文件。', es: 'El archivador contiene <strong>5 cajones por categoría</strong>, cada uno con un color distinto. Haga clic en cualquier cajón para expandirlo y ver sus documentos.'}
+          ko: '캐비닛에는 <strong>6개의 카테고리 서랍</strong>이 있으며, 각각 색상으로 구분되어 쉽게 식별할 수 있습니다. 아무 서랍이나 클릭하면 확장하여 문서를 볼 수 있습니다.', en: 'The cabinet contains <strong>6 category drawers</strong>, each color-coded for easy identification. Click any drawer to expand and view its documents.', ja: 'キャビネットには<strong>6つのカテゴリ引き出し</strong>があり、それぞれ色分けされて簡単に識別できます。引き出しをクリックして展開し、ドキュメントを表示できます。', 'zh-CN': '文件柜包含<strong>6个分类抽屉</strong>，每个都用颜色标记以便于识别。点击任何抽屉可展开查看其文档。', 'zh-TW': '文件櫃包含<strong>6個分類抽屜</strong>，每個都用顏色標記以便於識別。點擊任何抽屜可展開查看其文件。', es: 'El archivador contiene <strong>6 cajones por categoría</strong>, cada uno con un color distinto. Haga clic en cualquier cajón para expandirlo y ver sus documentos.'}
       },
       {
         target: '.drawer-face',
@@ -287,7 +287,7 @@
         title: {
           ko: '색상 카테고리', en: 'Color Categories', ja: 'カラーカテゴリ', 'zh-CN': '颜色分类', 'zh-TW': '顏色分類', es: 'Categorías por color'},
         content: {
-          ko: '각 서랍에는 <strong>고유한 색상</strong>이 있습니다: <strong>금색</strong>은 브로셔, <strong>빨간색</strong>은 all-suite, <strong>녹색</strong>은 Compiler, <strong>파란색</strong>은 Model Zoo, <strong>호박색</strong>은 Runtime입니다.', en: 'Each drawer has a <strong>unique color</strong>: <strong>gold</strong> for brochures, <strong>red</strong> for all-suite, <strong>green</strong> for compiler, <strong>blue</strong> for modelzoo, and <strong>amber</strong> for runtime.', ja: '各引き出しには<strong>固有の色</strong>があります。<strong>金色</strong>はブローシャー、<strong>赤</strong>はall-suite、<strong>緑</strong>はコンパイラ、<strong>青</strong>はModel Zoo、<strong>琥珀色</strong>はランタイムです。', 'zh-CN': '每个抽屉都有<strong>独特的颜色</strong>：<strong>金色</strong>代表宣传册、<strong>红色</strong>代表all-suite、<strong>绿色</strong>代表编译器、<strong>蓝色</strong>代表模型库、<strong>琥珀色</strong>代表运行时。', 'zh-TW': '每個抽屜都有<strong>獨特的顏色</strong>：<strong>金色</strong>代表宣傳冊、<strong>紅色</strong>代表all-suite、<strong>綠色</strong>代表編譯器、<strong>藍色</strong>代表模型庫、<strong>琥珀色</strong>代表執行環境。', es: 'Each drawer has a <strong>unique color</strong>: <strong>gold</strong> for brochures, <strong>red</strong> for all-suite, <strong>green</strong> for compiler, <strong>blue</strong> for modelzoo, and <strong>amber</strong> for runtime.'}
+          ko: '서랍마다 <strong>색</strong>이 있습니다: <strong>금색</strong>은 브로셔, <strong>빨간색</strong>은 all-suite, <strong>녹색</strong>은 Compiler, <strong>파란색</strong>은 AI Studio 매뉴얼과 Model Zoo, <strong>호박색</strong>은 Runtime입니다.', en: 'Each drawer has a <strong>color</strong>: <strong>gold</strong> for brochures, <strong>red</strong> for all-suite, <strong>green</strong> for compiler, <strong>blue</strong> for the AI Studio manual and Model Zoo, and <strong>amber</strong> for runtime.', ja: '引き出しにはそれぞれ<strong>色</strong>があります。<strong>金色</strong>はブローシャー、<strong>赤</strong>は all-suite、<strong>緑</strong>はコンパイラ、<strong>青</strong>は AI Studio マニュアルと Model Zoo、<strong>琥珀色</strong>はランタイムです。', 'zh-CN': '每个抽屉都有<strong>颜色</strong>：<strong>金色</strong>代表宣传册，<strong>红色</strong>代表 all-suite，<strong>绿色</strong>代表编译器，<strong>蓝色</strong>代表 AI Studio 手册和模型库，<strong>琥珀色</strong>代表运行时。', 'zh-TW': '每個抽屜都有<strong>顏色</strong>：<strong>金色</strong>代表宣傳冊，<strong>紅色</strong>代表 all-suite，<strong>綠色</strong>代表編譯器，<strong>藍色</strong>代表 AI Studio 手冊與模型庫，<strong>琥珀色</strong>代表執行環境。', es: 'Cada cajón tiene un <strong>color</strong>: <strong>dorado</strong> para los folletos, <strong>rojo</strong> para all-suite, <strong>verde</strong> para el compilador, <strong>azul</strong> para el manual de AI Studio y Model Zoo, y <strong>ámbar</strong> para el runtime.'}
       }
     ]
   };
@@ -374,7 +374,8 @@
         title: {
           ko: '뷰어 닫기', en: 'Close Viewer', ja: 'ビューアを閉じる', 'zh-CN': '关闭查看器', 'zh-TW': '關閉檢視器', es: 'Cerrar visor'},
         content: {
-          ko: '<strong>닫기 버튼</strong>을 클릭하거나 <strong>ESC</strong>를 눌러 문서 뷰어를 닫고 라이브러리 뷰로 돌아갑니다.', en: 'Click the <strong>close button</strong> or press <strong>ESC</strong> to close the document viewer and return to the library view.', ja: '<strong>閉じるボタン</strong>をクリックするか、<strong>ESC</strong>キーを押してドキュメントビューアを閉じ、ライブラリビューに戻ります。', 'zh-CN': '点击<strong>关闭按钮</strong>或按<strong>ESC</strong>关闭文档查看器并返回库视图。', 'zh-TW': '點擊<strong>關閉按鈕</strong>或按<strong>ESC</strong>關閉文件檢視器並返回庫檢視。', es: 'Haga clic en el <strong>botón cerrar</strong> o pulse <strong>ESC</strong> para cerrar el visor y volver a la vista de biblioteca.'}
+          ko: '<strong>닫기 버튼</strong>을 클릭하거나 <strong>ESC</strong>를 눌러 문서 뷰어를 닫고 라이브러리 뷰로 돌아갑니다.', en: 'Click the <strong>close button</strong> or press <strong>ESC</strong> to close the document viewer and return to the library view.', ja: '<strong>閉じるボタン</strong>をクリックするか、<strong>ESC</strong>キーを押してドキュメントビューアを閉じ、ライブラリビューに戻ります。', 'zh-CN': '点击<strong>关闭按钮</strong>或按<strong>ESC</strong>关闭文档查看器并返回库视图。', 'zh-TW': '點擊<strong>關閉按鈕</strong>或按<strong>ESC</strong>關閉文件檢視器並返回庫檢視。', es: 'Haga clic en el <strong>botón cerrar</strong> o pulse <strong>ESC</strong> para cerrar el visor y volver a la vista de biblioteca.'},
+        afterStep: function() { _closeDocViewer(); }   // 투어가 끝나면 문서 뷰어를 닫는다
       }
     ]
   };
@@ -405,6 +406,11 @@
         beforeStep: function() {
           var archBtn = document.getElementById('sdkArchBtn');
           if (archBtn) archBtn.click();
+        },
+        /* 투어가 끝나도 전체 화면 그림이 남아 있었다 (release audit L-9) */
+        afterStep: function() {
+          var ov = document.getElementById('sdkArchOverlay');
+          if (ov) ov.classList.remove('open');
         }
       }
     ]
@@ -422,7 +428,7 @@
         title: {
           ko: '언어 선택', en: 'Language Selector', ja: '言語選択', 'zh-CN': '语言选择', 'zh-TW': '語言選擇', es: 'Selector de idioma'},
         content: {
-          ko: '<strong>언어 드롭다운</strong>을 사용하여 5개 지원 언어(English, 한국어, 日本語, 简体中文, 繁體中文) 간에 전환하세요.', en: 'Use the <strong>language dropdown</strong> to switch between 5 supported languages: English, 한국어, 日本語, 简体中文, and 繁體中文.', ja: '<strong>言語ドロップダウン</strong>を使って、5つの対応言語（English、한국어、日本語、简体中文、繁體中文）を切り替えられます。', 'zh-CN': '使用<strong>语言下拉菜单</strong>在5种支持的语言之间切换：English、한국어、日本語、简体中文和繁體中文。', 'zh-TW': '使用<strong>語言下拉選單</strong>在5種支援的語言之間切換：English、한국어、日本語、简体中文和繁體中文。', es: 'Use el <strong>menú desplegable de idioma</strong> para cambiar entre 5 idiomas: English, 한국어, 日本語, 简体中文 y 繁體中文.'}
+          ko: '<strong>언어 드롭다운</strong>을 사용하여 6개 지원 언어(English, 한국어, 日本語, Español, 简体中文, 繁體中文) 간에 전환하세요.', en: 'Use the <strong>language dropdown</strong> to switch between 6 supported languages: English, 한국어, 日本語, Español, 简体中文 and 繁體中文.', ja: '<strong>言語ドロップダウン</strong>を使って、6つの対応言語（English、한국어、日本語、Español、简体中文、繁體中文）を切り替えられます。', 'zh-CN': '使用<strong>语言下拉菜单</strong>在6种支持的语言之间切换：English、한국어、日本語、Español、简体中文和繁體中文。', 'zh-TW': '使用<strong>語言下拉選單</strong>在6種支援的語言之間切換：English、한국어、日本語、Español、简体中文和繁體中文。', es: 'Use el <strong>menú desplegable de idioma</strong> para cambiar entre 6 idiomas: English, 한국어, 日本語, Español, 简体中文 y 繁體中文.'}
       },
       {
         target: '#dxToolbarTutorial',

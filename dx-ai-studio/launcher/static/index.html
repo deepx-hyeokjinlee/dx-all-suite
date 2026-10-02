@@ -59,6 +59,10 @@
       <p class="studio-boot-gate-title es">Iniciando módulos de DX AI Studio…</p>
       <p class="studio-boot-gate-hint en">Wait until all modules are ready before navigating.</p>
       <p class="studio-boot-gate-hint ko">모듈 준비가 끝날 때까지 잠시만 기다려 주세요.</p>
+      <p class="studio-boot-gate-hint ja">すべてのモジュールの準備が整うまでお待ちください。</p>
+      <p class="studio-boot-gate-hint zh-CN">请等待所有模块就绪后再进行操作。</p>
+      <p class="studio-boot-gate-hint zh-TW">請等待所有模組就緒後再進行操作。</p>
+      <p class="studio-boot-gate-hint es">Espere a que todos los módulos estén listos antes de navegar.</p>
     </div>
   </div>
   <!-- ── Splash Intro Overlay (v2: Neural Circuit Awakening) ── -->
@@ -190,7 +194,7 @@
     <!-- 입력 뒤의 무대 (spec §5.7b). 보이면 #landing:has(...) 가 Dock 으로 바꾼다. -->
     <section class="stage-work" id="homeStageWork">
       <section class="home-answer" id="homeAnswer" hidden aria-live="polite">
-          <button type="button" class="stage-close" id="answerClose" aria-label="Close" data-i18n-aria-label="Close">×</button>
+          <button type="button" class="stage-close" id="answerClose" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
           <div class="answer-read" id="answerRead"></div>
 
           <div class="answer-routes" id="answerRoutes"></div>
@@ -228,7 +232,7 @@
                  닿는 자리이기도 했다. -->
             <span class="work-setup" id="workSetupSummary"></span>
             <button type="button" class="work-stop" id="workStop" data-i18n="Stop">Stop</button>
-            <button type="button" class="stage-close" id="workClose" aria-label="Close" data-i18n-aria-label="Close">×</button>
+            <button type="button" class="stage-close" id="workClose" aria-label="Close" data-i18n-aria-label="Close"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#x"></use></svg></button>
           </header>
 
           <div class="work-split" id="workSplit">
@@ -286,7 +290,7 @@
               <span class="mod-tile" data-mod="app" aria-hidden="true"><svg class="mod-glyph"><use href="/static/shared/dx-icons.svg#app"></use></svg></span>
               <span class="mod-text">
                 <span class="orbital-name">App</span>
-                <span class="card-desc" data-i18n="Real-time NPU inference &amp; model compiler">Real-time NPU inference &amp; model compiler</span>
+                <span class="card-desc" data-i18n="Real-time NPU inference &amp; demos">Real-time NPU inference &amp; demos</span>
               </span>
               <span class="card-state" data-role="state"></span>
               <span class="mod-chev" aria-hidden="true">›</span>
@@ -306,7 +310,7 @@
               <span class="mod-tile" data-mod="zoo" aria-hidden="true"><svg class="mod-glyph"><use href="/static/shared/dx-icons.svg#zoo"></use></svg></span>
               <span class="mod-text">
                 <span class="orbital-name">Model Zoo</span>
-                <span class="card-desc" data-i18n="340 AI model catalog">340 AI model catalog</span>
+                <span class="card-desc" data-i18n="AI model catalog">AI model catalog</span>
               </span>
               <span class="card-state" data-role="state"></span>
               <span class="mod-chev" aria-hidden="true">›</span>
@@ -342,7 +346,7 @@
               <span class="mod-tile" data-mod="planner" aria-hidden="true"><svg class="mod-glyph"><use href="/static/shared/dx-icons.svg#edge"></use></svg></span>
               <span class="mod-text">
                 <span class="orbital-name">EdgeGuide</span>
-                <span class="card-desc" data-i18n="NPU config calculator &amp; TCO analysis">NPU config calculator &amp; TCO analysis</span>
+                <span class="card-desc" data-i18n="Board &amp; host picks from measured benchmarks">Board &amp; host picks from measured benchmarks</span>
               </span>
               <span class="card-state" data-role="state"></span>
               <span class="mod-chev" aria-hidden="true">›</span>
@@ -427,15 +431,15 @@
         <p class="platform-tagline" data-i18n="All-in-One Edge AI Development Platform">All-in-One Edge AI Development Platform</p>
         <p class="platform-desc" data-i18n="DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.">DX AI Studio is an all-in-one desktop platform for Edge AI development with DEEPX NPU. 8 specialized modules work together in a unified environment.</p>
         <div class="platform-modules">
-          <div class="pm-item" data-help-id="pm-dx-app" tabindex="0" role="button"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#app"></use></svg></span><span class="pm-name">DX App</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Real-time Inference Engine&lt;/strong&gt;&lt;br&gt;• Run 340+ pre-compiled AI models instantly&lt;br&gt;• Auto-generate C++/Python inference code templates&lt;br&gt;• FPS, latency, memory real-time dashboard"><strong>NPU Real-time Inference Engine</strong><br>• Run 340+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard</span></div>
+          <div class="pm-item" data-help-id="pm-dx-app" tabindex="0" role="button"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#app"></use></svg></span><span class="pm-name">DX App</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Real-time Inference Engine&lt;/strong&gt;&lt;br&gt;• Run 490+ pre-compiled AI models instantly&lt;br&gt;• Auto-generate C++/Python inference code templates&lt;br&gt;• FPS, latency, memory real-time dashboard"><strong>NPU Real-time Inference Engine</strong><br>• Run 490+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard</span></div>
           <div class="pm-item" data-help-id="pm-dx-stream"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#stream"></use></svg></span><span class="pm-name">DX Stream</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Vision AI Streaming Pipeline&lt;/strong&gt;&lt;br&gt;• 13 custom GStreamer-based plugins&lt;br&gt;• Real-time RTSP/USB/IP camera connection&lt;br&gt;• Multi-channel simultaneous AI processing"><strong>Vision AI Streaming Pipeline</strong><br>• 13 custom GStreamer-based plugins<br>• Real-time RTSP/USB/IP camera connection<br>• Multi-channel simultaneous AI processing</span></div>
-          <div class="pm-item" data-help-id="pm-model-zoo"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#zoo"></use></svg></span><span class="pm-name">Model Zoo</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;340 AI Model Catalog&lt;/strong&gt;&lt;br&gt;• YOLO, ResNet, EfficientNet .dxnn models&lt;br&gt;• Model performance comparison &amp; compatibility info&lt;br&gt;• One-click download &amp; Edge device deployment"><strong>340 AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment</span></div>
+          <div class="pm-item" data-help-id="pm-model-zoo"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#zoo"></use></svg></span><span class="pm-name">Model Zoo</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;490+ AI Model Catalog&lt;/strong&gt;&lt;br&gt;• YOLO, ResNet, EfficientNet .dxnn models&lt;br&gt;• Model performance comparison &amp; compatibility info&lt;br&gt;• One-click download &amp; Edge device deployment"><strong>490+ AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment</span></div>
           <div class="pm-item" data-help-id="pm-compiler"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#compiler"></use></svg></span><span class="pm-name">Compiler</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;ONNX → .dxnn Compiler GUI&lt;/strong&gt;&lt;br&gt;• INT8 intelligent quantization for optimal performance&lt;br&gt;• DX-TRON computational graph visualization&lt;br&gt;• Batch compilation &amp; profiling support"><strong>ONNX → .dxnn Compiler GUI</strong><br>• INT8 intelligent quantization for optimal performance<br>• DX-TRON computational graph visualization<br>• Batch compilation & profiling support</span></div>
-          <div class="pm-item" data-help-id="pm-edgeguide"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#edge"></use></svg></span><span class="pm-name">EdgeGuide</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Configuration &amp; TCO Analysis&lt;/strong&gt;&lt;br&gt;• Workload-based optimal NPU chip recommendation&lt;br&gt;• Total Cost of Ownership (TCO) comparison report&lt;br&gt;• DX-M1 vs DX-H1 Quattro performance comparison"><strong>NPU Configuration & TCO Analysis</strong><br>• Workload-based optimal NPU chip recommendation<br>• Total Cost of Ownership (TCO) comparison report<br>• DX-M1 vs DX-H1 Quattro performance comparison</span></div>
+          <div class="pm-item" data-help-id="pm-edgeguide"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#edge"></use></svg></span><span class="pm-name">EdgeGuide</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Edge AI Product Finder&lt;/strong&gt;&lt;br&gt;• Describe the workload: task, model size, channels, FPS&lt;br&gt;• Boards and hosts ranked from measured YOLO26 benchmarks&lt;br&gt;• Compare platforms, check the evidence, request a quote"><strong>Edge AI Product Finder</strong><br>• Describe the workload: task, model size, channels, FPS<br>• Boards and hosts ranked from measured YOLO26 benchmarks<br>• Compare platforms, check the evidence, request a quote</span></div>
           <div class="pm-item" data-help-id="pm-benchmark"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#bench"></use></svg></span><span class="pm-name">Benchmark</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;HW Performance Cross Benchmark&lt;/strong&gt;&lt;br&gt;• 6 boards × YOLO series automated testing&lt;br&gt;• FPS, latency, power consumption precision measurement&lt;br&gt;• Markdown auto-report &amp; chart generation"><strong>HW Performance Cross Benchmark</strong><br>• 6 boards × YOLO series automated testing<br>• FPS, latency, power consumption precision measurement<br>• Markdown auto-report & chart generation</span></div>
           <div class="pm-item" data-help-id="pm-monitor"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#monitor"></use></svg></span><span class="pm-name">Monitor</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;NPU Hardware Real-time Monitoring&lt;/strong&gt;&lt;br&gt;• NPU temperature, voltage, clock real-time charts&lt;br&gt;• CPU/memory/disk system gauges&lt;br&gt;• 5min~1hr history trend analysis"><strong>NPU Hardware Real-time Monitoring</strong><br>• NPU temperature, voltage, clock real-time charts<br>• CPU/memory/disk system gauges<br>• 5min~1hr history trend analysis</span></div>
           <div class="pm-item" data-help-id="pm-agent-dev"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#agent"></use></svg></span><span class="pm-name">Agent Dev</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;Natural-Language NPU App Builder&lt;/strong&gt;&lt;br&gt;• One-line commands auto-generate pipelines &amp; apps&lt;br&gt;• Interactive console · real-time build logs&lt;br&gt;• Offline showcase gallery"><strong>Natural-Language NPU App Builder</strong><br>• One-line commands auto-generate pipelines & apps<br>• Interactive console · real-time build logs<br>• Offline showcase gallery</span></div>
-          <div class="pm-item" data-help-id="pm-sdk-library"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#library"></use></svg></span><span class="pm-name">SDK Library</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DXNN SDK Tech Library&lt;/strong&gt;&lt;br&gt;• 120 official SDK documents curated&lt;br&gt;• 4-shelf classification (Runtime/Compiler/Zoo/Suite)&lt;br&gt;• Real-time search &amp; book-style viewer"><strong>DXNN SDK Tech Library</strong><br>• 120 official SDK documents curated<br>• 4-shelf classification (Runtime/Compiler/Zoo/Suite)<br>• Real-time search & book-style viewer</span></div>
+          <div class="pm-item" data-help-id="pm-sdk-library"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#library"></use></svg></span><span class="pm-name">SDK Library</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DXNN SDK Tech Library&lt;/strong&gt;&lt;br&gt;• 190 official SDK documents and brochures&lt;br&gt;• 6 shelves: Runtime, Compiler, Model Zoo, All Suite, Studio manual, Brochures&lt;br&gt;• Real-time search &amp; book-style viewer"><strong>DXNN SDK Tech Library</strong><br>• 190 official SDK documents and brochures<br>• 6 shelves: Runtime, Compiler, Model Zoo, All Suite, Studio manual, Brochures<br>• Real-time search & book-style viewer</span></div>
           <div class="pm-item" data-help-id="pm-about-deepx"><span class="pm-icon"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#book"></use></svg></span><span class="pm-name">About DEEPX</span><span class="pm-desc" data-i18n-html="&lt;strong&gt;DEEPX Interactive Encyclopedia&lt;/strong&gt;&lt;br&gt;• DX-M1/DX-M2 chip die hotspot exploration&lt;br&gt;• Click to explore tech, product, vision stories&lt;br&gt;• High-res chip die photos &amp; technical descriptions"><strong>DEEPX Interactive Encyclopedia</strong><br>• DX-M1/DX-M2 chip die hotspot exploration<br>• Click to explore tech, product, vision stories<br>• High-res chip die photos & technical descriptions</span></div>
         </div>
         <div class="platform-values">
@@ -591,14 +595,14 @@
     'ready': { ko:'준비됨', ja:'準備完了', es:'listo', 'zh-CN':'就绪', 'zh-TW':'就緒' },
     'not running': { ko:'실행 중 아님', ja:'未起動', es:'no iniciado', 'zh-CN':'未运行', 'zh-TW':'未執行' },
     'Ecosystem': { ko:'에코시스템', ja:'エコシステム', es:'Ecosistema', 'zh-CN':'生态', 'zh-TW':'生態' },
-    'YOLO export to DEEPX': { ko:'YOLO 를 DEEPX 로 export', ja:'YOLO を DEEPX へエクスポート', es:'exportar YOLO a DEEPX', 'zh-CN':'将 YOLO 导出到 DEEPX', 'zh-TW':'將 YOLO 匯出到 DEEPX' },
-    'OCR and detection': { ko:'OCR 과 검출', ja:'OCR と検出', es:'OCR y detección', 'zh-CN':'OCR 与检测', 'zh-TW':'OCR 與偵測' },
+    'YOLO export to DEEPX': { ko:'YOLO를 DEEPX로 export', ja:'YOLO を DEEPX へエクスポート', es:'exportar YOLO a DEEPX', 'zh-CN':'将 YOLO 导出到 DEEPX', 'zh-TW':'將 YOLO 匯出到 DEEPX' },
+    'OCR and detection': { ko:'OCR과 검출', ja:'OCR と検出', es:'OCR y detección', 'zh-CN':'OCR 与检测', 'zh-TW':'OCR 與偵測' },
     'the interchange format': { ko:'모델 교환 포맷', ja:'モデル交換フォーマット', es:'el formato de intercambio', 'zh-CN':'模型交换格式', 'zh-TW':'模型交換格式' },
     'the pipeline runtime': { ko:'파이프라인 런타임', ja:'パイプラインランタイム', es:'el runtime de pipelines', 'zh-CN':'流水线运行时', 'zh-TW':'管線執行環境' },
     'where models are trained': { ko:'모델을 학습하는 곳', ja:'モデルを学習する場所', es:'donde se entrenan los modelos', 'zh-CN':'训练模型的地方', 'zh-TW':'訓練模型的地方' },
     'pre- and post-processing': { ko:'전처리와 후처리', ja:'前処理と後処理', es:'pre y posprocesamiento', 'zh-CN':'前处理与后处理', 'zh-TW':'前處理與後處理' },
     'Build': { ko:'만들기', ja:'つくる', es:'Crear', 'zh-CN':'构建', 'zh-TW':'建立' },
-    'Describe it. The studio picks the module, model and pipeline — or the agent builds it.': { ko:'원하는 걸 문장으로 쓰세요. 어떤 module 과 모델, pipeline 이 필요한지는 스튜디오가 고르고, 없으면 agent 가 만듭니다.', ja:'つくりたいものを文で書いてください。どの module・モデル・pipeline が要るかはスタジオが選び、無ければ agent がつくります。', es:'Describa lo que quiere. El estudio elige el módulo, el modelo y el pipeline, o el agente lo construye.', 'zh-CN':'用一句话描述你想要的。工作室会挑选 module、模型和 pipeline，没有的话由 agent 构建。', 'zh-TW':'用一句話描述你想要的。工作室會挑選 module、模型和 pipeline，沒有的話由 agent 建立。' },
+    'Describe it. The studio picks the module, model and pipeline — or the agent builds it.': { ko:'원하는 걸 문장으로 쓰세요. 어떤 모듈과 모델, 파이프라인이 필요한지는 스튜디오가 고르고, 없으면 에이전트가 만듭니다.', ja:'つくりたいものを文で書いてください。どの module・モデル・pipeline が要るかはスタジオが選び、無ければ agent がつくります。', es:'Describa lo que quiere. El estudio elige el módulo, el modelo y el pipeline, o el agente lo construye.', 'zh-CN':'用一句话描述你想要的。工作室会挑选 module、模型和 pipeline，没有的话由 agent 构建。', 'zh-TW':'用一句話描述你想要的。工作室會挑選 module、模型和 pipeline，沒有的話由 agent 建立。' },
     'Or open a tool directly.': { ko:'또는 도구를 바로 엽니다.', ja:'または、ツールを直接開きます。', es:'O abra una herramienta directamente.', 'zh-CN':'或者直接打开工具。', 'zh-TW':'或者直接開啟工具。' },
     'Agent': { ko:'에이전트', ja:'エージェント', es:'Agente', 'zh-CN':'智能体', 'zh-TW':'代理' },
     'Model': { ko:'모델', ja:'モデル', es:'Modelo', 'zh-CN':'模型', 'zh-TW':'模型' },
@@ -615,15 +619,15 @@
     'sign-in unknown': { ko:'로그인 상태 확인 불가', ja:'ログイン状態不明', es:'sesión desconocida', 'zh-CN':'登录状态未知', 'zh-TW':'登入狀態未知' },
     'not installed': { ko:'미설치', ja:'未インストール', es:'no instalado', 'zh-CN':'未安装', 'zh-TW':'未安裝' },
     'Sign in with': { ko:'로그인 명령', ja:'ログインコマンド', es:'Inicie sesión con', 'zh-CN':'登录命令', 'zh-TW':'登入指令' },
-    'No coding agent found': { ko:'coding agent 를 찾지 못했습니다', ja:'coding agent が見つかりません', es:'No se encontró ningún agente', 'zh-CN':'未找到 coding agent', 'zh-TW':'找不到 coding agent' },
+    'No coding agent found': { ko:'코딩 에이전트를 찾지 못했습니다', ja:'coding agent が見つかりません', es:'No se encontró ningún agente', 'zh-CN':'未找到 coding agent', 'zh-TW':'找不到 coding agent' },
     'Measured on DX-M1': { ko:'DX-M1 실측', ja:'DX-M1 実測', es:'Medido en DX-M1', 'zh-CN':'DX-M1 实测', 'zh-TW':'DX-M1 實測' },
     'Browse all': { ko:'전체 보기', ja:'すべて見る', es:'Ver todo', 'zh-CN':'查看全部', 'zh-TW':'檢視全部' },
-    'measured': { ko:'개 실측', ja:'件 実測', es:'medidos', 'zh-CN':'个已实测', 'zh-TW':'個已實測' },
+    'measured': { ko:'개 실측', ja:'件を実測', es:'medidos', 'zh-CN':'个已实测', 'zh-TW':'個已實測' },
     'Modules': { ko:'모듈', ja:'モジュール', es:'Módulos', 'zh-CN':'模块', 'zh-TW':'模組' },
     'Device': { ko:'장치', ja:'デバイス', es:'Dispositivo', 'zh-CN':'设备', 'zh-TW':'裝置' },
     /* 무대의 hero (spec 2026-09-23 §5.2, §8.1). 프롬프트 원문 자체는 번역하지 않는다 (home-prompts.js). */
-    'Describe anything. Run it on DX-M1.': { ko:'무엇이든 말하세요. DX-M1 이 돌립니다.', ja:'何でも伝えてください。DX-M1 が動かします。', es:'Describe lo que sea. Ejecútalo en DX-M1.', 'zh-CN':'描述任何需求，在 DX-M1 上运行。', 'zh-TW':'描述任何需求，在 DX-M1 上執行。' },
-    'Say what you need. The agent picks the model, compiles it, builds the app and measures it on this NPU.': { ko:'원하는 것을 적으면 에이전트가 모델을 고르고, 컴파일하고, 앱을 만들고, 이 NPU 에서 측정합니다.', ja:'必要なことを書けば、エージェントがモデルを選び、コンパイルし、アプリを作り、この NPU で計測します。', es:'Di lo que necesitas. El agente elige el modelo, lo compila, crea la app y la mide en esta NPU.', 'zh-CN':'说出你的需求，智能体会选择模型、完成编译、构建应用，并在这块 NPU 上测量。', 'zh-TW':'說出你的需求，代理會選擇模型、完成編譯、建置應用，並在這顆 NPU 上量測。' },
+    'Describe anything. Run it on DX-M1.': { ko:'무엇이든 말하세요. DX-M1이 돌립니다.', ja:'何でも伝えてください。DX-M1 が動かします。', es:'Describa lo que sea. Ejecútelo en DX-M1.', 'zh-CN':'描述任何需求，在 DX-M1 上运行。', 'zh-TW':'描述任何需求，在 DX-M1 上執行。' },
+    'Say what you need. The agent picks the model, compiles it, builds the app and measures it on this NPU.': { ko:'원하는 것을 적으면 에이전트가 모델을 고르고, 컴파일하고, 앱을 만들고, 이 NPU에서 측정합니다.', ja:'必要なことを書けば、エージェントがモデルを選び、コンパイルし、アプリを作り、この NPU で計測します。', es:'Diga lo que necesita. El agente elige el modelo, lo compila, crea la app y la mide en esta NPU.', 'zh-CN':'说出你的需求，智能体会选择模型、完成编译、构建应用，并在这块 NPU 上测量。', 'zh-TW':'說出你的需求，代理會選擇模型、完成編譯、建置應用，並在這顆 NPU 上量測。' },
     'Show 5 more examples': { ko:'예시 5개 더 보기', ja:'例をあと 5 件表示', es:'Mostrar 5 ejemplos más', 'zh-CN':'再显示 5 个示例', 'zh-TW':'再顯示 5 個範例' },
     'Squat game': { ko:'스쿼트 게임', ja:'スクワットゲーム', es:'Juego de sentadillas', 'zh-CN':'深蹲游戏', 'zh-TW':'深蹲遊戲' },
     'Video OCR': { ko:'영상 OCR', ja:'動画 OCR', es:'OCR de video', 'zh-CN':'视频 OCR', 'zh-TW':'影片 OCR' },
@@ -634,12 +638,12 @@
     'Pill counter': { ko:'알약 계수', ja:'錠剤カウント', es:'Contador de pastillas', 'zh-CN':'药片计数', 'zh-TW':'藥錠計數' },
     'Site-safety PPE': { ko:'현장 안전 PPE', ja:'現場安全 PPE', es:'EPP en obra', 'zh-CN':'现场安全 PPE', 'zh-TW':'現場安全 PPE' },
     'Safari camera': { ko:'사파리 카메라', ja:'サファリカメラ', es:'Cámara de safari', 'zh-CN':'野生动物相机', 'zh-TW':'野生動物相機' },
-    'Build a squat-counting fitness mini-game using yolo26n-pose on DEEPX NPU': { ko:'DEEPX NPU 에서 yolo26n-pose 로 스쿼트 횟수를 세는 피트니스 미니게임을 만들어 주세요', ja:'DEEPX NPU 上で yolo26n-pose を使い、スクワットを数えるフィットネスミニゲームを作ってください', es:'Crea un minijuego de fitness que cuente sentadillas con yolo26n-pose en la NPU de DEEPX', 'zh-CN':'在 DEEPX NPU 上用 yolo26n-pose 做一个统计深蹲次数的健身小游戏', 'zh-TW':'在 DEEPX NPU 上用 yolo26n-pose 做一個計算深蹲次數的健身小遊戲' },
-    'Build an OCR inference app whose text detection + recognition runs on the DEEPX DX-M1 NPU.': { ko:'텍스트 검출과 인식을 DEEPX DX-M1 NPU 에서 돌리는 OCR 추론 앱을 만들어 주세요.', ja:'テキスト検出と認識を DEEPX DX-M1 NPU で実行する OCR 推論アプリを作ってください。', es:'Crea una app de inferencia OCR cuya detección y reconocimiento de texto se ejecuten en la NPU DEEPX DX-M1.', 'zh-CN':'构建一个在 DEEPX DX-M1 NPU 上运行文本检测和识别的 OCR 推理应用。', 'zh-TW':'建置一個在 DEEPX DX-M1 NPU 上執行文字偵測與辨識的 OCR 推論應用。' },
+    'Build a squat-counting fitness mini-game using yolo26n-pose on DEEPX NPU': { ko:'DEEPX NPU에서 yolo26n-pose로 스쿼트 횟수를 세는 피트니스 미니게임을 만들어 주세요', ja:'DEEPX NPU 上で yolo26n-pose を使い、スクワットを数えるフィットネスミニゲームを作ってください', es:'Crea un minijuego de fitness que cuente sentadillas con yolo26n-pose en la NPU de DEEPX', 'zh-CN':'在 DEEPX NPU 上用 yolo26n-pose 做一个统计深蹲次数的健身小游戏', 'zh-TW':'在 DEEPX NPU 上用 yolo26n-pose 做一個計算深蹲次數的健身小遊戲' },
+    'Build an OCR inference app whose text detection + recognition runs on the DEEPX DX-M1 NPU.': { ko:'텍스트 검출과 인식을 DEEPX DX-M1 NPU에서 돌리는 OCR 추론 앱을 만들어 주세요.', ja:'テキスト検出と認識を DEEPX DX-M1 NPU で実行する OCR 推論アプリを作ってください。', es:'Crea una app de inferencia OCR cuya detección y reconocimiento de texto se ejecuten en la NPU DEEPX DX-M1.', 'zh-CN':'构建一个在 DEEPX DX-M1 NPU 上运行文本检测和识别的 OCR 推理应用。', 'zh-TW':'建置一個在 DEEPX DX-M1 NPU 上執行文字偵測與辨識的 OCR 推論應用。' },
     'Using the Ultralytics Python package, adapt the base yolo26n model for a medical edge device that screens MRI/CT brain scans for tumors.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 MRI/CT 뇌 영상에서 종양을 선별하는 의료용 엣지 장치에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを MRI/CT の脳画像から腫瘍をスクリーニングする医療用エッジ機器向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a un dispositivo médico de borde que detecte tumores en imágenes cerebrales de MRI/CT.', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为可从 MRI/CT 脑部影像中筛查肿瘤的医疗边缘设备模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為可從 MRI/CT 腦部影像中篩檢腫瘤的醫療邊緣裝置模型。' },
     'Export the Ultralytics YOLO26n detection model to DeepX NPU format using the one-shot format=deepx export path, then run inference on the Ultralytics bus sample image.': { ko:'Ultralytics YOLO26n 검출 모델을 한 번에 끝나는 format=deepx 내보내기로 DeepX NPU 형식으로 바꾸고, Ultralytics bus 샘플 이미지로 추론해 주세요.', ja:'Ultralytics の YOLO26n 検出モデルをワンショットの format=deepx エクスポートで DeepX NPU 形式に変換し、Ultralytics の bus サンプル画像で推論してください。', es:'Exporta el modelo de detección YOLO26n de Ultralytics al formato NPU de DeepX con la exportación directa format=deepx y luego ejecuta la inferencia sobre la imagen de ejemplo bus de Ultralytics.', 'zh-CN':'使用一步式 format=deepx 导出，将 Ultralytics YOLO26n 检测模型转换为 DeepX NPU 格式，然后用 Ultralytics bus 示例图像进行推理。', 'zh-TW':'使用一步式 format=deepx 匯出，將 Ultralytics YOLO26n 偵測模型轉換為 DeepX NPU 格式，再以 Ultralytics bus 範例影像進行推論。' },
-    'Using the yolo26n-pose model on the DEEPX NPU, build a simple arcade-style stretching mini-game.': { ko:'DEEPX NPU 에서 yolo26n-pose 모델로 간단한 아케이드풍 스트레칭 미니게임을 만들어 주세요.', ja:'DEEPX NPU 上の yolo26n-pose モデルで、シンプルなアーケード風ストレッチミニゲームを作ってください。', es:'Con el modelo yolo26n-pose en la NPU de DEEPX, crea un sencillo minijuego de estiramientos de estilo arcade.', 'zh-CN':'在 DEEPX NPU 上用 yolo26n-pose 模型做一个简单的街机风格拉伸小游戏。', 'zh-TW':'在 DEEPX NPU 上用 yolo26n-pose 模型做一個簡單的街機風格伸展小遊戲。' },
-    'Build a PDF-to-Markdown app whose document-parsing pipeline (layout analysis + OCR + table/formula recognition) runs on the DEEPX DX-M1 NPU.': { ko:'문서 파싱 파이프라인(레이아웃 분석 + OCR + 표/수식 인식)이 DEEPX DX-M1 NPU 에서 도는 PDF → Markdown 변환 앱을 만들어 주세요.', ja:'ドキュメント解析パイプライン（レイアウト解析 + OCR + 表・数式認識）が DEEPX DX-M1 NPU で動く PDF → Markdown 変換アプリを作ってください。', es:'Crea una app de PDF a Markdown cuyo pipeline de análisis de documentos (análisis de diseño + OCR + reconocimiento de tablas y fórmulas) se ejecute en la NPU DEEPX DX-M1.', 'zh-CN':'构建一个 PDF 转 Markdown 应用，其文档解析流程（版面分析 + OCR + 表格/公式识别）在 DEEPX DX-M1 NPU 上运行。', 'zh-TW':'建置一個 PDF 轉 Markdown 應用，其文件解析流程（版面分析 + OCR + 表格／公式辨識）在 DEEPX DX-M1 NPU 上執行。' },
+    'Using the yolo26n-pose model on the DEEPX NPU, build a simple arcade-style stretching mini-game.': { ko:'DEEPX NPU에서 yolo26n-pose 모델로 간단한 아케이드풍 스트레칭 미니게임을 만들어 주세요.', ja:'DEEPX NPU 上の yolo26n-pose モデルで、シンプルなアーケード風ストレッチミニゲームを作ってください。', es:'Con el modelo yolo26n-pose en la NPU de DEEPX, crea un sencillo minijuego de estiramientos de estilo arcade.', 'zh-CN':'在 DEEPX NPU 上用 yolo26n-pose 模型做一个简单的街机风格拉伸小游戏。', 'zh-TW':'在 DEEPX NPU 上用 yolo26n-pose 模型做一個簡單的街機風格伸展小遊戲。' },
+    'Build a PDF-to-Markdown app whose document-parsing pipeline (layout analysis + OCR + table/formula recognition) runs on the DEEPX DX-M1 NPU.': { ko:'문서 파싱 파이프라인(레이아웃 분석 + OCR + 표/수식 인식)이 DEEPX DX-M1 NPU에서 도는 PDF → Markdown 변환 앱을 만들어 주세요.', ja:'ドキュメント解析パイプライン（レイアウト解析 + OCR + 表・数式認識）が DEEPX DX-M1 NPU で動く PDF → Markdown 変換アプリを作ってください。', es:'Crea una app de PDF a Markdown cuyo pipeline de análisis de documentos (análisis de diseño + OCR + reconocimiento de tablas y fórmulas) se ejecute en la NPU DEEPX DX-M1.', 'zh-CN':'构建一个 PDF 转 Markdown 应用，其文档解析流程（版面分析 + OCR + 表格/公式识别）在 DEEPX DX-M1 NPU 上运行。', 'zh-TW':'建置一個 PDF 轉 Markdown 應用，其文件解析流程（版面分析 + OCR + 表格／公式辨識）在 DEEPX DX-M1 NPU 上執行。' },
     'Using the Ultralytics Python package, adapt the base yolo26n model for a pharmaceutical pill identification/counting station.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 알약 식별·계수 스테이션에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを錠剤の識別・カウント用ステーション向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a una estación de identificación y conteo de pastillas.', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为药片识别与计数工作站的模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為藥錠辨識與計數工作站的模型。' },
     'Using the Ultralytics Python package, adapt the base yolo26n model for a construction/factory site-safety camera that checks PPE (personal protective equipment) compliance.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 건설·공장 현장에서 PPE(개인 보호구) 착용을 확인하는 안전 카메라에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを建設・工場現場で PPE（個人用保護具）の着用を確認する安全カメラ向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a una cámara de seguridad para obras y fábricas que compruebe el uso de EPP (equipos de protección personal).', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为检查建筑/工厂现场 PPE（个人防护装备）佩戴情况的安全摄像头模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為檢查營建／工廠現場 PPE（個人防護裝備）穿戴情況的安全攝影機模型。' },
     'Using the Ultralytics Python package, adapt the base yolo26n model for a wildlife-monitoring / safari camera scenario.': { ko:'Ultralytics Python 패키지로 기본 yolo26n 모델을 야생동물 관찰·사파리 카메라 시나리오에 맞게 조정해 주세요.', ja:'Ultralytics の Python パッケージで、ベースの yolo26n モデルを野生動物観察・サファリカメラのシナリオ向けに調整してください。', es:'Con el paquete de Python de Ultralytics, adapta el modelo base yolo26n a un escenario de cámara de vigilancia de fauna o safari.', 'zh-CN':'使用 Ultralytics Python 包，将基础 yolo26n 模型调整为野生动物监测／游猎摄像头场景的模型。', 'zh-TW':'使用 Ultralytics Python 套件，將基礎 yolo26n 模型調整為野生動物監測／遊獵攝影機情境的模型。' },
@@ -649,6 +653,9 @@
     /* task 이름은 Model Zoo 사전 (dx_modelzoo/static/js/i18n-dict-shared.js) 과 같다. */
     'Object Detection': { ko:'객체 탐지', ja:'物体検出', es:'Detección de objetos', 'zh-CN':'目标检测', 'zh-TW':'物件偵測' },
     'Instance Segmentation': { ko:'인스턴스 분할', ja:'インスタンスセグメンテーション', es:'Segmentación de instancias', 'zh-CN':'实例分割', 'zh-TW':'實例分割' },
+    'Segmentation': { ko:'분할', ja:'セグメンテーション', es:'Segmentación', 'zh-CN':'分割', 'zh-TW':'分割' },
+    'Face Detection': { ko:'얼굴 탐지', ja:'顔検出', es:'Detección de rostros', 'zh-CN':'人脸检测', 'zh-TW':'人臉偵測' },
+    'Semantic Segmentation': { ko:'의미론적 분할', ja:'セマンティックセグメンテーション', es:'Segmentación semántica', 'zh-CN':'语义分割', 'zh-TW':'語意分割' },
     'Pose Estimation': { ko:'자세 추정', ja:'姿勢推定', es:'Estimación de pose', 'zh-CN':'姿态估计', 'zh-TW':'姿態估計' },
     'Classification': { ko:'분류', ja:'分類', es:'Clasificación', 'zh-CN':'分类', 'zh-TW':'分類' },
     'OBB Detection': { ko:'OBB 탐지', ja:'OBB 検出', es:'Detección OBB', 'zh-CN':'OBB 检测', 'zh-TW':'OBB 偵測' },
@@ -723,17 +730,19 @@
     'channels': { ko:'채널', ja:'チャンネル', es:'canales', 'zh-CN':'路数', 'zh-TW':'路數' },
     'target': { ko:'목표', ja:'目標', es:'objetivo', 'zh-CN':'目标', 'zh-TW':'目標' },
     'input': { ko:'입력', ja:'入力', es:'entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
-    'Pick': { ko:'선택', ja:'選択', es:'Elegir', 'zh-CN':'选择', 'zh-TW':'選擇' },
-    'Find': { ko:'탐색', ja:'検索', es:'Buscar', 'zh-CN':'查找', 'zh-TW':'尋找' },
-    'Generate': { ko:'생성', ja:'生成', es:'Generar', 'zh-CN':'生成', 'zh-TW':'產生' },
-    'Wire': { ko:'연결', ja:'接続', es:'Conectar', 'zh-CN':'接入', 'zh-TW':'接入' },
+    '**Pick** a model for {task}': { ko:'{task}에 맞는 모델 **고르기**', ja:'{task} に合うモデルを**選ぶ**', es:'**Elegir** un modelo para {task}', 'zh-CN':'为{task}**选择**模型', 'zh-TW':'為{task}**選擇**模型' },
+    '**Find** the closest model in the zoo': { ko:'Model Zoo에서 가장 가까운 모델 **찾기**', ja:'Model Zoo で最も近いモデルを**探す**', es:'**Buscar** el modelo más parecido en el Model Zoo', 'zh-CN':'在 Model Zoo 中**查找**最接近的模型', 'zh-TW':'在 Model Zoo 中**尋找**最接近的模型' },
+    '**Generate** an app in a new session folder': { ko:'새 세션 폴더에 앱 **만들기**', ja:'新しいセッションフォルダにアプリを**生成**', es:'**Generar** una app en una carpeta de sesión nueva', 'zh-CN':'在新会话目录中**生成**应用', 'zh-TW':'在新工作階段目錄中**產生**應用' },
+    '**Wire** {input} and the logic you described': { ko:'{input} · 설명하신 로직 **연결하기**', ja:'{input}と説明されたロジックを**つなぐ**', es:'**Conectar** {input} y la lógica que describió', 'zh-CN':'**连接**{input}与你描述的逻辑', 'zh-TW':'**連接**{input}與你描述的邏輯' },
+    '**Run** it and show you the output': { ko:'**실행**하고 결과 보여 주기', ja:'**実行**して結果を表示', es:'**Ejecutar** y mostrarle el resultado', 'zh-CN':'**运行**并展示结果', 'zh-TW':'**執行**並展示結果' },
+    'about 3–6 min': { ko:'약 3–6분', ja:'約 3〜6 分', es:'unos 3–6 min', 'zh-CN':'约 3–6 分钟', 'zh-TW':'約 3–6 分鐘' },
+    '{n} models': { ko:'모델 {n}개', ja:'{n} 件のモデル', es:'{n} modelos', 'zh-CN':'{n} 个模型', 'zh-TW':'{n} 個模型' },
+    '{n}-channel': { ko:'{n}채널', ja:'{n} チャンネル', es:'{n} canales', 'zh-CN':'{n} 路', 'zh-TW':'{n} 路' },
+    'Webcam': { ko:'웹캠', ja:'Web カメラ', es:'Cámara web', 'zh-CN':'摄像头', 'zh-TW':'網路攝影機' },
+    'Video file': { ko:'동영상 파일', ja:'動画ファイル', es:'Archivo de video', 'zh-CN':'视频文件', 'zh-TW':'影片檔' },
+    'RTSP stream': { ko:'RTSP 스트림', ja:'RTSP ストリーム', es:'Transmisión RTSP', 'zh-CN':'RTSP 流', 'zh-TW':'RTSP 串流' },
     'Run': { ko:'실행', ja:'実行', es:'Ejecutar', 'zh-CN':'运行', 'zh-TW':'執行' },
-    'a model for': { ko:'에 맞는 모델을', ja:'に合うモデルを', es:'un modelo para', 'zh-CN':'适合的模型：', 'zh-TW':'適合的模型：' },
-    'the closest model in the zoo': { ko:'모델 저장소에서 가장 가까운 모델을', ja:'モデルズーで最も近いモデルを', es:'el modelo más parecido del zoo', 'zh-CN':'模型库中最接近的模型', 'zh-TW':'模型庫中最接近的模型' },
-    'an app in a new session folder': { ko:'새 세션 폴더에 앱을', ja:'新しいセッションフォルダにアプリを', es:'una app en una carpeta de sesión nueva', 'zh-CN':'在新会话目录里生成应用', 'zh-TW':'在新工作階段目錄產生應用' },
-    'the input': { ko:'입력을', ja:'入力を', es:'la entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
-    'and the logic you described': { ko:'설명하신 로직에 연결', ja:'と説明されたロジックを', es:'y la lógica que describió', 'zh-CN':'与你描述的逻辑', 'zh-TW':'與你描述的邏輯' },
-    'it and show you the output': { ko:'하고 결과를 보여줌', ja:'して結果を表示', es:'y mostrarle el resultado', 'zh-CN':'并展示结果', 'zh-TW':'並展示結果' },
+    'the input': { ko:'입력', ja:'入力', es:'la entrada', 'zh-CN':'输入', 'zh-TW':'輸入' },
     'Home': { ko:'홈', ja:'ホーム', es:'Inicio', 'zh-CN':'首页', 'zh-TW':'首頁' },
     'Models': { ko:'모델', ja:'モデル', es:'Modelos', 'zh-CN':'模型', 'zh-TW':'模型' },
     'Studio': { ko:'스튜디오', ja:'スタジオ', es:'Estudio', 'zh-CN':'工作台', 'zh-TW':'工作臺' },
@@ -748,10 +757,10 @@
     'compile yolo26n to DXNN': { ko:'yolo26n을 DXNN으로 컴파일', ja:'yolo26n を DXNN にコンパイル', es:'compilar yolo26n a DXNN', 'zh-CN':'把 yolo26n 编译为 DXNN', 'zh-TW':'把 yolo26n 編譯為 DXNN' },
     'pose estimation on webcam': { ko:'웹캠으로 포즈 추정', ja:'ウェブカメラで姿勢推定', es:'estimación de pose con webcam', 'zh-CN':'用摄像头做姿态估计', 'zh-TW':'用攝影機做姿態估計' },
     'segformer · 200 fps on one DX-M1': { ko:'segformer · DX-M1 한 개로 200 fps', ja:'segformer · DX-M1 1基で 200 fps', es:'segformer · 200 fps en un solo DX-M1', 'zh-CN':'segformer · 一颗 DX-M1 跑 200 fps', 'zh-TW':'segformer · 一顆 DX-M1 跑 200 fps' },
-    'yolo26n → DXNN · 212 fps on DX-M1': { ko:'yolo26n → DXNN · DX-M1 에서 212 fps', ja:'yolo26n → DXNN · DX-M1 で 212 fps', es:'yolo26n → DXNN · 212 fps en DX-M1', 'zh-CN':'yolo26n → DXNN · DX-M1 上 212 fps', 'zh-TW':'yolo26n → DXNN · DX-M1 上 212 fps' },
+    'yolo26n → DXNN · 212 fps on DX-M1': { ko:'yolo26n → DXNN · DX-M1에서 212 fps', ja:'yolo26n → DXNN · DX-M1 で 212 fps', es:'yolo26n → DXNN · 212 fps en DX-M1', 'zh-CN':'yolo26n → DXNN · DX-M1 上 212 fps', 'zh-TW':'yolo26n → DXNN · DX-M1 上 212 fps' },
     '16 channels on one DX-M1 · 495 fps NPU': { ko:'DX-M1 한 개로 16채널 · NPU 495 fps', ja:'DX-M1 1基で16チャンネル · NPU 495 fps', es:'16 canales en un solo DX-M1 · NPU a 495 fps', 'zh-CN':'一颗 DX-M1 跑 16 路 · NPU 495 fps', 'zh-TW':'一顆 DX-M1 跑 16 路 · NPU 495 fps' },
     '16-channel CCTV object detection': { ko:'16채널 CCTV 객체 감지', ja:'16チャンネルCCTV 物体検出', es:'detección de objetos en CCTV de 16 canales', 'zh-CN':'16 路 CCTV 目标检测', 'zh-TW':'16 路 CCTV 物件偵測' },
-    'segment a video file': { ko:'비디오 파일 분할', ja:'動画ファイルをセグメンテーション', es:'segmentar un archivo de vídeo', 'zh-CN':'对视频文件做分割', 'zh-TW':'對影片檔做分割' },
+    'segment a video file': { ko:'비디오 파일 분할', ja:'動画ファイルをセグメンテーション', es:'segmentar un archivo de video', 'zh-CN':'对视频文件做分割', 'zh-TW':'對影片檔做分割' },
     'Checking DX-M1…': { ko:'DX-M1 확인 중…', ja:'DX-M1 を確認中…', es:'Comprobando DX-M1…', 'zh-CN':'正在检查 DX-M1…', 'zh-TW':'正在檢查 DX-M1…' },
     'From ONNX to the NPU': { ko:'ONNX에서 NPU까지', ja:'ONNX から NPU まで', es:'De ONNX a la NPU', 'zh-CN':'从 ONNX 到 NPU', 'zh-TW':'從 ONNX 到 NPU' },
     'ONNX': { ko:'ONNX', ja:'ONNX', es:'ONNX', 'zh-CN':'ONNX', 'zh-TW':'ONNX' },
@@ -781,12 +790,12 @@
     'zh-TW': '270+ 個預編譯 .dxnn 模型',
     es: 'Más de 270 modelos .dxnn precompilados',
   },
-  '340 AI model catalog': {
-    ko: '340개 AI 모델 카탈로그',
-    ja: '340 AI モデルカタログ',
-    'zh-CN': '340 个 AI 模型目录',
-    'zh-TW': '340 個 AI 模型目錄',
-    es: 'Catálogo de 340 modelos de IA',
+  'AI model catalog': {
+    ko: 'AI 모델 카탈로그',
+    ja: 'AI モデルカタログ',
+    'zh-CN': 'AI 模型目录',
+    'zh-TW': 'AI 模型目錄',
+    es: 'Catálogo de modelos de IA',
   },
   '5min~1hr history analysis': {
     ko: '5분~1시간 히스토리 분석',
@@ -823,12 +832,12 @@
     'zh-TW': '銷量超 <em class="hl">7300 萬</em>；DEEPX AI HAT 為樹莓派 5 帶來最高 <em class="hl">25 TOPS</em>。',
     es: '<em class="hl">+73M</em> vendidas; el DEEPX AI HAT lleva hasta <em class="hl">25 TOPS</em> a la Raspberry Pi 5.',
   },
-  '<strong>340 AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment': {
-    ko: '<strong>340개 AI 모델 카탈로그</strong><br>• YOLO·ResNet·EfficientNet 등 .dxnn 제공<br>• 모델 성능 비교표 및 호환성 정보<br>• 원클릭 다운로드 & Edge 디바이스 배포',
-    ja: '<strong>340個AIモデルカタログ</strong><br>• YOLO・ResNet・EfficientNet等の.dxnnモデル<br>• モデル性能比較表と互換性情報<br>• ワンクリックダウンロード＆Edgeデバイスデプロイ',
-    'zh-CN': '<strong>340个AI模型目录</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型性能对比表及兼容性信息<br>• 一键下载与Edge设备部署',
-    'zh-TW': '<strong>340個AI模型目錄</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型效能比較表及相容性資訊<br>• 一鍵下載與Edge裝置部署',
-    es: '<strong>Catálogo de 340 modelos de IA</strong><br>• Modelos .dxnn YOLO, ResNet, EfficientNet<br>• Comparativa de rendimiento e información de compatibilidad<br>• Descarga con un clic e implementación en dispositivos Edge',
+  '<strong>490+ AI Model Catalog</strong><br>• YOLO, ResNet, EfficientNet .dxnn models<br>• Model performance comparison & compatibility info<br>• One-click download & Edge device deployment': {
+    ko: '<strong>490개 이상의 AI 모델 카탈로그</strong><br>• YOLO·ResNet·EfficientNet 등 .dxnn 제공<br>• 모델 성능 비교표 및 호환성 정보<br>• 원클릭 다운로드 & Edge 디바이스 배포',
+    ja: '<strong>490以上のAIモデルカタログ</strong><br>• YOLO・ResNet・EfficientNet等の.dxnnモデル<br>• モデル性能比較表と互換性情報<br>• ワンクリックダウンロード＆Edgeデバイスデプロイ',
+    'zh-CN': '<strong>490+ 个AI模型目录</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型性能对比表及兼容性信息<br>• 一键下载与Edge设备部署',
+    'zh-TW': '<strong>490+ 個AI模型目錄</strong><br>• YOLO·ResNet·EfficientNet等.dxnn模型<br>• 模型效能比較表及相容性資訊<br>• 一鍵下載與Edge裝置部署',
+    es: '<strong>Catálogo de más de 490 modelos de IA</strong><br>• Modelos .dxnn YOLO, ResNet, EfficientNet<br>• Comparativa de rendimiento e información de compatibilidad<br>• Descarga con un clic e implementación en dispositivos Edge',
   },
   '<strong>DEEPX Interactive Encyclopedia</strong><br>• DX-M1/DX-M2 chip die hotspot exploration<br>• Click to explore tech, product, vision stories<br>• High-res chip die photos & technical descriptions': {
     ko: '<strong>DEEPX 인터랙티브 백과사전</strong><br>• DX-M1/DX-M2 칩 다이 핫스팟 탐험<br>• 클릭으로 기술·제품·비전 스토리 탐색<br>• 고해상도 칩 다이 사진 & 기술 설명',
@@ -837,12 +846,12 @@
     'zh-TW': '<strong>DEEPX互動式百科全書</strong><br>• DX-M1/DX-M2晶片裸晶熱點探索<br>• 點擊探索技術·產品·願景故事<br>• 高解析度晶片裸晶照片與技術說明',
     es: '<strong>Enciclopedia interactiva DEEPX</strong><br>• Exploración de puntos clave del die de los chips DX-M1/DX-M2<br>• Haga clic para explorar historias de tecnología, productos y visión<br>• Fotos de alta resolución del die y descripciones técnicas',
   },
-  '<strong>DXNN SDK Tech Library</strong><br>• 120 official SDK documents curated<br>• 4-shelf classification (Runtime/Compiler/Zoo/Suite)<br>• Real-time search & book-style viewer': {
-    ko: '<strong>DXNN SDK 기술 도서관</strong><br>• 120개 공식 SDK 문서 큐레이션 수록<br>• 4개 책장 분류 체계 (Runtime/Compiler/Zoo/Suite)<br>• 실시간 검색 & 책 형태 뷰어',
-    ja: '<strong>DXNN SDK技術ライブラリ</strong><br>• 120件の公式SDKドキュメントを収録<br>• 4つの本棚分類体系（Runtime/Compiler/Zoo/Suite）<br>• リアルタイム検索＆書籍形式ビューア',
-    'zh-CN': '<strong>DXNN SDK技术资料库</strong><br>• 收录120份官方SDK文档<br>• 4个书架分类体系（Runtime/Compiler/Zoo/Suite）<br>• 实时搜索与书籍式阅读器',
-    'zh-TW': '<strong>DXNN SDK技術資料庫</strong><br>• 收錄120份官方SDK文件<br>• 4個書架分類體系（Runtime/Compiler/Zoo/Suite）<br>• 即時搜尋與書籍式閱讀器',
-    es: '<strong>Biblioteca técnica del SDK DXNN</strong><br>• 120 documentos oficiales del SDK seleccionados<br>• Clasificación en 4 estantes (Runtime/Compiler/Zoo/Suite)<br>• Búsqueda en tiempo real y visor estilo libro',
+  '<strong>DXNN SDK Tech Library</strong><br>• 190 official SDK documents and brochures<br>• 6 shelves: Runtime, Compiler, Model Zoo, All Suite, Studio manual, Brochures<br>• Real-time search & book-style viewer': {
+    ko: '<strong>DXNN SDK 기술 라이브러리</strong><br>• 공식 SDK 문서 · 브로슈어 190종<br>• 6개 서가: Runtime · Compiler · Model Zoo · All Suite · Studio 매뉴얼 · 브로슈어<br>• 실시간 검색 · 책 형태 뷰어',
+    ja: '<strong>DXNN SDK 技術ライブラリ</strong><br>• 公式 SDK ドキュメントとパンフレット 190 点<br>• 6 つの書棚: Runtime・Compiler・Model Zoo・All Suite・Studio マニュアル・パンフレット<br>• リアルタイム検索・ブック形式ビューア',
+    'zh-CN': '<strong>DXNN SDK 技术文库</strong><br>• 190 份官方 SDK 文档与宣传册<br>• 6 个书架：Runtime、Compiler、Model Zoo、All Suite、Studio 手册、宣传册<br>• 实时搜索与书本式阅读器',
+    'zh-TW': '<strong>DXNN SDK 技術文庫</strong><br>• 190 份官方 SDK 文件與型錄<br>• 6 個書架：Runtime、Compiler、Model Zoo、All Suite、Studio 手冊、型錄<br>• 即時搜尋與書本式閱讀器',
+    es: '<strong>Biblioteca técnica DXNN SDK</strong><br>• 190 documentos oficiales del SDK y folletos<br>• 6 estantes: Runtime, Compiler, Model Zoo, All Suite, manual de Studio, folletos<br>• Búsqueda en tiempo real y visor tipo libro',
   },
   '<strong>HW Performance Cross Benchmark</strong><br>• 6 boards × YOLO series automated testing<br>• FPS, latency, power consumption precision measurement<br>• Markdown auto-report & chart generation': {
     ko: '<strong>HW 성능 크로스 벤치마크</strong><br>• 6개 보드 × YOLO 시리즈 자동 테스트<br>• FPS·지연시간·전력 소비 정밀 측정<br>• Markdown 자동 리포트 & 차트 생성',
@@ -851,12 +860,12 @@
     'zh-TW': '<strong>HW效能交叉基準測試</strong><br>• 6塊開發板×YOLO系列自動測試<br>• FPS·延遲·功耗精確量測<br>• Markdown自動報告與圖表產生',
     es: '<strong>Benchmark cruzado de rendimiento HW</strong><br>• Pruebas automatizadas de 6 placas × serie YOLO<br>• Medición precisa de FPS, latencia y consumo energético<br>• Informe Markdown automático y generación de gráficos',
   },
-  '<strong>NPU Configuration & TCO Analysis</strong><br>• Workload-based optimal NPU chip recommendation<br>• Total Cost of Ownership (TCO) comparison report<br>• DX-M1 vs DX-H1 Quattro performance comparison': {
-    ko: '<strong>NPU 구성 & TCO 분석 도구</strong><br>• 워크로드 기반 최적 NPU 칩 자동 추천<br>• 총 소유 비용(TCO) 비교 분석 리포트<br>• DX-M1 vs DX-H1 Quattro 성능 비교',
-    ja: '<strong>NPU構成＆TCO分析ツール</strong><br>• ワークロードに基づく最適NPUチップ自動推薦<br>• 総所有コスト（TCO）比較分析レポート<br>• DX-M1 vs DX-H1 Quattro性能比較',
-    'zh-CN': '<strong>NPU配置与TCO分析工具</strong><br>• 基于工作负载的最优NPU芯片自动推荐<br>• 总拥有成本(TCO)对比分析报告<br>• DX-M1 vs DX-H1 Quattro性能对比',
-    'zh-TW': '<strong>NPU配置與TCO分析工具</strong><br>• 基於工作負載的最佳NPU晶片自動推薦<br>• 總擁有成本(TCO)比較分析報告<br>• DX-M1 vs DX-H1 Quattro效能比較',
-    es: '<strong>Configuración NPU y análisis TCO</strong><br>• Recomendación automática del chip NPU óptimo según la carga de trabajo<br>• Informe comparativo del costo total de propiedad (TCO)<br>• Comparación de rendimiento DX-M1 vs DX-H1 Quattro',
+  '<strong>Edge AI Product Finder</strong><br>• Describe the workload: task, model size, channels, FPS<br>• Boards and hosts ranked from measured YOLO26 benchmarks<br>• Compare platforms, check the evidence, request a quote': {
+    ko: '<strong>Edge AI 제품 찾기</strong><br>• 작업 · 모델 크기 · 채널 수 · FPS로 워크로드 입력<br>• 실측 YOLO26 벤치마크로 보드와 호스트 순위<br>• 플랫폼 비교 · 근거 확인 · 견적 요청',
+    ja: '<strong>Edge AI 製品ファインダー</strong><br>• タスク・モデルサイズ・チャネル数・FPS でワークロードを指定<br>• 実測 YOLO26 ベンチマークでボードとホストを順位付け<br>• プラットフォーム比較・根拠の確認・見積依頼',
+    'zh-CN': '<strong>Edge AI 产品选型</strong><br>• 按任务、模型大小、通道数、FPS 描述工作负载<br>• 依据实测 YOLO26 基准为开发板与主机排名<br>• 对比平台、查看依据、申请报价',
+    'zh-TW': '<strong>Edge AI 產品選型</strong><br>• 依任務、模型大小、通道數、FPS 描述工作負載<br>• 依實測 YOLO26 基準為開發板與主機排名<br>• 比較平台、檢視依據、申請報價',
+    es: '<strong>Buscador de productos Edge AI</strong><br>• Describa la carga: tarea, tamaño del modelo, canales, FPS<br>• Placas y hosts clasificados con pruebas YOLO26 medidas<br>• Compare plataformas, revise la evidencia y pida un presupuesto',
   },
   '<strong>NPU Hardware Real-time Monitoring</strong><br>• NPU temperature, voltage, clock real-time charts<br>• CPU/memory/disk system gauges<br>• 5min~1hr history trend analysis': {
     ko: '<strong>NPU 하드웨어 실시간 모니터링</strong><br>• NPU 온도·전압·클럭 실시간 차트<br>• CPU/메모리/디스크 시스템 게이지<br>• 5분~1시간 히스토리 추세 분석',
@@ -865,12 +874,12 @@
     'zh-TW': '<strong>NPU硬體即時監控</strong><br>• NPU溫度·電壓·時脈即時圖表<br>• CPU/記憶體/磁碟系統儀表<br>• 5分鐘～1小時歷史趨勢分析',
     es: '<strong>Monitoreo de hardware NPU en tiempo real</strong><br>• Gráficos en tiempo real de temperatura, voltaje y reloj NPU<br>• Indicadores del sistema de CPU/memoria/disco<br>• Análisis de tendencias históricas de 5 min~1 h',
   },
-  '<strong>NPU Real-time Inference Engine</strong><br>• Run 340+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard': {
-    ko: '<strong>NPU 실시간 추론 엔진</strong><br>• 340+ 사전 컴파일된 AI 모델 즉시 실행<br>• C++/Python 추론 코드 템플릿 자동 생성<br>• FPS, 지연시간, 메모리 실시간 대시보드',
-    ja: '<strong>NPU リアルタイム推論エンジン</strong><br>• 340以上のプリコンパイル済みAIモデルを即時実行<br>• C++/Python推論コードテンプレート自動生成<br>• FPS・レイテンシ・メモリのリアルタイムダッシュボード',
-    'zh-CN': '<strong>NPU 实时推理引擎</strong><br>• 即时运行340+预编译AI模型<br>• 自动生成C++/Python推理代码模板<br>• FPS、延迟、内存实时仪表盘',
-    'zh-TW': '<strong>NPU 即時推論引擎</strong><br>• 即時執行340+預編譯AI模型<br>• 自動產生C++/Python推論程式碼範本<br>• FPS、延遲、記憶體即時儀表板',
-    es: '<strong>Motor de inferencia NPU en tiempo real</strong><br>• Ejecutar más de 340 modelos de IA precompilados al instante<br>• Generar automáticamente plantillas de código de inferencia C++/Python<br>• Panel en tiempo real de FPS, latencia y memoria',
+  '<strong>NPU Real-time Inference Engine</strong><br>• Run 490+ pre-compiled AI models instantly<br>• Auto-generate C++/Python inference code templates<br>• FPS, latency, memory real-time dashboard': {
+    ko: '<strong>NPU 실시간 추론 엔진</strong><br>• 490+ 사전 컴파일된 AI 모델 즉시 실행<br>• C++/Python 추론 코드 템플릿 자동 생성<br>• FPS, 지연시간, 메모리 실시간 대시보드',
+    ja: '<strong>NPU リアルタイム推論エンジン</strong><br>• 490以上のプリコンパイル済みAIモデルを即時実行<br>• C++/Python推論コードテンプレート自動生成<br>• FPS・レイテンシ・メモリのリアルタイムダッシュボード',
+    'zh-CN': '<strong>NPU 实时推理引擎</strong><br>• 即时运行490+预编译AI模型<br>• 自动生成C++/Python推理代码模板<br>• FPS、延迟、内存实时仪表盘',
+    'zh-TW': '<strong>NPU 即時推論引擎</strong><br>• 即時執行490+預編譯AI模型<br>• 自動產生C++/Python推論程式碼範本<br>• FPS、延遲、記憶體即時儀表板',
+    es: '<strong>Motor de inferencia NPU en tiempo real</strong><br>• Ejecutar más de 490 modelos de IA precompilados al instante<br>• Generar automáticamente plantillas de código de inferencia C++/Python<br>• Panel en tiempo real de FPS, latencia y memoria',
   },
   '<strong>Natural-Language NPU App Builder</strong><br>• One-line commands auto-generate pipelines & apps<br>• Interactive console · real-time build logs<br>• Offline showcase gallery': {
     ko: '<strong>자연어 NPU 앱 빌더</strong><br>• 명령 한 줄로 파이프라인·앱 자동 생성<br>• 대화형 콘솔 · 실시간 빌드 로그<br>• 오프라인 쇼케이스 갤러리',
@@ -1110,12 +1119,12 @@
     'zh-TW': '多路串流同時處理',
     es: 'Procesamiento concurrente de múltiples flujos',
   },
-  'NPU config calculator & TCO analysis': {
-    ko: 'NPU 구성 계산 & TCO 분석',
-    ja: 'NPU 構成計算 & TCO 分析',
-    'zh-CN': 'NPU 配置计算 & TCO 分析',
-    'zh-TW': 'NPU 組態計算 & TCO 分析',
-    es: 'Calculadora de configuración NPU y análisis TCO',
+  'Board & host picks from measured benchmarks': {
+    ko: '실측 벤치마크로 보드 · 호스트 추천',
+    ja: '実測ベンチマークからボードとホストを推奨',
+    'zh-CN': '依据实测基准推荐开发板与主机',
+    'zh-TW': '依實測基準推薦開發板與主機',
+    es: 'Placa y host recomendados según mediciones reales',
   },
   'NPU temp · voltage · clock real-time charts': {
     ko: 'NPU 온도 · 전압 · 클럭 실시간 차트',
@@ -1180,12 +1189,12 @@
     'zh-TW': 'NPU 硬體即時監控',
     es: 'Monitoreo de hardware NPU en tiempo real',
   },
-  'Real-time NPU inference & model compiler': {
-    ko: 'NPU 실시간 추론 및 모델 컴파일',
-    ja: 'NPU リアルタイム推論 & モデルコンパイラ',
-    'zh-CN': 'NPU 实时推理 & 模型编译器',
-    'zh-TW': 'NPU 即時推論 & 模型編譯器',
-    es: 'Inferencia NPU en tiempo real y compilador de modelos',
+  'Real-time NPU inference & demos': {
+    ko: 'NPU 실시간 추론 · 데모',
+    ja: 'NPU リアルタイム推論とデモ',
+    'zh-CN': 'NPU 实时推理与演示',
+    'zh-TW': 'NPU 即時推論與示範',
+    es: 'Inferencia NPU en tiempo real y demos',
   },
   'Real-time inference performance dashboard': {
     ko: '실시간 추론 성능 대시보드',
@@ -1208,12 +1217,12 @@
     'zh-TW': '機器人',
     es: 'Robótica',
   },
-  'Run 340+ pre-compiled AI models': {
-    ko: '340+ 사전 컴파일 AI 모델 실행',
-    ja: '340+ 事前コンパイル済み AI モデルを実行',
-    'zh-CN': '运行 340+ 个预编译 AI 模型',
-    'zh-TW': '執行 340+ 個預編譯 AI 模型',
-    es: 'Ejecutar más de 340 modelos de IA precompilados',
+  'Run 490+ pre-compiled AI models': {
+    ko: '490+ 사전 컴파일 AI 모델 실행',
+    ja: '490+ 事前コンパイル済み AI モデルを実行',
+    'zh-CN': '运行 490+ 个预编译 AI 模型',
+    'zh-TW': '執行 490+ 個預編譯 AI 模型',
+    es: 'Ejecutar más de 490 modelos de IA precompilados',
   },
   'Security·CCTV': {
     ko: '보안·CCTV',
@@ -1393,7 +1402,7 @@
   // ── 마크업 lang-span 에서 옮겨온 항목 ──
   // ── 유리 막대 (P5) ──
   'Go deeper at DEEPX Developers': {
-    ko: 'DEEPX Developers 에서 더 깊이',
+    ko: 'DEEPX Developers에서 더 깊이',
     ja: 'DEEPX Developers でさらに詳しく',
     'zh-CN': '前往 DEEPX Developers 深入了解',
     'zh-TW': '前往 DEEPX Developers 深入了解',
@@ -1414,11 +1423,11 @@
     es: 'Sin conexión',
   },
   'Install the SDK and run your first model': {
-    ko: 'SDK 를 설치하고 첫 모델을 돌려 보세요',
+    ko: 'SDK를 설치하고 첫 모델을 돌려 보세요',
     ja: 'SDK をインストールして最初のモデルを実行',
     'zh-CN': '安装 SDK，运行第一个模型',
     'zh-TW': '安裝 SDK，執行第一個模型',
-    es: 'Instala el SDK y ejecuta tu primer modelo',
+    es: 'Instale el SDK y ejecute su primer modelo',
   },
   'DX-RT, DX-COM and drivers for every release': {
     ko: '릴리스별 DX-RT · DX-COM · 드라이버',
@@ -1428,7 +1437,7 @@
     es: 'DX-RT, DX-COM y controladores de cada versión',
   },
   'API references and guides for the SDK': {
-    ko: 'SDK 의 API 문서와 사용 안내',
+    ko: 'SDK의 API 문서와 사용 안내',
     ja: 'SDK の API リファレンスとガイド',
     'zh-CN': 'SDK 的 API 参考与指南',
     'zh-TW': 'SDK 的 API 參考與指南',
@@ -1442,7 +1451,7 @@
     es: 'Hojas de datos, manuales y notas de aplicación',
   },
   'The full catalogue on developer.deepx.ai': {
-    ko: 'developer.deepx.ai 의 전체 모델 목록',
+    ko: 'developer.deepx.ai의 전체 모델 목록',
     ja: 'developer.deepx.ai の全モデル一覧',
     'zh-CN': 'developer.deepx.ai 上的完整模型目录',
     'zh-TW': 'developer.deepx.ai 上的完整模型目錄',
@@ -1511,6 +1520,90 @@
     'zh-TW': 'deepx.ai',
     es: 'deepx.ai',
   },
+  'Connected browsers': {
+    ko: '연결된 브라우저',
+    ja: '接続中のブラウザ',
+    'zh-CN': '已连接的浏览器',
+    'zh-TW': '已連接的瀏覽器',
+    es: 'Navegadores conectados',
+  },
+  'Other computers on this network can open DX AI Studio at:': {
+    ko: '같은 네트워크의 다른 컴퓨터에서는 다음 주소로 DX AI Studio를 열 수 있습니다.',
+    ja: '同じネットワーク上の他のコンピューターからは、次のアドレスで DX AI Studio を開けます。',
+    'zh-CN': '同一网络中的其他计算机可通过以下地址打开 DX AI Studio:',
+    'zh-TW': '同一網路中的其他電腦可透過以下位址開啟 DX AI Studio:',
+    es: 'Otros equipos de esta red pueden abrir DX AI Studio en:',
+  },
+  'Each browser asks once for the 6-digit code shown in the terminal where ./launcher.sh is running.': {
+    ko: '브라우저마다 처음 한 번, ./launcher.sh를 실행한 터미널에 나온 6자리 코드를 입력합니다.',
+    ja: 'ブラウザごとに最初の一度だけ、./launcher.sh を実行しているターミナルに表示された6桁のコードを入力します。',
+    'zh-CN': '每个浏览器只需在首次连接时输入运行 ./launcher.sh 的终端中显示的 6 位代码。',
+    'zh-TW': '每個瀏覽器只需在首次連接時輸入執行 ./launcher.sh 的終端機中顯示的 6 位代碼。',
+    es: 'Cada navegador pide una sola vez el código de 6 dígitos que aparece en la terminal donde se ejecuta ./launcher.sh.',
+  },
+  'This browser is connected to DX AI Studio from another computer.': {
+    ko: '이 브라우저는 다른 컴퓨터에서 DX AI Studio에 연결되어 있습니다.',
+    ja: 'このブラウザは別のコンピューターから DX AI Studio に接続しています。',
+    'zh-CN': '此浏览器正从另一台计算机连接到 DX AI Studio。',
+    'zh-TW': '此瀏覽器正從另一台電腦連接到 DX AI Studio。',
+    es: 'Este navegador está conectado a DX AI Studio desde otro equipo.',
+  },
+  'Could not load the list. Try again.': {
+    ko: '목록을 불러오지 못했습니다. 다시 시도하세요.',
+    ja: '一覧を読み込めませんでした。もう一度お試しください。',
+    'zh-CN': '无法加载列表。请重试。',
+    'zh-TW': '無法載入清單。請再試一次。',
+    es: 'No se pudo cargar la lista. Inténtelo de nuevo.',
+  },
+  'No other computer is connected.': {
+    ko: '연결된 다른 컴퓨터가 없습니다.',
+    ja: '接続中の他のコンピューターはありません。',
+    'zh-CN': '没有其他计算机连接。',
+    'zh-TW': '沒有其他電腦連接。',
+    es: 'No hay otros equipos conectados.',
+  },
+  'This browser': {
+    ko: '이 브라우저',
+    ja: 'このブラウザ',
+    'zh-CN': '此浏览器',
+    'zh-TW': '此瀏覽器',
+    es: 'Este navegador',
+  },
+  'Last active {when}': {
+    ko: '{when} 접속',
+    ja: '最終アクセス {when}',
+    'zh-CN': '上次活动 {when}',
+    'zh-TW': '上次活動 {when}',
+    es: 'Última actividad {when}',
+  },
+  'Paired {date}': {
+    ko: '{date}에 연결',
+    ja: '{date} に接続',
+    'zh-CN': '{date} 配对',
+    'zh-TW': '{date} 配對',
+    es: 'Vinculado el {date}',
+  },
+  'Disconnect': {
+    ko: '연결 해제',
+    ja: '接続を解除',
+    'zh-CN': '断开连接',
+    'zh-TW': '中斷連線',
+    es: 'Desconectar',
+  },
+  'Disconnect this browser': {
+    ko: '이 브라우저 연결 해제',
+    ja: 'このブラウザの接続を解除',
+    'zh-CN': '断开此浏览器',
+    'zh-TW': '中斷此瀏覽器的連線',
+    es: 'Desconectar este navegador',
+  },
+  'Unknown browser': {
+    ko: '알 수 없는 브라우저',
+    ja: '不明なブラウザ',
+    'zh-CN': '未知浏览器',
+    'zh-TW': '未知的瀏覽器',
+    es: 'Navegador desconocido',
+  },
 };
   </script>
   <script src="/static/shared/i18n.js"></script>
@@ -1558,6 +1651,7 @@
   <script src="/home-console.js"></script>
   <script src="/home-sections.js"></script>
   <script src="/home-widgets.js"></script>
+  <script src="/remote-access.js"></script>
   <script src="/home-bar.js"></script>
   <script src="/home-effects.js"></script>
   <script src="/launcher.js"></script>

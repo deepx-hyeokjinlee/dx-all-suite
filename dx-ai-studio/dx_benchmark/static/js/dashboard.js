@@ -150,7 +150,7 @@ function _buildDashboardHTML() {
           '<div id="fpsRunSelectors" class="run-selector-grid"></div>' +
         '</section>' +
         '<section class="controls controls--compact">' +
-          '<label>' + _t('Task') + ' <select id="fpsTaskFilter">' +
+          '<label><span data-i18n="Task">' + _t('Task') + '</span> <select id="fpsTaskFilter">' +
             '<option value="object_detection">OD (' + _t('Object Detection') + ')</option>' +
             '<option value="pose_estimation">Pose (' + _t('Pose Estimation') + ')</option>' +
             '<option value="segmentation">Seg (' + _t('Segmentation') + ')</option>' +
@@ -197,7 +197,7 @@ function _buildDashboardHTML() {
           '<div id="overviewRunSelectors" class="run-selector-grid"></div>' +
         '</section>' +
         '<section class="controls controls--compact">' +
-          '<label>' + _t('Task') + ' <select id="taskFilter">' +
+          '<label><span data-i18n="Task">' + _t('Task') + '</span> <select id="taskFilter">' +
             '<option value="object_detection">OD (' + _t('Object Detection') + ')</option>' +
             '<option value="pose_estimation">Pose (' + _t('Pose Estimation') + ')</option>' +
             '<option value="segmentation">Seg (' + _t('Segmentation') + ')</option>' +
@@ -244,7 +244,7 @@ function _buildDashboardHTML() {
       '<section class="controls">' +
         '<label>' + _t('Environment') + ' <select id="detailEnvFilter"></select></label>' +
         '<label>' + _t('Run ID') + ' <select id="detailRunFilter"></select></label>' +
-        '<label>' + _t('Task') + ' <select id="detailTaskFilter">' +
+        '<label><span data-i18n="Task">' + _t('Task') + '</span> <select id="detailTaskFilter">' +
           '<option value="all">' + _t('All Tasks') + '</option>' +
           '<option value="object_detection">OD (' + _t('Object Detection') + ')</option>' +
           '<option value="pose_estimation">Pose (' + _t('Pose Estimation') + ')</option>' +
@@ -263,7 +263,7 @@ function _buildDashboardHTML() {
     '<div id="tab-version-trend" class="tab-content dashboard-panel-stack">' +
       '<section class="controls">' +
         '<label>' + _t('Environment') + ' <select id="trendEnvFilter"></select></label>' +
-        '<label>' + _t('Task') + ' <select id="trendTaskFilter">' +
+        '<label><span data-i18n="Task">' + _t('Task') + '</span> <select id="trendTaskFilter">' +
           '<option value="object_detection">OD (' + _t('Object Detection') + ')</option>' +
           '<option value="pose_estimation">Pose (' + _t('Pose Estimation') + ')</option>' +
           '<option value="segmentation">Seg (' + _t('Segmentation') + ')</option>' +
@@ -306,7 +306,7 @@ function _buildDashboardHTML() {
     '<div id="tab-ort-compare" class="tab-content dashboard-panel-stack">' +
       '<section class="controls">' +
         '<label>' + _t('Environment') + ' <select id="ortEnvFilter"></select></label>' +
-        '<label>' + _t('Task') + ' <select id="ortTaskFilter">' +
+        '<label><span data-i18n="Task">' + _t('Task') + '</span> <select id="ortTaskFilter">' +
           '<option value="object_detection">OD (' + _t('Object Detection') + ')</option>' +
           '<option value="pose_estimation">Pose (' + _t('Pose Estimation') + ')</option>' +
           '<option value="segmentation">Seg (' + _t('Segmentation') + ')</option>' +
@@ -462,7 +462,7 @@ function renderRunSelectors(targetId){
 }
 
 
-function _infoRows(r) { return r.map(function(row) { return '<div class="info-row"><span class="info-key">'+escHtml(row[0])+'</span><span class="info-val">'+escHtml(row[1]!=null?String(row[1]):'-')+'</span></div>'; }).join(''); }
+function _infoRows(r) { return r.map(function(row) { return '<div class="info-row"><span class="info-key">'+escHtml(_t(row[0]))+'</span><span class="info-val">'+escHtml(row[1]!=null?String(row[1]):'-')+'</span></div>'; }).join(''); }
 function cleanVer(v) { if (typeof v !== 'string') return v; return v.replace(/^DXRT\s+/i,'').replace(/^v(?=\d)/i,''); }
 /* Formats the npu_modules block (new-tool shape: [{product,count},...]) into a
    single readable string, e.g. "H1-Quattro ×1" or "M1 ×2, M1M ×1". */
@@ -515,22 +515,22 @@ function renderE2eTable(container, envId, task, useOrt, runId) {
   for (var ci=0;ci<rows.length;ci++){if(rows[ci].pipeline_caps){caps=rows[ci].pipeline_caps;break;}}
   if (caps) {
     var parts = [];
-    if (caps.video_codec) parts.push('<b>Codec:</b> '+escHtml(caps.video_codec));
+    if (caps.video_codec) parts.push('<b>'+_t('Codec:')+'</b> '+escHtml(caps.video_codec));
     /* Decoder element name (same for all rows in this env) */
     var decName = null;
     for (var di=0;di<rows.length;di++){if(rows[di].decoder && rows[di].decoder!=='unknown'){decName=rows[di].decoder;break;}}
-    if (decName) parts.push('<b>Decoder:</b> '+escHtml(decName));
+    if (decName) parts.push('<b>'+_t('Decoder:')+'</b> '+escHtml(decName));
     var decFmt = caps.decoder_src_format||'?';
     var decMem = caps.decoder_src_memory;
-    parts.push('<b>Decoder Out:</b> '+escHtml(decFmt)+(decMem?' <span class="tag tag--warn">'+escHtml(decMem)+'</span>':''));
+    parts.push('<b>'+_t('Decoder Out:')+'</b> '+escHtml(decFmt)+(decMem?' <span class="tag tag--warn">'+escHtml(decMem)+'</span>':''));
     var ppFmt = caps.dxpreprocess_sink_format||'?';
     var ppMem = caps.dxpreprocess_sink_memory;
-    parts.push('<b>Preprocess In:</b> '+escHtml(ppFmt)+(ppMem?' <span class="tag tag--warn">'+escHtml(ppMem)+'</span>':''));
-    if (caps.dxpreprocess_backend) parts.push('<b>Preprocess Backend:</b> '+escHtml(caps.dxpreprocess_backend));
+    parts.push('<b>'+_t('Preprocess In:')+'</b> '+escHtml(ppFmt)+(ppMem?' <span class="tag tag--warn">'+escHtml(ppMem)+'</span>':''));
+    if (caps.dxpreprocess_backend) parts.push('<b>'+_t('Preprocess Backend:')+'</b> '+escHtml(caps.dxpreprocess_backend));
     html += '<p class="decode-path-summary">'+parts.join(' &nbsp;|&nbsp; ')+'</p>';
   }
 
-  html += '<table class="summary-table"><thead><tr><th>Model</th><th>E2E FPS</th><th>CPU%</th><th>NPU Avg%</th><th>NPU Max%</th><th>NPU Temp \u00b0C</th><th>NPU MHz</th><th>Host RSS (MiB)</th><th>Runs</th><th>Status</th></tr></thead><tbody>';
+  html += '<table class="summary-table"><thead><tr><th>'+_t('Model')+'</th><th>E2E FPS</th><th>CPU%</th><th>NPU Avg%</th><th>NPU Max%</th><th>NPU Temp \u00b0C</th><th>NPU MHz</th><th>Host RSS (MiB)</th><th>'+_t('Runs')+'</th><th>'+_t('Status')+'</th></tr></thead><tbody>';
   rows.forEach(function(r) {
     var fpsS=fmt(r.avg_e2e_fps,1);if(r.fps_std!=null)fpsS+=' \u00b1'+fmt(r.fps_std,1);
     var tempS=_fmtTemp(r.npu_temp_min_c,r.npu_temp_max_c);
@@ -721,7 +721,7 @@ function getFpsCompareData() {
 }
 function refreshFpsCompare(preferredEnvId) {
   var data=getFpsCompareData();state.fpsChartData=data;
-  document.getElementById('fpsChartSubtitle').textContent=TASK_MAP[state.fpsTask].label+'  \u00b7  ORT '+(state.fpsOrt?'ON':'OFF')+'  \u00b7  All Sizes (N / S / M / L / X)';
+  document.getElementById('fpsChartSubtitle').textContent=_t(TASK_MAP[state.fpsTask].label)+'  \u00b7  ORT '+(state.fpsOrt?'ON':'OFF')+'  \u00b7  '+_t('All Sizes (N / S / M / L / X)');
   if(!data.length){
     state.fpsSelectedEnvId=null;
     document.getElementById('fpsEnvDetail').style.display='none';
@@ -745,7 +745,7 @@ function handleFpsEnvClick(idx,d,options) {
   renderNpuInfo(document.getElementById('fpsEnvNpuInfo'),d.env);
   renderToolsInfo(document.getElementById('fpsEnvToolsInfo'),d.env);
   var metaPanel=document.getElementById('fpsModelMetaPanel');metaPanel.style.display='';
-  document.getElementById('fpsModelMetaTitle').textContent='Benchmarked Models – '+TASK_MAP[state.fpsTask].label;
+  document.getElementById('fpsModelMetaTitle').textContent=_t('Benchmarked Models')+' – '+_t(TASK_MAP[state.fpsTask].label);
   renderModelMetaForTask(document.getElementById('fpsModelMetaSection'),d.env,state.fpsTask);
   var e2eSection=document.getElementById('fpsE2eTableSection');e2eSection.style.display='';
   var runId=_getSelectedRunId(d.envId);
@@ -781,7 +781,7 @@ function renderEnvDetail(env,options) {
   renderNpuInfo(document.getElementById('envNpuInfo'),env);
   renderToolsInfo(document.getElementById('envToolsInfo'),env);
   var metaPanel=document.getElementById('overviewModelMetaPanel');metaPanel.style.display='';
-  document.getElementById('overviewModelMetaTitle').textContent='Benchmarked Models – '+TASK_MAP[state.task].label;
+  document.getElementById('overviewModelMetaTitle').textContent=_t('Benchmarked Models')+' – '+_t(TASK_MAP[state.task].label);
   renderModelMetaForTask(document.getElementById('overviewModelMetaSection'),env,state.task);
   /* View trend link */
   var hwId=_envToHwId(env);
@@ -1018,7 +1018,7 @@ function getTrendData(hwId,task,useOrt,metricKey){
 function hideTrendEnvDetail(){var panel=document.getElementById('trendEnvDetail');if(panel)panel.style.display='none';var metaPanel=document.getElementById('trendModelMetaPanel');if(metaPanel)metaPanel.style.display='none';dispatchBenchmarkHelpSync();}
 function renderTrendEnvDetail(snap,options){
   options=options||{};var panel=document.getElementById('trendEnvDetail');if(!panel)return;var env=snap&&snap.environment;if(!env){panel.style.display='none';document.getElementById('trendModelMetaPanel').style.display='none';dispatchBenchmarkHelpSync();return;}panel.style.display='';var dateStr=snap.timestamp?snap.timestamp.substring(0,10):snap.run_id;var ver=envVersion(env);document.getElementById('trendEnvDetailTitle').textContent=(env.hostname||'Environment')+' ('+(_envProductLabel(env)||'?')+') \u00b7 '+ver+' \u00b7 '+dateStr+' \u00b7 '+snap.run_id;renderHostInfo(document.getElementById('trendEnvHostInfo'),env);renderNpuInfo(document.getElementById('trendEnvNpuInfo'),env);renderToolsInfo(document.getElementById('trendEnvToolsInfo'),env);
-  var metaPanel=document.getElementById('trendModelMetaPanel');metaPanel.style.display='';document.getElementById('trendModelMetaTitle').textContent='Benchmarked Models \u2013 '+TASK_MAP[state.trendTask].label+' \u00b7 '+snap.run_id;renderModelMetaForTask(document.getElementById('trendModelMetaSection'),env,state.trendTask);
+  var metaPanel=document.getElementById('trendModelMetaPanel');metaPanel.style.display='';document.getElementById('trendModelMetaTitle').textContent=_t('Benchmarked Models')+' \u2013 '+_t(TASK_MAP[state.trendTask].label)+' \u00b7 '+snap.run_id;renderModelMetaForTask(document.getElementById('trendModelMetaSection'),env,state.trendTask);
   if(options.scroll!==false)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   dispatchBenchmarkHelpSync();
 }
@@ -1031,7 +1031,7 @@ function refreshTrend(){
     if(!firstData&&data.length&&data[0].points.length)firstData=data;
     var ids=_trendPanelIds(metric.key);
     var subtitleEl=document.getElementById(ids.subtitle);
-    if(subtitleEl)subtitleEl.textContent=(TASK_MAP[task]?TASK_MAP[task].label:task)+'  \u00b7  ORT '+(useOrt?'ON':'OFF')+'  \u00b7  '+_t('All Sizes (N / S / M / L / X)');
+    if(subtitleEl)subtitleEl.textContent=(TASK_MAP[task]?_t(TASK_MAP[task].label):task)+'  \u00b7  ORT '+(useOrt?'ON':'OFF')+'  \u00b7  '+_t('All Sizes (N / S / M / L / X)');
   });
   var selectedIdx=firstData?_latestTrendPointIndex(firstData):-1;
   state.trendSelectedIdx=selectedIdx;
@@ -1245,6 +1245,7 @@ function initOrtCompareTab() {
     },
     refreshAllCharts: function() {
       if (!state.dataset) return;
+      if (document.getElementById('meta')) renderMeta();   // Environments · Generated 도 고른 언어로
       refreshFpsCompare();
       refreshChart();
       if (Object.keys(state.trendCharts).length) refreshTrend();

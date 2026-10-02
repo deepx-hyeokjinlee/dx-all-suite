@@ -36,8 +36,11 @@ function getLang() { return (typeof DXI18n !== 'undefined') ? DXI18n.lang : (loc
 function localeForLang(lang) { var map = { en: 'en-US', ko: 'ko-KR', ja: 'ja-JP', 'zh-CN': 'zh-CN', 'zh-TW': 'zh-TW', es: 'es-ES' }; return map[lang || getLang()] || 'en-US'; }
 function formatTime(ts) { var d = ts instanceof Date ? ts : new Date(ts); return d.toLocaleTimeString(localeForLang(), { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
 
-var CHART_LABEL_KEYS = { temp: 'NPU Temp (C)', volt: 'Voltage (mV)', clock: 'Clock (MHz)', dram: 'NPU DRAM (%)', util: 'NPU Util (%)', ctemp: 'Core Temp (C)', cpu: 'CPU Load', mem: 'Memory (%)', cpucores: 'CPU Cores (%)' };
+var CHART_LABEL_KEYS = { temp: 'NPU Temp (°C)', volt: 'Voltage (mV)', clock: 'Clock (MHz)', dram: 'NPU DRAM (%)', util: 'NPU Util (%)', ctemp: 'Core Temp (°C)', cpu: 'CPU Load', mem: 'Memory (%)', cpucores: 'CPU Cores (%)' };
 function metricLabel(key) { return T(CHART_LABEL_KEYS[key] || key); }
+/* 큰 숫자 옆 단위. 차트 제목 괄호 안 단위와 같다. CPU Load 는 load average 라 단위가 없다 (release audit M-2). */
+var METRIC_UNITS = { temp: '°C', volt: ' mV', clock: ' MHz', dram: '%', util: '%', ctemp: '°C', mem: '%', cpucores: '%' };
+function metricValue(key, v) { return v == null ? T('N/A') : v.toFixed(1) + (METRIC_UNITS[key] || ''); }
 function statusLabel(key) { return T(key); }
 function eventCountLabel(count) { var tmpl = T('{count} events'); return tmpl.replace('{count}', count); }
 

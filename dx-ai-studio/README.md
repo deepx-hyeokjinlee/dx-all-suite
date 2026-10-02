@@ -5,37 +5,40 @@ specialized tools — model catalog, compiler, inference, streaming, benchmarkin
 hardware monitor, deployment planner, and an agent-driven builder — in one browser
 experience, in six languages.
 
-![The DX AI Studio hub — eight module tiles orbiting the launcher home, each with a live status dot and port.](docs/source/resources/hub.png)
+![The DX AI Studio hub — the prompt box, the tool cards, the DX-M1 widget and the "Measured on DX-M1" card.](docs/source/resources/hub.png)
 
 ## The hub
 
 The **hub** is the studio's home screen and the single place everything launches from.
-Eight **module tiles** orbit the center in a constellation; each shows a **live status dot**
-(green when its server is up) and the local **port** it's serving on. The center badge names
-the suite — module count, the bundled **DXNN SDK** version, the studio **build**, and the
-launcher port (`:8890`).
 
+- **Describe it, run it.** The prompt box (*Describe anything. Run it on DX-M1.*) takes a
+  plain-words request: **Build it** opens the module that already does it, or runs the coding
+  agent right on the home page, where you follow its activity and answer its questions.
 - **One boot, all tools.** The launcher starts every module server for you on a short boot
-  screen; when it clears, click any tile to open that tool.
-- **Everything stays in one place.** Tiles open the module **embedded** in the hub (not a new
-  tab), and a shared **NPU monitor** float follows you across tools, so you never lose the
-  telemetry or the home.
-- **Tutorial Mode** (top-left toggle) auto-starts an interactive walkthrough the first time you
-  open each tool — handy for a first tour, off by default.
+  screen. The **tool cards** below the prompt show live facts (demo and model counts) and open
+  each tool **embedded** in the hub, under one address.
+- **This board at a glance.** The **DX-M1 widget** shows the NPU's cores, temperature, clock
+  and power (click for DX Monitor); **Measured on DX-M1** shows FPS measured on this device
+  (click for DX Benchmark). A small **NPU monitor** float follows you inside every tool.
+- **Tutorial Mode** (top-right switch, on by default) runs a short walkthrough on the first
+  visit and opens each tool's tutorial contents when you open it.
 - **Built-in references.** The **SDK Library** (DEEPX docs & brochures, fully in-app) and
-  **About DEEPX** open right from the hub, alongside the Physical-AI-ecosystem and product
-  (DX-M1 / DX-M2) cards.
-- **Always reachable.** The top bar carries the **language switch** (6 locales), the store
-  (**Buy**), and per-module status dots; the bottom bar has quick links (Homepage, Tech Docs,
-  Model Zoo, S/W & Document downloads, GitHub); and the **💬 assistant** (bottom-right) answers
+  **About DEEPX** open from the hub, next to the platform overview and the Physical-AI
+  ecosystem page.
+- **Always reachable.** The top bar carries **Buy**, the **language switch** (6 locales), the
+  **theme** (dark / light / system), **Connected browsers** (when other computers can reach
+  the studio) and **Tutorial**; the bottom bar links to Get Started, S/W Download, Tech Docs,
+  Documents, Model Zoo, GitHub and deepx.ai; the **chat assistant** (bottom-right) answers
   SDK/module questions from any screen.
 
 ## Getting started
 
-**Prerequisites:** Linux (Debian 12/13, Ubuntu 20.04–26.04) with **Python 3.8+** —
-and nothing else. DX AI Studio has **zero third-party dependencies** (pure Python
-standard library, ModelZoo tab included), and `./launcher.sh` self-installs the
-package (editable) on first run, so there's no manual `pip install` step.
+**Prerequisites:** Linux (Debian 12/13, Ubuntu 20.04–26.04) with **Python 3.8+**.
+DX AI Studio has **no pip dependencies** (pure Python standard library, ModelZoo tab
+included), and `./launcher.sh` self-installs the package (editable) on first run, so
+there's no manual `pip install` step. Real inference uses the DEEPX SDK and NPU; DX Stream
+uses the system GStreamer + PyGObject; live DX App runs (camera / RTSP / Continuous / Run
+Demo video) use the OS packages `xvfb` and `python3-pil`.
 
 **Layout:** DX AI Studio is meant to sit inside a `dx-all-suite` tree, alongside
 sibling `dx-runtime` / `dx-compiler`. Running actual NPU inference or compiling models
@@ -72,7 +75,8 @@ Debian package metadata, not the version of a source checkout.
   only after that authorization; browsing diagnostics and Setup remains available
   without it.
 - **Launch gate:** App and Stream inference launches require a journaled `ACTIVE`
-  profile that passed full validation. A failure returns a stable contract check ID
+  profile that passed full validation, or — when Studio has not run the transaction —
+  that module's own launch contracts validating live on this board. A failure returns a stable contract check ID
   and remediation rather than starting a child process with inherited shell paths.
 - **Environment isolation:** inference children receive the Studio-selected Python,
   virtual environment, native library paths, GStreamer plugin directory, and
@@ -83,16 +87,17 @@ Debian package metadata, not the version of a source checkout.
   cache are not runtime-install targets and are preserved during rollback.
 
 Installing or changing a DKMS driver can require a reboot before NPU device nodes are
-available. After a reboot, return to Runtime Setup to validate and activate the
-installed profile before starting inference.
+available. After a reboot, run the **DX-Runtime Dependencies** / **NPU Linux Driver** steps
+in DX Stream **Setup** again to validate and activate the installed profile before starting
+inference.
 
 ## What you can do
 
 | Tool | What it's for |
 |------|----------------|
-| **DX App** | Run NPU inference on images, video, camera or RTSP; live multi-stream, benchmark & compare. → [guide](dx_app/README.md) |
-| **DX Stream** | Real-time GStreamer vision-AI pipelines with live WebRTC playback. → [guide](dx_stream/README.md) |
-| **DX Model Zoo** | Browse 360+ DEEPX models by task; open details and use them. → [guide](dx_modelzoo/README.md) |
+| **DX App** | Run NPU inference on images, video, camera or RTSP; ready-made Run Demo, live multi-stream, benchmark & compare. → [guide](dx_app/README.md) |
+| **DX Stream** | Real-time GStreamer vision-AI pipelines with live playback (WebRTC, or MJPEG from another computer). → [guide](dx_stream/README.md) |
+| **DX Model Zoo** | Browse nearly 500 DEEPX models across 28 tasks; open details and use them. → [guide](dx_modelzoo/README.md) |
 | **DX Compiler** | Compile ONNX → `.dxnn`: config wizard, quantization tuning + diagnosis, re-quantization. → [guide](dx_compiler/README.md) |
 | **DX EdgeGuide** | Recommend the best NPU board + host for your workload from real benchmarks. → [guide](dx_planner/README.md) |
 | **DX Benchmark** | Browse and compare NPU throughput / latency / multi-stream results. → [guide](dx_benchmark/README.md) |

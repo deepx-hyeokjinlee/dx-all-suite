@@ -15,6 +15,7 @@ from pathlib import Path
 
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared.chat import ChatEngine
+from shared.chat import module_fallbacks as _module_fallbacks
 from shared.runtime_context import RuntimeContextError, resolve_active_runtime_context
 from shared.runtime_contract import ContractResult, validate_stream_contract
 from shared.runtime_environment import build_child_environment
@@ -43,6 +44,7 @@ except Exception:
 _playback_lock = threading.RLock()
 _current_output_mode = None
 _current_pipeline_id = None
+_current_demo_id = None   # 실행 중인 demo (대시보드가 이름을 보인다, release audit S-15)
 
 def _active_stream_context() -> tuple[ContractResult, object | None]:
     """Resolve the validated profile context shared by every Stream launch path."""
@@ -51,23 +53,21 @@ def _active_stream_context() -> tuple[ContractResult, object | None]:
         assert policy.reason is not None
         return ContractResult((policy.reason,)), None
     try:
-        return ContractResult(()), resolve_active_runtime_context()
+        # degraded 허용 (Stream 계약이 지금 통과) 이면 journal 이 ACTIVE 가 아니어도 같은 사실로 context 를 만든다 (S-1)
+        return ContractResult(()), resolve_active_runtime_context(allow_unjournaled=policy.degraded)
     except RuntimeContextError as exc:
         return ContractResult((ContractCheck(
             check_id="profile.context",
             required="resolved active runtime launch context",
             observed=str(exc),
             passed=False,
-            remediation="Complete Runtime Setup to repair the active runtime profile.",
+            remediation="Run the DX-Runtime Dependencies step in Setup, then try again.",
         ),)), None
 
 
 def _contract_failure_detail(failure: ContractCheck) -> str:
-    return "{}: {}; {}".format(
-        failure.check_id,
-        failure.observed,
-        failure.remediation,
-    )
+    # check_id 는 message 에 이미 있다 — 예전에는 'profile.context profile.context: …' 로 두 번 나왔다 (release audit S-7)
+    return " — ".join(p for p in (failure.observed, failure.remediation) if p)
 
 
 def _stream_launch_contract(demo: dict) -> tuple[ContractResult, object | None]:
@@ -127,7 +127,7 @@ def _check_webrtc_available() -> bool:
 
 def _stop_all_playback() -> None:
     """WebRTC + MJPEG 양쪽 백엔드를 모두 중지한다."""
-    global _current_output_mode, _current_pipeline_id
+    global _current_output_mode, _current_pipeline_id, _current_demo_id
     with _playback_lock:
         if _pipeline_mgr is not None:
             try:
@@ -146,6 +146,24 @@ def _stop_all_playback() -> None:
             log.debug("fMP4 pipeline stop failed during cleanup", exc_info=True)
         _current_output_mode = None
         _current_pipeline_id = None
+        _current_demo_id = None
+
+
+def _playback_running() -> bool:
+    """WebRTC · MJPEG · fMP4 중 무엇으로든 재생 중인가 — 예전 /api/pipeline/status 는 WebRTC 만 보아,
+    MJPEG 로 돌고 있는 demo 를 대시보드가 Idle 이라고 했다."""
+    if _pipeline_mgr is not None and _pipeline_mgr.is_running():
+        return True
+    try:
+        if _current_output_mode == "mjpeg":
+            from dx_stream.core import mjpeg
+            return bool(mjpeg.is_streaming())
+        if _current_output_mode == "fmp4":
+            from dx_stream.core import fmp4
+            return bool(fmp4.is_streaming())
+    except Exception:
+        return False
+    return False
 
 
 def _demo_launch_failure_payload(attempted_modes: list[str]) -> dict:
@@ -231,29 +249,7 @@ def _try_start_webrtc_pipeline(pipeline_str: str, extra_env: dict | None = None)
 
 _chat_engine = ChatEngine(
     app_name="dx_stream",
-    fallback_rules=[
-        (["element", "elements", "엘리먼트", "エレメント", "元素", "DxInfer"], {
-            "ko": "Elements 탭에서 사용 가능한 GStreamer 엘리먼트 목록을 확인하세요.",
-            "en": "Check available GStreamer elements in the Elements tab.",
-            "ja": "Elements タブで利用可能な GStreamer エレメント一覧を確認してください。",
-            "zh-CN": "请在 Elements 选项卡中查看可用的 GStreamer 元素列表。",
-            "zh-TW": "請在 Elements 分頁中查看可用的 GStreamer 元素清單。",
-        }),
-        (["pipeline", "pipelines", "파이프라인", "パイプライン", "管道", "管線", "gstreamer"], {
-            "ko": "Pipeline Builder 탭에서 드래그 & 드롭으로 파이프라인을 구성할 수 있습니다.",
-            "en": "Build pipelines with drag & drop in the Pipeline Builder tab.",
-            "ja": "Pipeline Builder タブでドラッグ & ドロップしてパイプラインを構成できます。",
-            "zh-CN": "可在 Pipeline Builder 选项卡中通过拖放构建管道。",
-            "zh-TW": "可在 Pipeline Builder 分頁中透過拖放建置管線。",
-        }),
-        (["webrtc", "webrtcbin", "streaming", "스트리밍", "ストリーミング", "流媒体", "串流"], {
-            "ko": "Demo 탭에서 WebRTC 스트리밍을 바로 시작할 수 있습니다.",
-            "en": "Start WebRTC streaming directly in the Demo tab.",
-            "ja": "Demo タブから WebRTC ストリーミングを直接開始できます。",
-            "zh-CN": "可在 Demo 选项卡中直接启动 WebRTC 流媒体。",
-            "zh-TW": "可在 Demo 分頁中直接啟動 WebRTC 串流。",
-        }),
-    ]
+    fallback_rules=_module_fallbacks.rules("dx_stream")
 )
 
 
@@ -377,10 +373,14 @@ class DXStreamHandler(DXBaseHandler):
                                 if f.suffix == ".so"]) if Path("/usr/local/share/gstdxstream/lib").is_dir() else []
                 _configs = sorted([d.name for d in CONFIGS_DIR.iterdir()
                                    if d.is_dir()]) if CONFIGS_DIR.is_dir() else []
+                from dx_stream.core.so_exports import exported_functions
+                _lib_dir = Path("/usr/local/share/gstdxstream/lib")
                 return self.send_json({
                     "models": _models,
                     "videos": _videos,
                     "libraries": _libs,
+                    # 라이브러리별 function-name 후보 (S-18)
+                    "functions": {lib: exported_functions(_lib_dir / lib) for lib in _libs},
                     "configs": _configs,
                     "models_dir": str(MODELS_DIR),
                     "videos_dir": str(VIDEOS_DIR),
@@ -392,11 +392,13 @@ class DXStreamHandler(DXBaseHandler):
                 rules = elements.get_connection_rules()
                 return self.send_json({"categories": cats, **rules})
             if path == "/api/pipeline/status":
-                if _pipeline_mgr is None:
-                    return self.send_json({"running": False, "pipeline_id": None})
+                running = _playback_running()
+                webrtc = _pipeline_mgr is not None and _pipeline_mgr.is_running()
                 return self.send_json({
-                    "running": _pipeline_mgr.is_running(),
-                    "pipeline_id": _pipeline_mgr.get_pipeline_id(),
+                    "running": running,
+                    "pipeline_id": (_pipeline_mgr.get_pipeline_id() if webrtc else _current_pipeline_id) if running else None,
+                    "output_mode": (_current_output_mode or ("webrtc" if webrtc else None)) if running else None,
+                    "demo_id": _current_demo_id if running else None,
                 })
             if path == "/api/pipeline/list":
                 from dx_stream.core.config import PIPELINES_DIR
@@ -560,7 +562,7 @@ class DXStreamHandler(DXBaseHandler):
 
     def _handle_demo_start(self, path: str):
         """데모 파이프라인 시작 — WebRTC 우선, MJPEG 폴백."""
-        global _current_output_mode, _current_pipeline_id
+        global _current_output_mode, _current_pipeline_id, _current_demo_id
         attempted_modes: list[str] = []
         playback_stopped = False
         body = self._safe_read_json()
@@ -642,6 +644,7 @@ class DXStreamHandler(DXBaseHandler):
                     attempted_modes.append("webrtc")
                     pid = _try_start_webrtc_pipeline(pipeline_str, extra_env=extra_env)
                 if pid is not None:
+                    _current_demo_id = demo_id
                     return self.send_json({
                         "started": True, "pipeline_id": pid,
                         "demo_id": demo_id, "output_mode": "webrtc"
@@ -655,6 +658,7 @@ class DXStreamHandler(DXBaseHandler):
                     if ready:
                         _current_output_mode = "fmp4"
                         _current_pipeline_id = "fmp4-demo-" + str(demo_id)
+                        _current_demo_id = demo_id
                         return self.send_json({
                             "started": True, "pipeline_id": _current_pipeline_id,
                             "demo_id": demo_id, "output_mode": "fmp4"
@@ -675,6 +679,7 @@ class DXStreamHandler(DXBaseHandler):
 
                 _current_output_mode = "mjpeg"
                 _current_pipeline_id = "mjpeg-demo-" + str(demo_id)
+                _current_demo_id = demo_id
                 self.send_json({
                     "started": True, "pipeline_id": _current_pipeline_id,
                     "demo_id": demo_id, "output_mode": "mjpeg"

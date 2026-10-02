@@ -116,3 +116,28 @@ def test_a_model_added_by_add_model_sh_is_found_in_a_per_model_tree(per_model):
     ex = layout.find(per_model, "object_detection", "my_custom")
     assert ex is not None and ex.family is None
     assert layout.find(per_model, "object_detection", "yolo26-n_640x640").family == "yolo26"
+
+
+def test_a_caller_naming_the_model_its_own_way_still_reaches_its_example(per_model):
+    """Model Zoo 는 카탈로그 id (`rtdetr_r18vd_6x_640x640`) 로 부른다 — dx_app 예제 이름은 .dxnn stem
+    (`rtdetr-r18vd-6x_640x640`). 못 찾으면 dx_app 이 같은 task 의 남의 binary (yolov7) 를 빌려 엉뚱한 상자를
+    성공처럼 보였다 (2026-10-02 release audit Z-1)."""
+    task = "object_detection"
+    assert layout.example_name(per_model, task, "yolo26-n_640x640", "") == "yolo26-n_640x640"
+    assert layout.example_name(per_model, task, "yolo26_n_640x640",
+                               "assets/models/yolo26-n_640x640.dxnn") == "yolo26-n_640x640"
+    assert layout.example_name(per_model, task, "yolo26n", "") == "yolo26-n_640x640", "registry model_name → variant"
+    assert layout.example_name(per_model, task, "something_else", "other.dxnn") == "something_else"
+
+
+def test_the_inference_entry_runs_the_models_own_example(monkeypatch, per_model):
+    import importlib
+    srv = importlib.import_module("dx_app.server")
+    monkeypatch.setattr(srv, "DX_APP_ROOT", per_model, raising=False)
+    monkeypatch.setattr(srv, "_require_model_file", lambda f: None)   # 이 시험은 이름만 본다
+    data = {"category": "object_detection", "model_name": "yolo26_n_640x640",
+            "model_file": "assets/models/yolo26-n_640x640.dxnn", "lang": "cpp", "variant": "sync",
+            "input_type": "image"}
+    err, _ = srv._validate_inference_payload(data)
+    assert err is None
+    assert data["model_name"] == "yolo26-n_640x640"

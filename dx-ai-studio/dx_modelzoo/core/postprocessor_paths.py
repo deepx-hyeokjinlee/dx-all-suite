@@ -108,7 +108,8 @@ _CATEGORY_DEFAULT_STEM = {
 
 def format_postprocessor_path(stem: str, *, lang: str = "python") -> str:
     """Return a suite-relative path string for UI (always prefixed with dx_app/)."""
-    stem = stem.removesuffix("_postprocessor")
+    if stem.endswith("_postprocessor"):
+        stem = stem[: -len("_postprocessor")]
     if lang == "cpp":
         rel = f"src/cpp_example/common/processors/{stem}_postprocessor.hpp"
     else:
@@ -163,7 +164,7 @@ def _scan_factory_postprocessor(category: str, model_id: str) -> str | None:
         pp_name = match.group(1) or match.group(2)
         if not pp_name:
             continue
-        stem = pp_name.removesuffix("_postprocessor")
+        stem = pp_name[: -len("_postprocessor")] if pp_name.endswith("_postprocessor") else pp_name
         proc_py = PY_DIR / "common" / "processors" / f"{pp_name}.py"
         if proc_py.is_file():
             rel = proc_py.relative_to(DX_APP_ROOT).as_posix()

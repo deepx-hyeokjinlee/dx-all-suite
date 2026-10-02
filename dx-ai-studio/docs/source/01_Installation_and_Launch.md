@@ -13,6 +13,10 @@
   **demo / mock mode** for exploring the UI.
 - **DX Stream** additionally needs the system **GStreamer + PyGObject** (`python3-gi`,
   `gstreamer1.0-*`) — standard on desktop Linux — to run pipelines.
+- **Live DX App runs** (camera, RTSP, Continuous, and Run Demo video) draw the example's
+  window on a virtual display and stream it to the browser. They need the OS packages
+  **`xvfb`** and **`python3-pil`** (`sudo apt install xvfb python3-pil`). Image and batch
+  video runs do not. If they are missing, the run stops with a message that names them.
 
 !!! note "How the studio finds these"
     `./launcher.sh` creates its virtualenv with **`--system-site-packages`**, so it inherits
@@ -41,8 +45,12 @@ a tool isn't ready yet.
 
 | Option | Effect |
 |--------|--------|
-| `--port <PORT>` / `-p <PORT>` | Hub port (default **8890**; auto-bumps if busy). |
+| `--port <PORT>` / `-p <PORT>` | Preferred hub port (default **8890**). If another service holds it, the next free port is used; the last port is remembered in `.launcher-port`. Open the URL the launcher prints. |
 | `--no-browser` | Start the servers but do not open a browser. |
+| `--no-kill` | Keep a studio that is already running (by default a new launch replaces your previous one). |
+| `--fast` | Skip the boot animation in the terminal. |
+| `--verbose` / `-v` | Print port-fallback notices. |
+| `--debug[=PATH]` | Write a debug log (default path printed at start). |
 
 Run `./launcher.sh --help` for the full flag list. The hub proxies all modules, so you
 only ever open the hub port.
@@ -110,13 +118,16 @@ See **[The Hub](02_The_Hub.md)** for details on all eight tools and navigation.
 
 ## Stopping
 
-`Ctrl+C` in the terminal running `./launcher.sh`. Re-running on a busy port auto-bumps
-to the next free port unless you pass `--no-kill`.
+`Ctrl+C` in the terminal running `./launcher.sh`. Running `./launcher.sh` again replaces your
+previous studio; pass `--no-kill` to leave it running (the new one then takes the next free
+port).
 
 ## Remote access & security
 
 By default the hub listens on **all network interfaces**, so a studio running on a headless
-NPU board can be opened from another machine's browser at `http://<board-ip>:8890`.
+NPU board can be opened from another machine's browser. The launcher prints that address
+under **other computers:** in its URL banner (for example `http://192.168.0.42:8890`), and the
+**Connected browsers** button in the top bar shows it too.
 Remote browsers must be **paired** first — nobody on the network can use the studio without
 the code shown on the board. The module servers behind the hub (App, Stream, Compiler …)
 only listen on the board's `127.0.0.1`; everything goes through the hub.
@@ -131,15 +142,21 @@ only listen on the board's `127.0.0.1`; everything goes through the hub.
 
 1. On the board, run `./launcher.sh`. Next to the URL banner it prints
    **`Remote access code: 123456`**.
-2. On your laptop, open `http://<board-ip>:8890` (find the IP with `hostname -I` on the board).
-   You see **Connect this browser** — type the code.
+2. On your laptop, open the address printed under **other computers:** (or shown in
+   **Connected browsers** on the board). You see **Connect this browser** — type the code.
 3. That browser is remembered for 30 days (`DX_SESSION_DAYS`). The code works once; a new one
    is printed after each use, and after 5 wrong tries the studio pauses for a minute and
    prints a new code.
 
-Connected browsers are listed — and can be disconnected — from the board
-(`GET /api/auth/sessions`, `POST /api/auth/sessions/revoke`). A browser can disconnect itself
-with `POST /api/auth/logout`.
+**Connected browsers** (top bar) lists every paired browser — browser and OS, IP, last
+active, paired date — with **Disconnect**. On the board you see and disconnect all of them;
+a paired browser sees only itself and can **Disconnect this browser**. Scripts can use
+`GET /api/auth/sessions`, `POST /api/auth/sessions/revoke` (board only) and
+`POST /api/auth/logout`.
+
+!!! tip "Watching DX Stream from another computer"
+    Choose **Playback → Remote (MJPEG)** in DX Stream. **Local (WebRTC)** is for the board
+    itself or the same LAN segment and does not cross an SSH tunnel.
 
 !!! note "Worked example — laptop → board at `192.168.0.42`"
     - **On the board:** `./launcher.sh` → note `Remote access code: 482915`.

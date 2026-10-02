@@ -76,7 +76,7 @@ const PlannerWorkspace = {
     if (this.conditionSummary) {
       const runtime = inputs.ort ? 'ONNX Runtime' : 'Native';
       this.conditionSummary.innerHTML = [
-        this._summaryChip('Task', inputs.task),
+        this._summaryChip('Task', plannerTaskLabel(inputs.task)),
         this._summaryChip('Model', 'yolo26' + inputs.size),
         this._summaryChip('Channels', inputs.cameras),
         this._summaryChip('FPS', inputs.targetFps),
@@ -102,8 +102,13 @@ const PlannerWorkspace = {
     const platformCount = meta.platform_count != null ? meta.platform_count : DataLoader.getPlatforms().length;
     const generated = DataLoader.getGeneratedAt();
     const generatedText = generated ? generated.slice(0, 10) : 'N/A';
-    this.scopeBannerMeta.textContent =
-      platformCount + ' platforms · YOLO26 benchmark · updated ' + generatedText;
+    const tpl = (typeof T === 'function') ? T('{n} platforms · YOLO26 benchmark · updated {date}')
+      : '{n} platforms · YOLO26 benchmark · updated {date}';
+    this.scopeBannerMeta.textContent = tpl.replace('{n}', platformCount).replace('{date}', generatedText);
+    if (!this._metaLangHooked && typeof DXI18n !== 'undefined' && DXI18n.onLangChange) {
+      this._metaLangHooked = true;   // 언어를 바꾸면 다시 (release audit P-3: 늘 영어였다)
+      DXI18n.onLangChange(() => this.renderScopeBannerMeta());
+    }
   },
 
   _renderRecommendationVerdict(inputs, results) {
@@ -215,7 +220,8 @@ const PlannerWorkspace = {
   },
 
   _summaryChip(label, value) {
-    return '<span class="summary-chip"><strong>' + this._escHtml(label) + '</strong>' +
+    const text = typeof T === 'function' ? T(label) : label;
+    return '<span class="summary-chip"><strong>' + this._escHtml(text) + '</strong>' +
       '<span>' + this._escHtml(value) + '</span></span>';
   },
 

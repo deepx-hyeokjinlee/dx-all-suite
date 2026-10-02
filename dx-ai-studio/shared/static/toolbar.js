@@ -22,6 +22,26 @@
     return (typeof DXI18n !== 'undefined') ? DXI18n.lang : (localStorage.getItem('dx-lang') || 'en');
   }
 
+  /* 단추 이름 (title · aria-label) 은 key 로 기억해 두고 언어가 바뀌면 다시 번역한다 (release audit L-13 —
+     예전에는 'Language' · 'Theme: dark' · 'Tutorial' · 'Settings' 가 모든 언어에서 영어였다). 말은
+     shared/static/i18n.js 의 공용 chrome 사전에. */
+  function _tr(key) {
+    return (typeof window.T === 'function') ? window.T(key) : key;
+  }
+
+  function _label(el, key) {
+    el.dataset.dxTip = key;
+    el.title = _tr(key);
+    el.setAttribute('aria-label', _tr(key));
+  }
+
+  function _relabelAll() {
+    document.querySelectorAll('#dxToolbar [data-dx-tip]').forEach(function (el) {
+      el.title = _tr(el.dataset.dxTip);
+      el.setAttribute('aria-label', _tr(el.dataset.dxTip));
+    });
+  }
+
   function _setLang(code) {
     if (typeof DXI18n !== 'undefined') {
       DXI18n.setLang(code);
@@ -48,6 +68,7 @@
     // so it is not always a descendant of #langToggle.
     document.querySelectorAll('.dx-lang-item').forEach(function (it) {
       it.classList.toggle('active', it.dataset.lang === lang);
+      it.setAttribute('aria-checked', String(it.dataset.lang === lang));
     });
   }
 
@@ -64,8 +85,11 @@
     wrap.id = 'langToggle';
 
     var btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'dx-toolbar-btn dx-lang-btn';
-    btn.title = 'Language';
+    _label(btn, 'Language');
+    btn.setAttribute('aria-haspopup', 'menu');
+    btn.setAttribute('aria-expanded', 'false');
 
     var iconSpan = document.createElement('span');
     iconSpan.className = 'dx-lang-icon';
@@ -85,16 +109,25 @@
 
     var menu = document.createElement('div');
     menu.className = 'dx-lang-menu';
+    menu.setAttribute('role', 'menu');
     LANGS.forEach(function (code) {
-      var item = document.createElement('div');
+      /* button — 키보드로 닿고 Enter · Space 로 고른다 (release audit L-16: div 라 Tab 으로 못 닿았다) */
+      var item = document.createElement('button');
+      item.type = 'button';
       item.className = 'dx-lang-item';
       item.dataset.lang = code;
+      item.lang = code;
+      item.setAttribute('role', 'menuitemradio');
+      item.setAttribute('aria-checked', String(code === _getLang()));
+      item.tabIndex = -1;
       item.textContent = LABELS[code] || code;
       if (code === _getLang()) item.classList.add('active');
       item.addEventListener('click', function (e) {
         e.stopPropagation();
+        var fromKey = e.detail === 0;          // Enter · Space 로 골랐으면 단추로 focus 를 돌려준다
         _setLang(code);
         _closeLangMenu();
+        if (fromKey) btn.focus();
       });
       menu.appendChild(item);
     });
@@ -121,8 +154,22 @@
       menu.style.zIndex = '10050';
     }
 
+    function _items() { return Array.prototype.slice.call(menu.querySelectorAll('.dx-lang-item')); }
+
+    function _openLangMenu(focusItem) {
+      wrap.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+      _positionLangMenu();
+      if (focusItem) {
+        var list = _items();
+        var cur = menu.querySelector('.dx-lang-item.active') || list[0];
+        if (cur) cur.focus();
+      }
+    }
+
     function _closeLangMenu() {
       wrap.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
       // _positionLangMenu set display:block + position:fixed on open. Reset BOTH — clearing only
       // position leaves display:block inline, which overrides the CSS `display:none` and keeps the
       // 140px menu rendered as position:absolute (CSS fallback). That stray absolute box overflows
@@ -142,9 +189,34 @@
       if (wrap.classList.contains('open')) {
         _closeLangMenu();
       } else {
-        wrap.classList.add('open');
-        _positionLangMenu();
+        _openLangMenu(e.detail === 0);       // 키보드로 열면 고른 언어에 focus
       }
+    });
+    btn.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        _openLangMenu(true);
+      }
+    });
+    menu.addEventListener('keydown', function (e) {
+      var list = _items();
+      var i = list.indexOf(document.activeElement);
+      var next = null;
+      if (e.key === 'ArrowDown') next = list[(i + 1) % list.length];
+      else if (e.key === 'ArrowUp') next = list[(i - 1 + list.length) % list.length];
+      else if (e.key === 'Home') next = list[0];
+      else if (e.key === 'End') next = list[list.length - 1];
+      else if (e.key === 'Escape') {
+        e.preventDefault();                  // 바깥 (dialog · 화면) 의 Escape 는 이번에 닫지 않는다
+        e.stopPropagation();
+        _closeLangMenu();
+        btn.focus();
+        return;
+      } else if (e.key === 'Tab') {
+        _closeLangMenu();
+        return;
+      }
+      if (next) { e.preventDefault(); next.focus(); }
     });
 
     wrap.appendChild(btn);
@@ -159,7 +231,7 @@
     });
 
     if (typeof DXI18n !== 'undefined') {
-      DXI18n.onLangChange(function () { _updateLangUI(); });
+      DXI18n.onLangChange(function () { _updateLangUI(); _relabelAll(); });
     }
 
     return wrap;
@@ -180,9 +252,9 @@
 
   function _makeIconBtn(iconName, title, onClick) {
     var btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'dx-toolbar-btn';
-    btn.title = title;
-    btn.setAttribute('aria-label', title);
+    _label(btn, title);
     _setIcon(btn, iconName);
     btn.addEventListener('click', onClick);
     return btn;
@@ -212,8 +284,7 @@
       themeBtn.id = 'dxToolbarTheme';
       DXTheme.onThemeChange(function (t) {
         _setIcon(themeBtn, THEME_ICON[t]);
-        themeBtn.title = THEME_TITLE[t];
-        themeBtn.setAttribute('aria-label', THEME_TITLE[t]);
+        _label(themeBtn, THEME_TITLE[t]);
       });
       toolbar.appendChild(themeBtn);
     }
@@ -309,7 +380,7 @@
       }
       tutBtn.disabled = false;
       tutBtn.removeAttribute('aria-disabled');
-      tutBtn.title = 'Tutorial';
+      _label(tutBtn, 'Tutorial');
       _tutorialClickHandler = newTutHandler;
       if (tutorialInstance._toggleBtnEl !== undefined) {
         tutorialInstance._toggleBtnEl = tutBtn;
@@ -330,7 +401,7 @@
       if (tutBtn) {
         tutBtn.disabled = true;
         tutBtn.setAttribute('aria-disabled', 'true');
-        tutBtn.title = 'Tutorial unavailable';
+        _label(tutBtn, 'Tutorial unavailable');
       }
       _tutorialInstance = null;
       _tutorialOwner = null;

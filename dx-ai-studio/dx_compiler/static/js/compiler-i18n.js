@@ -320,6 +320,7 @@ window._DX_I18N_DICT = {
     'zh-TW': '無檔案',
     es: 'Sin archivos',
   },
+  'Re-quantize': { ko: '재양자화', ja: '再量子化', 'zh-CN': '重新量化', 'zh-TW': '重新量化', es: 'Recuantizar' },
   'Browse file': {
     ko: '파일 찾아보기',
     ja: 'ファイルを参照',
@@ -1039,7 +1040,7 @@ window._DX_I18N_DICT = {
     es: '{n} modelos de ejemplo',
   },
   'Install the SDK first': {
-    ko: '먼저 SDK 를 설치하세요',
+    ko: '먼저 SDK를 설치하세요',
     ja: '先に SDK をインストールしてください',
     'zh-CN': '请先安装 SDK',
     'zh-TW': '請先安裝 SDK',

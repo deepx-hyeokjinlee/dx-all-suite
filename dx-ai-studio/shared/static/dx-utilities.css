@@ -38,17 +38,18 @@
 .wrap{flex-wrap:wrap}
 .w100{width:100%}
 .mt8{margin-top:8px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-4)}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--sp-4)}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-4)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4)}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+/* minmax(0,1fr) — 1fr 의 최솟값은 내용 폭이라 넓은 표 · 카드가 칸을 밀어 폰 폭에서 가로로 넘쳤다 (release audit A-10) */
 
 /* dx_app / dx_monitor / dx_stream 이 같은 규칙을 각자 복제하고 있었다.
    접히는 폭이 파일마다 갈리기 시작하면 같은 격자가 화면마다 다르게 접힌다. */
 @media(max-width:1200px){
-  .grid2,.grid3,.grid4{grid-template-columns:1fr 1fr}
+  .grid2,.grid3,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:600px){
-  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  .grid2,.grid3,.grid4{grid-template-columns:minmax(0,1fr)}
 }
 .txt-dim{color:var(--text-muted)}
 .tbl-wrap{overflow-x:auto}

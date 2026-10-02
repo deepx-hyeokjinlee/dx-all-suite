@@ -28,16 +28,24 @@ permission.
 The studio bundles the following open-source assets so it runs fully offline. Each is
 redistributed under its own license:
 
-**Fonts** — SIL Open Font License 1.1 (https://openfontlicense.org):  
+**Fonts** — SIL Open Font License 1.1 (https://openfontlicense.org); each license text ships
+next to the font in `shared/static/fonts/`:  
 - **Inter** — © The Inter Project Authors  
 - **JetBrains Mono** — © 2020 The JetBrains Mono Project Authors  
-- **Noto Sans**, **Noto Sans Mono**, **Noto Sans CJK** — © The Noto Project Authors
-  (Google). Noto Sans CJK is shipped as a **subset** limited to the glyphs used by the
-  studio's 6-language UI.  
+- **Noto Sans**, **Noto Sans Mono** — © The Noto Project Authors (Google)  
+- **Noto Sans SC**, **Noto Sans TC** (variable) — © The Noto Project Authors (Google);
+  Simplified and Traditional Chinese UI text  
+- **Pretendard**, **Pretendard JP** (variable) — © Kil Hyung-jin and the Pretendard
+  contributors; Korean and Japanese UI text  
+
+The CJK fonts are shipped as **subsets** limited to the glyphs used by the studio's
+6-language UI.  
 
 **JavaScript libraries** — MIT License:  
 - **Chart.js** (© Chart.js Contributors)  
 - **Mermaid** (© 2014–present Knut Sveidqvist)  
+- **dagre** with its bundled **graphlib** and **lodash** (© Chris Pettitt; © JS Foundation
+  and other contributors) — the DX Compiler graph layout  
 
 These bundled components are separate from the third-party **models** and **sample data**
 above and carry no usage restriction beyond their permissive licenses.

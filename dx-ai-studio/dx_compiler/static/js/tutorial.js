@@ -11,6 +11,24 @@
  *  - 미커버 기능 스텝 추가 (zoom, expand-all, wizard-close 등)
  *  - 챗봇 위젯 스텝(quick-start 마지막 단계, ai-assist 섹션 전체) 제거 → 런처 튜토리얼로 통합
  */
+
+  /* 투어용 미리보기 — 컴파일 중 · 끝난 뒤의 #result 모양. 이미 실제 내용이 있으면 그대로 둔다. */
+  function _tutResultMock(kind) {
+    var el = document.getElementById('result');
+    if (!el) return;
+    var mock = el.querySelector('[data-dxt-mock]');
+    if (!kind) { if (mock) el.innerHTML = ''; return; }
+    if (el.children.length && !mock) return;
+    var T_ = (typeof T === 'function') ? T : function (x) { return x; };
+    var ico = (typeof DXIcon === 'function') ? DXIcon : function () { return ''; };
+    el.innerHTML = kind === 'progress'
+      ? '<div class="progress-container" data-dxt-mock="1"><h3>' + ico('spinner') + ' ' + T_('Compiling...') + '</h3>' +
+        '<div class="progress-bar-wrapper"><div class="progress-bar" style="width: 40%">40%</div></div>' +
+        '<div class="phase-indicator"><span class="phase-label">' + T_('Current Phase') + '</span> ' +
+        '<span class="phase-value">' + T_('Initializing...') + '</span></div></div>'
+      : '<div class="result success" data-dxt-mock="1"><p>' + T_('Compilation finished successfully.') + '</p></div>';
+  }
+
 (function () {
   'use strict';
 
@@ -102,7 +120,11 @@
     { target: '#compile-main-btn', position: 'left',
       title: { en: 'Compile', ko: '컴파일', ja: 'コンパイル', 'zh-CN': '编译', 'zh-TW': '編譯', es: 'Compilar' },
       content: { en: 'Start compilation when everything is ready.', ko: '모든 준비가 완료되면 컴파일을 시작합니다.', ja: '準備が整ったらコンパイルを開始します。', 'zh-CN': '一切准备就绪后开始编译。', 'zh-TW': '一切準備就緒後開始編譯。', es: 'Inicie la compilación cuando todo esté listo.' } },
+    /* #result 는 컴파일 전에는 빈 div 라 (높이 0) 가리킬 것이 없었다 — 투어 동안만 모양을 보여 주고 뒤에 지운다
+       (release audit C-5). 실제 결과가 있으면 건드리지 않는다. */
     { target: '#result', position: 'left',
+      beforeStep: function () { _tutResultMock('progress'); },
+      afterStep: function () { _tutResultMock(null); },
       title: { en: 'Progress', ko: '진행률', ja: '進捗', 'zh-CN': '进度', 'zh-TW': '進度', es: 'Progreso' },
       content: { en: 'Progress bar and current compilation phase are shown here in real-time during compilation.', ko: '컴파일 중 진행률 바와 현재 페이즈가 이 영역에 실시간으로 표시됩니다.', ja: 'コンパイル中にプログレスバーと現在のフェーズがリアルタイムで表示されます。', 'zh-CN': '编译期间进度条和当前编译阶段将在此实时显示。', 'zh-TW': '編譯期間進度條和目前編譯階段將在此即時顯示。', es: 'Durante la compilación, la barra de progreso y la fase actual se muestran aquí en tiempo real.' } },
     { target: '#log-panel', position: 'top',
@@ -113,6 +135,8 @@
         if (lp && lp.style.display === 'none') lp.style.display = '';
       } },
     { target: '#result', position: 'top',
+      beforeStep: function () { _tutResultMock('result'); },
+      afterStep: function () { _tutResultMock(null); },
       title: { en: 'Result', ko: '결과', ja: '結果', 'zh-CN': '结果', 'zh-TW': '結果', es: 'Resultado' },
       content: { en: 'Compilation results (success/failure) appear here.', ko: '컴파일 성공/실패 결과가 여기에 표시됩니다.', ja: 'コンパイル結果（成功/失敗）がここに表示されます。', 'zh-CN': '编译结果（成功/失败）显示在此处。', 'zh-TW': '編譯結果（成功/失敗）顯示在此處。', es: 'Los resultados de compilación (éxito o fallo) aparecen aquí.' } },
     { target: '#save-summary-btn', position: 'left',

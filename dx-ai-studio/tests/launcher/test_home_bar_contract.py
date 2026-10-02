@@ -86,14 +86,17 @@ def test_the_web_agent_left_the_bar_for_the_chat():
     link = re.search(r'<a [^>]*href="' + re.escape(AGENT_URL) + r'"[^>]*>', head)
     assert link, "챗 머리에 DEEPX Agent 링크가 없다"
     assert 'target="_blank"' in link.group(0) and 'rel="noopener noreferrer"' in link.group(0)
-    assert f"_t('{AGENT_TITLE}')" in head
+    assert f'data-chat-tip="{AGENT_TITLE}"' in head, "링크 설명은 key 로 달아 언어마다 번역한다"
 
 
 def test_the_chat_link_speaks_six_languages_and_follows_the_language():
     _speaks_six(CHAT, AGENT_TITLE)
     on_change = CHAT[CHAT.index("DXI18n.onLangChange(function() {"):]
     on_change = on_change[:on_change.index("_renderConfigBanner();")]
-    assert AGENT_TITLE in on_change, "언어를 바꿔도 링크 설명이 그대로다"
+    assert "_relabel()" in on_change, "언어를 바꿔도 링크 설명이 그대로다"
+    relabel = CHAT[CHAT.index("function _relabel()"):CHAT.index("function _buildDOM()")]
+    assert "[data-chat-tip]" in relabel and "aria-label" in relabel
+    # 실제 화면에서의 확인: tests/shared/test_chat_widget_lang_browser.py
 
 
 @pytest.mark.parametrize("key", [TITLE[0], "Documents", "Offline"] + [p[2] for p in PRIMARY + SECONDARY])

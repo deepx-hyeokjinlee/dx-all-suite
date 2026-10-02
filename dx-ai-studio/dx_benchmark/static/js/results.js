@@ -66,7 +66,7 @@ var Results = {
       cardsHtml += '<div class="hw-card" role="button" tabindex="0" data-hw-id="' + _escAttr(hw.hw_id) + '">' +
       '<div class="hw-card-icon">' + ((typeof DXIcon === 'function') ? DXIcon('monitor') : '') + '</div>' +
       '<div class="hw-card-name">' + _escHtml(hw.hw_id) + '</div>' +
-      '<div class="hw-card-runs">' + (hw.runs || []).length + ' runs</div>' +
+      '<div class="hw-card-runs">' + _escHtml(_t('{n} runs').replace('{n}', (hw.runs || []).length)) + '</div>' +
       '</div>';
     });
     container.innerHTML = this._buildShellHTML(
@@ -141,8 +141,10 @@ var Results = {
     if (report && report.markdown) {
       html += '<section class="result-section result-section--report" data-help-id="bench-result-report"><h2>' + _t('View Report') + '</h2>';
       html += '<div class="report-content">';
-      if (typeof marked !== 'undefined' && marked.parse) {
-        html += marked.parse(report.markdown);
+      // 공용 renderer (GFM 표 포함) — 예전 vendor/marked.min.js 는 748 B 짜리 대용이라 REPORT.md 의 표가
+      // '<p>' 안의 맨 '<tr>' 로 이어 붙어 읽을 수 없었다 (2026-10-02 release audit B-1)
+      if (window.DXMarkdownRender && DXMarkdownRender.render) {
+        html += DXMarkdownRender.render(report.markdown);
       } else {
         html += '<pre>' + _escHtml(report.markdown) + '</pre>';
       }
