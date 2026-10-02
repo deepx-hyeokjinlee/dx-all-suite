@@ -376,12 +376,12 @@ window._DX_I18N_DICT = {
     'zh-TW': 'DRAM',
     es: 'DRAM',
   },
-  'NPU Temp (C)': {
-    ko: 'NPU 온도 (C)',
-    ja: 'NPU温度 (C)',
-    'zh-CN': 'NPU温度 (C)',
-    'zh-TW': 'NPU溫度 (C)',
-    es: 'Temp. NPU (C)',
+  'NPU Temp (°C)': {
+    ko: 'NPU 온도 (°C)',
+    ja: 'NPU 温度 (°C)',
+    'zh-CN': 'NPU 温度 (°C)',
+    'zh-TW': 'NPU 溫度 (°C)',
+    es: 'Temp. NPU (°C)',
   },
   'Voltage (mV)': {
     ko: '전압 (mV)',
@@ -411,12 +411,12 @@ window._DX_I18N_DICT = {
     'zh-TW': 'NPU使用率 (%)',
     es: 'Util. NPU (%)',
   },
-  'Core Temp (C)': {
-    ko: '코어 온도 (C)',
-    ja: 'コア温度 (C)',
-    'zh-CN': '核心温度 (C)',
-    'zh-TW': '核心溫度 (C)',
-    es: 'Temp. del núcleo (C)',
+  'Core Temp (°C)': {
+    ko: '코어 온도 (°C)',
+    ja: 'コア温度 (°C)',
+    'zh-CN': '核心温度 (°C)',
+    'zh-TW': '核心溫度 (°C)',
+    es: 'Temp. del núcleo (°C)',
   },
   'Memory (%)': {
     ko: '메모리 (%)',
@@ -469,6 +469,27 @@ window._DX_I18N_DICT = {
     'zh-CN': '平均温度',
     'zh-TW': '平均溫度',
     es: 'Temp. promedio',
+  },
+  'NPU telemetry is not current': {
+    ko: 'NPU 측정값이 최신이 아닙니다',
+    ja: 'NPU テレメトリが最新ではありません',
+    'zh-CN': 'NPU 遥测数据不是最新的',
+    'zh-TW': 'NPU 遙測資料不是最新的',
+    es: 'La telemetría del NPU no está actualizada',
+  },
+  'NPU telemetry unavailable': {
+    ko: 'NPU 측정값을 읽을 수 없습니다',
+    ja: 'NPU テレメトリを取得できません',
+    'zh-CN': '无法获取 NPU 遥测数据',
+    'zh-TW': '無法取得 NPU 遙測資料',
+    es: 'Telemetría del NPU no disponible',
+  },
+  'No NPU telemetry data': {
+    ko: 'NPU 측정 데이터가 없습니다',
+    ja: 'NPU テレメトリデータがありません',
+    'zh-CN': '没有 NPU 遥测数据',
+    'zh-TW': '沒有 NPU 遙測資料',
+    es: 'No hay datos de telemetría del NPU',
   },
   'Cores': {
     ko: '코어',

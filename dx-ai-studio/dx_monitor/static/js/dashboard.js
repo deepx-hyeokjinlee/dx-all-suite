@@ -35,11 +35,11 @@ function _updateTelemetryStatus(hw){
     return mode;
   }
   if(mode==='stale'){
-    _mLabel(el,'alert','NPU telemetry is not current.');
+    _mLabel(el,'alert',T('NPU telemetry is not current'));
   }else{
     var diagnostics=Array.isArray(telemetry.diagnostics)?telemetry.diagnostics:[];
     var detail=telemetry.error||diagnostics[0]||'';
-    _mLabel(el,'alert','NPU telemetry unavailable'+(detail?': '+String(detail):''));
+    _mLabel(el,'alert',T('NPU telemetry unavailable')+(detail?': '+String(detail):''));
   }
   el.className='sse-status telemetry-status degraded '+mode;
   el.style.display='inline';
@@ -111,7 +111,7 @@ function renderStatusBar(hw){
   var mockMode=_telemetryState(hw)==='mock';
   var h='';
   if(telemetryMode==='unavailable'||telemetryMode==='stale'){
-    var telemetryText=telemetryMode==='stale'?'NPU telemetry is not current':'NPU telemetry unavailable';
+    var telemetryText=telemetryMode==='stale'?T('NPU telemetry is not current'):T('NPU telemetry unavailable');
     h+='<div class="status-card '+statusClass('none')+'" data-help-id="status-npu-telemetry"><span class="sc-badge">'+statusIcon('none')+'</span><span class="sc-label">NPU</span><span class="sc-value">'+telemetryText+'</span></div>';
   }
   // NPU별 온도 카드
@@ -146,7 +146,7 @@ function renderStatusBar(hw){
     h+='<div class="status-card" data-help-id="status-clock"><span class="sc-label">'+statusLabel('Clock')+'</span><span class="sc-value">'+worstClock.toFixed(0)+' MHz</span></div>';
   }
   var cpuSt=getStatus('cpu_load',hw.cpu_load||0);
-  h+='<div class="status-card '+statusClass(cpuSt)+'" data-help-id="status-cpu"><span class="sc-badge">'+statusIcon(cpuSt)+'</span><span class="sc-label">CPU</span><span class="sc-value">'+(hw.cpu_load||0).toFixed(2)+'</span></div>';
+  h+='<div class="status-card '+statusClass(cpuSt)+'" data-help-id="status-cpu"><span class="sc-badge">'+statusIcon(cpuSt)+'</span><span class="sc-label">'+T('CPU Load')+'</span><span class="sc-value">'+(hw.cpu_load||0).toFixed(2)+'</span></div>';   // 부하 평균 — 단위 없는 "CPU 0.74" 는 % 로 읽혔다 (M-3)
   var memSt=getStatus('memory',hw.mem_pct||0);
   h+='<div class="status-card '+statusClass(memSt)+'" data-help-id="status-memory"><span class="sc-badge">'+statusIcon(memSt)+'</span><span class="sc-label">'+statusLabel('Memory')+'</span><span class="sc-value">'+(hw.mem_pct||0).toFixed(1)+'%</span></div>';
   $('status-bar').innerHTML=h;
@@ -402,14 +402,14 @@ function _drawSingleMode(area,data,tl,npuCount,mode){
     S._chartLayoutKey=layoutKey;
     var h='';
     if(isNpu&&!npuCount){
-      h+='<p class="txt-dim" data-help-id="npu-telemetry-no-data">'+(telemetryMode==='stale'?'NPU telemetry is not current':telemetryMode==='unavailable'?'NPU telemetry unavailable':'No NPU telemetry data')+'</p>';
+      h+='<p class="txt-dim" data-help-id="npu-telemetry-no-data">'+(telemetryMode==='stale'?T('NPU telemetry is not current'):telemetryMode==='unavailable'?T('NPU telemetry unavailable'):T('No NPU telemetry data'))+'</p>';
     }
     rows.forEach(function(r,idx){
       var canvasId='chart-single-'+idx;
       h+='<div class="chart-row" data-help-id="chart-row-'+esc(r.id)+'">'
         +'<div class="chart-row-label '+statusClass(r.status)+'" data-help-id="chart-label-'+esc(r.id)+'">'
         +'<div class="cr-id">'+esc(r.label)+'</div>'
-        +'<div class="cr-val">'+(r.val==null?T('N/A'):r.val.toFixed(1))+'</div>'
+        +'<div class="cr-val">'+metricValue(mode,r.val)+'</div>'
         +'<div class="cr-badge">'+statusIcon(r.status)+'</div>'
         +(r.mock?'<div class="cr-mock">('+statusLabel('Mock')+')</div>':'')
         +'</div>'
@@ -423,7 +423,7 @@ function _drawSingleMode(area,data,tl,npuCount,mode){
       if(labelEl){
         labelEl.className='chart-row-label '+statusClass(r.status);
         var valEl=labelEl.querySelector('.cr-val');
-        if(valEl)valEl.textContent=r.val==null?T('N/A'):r.val.toFixed(1);
+        if(valEl)valEl.textContent=metricValue(mode,r.val);
         var badgeEl=labelEl.querySelector('.cr-badge');
         if(badgeEl)badgeEl.innerHTML=statusIcon(r.status);
       }
@@ -446,7 +446,7 @@ function _drawAllMode(area,data,tl,npuCount){
     var h='';
 
     if(!npuCount){
-      h+='<p class="txt-dim" data-help-id="npu-telemetry-no-data">'+(telemetryMode==='stale'?'NPU telemetry is not current':telemetryMode==='unavailable'?'NPU telemetry unavailable':'No NPU telemetry data')+'</p>';
+      h+='<p class="txt-dim" data-help-id="npu-telemetry-no-data">'+(telemetryMode==='stale'?T('NPU telemetry is not current'):telemetryMode==='unavailable'?T('NPU telemetry unavailable'):T('No NPU telemetry data'))+'</p>';
     }
 
     for(var ni=0;ni<npuCount;ni++){
@@ -532,7 +532,7 @@ function renderNPUTopo(hw){
   var npus=hw.npus||[];
   var telemetryMode=S.telemetryMode||_telemetryState(hw);
   var mockMode=_telemetryState(hw)==='mock';
-  var telemetryMessage=telemetryMode==='stale'?'NPU telemetry is not current':'NPU telemetry unavailable';
+  var telemetryMessage=telemetryMode==='stale'?T('NPU telemetry is not current'):T('NPU telemetry unavailable');
   if($('npu-status-label'))$('npu-status-label').textContent=mockMode?T('Mock Data'):(telemetryMode==='unavailable'||telemetryMode==='stale'?telemetryMessage:npus.length+T(' NPU(s)'));
   if($('npu-topo'))$('npu-topo').innerHTML=npus.map(function(n, idx){
     var tc=tempColor(n.temp_avg||0);
@@ -541,7 +541,7 @@ function renderNPUTopo(hw){
       var badges=(n.temperatures||[]).map(function(t,i){
         return '<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:'+tempColor(t)+'">C'+i+' '+t.toFixed(0)+'°</span>';
       }).join('');
-      coreRows='<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+_mIco('thermometer')+' '+T('Cores')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+badges+'</span></div>';
+      coreRows='<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+_mIco('thermometer')+' '+T('Core Temp')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+badges+'</span></div>';
     }
     var npuId=esc(n.id==null?'':String(n.id));
     var firmware=esc(String(n.firmware_version||''));
@@ -557,7 +557,7 @@ function renderNPUTopo(hw){
       +coreRows
       +'<div class="npu-metric"><span class="mk">'+_mIco('bolt')+' '+T('Voltage')+'</span><span class="mv">'+(n.voltage_avg||0).toFixed(0)+' mV</span></div>'
       +'<div class="npu-metric"><span class="mk">'+_mIco('clock')+' '+T('Clock')+'</span><span class="mv">'+(n.clock_avg||0).toFixed(0)+' MHz</span></div>'
-      +(n.dram_total_mb>0?'<div class="npu-metric" style="flex-direction:column;align-items:flex-start;gap:4px"><span class="mk">'+_mIco('memory')+' '+T('DRAM')+'</span><div style="width:100%;background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin:2px 0"><div style="width:'+dramWidth.toFixed(1)+'%;background:#e879f9;border-radius:4px;height:6px"></div></div><span class="mv" style="color:#e879f9">'+(n.dram_used_mb||0)+' / '+(n.dram_total_mb||0)+' MB ('+_formatDramPct(dramPct)+')</span></div>':'')
+      +(n.dram_total_mb>0?'<div class="npu-metric" style="flex-direction:column;align-items:flex-start;gap:4px"><span class="mk">'+_mIco('memory')+' '+T('DRAM')+'</span><div style="width:100%;background:color-mix(in srgb,var(--text-primary) 8%,transparent);border-radius:4px;height:6px;margin:2px 0"><div style="width:'+dramWidth.toFixed(1)+'%;background:var(--vpu);border-radius:4px;height:6px"></div></div><span class="mv" style="color:var(--vpu)">'+(n.dram_used_mb||0)+' / '+(n.dram_total_mb||0)+' MB ('+_formatDramPct(dramPct)+')</span></div>':'')
       +((n.utilization||[]).length?'<div class="npu-metric" style="align-items:flex-start"><span class="mk">'+_mIco('gear')+' '+T('Util')+'</span><span class="mv" style="display:flex;gap:4px;flex-wrap:wrap">'+(n.utilization||[]).map(function(u,i){return'<span style="font-size:11px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.07);color:var(--status-info)">C'+i+' '+u+'%</span>';}).join('')+'</span></div>':'')
       +'<div class="npu-metric"><span class="mk">'+_mIco('cpu')+' '+T('Cores')+'</span><span class="mv">'+(n.cores||1)+'</span></div>'
       +(n.firmware_version?'<div class="npu-metric"><span class="mk">'+_mIco('wrench')+' '+T('Firmware')+'</span><span class="mv" style="color:var(--status-info)">'+firmware+'</span></div>':'')

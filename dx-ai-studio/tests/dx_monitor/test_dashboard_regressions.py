@@ -89,7 +89,7 @@ assert.strictEqual(elements['mock-banner'].style.display, 'none');
 apply({npus: [npu()], cpu_load: 2.0, mem_pct: 30.0, telemetry: {source_mode: 'stale'}});
 assert.strictEqual(state().mode, 'stale');
 assert(elements['telemetry-status'].className.includes('degraded stale'));
-assert.strictEqual(elements['telemetry-status'].textContent, '⚠ NPU telemetry is not current.');
+assert.strictEqual(elements['telemetry-status'].textContent, '⚠ NPU telemetry is not current');
 assert.strictEqual(elements['telemetry-status'].style.display, 'inline');
 assert(elements['status-bar'].innerHTML.includes('NPU telemetry is not current'));
 
@@ -582,3 +582,18 @@ def test_charts_redraw_on_resize_and_visibility():
     assert "'resize'" in dashboard or '"resize"' in dashboard
     # each hook must trigger a chart redraw
     assert "requestAnimationFrame(drawCharts)" in dashboard
+
+
+def test_single_chart_value_carries_its_unit():
+    """The big number beside each chart said "38.0" with no unit (release audit M-2)."""
+    utils = DASHBOARD_UTILS.read_text(encoding="utf-8")
+    dashboard = (MONITOR / "static" / "js" / "dashboard.js").read_text(encoding="utf-8")
+    assert "temp: '°C'" in utils and "clock: ' MHz'" in utils
+    assert dashboard.count("metricValue(mode,r.val)") == 2
+    assert "r.val.toFixed(1)" not in dashboard
+
+
+def test_telemetry_state_messages_are_translated():
+    dashboard = (MONITOR / "static" / "js" / "dashboard.js").read_text(encoding="utf-8")
+    assert "?'NPU telemetry" not in dashboard and ":'NPU telemetry" not in dashboard
+    assert "'alert','NPU telemetry" not in dashboard
