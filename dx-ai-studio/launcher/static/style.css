@@ -2402,6 +2402,8 @@ body {
    full-width on top and stops being sticky. */
 @media (max-width: 1200px) {
   .eco-hero { position: static; flex-basis: auto; width: 100%; max-width: 520px; margin: 0 auto; }
+  /* 탭에 자리를 준다 — 1024px 에서 "Agent Dev" 가 "Ag" 로 잘렸다 (release audit L-26) */
+  .logo-text, .studio-beta-badge { display: none; }
 }
 .eco-head h2 {
   font-size: var(--fs-lg);
@@ -2616,7 +2618,7 @@ body {
 .pm-desc { color: var(--text-muted); font-size: var(--fs-xs); line-height: 1.2; }
 .platform-values {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(72px, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(132px, 100%), 1fr));   /* 72px 로는 "ONNX→DXNN Compile" 같은 배지가 잘렸다 (L-21) */
   gap: 4px;
   margin-bottom: 5px;
   width: 100%;
@@ -2787,10 +2789,12 @@ body {
    흐려 "더 있다"고 말하게 한다. 잘린 글자는 사고처럼 보이고 페이드는
    안내처럼 보인다. */
 @media (max-width: 1440px) {
+  /* 왼쪽도 흐린다 — 활성 탭을 보이려 스크롤하면 잘린 탭 끝이 로고에 붙어 "DEEPXller" 처럼 읽혔다 (release audit L-26) */
   .top-bar-center {
-    -webkit-mask-image: linear-gradient(90deg,
+    padding-left: var(--sp-4);
+    -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) var(--sp-4),
       rgba(0, 0, 0, 1) calc(100% - 28px), rgba(0, 0, 0, 0));
-    mask-image: linear-gradient(90deg,
+    mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) var(--sp-4),
       rgba(0, 0, 0, 1) calc(100% - 28px), rgba(0, 0, 0, 0));
   }
 }

@@ -574,7 +574,7 @@
 }
 #homeBar .bar-icon.is-mark { fill: currentColor; stroke: none; }
 #homeBar .bar-desc {
-  --tip-w: 300px;
+  --tip-w: 260px;   /* 300px 은 줄 끝 링크에서 화면 밖으로 14px 까지 나갔다 (release audit L-20) */
   grid-row: 1;
   align-self: end;
   z-index: 2;

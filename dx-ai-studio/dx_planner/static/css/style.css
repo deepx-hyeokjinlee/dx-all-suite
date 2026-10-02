@@ -8,6 +8,7 @@ body { overflow-x: auto; overflow-y: hidden; }
    구 position:fixed + top 오프셋은 left:0 이라 56px 모듈 레일 위를 덮었다. */
 .planner-main {
   padding: var(--sp-5);
+  padding-bottom: calc(var(--sp-5) + var(--sp-7) + var(--sp-5));   /* 채팅 단추가 맨 아래 Next 를 덮지 않게 (release audit L-24) */
 }
 .requirements-panel {
   align-self: start;

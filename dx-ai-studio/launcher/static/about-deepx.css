@@ -92,7 +92,8 @@
   flex: 1 1 auto;
   min-width: 0;
   gap: var(--sp-1);
-  justify-content: flex-end;
+  /* safe — 넘치면 왼쪽부터 보인다. 그냥 flex-end 면 넘친 앞쪽 (Company) 이 왼쪽 밖으로 나가 스크롤로도 못 닿았다 (release audit L-25) */
+  justify-content: safe flex-end;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -1254,3 +1255,9 @@ ul.about-timeline-list li::before {
 .about-action-icon .dx-ico { width: 22px; height: 22px; color: var(--accent); }
 .about-scroll-hint .dx-ico { width: 20px; height: 20px; }
 .about-round-status .dx-ico { width: 14px; height: 14px; vertical-align: -2px; }
+
+/* 폰 폭: 목차가 0px 로 눌려 사라졌다 — 다음 줄로 내려 가로로 스크롤한다 (release audit L-25) */
+@media (max-width: 600px) {
+  .about-topbar { flex-wrap: wrap; height: auto; padding: var(--sp-2) var(--sp-4); }
+  .about-nav { order: 3; flex: 1 0 100%; overflow-x: auto; justify-content: flex-start; }
+}

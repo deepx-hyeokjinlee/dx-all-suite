@@ -877,7 +877,10 @@ body.lang-zh-TW .zh-CN { display: none; }
   display: flex; gap: var(--sp-1); padding: 0 var(--sp-4);
   border-bottom: 1px solid var(--border-subtle); margin-bottom: var(--sp-4);
 }
+/* 좁은 폭에서 탭을 줄이지 않는다 — 한국어가 한 글자씩 접혔다 ("전체메트릭스", release audit B-3). 모자라면 띠가 옆으로 스크롤한다 */
+.benchmark-segment-tabs { overflow-x: auto; scrollbar-width: none; }
 .dashboard-tab {
+  flex-shrink: 0; white-space: nowrap; word-break: keep-all;
   padding: 8px 16px; cursor: pointer; font-size: var(--fs-base); font-weight: 500;
   color: var(--text-muted); border: none; background: none;
   border-bottom: 2px solid transparent; transition: var(--transition);

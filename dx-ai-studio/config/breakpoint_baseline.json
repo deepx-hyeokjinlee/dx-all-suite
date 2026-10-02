@@ -13,6 +13,7 @@
     900
   ],
   "dx_compiler/static/css/style.css": [
+    600,
     768,
     1200
   ],
@@ -34,14 +35,14 @@
     1600
   ],
   "dx_stream/static/css/pipeline-iso.css": [
-    900,
-    1200
+    900
   ],
   "dx_stream/static/css/stream.css": [
     600,
     1200
   ],
   "launcher/static/about-deepx.css": [
+    600,
     1979
   ],
   "launcher/static/home-stage.css": [
@@ -50,6 +51,7 @@
     1200
   ],
   "launcher/static/style.css": [
+    600,
     768,
     1200,
     1440
@@ -58,6 +60,7 @@
     480
   ],
   "shared/static/dx-shell.css": [
+    600,
     1200
   ],
   "shared/static/dx-utilities.css": [
