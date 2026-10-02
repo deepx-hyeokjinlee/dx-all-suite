@@ -1,7 +1,11 @@
 ARG BASE_IMAGE_NAME=ubuntu
 ARG OS_VERSION=24.04
 ARG TAG_NAME=${OS_VERSION}
-FROM ${BASE_IMAGE_NAME}:${TAG_NAME}
+# FROM_IMAGE: actual base image repo. Defaults to BASE_IMAGE_NAME; the NVIDIA GPU
+# overlay overrides it to nvidia/cuda while BASE_IMAGE_NAME stays "ubuntu" so the
+# in-Dockerfile OS branching (apt vs dnf, supported-OS checks) keeps working.
+ARG FROM_IMAGE=${BASE_IMAGE_NAME}
+FROM ${FROM_IMAGE}:${TAG_NAME}
 
 USER root
 

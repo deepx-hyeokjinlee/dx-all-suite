@@ -20,6 +20,8 @@ OS_VERSION=""
 RUNTIME_VARIANT=""
 
 NVIDIA_GPU_MODE=0
+CUDA_VERSION=""
+INTEL_GPU_HW_ACC=0
 INTERNAL_MODE=0
 RE_ARCHIVE_ARGS=""
 PYPI_ARGS=""
@@ -71,6 +73,9 @@ show_help() {
     echo -e ""
     echo -e "${COLOR_BOLD}Optional:${COLOR_RESET}"
     echo -e "  ${COLOR_GREEN}[--driver_update]${COLOR_RESET}              Install 'dx_rt_npu_linux_driver' in the host environment"
+    echo -e "  ${COLOR_GREEN}[--nvidia_gpu]${COLOR_RESET}                 Build dx-compiler/dx-modelzoo on NVIDIA CUDA base image (ubuntu only)"
+    echo -e "  ${COLOR_GREEN}[--cuda_version=<version>]${COLOR_RESET}     CUDA base image version for --nvidia_gpu (default: 12.8.1)"
+    echo -e "  ${COLOR_GREEN}[--intel_gpu_hw_acc]${COLOR_RESET}           Build dx-runtime with Intel GPU VA-API media acceleration (ubuntu only)"
     echo -e "  ${COLOR_GREEN}[--no-cache]${COLOR_RESET}                   Build Docker images freshly without cache"
     echo -e "  ${COLOR_GREEN}[--skip-archive]${COLOR_RESET}               Skip archiving dx-compiler or dx-runtime or dx-modelzoo before building"
     echo -e "  ${COLOR_GREEN}[--variant=<variant>]${COLOR_RESET}          Build a specific dx-runtime image variant ${COLOR_RED}(--target=dx-runtime only)${COLOR_RESET}"
@@ -88,6 +93,7 @@ show_help() {
     echo -e "  ${COLOR_YELLOW}$0 --target=dx-runtime --ubuntu_version=24.04 --driver_update${COLOR_RESET}"
     echo -e "  ${COLOR_YELLOW}$0 --target=dx-runtime --debian_version=12 --driver_update${COLOR_RESET}"
     echo -e "  ${COLOR_YELLOW}$0 --target=dx-modelzoo --ubuntu_version=24.04 --driver_update${COLOR_RESET}"
+    echo -e "  ${COLOR_YELLOW}$0 --target=dx-modelzoo --ubuntu_version=24.04 --nvidia_gpu${COLOR_RESET}"
     echo -e ""
 
     if [ "$1" == "error" ] && [[ ! -n "$2" ]]; then
@@ -109,8 +115,14 @@ docker_build_impl()
     local config_file_args=${2:--f docker/docker-compose.yml}
     local no_cache_arg=""
 
-    if [ ${NVIDIA_GPU_MODE} -eq 1 ]; then
+    # NVIDIA GPU overlay applies to dx-compiler and dx-modelzoo only
+    if [ ${NVIDIA_GPU_MODE} -eq 1 ] && [ "$target" != "runtime" ]; then
         config_file_args="${config_file_args} -f docker/docker-compose.nvidia_gpu.yml"
+    fi
+
+    # Intel GPU (VA-API) overlay applies to dx-runtime only
+    if [ ${INTEL_GPU_HW_ACC} -eq 1 ] && [ "$target" = "runtime" ]; then
+        config_file_args="${config_file_args} -f docker/docker-compose.intel_gpu_hw_acc.yml"
     fi
 
     if [ ${INTERNAL_MODE} -eq 1 ]; then
@@ -332,8 +344,18 @@ docker_build_dx-runtime()
         exit 1
     fi
 
+    # dx-runtime is out of NVIDIA GPU scope — always build with CPU naming
+    local saved_suffix="${IMAGE_TAG_SUFFIX}"
+    if [ ${NVIDIA_GPU_MODE} -eq 1 ]; then
+        export IMAGE_TAG_SUFFIX="${BASE_IMAGE_NAME}-${OS_VERSION}"
+    fi
+
     local docker_compose_args="-f docker/docker-compose.yml"
     docker_build_impl "runtime" "${docker_compose_args}"
+
+    if [ ${NVIDIA_GPU_MODE} -eq 1 ]; then
+        export IMAGE_TAG_SUFFIX="${saved_suffix}"
+    fi
 }
 
 docker_build_dx-modelzoo()
@@ -426,6 +448,36 @@ main() {
         BASE_IMAGE_NAME="quay.io/centos/centos"
         OS_VERSION="$CENTOS_VERSION"
         IMAGE_TAG_SUFFIX="centos-${CENTOS_VERSION}"
+    fi
+
+    # NVIDIA GPU mode: ubuntu-only (nvidia/cuda base images are ubuntu-based)
+    if [ ${NVIDIA_GPU_MODE} -eq 1 ]; then
+        if [ "${BASE_IMAGE_NAME}" != "ubuntu" ]; then
+            show_help "error" "--nvidia_gpu supports --ubuntu_version only (nvidia/cuda base images are ubuntu-based)."
+        fi
+        if [ "${TARGET_ENV}" = "dx-runtime" ]; then
+            show_help "error" "--nvidia_gpu applies to dx-compiler and dx-modelzoo only."
+        fi
+        export CUDA_VERSION=${CUDA_VERSION:-12.8.1}
+        export IMAGE_TAG_SUFFIX="cuda${CUDA_VERSION}-${BASE_IMAGE_NAME}-${OS_VERSION}"
+        print_colored_v2 "INFO" "NVIDIA_GPU_MODE is set. (CUDA ${CUDA_VERSION}, image tag suffix: ${IMAGE_TAG_SUFFIX})"
+        check_nvidia_container_runtime || \
+            print_colored_v2 "WARNING" "Building GPU images anyway (GPU is not required at build time, only at run time)."
+    fi
+
+    # Intel GPU (VA-API) mode: ubuntu-only, dx-runtime only, exclusive with --nvidia_gpu
+    if [ ${INTEL_GPU_HW_ACC} -eq 1 ]; then
+        if [ ${NVIDIA_GPU_MODE} -eq 1 ]; then
+            show_help "error" "--intel_gpu_hw_acc and --nvidia_gpu are mutually exclusive."
+        fi
+        if [ "${BASE_IMAGE_NAME}" != "ubuntu" ]; then
+            show_help "error" "--intel_gpu_hw_acc supports --ubuntu_version only."
+        fi
+        if [ "${TARGET_ENV}" != "dx-runtime" ]; then
+            show_help "error" "--intel_gpu_hw_acc applies to dx-runtime only (VA-API media acceleration for dx_stream)."
+        fi
+        export IMAGE_TAG_SUFFIX="vaapi-${BASE_IMAGE_NAME}-${OS_VERSION}"
+        print_colored_v2 "INFO" "INTEL_GPU_HW_ACC is set. (image tag suffix: ${IMAGE_TAG_SUFFIX})"
     fi
 
     print_colored_v2 "INFO" "BASE_IMAGE_NAME($BASE_IMAGE_NAME) is set."
@@ -546,6 +598,12 @@ while [ $# -gt 0 ]; do
             ;;
         --nvidia_gpu)
             NVIDIA_GPU_MODE=1
+            ;;
+        --cuda_version=*)
+            CUDA_VERSION="${1#*=}"
+            ;;
+        --intel_gpu_hw_acc)
+            INTEL_GPU_HW_ACC=1
             ;;
         --help)
             show_help

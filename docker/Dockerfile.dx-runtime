@@ -37,6 +37,18 @@ RUN apt-get update && apt-get install -y \
 # X11 forwarding and xcb
 RUN apt-get install -y x11-apps libx11-6 xauth libxext6 libxrender1 libxtst6 libxi6 libxcb-xinerama0
 
+# Intel GPU HW acceleration (VA-API) — enabled by docker-compose.intel_gpu_hw_acc.yml.
+# Installs the Intel media driver + VA-API tools + GStreamer VA plugins so dx_stream's
+# decodebin auto-selects the HW decoder. No dx_stream code change is required.
+ARG INSTALL_VAAPI=false
+RUN if [ "${INSTALL_VAAPI}" = "true" ]; then \
+        apt-get update && apt-get install -y \
+        vainfo intel-media-va-driver-non-free intel-gpu-tools \
+        gstreamer1.0-vaapi \
+        libva2 libva-drm2 && \
+        apt-get clean && rm -rf /var/lib/apt/lists/*; \
+    fi
+
 # for setting ssl issue on intranet
 # only used 'USE_INTRANET=true'
 ARG USE_INTRANET=false
