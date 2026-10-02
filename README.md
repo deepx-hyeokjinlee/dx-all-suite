@@ -128,6 +128,63 @@ document is published in English and Korean.
 
 **DX-AllSuite** provides two environments depending on your intended use. Choose the environment that fits your needs to get started.
 
+### Quick Install (one-line)
+
+Install a single component without cloning this repository:
+
+```bash
+# DX-Compiler (x86_64 Host PC)
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-compiler/main/oneline-install.sh | sh
+
+# DX-Runtime (target device with a DEEPX NPU: NPU driver + dx_rt + firmware)
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-runtime/main/oneline-install.sh | sh
+```
+
+DX-Compiler installs `dx-com` from PyPI into `~/deepx/venv-dx-compiler` and links the
+`dxcom` launcher into `~/.local/bin`, so you can run `dxcom --help` straight afterwards.
+It also apt-installs `libgl1-mesa-dev` and `libglib2.0-0`, which `opencv-python` needs to
+import, so it requires root or `sudo` on a Debian/Ubuntu host. Note this route does not
+bring the sample data — clone the repository for that.
+
+Pin a specific version with `DX_VERSION` (DX-Compiler), or per component with
+`DX_RT_VERSION` / `DX_DRIVER_VERSION` / `DX_FW_VERSION` (DX-Runtime, which otherwise
+tracks each component's `main`). DX-Compiler also accepts `DX_INSTALL_DIR` to move the
+install root; DX-Runtime has none, since it installs system packages via `dpkg`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-compiler/main/oneline-install.sh | DX_VERSION=2.4.1 sh
+```
+
+> **DX-Runtime notes**
+> One-line install covers `dx_fw`, `dx_rt`, and `dx_rt_npu_linux_driver`; `dx_app`
+> and `dx_stream` still use the full installation guide below. The firmware update
+> step is skipped when no NPU device is detected — rerun the same command once the
+> device is available.
+
+#### Uninstalling
+
+Remove a one-line install without cloning either repository:
+
+```bash
+# DX-Compiler
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-compiler/main/oneline-uninstall.sh | sh
+
+# DX-Runtime
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-runtime/main/oneline-uninstall.sh | sh
+```
+
+Pass DX-Compiler the same `DX_INSTALL_DIR` / `DX_BIN_DIR` you installed with, or it looks in
+the default location and finds nothing. DX-Runtime needs no such argument, and because both
+of its install routes produce the same Debian packages, that one command also removes an
+`install.sh` install — you do not have to remember which way it went on.
+
+Two things are never undone: firmware already flashed to the NPU, which has no uninstall path
+at all, and the `dx_engine` Python wheel, which `libdxrt-bin` deliberately leaves to you and
+explains how to remove while it is being purged.
+
+For the full suite (all components, source builds, Docker), use the environment
+guides below.
+
 ### AI Model Compile Environment (Host PC)  
 
 This environment is used for converting and optimizing trained AI models into DEEPX NPU-specific binaries.  

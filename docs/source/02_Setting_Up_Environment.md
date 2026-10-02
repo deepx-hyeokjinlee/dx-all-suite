@@ -17,9 +17,79 @@
 
 ---
 
+## Quick Install (one-line)
+
+If you only need a single component, install it directly — no cloning, no submodule
+synchronization:
+
+```Bash
+# DX-Compiler (x86_64 Host PC)
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-compiler/main/oneline-install.sh | sh
+
+# DX-Runtime (target device with a DEEPX NPU: NPU driver + dx_rt + firmware)
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-runtime/main/oneline-install.sh | sh
+```
+
+Each installer resolves the newest version on its own — DX-Compiler from its latest
+release on PyPI, DX-Runtime from the `latest` pointer on each component's `main` branch.
+Override with `DX_VERSION=2.4.1` (DX-Compiler) or, for DX-Runtime, per component with
+`DX_RT_VERSION=3.4.2`, `DX_DRIVER_VERSION=2.6.0`, `DX_FW_VERSION=2.7.4`. DX-Compiler also
+accepts `DX_INSTALL_DIR=<dir>` (default `~/deepx`) to move the install root; DX-Runtime
+has no equivalent, because it installs system packages through `dpkg` rather than into a
+directory you choose.
+
+!!! warning "DX-Runtime tracks `main`, so runs are not reproducible by default"
+    Because versions are resolved at run time, the downloaded artifacts are not
+    checksum-verified, and the three components follow their own branches independently —
+    a run made between dx-runtime releases can install a combination that has not been
+    validated together. Pin the versions above, or use the repository's `install.sh`,
+    whenever you need a known-good set.
+
+!!! note "DX-Compiler needs root for its system packages"
+    `dx-com` is installed from PyPI into `$DX_INSTALL_DIR/venv-dx-compiler` (default
+    `~/deepx/venv-dx-compiler`), and the `dxcom` launcher is linked into `DX_BIN_DIR`
+    (default `~/.local/bin`) so it runs without activating the venv. The installer also
+    apt-installs `libgl1-mesa-dev` and `libglib2.0-0`: `dx-com` depends on
+    `opencv-python`, whose `cv2` extension links against those libraries and fails to
+    import without them. Run as root or with `sudo` available, on Debian or Ubuntu.
+    This route does not install the sample data — clone the repository for that.
+
+!!! warning "DX-Runtime: reboot required"
+    A reboot is mandatory after installation so the kernel loads the NPU driver. When no
+    NPU device is detected the firmware update step is skipped — rerun the same command
+    after rebooting to finish it.
+
+!!! note "Scope of one-line install"
+    One-line install covers `dx_fw`, `dx_rt`, and `dx_rt_npu_linux_driver` for DX-Runtime.
+    `dx_app`, `dx_stream`, source builds, and the Docker route all use the full setup
+    described below.
+
+### Uninstalling a one-line install
+
+```Bash
+# DX-Compiler
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-compiler/main/oneline-uninstall.sh | sh
+
+# DX-Runtime
+curl -fsSL https://raw.githubusercontent.com/DEEPX-AI/dx-runtime/main/oneline-uninstall.sh | sh
+```
+
+DX-Compiler must be given the same `DX_INSTALL_DIR` / `DX_BIN_DIR` used at install time,
+otherwise it looks in the default location and finds nothing. DX-Runtime takes no such
+argument: both of its install routes produce the same Debian packages, so this command
+removes an `install.sh` install as well.
+
+!!! warning "What uninstalling cannot undo"
+    Firmware already flashed to the NPU is not reverted — there is no uninstall path for it.
+    The `dx_engine` Python wheel is also left in place: `libdxrt-bin` cannot know which
+    interpreter or virtualenv it went into, so it prints removal instructions during its own
+    purge instead. `dx_app` and `dx_stream` are untouched, since the one-liner never installs
+    them; use the repository's `uninstall.sh` for those.
+
 ## Prerequisites
 
-Follow these steps first to ensure a stable installation.
+Follow these steps first to ensure a stable installation. This is the full-suite route —
+skip it if the one-line install above already covers what you need.
 
 ### Repository Cloning and Submodule Synchronization
 
