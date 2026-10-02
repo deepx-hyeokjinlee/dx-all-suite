@@ -45,6 +45,13 @@ ARG CA_FILE_NAME="dummy.crt"
 COPY ${CA_FILE_NAME} /tmp/ca-certs/
 # pip/requests use certifi's own CA bundle, not the OS trust store, so we also
 # write /etc/pip.conf pointing pip at the OS bundle that now contains the intranet CA.
+# The COPY above is unconditional (COPY cannot be branched), so when intranet mode is
+# OFF the trust dir holds dummy.crt -- a placeholder whose body is literally
+# "DUMMY CA SSL CERTIFICATE ...", not a parseable certificate. Any later
+# `apt-get install ca-certificates` runs update-ca-certificates via postinst, which
+# appends that garbage to /etc/ssl/certs/ca-certificates.crt; OpenSSL then cannot parse
+# the bundle and pip fails every PyPI request with SSLError "[X509] PEM lib". So delete
+# the placeholder in the else branch -- nothing should ever trust it.
 RUN if [ "$USE_INTRANET" = "true" ]; then \
       printf '[http]\n\tsslVerify = false\n' > /root/.gitconfig && \
       OS_FAM=$(cat /tmp/.os_family) && \
@@ -64,6 +71,7 @@ RUN if [ "$USE_INTRANET" = "true" ]; then \
       fi && \
       printf '[global]\ncert = %s\n' "$CA_BUNDLE" > /etc/pip.conf; \
     else \
+      rm -f "/usr/local/share/ca-certificates/${CA_FILE_NAME}" && \
       echo "Skipping intranet SSL setup"; \
     fi && \
     rm -rf /tmp/ca-certs

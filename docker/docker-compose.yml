@@ -53,6 +53,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.dx-runtime
+      target: ${RUNTIME_VARIANT:-rt-app-stream}
       args:
         BASE_IMAGE_NAME: ${BASE_IMAGE_NAME:-ubuntu}
         OS_VERSION: ${OS_VERSION}

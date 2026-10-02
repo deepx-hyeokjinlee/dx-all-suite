@@ -17,6 +17,7 @@ RHEL_VERSION=""
 CENTOS_VERSION=""
 BASE_IMAGE_NAME=""
 OS_VERSION=""
+RUNTIME_VARIANT=""
 
 NVIDIA_GPU_MODE=0
 INTERNAL_MODE=0
@@ -80,6 +81,9 @@ show_help() {
     echo -e "  ${COLOR_GREEN}[--driver_update]${COLOR_RESET}              Install 'dx_rt_npu_linux_driver' in the host environment"
     echo -e "  ${COLOR_GREEN}[--no-cache]${COLOR_RESET}                   Build Docker images freshly without cache"
     echo -e "  ${COLOR_GREEN}[--skip-archive]${COLOR_RESET}               Skip archiving dx-compiler or dx-runtime or dx-modelzoo before building"
+    echo -e "  ${COLOR_GREEN}[--variant=<variant>]${COLOR_RESET}          Build a specific dx-runtime image variant ${COLOR_RED}(--target=dx-runtime only)${COLOR_RESET}"
+    echo -e "                                   Available: ${COLOR_CYAN}rt${COLOR_RESET} (DX-RT only) | ${COLOR_CYAN}rt-app${COLOR_RESET} | ${COLOR_CYAN}rt-stream${COLOR_RESET} | ${COLOR_CYAN}rt-app-stream${COLOR_RESET} (default)"
+    echo -e "                                   Non-default variants are tagged with a '-<variant>' suffix (ex: dx-runtime:ubuntu-24.04-rt-app)"
     echo -e "  ${COLOR_GREEN}[--re-archive=<true|false>]${COLOR_RESET}    Force rebuild archive for dx-compiler (default: true)"
     echo -e "  ${COLOR_GREEN}[--help]${COLOR_RESET}                       Show this help message"
     echo -e ""
@@ -160,11 +164,25 @@ docker_build_impl()
         export XAUTHORITY_TARGET="/tmp/.docker.xauth"
     fi
 
+    # dx-runtime variant selects the Dockerfile stage to build; non-default variants
+    # also get a '-<variant>' image tag suffix. Both are applied in the compose
+    # subshell below only, so repeated docker_build_impl calls (docker_build_all)
+    # never inherit another target's variant or tag suffix.
+    local runtime_variant="${RUNTIME_VARIANT:-rt-app-stream}"
+    local variant_tag_suffix="${IMAGE_TAG_SUFFIX}"
+    if [ "${target}" = "runtime" ] && [ "${runtime_variant}" != "rt-app-stream" ]; then
+        variant_tag_suffix="${IMAGE_TAG_SUFFIX}-${runtime_variant}"
+    fi
+
     docker buildx use default
     CMD="docker compose ${config_file_args} build ${no_cache_arg} dx-${target}"
     echo "${CMD}"
 
-    ${CMD} || { print_colored_v2 "ERROR" "docker build 'dx-${target}' failed. "; exit 1; }
+    (
+        export RUNTIME_VARIANT="${runtime_variant}"
+        export IMAGE_TAG_SUFFIX="${variant_tag_suffix}"
+        ${CMD}
+    ) || { print_colored_v2 "ERROR" "docker build 'dx-${target}' failed. "; exit 1; }
 }
 
 docker_build_all() 
@@ -403,6 +421,18 @@ main() {
         show_help "error" "An OS version option must be specified (--ubuntu_version, --debian_version, --fedora_version, --rhel_version, or --centos_version)."
     fi
 
+    # --variant selects a dx-runtime Dockerfile stage, so it is meaningless for other targets
+    if [ -n "$RUNTIME_VARIANT" ] && [ "$TARGET_ENV" != "dx-runtime" ]; then
+        show_help "error" "--variant is only supported with '--target=dx-runtime' (got TARGET_ENV='${TARGET_ENV:-unset}')."
+    fi
+
+    # The nvidia_gpu overlay hardcodes image:/container_name: to a CUDA tag and drops
+    # IMAGE_TAG_SUFFIX, so the variant suffix would be lost and every variant would
+    # overwrite the same image tag with different contents.
+    if [ -n "$RUNTIME_VARIANT" ] && [ "${NVIDIA_GPU_MODE}" -eq 1 ]; then
+        show_help "error" "--variant cannot be combined with --nvidia_gpu (the nvidia_gpu overlay overrides the image tag, so the variant suffix would be lost)."
+    fi
+
     # Set BASE_IMAGE_NAME and OS_VERSION based on input
     if [ -n "$UBUNTU_VERSION" ]; then
         BASE_IMAGE_NAME="ubuntu"
@@ -535,6 +565,13 @@ while [ $# -gt 0 ]; do
             ;;
         --skip-archive)
             SKIP_ARCHIVE=y
+            ;;
+        --variant=*)
+            RUNTIME_VARIANT="${1#*=}"
+            case "${RUNTIME_VARIANT}" in
+                rt|rt-app|rt-stream|rt-app-stream) ;;
+                *) show_help "error" "Invalid --variant '${RUNTIME_VARIANT}'. Must be one of: rt, rt-app, rt-stream, rt-app-stream" ;;
+            esac
             ;;
         --nvidia_gpu)
             NVIDIA_GPU_MODE=1

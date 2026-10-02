@@ -153,6 +153,22 @@ DEEPX NPU가 물리적으로 장착된 디바이스에서 inference를 수행하
     sudo reboot
     ```
 
+### 사전 빌드된 Container Image (GHCR)
+
+Local 설치 대신 container를 선호한다면, GitHub Container Registry에 게시된 공식 Ubuntu 24.04 image를 사용해 suite 빌드 과정을 건너뛸 수 있습니다.
+
+```Bash
+docker pull ghcr.io/deepx-ai/dx-runtime:latest
+docker run --rm -it --privileged --ipc=host --pid=host -v /dev:/dev \
+    --entrypoint bash ghcr.io/deepx-ai/dx-runtime:latest
+```
+
+`dx-runtime`은 네 가지 variant(`rt`, `rt-app`, `rt-stream`, `rt-app-stream`)로 제공되며, `dx-compiler`와 `dx-modelzoo` image도 함께 게시됩니다.
+
+`dx-runtime`은 `linux/amd64`와 `linux/arm64`를 모두 지원하며, **`dx-compiler`와 `dx-modelzoo`는 `linux/amd64`만 지원합니다**.
+
+- **Action**: Container image 태그, variant 선택 기준, NPU passthrough 옵션 [Link](./docker/README.md)
+
 ## 지원 모델
 
 DX-AllSuite는 우리 NPU에서 최고 성능을 내도록 최적화된, 업계 표준 AI 아키텍처를 폭넓게 지원합니다.

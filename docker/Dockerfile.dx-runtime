@@ -1,7 +1,9 @@
 ARG BASE_IMAGE_NAME=ubuntu
 ARG OS_VERSION=24.04
 ARG TAG_NAME=${OS_VERSION}
-FROM ${BASE_IMAGE_NAME}:${TAG_NAME}
+
+# ── Stage: rt ── dx_rt core (base for all other stages)
+FROM ${BASE_IMAGE_NAME}:${TAG_NAME} AS rt
 
 USER root
 
@@ -42,11 +44,17 @@ ARG CA_FILE_NAME="dummy.crt"
 COPY ${CA_FILE_NAME} /usr/local/share/ca-certificates/
 # pip/requests use certifi's own CA bundle, not the OS trust store, so we also
 # write /etc/pip.conf pointing pip at the OS bundle that now contains the intranet CA.
+# The COPY above is unconditional (COPY cannot be branched), so with intranet mode OFF
+# the trust dir would keep dummy.crt -- a placeholder that is not a parseable
+# certificate. A later `apt-get install ca-certificates` runs update-ca-certificates,
+# which would append it to /etc/ssl/certs/ca-certificates.crt and leave pip failing
+# every PyPI request with SSLError "[X509] PEM lib". Delete it in the else branch.
 RUN if [ "$USE_INTRANET" = "true" ]; then \
       git config --global http.sslVerify false && \
       update-ca-certificates && \
       printf '[global]\ncert = %s\n' /etc/ssl/certs/ca-certificates.crt > /etc/pip.conf ; \
     else \
+      rm -f "/usr/local/share/ca-certificates/${CA_FILE_NAME}" && \
       echo "Skipping intranet SSL setup"; \
     fi
 
@@ -191,33 +199,6 @@ RUN set -x && \
         pip install /usr/share/libdxrt/python_package; \
     fi
 
-WORKDIR /deepx/dx-runtime/dx_app
-ARG FILE_DXAPP=archives/dx_app.tar.gz
-ADD ${FILE_DXAPP} /deepx/dx-runtime/dx_app/
-RUN set -x && \
-    . /venv-dxnn/bin/activate && \
-    echo "Build dx_app..." && \
-    ./install.sh --all
-RUN set -x && \
-    . /venv-dxnn/bin/activate && \
-    ./build.sh
-
-WORKDIR /deepx/dx-runtime/dx_stream
-ARG FILE_DXSTREAM=archives/dx_stream.tar.gz
-ADD ${FILE_DXSTREAM} /deepx/dx-runtime/dx_stream/
-RUN set -x && \
-    . /venv-dxnn/bin/activate && \
-    echo "install dependancies for dx_stream..." && \
-    sudo ./install.sh
-RUN set -x && \
-    . /venv-dxnn/bin/activate && \
-    echo "Build dx_stream..." && \
-    sudo ./build.sh --install
-
-RUN rm -rf /deepx/dx-runtime/dx_stream/util && \
-    rm -rf /deepx/dx-runtime/dx_app/util && \
-    rm -rf /deepx/dx-runtime/dx_app/build_x86_64
-
 WORKDIR /deepx
 
 RUN apt-get update && \
@@ -229,6 +210,8 @@ RUN apt-get update && \
 RUN echo "source /venv-dxnn/bin/activate" >> /root/.bashrc
 
 # COPY 'scripts' and 'getting-started'
+# NOTE: changes under scripts/ or getting-started/ invalidate all child stage
+# caches; accepted — release builds are cold anyway.
 COPY scripts /deepx/scripts
 COPY getting-started /deepx/getting-started
 ENV DX_CONTAINER_MODE=true
@@ -236,3 +219,62 @@ RUN /deepx/getting-started/runtime-clean.sh
 
 ENTRYPOINT [ "/usr/local/bin/dxrtd" ]
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+# ── Stage: rt-app ── dx_rt + dx_app
+FROM rt AS rt-app
+# ARG does not cross FROM boundaries — re-declare per stage
+ARG DEBIAN_FRONTEND=noninteractive
+WORKDIR /deepx/dx-runtime/dx_app
+ARG FILE_DXAPP=archives/dx_app.tar.gz
+ADD ${FILE_DXAPP} /deepx/dx-runtime/dx_app/
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "Build dx_app..." && \
+    ./install.sh --all
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    ./build.sh
+RUN rm -rf /deepx/dx-runtime/dx_app/util && \
+    rm -rf /deepx/dx-runtime/dx_app/build_*
+WORKDIR /deepx
+
+# ── Stage: rt-stream ── dx_rt + dx_stream
+FROM rt AS rt-stream
+ARG DEBIAN_FRONTEND=noninteractive
+WORKDIR /deepx/dx-runtime/dx_stream
+ARG FILE_DXSTREAM=archives/dx_stream.tar.gz
+ADD ${FILE_DXSTREAM} /deepx/dx-runtime/dx_stream/
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "install dependencies for dx_stream..." && \
+    sudo ./install.sh
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "Build dx_stream..." && \
+    sudo ./build.sh --install
+RUN rm -rf /deepx/dx-runtime/dx_stream/util
+WORKDIR /deepx
+
+# ── Stage: rt-app-stream ── full image (dx_rt + dx_app + dx_stream)
+# NOTE: Full image chains FROM rt-app and builds dx_stream last, preserving the
+# original single-stage order: dx_app's install.sh re-installs distro
+# OpenCV/GStreamer packages, so dx_stream (which links plugins against its own
+# /usr/local OpenCV) must build after it. This also lets rt-app-stream reuse
+# rt-app's layers byte-identically.
+# Last stage = default build target, so an untargeted compose build still
+# produces the full image (backward compatible).
+FROM rt-app AS rt-app-stream
+ARG DEBIAN_FRONTEND=noninteractive
+WORKDIR /deepx/dx-runtime/dx_stream
+ARG FILE_DXSTREAM=archives/dx_stream.tar.gz
+ADD ${FILE_DXSTREAM} /deepx/dx-runtime/dx_stream/
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "install dependencies for dx_stream..." && \
+    sudo ./install.sh
+RUN set -x && \
+    . /venv-dxnn/bin/activate && \
+    echo "Build dx_stream..." && \
+    sudo ./build.sh --install
+RUN rm -rf /deepx/dx-runtime/dx_stream/util
+WORKDIR /deepx
