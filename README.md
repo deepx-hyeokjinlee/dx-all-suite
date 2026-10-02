@@ -172,6 +172,18 @@ docker run --rm -it --privileged --ipc=host --pid=host -v /dev:/dev \
 
 - **Action**: Container image tags, variant selection, and NPU passthrough options [Link](./docker/README.md)
 
+### Kubernetes Cluster (Optional)
+
+This environment schedules DEEPX NPUs across a Kubernetes cluster, so a pod asks for an NPU the
+same way it asks for CPU or memory.
+
+-	**Platform**: k3s or vanilla Kubernetes with containerd (CDI is on by default in containerd 2.x)
+-	**Hardware**: One or more nodes with DX-M1 installed, each set up as a Runtime Environment above
+-	**Components**: Device plugin (`deepx.ai/dx-m1` resource), NFD node labels (firmware/driver versions), CDI injection of the device and runtime libraries, Prometheus metrics, one-command Helm chart (`dx-npu`)
+-	**Usage**: Add `resources.limits: {deepx.ai/dx-m1: 1}` to a pod — the scheduler places it on an NPU node and the device arrives inside the container, with no manual device mounts
+-	**Action**: [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart.md) · new to Kubernetes? [Beginner Guide](./docs/source/07_Kubernetes_Beginner_Guide.md)
+=======
+
 ## Supported Models
 
 DX-AllSuite supports a vast array of industry-standard AI architectures, optimized for peak performance on our NPU.  
@@ -198,6 +210,8 @@ If you are a first-time user, we recommend following the documentation in this o
 - **Step 3. [Running Your First NPU Model](./docs/source/03_Running_Your_First_NPU_Model.md)**: Step-by-step hands-on script execution  
 - **Step 4. [Checking Version Compatibility](./docs/source/04_Version_Compatibility.md)**: SDK, Driver, and Firmware dependency matrix  
 - **Step 5. [FAQ Troubleshooting Guide](./docs/source/05_FAQ_Troubleshooting_Guide.md)**: Solutions for environment conflicts and GUI session (X11) errors  
+- **Optional. [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart.md)**: Schedule DX-M1 NPUs as a Kubernetes resource with the `dx-npu` Helm chart
+- **Optional. [Kubernetes Beginner Guide](./docs/source/07_Kubernetes_Beginner_Guide.md)**: Kubernetes explained from scratch, with hands-on NPU examples
 
 ## Support
 

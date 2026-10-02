@@ -152,7 +152,6 @@ DEEPX NPU가 물리적으로 장착된 디바이스에서 inference를 수행하
     ```Bash
     sudo reboot
     ```
-
 ### 사전 빌드된 Container Image (GHCR)
 
 Local 설치 대신 container를 선호한다면, GitHub Container Registry에 게시된 공식 Ubuntu 24.04 image를 사용해 suite 빌드 과정을 건너뛸 수 있습니다.
@@ -168,6 +167,18 @@ docker run --rm -it --privileged --ipc=host --pid=host -v /dev:/dev \
 `dx-runtime`은 `linux/amd64`와 `linux/arm64`를 모두 지원하며, **`dx-compiler`와 `dx-modelzoo`는 `linux/amd64`만 지원합니다**.
 
 - **Action**: Container image 태그, variant 선택 기준, NPU passthrough 옵션 [Link](./docker/README.md)
+
+### Kubernetes Cluster 환경 (선택)
+
+Kubernetes 클러스터 전체에서 DEEPX NPU를 스케줄링하는 환경입니다. Pod가 CPU나 메모리를
+요청하듯 NPU를 요청할 수 있습니다.
+
+- **Platform**: k3s 또는 containerd 기반 vanilla Kubernetes (containerd 2.x는 CDI가 기본 활성화)
+- **Hardware**: DX-M1이 장착된 노드 1대 이상. 각 노드는 위 Runtime 환경으로 설정되어 있어야 함
+- **Components**: Device plugin (`deepx.ai/dx-m1` 리소스), NFD 노드 라벨 (firmware/driver 버전), CDI를 통한 장치·runtime library 주입, Prometheus metrics, 원커맨드 Helm chart (`dx-npu`)
+- **Usage**: Pod에 `resources.limits: {deepx.ai/dx-m1: 1}`만 추가하면 scheduler가 NPU 노드에 배치하고, 장치가 컨테이너 안으로 자동으로 들어옴 (수동 device mount 불필요)
+- **Action**: [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart_kor.md) · Kubernetes가 처음이라면 [입문 가이드](./docs/source/07_Kubernetes_Beginner_Guide_kor.md)
+=======
 
 ## 지원 모델
 
@@ -194,6 +205,8 @@ DX-AllSuite는 우리 NPU에서 최고 성능을 내도록 최적화된, 업계 
 - **Step 3. [Running Your First NPU Model](./docs/source/03_Running_Your_First_NPU_Model_kor.md)**: 단계별 hands-on 스크립트 실행
 - **Step 4. [Checking Version Compatibility](./docs/source/04_Version_Compatibility_kor.md)**: SDK, Driver, Firmware 의존성 매트릭스
 - **Step 5. [FAQ Troubleshooting Guide](./docs/source/05_FAQ_Troubleshooting_Guide_kor.md)**: 환경 충돌 및 GUI 세션(X11) 오류 해결책
+- **Optional. [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart_kor.md)**: `dx-npu` Helm chart로 DX-M1 NPU를 Kubernetes 리소스로 스케줄링
+- **Optional. [Kubernetes 입문 가이드](./docs/source/07_Kubernetes_Beginner_Guide_kor.md)**: Kubernetes 기초부터 설명하고 NPU 실습 예제 제공
 
 ## 지원
 
