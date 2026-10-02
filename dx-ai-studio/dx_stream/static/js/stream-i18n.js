@@ -1,4 +1,10 @@
 window._DX_I18N_DICT = {
+    'Face Detection': { ko: '얼굴 탐지', ja: '顔検出', 'zh-CN': '人脸检测', 'zh-TW': '人臉偵測', es: 'Detección de rostros' },
+    'Uncategorized': { ko: '미분류', ja: '未分類', 'zh-CN': '未分类', 'zh-TW': '未分類', es: 'Sin categoría' },
+    'Depth Estimation': { ko: '깊이 추정', ja: '深度推定', 'zh-CN': '深度估计', 'zh-TW': '深度估計', es: 'Estimación de profundidad' },
+    'OBB Detection': { ko: 'OBB 탐지', ja: 'OBB 検出', 'zh-CN': 'OBB 检测', 'zh-TW': 'OBB 偵測', es: 'Detección OBB' },
+    'No output': { ko: '출력 없음', ja: '出力なし', 'zh-CN': '无输出', 'zh-TW': '無輸出', es: 'Sin salida' },
+    'Download this model to see its metadata.': { ko: '메타데이터를 보려면 이 모델을 내려받으세요.', ja: 'メタデータを見るには、このモデルをダウンロードしてください。', 'zh-CN': '下载此模型后即可查看其元数据。', 'zh-TW': '下載此模型後即可查看其中繼資料。', es: 'Descargue este modelo para ver sus metadatos.' },
     'Custom pipeline': { ko: '사용자 파이프라인', ja: 'カスタムパイプライン', 'zh-CN': '自定义管道', 'zh-TW': '自訂管線', es: 'Canalización propia' },
     'Open Demo Launcher': { ko: 'Demo Launcher 열기', ja: 'Demo Launcher を開く', 'zh-CN': '打开 Demo Launcher', 'zh-TW': '開啟 Demo Launcher', es: 'Abrir Demo Launcher' },
     'Open Pipeline Builder': { ko: 'Pipeline Builder 열기', ja: 'Pipeline Builder を開く', 'zh-CN': '打开 Pipeline Builder', 'zh-TW': '開啟 Pipeline Builder', es: 'Abrir Pipeline Builder' },
@@ -141,7 +147,7 @@ window._DX_I18N_DICT = {
   'Idle': { ko: '대기', ja: '待機中', 'zh-CN': '空闲', 'zh-TW': '閒置',es:'Inactivo'},
   'NPU Device': { ko: 'NPU 장치', ja: 'NPUデバイス', 'zh-CN': 'NPU设备', 'zh-TW': 'NPU裝置',es:'Dispositivo NPU'},
   'Models': { ko: '모델', ja: 'モデル', 'zh-CN': '模型', 'zh-TW': '模型',es:'Modelos'},
-  'Sample Videos': { ko: '샘플 비디오', ja: 'サンプルビデオ', 'zh-CN': '示例视频', 'zh-TW': '範例影片',es:'Vídeos de muestra'},
+  'Sample Videos': { ko: '샘플 비디오', ja: 'サンプルビデオ', 'zh-CN': '示例视频', 'zh-TW': '範例影片',es:'Videos de muestra'},
   'Plugin Build': { ko: '플러그인 빌드', ja: 'プラグインビルド', 'zh-CN': '插件构建', 'zh-TW': '外掛程式建置',es:'Compilación de plugin'},
   'Pipeline Status': { ko: '파이프라인 상태', ja: 'パイプライン状態', 'zh-CN': '管道状态', 'zh-TW': '管線狀態',es:'Estado de pipeline'},
   'No active pipeline — run a demo or build a pipeline': {
@@ -249,7 +255,7 @@ window._DX_I18N_DICT = {
   },
   'Clean Build': { ko: '클린 빌드', ja: 'クリーンビルド', 'zh-CN': '清理构建', 'zh-TW': '清除建置',es:'Compilación limpia'},
   'Debug Mode': { ko: '디버그 모드', ja: 'デバッグモード', 'zh-CN': '调试模式', 'zh-TW': '除錯模式',es:'Modo de depuración'},
-  'Model & Video Download': { ko: '모델 & 비디오 다운로드', ja: 'モデル＆ビデオダウンロード', 'zh-CN': '模型和视频下载', 'zh-TW': '模型與影片下載',es:'Descarga de modelo y vídeo'},
+  'Model & Video Download': { ko: '모델 & 비디오 다운로드', ja: 'モデル＆ビデオダウンロード', 'zh-CN': '模型和视频下载', 'zh-TW': '模型與影片下載',es:'Descarga de modelo y video'},
   'Download model files and sample videos for inference.': {
     ko: '추론에 필요한 모델 파일과 샘플 비디오를 다운로드합니다.',
     ja: '推論に必要なモデルファイルとサンプルビデオをダウンロードします。',
@@ -258,7 +264,7 @@ window._DX_I18N_DICT = {
     es: 'Descargue archivos de modelo y videos de ejemplo para inferencia.',
   },
   'Download Models': { ko: '모델 다운로드', ja: 'モデルをダウンロード', 'zh-CN': '下载模型', 'zh-TW': '下載模型',es:'Descargar modelos'},
-  'Download Videos': { ko: '비디오 다운로드', ja: '動画をダウンロード', 'zh-CN': '下载视频', 'zh-TW': '下載影片',es:'Descargar vídeos'},
+  'Download Videos': { ko: '비디오 다운로드', ja: '動画をダウンロード', 'zh-CN': '下载视频', 'zh-TW': '下載影片',es:'Descargar videos'},
   'Pipeline bottleneck analysis': { ko: '파이프라인 병목 분석', ja: 'パイプラインボトルネック分析', 'zh-CN': '管道瓶颈分析', 'zh-TW': '管道瓶頸分析',es:'Análisis de cuello de botella de pipeline'},
   'Environment Check': { ko: '환경 점검', ja: '環境チェック', 'zh-CN': '环境检查', 'zh-TW': '環境檢查',es:'Verificación del entorno'},
   'Item': { ko: '항목', ja: '項目', 'zh-CN': '项目', 'zh-TW': '項目',es:'Elemento'},
@@ -532,7 +538,7 @@ window._DX_I18N_DICT = {
     ja: 'devランタイムはモデルとビデオをまとめて設定します。',
     'zh-CN': 'dev 运行时会一起设置模型和视频。',
     'zh-TW': 'dev 執行時期會一起設定模型與影片。',
-    es: 'El runtime dev configura modelos y vídeos juntos.',
+    es: 'El runtime dev configura modelos y videos juntos.',
   },
   'Upload Model (.dxnn)': {
     ko: '모델 업로드 (.dxnn)',

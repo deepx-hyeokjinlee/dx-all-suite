@@ -578,69 +578,24 @@
 
 /* ── Below 1200px: Palette collapses to icon-only ── */
 
-@media (max-width: 1200px) {
-  .palette-panel {
-    width: 48px;
-    min-width: 48px;
-  }
-
-  .palette-header span,
-  .palette-search,
-  .palette-category-header span,
-  .palette-item .item-label {
-    display: none;
-  }
-
-  .palette-header {
-    justify-content: center;
-    padding: var(--sp-3);
-  }
-
-  .palette-category-header {
-    justify-content: center;
-    padding: 8px 0;
-  }
-
-  .palette-item {
-    justify-content: center;
-    padding: 8px 0;
-    position: relative;
-  }
-
-  /* Tooltip on hover for collapsed items */
-  .palette-item::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: calc(100% + 8px);
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 4px 8px;
-    background: var(--surface-hover);
-    color: var(--text-primary);
-    font-size: 0.75rem;
-    border-radius: var(--radius-xs);
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    z-index: 100;
-  }
-
-  .palette-item:hover::after {
-    opacity: 1;
-  }
-}
+/* 900–1200px 의 팔레트 "접힘" (아이콘만) 규칙은 지웠다 — 기본 flex-basis 240px 에 밀려 실제로는 접히지 않았고,
+   남은 가운데 정렬이 항목을 들쭉날쭉하게 만들고 검색창을 숨겼다 (release audit S-13). 이 폭에서는 보통 팔레트를 쓴다. */
 
 /* ── Below 900px: Property panel moves to bottom overlay ── */
 
 @media (max-width: 900px) {
+  /* 속성 패널 (absolute) 의 기준 — 없으면 화면 맨 아래에 붙어 "rties" 처럼 잘렸다 (release audit S-13) */
   .pipeline-builder {
     flex-direction: column;
+    position: relative;
   }
 
+  /* 세로로 쌓이면 기본 flex-basis 240px 가 높이가 되어 띠가 240px 로 커졌다 — 48px 로 고정한다 */
   .palette-panel {
     width: 100%;
     min-width: 100%;
+    max-width: none;
+    flex: 0 0 48px;
     flex-direction: row;
     border-right: none;
     border-bottom: 1px solid var(--border-subtle);
@@ -658,7 +613,10 @@
     display: none;
   }
 
+  #palette-list,
   .palette-body {
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     flex-direction: row;
     overflow-x: auto;
@@ -668,15 +626,17 @@
     align-items: center;
   }
 
-  .palette-category {
+  /* 팔레트는 이제 .palette-group 으로 그린다 — 예전 이름 (.palette-category) 을 겨냥해 한 줄 띠가 되지 않았다 */
+  .palette-group {
     display: flex;
     flex-direction: row;
+    flex-shrink: 0;
     border-bottom: none;
     gap: var(--sp-1);
     align-items: center;
   }
 
-  .palette-category-header {
+  .palette-group-title {
     display: none;
   }
 

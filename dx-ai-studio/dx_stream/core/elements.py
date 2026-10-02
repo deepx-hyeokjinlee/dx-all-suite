@@ -110,7 +110,8 @@ _ELEMENTS = [
         "description_ko": "프레임레이트 제어",
         "description_en": "Frame rate control", "description_es": "Frame rate control",
         "properties": [
-            {"name": "rate", "type": "float", "description": "목표 FPS", "description_ko": "목표 FPS", "description_en": "Target FPS", "description_es": "FPS objetivo"},
+            {"name": "framerate", "type": "uint", "description": "목표 FPS (필수)", "description_ko": "목표 FPS (필수)", "description_en": "Target FPS (required)", "description_es": "FPS objetivo (obligatorio)"},
+            {"name": "throttle", "type": "bool", "description_ko": "프레임을 버릴 때 상류로 Throttle QoS 이벤트 전송", "description_en": "Send Throttle QoS events upstream on frame drops", "description_es": "Send Throttle QoS events upstream on frame drops"},
         ],
     },
     {
@@ -128,8 +129,6 @@ _ELEMENTS = [
         "description_ko": "MQTT/Kafka 메시지 전송",
         "description_en": "MQTT/Kafka message publishing", "description_es": "MQTT/Kafka message publishing",
         "properties": [
-            {"name": "proto-lib", "type": "string", "description": "프로토콜 라이브러리 경로", "description_ko": "프로토콜 라이브러리 경로", "description_en": "Protocol library path", "description_es": "Protocol library path"},
-            {"name": "conn-str", "type": "string", "description": "연결 문자열", "description_ko": "연결 문자열", "description_en": "Connection string", "description_es": "Connection string"},
             {"name": "topic", "type": "string", "description": "토픽명", "description_ko": "토픽명", "description_en": "Topic name", "description_es": "Topic name"},
             {"name": "broker-name", "type": "string", "description_ko": "브로커 종류 (mqtt/kafka)", "description_en": "Broker type (mqtt/kafka)", "description_es": "Broker type (mqtt/kafka)"},
             {"name": "conn-info", "type": "string", "description_ko": "연결 정보 (host:port)", "description_en": "Connection info (host:port)", "description_es": "Connection info (host:port)"},
@@ -162,7 +161,7 @@ _ELEMENTS = [
         "category": "source",
         "description_ko": "VNPU 하드웨어 비디오 디코더 (H.264/H.265 → raw)",
         "description_en": "VNPU hardware video decoder (H.264/H.265 → raw)",
-        "description_es": "Decodificador de vídeo por hardware VNPU (H.264/H.265 → raw)",
+        "description_es": "Decodificador de video por hardware VNPU (H.264/H.265 → raw)",
         "properties": [
             {"name": "output-format", "type": "string", "description_ko": "출력 픽셀 포맷: NV12(기본)/RGB/BGR", "description_en": "Output pixel format: NV12 (default)/RGB/BGR", "description_es": "Formato de píxel de salida: NV12 (predet.)/RGB/BGR"},
             {"name": "output-width", "type": "int", "description_ko": "출력 폭 (0=입력과 동일)", "description_en": "Output width (0 = same as input)", "description_es": "Ancho de salida (0 = igual que entrada)"},
@@ -174,7 +173,7 @@ _ELEMENTS = [
         "category": "output",
         "description_ko": "VNPU 하드웨어 비디오 인코더 (raw → H.264/H.265)",
         "description_en": "VNPU hardware video encoder (raw → H.264/H.265)",
-        "description_es": "Codificador de vídeo por hardware VNPU (raw → H.264/H.265)",
+        "description_es": "Codificador de video por hardware VNPU (raw → H.264/H.265)",
         "properties": [
             {"name": "codec", "type": "string", "description_ko": "인코딩 코덱: h264(기본)/h265", "description_en": "Encoding codec: h264 (default)/h265", "description_es": "Códec de codificación: h264 (predet.)/h265"},
             {"name": "bitrate", "type": "int", "description_ko": "목표 비트레이트 (kbps, 기본 4096)", "description_en": "Target bitrate (kbps, default 4096)", "description_es": "Bitrate objetivo (kbps, predet. 4096)"},
@@ -475,9 +474,36 @@ _ELEMENT_DETAILS = {
 }
 
 
+# 속성 기본값. 이 PC 에 설치된 플러그인에서 `gst-inspect-1.0 <element>` 로 읽은 값이다
+# (dx_stream 플러그인 3.1.2 · GStreamer 표준). 문자열 기본값이 null 인 속성과 이 PC 에 없는
+# 플러그인 (DxVnpu* · x264enc) 은 적지 않는다 — 표에는 "--" 로 나온다 (release audit S-17).
+_GST_DEFAULTS = {
+    "DxPreprocess": {"preprocess-id": "0", "resize-width": "0", "resize-height": "0", "secondary-mode": "false",
+                     "interval": "0", "min-object-width": "0", "min-object-height": "0", "keep-ratio": "true",
+                     "pad-value": "0", "target-class-id": "-1"},
+    "DxInfer": {"preprocess-id": "0", "inference-id": "0", "secondary-mode": "false"},
+    "DxPostprocess": {"inference-id": "0", "secondary-mode": "false"},
+    "DxScale": {"width": "0", "height": "0"},
+    "DxRate": {"framerate": "0", "throttle": "false"},
+    "DxMsgBroker": {"broker-name": "mqtt"},
+    "rtspsrc": {"latency": "2000"},
+    "queue": {"max-size-buffers": "200", "leaky": "no (0)"},
+    "fpsdisplaysink": {"sync": "true"},
+    "ximagesink": {"sync": "true", "force-aspect-ratio": "true"},
+    "webrtcbin": {"bundle-policy": "none (0)"},
+    "vp8enc": {"deadline": "1000000", "target-bitrate": "256000"},
+}
+
+
 def _with_detail(element: dict) -> dict:
     detailed = dict(element)
     detailed.update(_ELEMENT_DETAILS.get(element["name"], {}))
+    defaults = _GST_DEFAULTS.get(element["name"])
+    if defaults:
+        detailed["properties"] = [
+            dict(prop, default=defaults[prop["name"]]) if prop["name"] in defaults else prop
+            for prop in element.get("properties", [])
+        ]
     return detailed
 
 CONNECTION_RULES = {

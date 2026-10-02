@@ -373,10 +373,14 @@ class DXStreamHandler(DXBaseHandler):
                                 if f.suffix == ".so"]) if Path("/usr/local/share/gstdxstream/lib").is_dir() else []
                 _configs = sorted([d.name for d in CONFIGS_DIR.iterdir()
                                    if d.is_dir()]) if CONFIGS_DIR.is_dir() else []
+                from dx_stream.core.so_exports import exported_functions
+                _lib_dir = Path("/usr/local/share/gstdxstream/lib")
                 return self.send_json({
                     "models": _models,
                     "videos": _videos,
                     "libraries": _libs,
+                    # 라이브러리별 function-name 후보 (S-18)
+                    "functions": {lib: exported_functions(_lib_dir / lib) for lib in _libs},
                     "configs": _configs,
                     "models_dir": str(MODELS_DIR),
                     "videos_dir": str(VIDEOS_DIR),

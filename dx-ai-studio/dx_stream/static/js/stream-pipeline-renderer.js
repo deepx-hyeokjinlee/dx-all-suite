@@ -846,7 +846,7 @@ function _hidePropertyPanel() {
 }
 
 /* 속성 드롭다운 옵션 생성 — 모델/비디오/라이브러리/설정 */
-function _getDropdownOptions(propName, nodeType) {
+function _getDropdownOptions(propName, nodeType, props) {
     var a = DXStream._pipeAssets;
     if (!a) return null;
 
@@ -856,14 +856,17 @@ function _getDropdownOptions(propName, nodeType) {
         });
     }
     if (propName === 'library-file-path') {
-        return (a.libraries || []).map(function (lib) {
+        // 후처리 요소에는 후처리 라이브러리만, 메시지 변환 요소에는 메시지 변환 라이브러리만 보인다.
+        var prefix = nodeType === 'DxPostprocess' ? 'libpostprocess_' : nodeType === 'DxMsgConv' ? 'libdx_msgconv' : '';
+        return (a.libraries || []).filter(function (lib) { return !prefix || lib.indexOf(prefix) === 0; }).map(function (lib) {
             return { value: a.libs_dir + '/' + lib, label: lib.replace('libpostprocess_', '').replace('.so', '') };
         });
     }
     if (propName === 'function-name') {
-        return [
-            { value: 'PostProcess', label: 'PostProcess' },
-        ];
+        // 고른 라이브러리가 내보내는 함수들 (서버가 .so 의 .dynsym 에서 읽는다, S-18). 모르면 PostProcess.
+        var lib = String((props || {})['library-file-path'] || '').split('/').pop();
+        var fns = (a.functions && a.functions[lib] && a.functions[lib].length) ? a.functions[lib] : ['PostProcess'];
+        return fns.map(function (f) { return { value: f, label: f }; });
     }
     if (propName === 'config-file-path') {
         var items = [];
@@ -924,7 +927,7 @@ DXStream._showPropertyPanel = function (node) {
             var typeHint = meta.type ? '<span class=\"prop-type-hint\">' + meta.type + '</span>' : '';
 
             // 드롭다운 대상: model-path, library-file-path, function-name, config-file-path, uri
-            var dropdown = _getDropdownOptions(entry[0], node.type);
+            var dropdown = _getDropdownOptions(entry[0], node.type, node.properties);
             if (dropdown) {
                 var curVal = entry[1] != null ? String(entry[1]) : '';
                 var opts = '<option value="">' + (placeholder || T('Select...')) + '</option>';
@@ -966,6 +969,8 @@ DXStream._updateNodeProp = function (nodeId, key, value) {
     if (node && node.properties) {
         node.properties[key] = value;
         _pushHistory();
+        // 라이브러리를 바꾸면 function-name 후보도 바뀐다 — 속성 패널을 다시 그린다.
+        if (key === 'library-file-path' && typeof DXStream._showPropertyPanel === 'function') DXStream._showPropertyPanel(node);
     }
 };
 

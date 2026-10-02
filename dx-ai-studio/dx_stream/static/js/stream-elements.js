@@ -67,9 +67,15 @@ function _escElementHtml(value) {
     });
 }
 
+/* 요소 설명은 ko · en 두 벌만 있다. 예전에는 두 <span> 을 그려 CSS 로 하나만 보였는데, ja · zh · es 에서는 둘 다
+   숨겨져 설명이 비었다 (release audit S-20). 고른 언어가 ko 면 ko, 아니면 en 글자 하나. */
+function _bilingual(ko, en) {
+    var lang = (window.DXI18n && DXI18n.lang) || DXStream.S.lang || 'en';
+    return lang === 'ko' ? (ko || en || '') : (en || ko || '');
+}
+
 function _renderBilingualText(ko, en) {
-    return '<span class="ko">' + _escElementHtml(ko || en || '') + '</span>' +
-        '<span class="en">' + _escElementHtml(en || ko || '') + '</span>';
+    return _escElementHtml(_bilingual(ko, en));
 }
 
 function _renderElementExtra(el) {
@@ -132,7 +138,7 @@ function _renderElementCards(elements) {
         html += '<div class="element-card" onclick="DXStream.showElementDetail(\'' + e.name.replace(/'/g, "\\'") + '\')">' +
             '<div><span class="element-card-name">' + e.name + '</span>' +
             '<span class="badge ' + catClass + ' element-card-cat">' + _elemCatLabel(e.category) + '</span></div>' +
-            '<div class="element-card-desc"><span class="ko">' + (e.description_ko || '') + '</span><span class="en">' + (e.description_en || '') + '</span></div>' +
+            '<div class="element-card-desc">' + _renderBilingualText(e.description_ko, e.description_en) + '</div>' +
             '<div class="element-card-props">' + propCount + ' ' + T('properties') + '</div>' +
             '</div>';
     }

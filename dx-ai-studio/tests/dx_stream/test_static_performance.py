@@ -593,16 +593,22 @@ def test_stream_demo_filters_match_dev_runtime_surface():
     assert "cats.push(d.category)" in js
 
 
-def test_stream_model_filters_do_not_advertise_obb_manifest_absent_model():
+def test_stream_model_filters_come_from_the_loaded_catalog():
+    """분류 버튼은 HTML 에 고정하지 않고 받은 목록의 분류로 만든다 (release audit S-16).
+    목록은 manifest (깊이 추정 있음 · OBB 없음) 나 내장 목록 (OBB 있음) 이라 고정 버튼은 둘 중 하나와 어긋났다."""
     html = _read(STREAM_HTML)
     model_filter = html[html.index('id="models-filter-bar"'):html.index('id="models-search"')]
+    assert model_filter.count("data-cat=") == 1 and 'data-cat="all"' in model_filter
+    js = _read(STREAM_JS / "stream-models.js")
+    assert "function _renderModelFilters(models)" in js
+    assert "cats.indexOf(m.category) === -1" in js
 
-    assert 'data-cat="obb_detection"' not in model_filter
-    assert 'data-cat="depth"' not in model_filter
-    assert 'data-cat="tracking"' not in model_filter
-    assert 'data-cat="face"' not in model_filter
-    assert 'data-cat="face_detection"' in model_filter
-    assert 'data-cat="classification"' in model_filter
+
+def test_stream_model_filter_keeps_search_and_highlights_button():
+    js = _read(STREAM_JS / "stream-models.js")
+    body = js[js.index("DXStream.filterModels = function"):js.index("function _modelDesc")]
+    assert "search.value = ''" not in body
+    assert "bar.querySelector('[data-cat=\"' + cat + '\"]')" in body
 
 
 def test_stream_demo_renders_unavailable_reason():
