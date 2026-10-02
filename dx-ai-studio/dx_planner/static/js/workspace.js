@@ -76,7 +76,7 @@ const PlannerWorkspace = {
     if (this.conditionSummary) {
       const runtime = inputs.ort ? 'ONNX Runtime' : 'Native';
       this.conditionSummary.innerHTML = [
-        this._summaryChip('Task', inputs.task),
+        this._summaryChip('Task', plannerTaskLabel(inputs.task)),
         this._summaryChip('Model', 'yolo26' + inputs.size),
         this._summaryChip('Channels', inputs.cameras),
         this._summaryChip('FPS', inputs.targetFps),
@@ -220,7 +220,8 @@ const PlannerWorkspace = {
   },
 
   _summaryChip(label, value) {
-    return '<span class="summary-chip"><strong>' + this._escHtml(label) + '</strong>' +
+    const text = typeof T === 'function' ? T(label) : label;
+    return '<span class="summary-chip"><strong>' + this._escHtml(text) + '</strong>' +
       '<span>' + this._escHtml(value) + '</span></span>';
   },
 

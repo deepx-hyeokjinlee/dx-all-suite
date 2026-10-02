@@ -9,7 +9,7 @@ const RecommendEngine = {
       parts.push('H1 ×' + topo.h1_cards);
     }
     if (Number(topo.device_count) > 1) {
-      parts.push(topo.device_count + ' DXRT devices');
+      parts.push((typeof T === 'function' ? T('{n} DXRT devices') : '{n} DXRT devices').replace('{n}', topo.device_count));
     }
     if (topo.pcie) {
       const pcie = String(topo.pcie).split('[')[0].trim();

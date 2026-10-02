@@ -65,7 +65,7 @@ const ExplorerView = {
     const status = metrics.meetsRequirement ? copy.meets : copy.insufficient;
     el.innerHTML =
       '<div class="fact-grid">' +
-        this._factItem(copy.task, inputs.task || '-') +
+        this._factItem(copy.task, plannerTaskLabel(inputs.task)) +
         this._factItem(copy.modelSize, inputs.size || '-') +
         this._factItem(copy.channelsRequired, inputs.cameras) +
         this._factItem(copy.targetFps, inputs.targetFps) +
@@ -150,14 +150,14 @@ const ExplorerView = {
       '<div class="spec-grid">' +
         this._specItem('NPU', p.npu.model) +
         (topoLabel ? this._specItem(
-          '<span data-i18n="Benchmark system">Benchmark system</span>',
+          this._escHtml(typeof T === 'function' ? T('Benchmark system') : 'Benchmark system'),
           topoLabel
         ) : '') +
         this._specItem('TOPS', p.npu.tops) +
         this._specItem('TDP', p.npu.tdp_w + 'W') +
         this._specItem('DRAM', p.npu.dram) +
         this._specItem(
-          '<span data-i18n="Host">Host</span>',
+          this._escHtml(typeof T === 'function' ? T('Host') : 'Host'),
           p.host.name + ' (' + p.host.cpu + ')'
         ) +
       '</div>';
@@ -419,7 +419,7 @@ const ExplorerView = {
       html += '<tr class="bench-row' + (isCurrent ? ' row-highlight' : '') +
         '" data-task="' + r.task + '" data-size="' + r.size + '">' +
         '<td>' + this._escHtml(r.model) + '</td>' +
-        '<td>' + this._escHtml(r.task) + '</td>' +
+        '<td>' + this._escHtml(plannerTaskLabel(r.task)) + '</td>' +
         '<td>' + this._escHtml(r.size) + '</td>' +
         '<td>' + (r.latencyMs != null ? r.latencyMs.toFixed(2) : '-') + '</td>' +
         '<td>' + (r.latencyFps != null ? Math.round(r.latencyFps) : '-') + '</td>' +

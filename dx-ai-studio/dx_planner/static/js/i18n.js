@@ -119,7 +119,7 @@ window._DX_I18N_DICT = {
     ja: '8ch 小売分類',
     'zh-CN': '8路零售分类',
     'zh-TW': '8路零售分類',
-    es: '8 canales retail cls',
+    es: '8 canales retail (clasificación)',
   },
   'After the first recommendation, changes update the results automatically.': {
     ko: '첫 추천 이후 조건 변경은 자동으로 결과에 반영됩니다.',
@@ -275,6 +275,11 @@ window._DX_I18N_DICT = {
     'zh-TW': '在滿足相同 YOLO26 條件的板卡之間如何排序。',
     es: 'Cómo ordenar placas que cumplen la misma carga YOLO26.',
   },
+  'Task': { ko: '작업', ja: 'タスク', 'zh-CN': '任务', 'zh-TW': '任務', es: 'Tarea' },
+  'Model': { ko: '모델', ja: 'モデル', 'zh-CN': '模型', 'zh-TW': '模型', es: 'Modelo' },
+  'Channels': { ko: '채널', ja: 'チャンネル', 'zh-CN': '通道', 'zh-TW': '通道', es: 'Canales' },
+  'Stability': { ko: '안정성', ja: '安定性', 'zh-CN': '稳定性', 'zh-TW': '穩定性', es: 'Estabilidad' },
+  '{n} DXRT devices': { ko: 'DXRT 장치 {n}개', ja: 'DXRT デバイス {n} 台', 'zh-CN': '{n} 个 DXRT 设备', 'zh-TW': '{n} 個 DXRT 裝置', es: '{n} dispositivos DXRT' },
   'Insufficient': {
     ko: '부족',
     ja: '不足',
@@ -449,6 +454,12 @@ window._DX_I18N_SELECTORS = '';
 window._DX_I18N_PLACEHOLDERS = {};
 window._DX_I18N_CALLBACKS = [];
 window.__plannerLangRefreshers = window.__plannerLangRefreshers || [];
+/* 작업 slug (object_detection …) 는 데이터 값이다. 화면에는 고른 언어의 작업 이름으로 보인다 (release audit P-3). */
+window.plannerTaskLabel = function (task) {
+  var en = { object_detection: 'Object Detection', pose_estimation: 'Pose Estimation', segmentation: 'Segmentation',
+    oriented_bbox: 'OBB', classification: 'Classification' }[task];
+  return en ? (typeof T === 'function' ? T(en) : en) : (task || '-');
+};
 window.registerPlannerLangRefresher = function (fn) {
   if (typeof fn === 'function') window.__plannerLangRefreshers.push(fn);
 };
