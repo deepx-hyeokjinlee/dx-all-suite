@@ -822,7 +822,8 @@ function contOnCat(idx,val){
   CONT.slots[idx].cat=val;CONT.slots[idx].model='';
   contRenderSlots();
 }
-function contOnModel(idx,val){CONT.slots[idx].model=val}
+// 고른 모델을 슬롯 화면의 이름표에 바로 보인다 — 예전에는 시작할 때까지 "(no model selected)" 였다 (release audit A-16)
+function contOnModel(idx,val){CONT.slots[idx].model=val;if(!CONT.running)contRenderGrid()}
 
 function toggleContInput(){
   var t=$('c-input-type').value;
@@ -868,6 +869,8 @@ async function contStart(){
   if(!valid){toast(T('Please select Category and Model for all slots'),'warn');return}
   var cInputType=$('c-input-type')?$('c-input-type').value:'video';
   if(cInputType==='video'&&!$('c-video').value){toast(T('Please select a video'),'warn');return}
+  // 카메라가 없으면 시작하지 않는다 — 예전에는 runner 를 띄웠다가 "카메라를 열 수 없음" 으로 끝났다 (A-16)
+  if(cInputType==='camera'&&!$('c-camera').value){toast(T('No cameras found'),'warn');return}
   for(var i=0;i<CONT.slots.length;i++){
     var m=findModel(CONT.slots[i].model);
     if(!m){toast(T('Model not found: ')+CONT.slots[i].model,'err');return}

@@ -427,7 +427,8 @@ tbody tr:hover td{background:var(--surface-hover)}
 }
 .cont-badge{
   padding:3px 8px;border-radius:var(--radius-sm);font-size:var(--fs-2xs);font-weight:700;
-  background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+  /* 바탕이 테마를 따른다 — 늘 검은 바탕에 테마 글자색이라 밝은 테마에서 1.7:1 이었다 (release audit A-33) */
+  background:color-mix(in srgb,var(--surface-page) 85%,transparent);backdrop-filter:blur(4px);
   font-family:var(--mono);letter-spacing:.3px;
 }
 .cont-badge.cb-fps{color:var(--accent)}

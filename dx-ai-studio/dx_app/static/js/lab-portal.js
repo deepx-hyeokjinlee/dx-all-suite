@@ -667,6 +667,46 @@ window.LabPortal = (function () {
   }
 
 
+  /* Generated Files — Lab 이 만든 manifest 마다 생성 파일을 본다. 예전에는 카드를 누르면 "다음 단계에서 구현됩니다"
+     만 나왔다 (release audit A-19). 목록 · 파일 API 는 이미 있었다 (/api/lab/manifests · /api/lab/generated/<id>). */
+  async function renderGeneratedFlow() {
+    var root = document.getElementById('lab-flow-root');
+    if (!root) return;
+    _clear(root);
+    _appendText(root, 'h2', 'generated-flow-title', _text('Generated Files', '생성된 파일'));
+    var listDiv = document.createElement('div');
+    listDiv.className = 'safety-manifests';
+    root.appendChild(listDiv);
+    var preview = document.createElement('div');
+    preview.id = 'lab-generated-preview';
+    try {
+      var data = await _labGet('/api/lab/manifests');
+      var list = (data && data.manifests) || [];
+      if (!list.length) {
+        _appendText(listDiv, 'p', 'safety-empty', _text('Nothing generated yet. Add a model or create a task first.', '아직 생성된 파일이 없습니다. 먼저 모델을 추가하거나 태스크를 만드세요.'));
+      } else {
+        var ul = document.createElement('ul');
+        ul.className = 'safety-manifest-list';
+        list.forEach(function (m) {
+          var li = document.createElement('li');
+          li.className = 'safety-manifest-item';
+          li.textContent = (m.kind || '') + ': ' + (m.summary || m.id);
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'btn btn-sm';
+          btn.textContent = _text('Show files', '파일 보기');
+          btn.addEventListener('click', function () { _loadGeneratedFiles(m.id); });
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+        listDiv.appendChild(ul);
+      }
+    } catch (err) {
+      _appendText(listDiv, 'p', 'safety-error', _text('Failed to load manifests', '매니페스트 로드 실패'));
+    }
+    root.appendChild(preview);
+  }
+
   async function renderSafetyCenter() {
     var root = document.getElementById('lab-flow-root');
     if (!root) return;
@@ -791,6 +831,10 @@ window.LabPortal = (function () {
         }
         if (flow === 'safety') {
           renderSafetyCenter();
+          return;
+        }
+        if (flow === 'generated') {
+          renderGeneratedFlow();
           return;
         }
         if (flow === 'composer') {

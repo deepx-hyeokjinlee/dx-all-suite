@@ -380,8 +380,9 @@ function _rundemoPreview(d, dim) {
   return d.thumbnail ? '<img class="dds-preview' + (dim ? ' is-dim' : '') + '" src="' + esc(d.thumbnail) + '" alt="">' : '';
 }
 
+// 비동기 실행은 프레임별 NPU 지연을 재지 않아 "0.00" 을 돌려준다. 0 은 측정값이 아니므로 — 로 보인다 (release audit A-17).
 function _rundemoNum(v, unit) {
-  return (v === undefined || v === null || v === '' || v === 0) ? '—' : (v + (unit ? ' ' + unit : ''));
+  return (v === undefined || v === null || v === '' || !(parseFloat(v) > 0)) ? '—' : (v + (unit ? ' ' + unit : ''));
 }
 
 // Paint the stage for demo idx: running (progress over the preview) · a finished result · ready.
