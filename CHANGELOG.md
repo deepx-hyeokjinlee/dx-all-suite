@@ -1,6 +1,33 @@
 ## Changelog
 ### 2026-10-06  
 #### dx-compiler  
+ 5c68545773d0e2ffd136d022c3eb39f3b21822d8 dx-compiler (heads/main)  
+ d9faff0d7bc32e7adebc6552446f978118d3ab3b dx-compiler/tests_internal/bats (d9faff0)  
+ 697471b7a89d3ab38571f38c6c7c4b460d1f5e35 dx-compiler/tests_internal/test_helper/bats-assert (heads/main)  
+ 0954abb9925cad550424cebca2b99255d4eabe96 dx-compiler/tests_internal/test_helper/bats-support (heads/main)  
+
+#### dx-modelzoo  
+ ad6035f2d92826fb127e9f564395ea8bb1243c01 dx-modelzoo (ad6035f)  
+
+#### dx-runtime  
++4a137460a82d6112b3788a19e3dbfef54e3d1e0c dx-runtime (4a13746)  
+ e39669d3dc91b5cf0dbd5b47bbe0c26cc2a3197f dx-runtime/dx_app (v3.2.2-rc+manual-20260814.e39669d)  
++b11ae92b6287c68c69f3f20eb7a8c3f394fa7ff1 dx-runtime/dx_fw (b11ae92)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ 4e8a34fbb600385d21a19645566c1a08dfcf1fa2 dx-runtime/dx_fw/firmware/bootloader (heads/main)  
+ 520126c6293e2e9d34f023342d7b830e796e7ab5 dx-runtime/dx_fw/firmware/freertos/apps (520126c)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ df5977c59244680d793ce94b451021941ae68629 dx-runtime/dx_fw/firmware/freertos/plat (df5977c)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2026-10-06  
+#### dx-compiler  
 +5c68545773d0e2ffd136d022c3eb39f3b21822d8 dx-compiler (remotes/origin/HEAD)  
 -d9faff0d7bc32e7adebc6552446f978118d3ab3b dx-compiler/tests_internal/bats  
 -697471b7a89d3ab38571f38c6c7c4b460d1f5e35 dx-compiler/tests_internal/test_helper/bats-assert  
