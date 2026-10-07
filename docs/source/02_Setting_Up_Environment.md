@@ -12,8 +12,8 @@
 **[Common] 1. Prerequisites**: Acquire source code and understand virtual environment management policies.  
 
 **[Optional]** Choose Installation Path.  
-- **[Route A] 2. Docker Installation**: Isolated installation based on containers.  
-- **[Route B] 3. Local Installation**: Direct installation on the host OS.  
+- **[Route A] 2. Local Installation**: Direct installation on the host OS.  
+- **[Route B] 3. Docker Installation**: Isolated installation based on containers.  
 
 ---
 
@@ -85,6 +85,69 @@ removes an `install.sh` install as well.
     interpreter or virtualenv it went into, so it prints removal instructions during its own
     purge instead. `dx_app` and `dx_stream` are untouched, since the one-liner never installs
     them; use the repository's `uninstall.sh` for those.
+
+## APT Repository Install (DX-Runtime)
+
+The NPU driver and the DX-RT runtime are also published as Debian packages in the DEEPX APT
+repository, for Ubuntu and Debian on `amd64` and `arm64`. Use this route when you want them managed by
+`apt` like any other system package — installed, upgraded and removed with the usual commands.
+
+```Bash
+# 1. Download the DEEPX signing key and check its fingerprint
+wget -O deepx-archive-keyring.asc https://apt.releases.deepx.ai/gpg
+gpg --show-keys deepx-archive-keyring.asc
+
+# 2. Only if the fingerprint matches, install the key and remove the download
+sudo gpg --dearmor -o /usr/share/keyrings/deepx-archive-keyring.gpg deepx-archive-keyring.asc
+rm deepx-archive-keyring.asc
+
+# 3. Add the repository for this Ubuntu / Debian release
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/deepx-archive-keyring.gpg] https://apt.releases.deepx.ai $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") main" | sudo tee /etc/apt/sources.list.d/deepx.list
+
+# 4. Install the driver and the runtime
+sudo apt update
+sudo apt install dxrt-driver-dkms
+sudo apt install libdxrt-bin
+```
+
+!!! danger "Verify the key fingerprint before step 2"
+    To guard against a tampered key (e.g. a man-in-the-middle attack), check the output of
+    `gpg --show-keys` before installing the key. It must show exactly this 40-character
+    fingerprint — `3A20CC853C64AE328D0F58CFD816AAC6689DBDEA`:
+    ```
+    pub   rsa4096 2026-08-11 [SCEA]
+          3A20CC853C64AE328D0F58CFD816AAC6689DBDEA
+    uid                      DeepX APT Repo <jhsa@deepx.ai>
+    ```
+    If it differs, stop, delete `deepx-archive-keyring.asc`, and contact DEEPX support.
+
+| Package | Contents |
+|---|---|
+| `dxrt-driver-dkms` | NPU kernel driver, built for the running kernel through DKMS (pulls in `dkms` and `build-essential`) and rebuilt automatically on kernel updates |
+| `libdxrt-bin` | Pre-built DX-RT library and headers under `/usr/local`, `dxrt-cli` and the other runtime tools, and the `dxrt` service |
+
+!!! warning "Reboot and firmware"
+    Reboot after installing `dxrt-driver-dkms` so the kernel loads the NPU driver. Firmware
+    is not shipped in the APT repository — update it with the one-line installer above or
+    `./dx-runtime/install.sh --target=dx_fw`, then cold boot as described in
+    **DX-Runtime Installation**.
+
+!!! note "Install the `dx_engine` Python package from PyPI"
+    `libdxrt-bin` does not install the `dx_engine` Python binding, since it cannot know which
+    interpreter or virtualenv you use. Install it from PyPI (`dx-engine`) into your virtualenv,
+    pinned to the same major.minor version as the installed `libdxrt-bin` — the wheel carries
+    its own copy of the runtime library, so mismatched versions are not caught by `apt` or `pip`:
+    ```Bash
+    source /path/to/venv/bin/activate
+    pip install "dx-engine==$(dpkg-query -W -f='${Version}' libdxrt-bin | cut -d. -f1,2).*"
+    ```
+    For offline installs, the same wheels (one per CPython ABI) are staged in
+    `/usr/share/libdxrt-bin/python`; the package prints the exact `pip install` command after
+    installation.
+
+Upgrade to later releases with `sudo apt update && sudo apt upgrade`, and remove the packages
+with `sudo apt purge libdxrt-bin dxrt-driver-dkms`. This route covers the driver and runtime
+only; `dx_app` and `dx_stream` still use the full setup below.
 
 ## Prerequisites
 
@@ -167,6 +230,138 @@ This path is ideal for users who want to quickly benchmark DEEPX NPU performance
 - **Step 1 (Select)**: Choose a pre-validated `.dxnn` model from the **DEEPX ModelZoo** or sample data.  
 - **Step 2 (DX-RT)**: Load the selected model immediately in the runtime environment (`venv-dx-runtime`) without a separate compilation process.  
 - **Step 3 (NPU Acceleration)**: Execute hardware-accelerated inference and analyze key performance indicators like **FPS** and **Latency**.  
+
+---
+
+## Local Installation
+
+Installing **DX-AllSuite** directly on the **Host OS** ensures maximum hardware performance and seamless compatibility between all software modules. This method is recommended for production environments and advanced performance benchmarking.  
+
+### DX-Compiler Installation (DX-COM)
+
+DX-Compiler (DX-COM) can be used as a CLI tool or a Python module on supported Linux distributions.  
+
+**Differences in Usage**  
+- **CLI Tool (Command Line Interface)**: Perform compilation by entering `dxcom` commands directly in the terminal (Bash). Ideal for quick execution and automated shell scripts without additional coding.  
+- **Python Module (Library)**: Call functions or classes via `import dx_com` within your Python scripts. This is the preferred method for integrating the compiler into your existing AI training or automation pipelines.  
+
+!!! warning "Change in Distribution Method"  
+    The standalone executable distribution method is **no longer supported**. This guide describes the latest **Wheel-based** installation workflow, which ensures better dependency management and Python environment integration.  
+
+#### A. Pre-Installation Requirements
+Before installing **DX-COM**, you **must** install the following system libraries to support core utilities and graphical operations.  
+
+- **`libgl1-mesa-glx`**: OpenGL runtime support for graphics processing  
+- **`libglib2.0-0`**: Core utility library (related to GNOME/GTK)
+
+**Installation Command**  
+```Bash
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends libgl1-mesa-glx libglib2.0-0 make
+```
+
+#### B. Installation Method
+**Supported Environments**  
+
+- **OS**: Linux (x86_64)  
+- **Python Version**: 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 (The installation script will automatically detect your version)
+
+**Integrated Package Installation**  
+The provided install.sh script handles everything in one go, including Python version detection and package installation.  
+```Bash
+# Run the interactive installation script (recommended)
+./dx-compiler/install.sh
+```
+
+#### C. Verify and Usage
+After installation, activate the virtual environment (`venv-dx-compiler`) to verify the setup.  
+```Bash
+# 1. Activate the Virtual Environment
+source ./dx-compiler/venv-dx-compiler/bin/activate
+
+# 2. Verify Installed Version (CLI and Python Modules)
+dxcom --version
+python3 -c "import dx_com; print(dx_com.__version__)"
+
+# 3. Access Help Documentation
+dxcom -h
+```
+
+- **Sample Data Location**: `./dx-compiler/dx_com/sample_models/`  
+
+!!! note "Tip"  
+    If the automatic sample data download fails, you can manually fetch the assets using the following scripts:  
+    - `./dx-compiler/example/1-download_sample_models.sh` (Model data)  
+    - `./dx-compiler/example/2-download_sample_calibration_dataset.sh` (Calibration data)  
+
+#### D. Model Visualization
+**DX-TRON has been removed** as of DX-Compiler v2.5.0. To inspect the compiled model structure and CPU/NPU workload distribution, generate the interactive HTML **Compilation Summary Report** with DX-COM:  
+```bash
+dxcom -m model.onnx -c config.json -o output/ --export_html
+```
+Then open `output/<model_name>_summary.html` in your browser.  
+
+### DX-Runtime Installation (RT, Driver, FW, App, Stream)
+
+The **DX-Runtime** stack is the core software layer required to control DEEPX NPU hardware and execute AI applications. Each component is managed as a submodule within the `./dx-runtime` directory.  
+
+#### A. Building and Installing Modules
+Depending on your requirements, you can perform a full installation or target specific modules to save time.  
+```Bash
+# Option 1: Install all modules (Driver, FW, RT, App, Stream)
+./dx-runtime/install.sh --all
+
+# Option 2: Full install excluding firmware
+# (Use this if your NPU already has the latest FW version)
+./dx-runtime/install.sh --all --exclude-fw
+
+# Option 3: Install a specific module only
+./dx-runtime/install.sh --target=<module_name>
+```
+
+#### B. Firmware (DX-FW) Update and Activation
+Updating the firmware is a critical process. To ensure the hardware logic is correctly initialized, follow these steps precisely.
+
+**Step 1. Update the Firmware**  
+You can update the firmware using the automated installation script or the dedicated CLI tool.  
+```Bash
+# Method 1. Using the installation script
+./dx-runtime/install.sh --target=dx_fw
+
+# Method 2. Manual update using dxrt-cli
+dxrt-cli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
+```
+
+**Step 2. Perform a Cold Boot**  
+It is **strongly recommended** to completely shut down the system, turn off the power, and then turn it back on. A simple 'Restart' may not be sufficient for hardware initialization.  
+
+**Step 3. System Reboot**  
+After installation is complete, be sure to perform `sudo reboot` to activate the installed kernel driver.  
+
+### [Local] Installation Verification (Sanity Check)
+
+Once the local installation is finished, perform a final check to confirm that the hardware and software are communicating correctly. 
+
+#### A. Hardware and Version Check  
+Run the following command to display information about the NPU devices recognized by the system.  
+```Bash
+dxrt-cli -s
+```
+
+**Success Checklist**  
+
+- **[x] Device Recognition**: Does it display `Device 0: M1?`  
+- **[x] Version Info**: Do `RT Driver`, `PCIe Driver`, and `FW version` show valid numbers (e.g., v1.x.x)?  
+- **[x] Status**: Are real-time metrics for **Voltage**, **Clock**, and **Temperature** visible at the bottom?  
+
+#### B. System Integrity Check  
+Run the batch sanity script to verify that all modules are located in their designated paths.  
+```Bash
+./dx-runtime/scripts/sanity_check.sh
+```
+
+!!! note "Tip"  
+    If any item returns a **FAIL** or **Not Found**, please revisit the **DX-Runtime Installation** section (Building and Installing Modules) to ensure all components were compiled correctly.    
 
 ---
 
@@ -418,137 +613,5 @@ This script performs a batch check to ensure all individual modules are correctl
 ```
 
 If **[OK]** or **PASS** is output for all items, you are ready to start service development.  
-
----
-
-## Local Installation
-
-Installing **DX-AllSuite** directly on the **Host OS** ensures maximum hardware performance and seamless compatibility between all software modules. This method is recommended for production environments and advanced performance benchmarking.  
-
-### DX-Compiler Installation (DX-COM)
-
-DX-Compiler (DX-COM) can be used as a CLI tool or a Python module on supported Linux distributions.  
-
-**Differences in Usage**  
-- **CLI Tool (Command Line Interface)**: Perform compilation by entering `dxcom` commands directly in the terminal (Bash). Ideal for quick execution and automated shell scripts without additional coding.  
-- **Python Module (Library)**: Call functions or classes via `import dx_com` within your Python scripts. This is the preferred method for integrating the compiler into your existing AI training or automation pipelines.  
-
-!!! warning "Change in Distribution Method"  
-    The standalone executable distribution method is **no longer supported**. This guide describes the latest **Wheel-based** installation workflow, which ensures better dependency management and Python environment integration.  
-
-#### A. Pre-Installation Requirements
-Before installing **DX-COM**, you **must** install the following system libraries to support core utilities and graphical operations.  
-
-- **`libgl1-mesa-glx`**: OpenGL runtime support for graphics processing  
-- **`libglib2.0-0`**: Core utility library (related to GNOME/GTK)
-
-**Installation Command**  
-```Bash
-sudo apt-get update
-sudo apt-get install -y --no-install-recommends libgl1-mesa-glx libglib2.0-0 make
-```
-
-#### B. Installation Method
-**Supported Environments**  
-
-- **OS**: Linux (x86_64)  
-- **Python Version**: 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 (The installation script will automatically detect your version)
-
-**Integrated Package Installation**  
-The provided install.sh script handles everything in one go, including Python version detection and package installation.  
-```Bash
-# Run the interactive installation script (recommended)
-./dx-compiler/install.sh
-```
-
-#### C. Verify and Usage
-After installation, activate the virtual environment (`venv-dx-compiler`) to verify the setup.  
-```Bash
-# 1. Activate the Virtual Environment
-source ./dx-compiler/venv-dx-compiler/bin/activate
-
-# 2. Verify Installed Version (CLI and Python Modules)
-dxcom --version
-python3 -c "import dx_com; print(dx_com.__version__)"
-
-# 3. Access Help Documentation
-dxcom -h
-```
-
-- **Sample Data Location**: `./dx-compiler/dx_com/sample_models/`  
-
-!!! note "Tip"  
-    If the automatic sample data download fails, you can manually fetch the assets using the following scripts:  
-    - `./dx-compiler/example/1-download_sample_models.sh` (Model data)  
-    - `./dx-compiler/example/2-download_sample_calibration_dataset.sh` (Calibration data)  
-
-#### D. Model Visualization
-**DX-TRON has been removed** as of DX-Compiler v2.5.0. To inspect the compiled model structure and CPU/NPU workload distribution, generate the interactive HTML **Compilation Summary Report** with DX-COM:  
-```bash
-dxcom -m model.onnx -c config.json -o output/ --export_html
-```
-Then open `output/<model_name>_summary.html` in your browser.  
-
-### DX-Runtime Installation (RT, Driver, FW, App, Stream)
-
-The **DX-Runtime** stack is the core software layer required to control DEEPX NPU hardware and execute AI applications. Each component is managed as a submodule within the `./dx-runtime` directory.  
-
-#### A. Building and Installing Modules
-Depending on your requirements, you can perform a full installation or target specific modules to save time.  
-```Bash
-# Option 1: Install all modules (Driver, FW, RT, App, Stream)
-./dx-runtime/install.sh --all
-
-# Option 2: Full install excluding firmware
-# (Use this if your NPU already has the latest FW version)
-./dx-runtime/install.sh --all --exclude-fw
-
-# Option 3: Install a specific module only
-./dx-runtime/install.sh --target=<module_name>
-```
-
-#### B. Firmware (DX-FW) Update and Activation
-Updating the firmware is a critical process. To ensure the hardware logic is correctly initialized, follow these steps precisely.
-
-**Step 1. Update the Firmware**  
-You can update the firmware using the automated installation script or the dedicated CLI tool.  
-```Bash
-# Method 1. Using the installation script
-./dx-runtime/install.sh --target=dx_fw
-
-# Method 2. Manual update using dxrt-cli
-dxrt-cli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
-```
-
-**Step 2. Perform a Cold Boot**  
-It is **strongly recommended** to completely shut down the system, turn off the power, and then turn it back on. A simple 'Restart' may not be sufficient for hardware initialization.  
-
-**Step 3. System Reboot**  
-After installation is complete, be sure to perform `sudo reboot` to activate the installed kernel driver.  
-
-### [Local] Installation Verification (Sanity Check)
-
-Once the local installation is finished, perform a final check to confirm that the hardware and software are communicating correctly. 
-
-#### A. Hardware and Version Check  
-Run the following command to display information about the NPU devices recognized by the system.  
-```Bash
-dxrt-cli -s
-```
-
-**Success Checklist**  
-
-- **[x] Device Recognition**: Does it display `Device 0: M1?`  
-- **[x] Version Info**: Do `RT Driver`, `PCIe Driver`, and `FW version` show valid numbers (e.g., v1.x.x)?  
-- **[x] Status**: Are real-time metrics for **Voltage**, **Clock**, and **Temperature** visible at the bottom?  
-
-#### B. System Integrity Check  
-Run the batch sanity script to verify that all modules are located in their designated paths.  
-```Bash
-./dx-runtime/scripts/sanity_check.sh
-```
-
-!!! note "Tip"  
-    If any item returns a **FAIL** or **Not Found**, please revisit the **DX-Runtime Installation** section (Building and Installing Modules) to ensure all components were compiled correctly.    
 
 ---

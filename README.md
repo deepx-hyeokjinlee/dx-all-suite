@@ -2,6 +2,22 @@
 
 **DX-AllSuite** is an all-in-one software platform designed to streamline the entire process of compiling, optimizing, simulating, and deploying AI inference applications on **DEEPX NPUs**. It ensures optimal compatibility and powerful hardware performance through a complete toolchain that covers everything from model creation to real-world "Physical AI" deployment.  
 
+## Documentation Navigation
+
+If you are a first-time user, we recommend following the documentation in this order.  
+
+- **[Introduction](./docs/source/index.md)**: DX-AS overview and component descriptions
+- **★ [Agent-Driven Development (Beta)](./docs/source/00_Agent_Driven_Development.md)**: Build DEEPX apps with natural-language prompts using AI coding agents (Claude Code, Cursor, GitHub Copilot, OpenCode, Codex CLI)  
+- **[DX-Benchmark (Beta)](./dx-benchmark/README.md)**: Reproducible YOLO26 NPU benchmarks (Model-Level + E2E Pipeline) with an interactive performance dashboard  
+- **[DX-Edge](./dx-edge/README.md)**: Deploying DEEPX NPUs through AWS Marketplace — Greengrass Solution (ZTP runtime deployment), Compiler Solution (ONNX → `.dxnn` on AWS), and the DX-AIPlayer N97 Getting Started Guide
+- **Step 1. [DX-AllSuite Architecture Overview](./docs/source/01_DX-AllSuite_Architecture_Overview.md)**: SDK overview, module descriptions, and ModelZoo usage  
+- **Step 2. [Setting Up Environment](./docs/source/02_Setting_Up_Environment.md)**: Detailed Local/Docker installation and troubleshooting  
+- **Step 3. [Running Your First NPU Model](./docs/source/03_Running_Your_First_NPU_Model.md)**: Step-by-step hands-on script execution  
+- **Step 4. [Checking Version Compatibility](./docs/source/04_Version_Compatibility.md)**: SDK, Driver, and Firmware dependency matrix  
+- **Step 5. [FAQ Troubleshooting Guide](./docs/source/05_FAQ_Troubleshooting_Guide.md)**: Solutions for environment conflicts and GUI session (X11) errors  
+- **Optional. [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart.md)**: Schedule DX-M1 NPUs as a Kubernetes resource with the `dx-npu` Helm chart
+- **Optional. [Kubernetes Beginner Guide](./docs/source/07_Kubernetes_Beginner_Guide.md)**: Kubernetes explained from scratch, with hands-on NPU examples
+
 <div align="center">
   <img src="./docs/source/img/DXNN-SDK-Full-Architecture.png" width="600">
   <p><strong>Figure. DXNN SDK Full Architecture Overview.</strong></p>
@@ -182,6 +198,39 @@ Two things are never undone: firmware already flashed to the NPU, which has no u
 at all, and the `dx_engine` Python wheel, which `libdxrt-bin` deliberately leaves to you and
 explains how to remove while it is being purged.
 
+#### APT Repository (DX-Runtime)
+
+The NPU driver and the DX-RT runtime are also published as Debian packages in the DEEPX
+APT repository (Ubuntu / Debian, `amd64` / `arm64`), so you can install and upgrade them with `apt`.
+Verify the signing key before trusting it: `gpg --show-keys` must print the fingerprint
+`3A20CC853C64AE328D0F58CFD816AAC6689DBDEA`. If it does not match, stop — do not install the key.
+
+```bash
+wget -O deepx-archive-keyring.asc https://apt.releases.deepx.ai/gpg
+gpg --show-keys deepx-archive-keyring.asc   # fingerprint must be 3A20CC853C64AE328D0F58CFD816AAC6689DBDEA
+sudo gpg --dearmor -o /usr/share/keyrings/deepx-archive-keyring.gpg deepx-archive-keyring.asc
+rm deepx-archive-keyring.asc
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/deepx-archive-keyring.gpg] https://apt.releases.deepx.ai $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") main" | sudo tee /etc/apt/sources.list.d/deepx.list
+
+sudo apt update
+sudo apt install dxrt-driver-dkms   # NPU kernel driver, built for your kernel via DKMS
+sudo apt install libdxrt-bin        # DX-RT library, dxrt-cli and tools
+```
+
+The `dx_engine` Python package is published on PyPI as `dx-engine`. Install it into your
+virtualenv with the same major.minor version as the installed `libdxrt-bin`, since the wheel
+carries its own copy of the runtime library:
+
+```bash
+pip install "dx-engine==$(dpkg-query -W -f='${Version}' libdxrt-bin | cut -d. -f1,2).*"
+```
+
+The same wheels are also staged in `/usr/share/libdxrt-bin/python` for offline installs.
+Firmware is not part of these packages; update it with the one-line
+installer or `./dx-runtime/install.sh --target=dx_fw`, and reboot after installing the driver.
+Later releases arrive through `sudo apt update && sudo apt upgrade`.
+
 For the full suite (all components, source builds, Docker), use the environment
 guides below.
 
@@ -239,7 +288,6 @@ same way it asks for CPU or memory.
 -	**Components**: Device plugin (`deepx.ai/dx-m1` resource), NFD node labels (firmware/driver versions), CDI injection of the device and runtime libraries, Prometheus metrics, one-command Helm chart (`dx-npu`)
 -	**Usage**: Add `resources.limits: {deepx.ai/dx-m1: 1}` to a pod — the scheduler places it on an NPU node and the device arrives inside the container, with no manual device mounts
 -	**Action**: [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart.md) · new to Kubernetes? [Beginner Guide](./docs/source/07_Kubernetes_Beginner_Guide.md)
-=======
 
 ## Supported Models
 
@@ -253,22 +301,6 @@ DX-AllSuite supports a vast array of industry-standard AI architectures, optimiz
 > **Note: Pro Tip**  
 > Instead of compiling models yourself, you can download ready-to-use binaries from the [**DEEPX ModelZoo**](https://developer.deepx.ai/modelzoo/), which features **345 optimized models**.  
 
-
-## Documentation Navigation
-
-If you are a first-time user, we recommend following the documentation in this order.  
-
-- **[Introduction](./docs/source/index.md)**: DX-AS overview and component descriptions
-- **★ [Agent-Driven Development (Beta)](./docs/source/00_Agent_Driven_Development.md)**: Build DEEPX apps with natural-language prompts using AI coding agents (Claude Code, Cursor, GitHub Copilot, OpenCode, Codex CLI)  
-- **[DX-Benchmark (Beta)](./dx-benchmark/README.md)**: Reproducible YOLO26 NPU benchmarks (Model-Level + E2E Pipeline) with an interactive performance dashboard  
-- **[DX-Edge](./dx-edge/README.md)**: Deploying DEEPX NPUs through AWS Marketplace — Greengrass Solution (ZTP runtime deployment), Compiler Solution (ONNX → `.dxnn` on AWS), and the DX-AIPlayer N97 Getting Started Guide
-- **Step 1. [DX-AllSuite Architecture Overview](./docs/source/01_DX-AllSuite_Architecture_Overview.md)**: SDK overview, module descriptions, and ModelZoo usage  
-- **Step 2. [Setting Up Environment](./docs/source/02_Setting_Up_Environment.md)**: Detailed Local/Docker installation and troubleshooting  
-- **Step 3. [Running Your First NPU Model](./docs/source/03_Running_Your_First_NPU_Model.md)**: Step-by-step hands-on script execution  
-- **Step 4. [Checking Version Compatibility](./docs/source/04_Version_Compatibility.md)**: SDK, Driver, and Firmware dependency matrix  
-- **Step 5. [FAQ Troubleshooting Guide](./docs/source/05_FAQ_Troubleshooting_Guide.md)**: Solutions for environment conflicts and GUI session (X11) errors  
-- **Optional. [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart.md)**: Schedule DX-M1 NPUs as a Kubernetes resource with the `dx-npu` Helm chart
-- **Optional. [Kubernetes Beginner Guide](./docs/source/07_Kubernetes_Beginner_Guide.md)**: Kubernetes explained from scratch, with hands-on NPU examples
 
 ## Support
 

@@ -12,10 +12,70 @@
 **[공통] 1. 사전 준비**: 소스 코드를 확보하고 가상 환경 관리 정책을 이해합니다.  
 
 **[선택]** 설치 경로를 선택합니다.  
-- **[Route A] 2. Docker 설치**: 컨테이너 기반의 격리된 설치 방식입니다.  
-- **[Route B] 3. 로컬 설치**: 호스트 OS에 직접 설치하는 방식입니다.  
+- **[Route A] 2. 로컬 설치**: 호스트 OS에 직접 설치하는 방식입니다.  
+- **[Route B] 3. Docker 설치**: 컨테이너 기반의 격리된 설치 방식입니다.  
 
 ---
+
+## APT 저장소 설치 (DX-Runtime)
+
+NPU driver와 DX-RT runtime은 DEEPX APT 저장소에 Debian package로도 배포됩니다(Ubuntu /
+Debian, `amd64` / `arm64`). 다른 system package처럼 `apt`로 설치·업그레이드·제거하고 싶을 때 이
+방법을 사용하십시오.
+
+```Bash
+# 1. DEEPX 서명 키 다운로드 및 fingerprint 확인
+wget -O deepx-archive-keyring.asc https://apt.releases.deepx.ai/gpg
+gpg --show-keys deepx-archive-keyring.asc
+
+# 2. fingerprint가 일치할 때만 키를 설치하고 다운로드한 파일 삭제
+sudo gpg --dearmor -o /usr/share/keyrings/deepx-archive-keyring.gpg deepx-archive-keyring.asc
+rm deepx-archive-keyring.asc
+
+# 3. 현재 Ubuntu / Debian 릴리즈에 맞는 저장소 추가
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/deepx-archive-keyring.gpg] https://apt.releases.deepx.ai $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") main" | sudo tee /etc/apt/sources.list.d/deepx.list
+
+# 4. Driver와 runtime 설치
+sudo apt update
+sudo apt install dxrt-driver-dkms
+sudo apt install libdxrt-bin
+```
+
+!!! danger "2단계 전에 키 fingerprint 확인"
+    변조된 키(예: 중간자 공격)를 막기 위해, 키를 설치하기 전에 `gpg --show-keys` 출력을
+    확인하십시오. 다음 40자 fingerprint와 정확히 일치해야 합니다 — `3A20CC853C64AE328D0F58CFD816AAC6689DBDEA`:
+    ```
+    pub   rsa4096 2026-08-11 [SCEA]
+          3A20CC853C64AE328D0F58CFD816AAC6689DBDEA
+    uid                      DeepX APT Repo <jhsa@deepx.ai>
+    ```
+    다르면 중단하고 `deepx-archive-keyring.asc`를 삭제한 뒤 DEEPX 기술 지원에 문의하십시오.
+
+| Package | 내용 |
+|---|---|
+| `dxrt-driver-dkms` | NPU kernel driver. DKMS로 현재 kernel에 맞춰 빌드되며(`dkms`, `build-essential` 의존) kernel 업데이트 시 자동으로 다시 빌드됩니다 |
+| `libdxrt-bin` | `/usr/local` 아래의 pre-built DX-RT library와 header, `dxrt-cli` 등 runtime 도구, `dxrt` service |
+
+!!! warning "재부팅과 firmware"
+    `dxrt-driver-dkms` 설치 후 kernel이 NPU driver를 로드하도록 재부팅하십시오. Firmware는
+    APT 저장소에 포함되지 않으므로 한 줄 설치 또는 `./dx-runtime/install.sh --target=dx_fw`로
+    업데이트한 뒤, **DX-Runtime 설치** 섹션의 안내대로 cold boot 하십시오.
+
+!!! note "`dx_engine` Python package는 PyPI에서 설치"
+    `libdxrt-bin`은 어떤 interpreter나 virtualenv를 쓰는지 알 수 없기 때문에 `dx_engine` Python
+    binding을 설치하지 않습니다. PyPI(`dx-engine`)에서 virtualenv에 설치하되, 설치된
+    `libdxrt-bin`과 같은 major.minor 버전으로 고정하십시오. wheel이 runtime library를 자체
+    포함하므로 버전이 어긋나도 `apt`나 `pip`가 잡아주지 않습니다.
+    ```Bash
+    source /path/to/venv/bin/activate
+    pip install "dx-engine==$(dpkg-query -W -f='${Version}' libdxrt-bin | cut -d. -f1,2).*"
+    ```
+    오프라인 설치용으로 같은 wheel(CPython ABI별 1개)이 `/usr/share/libdxrt-bin/python`에도
+    들어 있으며, package 설치 후 정확한 `pip install` 명령이 출력됩니다.
+
+이후 릴리즈는 `sudo apt update && sudo apt upgrade`로 업그레이드하고, 제거는
+`sudo apt purge libdxrt-bin dxrt-driver-dkms`로 합니다. 이 방법은 driver와 runtime만
+다루며, `dx_app`과 `dx_stream`은 아래 전체 설치 절차를 따릅니다.
 
 ## Prerequisites
 
@@ -98,6 +158,138 @@ Docker 경로를 사용할 계획이지만 Docker가 설치되어 있지 않은 
 - **단계 1 (Select)**: **DEEPX ModelZoo** 또는 샘플 데이터에서 사전 검증된 `.dxnn` 모델을 선택합니다.  
 - **단계 2 (DX-RT)**: 별도의 컴파일 과정 없이 런타임 환경(`venv-dx-runtime`)에서 선택한 모델을 즉시 로드합니다.  
 - **단계 3 (NPU Acceleration)**: 하드웨어 가속 추론을 실행하고 **FPS** 및 **지연 시간(Latency)**과 같은 주요 성능 지표를 분석합니다.  
+
+---
+
+## Local Installation
+
+**DX-AllSuite**를 **호스트 OS**에 직접 설치하면 하드웨어 성능을 극대화하고 모든 소프트웨어 모듈 간의 원활한 호환성을 보장할 수 있습니다. 이 방법은 프로덕션 환경 및 고급 성능 벤치마킹에 권장됩니다.  
+
+### DX-Compiler Installation (DX-COM)
+
+DX-Compiler(DX-COM)는 지원되는 Linux 배포판에서 CLI 도구 또는 Python 모듈로 사용할 수 있습니다.  
+
+**사용 방식의 차이점**  
+
+- **CLI 도구 (커맨드 라인 인터페이스)**: 터미널(Bash)에서 직접 `dxcom` 명령을 입력하여 컴파일을 수행합니다. 추가 코딩 없이 빠른 실행 및 자동화된 쉘 스크립트에 적합합니다.  
+- **Python 모듈 (라이브러리)**: Python 스크립트 내에서 `import dx_com`을 통해 함수나 클래스를 호출합니다. 컴파일러를 기존 AI 훈련 또는 자동화 파이프라인에 통합하는 데 선호되는 방법입니다.
+
+!!! warning "배포 방식 변경 알림"  
+    **독립 실행형(standalone executable) 배포 방식은 더 이상 지원되지 않습니다**. 이 가이드는 의존성 관리와 Python 환경 통합을 보장하는 최신 **Wheel 기반** 설치 워크플로우를 설명합니다.  
+
+#### A. 설치 전 요구 사항
+**DX-COM**을 설치하기 전에 핵심 유틸리티 및 그래픽 작업을 지원하기 위해, **반드시** 다음 시스템 라이브러리를 설치해야 합니다.  
+
+- **`libgl1-mesa-glx`**: 그래픽 처리를 위한 OpenGL 런타임 지원  
+- **`libglib2.0-0`**: 핵심 유틸리티 라이브러리 (GNOME/GTK 관련)  
+
+**설치 명령**  
+```Bash
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends libgl1-mesa-glx libglib2.0-0 make
+```
+
+#### B. 설치 방법
+**지원 환경**  
+
+- **OS**: Linux (x86_64)  
+- **Python 버전**: 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 (설치 스크립트가 버전을 자동으로 감지함)
+
+**통합 패키지 설치**  
+제공된 `install.sh` 스크립트는 Python 버전 감지 및 패키지 설치를 포함한 모든 과정을 한 번에 처리합니다.  
+```Bash
+# Run the interactive installation script (recommended)
+./dx-compiler/install.sh
+```
+
+#### C. 검증 및 사용
+설치 후, 가상 환경(`venv-dx-compiler`)을 활성화하여 설정을 확인합니다.  
+```Bash
+# 1. Activate the Virtual Environment
+source ./dx-compiler/venv-dx-compiler/bin/activate
+
+# 2. Verify Installed Version (CLI and Python Modules)
+dxcom --version
+python3 -c "import dx_com; print(dx_com.__version__)"
+
+# 3. Access Help Documentation
+dxcom -h
+```
+
+- **샘플 데이터 위치**: `./dx-compiler/dx_com/sample_models/`  
+
+!!! note "팁"  
+    샘플 데이터 자동 다운로드에 실패한 경우, 다음 스크립트를 사용하여 수동으로 자산을 가져올 수 있습니다.  
+    - `./dx-compiler/example/1-download_sample_models.sh` (모델 데이터)  
+    - `./dx-compiler/example/2-download_sample_calibration_dataset.sh` (교정 데이터)  
+
+#### D. 모델 시각화
+**DX-TRON은 DX-Compiler v2.5.0부터 제거되었습니다.** 컴파일된 모델 구조와 CPU/NPU 작업 부하 분산을 확인하려면 DX-COM으로 인터랙티브 HTML **Compilation Summary Report**를 생성하십시오.  
+```bash
+dxcom -m model.onnx -c config.json -o output/ --export_html
+```
+그 후, 브라우저에서 `output/<model_name>_summary.html`을 여십시오.  
+
+### DX-Runtime Installation (RT, Driver, FW, App, Stream)
+
+**DX-Runtime** 스택은 DEEPX NPU 하드웨어를 제어하고 AI 애플리케이션을 실행하는 데 필요한 핵심 소프트웨어 계층입니다. 각 구성 요소는 `./dx-runtime` 디렉토리 내의 하위 모듈로 관리됩니다.  
+
+#### A. 모듈 빌드 및 설치
+요구 사항에 따라 전체 설치를 수행하거나 특정 모듈만 선택하여 설치 시간을 단축할 수 있습니다.  
+```Bash
+# Option 1: Install all modules (Driver, FW, RT, App, Stream)
+./dx-runtime/install.sh --all
+
+# Option 2: Full install excluding firmware
+# (Use this if your NPU already has the latest FW version)
+./dx-runtime/install.sh --all --exclude-fw
+
+# Option 3: Install a specific module only
+./dx-runtime/install.sh --target=<module_name>
+```
+
+#### B. 펌웨어 (DX-FW) 업데이트 및 활성화
+펌웨어 업데이트는 매우 중요한 과정입니다. 하드웨어 로직이 올바르게 초기화되도록 다음 단계를 정확히 따르십시오.  
+
+**단계 1. 펌웨어 업데이트**  
+자동 설치 스크립트 또는 전용 CLI 도구를 사용하여 펌웨어를 업데이트할 수 있습니다.  
+```Bash
+# Method 1. Using the installation script
+./dx-runtime/install.sh --target=dx_fw
+
+# Method 2. Manual update using dxrt-cli
+dxrt-cli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
+```
+
+**단계 2. 콜드 부트(Cold Boot) 수행**  
+시스템을 완전히 종료하고 **전원을 껐다가 다시 켜는 것을 강력히 권장합니다**. 단순한 '다시 시작(Restart)'은 하드웨어 초기화에 충분하지 않을 수 있습니다.  
+
+**단계 3. 시스템 재부팅**  
+설치가 완료되면 반드시 `sudo reboot`를 수행하여 설치된 커널 드라이버를 활성화하십시오.  
+
+### [Local] Installation Verification (Sanity Check)
+
+로컬 설치가 완료되면 하드웨어와 소프트웨어가 올바르게 통신하는지 최종 확인을 수행합니다.
+
+#### A. 하드웨어 및 버전 확인 
+다음 명령을 실행하여 시스템에서 인식된 NPU 장치에 대한 정보를 표시합니다.  
+```Bash
+dxrt-cli -s
+```
+
+**성공 체크리스트**  
+- **[x] 장치 인식**: `Device 0: M1`이 표시됩니까?  
+- **[x] 버전 정보**: `RT Driver`, `PCIe Driver`, `FW version` 등이 유효한 번호(예: v1.x.x)를 보여줍니까?  
+- **[x] 상태**: 하단에 **전압(Voltage)**, **클럭(Clock)**, **온도(Temperature)** 에 대한 실시간 지표가 보입니까?  
+
+#### B. 시스템 무결성 확인
+일괄 위생 점검(sanity script)을 실행하여 모든 모듈이 지정된 경로에 위치하는지 확인합니다.  
+```Bash
+./dx-runtime/scripts/sanity_check.sh
+```
+
+!!! note "팁"  
+    어떤 항목이라도 **FAIL** 또는 **Not Found**를 반환하는 경우, **DX-Runtime 설치** 섹션(모듈 빌드 및 설치)을 다시 방문하여 모든 구성 요소가 올바르게 컴파일되었는지 확인하십시오.
 
 ---
 
@@ -347,137 +539,5 @@ DX-RT v3.2.0
 ```
 
 모든 항목에 대해 **[OK]** 또는 **PASS**가 출력되면 서비스 개발을 시작할 준비가 된 것입니다.  
-
----
-
-## Local Installation
-
-**DX-AllSuite**를 **호스트 OS**에 직접 설치하면 하드웨어 성능을 극대화하고 모든 소프트웨어 모듈 간의 원활한 호환성을 보장할 수 있습니다. 이 방법은 프로덕션 환경 및 고급 성능 벤치마킹에 권장됩니다.  
-
-### DX-Compiler Installation (DX-COM)
-
-DX-Compiler(DX-COM)는 지원되는 Linux 배포판에서 CLI 도구 또는 Python 모듈로 사용할 수 있습니다.  
-
-**사용 방식의 차이점**  
-
-- **CLI 도구 (커맨드 라인 인터페이스)**: 터미널(Bash)에서 직접 `dxcom` 명령을 입력하여 컴파일을 수행합니다. 추가 코딩 없이 빠른 실행 및 자동화된 쉘 스크립트에 적합합니다.  
-- **Python 모듈 (라이브러리)**: Python 스크립트 내에서 `import dx_com`을 통해 함수나 클래스를 호출합니다. 컴파일러를 기존 AI 훈련 또는 자동화 파이프라인에 통합하는 데 선호되는 방법입니다.
-
-!!! warning "배포 방식 변경 알림"  
-    **독립 실행형(standalone executable) 배포 방식은 더 이상 지원되지 않습니다**. 이 가이드는 의존성 관리와 Python 환경 통합을 보장하는 최신 **Wheel 기반** 설치 워크플로우를 설명합니다.  
-
-#### A. 설치 전 요구 사항
-**DX-COM**을 설치하기 전에 핵심 유틸리티 및 그래픽 작업을 지원하기 위해, **반드시** 다음 시스템 라이브러리를 설치해야 합니다.  
-
-- **`libgl1-mesa-glx`**: 그래픽 처리를 위한 OpenGL 런타임 지원  
-- **`libglib2.0-0`**: 핵심 유틸리티 라이브러리 (GNOME/GTK 관련)  
-
-**설치 명령**  
-```Bash
-sudo apt-get update
-sudo apt-get install -y --no-install-recommends libgl1-mesa-glx libglib2.0-0 make
-```
-
-#### B. 설치 방법
-**지원 환경**  
-
-- **OS**: Linux (x86_64)  
-- **Python 버전**: 3.8, 3.9, 3.10, 3.11, 3.12, 3.13, 3.14 (설치 스크립트가 버전을 자동으로 감지함)
-
-**통합 패키지 설치**  
-제공된 `install.sh` 스크립트는 Python 버전 감지 및 패키지 설치를 포함한 모든 과정을 한 번에 처리합니다.  
-```Bash
-# Run the interactive installation script (recommended)
-./dx-compiler/install.sh
-```
-
-#### C. 검증 및 사용
-설치 후, 가상 환경(`venv-dx-compiler`)을 활성화하여 설정을 확인합니다.  
-```Bash
-# 1. Activate the Virtual Environment
-source ./dx-compiler/venv-dx-compiler/bin/activate
-
-# 2. Verify Installed Version (CLI and Python Modules)
-dxcom --version
-python3 -c "import dx_com; print(dx_com.__version__)"
-
-# 3. Access Help Documentation
-dxcom -h
-```
-
-- **샘플 데이터 위치**: `./dx-compiler/dx_com/sample_models/`  
-
-!!! note "팁"  
-    샘플 데이터 자동 다운로드에 실패한 경우, 다음 스크립트를 사용하여 수동으로 자산을 가져올 수 있습니다.  
-    - `./dx-compiler/example/1-download_sample_models.sh` (모델 데이터)  
-    - `./dx-compiler/example/2-download_sample_calibration_dataset.sh` (교정 데이터)  
-
-#### D. 모델 시각화
-**DX-TRON은 DX-Compiler v2.5.0부터 제거되었습니다.** 컴파일된 모델 구조와 CPU/NPU 작업 부하 분산을 확인하려면 DX-COM으로 인터랙티브 HTML **Compilation Summary Report**를 생성하십시오.  
-```bash
-dxcom -m model.onnx -c config.json -o output/ --export_html
-```
-그 후, 브라우저에서 `output/<model_name>_summary.html`을 여십시오.  
-
-### DX-Runtime Installation (RT, Driver, FW, App, Stream)
-
-**DX-Runtime** 스택은 DEEPX NPU 하드웨어를 제어하고 AI 애플리케이션을 실행하는 데 필요한 핵심 소프트웨어 계층입니다. 각 구성 요소는 `./dx-runtime` 디렉토리 내의 하위 모듈로 관리됩니다.  
-
-#### A. 모듈 빌드 및 설치
-요구 사항에 따라 전체 설치를 수행하거나 특정 모듈만 선택하여 설치 시간을 단축할 수 있습니다.  
-```Bash
-# Option 1: Install all modules (Driver, FW, RT, App, Stream)
-./dx-runtime/install.sh --all
-
-# Option 2: Full install excluding firmware
-# (Use this if your NPU already has the latest FW version)
-./dx-runtime/install.sh --all --exclude-fw
-
-# Option 3: Install a specific module only
-./dx-runtime/install.sh --target=<module_name>
-```
-
-#### B. 펌웨어 (DX-FW) 업데이트 및 활성화
-펌웨어 업데이트는 매우 중요한 과정입니다. 하드웨어 로직이 올바르게 초기화되도록 다음 단계를 정확히 따르십시오.  
-
-**단계 1. 펌웨어 업데이트**  
-자동 설치 스크립트 또는 전용 CLI 도구를 사용하여 펌웨어를 업데이트할 수 있습니다.  
-```Bash
-# Method 1. Using the installation script
-./dx-runtime/install.sh --target=dx_fw
-
-# Method 2. Manual update using dxrt-cli
-dxrt-cli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
-```
-
-**단계 2. 콜드 부트(Cold Boot) 수행**  
-시스템을 완전히 종료하고 **전원을 껐다가 다시 켜는 것을 강력히 권장합니다**. 단순한 '다시 시작(Restart)'은 하드웨어 초기화에 충분하지 않을 수 있습니다.  
-
-**단계 3. 시스템 재부팅**  
-설치가 완료되면 반드시 `sudo reboot`를 수행하여 설치된 커널 드라이버를 활성화하십시오.  
-
-### [Local] Installation Verification (Sanity Check)
-
-로컬 설치가 완료되면 하드웨어와 소프트웨어가 올바르게 통신하는지 최종 확인을 수행합니다.
-
-#### A. 하드웨어 및 버전 확인 
-다음 명령을 실행하여 시스템에서 인식된 NPU 장치에 대한 정보를 표시합니다.  
-```Bash
-dxrt-cli -s
-```
-
-**성공 체크리스트**  
-- **[x] 장치 인식**: `Device 0: M1`이 표시됩니까?  
-- **[x] 버전 정보**: `RT Driver`, `PCIe Driver`, `FW version` 등이 유효한 번호(예: v1.x.x)를 보여줍니까?  
-- **[x] 상태**: 하단에 **전압(Voltage)**, **클럭(Clock)**, **온도(Temperature)** 에 대한 실시간 지표가 보입니까?  
-
-#### B. 시스템 무결성 확인
-일괄 위생 점검(sanity script)을 실행하여 모든 모듈이 지정된 경로에 위치하는지 확인합니다.  
-```Bash
-./dx-runtime/scripts/sanity_check.sh
-```
-
-!!! note "팁"  
-    어떤 항목이라도 **FAIL** 또는 **Not Found**를 반환하는 경우, **DX-Runtime 설치** 섹션(모듈 빌드 및 설치)을 다시 방문하여 모든 구성 요소가 올바르게 컴파일되었는지 확인하십시오.
 
 ---
