@@ -1,7 +1,7 @@
 name: version-compatibility-stamper
 
 # Manual only. Stamps docs/source/04_Version_Compatibility{,_kor}.md from the
-# release-ready staging versions of dx-compiler / dx-runtime, so the matrix
+# release-ready staging versions of dx-compiler / dx-runtime / dx-modelzoo, so the matrix
 # stays in sync with what is actually on staging (not every submodule main push).
 on:
   workflow_dispatch:
@@ -18,13 +18,15 @@ jobs:
         with:
           token: ${{ secrets.GH_DCI_TOKEN }}
 
-      - name: Fetch dx-compiler & dx-runtime at 'staging'
+      - name: Fetch dx-compiler, dx-runtime & dx-modelzoo at 'staging'
         run: |
-          rm -rf dx-compiler dx-runtime
+          rm -rf dx-compiler dx-runtime dx-modelzoo
           git clone https://github.com/DEEPX-AI/dx-compiler
           git clone https://github.com/DEEPX-AI/dx-runtime
+          git clone https://github.com/DEEPX-AI/dx-modelzoo
           git -C dx-compiler checkout staging
           git -C dx-runtime  checkout staging
+          git -C dx-modelzoo checkout staging
           # dx-runtime component versions (dx_fw/dx_rt/dx_app/dx_stream/dx_rt_npu_linux_driver)
           # live in nested submodules -> init one level so their release.ver is readable.
           git -C dx-runtime submodule update --init
@@ -42,4 +44,4 @@ jobs:
 
       - name: Clean Workspace
         run: |
-          rm -rf dx-compiler dx-runtime
+          rm -rf dx-compiler dx-runtime dx-modelzoo

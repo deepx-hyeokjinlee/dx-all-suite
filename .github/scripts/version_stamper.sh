@@ -3,7 +3,7 @@
 # Read the DX-AllSuite version from release.ver and stamp the version-compatibility
 # matrix (EN + KOR) from the recursively-checked-out submodule tree.
 # Idempotent: writes only when a value actually changed, so it is safe to run on
-# every dispatch (dx-modelzoo is not in the matrix -> nothing changes -> no-op).
+# every dispatch (nothing changed -> no-op).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,6 +15,7 @@ norm() { printf 'v%s' "$(tr -d ' \r\nv' < "$1")"; }   # -> vX.Y.Z
 SUITE="$(norm "$ROOT/release.ver")"                    # suite = root release.ver (own source of truth)
 RUNTIME="$(norm "$ROOT/dx-runtime/release.ver")"
 COMPILER="$(norm "$ROOT/dx-compiler/release.ver")"
+MODELZOO="$(norm "$ROOT/dx-modelzoo/release.ver")"
 
 # release.ver is the suite's own version -> NOT overwritten here (bump it elsewhere / by hand)
 
@@ -23,6 +24,7 @@ python3 "$SCRIPT_DIR/compat_table.py" \
   --suite "$SUITE" \
   --compiler "$COMPILER" \
   --runtime "$RUNTIME" \
+  --modelzoo "$MODELZOO" \
   --dxcom "$COMPILER" \
   --dxfw "$(norm "$ROOT/dx-runtime/dx_fw/release.ver")" \
   --driver "$(norm "$ROOT/dx-runtime/dx_rt_npu_linux_driver/release.ver")" \
@@ -32,4 +34,4 @@ python3 "$SCRIPT_DIR/compat_table.py" \
   "$ROOT/docs/source/04_Version_Compatibility.md" \
   "$ROOT/docs/source/04_Version_Compatibility_kor.md"
 
-echo "version_stamper: done (suite=$SUITE runtime=$RUNTIME)"
+echo "version_stamper: done (suite=$SUITE runtime=$RUNTIME modelzoo=$MODELZOO)"
