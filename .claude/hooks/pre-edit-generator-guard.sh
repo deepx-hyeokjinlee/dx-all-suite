@@ -35,8 +35,14 @@ fi
 
 [ -z "$FILE_PATH" ] && exit 0
 
-# Is this path inside a dx-agent-dev tree? Walk up looking for .deepx/ so that
-# an unrelated CLAUDE.md (another project, ~/.claude/CLAUDE.md) stays editable.
+# Is this path inside a dx-agent-dev tree? Walk up looking for .deepx/.
+#
+# INTENTIONAL: a Q2 path outside such a tree is allowed through. The names this
+# hook guards are not unique to this repo — an unrelated project's .claude/agents/
+# or the user's own ~/.claude/CLAUDE.md must stay editable — and without .deepx/
+# there is no generator for the file to be an output of, so there is nothing to
+# protect. A dx repo whose .deepx/ is missing is a broken checkout, not a case
+# this hook papers over.
 in_generated_tree() {
     local abs="$1" dir
     case "$abs" in /*) ;; *) abs="$PWD/$abs" ;; esac
@@ -62,7 +68,7 @@ block() {
     exit 2
 }
 
-# Q2 path pattern check
+# Q2 path pattern check (allowed through outside a .deepx/ tree — see above)
 if echo "$FILE_PATH" | grep -qE '(^|/)\.(github/(skills|agents)|opencode/agents|claude/(agents|skills)|cursor/rules)/'; then
     in_generated_tree "$FILE_PATH" && block "source"
 fi
@@ -71,6 +77,7 @@ fi
 BASENAME="$(basename "$FILE_PATH")"
 case "$BASENAME" in
     CLAUDE.md|CLAUDE-KO.md|AGENTS.md|AGENTS-KO.md|copilot-instructions.md|copilot-instructions-KO.md)
+        # Allowed through outside a .deepx/ tree — see in_generated_tree above
         in_generated_tree "$FILE_PATH" && block "template"
         ;;
 esac

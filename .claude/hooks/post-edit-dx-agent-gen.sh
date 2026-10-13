@@ -46,14 +46,10 @@ REPO_ROOT="$(git -C "$(dirname "$ABS")" rev-parse --show-toplevel 2>/dev/null)"
 [ -z "$REPO_ROOT" ] && exit 0
 [ -d "$REPO_ROOT" ] || exit 0
 
-# Need dx-agent-gen on PATH
-if ! command -v dx-agent-gen >/dev/null 2>&1; then
-    echo "[dx-agent-gen] WARNING: binary not found — drift check skipped." >&2
-    echo "  Install: pip install -e ${REPO_ROOT}/.deepx/tools" >&2
-    exit 0
-fi
-
-# Collect all repos with .deepx/ (suite root + nested dx_app / dx_stream)
+# Collect all repos with .deepx/ (suite root + nested dx_app / dx_stream).
+# This runs BEFORE the binary lookup: REPO_ROOT may have come from the
+# CLAUDE_PROJECT_DIR fallback and need not be a repo root at all, in which case
+# there is nothing to check and nothing worth telling the agent about.
 check_repos=()
 [ -d "$REPO_ROOT/.deepx" ] && check_repos+=("$REPO_ROOT")
 for sub in dx-runtime/dx_app dx-runtime/dx_stream dx_app dx_stream; do
@@ -62,6 +58,13 @@ for sub in dx-runtime/dx_app dx-runtime/dx_stream dx_app dx_stream; do
 done
 
 [ "${#check_repos[@]}" -eq 0 ] && exit 0
+
+# Need dx-agent-gen on PATH
+if ! command -v dx-agent-gen >/dev/null 2>&1; then
+    echo "[dx-agent-gen] WARNING: binary not found — drift check skipped." >&2
+    echo "  Install: pip install -e ${REPO_ROOT}/.deepx/tools" >&2
+    exit 0
+fi
 
 drifted=()
 for repo in "${check_repos[@]}"; do

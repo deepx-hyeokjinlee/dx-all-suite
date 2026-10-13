@@ -33,6 +33,16 @@ GUARD = HOOKS_DIR / "pre-edit-generator-guard.sh"
 POST = HOOKS_DIR / "post-edit-dx-agent-gen.sh"
 SETTINGS = SUITE_ROOT / ".claude" / "settings.json"
 
+# The guard only acts inside a tree that contains .deepx/, so these tests are
+# meaningless without it: the "allowed" cases would pass vacuously while the
+# blocking cases failed for an unrelated reason. Fail loudly instead — a suite
+# checkout without .deepx/ is itself broken.
+if not (SUITE_ROOT / ".deepx").is_dir():  # pragma: no cover - broken checkout
+    raise RuntimeError(
+        f"{SUITE_ROOT} has no .deepx/ — the hook guard is scoped to .deepx/ trees, "
+        "so these contract tests cannot be interpreted here."
+    )
+
 # Paths the guard must refuse (Q2 of the Pre-flight Classification rule).
 PROTECTED_PATHS = [
     ".claude/skills/dx-skill-router/SKILL.md",
@@ -85,6 +95,7 @@ def _run(script: Path, stdin: str | None, cwd: Path | None = None, env_extra=Non
         input=stdin if stdin is not None else "",
         capture_output=True,
         text=True,
+        # 60s: the post hook may run a real `dx-agent-gen check` over several repos.
         timeout=60,
         cwd=str(cwd or SUITE_ROOT),
         env=env,
@@ -179,6 +190,8 @@ def test_guard_does_not_hang_without_stdin():
         stdin=subprocess.DEVNULL,
         capture_output=True,
         text=True,
+        # 15s: this is the hang detector — the guard must return without stdin,
+        # so anything beyond a moment means it is waiting on a read.
         timeout=15,
         cwd=str(SUITE_ROOT),
         env=env,
@@ -301,6 +314,12 @@ def test_settings_invokes_hooks_through_project_dir():
     ]
     assert commands, "no hook commands configured"
     for cmd in commands:
-        assert "$CLAUDE_PROJECT_DIR" in cmd, (
+        assert "CLAUDE_PROJECT_DIR" in cmd, (
             f"hook command must be anchored to $CLAUDE_PROJECT_DIR: {cmd!r}"
+        )
+        # Unset the variable and the path becomes /.claude/hooks/... -> bash exits 127,
+        # which PreToolUse treats as a non-blocking error: the guard would stop
+        # protecting without saying so. A cwd fallback keeps the pre-fix behaviour.
+        assert "${CLAUDE_PROJECT_DIR:-" in cmd, (
+            f"hook command must fall back when CLAUDE_PROJECT_DIR is unset: {cmd!r}"
         )
