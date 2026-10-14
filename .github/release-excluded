@@ -12,5 +12,6 @@ CHANGELOG.md
 dx-compiler/
 dx-modelzoo/
 dx-runtime/
+dx-k8s-device-plugin/
 pytest.ini
 internal/
