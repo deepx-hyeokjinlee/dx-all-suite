@@ -184,3 +184,48 @@ def test_model_manager_per_task_rows_match_registry(live_counts):
     assert got == dict(want), (
         "dx-model-manager.md per-task rows drift (task, n): "
         f"{sorted(set(want.items()) ^ set(got.items()))}")
+
+# ── The suite must not carry another repo's counts at all ────────────────────
+# A number borrowed from a sub-repo becomes a committed SNAPSHOT of whatever that
+# repo happened to be at generation time. dx_app main has 353 models and dev has
+# 498: no single committed number satisfies both, so the suite gate is red in one
+# mode or the other forever. The suite therefore states no counts and points at
+# the file that owns them.
+STREAM_RE = re.compile(
+    r"(?<![~\d.A-Za-z])(\d{1,3})\s+(?:GStreamer\s+)?elements\b"
+    r"|(?<![~\d.A-Za-z])(\d{1,3})\s+pipeline categories\b"
+    r"|(?<![~\d.A-Za-z])(\d{1,3})개\s*(?:GStreamer\s*)?(?:element|엘리먼트|요소)"
+    r"|(?<![~\d.A-Za-z])(\d{1,3})개\s*파이프라인\s*(?:카테고리|분류)",
+    re.IGNORECASE,
+)
+# py3.8: Path.is_relative_to is 3.9+, so compare prefixes as strings.
+_APP_PREFIX = str(APP_ROOT) + "/"
+SUITE_SCAN = [f for f in SCAN_TARGETS if not str(f).startswith(_APP_PREFIX)]
+SUITE_TEMPLATES = sorted((SUITE_ROOT / ".deepx" / "templates").rglob("*.tmpl"))
+REGISTRY_VARS = ("{{MODEL_COUNT}}", "{{TASK_COUNT}}", "{{TASK_LIST}}")
+
+
+def test_suite_kb_does_not_state_sub_project_counts():
+    bad: list[str] = []
+    for f in SUITE_SCAN:
+        for i, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            if IGNORE_MARK in line:
+                continue
+            for regex in (MODEL_RE, TASK_RE, STREAM_RE):
+                if regex.search(line):
+                    s = line.strip()
+                    bad.append(f"{f.relative_to(SUITE_ROOT)}:{i}: {s[:90]}")
+                    break
+    assert not bad, (
+        "The suite KB must not state a sub-project's counts — point at the file that "
+        "owns them instead (dx_app: config/model_registry.json + src/python_example/, "
+        "dx_stream: model_list.json + gst-dxstream-plugin/src/):\n  " + "\n  ".join(bad))
+
+
+def test_suite_templates_do_not_depend_on_dx_app_registry():
+    bad = [f"{f.relative_to(SUITE_ROOT)}: {v}" for f in SUITE_TEMPLATES
+           for v in REGISTRY_VARS if v in f.read_text(encoding="utf-8")]
+    assert not bad, (
+        "Suite templates must render without dx_app's registry (otherwise the suite "
+        "cannot be generated unless the submodule is initialised, and its output is a "
+        "snapshot of whichever dx_app branch was checked out):\n  " + "\n  ".join(bad))

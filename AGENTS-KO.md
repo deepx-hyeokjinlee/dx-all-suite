@@ -97,8 +97,8 @@ API accuracy. Please switch to a recommended model.
 | 컴포넌트 | 경로 | 목적 |
 |---|---|---|
 | **dx-runtime** | `dx-runtime/` | 통합 레이어 + 프로젝트 간 오케스트레이션 |
-| **dx_app** | `dx-runtime/dx_app/` | Standalone inference 앱 (Python/C++, 353개 모델, 22개 AI 태스크) |
-| **dx_stream** | `dx-runtime/dx_stream/` | GStreamer pipeline 앱 (13개 element, 6개 pipeline 카테고리) |
+| **dx_app** | `dx-runtime/dx_app/` | 독립형 추론 앱 (Python/C++) — 모델은 `config/model_registry.json`, 태스크는 `src/python_example/` 참조 |
+| **dx_stream** | `dx-runtime/dx_stream/` | GStreamer 파이프라인 앱 — element 는 `gst-dxstream-plugin/src/`, 파이프라인은 `dx_stream/pipelines/`, 모델은 `model_list.json` 참조 |
 | **Docs** | `docs/` | MkDocs 문서 사이트 |
 | **dx-compiler** | `dx-compiler/` | DXNN 모델 컴파일러 (ONNX → .dxnn via DX-COM) |
 
