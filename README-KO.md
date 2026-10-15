@@ -67,9 +67,9 @@ DEEPX NPU가 물리적으로 장착된 디바이스에서 inference를 수행하
 - **Key Tasks**: `.dxnn` 모델 실행, 실시간 데이터 inference, 리소스 관리
 - **Action**: DX-Runtime Installation Guide [Link](./docs/source/02_Setting_Up_Environment.md)
 
-> **경고: 활성화 필요**
-> 설치 후 NPU Driver를 커널에 올바르게 로드하려면 시스템 재부팅이 필수입니다.
-> ```Bash
+> **경고: 활성화 필요 (Runtime 환경)**
+> Target Device에 DX-Runtime을 설치한 후 NPU Driver를 커널에 올바르게 로드하려면 시스템 재부팅이 필수입니다. Compile 환경(Host PC)에서는 필요하지 않습니다.
+> ```bash
 > sudo reboot
 > ```
 
@@ -162,7 +162,7 @@ Firmware는 이 package에 포함되지 않으므로 한 줄 설치 또는
 
 Local 설치 대신 container를 선호한다면, GitHub Container Registry에 게시된 공식 Ubuntu 24.04 image를 사용해 suite 빌드 과정을 건너뛸 수 있습니다.
 
-```Bash
+```bash
 docker pull ghcr.io/deepx-ai/dx-runtime:latest
 docker run --rm -it --privileged --ipc=host --pid=host -v /dev:/dev \
     --entrypoint bash ghcr.io/deepx-ai/dx-runtime:latest

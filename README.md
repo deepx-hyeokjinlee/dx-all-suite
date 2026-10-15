@@ -51,25 +51,25 @@ This environment is used for converting and optimizing trained AI models into DE
 
 - **Arch**: x86_64  
 - **OS**: Ubuntu 26.04 / 24.04 / 22.04 / 20.04 (LTS), Fedora 42-45, Red Hat Enterprise Linux 9-10, and CentOS Stream 9-10
--	**Hardware**: x86_64 Host PC  
+- **Hardware**: x86_64 Host PC  
 - **Software**: Python 3.8~3.14, CUDA (Optional for simulation)
--	**Key Tasks**: AI model (`.onnx`) compilation, Quantization, `.dxnn` generation  
--	**Action**: DX-Compiler Local Installation Guide [Link](./docs/source/02_Setting_Up_Environment.md)
+- **Key Tasks**: AI model (`.onnx`) compilation, Quantization, `.dxnn` generation  
+- **Action**: DX-Compiler Local Installation Guide [Link](./docs/source/02_Setting_Up_Environment.md)
 
 ### AI Model Runtime Environment (Target Device)
 
 This environment is for performing inference and running applications on devices physically equipped with DEEPX NPUs.  
 
--	**Arch**: x86_64, aarch64 
--	**OS**: Ubuntu 26.04 / 24.04 / 22.04 / 20.04 (LTS), Debian 13 / 12
--	**Hardware**: Host PC / Target Board (DEEPX NPU is required)
--	**Software**: Python 3.8+
--	**Key Tasks**: `.dxnn` model execution, real-time data inference, resource management
--	**Action**: DX-Runtime Installation Guide [Link](./docs/source/02_Setting_Up_Environment.md)
+- **Arch**: x86_64, aarch64 
+- **OS**: Ubuntu 26.04 / 24.04 / 22.04 / 20.04 (LTS), Debian 13 / 12
+- **Hardware**: Host PC / Target Board (DEEPX NPU is required)
+- **Software**: Python 3.8+
+- **Key Tasks**: `.dxnn` model execution, real-time data inference, resource management
+- **Action**: DX-Runtime Installation Guide [Link](./docs/source/02_Setting_Up_Environment.md)
 
-> **Warning: Activation Required**  
-> A system reboot is mandatory after installation to properly load the NPU Driver into the kernel.  
-> ```Bash  
+> **Warning: Activation Required (Runtime Environment)**  
+> A system reboot is mandatory after installing DX-Runtime on the target device to properly load the NPU Driver into the kernel. The Compile Environment (Host PC) does not need this step.  
+> ```bash  
 > sudo reboot  
 > ```
 
@@ -162,7 +162,7 @@ guides in [Getting Started](#getting-started).
 
 Prefer containers over a local install? Official Ubuntu 24.04 images are published to GitHub Container Registry, so you can skip building the suite entirely.  
 
-```Bash
+```bash
 docker pull ghcr.io/deepx-ai/dx-runtime:latest
 docker run --rm -it --privileged --ipc=host --pid=host -v /dev:/dev \
     --entrypoint bash ghcr.io/deepx-ai/dx-runtime:latest
@@ -179,11 +179,11 @@ docker run --rm -it --privileged --ipc=host --pid=host -v /dev:/dev \
 This environment schedules DEEPX NPUs across a Kubernetes cluster, so a pod asks for an NPU the
 same way it asks for CPU or memory.
 
--	**Platform**: k3s or vanilla Kubernetes with containerd (CDI is on by default in containerd 2.x)
--	**Hardware**: One or more nodes with DX-M1 installed, each set up as a Runtime Environment above
--	**Components**: Device plugin (`deepx.ai/dx-m1` resource), NFD node labels (firmware/driver versions), CDI injection of the device and runtime libraries, Prometheus metrics, one-command Helm chart (`dx-npu`)
--	**Usage**: Add `resources.limits: {deepx.ai/dx-m1: 1}` to a pod — the scheduler places it on an NPU node and the device arrives inside the container, with no manual device mounts
--	**Action**: [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart.md) · new to Kubernetes? [Beginner Guide](./docs/source/07_Kubernetes_Beginner_Guide.md)
+- **Platform**: k3s or vanilla Kubernetes with containerd (CDI is on by default in containerd 2.x)
+- **Hardware**: One or more nodes with DX-M1 installed, each set up as a Runtime Environment above
+- **Components**: Device plugin (`deepx.ai/dx-m1` resource), NFD node labels (firmware/driver versions), CDI injection of the device and runtime libraries, Prometheus metrics, one-command Helm chart (`dx-npu`)
+- **Usage**: Add `resources.limits: {deepx.ai/dx-m1: 1}` to a pod — the scheduler places it on an NPU node and the device arrives inside the container, with no manual device mounts
+- **Action**: [Kubernetes Quickstart](./docs/source/06_Kubernetes_Quickstart.md) · new to Kubernetes? [Beginner Guide](./docs/source/07_Kubernetes_Beginner_Guide.md)
 
 ## ✨ DEEPX Agent-Driven Development — dx-agent-dev (Beta)
 
