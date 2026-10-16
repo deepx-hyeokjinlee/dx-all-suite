@@ -45,7 +45,7 @@ def model_count(app_root: Path) -> int | None:
         return None
     rows = list(data.values()) if isinstance(data, dict) else data
     dxnn = {r.get("dxnn_file") for r in rows if isinstance(r, dict) and r.get("dxnn_file")}
-    return len(dxnn) if dxnn else len(data)
+    return len(dxnn) if dxnn else len(rows)
 
 
 def task_model_counts(app_root: Path) -> Counter | None:

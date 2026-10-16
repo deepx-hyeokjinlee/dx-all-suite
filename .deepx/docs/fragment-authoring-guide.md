@@ -6,7 +6,7 @@ injected into all platform instruction files (CLAUDE.md, AGENTS.md,
 copilot-instructions.md, etc.) across all 5 repos.
 
 The current `.deepx/templates/fragments/` tree holds **40 files total** (20 EN +
-19 KO), and every EN file must have a same-stem KO counterpart (see Rule 1).
+20 KO), and every EN file must have a same-stem KO counterpart (see Rule 1).
 
 ---
 
