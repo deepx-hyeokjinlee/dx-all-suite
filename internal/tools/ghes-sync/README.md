@@ -36,6 +36,10 @@ public `github.com/DEEPX-AI` export.
   auth hint instead. `gh auth login` on the closed-network machine works with `--with-token` (no browser needed); the
   device/web flow also works if the machine can open `https://github.com/login/device`.
 - If both an env token and a credential helper exist, the header (env token) wins for that call.
+- **The token is chosen by the URL's host, not by the src/dst side.** Both configured hosts are known,
+  so a repo whose dst sits on `github.com` (the public channel) is handed the *mirror* PAT — sending the
+  GHES PAT to github.com is rejected even for a public repo. `GHES_SYNC_TOKEN_<HOST>` (e.g.
+  `GHES_SYNC_TOKEN_GITHUB_COM`) overrides both; a host matching neither keeps using that side's token.
 - **Non-interactive only.** The tool never prompts (`GIT_TERMINAL_PROMPT=0`, no PAT prompt) — interactive logins
   proved unreliable. Before touching a host it runs a **credential preflight**: with no token env for that side it asks
   git's credential helpers (`git credential fill`, no prompt) and, if nothing answers, fails fast with a hint naming the
@@ -62,6 +66,10 @@ forever). Put them in `sync.override.conf` next to it — gitignored, same INI f
 cp internal/tools/ghes-sync/sync.override.conf.example internal/tools/ghes-sync/sync.override.conf
 # then set src_host (your mirror org) and branch (your feature branch) in that file
 ```
+`--branch NAME` passes the feature branch on the command line instead: it beats the config, the
+override file and `GHES_SYNC_BRANCH`, and overrides a per-repo `branch` too (a `dst_branch`
+mapping is left alone).
+
 The two keys are intentionally empty in `sync.conf`; until they are set (override file, `--override FILE`,
 or `GHES_SYNC_SRC_HOST` / `GHES_SYNC_BRANCH` env) the tool exits 2 with a hint. `--print-config` shows which
 override file was applied.
@@ -79,21 +87,57 @@ mode      = pr                              # pr = push + ensure PR · push = pu
 cache_dir = ${XDG_CACHE_HOME:-~/.cache}/ghes-sync
 gitlink_check = strict                      # strict | warn | off
 
-[repo dx_app]           ; section order = processing order (nested repos first)
+[repo dx_rt_npu_linux_driver]   ; section order = processing order (nested repos first)
+[repo dx_rt]
+[repo dx_fw]                                         # the public-channel exception — see below
+sync = off                                           # ghes-sync never fetches/pushes this repo
+ghcloud_url = https://github.com/DEEPX-AI/dx_fw.git  # setup_remotes.sh only: the `ghcloud` remote
+ghcloud_ref = main
+[repo dx_app]
 pr_base = dev
 [repo dx_stream]
 pr_base = dev
 [repo dx-runtime]
-gitlinks = dx_app:dx_app dx_stream:dx_stream         # <repo-name>:<path in this repo>
+gitlinks = dx_rt:dx_rt dx_app:dx_app dx_stream:dx_stream   # <repo-name>:<path in this repo>
 [repo dx-compiler]
 [repo dx-all-suite]
 gitlinks = dx-runtime:dx-runtime dx-compiler:dx-compiler
 ```
 
 Per-repo keys: `src_url`, `dst_url` (full URLs override host+name), `src_host`, `dst_host`,
-`branch`, `dst_branch`, `pr_base`, `mode`, `gitlinks`. Adding a repo = adding a `[repo NAME]`
-section (before any parent that lists it in `gitlinks`). Adding a branch mapping = `branch =` /
-`dst_branch =` in that section, or a second config file (`--config other.conf`).
+`branch`, `dst_branch`, `pr_base`, `mode`, `sync`, `ghcloud_url`, `ghcloud_ref`,
+`allow_foreign_dst`, `gitlinks`. Adding a repo = adding a `[repo NAME]` section (before any parent
+that lists it in `gitlinks`). Adding a branch mapping = `branch =` / `dst_branch =` in that
+section, or a second config file (`--config other.conf`).
+
+`sync = off` keeps a repo in the config for `setup_remotes.sh` while ghes-sync never touches it.
+`allow_foreign_dst = yes` is the explicit opt-in for a push target outside the configured host/org;
+without it such a push is **refused before any network call**, so a per-repo `dst_host` cannot
+quietly put a private branch on someone else's (e.g. public) repo.
+
+### `dx_fw` — the public-channel exception
+
+`dx_fw`'s source lives only on GHES, while the `fw.bin` that actually gets used is published only on
+`github.com/DEEPX-AI/dx_fw`, which GHES never carries. Neither side of the mirror sync is the right
+source, so the repo is `sync = off` and the dev checkout is configured instead:
+
+```bash
+bash internal/tools/ghes-sync/setup_remotes.sh                      # `ghcloud` remote + submodule policy
+bash internal/tools/ghes-sync/setup_remotes.sh --checkout-ghcloud   # …and check out ghcloud/main
+```
+
+That writes three **local** overrides in `dx-runtime` — never `.gitmodules`, which belongs to the GHES
+repo: `submodule.dx_fw.url` = the ghcloud URL, `update = none` so `git submodule update --init` does
+not die on a gitlink the public history has never contained, and `ignore = all` so the deliberately
+different content is not reported as dirty. Back to the GHES source:
+`git -C dx-runtime config --unset-all submodule.dx_fw.url` (same for `.update` / `.ignore`).
+
+On a fresh clone `git submodule update --init` skips `dx_fw` (that is what `update = none` means),
+so the directory stays empty until `--checkout-ghcloud` clones it there — that one command covers
+both the empty-directory and the existing-checkout case.
+
+`dx_fw` is deliberately **not** one of `dx-runtime`'s `gitlinks`: that pointer is a GHES commit the
+ghcloud history does not contain, and the strict gitlink check would block every dx-runtime push.
 
 ## What happens per repo
 

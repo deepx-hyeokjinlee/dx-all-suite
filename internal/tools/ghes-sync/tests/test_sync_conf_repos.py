@@ -84,12 +84,16 @@ def test_nested_repos_precede_the_parent_that_gitlinks_them():
 
 
 def test_suite_gitlinks_list_every_direct_submodule():
+    """Read the submodules from .gitmodules rather than a hand-kept list — that list is
+    how dx-k8s-device-plugin (#104) stayed invisible until the coverage test caught it.
+    A repo configured `sync = off` is exempt: it is never fetched, so its cache cannot
+    hold the pointer and a strict gitlink check could never pass."""
     text = conf_text()
     suite_section = text.split("[repo dx-all-suite]", 1)[1]
-    for name in ("dx-runtime", "dx-compiler", "dx-modelzoo"):
-        assert "%s:%s" % (name, name) in suite_section, (
-            "dx-all-suite gitlinks must include %s" % name
-        )
+    names = re.findall(r'^\[submodule "([^"]+)"\]', GITMODULES.read_text(encoding="utf-8"), re.M)
+    missing = [n for n in names
+               if "%s:%s" % (n, n) not in suite_section and not _is_sync_off(n)]
+    assert not missing, "dx-all-suite gitlinks must include %s" % missing
 
 
 def test_print_config_enumerates_dx_modelzoo(tmp_path):
@@ -143,3 +147,52 @@ def test_setup_remotes_dry_run_reports_dx_modelzoo():
     )
     out = proc.stdout + proc.stderr
     assert "dx-modelzoo" in out, "setup_remotes.sh is still silent about dx-modelzoo:\n" + out
+
+
+# ── dx-runtime's own submodules ──────────────────────────────────────────────
+
+def _section(name: str) -> str:
+    text = conf_text()
+    return text.split("[repo %s]" % name, 1)[1].split("\n[repo ", 1)[0]
+
+
+def test_dx_rt_and_driver_are_configured():
+    """dx_rt / dx_rt_npu_linux_driver are never edited here, but the mirror still
+    has to receive GHES's latest — they need sections like any other sub-repo."""
+    for name in ("dx_rt", "dx_rt_npu_linux_driver"):
+        assert name in conf_sections(), "%s has no [repo] section" % name
+
+
+def test_dx_fw_is_ghcloud_only():
+    """dx_fw's source is GHES-only and its fw.bin is public-channel-only: neither
+    side of the mirror sync is the right source, so it is sync = off + ghcloud_url."""
+    sec = _section("dx_fw")
+    assert re.search(r"^sync\s*=\s*off", sec, re.M), sec
+    assert re.search(r"^ghcloud_url\s*=\s*https://github\.com/DEEPX-AI/dx_fw\.git", sec, re.M), sec
+    assert re.search(r"^path\s*=\s*dx-runtime/dx_fw", sec, re.M), sec
+
+
+def test_dx_runtime_gitlinks_cover_its_synced_submodules_but_not_dx_fw():
+    """A gitlink entry makes the parent's push wait for that sub-repo's cache.
+    dx_fw's gitlink is a GHES commit that the ghcloud mirror never contains, so
+    listing it would block every dx-runtime push for good."""
+    sec = _section("dx-runtime")
+    for name in ("dx_app", "dx_stream", "dx_rt", "dx_rt_npu_linux_driver"):
+        assert "%s:%s" % (name, name) in sec, "dx-runtime gitlinks must include %s" % name
+    assert "dx_fw:dx_fw" not in sec, "dx_fw must NOT be a gitlink target (its pointer is unreachable here)"
+
+
+def _is_sync_off(name: str) -> bool:
+    text = conf_text()
+    if "[repo %s]" % name not in text:
+        return False
+    section = text.split("[repo %s]" % name, 1)[1].split("\n[repo ", 1)[0]
+    return bool(re.search(r"^sync\s*=\s*off", section, re.M))
+
+
+def test_dx_k8s_device_plugin_is_synced():
+    """It has a repo in the mirror org, so it syncs like any other submodule."""
+    assert "dx-k8s-device-plugin" in conf_sections()
+    assert not _is_sync_off("dx-k8s-device-plugin"), "it has a mirror counterpart — do not disable it"
+    assert re.search(r"^path\s*=\s*dx-k8s-device-plugin",
+                     _section("dx-k8s-device-plugin"), re.M), _section("dx-k8s-device-plugin")

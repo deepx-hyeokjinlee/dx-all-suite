@@ -32,6 +32,10 @@ GHES에 접근 가능하고 github.com을 *읽을* 수 있는 기계에서 실�
   도구가 `GIT_TERMINAL_PROMPT=0`을 설정하므로 인증 힌트와 함께 즉시 실패한다. 폐쇄망 기계에서 `gh auth login`은
   `--with-token`으로 브라우저 없이 가능하고, `https://github.com/login/device`를 열 수 있으면 device/web 흐름도 된다.
 - env 토큰과 credential helper가 둘 다 있으면 해당 호출에는 header(env 토큰)가 우선한다.
+- **토큰은 src/dst side가 아니라 URL의 host로 고른다.** 설정된 두 host를 알고 있으므로, dst가
+  `github.com`(공개 채널)에 있는 repo에는 *mirror* PAT가 쓰인다 — GHES PAT를 github.com에 보내면
+  public repo라도 거절된다. `GHES_SYNC_TOKEN_<HOST>`(예: `GHES_SYNC_TOKEN_GITHUB_COM`)가 둘보다
+  우선하며, 두 host 어느 쪽도 아닌 host는 종전대로 그 side의 토큰을 쓴다.
 - **비대화형 전용.** 도구는 절대 묻지 않는다(`GIT_TERMINAL_PROMPT=0`, PAT prompt 없음) — 대화형 로그인은 실제로 안정적으로
   인증되지 않았다. host에 접근하기 전에 **자격증명 preflight**를 수행한다: 해당 쪽 토큰 env가 없으면 git credential helper에
   묻고(`git credential fill`, prompt 없음), 응답이 없으면 env 변수 이름과
@@ -58,6 +62,9 @@ bash internal/tools/ghes-sync/ghes-sync.sh --reviewers dci          # + push가 
 cp internal/tools/ghes-sync/sync.override.conf.example internal/tools/ghes-sync/sync.override.conf
 # 그 파일에서 src_host(본인 미러 org)와 branch(본인 feature 브랜치)를 설정
 ```
+`--branch NAME` 으로 feature 브랜치를 명령줄에서 바로 줄 수도 있다. 설정·override 파일·
+`GHES_SYNC_BRANCH` 를 모두 이기고 repo별 `branch` 도 덮어쓴다(`dst_branch` 매핑은 그대로).
+
 두 키는 `sync.conf`에서 의도적으로 비어 있다. 설정되기 전(override 파일, `--override FILE`, 또는
 `GHES_SYNC_SRC_HOST` / `GHES_SYNC_BRANCH` env)까지 도구는 exit 2와 힌트로 멈춘다. `--print-config`가 적용된 override 파일을 보여 준다.
 
@@ -74,20 +81,55 @@ mode      = pr                              # pr = push + PR 보장 · push = pu
 cache_dir = ${XDG_CACHE_HOME:-~/.cache}/ghes-sync
 gitlink_check = strict                      # strict | warn | off
 
-[repo dx_app]           ; 섹션 순서 = 처리 순서 (nested repo 먼저)
+[repo dx_rt_npu_linux_driver]   ; 섹션 순서 = 처리 순서 (nested repo 먼저)
+[repo dx_rt]
+[repo dx_fw]                                         # 공개 채널 예외 — 아래 참고
+sync = off                                           # ghes-sync가 이 repo를 fetch/push하지 않음
+ghcloud_url = https://github.com/DEEPX-AI/dx_fw.git  # setup_remotes.sh 전용: `ghcloud` remote
+ghcloud_ref = main
+[repo dx_app]
 pr_base = dev
 [repo dx_stream]
 pr_base = dev
 [repo dx-runtime]
-gitlinks = dx_app:dx_app dx_stream:dx_stream         # <repo 이름>:<이 repo 안의 경로>
+gitlinks = dx_rt:dx_rt dx_app:dx_app dx_stream:dx_stream   # <repo 이름>:<이 repo 안의 경로>
 [repo dx-compiler]
 [repo dx-all-suite]
 gitlinks = dx-runtime:dx-runtime dx-compiler:dx-compiler
 ```
 
 repo별 키: `src_url`, `dst_url`(전체 URL이 host+name보다 우선), `src_host`, `dst_host`, `branch`,
-`dst_branch`, `pr_base`, `mode`, `gitlinks`. repo 추가 = `[repo NAME]` 섹션 추가(그 repo를 `gitlinks`로
-가리키는 parent보다 앞에). 브랜치 매핑 추가 = 해당 섹션에 `branch =`/`dst_branch =`, 또는 별도 설정 파일(`--config other.conf`).
+`dst_branch`, `pr_base`, `mode`, `sync`, `ghcloud_url`, `ghcloud_ref`, `allow_foreign_dst`,
+`gitlinks`. repo 추가 = `[repo NAME]` 섹션 추가(그 repo를 `gitlinks`로 가리키는 parent보다 앞에).
+브랜치 매핑 추가 = 해당 섹션에 `branch =`/`dst_branch =`, 또는 별도 설정 파일(`--config other.conf`).
+
+`sync = off`는 repo를 설정에는 남겨 `setup_remotes.sh`가 보게 하면서 ghes-sync는 건드리지 않게 한다.
+`allow_foreign_dst = yes`는 설정된 host/org 밖으로 push하는 것에 대한 명시적 opt-in이다. 없으면 그런
+push는 **네트워크 호출 전에 거부**되므로, repo별 `dst_host` 때문에 private 브랜치가 남의(예: 공개) repo로
+조용히 올라가는 일이 생기지 않는다.
+
+### `dx_fw` — 공개 채널 예외
+
+`dx_fw`의 소스는 GHES에만 있고, 실제로 쓰는 `fw.bin`은 `github.com/DEEPX-AI/dx_fw`에만 올라간다(GHES에는
+그 바이너리가 없다). mirror sync의 어느 쪽도 올바른 소스가 아니므로 이 repo는 `sync = off`이고, 대신
+dev checkout을 구성한다:
+
+```bash
+bash internal/tools/ghes-sync/setup_remotes.sh                      # `ghcloud` remote + submodule 정책
+bash internal/tools/ghes-sync/setup_remotes.sh --checkout-ghcloud   # …추가로 ghcloud/main 체크아웃
+```
+
+이때 `dx-runtime`에 **local** override 3개를 쓴다 — GHES repo 소유인 `.gitmodules`는 건드리지 않는다:
+`submodule.dx_fw.url` = ghcloud URL, `update = none`(공개 history에 없는 gitlink 때문에
+`git submodule update --init`이 죽지 않도록), `ignore = all`(의도적으로 다른 내용이 dirty로 보이지 않도록).
+GHES 소스로 되돌리려면 `git -C dx-runtime config --unset-all submodule.dx_fw.url`(`.update`/`.ignore`도 동일).
+
+새로 clone한 경우 `git submodule update --init`은 `dx_fw`를 건너뛴다(`update = none`의 의미). 그래서
+디렉터리가 비어 있는데, `--checkout-ghcloud`가 그 자리에 clone해 준다 — 빈 디렉터리든 기존 checkout이든
+이 명령 하나로 처리된다.
+
+`dx_fw`는 의도적으로 `dx-runtime`의 `gitlinks`에 **넣지 않는다**: 그 pointer는 ghcloud history에 없는 GHES
+commit이라, strict gitlink 검사가 dx-runtime push를 영구히 막게 된다.
 
 ## repo별 동작
 

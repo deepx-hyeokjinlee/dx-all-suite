@@ -5,6 +5,7 @@ Everything runs against local bare repos and a fake `gh` — no network."""
 from __future__ import annotations
 
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -305,7 +306,13 @@ def test_committed_conf_has_no_hardcoded_mirror_org_or_branch():
     assert re.search(r"^src_host\s*=\s*(#.*)?$", text, re.M), "src_host must be left EMPTY for the user to fill in"
     assert re.search(r"^branch\s*=\s*(#.*)?$", text, re.M), "branch must be left EMPTY for the user to fill in"
     assert "dst_host  = https://gh.deepx.ai/deepx" in text.replace("dst_host =", "dst_host  ="), text
-    assert "git@" not in text and "ghcloud" not in text
+    assert "git@" not in text
+    # ghcloud came back as a PER-REPO source for the one repo whose usable content exists only
+    # on the public channel (dx_fw). It must never be a defaults-level host again (663ff4c).
+    assert not re.search(r"^\s*ghcloud_host\s*=", text, re.M), text
+    for line in (l.strip() for l in text.splitlines()):
+        if line.startswith("ghcloud"):
+            assert re.match(r"^ghcloud_(url|ref)\s*=", line), line
 
 
 def test_committed_conf_refuses_to_run_unedited_with_a_hint(env, tmp_path):
@@ -1380,3 +1387,278 @@ def test_lang_en_full_run_has_no_korean_at_all(env):
     assert r.returncode == 0, o
     assert "FAST-FORWARD" in o and "PR skipped" in o and "SUMMARY" in o
     assert not _HANGUL.search(o), [l for l in o.splitlines() if _HANGUL.search(l)]
+
+
+# ── sync = off: configured (setup_remotes reads it) but never synced ──────────
+
+def test_sync_off_repo_is_never_pushed(env):
+    """dx_fw lives only on the public channel: it must stay in the conf (setup_remotes
+    needs its path/ghcloud_url) while ghes-sync never touches either side."""
+    r = env.repos
+    r.make("dx_app", "dx_fw")
+    r.commit("src", "dx_app", BR, "app", files={"a": "1"})
+    r.commit("src", "dx_fw", BR, "fw", files={"f": "1"})
+    env.write_conf([("dx_app", ""), ("dx_fw", "sync = off")])
+    res = env.run("--no-pr")
+    assert res.returncode == 0, out(res)
+    assert r.rev("dst", "dx_fw", f"refs/heads/{BR}") is None, "a sync=off repo must never be pushed"
+    assert r.rev("dst", "dx_app", f"refs/heads/{BR}"), "the other repos still sync"
+    assert "sync=off" in out(res), out(res)
+
+
+def test_sync_off_repo_is_skipped_in_reverse(env):
+    r = env.repos
+    r.make("dx_fw")
+    r.commit("dst", "dx_fw", "main", "fw on ghes", files={"f": "1"})
+    env.write_conf([("dx_fw", "sync = off")])
+    res = env.run("--reverse")
+    assert res.returncode == 0, out(res)
+    assert r.rev("src", "dx_fw", "refs/heads/main") is None, "a sync=off repo must never be pushed to the mirror"
+    assert "sync=off" in out(res), out(res)
+
+
+def test_sync_off_repo_still_appears_in_print_config(env):
+    env.repos.make("dx_fw")
+    env.write_conf([("dx_fw", "sync = off\nghcloud_url = https://github.com/DEEPX-AI/dx_fw.git\nghcloud_ref = main")])
+    res = env.run("--print-config")
+    assert res.returncode == 0, out(res)
+    sec = re.search(r"\[dx_fw\](.*?)(?=\n\[|\Z)", res.stdout, re.S).group(1)
+    assert "sync = off" in sec, sec
+    assert "ghcloud_url = https://github.com/DEEPX-AI/dx_fw.git" in sec, sec
+    assert "ghcloud_ref = main" in sec, sec
+
+
+def test_invalid_sync_value_is_rejected(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "sync = maybe")])
+    res = env.run("--print-config")
+    assert res.returncode == 2 and "sync" in out(res), out(res)
+
+
+# ── the PAT is chosen by URL host, not by src/dst side ───────────────────────
+
+def _host_conf(env, repo_body: str, *, src_host: str) -> None:
+    env.write_conf([("dx_app", repo_body)])
+    env.conf.write_text(
+        env.conf.read_text(encoding="utf-8").replace(f"src_host = file://{env.repos.src}", f"src_host = {src_host}"),
+        encoding="utf-8")
+
+
+def test_token_is_chosen_by_url_host_not_by_side(env):
+    """dx_fw-style: a dst that lives on the SAME host as the mirror must use the
+    mirror's PAT. Sending the GHES PAT to github.com is rejected even for public repos."""
+    log = env.install_fake_git()
+    env.repos.make("dx_app")
+    _host_conf(env, "dst_url = https://github.invalid/DEEPX-AI/dx_app.git",
+               src_host="https://github.invalid/mirror-org")
+    env.run("--push-only", "--no-pr", "--repo", "dx_app",
+            extra_env={"GHES_SYNC_SRC_TOKEN": "mirrorTOK", "GHES_SYNC_DST_TOKEN": "ghesTOK"})
+    lines = [l for l in log.read_text().splitlines() if "ls-remote" in l and "DEEPX-AI" in l]
+    assert lines, log.read_text()
+    assert all(_b64("mirrorTOK") in l for l in lines), lines
+    assert all(_b64("ghesTOK") not in l for l in lines), lines
+
+
+def test_token_host_override_env_wins(env):
+    log = env.install_fake_git()
+    env.repos.make("dx_app")
+    _host_conf(env, "dst_url = https://github.invalid/DEEPX-AI/dx_app.git",
+               src_host="https://github.invalid/mirror-org")
+    env.run("--push-only", "--no-pr", "--repo", "dx_app",
+            extra_env={"GHES_SYNC_SRC_TOKEN": "mirrorTOK", "GHES_SYNC_DST_TOKEN": "ghesTOK",
+                       "GHES_SYNC_TOKEN_GITHUB_INVALID": "ovTOK"})
+    lines = [l for l in log.read_text().splitlines() if "ls-remote" in l and "DEEPX-AI" in l]
+    assert lines, log.read_text()
+    assert all(_b64("ovTOK") in l for l in lines), lines
+
+
+def test_unknown_host_still_falls_back_to_the_side_token(env):
+    """A dst host that matches neither configured host keeps the old behaviour."""
+    log = env.install_fake_git()
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "dst_url = https://ghes.invalid/deepx/dx_app.git")])
+    env.run("--push-only", "--no-pr", "--repo", "dx_app",
+            extra_env={"GHES_SYNC_SRC_TOKEN": "mirrorTOK", "GHES_SYNC_DST_TOKEN": "ghesTOK"})
+    lines = [l for l in log.read_text().splitlines() if "ls-remote" in l and "ghes.invalid" in l]
+    assert lines and all(_b64("ghesTOK") in l for l in lines), lines
+
+
+# ── "repo is missing" is not "your token was rejected" ───────────────────────
+
+def _git_failing_ls_remote(env, message: str) -> None:
+    """A git shim that fails every ls-remote with *message* (the server's wording is
+    what probe_reason classifies) and delegates everything else to the real git."""
+    real = shutil.which("git")
+    shim = env.bin / "git"
+    shim.write_text(
+        "#!/usr/bin/env bash\n"
+        'for a in "$@"; do\n'
+        '  if [ "$a" = ls-remote ]; then printf \'%s\\n\' ' + repr(message).replace("'", '"') + ' >&2; exit 128; fi\n'
+        "done\n"
+        f'exec "{real}" "$@"\n')
+    shim.chmod(0o755)
+
+
+def test_missing_repo_is_not_reported_as_a_rejected_token(env):
+    env.repos.make("dx_app")
+    env.repos.commit("src", "dx_app", BR, "c", files={"a": "1"})
+    env.write_conf([("dx_app", "")])
+    _git_failing_ls_remote(env, "remote: Repository not found.")
+    r = env.run("--no-pr", "--push-only", "--repo", "dx_app", extra_env={"GHES_SYNC_DST_TOKEN": "dstTOK"})
+    o = out(r)
+    assert r.returncode == 1, o
+    assert "REJECTED" not in o, o
+    assert "repo 가 없거나" in o, o
+    assert "fine-grained" in o, o
+
+
+def test_rejected_token_is_still_reported_as_rejected(env):
+    env.repos.make("dx_app")
+    env.repos.commit("src", "dx_app", BR, "c", files={"a": "1"})
+    env.write_conf([("dx_app", "")])
+    _git_failing_ls_remote(env, "remote: Invalid username or token.")
+    r = env.run("--no-pr", "--push-only", "--repo", "dx_app", extra_env={"GHES_SYNC_DST_TOKEN": "dstTOK"})
+    o = out(r)
+    assert r.returncode == 1, o
+    assert "REJECTED" in o and "GHES_SYNC_DST_TOKEN" in o, o
+
+
+# ── never push outside the configured host/org ───────────────────────────────
+
+def _foreign_dst_conf(env, repo_body: str) -> None:
+    env.write_conf([("dx_app", repo_body)])
+    env.conf.write_text(
+        env.conf.read_text(encoding="utf-8").replace(f"dst_host = file://{env.repos.dst}",
+                                                     "dst_host = https://ghes.invalid/deepx"),
+        encoding="utf-8")
+
+
+def test_push_to_a_foreign_org_is_refused_before_any_network_call(env):
+    """A per-repo dst pointing at another org (e.g. the public channel) must never be
+    pushed to — that is how a private mirror branch ends up on a public repo."""
+    log = env.install_fake_git()
+    env.repos.make("dx_app")
+    env.repos.commit("src", "dx_app", BR, "c", files={"a": "1"})
+    _foreign_dst_conf(env, "dst_url = https://ghes.invalid/other-org/dx_app.git")
+    r = env.run("--no-pr", "--repo", "dx_app", extra_env={"GHES_SYNC_DST_TOKEN": "t"})
+    o = out(r)
+    assert r.returncode == 1, o
+    assert "allow_foreign_dst" in o, o
+    assert not [l for l in log.read_text().splitlines() if "ls-remote" in l and "other-org" in l], \
+        "must refuse before touching the network"
+
+
+def test_allow_foreign_dst_opt_in_lets_it_through(env):
+    log = env.install_fake_git()
+    env.repos.make("dx_app")
+    env.repos.commit("src", "dx_app", BR, "c", files={"a": "1"})
+    _foreign_dst_conf(env, "dst_url = https://ghes.invalid/other-org/dx_app.git\nallow_foreign_dst = yes")
+    r = env.run("--no-pr", "--repo", "dx_app", extra_env={"GHES_SYNC_DST_TOKEN": "t"})
+    o = out(r)
+    assert "allow_foreign_dst = yes 를" not in o, o          # no longer the blocking hint
+    assert [l for l in log.read_text().splitlines() if "ls-remote" in l and "other-org" in l], \
+        "with the opt-in the run proceeds to the network"
+
+
+def test_reverse_refuses_pushing_the_mirror_outside_its_org(env):
+    env.repos.make("dx_app")
+    env.repos.commit("dst", "dx_app", "main", "on ghes", files={"a": "1"})
+    env.write_conf([("dx_app", "src_url = https://github.invalid/other-org/dx_app.git")])
+    env.conf.write_text(
+        env.conf.read_text(encoding="utf-8").replace(f"src_host = file://{env.repos.src}",
+                                                     "src_host = https://github.invalid/mirror-org"),
+        encoding="utf-8")
+    r = env.run("--reverse", "--repo", "dx_app", extra_env={"GHES_SYNC_SRC_TOKEN": "t"})
+    assert r.returncode == 1 and "allow_foreign_dst" in out(r), out(r)
+
+
+def test_pull_only_does_not_trip_the_push_guard(env):
+    env.repos.make("dx_app")
+    env.repos.commit("src", "dx_app", BR, "c", files={"a": "1"})
+    _foreign_dst_conf(env, "dst_url = https://ghes.invalid/other-org/dx_app.git")
+    r = env.run("--pull-only", "--repo", "dx_app", extra_env={"GHES_SYNC_SRC_TOKEN": "t"})
+    assert "allow_foreign_dst" not in out(r), out(r)   # nothing is pushed in --pull-only
+
+
+# ── --branch: the feature branch on the command line, not only in the env ────
+
+def test_branch_option_is_listed_in_help(env):
+    r = env.run("--help")
+    assert r.returncode == 0, out(r)
+    assert "--branch" in r.stdout, "--help must list --branch"
+
+
+def test_branch_option_overrides_defaults_and_env(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "")], branch="conf/branch")
+    r = env.run("--print-config", "--branch", "cli/branch",
+                extra_env={"GHES_SYNC_BRANCH": "env/branch"})
+    assert r.returncode == 0, out(r)
+    assert "branch = cli/branch" in r.stdout, r.stdout
+    assert "conf/branch" not in r.stdout and "env/branch" not in r.stdout, r.stdout
+
+
+def test_branch_option_overrides_a_per_repo_branch(env):
+    """`--branch X` means "sync X" — a per-repo branch mapping must not win over it."""
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "branch = per/repo")])
+    r = env.run("--print-config", "--branch", "cli/branch")
+    assert r.returncode == 0, out(r)
+    app = re.search(r"\[dx_app\](.*?)(?=\n\[|\Z)", r.stdout, re.S).group(1)
+    assert "branch = cli/branch" in app and "per/repo" not in app, app
+
+
+def test_branch_option_needs_a_value(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "")])
+    r = env.run("--print-config", "--branch")
+    assert r.returncode == 2 and "--branch" in out(r), out(r)
+
+
+def test_branch_option_leaves_dst_branch_alone(env):
+    """Only the source branch is overridden; an explicit dst_branch mapping stays."""
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "dst_branch = ghes/target")])
+    r = env.run("--print-config", "--branch", "cli/branch")
+    app = re.search(r"\[dx_app\](.*?)(?=\n\[|\Z)", r.stdout, re.S).group(1)
+    assert "branch = cli/branch" in app and "dst_branch = ghes/target" in app, app
+
+
+# ── gh prints notices on the same stream as the URL ──────────────────────────
+
+def _noisy_gh(env, log_path):
+    """A gh that prints a warning BEFORE and AFTER the URL, like the real one does
+    ("Warning: N uncommitted changes")."""
+    gh = env.bin / "gh"
+    gh.write_text(
+        "#!/usr/bin/env bash\n"
+        f"printf '%s\\n' \"$*\" >> '{log_path}'\n"
+        'case "$1 $2" in\n'
+        "  'pr list') echo '[]';;\n"
+        "  'pr create') echo 'Warning: 2 uncommitted changes'; "
+        "echo 'https://gh.example/deepx/dx_app/pull/42'; echo 'Notice: trailing chatter';;\n"
+        "  *) exit 0;;\n"
+        "esac\n")
+    gh.chmod(0o755)
+
+
+def test_gh_notices_do_not_leak_into_the_pr_summary_cell(env):
+    _basic(env)
+    _noisy_gh(env, env.gh_log)
+    r = env.run("--repo", "dx_app")
+    assert r.returncode == 0, out(r)
+    summary = out(r).split("SUMMARY", 1)[1]
+    row = [l for l in summary.splitlines() if l.strip().startswith("dx_app")][0]
+    assert "pull/42" in row, row
+    assert "Warning" not in row and "Notice" not in row, row
+
+
+def test_pr_number_comes_from_the_url_not_the_trailing_output(env):
+    """The reviewer re-request needs the PR number; parsing digits off the end of the
+    whole output picks up whatever gh printed last."""
+    _basic(env)
+    _noisy_gh(env, env.gh_log)
+    env.run("--repo", "dx_app", "--reviewers", "dci")
+    edits = [c for c in env.gh_calls() if c.startswith("pr edit")]
+    assert edits, env.gh_calls()
+    assert all(c.split()[2] == "42" for c in edits), edits

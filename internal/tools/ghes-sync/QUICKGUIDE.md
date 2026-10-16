@@ -14,8 +14,10 @@ Always start with `--dry-run`; it fetches, classifies and prints every push/PR i
 |---|---|---|
 | `ghes` | `https://gh.deepx.ai/deepx/<repo>.git` | closed-network SCM (source of truth) |
 | `mirror` | `https://github.com/{DEEPX-MIRROR-ORG}/<repo>.git` | private mirror the sync tool reads/writes |
+| `ghcloud` | `https://github.com/DEEPX-AI/<repo>.git` | public channel — **only** for a repo that sets `ghcloud_url` (today: `dx_fw`) |
 
-The public channel (`github.com/DEEPX-AI/*`) is produced by the GHES release export and is not a dev remote.
+The public channel is normally produced by the GHES release export and is not a dev remote; see Scenario 5
+for the one repo where it is the actual source.
 Apply the convention to the suite and its four harness sub-repos in one go (idempotent; `--rename-origin` turns an
 `origin` that equals one of the two into that name; `--dry-run` shows the plan):
 ```bash
@@ -169,3 +171,32 @@ Messages come out in the terminal's language (Korean locale → Korean, otherwis
 | Suite gate red on `main` push while dx_app/dx_stream work sits on `dev` | Expected. The How-to-fix step dispatches (or tells you to run) the gate with `submodule_refs='dx_app=dev dx_stream=dev'`. |
 
 Exit codes: `0` all OK · `1` at least one repo/branch failed · `2` usage/config/setup error.
+
+---
+
+## Scenario 5 — `dx_fw`: the content you need is only on the public channel
+
+`dx_fw`'s source lives on GHES, but the `fw.bin` that gets flashed is published only on
+`github.com/DEEPX-AI/dx_fw`. Mirroring either side would be wrong, so the repo is `sync = off` in
+`sync.conf` and never appears in a sync run except as one `SKIPPED (sync=off)` row.
+
+```bash
+bash internal/tools/ghes-sync/setup_remotes.sh --checkout-ghcloud
+git -C dx-runtime/dx_fw log --oneline -1           # the public channel's tip
+```
+
+(On a fresh clone the directory is still empty — `submodule update --init` skips it — and the same
+command clones it there.)
+
+What that does to `dx-runtime` (local config only — `.gitmodules` belongs to the GHES repo):
+
+| setting | why |
+|---|---|
+| `submodule.dx_fw.url` → ghcloud | the mirror org has no `dx_fw` repo to clone from |
+| `submodule.dx_fw.update = none` | the recorded gitlink is a GHES commit the public history never had, so `git submodule update --init` must skip it instead of failing the whole run |
+| `submodule.dx_fw.ignore = all` | the checked-out content differs from the gitlink **by design** |
+
+Going back to the GHES source: `git -C dx-runtime config --unset-all submodule.dx_fw.url` (and
+`.update` / `.ignore`), then `git -C dx-runtime/dx_fw checkout ghes-main`. The `ghes` remote of that
+checkout is left untouched, so both histories stay available side by side.
+

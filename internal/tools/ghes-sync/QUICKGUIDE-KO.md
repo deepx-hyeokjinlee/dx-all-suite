@@ -13,8 +13,10 @@
 |---|---|---|
 | `ghes` | `https://gh.deepx.ai/deepx/<repo>.git` | 폐쇄망 SCM (원천) |
 | `mirror` | `https://github.com/{DEEPX-MIRROR-ORG}/<repo>.git` | sync 도구가 읽고 쓰는 private 미러 |
+| `ghcloud` | `https://github.com/DEEPX-AI/<repo>.git` | 공개 채널 — `ghcloud_url`을 설정한 repo **전용**(현재: `dx_fw`) |
 
-공개 채널(`github.com/DEEPX-AI/*`)은 GHES release export로 만들어지는 것이라 개발용 remote가 아니다.
+공개 채널은 보통 GHES release export로 만들어지는 것이라 개발용 remote가 아니다. 그것이 실제 소스인
+유일한 repo는 시나리오 5 참고.
 suite와 4개 harness sub-repo에 한 번에 적용한다(idempotent; `--rename-origin`은 두 URL 중 하나와 같은
 `origin`을 그 이름으로 바꿈; `--dry-run`은 계획만 출력):
 ```bash
@@ -158,3 +160,32 @@ release 커밋 등.
 | dx_app/dx_stream 작업이 `dev`에 있는 동안 suite `main` push run이 red | 예상된 상태. How-to-fix step이 `submodule_refs='dx_app=dev dx_stream=dev'` run을 dispatch(또는 실행 방법 안내). |
 
 Exit code: `0` 모두 OK · `1` repo/브랜치 중 하나 이상 실패 · `2` 사용법/설정/환경 오류.
+
+---
+
+## 시나리오 5 — `dx_fw`: 필요한 내용이 공개 채널에만 있을 때
+
+`dx_fw`의 소스는 GHES에 있지만, 실제로 굽는 `fw.bin`은 `github.com/DEEPX-AI/dx_fw`에만 올라온다.
+어느 쪽을 미러링해도 틀리므로 이 repo는 `sync.conf`에서 `sync = off`이고, sync 실행에는
+`SKIPPED (sync=off)` 한 줄로만 나온다.
+
+```bash
+bash internal/tools/ghes-sync/setup_remotes.sh --checkout-ghcloud
+git -C dx-runtime/dx_fw log --oneline -1           # 공개 채널의 tip
+```
+
+(새로 clone한 경우 디렉터리는 아직 비어 있고 — `submodule update --init`이 건너뛴다 — 같은 명령이 그
+자리에 clone해 준다.)
+
+`dx-runtime`에 적용되는 것(local config 전용 — `.gitmodules`는 GHES repo 소유):
+
+| 설정 | 이유 |
+|---|---|
+| `submodule.dx_fw.url` → ghcloud | mirror org에는 clone할 `dx_fw` repo가 없다 |
+| `submodule.dx_fw.update = none` | 기록된 gitlink가 공개 history에 없는 GHES commit이라, `git submodule update --init`이 전체 실패하지 않고 건너뛰어야 한다 |
+| `submodule.dx_fw.ignore = all` | 체크아웃된 내용이 gitlink와 다른 것이 **의도된 상태**다 |
+
+GHES 소스로 되돌리려면 `git -C dx-runtime config --unset-all submodule.dx_fw.url`(`.update`/`.ignore`도)
+실행 후 `git -C dx-runtime/dx_fw checkout ghes-main`. 그 checkout의 `ghes` remote는 그대로 두므로 두
+history를 나란히 쓸 수 있다.
+

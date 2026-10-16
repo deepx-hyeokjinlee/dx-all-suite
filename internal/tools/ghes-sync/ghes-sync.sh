@@ -3,7 +3,7 @@
 # fetch → submodule pointer 검증 → fast-forward push(절대 force 없음) → 설정된 base 브랜치로 PR 생성/갱신.
 #
 # 사용법:
-#   ghes-sync.sh [--config FILE] [--override FILE] [--repo NAME ...] [--pull-only | --push-only]
+#   ghes-sync.sh [--config FILE] [--override FILE] [--branch NAME] [--repo NAME ...] [--pull-only | --push-only]
 #                [--dry-run] [--tags] [--no-pr] [--reviewers A,B] [--update-branch]
 #                [--reverse [--force-with-lease] [--reset-to-base [--no-backup]]]
 #                [--cache-dir DIR] [--print-config] [--lang ko|en] [--help]
@@ -13,6 +13,8 @@
 #                     즉 sync.override.conf — gitignored; sync.override.conf.example 을 복사해서 만든다).
 #                     개인 값(src_host = 내 mirror org, branch = 내 feature 브랜치)은 여기에 두어
 #                     sync.conf 가 `git status` 에 나타나지 않게 한다.
+#   --branch NAME     sync 할 source 브랜치 (설정/override/GHES_SYNC_BRANCH 를 모두 이기고,
+#                     repo별 `branch` 도 덮어쓴다; `dst_branch` 매핑은 건드리지 않는다)
 #   --repo NAME       이 repo만 처리 (반복 가능; 설정 파일의 순서 유지)
 #   --pull-only       src/dst를 로컬 cache로 fetch만 하고 push하지 않음
 #   --push-only       src fetch 생략(cache 사용), dst는 fetch, push 수행
@@ -102,7 +104,7 @@ m() { if [ "$LANG_SEL" = ko ]; then printf '%s' "$1"; else printf '%s' "$2"; fi;
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 CONFIG="$SCRIPT_DIR/sync.conf"
 declare -a ONLY_REPOS=()
-PULL_ONLY=0; PUSH_ONLY=0; DRY_RUN=0; TAGS=0; NO_PR=0; PRINT_CONFIG=0; CACHE_OVERRIDE=""; UPDATE_BRANCH=0; OVERRIDE=""; REVIEWERS_OVERRIDE=""
+PULL_ONLY=0; PUSH_ONLY=0; DRY_RUN=0; TAGS=0; NO_PR=0; PRINT_CONFIG=0; CACHE_OVERRIDE=""; UPDATE_BRANCH=0; OVERRIDE=""; REVIEWERS_OVERRIDE=""; BRANCH_OVERRIDE=""
 REVERSE=0; FORCE_LEASE=0; RESET_TO_BASE=0; NO_BACKUP=0
 
 usage_ko() { sed -n '2,/^set -euo pipefail/p' "${BASH_SOURCE[0]}" | sed '$d' | sed 's/^# \{0,1\}//'; }
@@ -111,7 +113,7 @@ ghes-sync.sh — sync the configured branch of the github.com mirror (src) to th
 fetch → submodule pointer check → fast-forward push (never force) → create/refresh a PR into the configured base.
 
 Usage:
-  ghes-sync.sh [--config FILE] [--override FILE] [--repo NAME ...] [--pull-only | --push-only]
+  ghes-sync.sh [--config FILE] [--override FILE] [--branch NAME] [--repo NAME ...] [--pull-only | --push-only]
                [--dry-run] [--tags] [--no-pr] [--reviewers A,B] [--update-branch]
                [--reverse [--force-with-lease] [--reset-to-base [--no-backup]]]
                [--cache-dir DIR] [--print-config] [--lang ko|en] [--help]
@@ -121,6 +123,9 @@ Usage:
                     directory, i.e. sync.override.conf — gitignored; copy sync.override.conf.example).
                     Personal values (src_host = your mirror org, branch = your feature branch) live here so
                     sync.conf never shows up in `git status`.
+  --branch NAME     the source branch to sync. Beats the config, the override file and
+                    GHES_SYNC_BRANCH, and overrides a per-repo `branch` as well; a
+                    `dst_branch` mapping is left alone.
   --repo NAME       only this repo (repeatable; config order is kept)
   --pull-only       fetch src/dst into the local cache, push nothing
   --push-only       skip the src fetch (use the cache), fetch dst, push
@@ -215,6 +220,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --config)    [ $# -ge 2 ] || die2 "$(m "--config 에 값이 필요합니다" "--config needs a value")"; CONFIG="$2"; shift 2 ;;
     --override)  [ $# -ge 2 ] || die2 "$(m "--override 에 값이 필요합니다" "--override needs a value")"; OVERRIDE="$2"; shift 2 ;;
+    --branch)    [ $# -ge 2 ] || die2 "$(m "--branch 에 값이 필요합니다" "--branch needs a value")"; BRANCH_OVERRIDE="$2"; shift 2 ;;
     --repo)      [ $# -ge 2 ] || die2 "$(m "--repo 에 값이 필요합니다" "--repo needs a value")"; ONLY_REPOS+=("$2"); shift 2 ;;
     --cache-dir) [ $# -ge 2 ] || die2 "$(m "--cache-dir 에 값이 필요합니다" "--cache-dir needs a value")"; CACHE_OVERRIDE="$2"; shift 2 ;;
     --pull-only) PULL_ONLY=1; shift ;;
@@ -263,6 +269,61 @@ RETRIES="${GHES_SYNC_RETRIES:-3}"; RETRY_DELAY="${GHES_SYNC_RETRY_DELAY:-5}"
 # 일시적(재시도 가치가 있는) network/TLS 오류의 stderr 패턴 — 인증 거부나 DNS 실패는 포함하지 않음
 TRANSIENT_RE='GnuTLS|TLS|SSL|RPC failed|early EOF|Connection reset|timed out|remote end hung up|Recv failure|Empty reply|Connection timed'
 
+# ── token 선택: side(src/dst) 가 아니라 URL 의 host 로 고른다 ────────────────
+# 같은 host 에 mirror 와 다른 org(공개 채널 등)가 함께 있을 수 있으므로, side 로 고르면
+# 엉뚱한 PAT 를 보내게 된다(GHES PAT 를 github.com 으로 보내면 public repo 라도 거절된다).
+#   ① GHES_SYNC_TOKEN_<HOST>  (github.com → GHES_SYNC_TOKEN_GITHUB_COM)
+#   ② 설정된 두 host(src_host / dst_host) 중 URL 과 같은 host 쪽의 token
+#   ③ 그 외(설정에 없는 host) 는 종전대로 자기 side 의 token
+host_of() { local h; case "$1" in http://*|https://*) h="${1#*://}"; printf '%s' "${h%%/*}" ;; *) printf '' ;; esac; }
+token_env_for() { printf 'GHES_SYNC_TOKEN_%s' "$(printf '%s' "$1" | tr '[:lower:]' '[:upper:]' | tr '.-' '__')"; }
+SRC_HOST_H=""; DST_HOST_H=""          # 설정 파싱 후 채운다
+TOKEN_VAL=""; TOKEN_VAR=none
+pick_token() {  # pick_token src|dst URL → TOKEN_VAL / TOKEN_VAR (오류 메시지에 쓸 env 변수명)
+  local side="$1" url="$2" host ev
+  if [ "$side" = src ]; then TOKEN_VAL="$SRC_TOKEN"; TOKEN_VAR="$SRC_TOKEN_SRC"
+  else TOKEN_VAL="$DST_TOKEN"; TOKEN_VAR="$DST_TOKEN_SRC"; fi
+  host="$(host_of "$url")"; [ -n "$host" ] || return 0
+  ev="$(token_env_for "$host")"
+  if [ -n "${!ev:-}" ]; then TOKEN_VAL="${!ev}"; TOKEN_VAR="$ev"; return 0; fi
+  if [ "$side" = src ] && [ -n "$DST_HOST_H" ] && [ "$host" = "$DST_HOST_H" ] && [ "$host" != "$SRC_HOST_H" ]; then
+    TOKEN_VAL="$DST_TOKEN"; TOKEN_VAR="$DST_TOKEN_SRC"
+  elif [ "$side" = dst ] && [ -n "$SRC_HOST_H" ] && [ "$host" = "$SRC_HOST_H" ] && [ "$host" != "$DST_HOST_H" ]; then
+    TOKEN_VAL="$SRC_TOKEN"; TOKEN_VAR="$SRC_TOKEN_SRC"
+  fi
+  return 0
+}
+# token_for is the value-only form, written for `$(token_for side url)`: the subshell
+# discards the TOKEN_VAL/TOKEN_VAR it sets, which is exactly what callers of the value
+# want. Anything that needs the env-variable NAME (error messages) must call pick_token
+# directly, in THIS shell — probe_reason is the only such caller.
+token_for() { pick_token "$1" "$2"; printf '%s' "$TOKEN_VAL"; }
+
+# push_target_ok side URL → 0: 허용. push 대상이 설정된 host/org 안인지 확인한다.
+# per-repo dst_host/dst_url override 로 공개 채널(github.com/DEEPX-AI) 같은 남의 org 를 가리켜 두면
+# forward 한 번에 private 브랜치가 공개 repo 로 push + PR 까지 되어 버린다 — 그 사고를 막는다.
+# http(s) 끼리일 때만 검사(file:// 등 로컬/테스트 URL 은 대상 아님). allow_foreign_dst = yes 면 통과.
+push_target_ok() {
+  # `allowed` is the host+org this side is configured to write to: dst_host when pushing
+  # to GHES (forward), src_host when pushing to the mirror (--reverse). The target URL
+  # must sit under it.
+  local side="$1" url="$2" allowed
+  [ "${R_ALLOW_FOREIGN:-}" = yes ] && return 0
+  case "$side" in
+    src) allowed="${DEF[src_host]:-}" ;;
+    *)   allowed="${DEF[dst_host]:-}" ;;
+  esac
+  case "$allowed" in http://*|https://*) ;; *) return 0 ;; esac
+  case "$url"     in http://*|https://*) ;; *) return 0 ;; esac
+  case "$url/"    in "${allowed%/}/"*) return 0 ;; esac
+  return 1
+}
+push_target_msg() {  # push_target_msg side URL
+  local base="${DEF[dst_host]:-}"; [ "$1" = src ] && base="${DEF[src_host]:-}"
+  m "push 대상이 설정된 host/org 밖입니다: $2 (설정: $base). 실수로 남의 org(예: 공개 채널)에 push 하는 것을 막기 위해 차단했습니다 — 의도한 것이면 [repo $R_NAME] 에 allow_foreign_dst = yes 를 추가하세요 (sync 자체를 하지 않을 repo 라면 sync = off)" \
+    "the push target is outside the configured host/org: $2 (configured: $base). Refused so a private branch cannot land in someone else's org (e.g. the public channel) by accident — if it is intended, add allow_foreign_dst = yes to [repo $R_NAME] (or sync = off if the repo should not be synced at all)"
+}
+
 # auth_opts URL TOKEN → http(s) URL이고 TOKEN이 있으면 전역 배열 AUTH_OPTS 를
 # `-c http.<scheme://host>/.extraheader=...` 로, 아니면(file://, ssh, token 없음) 빈 배열로 설정.
 declare -a AUTH_OPTS=()
@@ -303,10 +364,16 @@ probe() {
 # probe_reason src|dst URL RC → 한 줄 진단: timeout / token REJECTED(어느 env 변수) / NETWORK / 기타
 probe_reason() {
   local side="$1" url="$2" rc="$3" var pre=""
-  if [ "$side" = src ]; then var="$SRC_TOKEN_SRC"; else var="$DST_TOKEN_SRC"; fi
+  pick_token "$side" "$url"; var="$TOKEN_VAR"
   [ "$PROBE_TRIES" -gt 1 ] && pre="$(m "${PROBE_TRIES}회 시도 후에도 실패 — " "still failing after ${PROBE_TRIES} attempts — ")"
   if [ "$rc" -eq 124 ]; then printf '%s' "$(m "${pre}probe timeout (${PROBE_TIMEOUT}초, GHES_SYNC_PROBE_TIMEOUT 초과) — 이 기계에서 $url 에 접근 가능한지 확인하세요" "${pre}probe timeout (${PROBE_TIMEOUT}s, GHES_SYNC_PROBE_TIMEOUT exceeded) — check that $url is reachable from this machine")"; return; fi
-  if printf '%s' "$PROBE_ERR" | grep -qiE 'authentication failed|invalid username|invalid (password|token)|error: 401|error: 403|could not read (username|password)|permission denied|repository not found'; then
+  # "repo 가 없다" 는 "token 이 거부됐다" 와 다른 문제다. GitHub/GHES 는 권한이 없는 private repo 에도
+  # 404(Repository not found)를 주므로 둘을 한 문장으로 안내한다 — token 을 다시 발급하라고만 하면 오진이 된다.
+  if printf '%s' "$PROBE_ERR" | grep -qiE 'repository not found|not appear to be a git repository'; then
+    printf '%s' "$(m "${pre}git: $PROBE_ERR — repo 가 없거나 token 에 이 repo 접근 권한이 없습니다 — ① URL/이름 확인: $url ② org 에 repo 가 아직 생성되지 않았을 수 있습니다 ③ fine-grained PAT 의 repository 선택에서 이 repo 가 빠졌을 수 있습니다 (사용된 token: $var)" "${pre}git: $PROBE_ERR — the repo does not exist, or this token cannot see it — (1) check the URL/name: $url (2) the repo may not have been created in that org yet (3) a fine-grained PAT may not list this repository (token used: $var)")"
+    return
+  fi
+  if printf '%s' "$PROBE_ERR" | grep -qiE 'authentication failed|invalid username|invalid (password|token)|error: 401|error: 403|could not read (username|password)|permission denied'; then
     if [ "$var" = none ]; then printf '%s' "$(m "${pre}git: $PROBE_ERR — token env 변수가 설정되지 않았습니다; $(auth_hint "$side" "$url")" "${pre}git: $PROBE_ERR — no token env variable is set; $(auth_hint "$side" "$url")")"
     else printf '%s' "$(m "${pre}git: $PROBE_ERR — $var 의 token이 REJECTED 되었습니다 (revoked/expired, 다른 org, 또는 이 repo 접근 권한 없음). 새 PAT를 발급해 $var 를 다시 export 하세요" "${pre}git: $PROBE_ERR — the token in $var was REJECTED (revoked/expired, wrong org, or no access to this repo). Mint a new PAT and export $var again")"; fi
   elif printf '%s' "$PROBE_ERR" | grep -qiE "could not resolve|unable to access|connection|timed out|ssl|tls|network|$TRANSIENT_RE"; then
@@ -358,7 +425,7 @@ gpush() {
 declare -A DEF=() CFG=()
 declare -a REPOS=()
 KNOWN_DEF="src_host dst_host branch dst_branch pr_base mode cache_dir gitlink_check reverse_branches reviewers"
-KNOWN_REPO="src_url dst_url src_host dst_host branch dst_branch pr_base mode gitlinks reverse_branches path reviewers"
+KNOWN_REPO="src_url dst_url src_host dst_host branch dst_branch pr_base mode sync ghcloud_url ghcloud_ref allow_foreign_dst gitlinks reverse_branches path reviewers"
 
 parse_conf() {  # parse_conf FILE OVERLAY(0|1) — OVERLAY: 기본 파일에 이미 있는 [repo]는 병합(오류 아님)
   local file="$1" overlay="${2:-0}"
@@ -435,6 +502,12 @@ resolve() {
   fi
   R_PR_BASE="$(eff "$name" pr_base)"
   R_MODE="$(eff "$name" mode)"; has_word "$R_MODE" "pr push" || die2 "$(m "[repo $name]: mode 는 pr|push 여야 합니다 (현재 '$R_MODE')" "[repo $name]: mode must be pr|push (got '$R_MODE')")"
+  # sync = on|off — off: 이 repo 는 설정에만 존재(설정/경로는 setup_remotes.sh 가 사용)하고
+  # ghes-sync 는 어느 방향으로도 fetch/push 하지 않는다 (예: dx_fw — 코드는 GHES, 배포 바이너리는 공개 채널).
+  R_SYNC="${CFG[$name.sync]:-on}"; has_word "$R_SYNC" "on off" || die2 "$(m "[repo $name]: sync 는 on|off 여야 합니다 (현재 '$R_SYNC')" "[repo $name]: sync must be on|off (got '$R_SYNC')")"
+  R_GHCLOUD_URL="${CFG[$name.ghcloud_url]:-}"      # setup_remotes.sh 전용: 세 번째 remote(public 채널)
+  R_GHCLOUD_REF="${CFG[$name.ghcloud_ref]:-}"
+  R_ALLOW_FOREIGN="${CFG[$name.allow_foreign_dst]:-}"
   R_GITLINKS="${CFG[$name.gitlinks]:-}"
   R_PATH="${CFG[$name.path]:-}"                    # suite 기준 checkout 경로(setup_remotes.sh)
   R_GL_CHECK="$(eff "$name" gitlink_check)"; has_word "$R_GL_CHECK" "strict warn off" || die2 "$(m "gitlink_check 는 strict|warn|off 여야 합니다" "gitlink_check must be strict|warn|off")"
@@ -470,7 +543,15 @@ OVERRIDE_HINT="$OVERRIDE_FILE $(m "(gitignored; $(dirname "$CONFIG")/sync.overri
 # committed sync.conf 가 의도적으로 비워 둔 값의 env fallback
 [ -n "${DEF[src_host]:-}" ] || DEF[src_host]="${GHES_SYNC_SRC_HOST:-}"
 [ -n "${DEF[dst_host]:-}" ] || DEF[dst_host]="${GHES_SYNC_DST_HOST:-}"
+SRC_HOST_H="$(host_of "${DEF[src_host]:-}")"; DST_HOST_H="$(host_of "${DEF[dst_host]:-}")"
 [ -n "${DEF[branch]:-}" ]   || DEF[branch]="${GHES_SYNC_BRANCH:-}"
+# --branch beats every config source. It also clears a per-repo `branch` (eff() reads CFG
+# before DEF), because "sync THIS branch" is an explicit instruction and a repo-level mapping
+# silently winning over it would be a trap. `dst_branch` mappings are left untouched.
+if [ -n "$BRANCH_OVERRIDE" ]; then
+  DEF[branch]="$BRANCH_OVERRIDE"
+  for n in "${REPOS[@]}"; do unset "CFG[$n.branch]"; done
+fi
 # 빠진 필수 값을 한 번에 모두 보고한다(committed sync.conf 는 src_host 와 branch 를 의도적으로 비워 둠).
 check_required() {
   local n missing="" k
@@ -513,6 +594,10 @@ if [ "$PRINT_CONFIG" -eq 1 ]; then
     printf '[%s]\n' "$n"
     printf '  src_url = %s\n  dst_url = %s\n  path = %s\n  branch = %s\n  dst_branch = %s\n  pr_base = %s\n  mode = %s\n  gitlinks = %s\n  gitlink_check = %s\n' \
       "$R_SRC_URL" "$R_DST_URL" "$R_PATH" "$R_BRANCH" "$R_DST_BRANCH" "$R_PR_BASE" "$R_MODE" "$R_GITLINKS" "$R_GL_CHECK"
+    [ "$R_SYNC" = off ]        && printf '  sync = off\n'
+    [ -n "$R_GHCLOUD_URL" ]    && printf '  ghcloud_url = %s\n' "$R_GHCLOUD_URL"
+    [ -n "$R_GHCLOUD_REF" ]    && printf '  ghcloud_ref = %s\n' "$R_GHCLOUD_REF"
+    [ -n "$R_ALLOW_FOREIGN" ]  && printf '  allow_foreign_dst = %s\n' "$R_ALLOW_FOREIGN"
   done
   exit 0
 fi
@@ -581,7 +666,7 @@ prune_stale_refs() {
 fetch_dst_ref() {
   local cache="$1" url="$2" ref="$3"
   if printf '%s\n' "$DST_HEADS" | grep -qx "refs/heads/$ref"; then
-    auth_opts "$url" "$DST_TOKEN"
+    auth_opts "$url" "$(token_for dst "$url")"
     git "${AUTH_OPTS[@]}" -C "$cache" fetch -q --no-tags "$url" "+refs/heads/$ref:refs/remotes/dst/$ref"
     git -C "$cache" update-ref -d "refs/ghes-sync/absent/$ref" 2>/dev/null || true
   else
@@ -601,7 +686,7 @@ sub_refs() {
   if [ -n "${SYNCED_OK[$sub]:-}" ]; then printf 'refs/remotes/src/%s' "$br"; return; fi
   ensure_cache "$subcache"
   url="${CFG[$sub.dst_url]:-}"; [ -n "$url" ] || url="$(join_url "$(eff "$sub" dst_host)" "$sub")"
-  auth_opts "$url" "$DST_TOKEN"
+  auth_opts "$url" "$(token_for dst "$url")"
   for b in "$dbr" "$pb" main; do
     [ -n "$b" ] || continue; has_word "refs/remotes/dst/$b" "$out" && continue
     if git "${AUTH_OPTS[@]}" -C "$subcache" fetch -q --no-tags "$url" "+refs/heads/$b:refs/remotes/dst/$b" 2>/dev/null; then out="$out refs/remotes/dst/$b"; fi
@@ -665,7 +750,7 @@ merge_update() {  # $1 = 브랜치에 없는 base commit 수; R_*, cache, TIP �
     if [ "$DRY_RUN" -eq 1 ]; then
       rlog "$R_NAME" "$(m "DRY-RUN: $R_PR_BASE ($behind commit) 을 $R_DST_BRANCH 에 merge → $(short "$m") 후 git push $R_DST_URL $(short "$m"):refs/heads/$R_DST_BRANCH" "DRY-RUN: merge $R_PR_BASE ($behind commit) into $R_DST_BRANCH → $(short "$m"), then git push $R_DST_URL $(short "$m"):refs/heads/$R_DST_BRANCH")"
     else
-      if ! gpush "$R_DST_URL" "$DST_TOKEN" "$m:refs/heads/$R_DST_BRANCH"; then
+      if ! gpush "$R_DST_URL" "$(token_for dst "$R_DST_URL")" "$m:refs/heads/$R_DST_BRANCH"; then
         fail "$(m "merge-update commit push 실패 (force 없음) — git: ${GPUSH_ERR:-?}" "push of the merge-update commit failed (no force) — git: ${GPUSH_ERR:-?}")"; return 1
       fi
       git -C "$cache" update-ref "refs/remotes/dst/$R_DST_BRANCH" "$m"; DST_AFTER[$R_NAME]="$m"
@@ -690,6 +775,12 @@ api_base() {  # api_base DST_URL → https://api.github.com | <scheme>://<host>/
   local url="$1" scheme host; scheme="${url%%://*}"; host="${url#*://}"; host="${host%%/*}"
   if [ "$host" = github.com ]; then printf 'https://api.github.com'; else printf '%s://%s/api/v3' "$scheme" "$host"; fi
 }
+# pr_url_of TEXT → the first PR URL in TEXT. `gh` prints notices on the same stream as
+# the URL ("Warning: N uncommitted changes", trailing hints), so the whole output must not
+# be treated as the URL: it lands in the summary's `pr` cell and breaks the table, and the
+# PR number parsed off the end of that blob can come from the wrong line.
+pr_url_of() { printf '%s' "$1" | grep -oE 'https?://[^[:space:]]+/pull/[0-9]+' | head -n1; }
+
 rest_curl() {  # rest_curl OUTFILE METHOD URL [DATAFILE] → http code 출력; DST_TOKEN 은 -K 설정 파일로 전달(argv 아님)
   local out="$1" method="$2" url="$3" data="${4:-}" cfg code
   cfg="$(mktemp)"; chmod 600 "$cfg"
@@ -778,12 +869,15 @@ ensure_pr() {  # R_*, TIP, cache 사용
     PRINFO[$R_NAME]="(dry-run) would create"; rm -f "$body" "$resp"; return 0
   fi
   if [ "$backend" = gh ]; then
-    if url="$(gh pr create -R "$slug" -B "$R_PR_BASE" -H "$R_DST_BRANCH" -t "$title" -F "$body" 2>&1)"; then
+    if ghout="$(gh pr create -R "$slug" -B "$R_PR_BASE" -H "$R_DST_BRANCH" -t "$title" -F "$body" 2>&1)"; then
+      url="$(pr_url_of "$ghout")"
+      num="$(printf '%s' "$url" | grep -oE '[0-9]+$' || true)"
+      # No URL in the output at all: keep the text, but on one line so the summary table survives.
+      [ -n "$url" ] || url="$(printf '%s' "$ghout" | tr '\n' ' ')"
       PRINFO[$R_NAME]="created $url"; rlog "$R_NAME" "$(m "PR 생성됨 $url" "PR created $url")"; rm -f "$body" "$resp"
-      num="$(printf '%s' "$url" | grep -o '[0-9]*$' || true)"
       request_reviewers "$num" "$backend" "$api/repos/$owner/$name" "$slug"; return 0
     fi
-    rm -f "$body" "$resp"; fail "$(m "gh pr create 실패 (브랜치는 push 되었음): $url" "gh pr create failed (the branch was pushed): $url")"; return 1
+    rm -f "$body" "$resp"; fail "$(m "gh pr create 실패 (브랜치는 push 되었음): $(printf '%s' "$ghout" | tr '\n' ' ')" "gh pr create failed (the branch was pushed): $(printf '%s' "$ghout" | tr '\n' ' ')")"; return 1
   fi
   local payload; payload="$(mktemp)"
   printf '{"title":%s,"head":%s,"base":%s,"body":%s}' \
@@ -806,11 +900,12 @@ process() {
   ROWS+=("$R_NAME"); STATUS[$R_NAME]=OK; ACTION[$R_NAME]=-; DETAIL[$R_NAME]=""; PRINFO[$R_NAME]="-"
   hdr "$R_NAME: $R_SRC_URL [$R_BRANCH] → $R_DST_URL [$R_DST_BRANCH]"
   ensure_cache "$cache"
-  if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_SRC_URL" "$SRC_TOKEN"; then fail "$(cred_hint src "$R_SRC_URL")"; return; fi
-  if ! has_creds "$R_DST_URL" "$DST_TOKEN"; then fail "$(cred_hint dst "$R_DST_URL")"; return; fi
+  if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_SRC_URL" "$(token_for src "$R_SRC_URL")"; then fail "$(cred_hint src "$R_SRC_URL")"; return; fi
+  if ! has_creds "$R_DST_URL" "$(token_for dst "$R_DST_URL")"; then fail "$(cred_hint dst "$R_DST_URL")"; return; fi
+  if [ "$PULL_ONLY" -eq 0 ] && ! push_target_ok dst "$R_DST_URL"; then fail "$(push_target_msg dst "$R_DST_URL")"; return; fi
 
   if [ "$PUSH_ONLY" -eq 0 ]; then
-    auth_opts "$R_SRC_URL" "$SRC_TOKEN"
+    auth_opts "$R_SRC_URL" "$(token_for src "$R_SRC_URL")"
     local frc=0
     tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" fetch -q --no-tags "$R_SRC_URL" "+refs/heads/$R_BRANCH:refs/remotes/src/$R_BRANCH" || frc=$?
     if [ "$frc" -eq 124 ]; then fail "$(m "src fetch timeout (${NET_TIMEOUT}초, GHES_SYNC_NET_TIMEOUT) — $R_SRC_URL" "src fetch timeout (${NET_TIMEOUT}s, GHES_SYNC_NET_TIMEOUT) — $R_SRC_URL")"; return
@@ -818,7 +913,7 @@ process() {
     [ "$TAGS" -eq 1 ] && tmo "$NET_TIMEOUT" git "${AUTH_OPTS[@]}" -C "$cache" fetch -q "$R_SRC_URL" "+refs/tags/*:refs/tags/*"
   fi
   local probe_rc=0
-  probe "$R_DST_URL" "$DST_TOKEN" || probe_rc=$?
+  probe "$R_DST_URL" "$(token_for dst "$R_DST_URL")" || probe_rc=$?
   DST_HEADS="$(printf '%s\n' "$PROBE_OUT" | awk '{print $2}')"
   if [ "$probe_rc" -ne 0 ]; then fail "$(m "dst(GHES) 에 접근할 수 없음 — $(probe_reason dst "$R_DST_URL" "$probe_rc")" "cannot reach dst (GHES) — $(probe_reason dst "$R_DST_URL" "$probe_rc")")"; return; fi
   pruned="$(prune_stale_refs "$cache" dst "$DST_HEADS" | tr '\n' ' ')"
@@ -858,7 +953,7 @@ process() {
     if [ "$DRY_RUN" -eq 1 ]; then rlog "$R_NAME" "DRY-RUN: $pushcmd"
     else
       rlog "$R_NAME" "$pushcmd"
-      if ! gpush "$R_DST_URL" "$DST_TOKEN" "refs/remotes/src/$R_BRANCH:refs/heads/$R_DST_BRANCH"; then
+      if ! gpush "$R_DST_URL" "$(token_for dst "$R_DST_URL")" "refs/remotes/src/$R_BRANCH:refs/heads/$R_DST_BRANCH"; then
         fail "$(m "dst push 실패 (force 없음) — git: ${GPUSH_ERR:-?}" "dst push failed (no force) — git: ${GPUSH_ERR:-?}")"; return
       fi
       git -C "$cache" update-ref "refs/remotes/dst/$R_DST_BRANCH" "$S"
@@ -880,7 +975,7 @@ process() {
   if [ "$TAGS" -eq 1 ]; then
     if [ "$DRY_RUN" -eq 1 ]; then rlog "$R_NAME" "DRY-RUN: git push $R_DST_URL 'refs/tags/*:refs/tags/*'"
     else
-      if ! gpush "$R_DST_URL" "$DST_TOKEN" 'refs/tags/*:refs/tags/*'; then fail "$(m "tag push 실패 (tag 는 절대 force 하지 않음) — git: ${GPUSH_ERR:-?}" "tag push failed (tags are never forced) — git: ${GPUSH_ERR:-?}")"; return; fi
+      if ! gpush "$R_DST_URL" "$(token_for dst "$R_DST_URL")" 'refs/tags/*:refs/tags/*'; then fail "$(m "tag push 실패 (tag 는 절대 force 하지 않음) — git: ${GPUSH_ERR:-?}" "tag push failed (tags are never forced) — git: ${GPUSH_ERR:-?}")"; return; fi
     fi
   fi
   ensure_pr || true
@@ -925,11 +1020,13 @@ process_reverse() {
   fi
   hdr "$R_NAME (REVERSE): GHES $R_DST_URL → mirror $R_SRC_URL | $(m "같은 이름으로 sync: ${branches:-없음}" "same-name sync: ${branches:-none}")$( [ "$RESET_TO_BASE" -eq 1 ] && [ -n "$R_PR_BASE" ] && [ "$R_PR_BASE" != "$R_BRANCH" ] && { [ "$PUSH_ONLY" -eq 0 ] && printf ' | reset@GHES: GHES %s <= GHES %s' "$R_BRANCH" "$R_PR_BASE"; [ "$PULL_ONLY" -eq 0 ] && printf ' | reset: mirror %s <= GHES %s' "$R_BRANCH" "$R_PR_BASE"; } )"
   ensure_cache "$cache"
-  if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_DST_URL" "$DST_TOKEN"; then rv_fail_all "$branches" "$(cred_hint dst "$R_DST_URL")"; return; fi
-  if ! has_creds "$R_SRC_URL" "$SRC_TOKEN"; then rv_fail_all "$branches" "$(cred_hint src "$R_SRC_URL")"; return; fi
+  if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_DST_URL" "$(token_for dst "$R_DST_URL")"; then rv_fail_all "$branches" "$(cred_hint dst "$R_DST_URL")"; return; fi
+  if ! has_creds "$R_SRC_URL" "$(token_for src "$R_SRC_URL")"; then rv_fail_all "$branches" "$(cred_hint src "$R_SRC_URL")"; return; fi
+  if [ "$PULL_ONLY" -eq 0 ] && ! push_target_ok src "$R_SRC_URL"; then rv_fail_all "$branches" "$(push_target_msg src "$R_SRC_URL")"; return; fi
+  if [ "$RESET_TO_BASE" -eq 1 ] && [ "$PUSH_ONLY" -eq 0 ] && ! push_target_ok dst "$R_DST_URL"; then rv_fail_all "$branches" "$(push_target_msg dst "$R_DST_URL")"; return; fi
   # FROM = GHES. --push-only 면 생략: cache 에 --pull-only 가 가져온 것이 이미 있음.
   if [ "$PUSH_ONLY" -eq 0 ]; then
-    probe_rc=0; probe "$R_DST_URL" "$DST_TOKEN" || probe_rc=$?
+    probe_rc=0; probe "$R_DST_URL" "$(token_for dst "$R_DST_URL")" || probe_rc=$?
     DST_HEADS="$(printf '%s\n' "$PROBE_OUT" | awk '{print $2}')"
     if [ "$probe_rc" -ne 0 ]; then rv_fail_all "$branches" "$(m "GHES(from) 에 접근할 수 없음 — $(probe_reason dst "$R_DST_URL" "$probe_rc"). GHES 가 이 기계에서 원래 접근 불가라면: 접근 가능한 곳에서 '--reverse --pull-only', 이 기계에서 '--reverse --push-only'" "cannot reach GHES (from) — $(probe_reason dst "$R_DST_URL" "$probe_rc"). If GHES is never reachable from this machine: run '--reverse --pull-only' where it is, then '--reverse --push-only' here")"; return; fi
     DST_LS="$PROBE_OUT"
@@ -942,7 +1039,7 @@ process_reverse() {
     fi
   fi
   # TO = mirror: 항상 probe (분류에 필요), refs/remotes/src/<b> 로 fetch
-  probe_rc=0; probe "$R_SRC_URL" "$SRC_TOKEN" || probe_rc=$?
+  probe_rc=0; probe "$R_SRC_URL" "$(token_for src "$R_SRC_URL")" || probe_rc=$?
   MIRROR_LS="$PROBE_OUT"
   MIRROR_HEADS="$(printf '%s\n' "$MIRROR_LS" | awk '{print $2}')"
   if [ "$probe_rc" -ne 0 ]; then rv_fail_all "$branches" "$(m "mirror(to) 에 접근할 수 없음 — $(probe_reason src "$R_SRC_URL" "$probe_rc")" "cannot reach the mirror (to) — $(probe_reason src "$R_SRC_URL" "$probe_rc")")"; return; fi
@@ -1000,9 +1097,9 @@ process_reverse() {
     if [ "$DRY_RUN" -eq 1 ]; then rlog "$ROW_KEY" "DRY-RUN: $pushcmd"; continue; fi
     rlog "$ROW_KEY" "$pushcmd"
     if [ -n "$lease" ]; then
-      gpush "$R_SRC_URL" "$SRC_TOKEN" "refs/remotes/dst/$b:refs/heads/$b" "$lease" || { fail "$(m "mirror push 실패 — git: ${GPUSH_ERR:-?}" "mirror push failed — git: ${GPUSH_ERR:-?}")"; continue; }
+      gpush "$R_SRC_URL" "$(token_for src "$R_SRC_URL")" "refs/remotes/dst/$b:refs/heads/$b" "$lease" || { fail "$(m "mirror push 실패 — git: ${GPUSH_ERR:-?}" "mirror push failed — git: ${GPUSH_ERR:-?}")"; continue; }
     else
-      gpush "$R_SRC_URL" "$SRC_TOKEN" "refs/remotes/dst/$b:refs/heads/$b" || { fail "$(m "mirror push 실패 (force 없음) — git: ${GPUSH_ERR:-?}" "mirror push failed (no force) — git: ${GPUSH_ERR:-?}")"; continue; }
+      gpush "$R_SRC_URL" "$(token_for src "$R_SRC_URL")" "refs/remotes/dst/$b:refs/heads/$b" || { fail "$(m "mirror push 실패 (force 없음) — git: ${GPUSH_ERR:-?}" "mirror push failed (no force) — git: ${GPUSH_ERR:-?}")"; continue; }
     fi
     git -C "$cache" update-ref "refs/remotes/src/$b" "$S"; DST_AFTER[$ROW_KEY]="$S"
   done
@@ -1069,7 +1166,7 @@ reset_ghes_branch() {
         ts="$(date +%Y%m%d-%H%M%S)"; backup="refs/heads/backup/$b/$ts"
         if [ "$DRY_RUN" -eq 1 ]; then rlog "$ROW_KEY" "DRY-RUN: git push $R_DST_URL $(short "$G"):$backup"
         else
-          gpush "$R_DST_URL" "$DST_TOKEN" "$G:$backup" \
+          gpush "$R_DST_URL" "$(token_for dst "$R_DST_URL")" "$G:$backup" \
             || { fail "$(m "backup 브랜치 $backup 을 GHES 에 push 하지 못함 — 덮어쓰지 않음 — git: ${GPUSH_ERR:-?}" "could not push the backup branch $backup to GHES — not overwriting — git: ${GPUSH_ERR:-?}")"; return; }
           rlog "$ROW_KEY" "$(m "옛 GHES tip 을 $backup 으로 backup" "old GHES tip backed up as $backup")"
         fi
@@ -1082,10 +1179,10 @@ reset_ghes_branch() {
   if [ "$DRY_RUN" -eq 1 ]; then rlog "$ROW_KEY" "DRY-RUN: $pushcmd"; return; fi
   rlog "$ROW_KEY" "$pushcmd"
   if [ -n "$lease" ]; then
-    gpush "$R_DST_URL" "$DST_TOKEN" "$refspec" "$lease" \
+    gpush "$R_DST_URL" "$(token_for dst "$R_DST_URL")" "$refspec" "$lease" \
       || { case "$GPUSH_ERR" in *stale*|*lease*) fail "$(m "fetch 와 push 사이에 GHES 브랜치가 움직였음 (lease) — 재실행하세요 — git: $GPUSH_ERR" "the GHES branch moved between fetch and push (lease) — rerun — git: $GPUSH_ERR")";; *) fail "$(m "GHES push 실패 — git: ${GPUSH_ERR:-?}" "GHES push failed — git: ${GPUSH_ERR:-?}")";; esac; return; }
   else
-    gpush "$R_DST_URL" "$DST_TOKEN" "$refspec" \
+    gpush "$R_DST_URL" "$(token_for dst "$R_DST_URL")" "$refspec" \
       || { fail "$(m "GHES push 실패 (force 없음) — git: ${GPUSH_ERR:-?}" "GHES push failed (no force) — git: ${GPUSH_ERR:-?}")"; return; }
   fi
   git -C "$cache" update-ref "refs/remotes/dst/$b" "$S"; git -C "$cache" update-ref -d "refs/ghes-sync/absent/$b" 2>/dev/null || true
@@ -1102,7 +1199,7 @@ reset_to_base() {
   if [ -z "$S" ]; then fail "$(m "GHES '$base' 가 cache 에 없음 — GHES 접근 가능한 곳에서 먼저 '--reverse --pull-only' 를 실행하세요" "GHES '$base' is not in the cache — run '--reverse --pull-only' where GHES is reachable first")"; return; fi
   # mirror <branch> 는 위 루프에서 fetch 되지 않았을 수 있음 (reverse_branches 에 있을 때만 fetch 됨)
   if printf '%s\n' "$MIRROR_HEADS" | grep -qx "refs/heads/$b"; then
-    auth_opts "$R_SRC_URL" "$SRC_TOKEN"
+    auth_opts "$R_SRC_URL" "$(token_for src "$R_SRC_URL")"
     git "${AUTH_OPTS[@]}" -C "$cache" fetch -q --no-tags "$R_SRC_URL" "+refs/heads/$b:refs/remotes/src/$b"
   else git -C "$cache" update-ref -d "refs/remotes/src/$b" 2>/dev/null || true; fi
   D="$(git -C "$cache" rev-parse -q --verify "refs/remotes/src/$b" 2>/dev/null || true)"
@@ -1126,7 +1223,7 @@ reset_to_base() {
         ts="$(date +%Y%m%d-%H%M%S)"; backup="refs/heads/backup/$b/$ts"
         if [ "$DRY_RUN" -eq 1 ]; then rlog "$ROW_KEY" "DRY-RUN: git push $R_SRC_URL $(short "$D"):$backup"
         else
-          gpush "$R_SRC_URL" "$SRC_TOKEN" "$D:$backup" \
+          gpush "$R_SRC_URL" "$(token_for src "$R_SRC_URL")" "$D:$backup" \
             || { fail "$(m "backup 브랜치 $backup 을 mirror 에 push 하지 못함 — 덮어쓰지 않음 — git: ${GPUSH_ERR:-?}" "could not push the backup branch $backup to the mirror — not overwriting — git: ${GPUSH_ERR:-?}")"; return; }
           rlog "$ROW_KEY" "$(m "옛 mirror tip 을 $backup 으로 backup" "old mirror tip backed up as $backup")"
         fi
@@ -1139,21 +1236,32 @@ reset_to_base() {
   if [ "$DRY_RUN" -eq 1 ]; then rlog "$ROW_KEY" "DRY-RUN: $pushcmd"; return; fi
   rlog "$ROW_KEY" "$pushcmd"
   if [ -n "$lease" ]; then
-    gpush "$R_SRC_URL" "$SRC_TOKEN" "$refspec" "$lease" \
+    gpush "$R_SRC_URL" "$(token_for src "$R_SRC_URL")" "$refspec" "$lease" \
       || { case "$GPUSH_ERR" in *stale*|*lease*) fail "$(m "fetch 와 push 사이에 mirror 브랜치가 움직였음 (lease) — 재실행하세요 — git: $GPUSH_ERR" "the mirror branch moved between fetch and push (lease) — rerun — git: $GPUSH_ERR")";; *) fail "$(m "mirror push 실패 — git: ${GPUSH_ERR:-?}" "mirror push failed — git: ${GPUSH_ERR:-?}")";; esac; return; }
   else
-    gpush "$R_SRC_URL" "$SRC_TOKEN" "$refspec" \
+    gpush "$R_SRC_URL" "$(token_for src "$R_SRC_URL")" "$refspec" \
       || { fail "$(m "mirror push 실패 (force 없음) — git: ${GPUSH_ERR:-?}" "mirror push failed (no force) — git: ${GPUSH_ERR:-?}")"; return; }
   fi
   git -C "$cache" update-ref "refs/remotes/src/$b" "$S"; DST_AFTER[$ROW_KEY]="$S"
   rlog "$ROW_KEY" "$(m "완료. dev checkout 갱신: git fetch mirror && git reset --hard mirror/$b   (remote 이름: setup_remotes.sh)" "done. Refresh your dev checkout: git fetch mirror && git reset --hard mirror/$b   (remote names: setup_remotes.sh)")"
 }
 
+# sync = off 인 repo: 양방향 모두 건너뛰고 요약에 한 줄만 남긴다 (FAIL 아님).
+skip_sync_off() {
+  resolve "$1"
+  ROWS+=("$R_NAME"); STATUS[$R_NAME]=OK; ACTION[$R_NAME]=SKIPPED; PRINFO[$R_NAME]="-"
+  DETAIL[$R_NAME]="$(m "sync=off — ghes-sync 는 이 repo 를 sync 하지 않습니다${R_GHCLOUD_URL:+ (소스: $R_GHCLOUD_URL — setup_remotes.sh 의 ghcloud remote)}" "sync=off — ghes-sync does not sync this repo${R_GHCLOUD_URL:+ (source: $R_GHCLOUD_URL — the ghcloud remote from setup_remotes.sh)}")"
+  rlog "$R_NAME" "${DETAIL[$R_NAME]}"
+}
 if [ "$REVERSE" -eq 1 ]; then
   [ "$UPDATE_BRANCH" -eq 1 ] && warn "$(m "--reverse 에서는 --update-branch 가 무시됩니다" "--update-branch is ignored under --reverse")"
-  for n in "${TARGETS[@]}"; do process_reverse "$n"; done
+  for n in "${TARGETS[@]}"; do
+    if [ "${CFG[$n.sync]:-on}" = off ]; then skip_sync_off "$n"; else process_reverse "$n"; fi
+  done
 else
-  for n in "${TARGETS[@]}"; do process "$n"; done
+  for n in "${TARGETS[@]}"; do
+    if [ "${CFG[$n.sync]:-on}" = off ]; then skip_sync_off "$n"; else process "$n"; fi
+  done
 fi
 
 # ---------------------------------------------------------------------------
