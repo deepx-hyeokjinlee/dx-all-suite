@@ -60,8 +60,10 @@ def _is_capture_device(path: str) -> bool:
         fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
     except OSError:
         return False
+    # A mutable buffer is filled in place; fcntl.ioctl then returns the ioctl's int result, not the buffer.
+    buf = bytearray(104)
     try:
-        buf = fcntl.ioctl(fd, _VIDIOC_QUERYCAP, bytearray(104))
+        fcntl.ioctl(fd, _VIDIOC_QUERYCAP, buf)
     except OSError:
         return False
     finally:
@@ -176,7 +178,10 @@ def probe(kind: str):
             got = None
         if got:
             return bool(got[0]), str(got[1])
-    return _PROBES[kind]()
+    try:
+        return _PROBES[kind]()
+    except Exception as exc:  # noqa: BLE001 - a probe that raises is that kind's NOT RUN reason, not the end of the run
+        return False, f"{kind} probe failed: {type(exc).__name__}: {exc}"
 
 
 def probe_all() -> dict:
