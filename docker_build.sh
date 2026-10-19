@@ -458,6 +458,15 @@ main() {
         IMAGE_TAG_SUFFIX="centos-${CENTOS_VERSION}"
     fi
 
+    # Reject unsupported Ubuntu versions before archiving/building, for every target
+    # (previously only archive_dx-compiler checked; other targets failed late in the Dockerfile)
+    if [ "${BASE_IMAGE_NAME}" = "ubuntu" ]; then
+        case "${OS_VERSION}" in
+            20.04|22.04|24.04|26.04) ;;
+            *) show_help "error" "Unsupported OS version: ubuntu ${OS_VERSION}. Supported versions: Ubuntu 20.04, 22.04, 24.04, 26.04" ;;
+        esac
+    fi
+
     # NVIDIA GPU mode: ubuntu-only (nvidia/cuda base images are ubuntu-based)
     if [ ${NVIDIA_GPU_MODE} -eq 1 ]; then
         if [ "${BASE_IMAGE_NAME}" != "ubuntu" ]; then
