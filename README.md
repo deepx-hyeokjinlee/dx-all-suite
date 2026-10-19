@@ -258,7 +258,9 @@ same way it asks for CPU or memory.
   <img src="./dx-ai-studio/docs/source/resources/hub.png" width="820">
 </div>
 
-**DX AI Studio is here — currently in Beta.** An all-in-one desktop web workspace for building on the DEEPX NPU: eight specialized tools in one browser, launched with a single command — **DX Model Zoo** (model catalog), **DX Compiler** (ONNX/`.pt` → `.dxnn`), **DX App** (inference + one-click **Run Demo**), **DX Stream** (GStreamer pipelines), **DX Benchmark**, **DX Monitor** (live NPU telemetry), **DX EdgeGuide** (deployment planner from measured benchmark data), and **DX Agent Dev** (the agent-driven builder above). Compile a model, run a curated demo, stream a pipeline, and watch NPU utilization live — all on-device.
+**DX AI Studio is here — currently in Beta.** An all-in-one desktop web workspace for building on the DEEPX NPU: **nine specialized tools** in one browser, launched with a single command — **DX Model Zoo** (model catalog), **DX Compiler** (ONNX → `.dxnn`), **DX App** (inference, **Run Demo** and **Graph Composer**), **DX Stream** (GStreamer pipelines), **DX Benchmark**, **DX Monitor** (NPU telemetry), **DX EdgeGuide** (hardware recommendations from benchmark data), **DX Agent Dev** (the agent-driven builder above), and **DX Cloud** (AWS compile and Greengrass device workflows). Local compilation needs the compiler SDK; real NPU inference needs the runtime, driver and NPU. Cloud actions use your AWS environment and can incur charges.
+
+The October 2026 catalog reference contains **497 canonical model variants across 29 tasks**, not 497 distinct architectures; **492** are runnable in DX App's Graph Composer. The Hub's **Build it** presents tool routes or an agent plan before you choose to proceed. Use the left module rail, bottom **Hub** button and top page tabs to navigate.
 
 **Explore the studio →** [`dx-ai-studio/README.md`](./dx-ai-studio/README.md)  ·  **Install & launch →** [Installation and Launch](./dx-ai-studio/docs/source/01_Installation_and_Launch.md)
 

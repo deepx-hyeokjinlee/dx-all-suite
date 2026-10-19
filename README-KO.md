@@ -257,7 +257,9 @@ Kubernetes 클러스터 전체에서 DEEPX NPU를 스케줄링하는 환경입�
   <img src="./dx-ai-studio/docs/source/resources/hub.png" width="820">
 </div>
 
-**DX AI Studio 출시 — 현재 Beta 버전입니다.** DEEPX NPU 위에서 개발하기 위한 올인원 desktop web workspace로, 8개의 전문 도구를 브라우저 하나에서 단일 명령으로 실행합니다 — **DX Model Zoo**(모델 카탈로그), **DX Compiler**(ONNX/`.pt` → `.dxnn`), **DX App**(추론 + 원클릭 **Run Demo**), **DX Stream**(GStreamer 파이프라인), **DX Benchmark**, **DX Monitor**(실시간 NPU telemetry), **DX EdgeGuide**(실측 benchmark 데이터 기반 배포 플래너), **DX Agent Dev**(위의 agent-driven builder). 모델을 컴파일하고, 큐레이션된 demo를 실행하고, 파이프라인을 스트리밍하고, NPU 사용률을 실시간으로 확인 — 모두 on-device로 이루어집니다.
+**DX AI Studio 출시 — 현재 Beta 버전입니다.** DEEPX NPU 위에서 개발하기 위한 올인원 desktop web workspace로, **9개의 전문 도구**를 브라우저 하나에서 단일 명령으로 실행합니다 — **DX Model Zoo**(모델 카탈로그), **DX Compiler**(ONNX → `.dxnn`), **DX App**(추론, **Run Demo**, **Graph Composer**), **DX Stream**(GStreamer pipeline), **DX Benchmark**, **DX Monitor**(NPU telemetry), **DX EdgeGuide**(benchmark 데이터 기반 hardware 추천), **DX Agent Dev**(위의 agent-driven builder), **DX Cloud**(AWS compile 및 Greengrass device workflow). 로컬 컴파일에는 Compiler SDK가, 실제 NPU 추론에는 runtime·driver·NPU가 필요합니다. Cloud 작업은 사용자의 AWS 환경을 이용하고 과금될 수 있습니다.
+
+2026년 10월 기준 카탈로그는 **29개 task의 canonical model variant 497개**이며, 서로 다른 architecture가 497개라는 뜻은 아닙니다. 이 중 **492개**가 DX App의 Graph Composer에서 실행 가능합니다. Hub의 **Build it**은 추천 도구나 agent 계획을 먼저 보여 주고, 사용자가 선택한 뒤 진행합니다. 왼쪽 module rail, 하단 **Hub** 버튼, 상단 page tab으로 이동합니다.
 
 **스튜디오 살펴보기 →** [`dx-ai-studio/README.md`](./dx-ai-studio/README.md)  ·  **설치 및 실행 →** [Installation and Launch](./dx-ai-studio/docs/source/01_Installation_and_Launch.md)
 

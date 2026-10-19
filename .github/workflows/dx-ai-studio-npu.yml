@@ -1,0 +1,102 @@
+# dx-all-suite/.github/workflows/dx-ai-studio-npu.yml
+#
+# The real-NPU tier of the inference triple gate (tests/e2e/ -m e2e_npu).
+#
+# It is NOT part of the blocking PR gate: it needs a DX-M1 plus an installed
+# .dxnn, so gating every PR on it would make merges depend on one board's health.
+# Instead it runs nightly, on demand, and on a PR that opts in with the `run-npu`
+# label — which is the point of having a mock tier that blocks and a hardware tier
+# that verifies.
+#
+# run_ci.sh --npu exports DX_E2E_NPU_STRICT=1, so a missing NPU or model FAILS
+# here instead of skipping. A scheduled job that silently skips would report green
+# while proving nothing, which is the failure mode this tier exists to close.
+name: dx-ai-studio NPU tier
+run-name: dx-ai-studio NPU tier — ${{ github.event_name }}
+
+on:
+  schedule:
+    # 18:00 UTC = 03:00 KST, after the board is idle.
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'Registry model name (dx_app config/test_models.conf)'
+        required: false
+        default: ''
+        type: string
+      model_file:
+        description: 'Absolute path to the .dxnn, if not installed under dx_app/assets/models'
+        required: false
+        default: ''
+        type: string
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  # One NPU on the board — never let two runs contend for it.
+  group: dx-ai-studio-npu
+  cancel-in-progress: false
+
+jobs:
+  npu-tier:
+    name: Inference triple gate (real NPU)
+    # On a PR this runs ONLY for the opt-in label; schedule/dispatch always run.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.label.name == 'run-npu'
+    runs-on:
+      - self-hosted
+      - sdk
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: dx-ai-studio
+    env:
+      DX_E2E_NPU_MODEL: ${{ inputs.model || vars.DX_E2E_NPU_MODEL }}
+      DX_E2E_NPU_MODEL_FILE: ${{ inputs.model_file || vars.DX_E2E_NPU_MODEL_FILE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Report NPU health before testing
+        # Surfaces "driver not built for the running kernel" as a readable first
+        # line instead of an opaque inference failure 5 minutes later. Advisory:
+        # the tier's own strict guard is what actually fails the job.
+        run: |
+          echo "kernel: $(uname -r)"
+          echo "device: $(ls -l /dev/dxrt0 2>&1)"
+          echo "service: $(systemctl is-active dxrt 2>&1)"
+          dkms status 2>&1 | grep -i dxrt || echo "dkms: no dxrt entries"
+
+      - name: Provision test venv
+        run: |
+          set -euo pipefail
+          VENV="$HOME/.cache/dx-ai-studio/venv"
+          if [ ! -x "$VENV/bin/python" ]; then
+            python3 -m venv "$VENV"
+          fi
+          "$VENV/bin/python" -m pip install --upgrade pip
+          "$VENV/bin/python" -m pip install -r requirements-ci.txt
+          echo "VENV_PYTHON=$VENV/bin/python" >> "$GITHUB_ENV"
+
+      - name: Ensure browser engine
+        run: |
+          "$VENV_PYTHON" -m playwright install chromium
+
+      - name: Real-NPU inference tier
+        run: bash scripts/run_ci.sh --npu
+
+      - name: Upload failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npu-tier-traces
+          path: dx-ai-studio/var/e2e-traces/
+          if-no-files-found: ignore
+          retention-days: 14
