@@ -409,7 +409,11 @@ Docker 이미지는 GPU 가속 옵션으로 빌드할 수 있습니다. 두 옵�
 ./docker_down.sh --target=dx-modelzoo --ubuntu_version=24.04 --nvidia_gpu
 ```
 
-dx-modelzoo 컨테이너 내에서는 측정 전 GPU 의존성을 설치하십시오: `pip install -e ".[gpu]"`.
+dx-modelzoo GPU 이미지에는 이미지의 CUDA 버전에 맞는 `onnxruntime-gpu`가 설치되어 있어 별도 설정 없이 ONNX 평가가 GPU로 실행됩니다.
+
+- CUDA 12 이미지: `onnxruntime-gpu<1.27`, CUDA 13 이미지: `onnxruntime-gpu>=1.27`
+- **컨테이너 내에서 `pip install -e ".[gpu]"`를 실행하지 마십시오.** `onnxruntime-gpu`가 최신 릴리스로 올라가 다른 CUDA 메이저 버전용 빌드가 설치되면 평가가 CPU로 폴백됩니다.
+- 확인 방법: `python -c "import onnxruntime as ort; print(ort.__version__)"`를 실행하고, 평가 중 `nvidia-smi`를 확인하십시오.
 dx-compiler의 `q-pro` calibration은 GPU를 자동으로 사용합니다 (`quantization_device` auto-detection).
 
 **B. Intel GPU (VA-API 미디어 가속) — dx-runtime (dx_stream)**

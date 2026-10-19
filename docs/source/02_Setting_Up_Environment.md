@@ -481,7 +481,11 @@ Host requirements: NVIDIA driver and [nvidia-container-toolkit](https://docs.nvi
 ./docker_down.sh --target=dx-modelzoo --ubuntu_version=24.04 --nvidia_gpu
 ```
 
-Inside the dx-modelzoo container, install GPU dependencies before evaluation: `pip install -e ".[gpu]"`.
+The dx-modelzoo GPU image already includes an `onnxruntime-gpu` build that matches the image's CUDA version, so ONNX evaluation runs on the GPU without extra setup.
+
+- CUDA 12 images: `onnxruntime-gpu<1.27`; CUDA 13 images: `onnxruntime-gpu>=1.27`.
+- **Do not run `pip install -e ".[gpu]"` inside the container.** It upgrades `onnxruntime-gpu` to the newest release, which may target a different CUDA major version, and evaluation then falls back to the CPU.
+- To check: `python -c "import onnxruntime as ort; print(ort.__version__)"`, and watch `nvidia-smi` during evaluation.
 For dx-compiler, `q-pro` calibration uses the GPU automatically (`quantization_device` auto-detection).
 
 **B. Intel GPU (VA-API Media Acceleration) — dx-runtime (dx_stream)**
