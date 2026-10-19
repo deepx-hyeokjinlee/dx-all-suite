@@ -489,8 +489,8 @@ Docker Compose를 사용하는 경우, `docker/docker-compose.yml`의 해당 서
 ```YAML
 services:
 dx-runtime:
-		entrypoint: ["/bin/sh", "-c"]
-		command: ["sleep infinity"]
+entrypoint: ["/bin/sh", "-c"]
+command: ["sleep infinity"]
 ```
 
 !!! note "수동 시작"  
