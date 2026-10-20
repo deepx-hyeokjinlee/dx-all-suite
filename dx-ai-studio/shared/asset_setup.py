@@ -48,9 +48,36 @@ def _declaration(script, name, values=None):
     return value
 
 
-def _model_tasks(component, root, model):
+def demo_model_files(root):
+    """The .dxnn files dx_app's run_demo.sh launches (its quoted ``DEMO_MODEL=( … )`` array).
+
+    Read as text, like build.sh's own resolver (scripts/build_target_resolver.sh) — never sourced
+    or executed. Quick Start downloads and requires only this set.
+    """
+    script = Path(root) / "run_demo.sh"
+    try:
+        text = script.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ValueError("Demo model list unavailable: {} ({})".format(script, exc)) from exc
+    match = re.search(r"^DEMO_MODEL=\(\s*$(.*?)^\)", text, re.M | re.S)
+    if match is None:
+        raise ValueError("Demo model list unavailable: no DEMO_MODEL array in {}".format(script))
+    names = []
+    for line in match.group(1).splitlines():
+        line = line.split("#", 1)[0].strip()
+        for token in line.split():
+            token = token.strip("\"'")
+            if token:
+                names.append(_name(token))
+    if not names:
+        raise ValueError("Demo model list unavailable: DEMO_MODEL is empty in {}".format(script))
+    return list(dict.fromkeys(names))
+
+
+def _model_tasks(component, root, model, demo=False):
     if model is not None:
         _name(model)
+    demo_files = set(demo_model_files(root)) if demo and component == "app" else None
     if component == "stream":
         manifest = json.loads((root / "model_list.json").read_text(encoding="utf-8"))
         version = _name(manifest["version"], "Version")
@@ -70,6 +97,8 @@ def _model_tasks(component, root, model):
         tasks = []
         for entry in manifest:
             filename = _url_filename(entry["dxnn_url"])
+            if demo_files is not None and filename not in demo_files:
+                continue
             if model is not None and model.lower() not in (
                     entry["name"].lower(), filename.lower(), Path(filename).stem.lower()):
                 continue
@@ -221,21 +250,40 @@ def _models_location(component, output, resources, suffix):
 
 
 def _local_group(files):
+    """Count files as verified / unverified (present, no current Studio record) / missing.
+
+    ``ok`` means nothing is missing — a present file is installed whether or not Studio
+    recorded its transfer. ``verified`` additionally needs every record; running the step
+    again checks an unverified file's size against the server and records it in place.
+    """
     result = {"ok": False, "verified": 0, "unverified": 0, "missing": 0, "total": len(files)}
     for path in files:
         result[asset_file_status(path)["state"]] += 1
-    result["ok"] = result["total"] > 0 and result["verified"] == result["total"]
+    result["ok"] = result["total"] > 0 and result["missing"] == 0
+    result["all_verified"] = result["total"] > 0 and result["verified"] == result["total"]
     return result
 
 
-def sample_assets_status(component, sdk_root=None, resource_root=None):
-    """Local-only Setup/Quick Start readiness; legacy existence alone is unverified.
+def _group_detail(label, group):
+    text = "{} {}/{}".format(label, group["total"] - group["missing"], group["total"])
+    if group["unverified"]:
+        text += " ({} unverified)".format(group["unverified"])
+    return text
 
-    ``models`` counts manifest artifacts (including JSON sidecars). Video inventory
-    is written only after every archive member completed. Polls read small JSON
-    receipts and stat identities, never remote HEAD/GET or full-file hashes.
+
+def sample_assets_status(component, sdk_root=None, resource_root=None):
+    """Local-only Setup/Quick Start readiness.
+
+    ``ok``: every manifest artifact (models, JSON sidecars) and every video is present.
+    ``demo_ok`` (app): the same for the run_demo.sh demo set Quick Start installs.
+    ``verified``: every present file also has a current Studio completion record; a file
+    without one is reported as unverified, never as missing, and is not re-downloaded for
+    that alone (running the step verifies it by Content-Length).
+    Video inventory is written only after every archive member completed. Polls read small
+    JSON receipts and stat identities, never remote HEAD/GET or full-file hashes.
     """
-    result = {"ok": False, "models": _local_group([]), "videos": _local_group([])}
+    result = {"ok": False, "demo_ok": False, "verified": False,
+              "models": _local_group([]), "videos": _local_group([])}
     try:
         root, resources, output = _roots(component, sdk_root, resource_root)
         tasks, suffix = _model_tasks(component, root, None)
@@ -243,6 +291,14 @@ def sample_assets_status(component, sdk_root=None, resource_root=None):
         if model_output.is_symlink() and model_output.resolve() != expected.resolve():
             raise OSError("Conflicting model symlink: {}".format(model_output))
         result["models"] = _local_group([model_output / name for name, _, _ in tasks])
+        demo_models = result["models"]
+        if component == "app":
+            try:
+                demo_tasks, _ = _model_tasks(component, root, None, demo=True)
+                demo_models = _local_group([model_output / name for name, _, _ in demo_tasks])
+            except ValueError as exc:
+                demo_models = dict(_local_group([]), error=str(exc))
+        result["demo_models"] = demo_models
         _, filename, video_suffix = _video_contract(root)
         videos = output / "videos"
         if videos.is_symlink() and videos.resolve() != (resources / "videos" / video_suffix).resolve():
@@ -264,20 +320,26 @@ def sample_assets_status(component, sdk_root=None, resource_root=None):
             files.append(videos.joinpath(*path.parts))
         result["videos"] = _local_group(files)
         result["ok"] = result["models"]["ok"] and result["videos"]["ok"]
-        result["detail"] = "; ".join(
-            "{}: {}/{} receipt-verified, {} unverified, {} missing".format(
-                label, group["verified"], group["total"], group["unverified"], group["missing"])
-            for label, group in (("model artifacts", result["models"]), ("videos", result["videos"])))
+        result["demo_ok"] = demo_models["ok"] and result["videos"]["ok"]
+        result["verified"] = result["models"]["all_verified"] and result["videos"]["all_verified"]
+        # Short facts joined by " · " (the Setup step list shows each one; setup.js translates them).
+        facts = [_group_detail("models", result["models"]), _group_detail("videos", result["videos"])]
+        if component == "app":
+            facts.insert(0, _group_detail("demo models", demo_models))
+        result["detail"] = " · ".join(facts)
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         result["detail"] = "Unverified sample assets: {}".format(exc)
     return result
 
 
-def install_assets(component, model=None, *, sdk_root=None, resource_root=None,
+def install_assets(component, model=None, *, demo=False, sdk_root=None, resource_root=None,
                    open_url=None, cancel=None, log=print):
-    """Install bundled SDK manifests, preserving directories and conflicting user links."""
+    """Install bundled SDK manifests, preserving directories and conflicting user links.
+
+    ``demo`` (app) installs only the run_demo.sh demo models plus the sample videos (Quick Start).
+    """
     root, resources, output = _roots(component, sdk_root, resource_root)
-    tasks, suffix = _model_tasks(component, root, model)
+    tasks, suffix = _model_tasks(component, root, model, demo=demo)
     model_output, model_expected = _models_location(component, output, resources, suffix)
     models = _layout(model_output, model_expected)
     if model is None:
@@ -315,6 +377,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("component", choices=("app", "stream"))
     parser.add_argument("--model", help="Install only one model named in the SDK manifest (no videos)")
+    parser.add_argument("--demo", action="store_true",
+                        help="Install only the models dx_app's run_demo.sh launches, plus the videos")
     args = parser.parse_args(argv)
 
     def cancelled(signum, frame):
@@ -322,7 +386,7 @@ def main(argv=None):
 
     previous = signal.signal(signal.SIGTERM, cancelled)
     try:
-        install_assets(args.component, model=args.model)
+        install_assets(args.component, model=args.model, demo=args.demo)
         return 0
     except (DownloadCancelled, KeyboardInterrupt) as exc:
         print("[CANCELLED] {}".format(exc), file=sys.stderr, flush=True)

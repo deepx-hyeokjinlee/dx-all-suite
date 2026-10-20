@@ -300,7 +300,7 @@ def test_correct_dangling_sample_symlink_is_kept_on_cancel(tmp_path):
 
 
 @pytest.mark.parametrize("component", ["app", "stream"])
-def test_local_readiness_never_approves_existing_partials_and_never_uses_network(tmp_path, monkeypatch, component):
+def test_local_readiness_never_verifies_existing_partials_and_never_uses_network(tmp_path, monkeypatch, component):
     module = assets()
     check = getattr(module, "sample_assets_status", None)
     assert callable(check), "Need shared local-only sample readiness"
@@ -322,8 +322,12 @@ def test_local_readiness_never_approves_existing_partials_and_never_uses_network
     module.install_assets(component, sdk_root=root, resource_root=resources, open_url=opener([], archive()))
     result = check(component, sdk_root=root, resource_root=resources)
     assert result["ok"] is True, result
+    assert result["verified"] is True, result
     (output / "models" / "tiny.dxnn").write_bytes(b"other")
-    assert check(component, sdk_root=root, resource_root=resources)["ok"] is False
+    changed = check(component, sdk_root=root, resource_root=resources)
+    # Changed after its record: present but unverified (never shown as verified, never as missing).
+    assert changed["verified"] is False
+    assert changed["models"]["unverified"] == 1 and changed["models"]["missing"] == 0
 
 
 def test_single_app_model_keeps_manifest_json_sidecar_and_layout(tmp_path, monkeypatch):

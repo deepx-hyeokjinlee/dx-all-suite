@@ -132,18 +132,31 @@ def test_all_failed_slots_keep_their_individual_diagnostics_after_reset(page):
     assert page.locator("#c-start-btn").is_enabled() and page.locator("#c-stop-btn").is_hidden()
 
 
-def test_setup_shows_explicit_xvfb_install_guidance_without_running_it(page):
+def test_setup_reports_xvfb_as_a_separate_optional_requirement_without_running_it(page):
+    """Xvfb is not installed by any step (dx_app install.sh --all never does), so it is shown
+    beside the list as an optional Live requirement with the exact command, not as a step gate."""
+    started = []
+    page.on("request", lambda request: started.append(request.url)
+            if request.method == "POST" and request.url.endswith("/api/setup/run") else None)
     page.route("**/api/setup/status", lambda route: route.fulfill(json={
-        "dx-app-deps": {"ok": False, "detail": "cmake · gcc · missing: Xvfb"},
         **{key: {"ok": True, "detail": "ready"} for key in
-           ("dx-rt-deps", "dx-rt-build", "dx-driver", "dx-app-build", "dx-app-setup")},
+           ("dx-app-deps", "dx-rt-deps", "dx-rt-build", "dx-driver", "dx-app-build", "dx-app-setup")},
+        "live-display": {"ok": False, "optional": True, "hint": "sudo apt install xvfb",
+                         "detail": "Xvfb not installed · sudo apt install xvfb"},
     }))
-    page.evaluate("nav('setup')")
-    page.wait_for_selector('[data-step="dx-app-deps"].is-open')
-    assert "sudo apt install xvfb" in page.locator('[data-step="dx-app-deps"]').inner_text()
+    with page.expect_response(lambda response: response.url.endswith("/api/setup/status")):
+        page.evaluate("nav('setup')")
+    box = page.locator("#setup-live-display")
+    page.wait_for_function("() => document.getElementById('setup-live-display').dataset.ok === 'false'")
+    assert box.is_visible()
+    assert "sudo apt install xvfb" in box.inner_text()
+    assert "Optional" in box.inner_text() and "Xvfb not installed" in box.inner_text()
+    assert "xvfb" not in page.locator('[data-step="dx-app-deps"]').inner_text().lower()
+    assert page.locator('[data-step="dx-app-deps"]').get_attribute("data-state") == "done"
+    assert not started, "an optional requirement is reported, never installed"
 
 
-def test_quick_start_describes_full_preparation_and_never_runs_it_on_status_read(page):
+def test_quick_start_describes_the_demo_preparation_and_never_runs_it_on_status_read(page):
     started = []
     page.on("request", lambda request: started.append(request.url)
             if request.method == "POST" and request.url.endswith("/api/setup/run") else None)
@@ -154,9 +167,27 @@ def test_quick_start_describes_full_preparation_and_never_runs_it_on_status_read
     with page.expect_response(lambda response: response.url.endswith("/api/setup/status")):
         page.evaluate("nav('setup')")
     text = page.locator("#setup-quickstart").inner_text()
-    assert "full C++ build and all sample assets" in text
-    assert "downloads only the required models" not in text
+    assert "demo C++ runners and demo models" in text
+    assert "full C++ build" not in text
     assert not started, "checking missing prerequisites must never start an installer"
+
+
+def test_quick_start_runs_the_demo_form_of_the_build_and_asset_steps(page):
+    runs = []
+
+    def run(route):
+        runs.append(route.request.post_data_json)
+        route.fulfill(json={"ok": True, "started": True})
+
+    page.route("**/api/setup/quick-start-plan", lambda route: route.fulfill(json={"plan": ["dx-app-setup"]}))
+    page.route("**/api/setup/run", run)
+    page.route("**/api/setup/log", lambda route: route.fulfill(json={"log": "", "done": True, "exit_code": 0}))
+    page.evaluate("nav('setup')")
+    page.evaluate("setupDemoQuickStart()")
+    page.wait_for_function("() => document.getElementById('setup-try-demo').style.display === ''")
+    assert runs and runs[0]["step"] == "dx-app-setup" and runs[0]["demo_only"] is True
+    assert page.evaluate("_setupDemoParams('dx-app-build')") == {"demo_only": True}
+    assert page.evaluate("_setupDemoParams('dx-rt-build')") == {}
 
 
 def test_camera_runtime_failure_is_not_reported_as_no_cameras_and_can_retry(page):

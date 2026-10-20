@@ -98,20 +98,26 @@ def test_opener_failure_finishes_state(monkeypatch, tmp_path):
     assert "invalid proxy CA" in status["results"][0]["error"]
 
 
-def test_installed_flag_does_not_hide_a_legacy_partial(monkeypatch, tmp_path):
+def test_a_downloaded_file_without_a_record_is_shown_downloaded_but_unverified(monkeypatch, tmp_path):
+    """Already-downloaded models (e.g. by the SDK's own downloader) are not "not downloaded";
+    without a Studio record they are flagged unverified so the user can verify them."""
     monkeypatch.setattr(modelzoo, "_CHIP_DIRS", {"qlite": (tmp_path, "assets/models")})
-    (tmp_path / "model.dxnn").write_bytes(b"bad")
-    models = [{"qlite": {"dxnn_url": "https://example/model.dxnn", "exists": True}}]
+    (tmp_path / "model.dxnn").write_bytes(b"from elsewhere")
+    models = [{"qlite": {"dxnn_url": "https://example/model.dxnn", "exists": False}}]
+    modelzoo._refresh_exists(models)
+    assert models[0]["qlite"]["exists"] is True
+    assert models[0]["qlite"]["install_state"] == "unverified"
+    (tmp_path / "model.dxnn").unlink()
     modelzoo._refresh_exists(models)
     assert models[0]["qlite"]["exists"] is False
-    assert models[0]["qlite"]["install_state"] == "unverified"
+    assert models[0]["qlite"]["install_state"] == "missing"
 
 
-def test_public_payload_tier_does_not_approve_a_legacy_partial(monkeypatch, tmp_path):
+def test_public_payload_tier_reports_an_unrecorded_file_as_unverified(monkeypatch, tmp_path):
     monkeypatch.setattr(modelzoo, "_CHIP_DIRS", {"qlite": (tmp_path, "assets/models")})
-    (tmp_path / "model.dxnn").write_bytes(b"bad")
+    (tmp_path / "model.dxnn").write_bytes(b"from elsewhere")
     tier = modelzoo._tier_block({"artifacts": {"qlite_dxnn": "https://example/model.dxnn"}}, "qlite")
-    assert tier["exists"] is False
+    assert tier["exists"] is True and tier["install_state"] == "unverified"
 
 
 def test_installed_receipt_is_cheap_and_metadata_sidecar_is_required(monkeypatch, tmp_path):

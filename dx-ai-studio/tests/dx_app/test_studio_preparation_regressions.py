@@ -64,12 +64,15 @@ def test_assets_use_studio_entrypoint_not_sdk_bulk_setup():
 
 
 def test_minimal_build_does_not_skip_graph_preparation(app_tree):
+    """The full step (Run All) still needs the Graph binaries a --minimal build lacks (SR-842);
+    Quick Start, which builds --minimal for the demos, does not wait for them."""
     root, build = app_tree
     _example(root, build)
     status = setup_steps.setup_status()["dx-app-build"]
     assert not status["ok"], status
+    assert status["demo_ok"], status
     assert "multi_model_graph_sync" in status["detail"]
-    assert "dx-app-build" in setup_steps.quick_start_plan()
+    assert "dx-app-build" not in setup_steps.quick_start_plan()
 
 
 def test_graphs_alone_are_not_a_complete_demo_build(app_tree):
@@ -114,16 +117,100 @@ def test_graph_missing_message_names_existing_full_or_targeted_build(monkeypatch
     assert "./build.sh --target multi_model_graph_sync multi_model_graph_async" in str(missing.value)
 
 
-def test_xvfb_is_checked_with_actionable_manual_setup_guidance(app_tree, monkeypatch):
+def _without(monkeypatch, *missing):
     original = setup_steps.shutil.which
     monkeypatch.setattr(setup_steps.shutil, "which",
-                        lambda name, **kw: None if name == "Xvfb" else original(name, **kw))
-    status = setup_steps.setup_status()["dx-app-deps"]
-    assert not status["ok"]
-    assert "Xvfb" in status["detail"]
+                        lambda name, **kw: None if name in missing else (original(name, **kw) or "/usr/bin/" + name))
+
+
+def test_xvfb_is_a_separate_optional_live_requirement_not_a_dx_app_deps_gate(app_tree, monkeypatch):
+    """dx_app install.sh --all never installs Xvfb, so gating dx-app-deps on it made Run All and
+    Quick Start re-run sudo install.sh forever on a board without Xvfb."""
+    _without(monkeypatch, "Xvfb")
+    status = setup_steps.setup_status()
+    assert status["dx-app-deps"]["ok"], status["dx-app-deps"]
+    assert "Xvfb" not in status["dx-app-deps"]["detail"]
+    live = status["live-display"]
+    assert live["ok"] is False and live["optional"] is True
+    assert live["hint"] == "sudo apt install xvfb"
+    assert "sudo apt install xvfb" in live["detail"]
+    assert "dx-app-deps" not in setup_steps.quick_start_plan()
+    assert "live-display" not in setup_steps.quick_start_plan()
+    assert "live-display" not in setup_steps.SETUP_STEPS, "no installer step runs apt for it"
     diag = next((c for c in setup_steps.deep_diagnostics()["checks"] if c["id"] == "live_display"), None)
     assert diag and not diag["ok"], "Setup diagnostics must check the Live display prerequisite"
     assert all("sudo apt install xvfb" in text for text in diag["fix"].values())
+    assert "optional" in diag["label"]["en"].lower()
+    _without(monkeypatch)
+    assert setup_steps.setup_status()["live-display"]["ok"] is True
+
+
+def test_dx_app_deps_still_needs_the_compiler_toolchain(app_tree, monkeypatch):
+    _without(monkeypatch, "cmake")
+    status = setup_steps.setup_status()["dx-app-deps"]
+    assert not status["ok"] and "cmake" in status["detail"]
+
+
+def _run_demo(root, *stems):
+    (root / "run_demo.sh").write_text(
+        "DEMO_MODEL=(\n" + "".join('    "{}.dxnn"\n'.format(stem) for stem in stems) + ")\n")
+
+
+def _plain_example(root, build, name, built):
+    folder = root / "src" / "cpp_example" / "object_detection" / name
+    folder.mkdir(parents=True)
+    for variant in ("sync", "async"):
+        (folder / f"{name}_{variant}.cpp").write_text("int main() { return 0; }\n")
+        if built:
+            _executable(build / f"{name}_{variant}")
+
+
+def test_build_readiness_is_the_demo_runners_and_graph_not_every_target(app_tree):
+    """An optional per-model target that is not built (or fails to build on this board) must not
+    keep the step "not ready" forever; the demo runners and the Graph binaries are the promise."""
+    root, build = app_tree
+    _run_demo(root, "detector")
+    _example(root, build)
+    _plain_example(root, build, "extra", built=False)
+    _graphs(build)
+    dx_app_layout.clear_cache()
+    status = setup_steps.setup_status()["dx-app-build"]
+    assert status["ok"] and status["demo_ok"], status
+    assert status["complete"] is False
+    assert "demo C++ 2/2" in status["detail"] and "all C++ 2/4" in status["detail"]
+    (build / "detector_async").unlink()
+    status = setup_steps.setup_status()["dx-app-build"]
+    assert not status["ok"] and not status["demo_ok"]
+    assert "detector_async" in status["detail"]
+
+
+def test_quick_start_needs_only_the_demo_build_and_demo_assets(app_tree, monkeypatch):
+    from shared import asset_setup
+
+    root, build = app_tree
+    _run_demo(root, "detector")
+    _example(root, build)               # demo runners built, Graph binaries not
+    dx_app_layout.clear_cache()
+    monkeypatch.setattr(asset_setup, "sample_assets_status", lambda *a, **k: {
+        "ok": False, "demo_ok": True, "verified": False, "detail": "demo models 1/1 · models 1/497"})
+    status = setup_steps.setup_status()
+    assert not status["dx-app-build"]["ok"] and status["dx-app-build"]["demo_ok"]
+    plan = setup_steps.quick_start_plan()
+    assert "dx-app-build" not in plan and "dx-app-setup" not in plan, plan
+
+
+def test_quick_start_runs_the_minimal_build_and_the_demo_download():
+    """demo_only reached setup_run but a "cmd" step ignored args, so Quick Start downloaded the
+    whole manifest; the build step ran --all."""
+    argv, _ = setup_steps.step_argv("dx-app-setup", {"demo_only": True})
+    assert argv == [sys.executable, "-m", "shared.asset_setup", "app", "--demo"]
+    argv, _ = setup_steps.step_argv("dx-app-setup", {})
+    assert argv == [sys.executable, "-m", "shared.asset_setup", "app"]
+    argv, _ = setup_steps.step_argv("dx-app-build", {"demo_only": True})
+    assert "--minimal" in argv and "--all" not in argv
+    assert argv[argv.index("--arch") + 1] == "x86_64"
+    argv, _ = setup_steps.step_argv("dx-app-build", {})
+    assert "--all" in argv and "--minimal" not in argv
 
 
 @pytest.mark.parametrize("available", [False, True])
@@ -190,7 +277,8 @@ def test_asset_readiness_uses_local_validation_not_any_nonempty_model_and_video(
         (assets / folder / name).write_bytes(b"bad")
     monkeypatch.setattr(setup_steps, "ASSETS_DIR", assets)
     calls = []
-    status = {"ok": verified, "detail": "verified transfers" if verified else "unverified legacy assets"}
+    status = {"ok": verified, "demo_ok": verified,
+              "detail": "verified transfers" if verified else "unverified legacy assets"}
 
     def local_status(component, sdk_root=None, resource_root=None):
         calls.append((component, sdk_root))
@@ -200,3 +288,20 @@ def test_asset_readiness_uses_local_validation_not_any_nonempty_model_and_video(
     assert setup_steps.setup_status()["dx-app-setup"] == status
     assert calls == [("app", root)]
     assert ("dx-app-setup" in setup_steps.quick_start_plan()) == (not verified)
+
+
+def test_live_start_without_xvfb_fails_with_the_same_install_hint(monkeypatch):
+    """No step installs Xvfb, so Live start is where its absence must be explained (SR-845)."""
+    from dx_app.core import camera, graph_live, live
+
+    _without(monkeypatch, "Xvfb")
+    monkeypatch.setattr(live.shutil if hasattr(live, "shutil") else setup_steps.shutil, "which",
+                        lambda name, **kw: None if name == "Xvfb" else "/usr/bin/" + name)
+    monkeypatch.setattr(camera, "_xlib", lambda: object())
+    monkeypatch.setattr(camera, "_xcb", lambda: object())
+    result = live._start_live("demo", "object_detection", "m.dxnn", "cpp", "sync", "camera",
+                              0, None, None, 0, 1)
+    body = result[0] if isinstance(result, tuple) else result
+    assert body["error_key"] == "live_deps_missing", body
+    assert setup_steps.LIVE_DISPLAY_HINT in body["error"]
+    assert any(setup_steps.LIVE_DISPLAY_HINT in item for item in graph_live._deps_missing())

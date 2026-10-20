@@ -1,0 +1,105 @@
+"""Sample-asset readiness matches what each step promises (S4 review of SR-848 follow-up).
+
+* Quick Start promises the demo set — the models dx_app's run_demo.sh launches plus the videos —
+  and only that set is downloaded and required.
+* The full Sample Assets step promises the whole manifest.
+* A file that is present but has no Studio verification record is *unverified*, not *missing*:
+  it counts as installed, is reported separately, and running the step again verifies it by
+  Content-Length without downloading the body again.
+"""
+import json
+
+import pytest
+
+from tests.shared.test_asset_setup import archive, assets, opener, sdk
+
+DEMO_SH = '''#!/bin/bash
+DEMO_MODEL=(
+    "tiny.dxnn"   # the one demo model
+)
+DEMO_VIDEO=(
+    "assets/videos/dance.mov"
+)
+'''
+
+
+def _app_sdk(tmp_path):
+    root = sdk(tmp_path, "app")
+    (root / "scripts" / "modelzoo_manifest.json").write_text(json.dumps([
+        {"name": "Tiny", "dxnn_url": "https://sdk.deepx.ai/modelzoo/dxnn/2_4_0/tiny.dxnn",
+         "json_url": "https://sdk.deepx.ai/modelzoo/json/2_4_0/tiny.json"},
+        {"name": "Huge", "dxnn_url": "https://sdk.deepx.ai/modelzoo/dxnn/2_4_0/huge.dxnn",
+         "json_url": None},
+    ]))
+    (root / "run_demo.sh").write_text(DEMO_SH)
+    return root
+
+
+@pytest.fixture
+def app(tmp_path, monkeypatch):
+    monkeypatch.delenv("DX_APP_MODELS_DIR", raising=False)
+    return _app_sdk(tmp_path), tmp_path / "res"
+
+
+def test_demo_install_downloads_only_the_run_demo_models_and_the_videos(app):
+    module = assets()
+    root, resources = app
+    calls = []
+    module.install_assets("app", demo=True, sdk_root=root, resource_root=resources,
+                          open_url=opener(calls, archive()))
+    names = [url.rsplit("/", 1)[-1] for url in calls]
+    assert "huge.dxnn" not in names
+    assert {"tiny.dxnn", "tiny.json"} <= set(names)
+    assert any(name.endswith(".tar.gz") for name in names), "demos need the sample videos"
+    status = module.sample_assets_status("app", sdk_root=root, resource_root=resources)
+    assert status["demo_ok"] is True, status
+    assert status["ok"] is False, "the full step still promises the whole manifest"
+    assert status["models"]["missing"] == 1
+
+
+def test_the_cli_demo_flag_reaches_install(app, monkeypatch):
+    module = assets()
+    seen = {}
+    monkeypatch.setattr(module, "install_assets", lambda component, **kw: seen.update(kw, c=component))
+    assert module.main(["app", "--demo"]) == 0
+    assert seen["demo"] is True and seen["c"] == "app"
+
+
+def test_a_demo_request_without_the_sdk_demo_list_fails_clearly(app):
+    module = assets()
+    root, resources = app
+    (root / "run_demo.sh").unlink()
+    with pytest.raises(ValueError, match="run_demo.sh"):
+        module.install_assets("app", demo=True, sdk_root=root, resource_root=resources,
+                              open_url=opener([], archive()))
+
+
+def test_present_without_a_record_is_unverified_not_missing(app):
+    module = assets()
+    root, resources = app
+    module.install_assets("app", sdk_root=root, resource_root=resources, open_url=opener([], archive()))
+    models = root / "assets" / "models"
+    # A file another tool (the SDK's own downloader) wrote: present, no Studio record.
+    (models / "huge.dxnn").write_bytes(b"from the sdk downloader")
+    status = module.sample_assets_status("app", sdk_root=root, resource_root=resources)
+    assert status["ok"] is True, "a present file is installed; it is not re-downloaded for a missing record"
+    assert status["verified"] is False
+    assert status["models"]["unverified"] == 1 and status["models"]["missing"] == 0
+    assert "1 unverified" in status["detail"]
+    (models / "huge.dxnn").unlink()
+    status = module.sample_assets_status("app", sdk_root=root, resource_root=resources)
+    assert status["ok"] is False and status["models"]["missing"] == 1
+
+
+def test_running_the_step_again_verifies_a_present_file_without_downloading_it(app):
+    module = assets()
+    root, resources = app
+    module.install_assets("app", sdk_root=root, resource_root=resources, open_url=opener([], archive()))
+    target = root / "assets" / "models" / "huge.dxnn"
+    target.write_bytes(b"model")  # the size the server reports (opener serves b"model")
+    for receipt in (target.parent / ".studio-assets").glob("*.json"):
+        receipt.unlink()
+    before = target.stat().st_mtime_ns
+    module.install_assets("app", sdk_root=root, resource_root=resources, open_url=opener([], archive()))
+    assert target.stat().st_mtime_ns == before, "a size-matching file is verified in place"
+    assert module.sample_assets_status("app", sdk_root=root, resource_root=resources)["verified"] is True

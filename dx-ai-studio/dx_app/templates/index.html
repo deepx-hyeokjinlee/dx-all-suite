@@ -54,7 +54,7 @@
       <svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#demo"></use></svg>
       <div class="dx-steps-quick-text">
         <b data-i18n="Demo Quick Start">Demo Quick Start</b>
-        <p data-i18n="Prepare demos in one go — full C++ build and all sample assets; skips ready steps">Prepare demos in one go — full C++ build and all sample assets; skips ready steps</p>
+        <p data-i18n="Prepare demos in one go — demo C++ runners and demo models with sample videos; skips ready steps">Prepare demos in one go — demo C++ runners and demo models with sample videos; skips ready steps</p>
       </div>
       <span id="setup-quickstart-progress" class="txt-dim txt-sm" style="display:none"></span>
       <button class="btn btn-ghost" id="setup-quickstart-btn" onclick="setupDemoQuickStart()"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#play"></use></svg> <span data-i18n="Start Demo Setup">Start Demo Setup</span></button>
@@ -68,7 +68,6 @@
         <div class="dx-step-more">
           <p class="dx-step-desc"><span data-i18n="Install system packages required for C++ build (cmake, gcc, ninja, OpenCV, …)">Install system packages required for C++ build (cmake, gcc, ninja, OpenCV, …)</span></p>
           <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>install.sh --all</code></div>
-          <p class="dx-step-desc"><span data-i18n="Live Display">Live Display</span> (Xvfb): <code>sudo apt install xvfb</code></p>
           <div class="dx-step-detail" id="setup-detail-dx-app-deps"></div>
           <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-app-deps')"><span data-i18n="Install">Install</span></button></div>
         </div>
@@ -130,11 +129,20 @@
           <p class="dx-step-desc"><span data-i18n="Download sample models &amp; videos for Run / Benchmark demos">Download sample models &amp; videos for Run / Benchmark demos</span></p>
           <div class="dx-step-cmd"><svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#dev"></use></svg><code>python -m shared.asset_setup app</code></div>
           <div class="dx-step-detail" id="setup-detail-dx-app-setup"></div>
-          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-app-setup')"><span data-i18n="Setup">Setup</span></button></div>
+          <div class="dx-step-actions"><button class="btn btn-primary btn-sm" onclick="setupRun('dx-app-setup')"><span data-i18n="Setup">Setup</span></button><button class="btn btn-ghost btn-sm" id="setup-verify-dx-app-setup" onclick="setupRun('dx-app-setup')" style="display:none"><span data-i18n="Verify">Verify</span></button></div>
         </div>
       </div>
     </li>
     </ol>
+    <!-- Optional, not a step: no installer here installs Xvfb (setup_steps.live_display_status). -->
+    <div class="dx-steps-optional" id="setup-live-display">
+      <svg class="dx-ico" aria-hidden="true"><use href="/static/shared/dx-icons.svg#info"></use></svg>
+      <div class="dx-steps-optional-text">
+        <b data-i18n="Optional — Live display capture">Optional — Live display capture</b>
+        <p><span data-i18n="Camera / Continuous runs and Graph Live draw on an Xvfb virtual display. No setup step installs it; install it yourself:">Camera / Continuous runs and Graph Live draw on an Xvfb virtual display. No setup step installs it; install it yourself:</span> <code>sudo apt install xvfb</code></p>
+      </div>
+      <span class="dx-step-state" id="setup-live-display-state"></span>
+    </div>
   </section>
   <!-- Version Info -->
   <div class="card mt16" id="setup-version-card" style="display:none">

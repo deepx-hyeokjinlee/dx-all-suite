@@ -644,3 +644,13 @@ def test_script_steps_start_in_their_own_process_group():
     import inspect
     from dx_stream.core import setup as SU
     assert "start_new_session=True" in inspect.getsource(SU.run_step)
+
+
+def test_stream_model_count_includes_present_unverified_files(monkeypatch):
+    """A model file without a Studio record is installed (counted) and flagged unverified."""
+    from core import setup
+    monkeypatch.setattr(setup, "sample_assets_status", lambda *a, **k: {
+        "ok": True, "verified": False, "detail": "models 2/2 (1 unverified)",
+        "models": {"total": 2, "verified": 1, "unverified": 1, "missing": 0}})
+    result = setup.get_setup_status()["download-models"]
+    assert result["installed"] == 2 and result["total"] == 2 and result["unverified"] == 1

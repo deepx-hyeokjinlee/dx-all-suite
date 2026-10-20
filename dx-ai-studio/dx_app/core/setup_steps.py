@@ -239,8 +239,26 @@ def _probe_dx_engine_venv():
     return False,"venv-dx-runtime not found"
 
 
+def _demo_targets(targets):
+    """The run_demo C++ targets (build.sh --minimal: each DEMO_MODEL stem, sync + async) that this
+    tree declares. Without a readable demo list every declared target counts as a demo one."""
+    from shared.asset_setup import demo_model_files
+    try:
+        stems = [Path(name).stem for name in demo_model_files(DX_APP_ROOT)]
+    except ValueError:
+        return set(targets)
+    wanted = {f"{stem}_{variant}" for stem in stems for variant in ("sync", "async")}
+    return wanted & set(targets)
+
+
 def _app_build_status():
-    """Check the declared demo variants and Graph through the same resolvers as Studio execution."""
+    """Check the demo runners and Graph through the same resolvers as Studio execution.
+
+    ``ok`` — what Run All needs: the run_demo C++ runners and both Graph binaries. Every other
+    per-model target is reported (``complete``, "all C++ n/m") but does not gate readiness: one
+    target that does not build on a board must not make Run All rebuild forever.
+    ``demo_ok`` — what Quick Start needs (build.sh --minimal): the run_demo runners.
+    """
     from dx_app.core import graph_cli
     from dx_app.core.inference_exec import _is_executable_file
     from shared import dx_app_layout
@@ -254,13 +272,32 @@ def _app_build_status():
                 name = f"{example.name}_{variant}"
                 targets[name] = _is_executable_file(dx_app_layout.cpp_binary(BUILD_DIR, example.name, variant))
     graphs = {name: graph_cli.binary(variant) is not None for variant, name in graph_cli.NAMES.items()}
-    missing = [name for name, ready in {**graphs, **targets}.items() if not ready]
-    detail = f"C++: {sum(targets.values())}/{len(targets)} · Graph: {sum(graphs.values())}/{len(graphs)}"
+    demo = {name: targets[name] for name in sorted(_demo_targets(targets))}
+    demo_ok = bool(demo) and all(demo.values())
+    ok = demo_ok and all(graphs.values())
+    missing = [name for name, ready in {**graphs, **demo}.items() if not ready]
+    detail = (f"demo C++ {sum(demo.values())}/{len(demo)} · Graph {sum(graphs.values())}/{len(graphs)}"
+              f" · all C++ {sum(targets.values())}/{len(targets)}")
     if missing:
         detail += " · missing: " + ", ".join(missing[:4])
         if len(missing) > 4:
             detail += f" (+{len(missing) - 4})"
-    return {"ok": bool(targets) and all(targets.values()) and all(graphs.values()), "detail": detail}
+    return {"ok": ok, "demo_ok": demo_ok, "complete": ok and all(targets.values()), "detail": detail}
+
+
+LIVE_DISPLAY_HINT = "sudo apt install xvfb"
+
+
+def live_display_status():
+    """Optional: Live / graph Live display capture draws on an Xvfb virtual display.
+
+    Not part of any installer step — dx_app install.sh --all never installs Xvfb, so it must not
+    gate DX-APP Dependencies (Run All / Quick Start would re-run sudo install.sh forever).
+    Live start fails with this hint when it is missing (dx_app/core/live.py, graph_live.py).
+    """
+    ok = bool(shutil.which("Xvfb"))
+    return {"ok": ok, "optional": True, "hint": LIVE_DISPLAY_HINT,
+            "detail": "Xvfb found" if ok else f"Xvfb not installed · {LIVE_DISPLAY_HINT}"}
 
 
 def setup_status():
@@ -269,9 +306,8 @@ def setup_status():
     cmake_ok=bool(shutil.which("cmake"))
     gcc_ok=bool(shutil.which("gcc") or shutil.which("gcc-12") or shutil.which("g++"))
     ninja_ok=bool(shutil.which("ninja") or shutil.which("ninja-build"))
-    xvfb_ok=bool(shutil.which("Xvfb"))
-    deps=(("cmake", cmake_ok), ("gcc", gcc_ok), ("ninja", ninja_ok), ("Xvfb", xvfb_ok))
-    r["dx-app-deps"]={"ok":cmake_ok and gcc_ok and xvfb_ok,
+    deps=(("cmake", cmake_ok), ("gcc", gcc_ok), ("ninja", ninja_ok))
+    r["dx-app-deps"]={"ok":cmake_ok and gcc_ok,
         # The screen (shared step list) splits on " · " into short facts on one line; show words, no emoji.
         "detail":" · ".join([n for n, ok in deps if ok]
                             + (["missing: " + ", ".join(n for n, ok in deps if not ok)]
@@ -279,6 +315,7 @@ def setup_status():
     r["dx-app-build"]=_app_build_status()
     from shared.asset_setup import sample_assets_status
     r["dx-app-setup"]=sample_assets_status("app",sdk_root=DX_APP_ROOT)
+    r["live-display"]=live_display_status()
     rv=DX_RT_ROOT/"release.ver"
     rt_ver=rv.read_text().strip() if rv.exists() else None
     # release.ver may already start with "v" (e.g. "v3.4.1") → don't double it into "vv3.4.1".
@@ -444,11 +481,12 @@ def deep_diagnostics():
             "detail":"assets/models/ not found","fix":{"ko":"setup.sh 실행하여 모델 다운로드","en":"Run setup.sh to download models","ja":"setup.shを実行してモデルをダウンロード","zhCN":"运行setup.sh下载模型","zhTW":"執行setup.sh下載模型","es":"Ejecute setup.sh para descargar los modelos"}})
 
     xvfb_ok=bool(shutil.which("Xvfb"))
-    checks.append({"id":"live_display",
-        "label":{"ko":"Live display (Xvfb)","en":"Live display (Xvfb)","ja":"ライブ表示 (Xvfb)",
-                 "zhCN":"实时显示 (Xvfb)","zhTW":"即時顯示 (Xvfb)","es":"Pantalla en vivo (Xvfb)"},
+    checks.append({"id":"live_display","optional":True,
+        "label":{"ko":"Live 화면 캡처 (Xvfb, 선택)","en":"Live display capture (Xvfb, optional)",
+                 "ja":"ライブ画面キャプチャ (Xvfb、任意)","zhCN":"实时画面捕获 (Xvfb，可选)",
+                 "zhTW":"即時畫面擷取 (Xvfb，選用)","es":"Captura de pantalla en vivo (Xvfb, opcional)"},
         "ok":xvfb_ok,"detail":"Xvfb found" if xvfb_ok else "Xvfb not installed",
-        "fix":{lang:"sudo apt install xvfb" for lang in ("ko","en","ja","zhCN","zhTW","es")}})
+        "fix":{lang:LIVE_DISPLAY_HINT for lang in ("ko","en","ja","zhCN","zhTW","es")}})
 
     # OpenCV is probed in a compatible child; importing it here can abort the server on a NumPy ABI mismatch.
     from shared.media import run_media, MediaError
@@ -466,11 +504,34 @@ def deep_diagnostics():
     return {"checks":checks,"passed":passed,"total":total,"all_ok":passed==total}
 
 _QUICK_ORDER = ["dx-app-deps","dx-rt-deps","dx-rt-build","dx-driver","dx-app-build","dx-app-setup"]
+# Steps Quick Start runs in their demo form (demo_only): build.sh --minimal, asset_setup --demo.
+_DEMO_FORM_STEPS = ("dx-app-build", "dx-app-setup")
 
 def quick_start_plan():
-    """Ordered setup step ids still needed for a demo-only setup (skip satisfied)."""
+    """Ordered setup step ids still needed for a demo-only setup (skip satisfied).
+
+    The build and asset steps are judged by their demo form (``demo_ok``) — what Quick Start
+    runs for them — not by the full step's promise."""
     st = setup_status()
-    return [sid for sid in _QUICK_ORDER if not (st.get(sid) or {}).get("ok")]
+    def ready(sid):
+        s = st.get(sid) or {}
+        return s.get("demo_ok", s.get("ok")) if sid in _DEMO_FORM_STEPS else s.get("ok")
+    return [sid for sid in _QUICK_ORDER if not ready(sid)]
+
+
+def step_argv(step, params=None):
+    """(argv, cwd) a setup step runs. ``demo_only`` (Quick Start) selects the demo form of the
+    build (build.sh --minimal) and asset (asset_setup --demo) steps."""
+    params = params or {}
+    cfg = SETUP_STEPS[step]
+    args = list(cfg.get("args", []))
+    demo = bool(params.get("demo_only")) and step in _DEMO_FORM_STEPS
+    if demo and step == "dx-app-build":
+        args = ["--minimal" if a == "--all" else a for a in args]
+    if demo and step == "dx-app-setup":
+        args = args + ["--demo"]
+    argv = cfg["cmd"]() + args if cfg.get("cmd") else ["bash", str(cfg["script"]())] + args
+    return argv, cfg["cwd"]()
 
 
 def setup_run(step,params=None):
@@ -507,15 +568,8 @@ def setup_run(step,params=None):
             sudo_cleanup()
             # sudo_auth marker lets the client re-prompt for the password instead of failing.
             return{"ok":False,"error":sudo_error,"sudo_auth":True}
-    cwd=cfg["cwd"]()
-    args=cfg.get("args",[])
-    # Demo Quick Start (frontend Task 10 passes {"demo_only": true} in the run params for the
-    # dx-app-setup step only) — download demo sample assets instead of the full --all catalog.
-    # Read from params (like username/password above) rather than adding a new function
-    # parameter: the existing entrypoint signature/caller (server.py forwards the whole request
-    # body as params) is left untouched, and no other step's args are affected.
-    if step=="dx-app-setup" and params.get("demo_only"):
-        args=["--demo-models"]
+    # Demo Quick Start passes {"demo_only": true} for the build and asset steps (step_argv).
+    run_argv,cwd=step_argv(step,params)
     with config._comp_log_lock:config._comp_log=""
     config._comp_done=False;config._comp_exit_code=-1
     def _run():
@@ -526,7 +580,6 @@ def setup_run(step,params=None):
         try:
             if cfg.get("needs_sudo"):
                 threading.Thread(target=_keep_sudo_alive,args=(sudo_stop,),daemon=True).start()
-            run_argv=cfg["cmd"]() if cfg.get("cmd") else ["bash",str(script)]+args
             proc=subprocess.Popen(run_argv,
              stdout=subprocess.PIPE,stderr=subprocess.STDOUT,
              stdin=subprocess.PIPE,cwd=str(cwd),env=env,bufsize=0)
@@ -568,6 +621,12 @@ def setup_run(step,params=None):
             config._comp_stdin_proc=None
             with config._comp_log_lock:config._comp_log="".join(buf)
             config._comp_done=True
+            # A step may have installed or repaired OpenCV / the runtime: probe media again.
+            try:
+                from shared.media import media_python
+                media_python.cache_clear()
+            except Exception:
+                pass
             print(f"[SETUP:{step}] Done. exit_code={config._comp_exit_code}")
     threading.Thread(target=_run,daemon=True).start()
     return{"ok":True,"started":True}

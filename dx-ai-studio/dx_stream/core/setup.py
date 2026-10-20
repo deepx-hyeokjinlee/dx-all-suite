@@ -397,7 +397,10 @@ def get_setup_status() -> dict:
     from dx_stream.core import status as _status
     assets = sample_assets_status("stream", sdk_root=DX_STREAM_ROOT)
     model_counts = assets.get("models", {})
-    assets.update(total=model_counts.get("total", 0), installed=model_counts.get("verified", 0))
+    # Installed = present on disk; files without a Studio record are counted (and shown) as unverified.
+    assets.update(total=model_counts.get("total", 0),
+                  installed=model_counts.get("verified", 0) + model_counts.get("unverified", 0),
+                  unverified=model_counts.get("unverified", 0))
     return {
         "build": _status._check_build(),
         "download-models": assets,

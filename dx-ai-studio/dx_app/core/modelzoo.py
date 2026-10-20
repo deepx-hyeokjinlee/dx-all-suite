@@ -56,12 +56,15 @@ _dl_state = {
 
 
 def _installed_status(directory, dxnn_url, json_url=None):
+    """A tier is downloaded when all its files are present. Without a Studio completion record
+    it is ``unverified`` (still downloaded — never shown as "not downloaded"); downloading it
+    again verifies it by Content-Length and keeps a size-matching file in place."""
     urls = [url for url in (dxnn_url, json_url) if url]
     checks = [asset_file_status(directory / Path(urlparse(url).path).name) for url in urls]
+    present = bool(checks) and all(check["state"] != "missing" for check in checks)
     verified = bool(checks) and all(check["ok"] for check in checks)
-    state = "verified" if verified else (
-        "unverified" if any(check["state"] == "unverified" for check in checks) else "missing")
-    return {"exists": verified, "install_state": state,
+    state = "verified" if verified else ("unverified" if present else "missing")
+    return {"exists": present, "install_state": state,
             "install_detail": "; ".join(check["detail"] for check in checks)}
 
 
