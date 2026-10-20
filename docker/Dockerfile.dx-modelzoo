@@ -19,7 +19,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV PATH="/usr/local/bin:${PATH}"
 
 ### update apt repo
-RUN if grep -q '^ID=ubuntu' /etc/os-release; then \
+RUN if [ "${BASE_IMAGE_NAME}" = "ubuntu" ]; then \
     apt-get update && apt-get install -y \
     software-properties-common && \
     add-apt-repository universe && \
@@ -89,7 +89,7 @@ RUN set -x && \
        { [ "${BASE_IMAGE_NAME}" = "debian" ] && { [ "$(lsb_release -rs)" = "13" ] || [ "$(lsb_release -rs)" = "12" ]; }; }; then \
         echo "Supported OS: ${BASE_IMAGE_NAME} $(lsb_release -rs)" && \
         apt-get update && \
-        if grep -q '^ID=ubuntu' /etc/os-release; then \
+        if [ "${BASE_IMAGE_NAME}" = "ubuntu" ]; then \
             echo "Adding deadsnakes PPA for Ubuntu..." && \
             apt-get install -y software-properties-common gnupg gpg-agent ca-certificates && \
             add-apt-repository -y ppa:deadsnakes/ppa || echo "PPA add failed, continuing..." && \
@@ -150,7 +150,7 @@ RUN set -x && \
     ${DX_PYTHON_EXEC} -m venv /venv-dxnn && \
     . /venv-dxnn/bin/activate && \
     echo "Upgrade pip wheel setuptools..." && \
-    if grep -q '^ID=ubuntu' /etc/os-release; then \
+    if [ "${BASE_IMAGE_NAME}" = "ubuntu" ]; then \
         OS_VERSION=$(lsb_release -rs) && \
         echo "*** OS_VERSION(${OS_VERSION}) ***" && \
         if [ "$OS_VERSION" = "26.04" ] || [ "$OS_VERSION" = "24.04" ]; then \
