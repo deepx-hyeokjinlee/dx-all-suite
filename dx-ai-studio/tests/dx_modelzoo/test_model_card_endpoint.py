@@ -14,7 +14,7 @@ import pytest
 from PIL import Image
 
 from dx_modelzoo.core.model_card_studio import DxAppMissing, NoDxAppExample, studio_card
-from shared.paths import DX_APP_ROOT
+from tests.installed_sdk import require, require_dx_app
 
 MODULE_DIR = Path(__file__).resolve().parents[2] / "dx_modelzoo"
 def test_studio_card_without_a_dx_app_checkout(tmp_path):
@@ -53,8 +53,7 @@ _SERVER_GLOBALS = {}
 
 @pytest.fixture(scope="module")
 def port():
-    if not (DX_APP_ROOT / "config" / "model_registry.json").is_file():
-        pytest.skip("needs the dx_app checkout")
+    require_dx_app("config/model_registry.json")
     sys.modules.pop("server", None)
     sys.path.insert(0, str(MODULE_DIR))
     try:
@@ -71,6 +70,14 @@ def port():
             break
         except Exception:
             time.sleep(0.2)
+    try:   # the cards below are of yolo26n, which a dx_app before the per-model layout has no example for
+        _post(port, "/api/model_card/yolo26n", {})
+    except HTTPError as exc:
+        missing = exc.code == 404 and "No dx_app example" in exc.read().decode("utf-8", "replace")
+        if missing:
+            srv.shutdown()
+            srv.server_close()
+        require(not missing, "the installed dx_app has no yolo26n example (a dx_app before the per-model layout)")
     yield port
     srv.shutdown()
     srv.server_close()

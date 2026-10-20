@@ -21,5 +21,8 @@ def test_every_media_path_in_the_catalog_exists():
         if res and not (DATA_DIR / res).is_file():
             missing.append(("result", m["id"], res))
     assert missing == [], missing[:8]
+    from tests.installed_sdk import require
+    require((DATA_DIR / "thumbnails" / "beit_large_patch16.jpg").is_file(),
+            "the Model Zoo thumbnails are not generated (dx_modelzoo/scripts/generate_thumbnails.py)")
     beit = next(m for m in models if m["id"] == "beit_l_p16_384x384")
     assert beit["thumbnail"] == "thumbnails/beit_large_patch16.jpg"
