@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 
 import pytest
 
@@ -186,8 +187,14 @@ def test_run_inference_on_the_npu_shows_the_result_image_and_fps(pages):
 
 
 def test_continuous_camera_inference_on_the_npu_shows_live_frames(pages):
-    """Not exercised on a board without a camera: the AC is NOT RUN there (hardware.need)."""
+    """Not exercised on a board without a camera: the AC is NOT RUN there (hardware.need).
+
+    Live frames are captured from an Xvfb display, an optional host package no Setup step
+    installs; without it Live start refuses with the install hint (SR-845), so the AC cannot
+    be checked on that machine."""
     need("camera", "npu")
+    if not shutil.which("Xvfb"):
+        pytest.skip("NOT RUN: Live display capture needs Xvfb (sudo apt install xvfb), not installed here")
     page, frame = _app(pages)
     _nav(frame, "run")
     frame.locator('.run-tab[data-rtab="continuous"]').click()
