@@ -7,6 +7,7 @@ the layered DAG): imports inference_exec only. No dependency on live.py or
 inference.py — this keeps the DAG acyclic.
 """
 
+import logging
 import os, time, threading, tempfile, subprocess, io
 from pathlib import Path
 from dx_app.core.inference_exec import _TMP
@@ -114,7 +115,10 @@ def _crop_roi(imgp, roi):
         return tmp
     except (MediaError, OSError) as error:
         if tmp is not None:
-            Path(tmp).unlink(missing_ok=True)
+            try:
+                Path(tmp).unlink(missing_ok=True)
+            except OSError as cleanup_error:
+                logging.warning("ROI staging cleanup failed for %s: %s", tmp, cleanup_error)
         print(f"[ROI] Error: {error}")
         raise
 

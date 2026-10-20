@@ -212,3 +212,62 @@ def test_thumbnail_publish_failure_cleans_owned_temporary_file(tmp_path, monkeyp
     monkeypatch.setattr(assets.os, "replace", denied)
     assert assets.sample_thumbnail("input.jpg") is None
     assert not list((tmp_path / "cache").iterdir())
+
+
+def test_roi_cleanup_failure_preserves_crop_error_and_reports_the_staging_file(tmp_path, monkeypatch, caplog):
+    from dx_app.core import camera
+    from shared.media import MediaError
+
+    original = MediaError("crop runtime unavailable")
+    def crop(*args, **kwargs):
+        raise original
+    unlink = Path.unlink
+    def denied(path, *args, **kwargs):
+        if path.parent == tmp_path and path.suffix == ".jpg":
+            raise PermissionError("ROI cleanup denied")
+        return unlink(path, *args, **kwargs)
+
+    monkeypatch.setattr(camera, "_TMP", str(tmp_path))
+    monkeypatch.setattr(camera, "run_media", crop)
+    monkeypatch.setattr(Path, "unlink", denied)
+    with pytest.raises(MediaError) as caught:
+        camera._crop_roi(tmp_path / "source.jpg", {"x": 0, "y": 0, "w": 1, "h": 1})
+    assert caught.value is original
+    remaining = list(tmp_path.glob("*.jpg"))
+    assert len(remaining) == 1
+    assert str(remaining[0]) in caplog.text
+    assert "ROI cleanup denied" in caplog.text
+
+
+@pytest.mark.parametrize("failure", [ImportError("cache import failed"), AttributeError("cache reset missing")])
+def test_setup_reports_media_cache_reset_failures(tmp_path, monkeypatch, caplog, failure):
+    from dx_app.core import setup_steps
+    from shared import media
+
+    started = []
+    thread_type = setup_steps.threading.Thread
+    def thread(*args, **kwargs):
+        worker = thread_type(*args, **kwargs)
+        started.append(worker)
+        return worker
+    def reset():
+        raise failure
+
+    monkeypatch.setattr(setup_steps.threading, "Thread", thread)
+    monkeypatch.setattr(media.media_python, "cache_clear", reset)
+    monkeypatch.setitem(setup_steps.SETUP_STEPS, "test-cache-reset", {
+        "cmd": lambda: [sys.executable, "-c", "print('installed')"],
+        "cwd": lambda: tmp_path,
+    })
+    for name, value in (("_comp_proc", None), ("_comp_stdin_proc", None),
+                        ("_comp_done", False), ("_comp_exit_code", -1), ("_comp_log", "")):
+        monkeypatch.setattr(setup_steps.config, name, value)
+    assert setup_steps.setup_run("test-cache-reset") == {"ok": True, "started": True}
+    assert len(started) == 1
+    started[0].join(5)
+    assert not started[0].is_alive()
+    assert setup_steps.config._comp_done is True
+    assert setup_steps.config._comp_exit_code == 0
+    assert "installed" in setup_steps.config._comp_log
+    assert str(failure) in caplog.text
+    assert any(record.exc_info for record in caplog.records)

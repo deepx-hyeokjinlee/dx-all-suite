@@ -1,5 +1,6 @@
 """DX-APP Setup & Installation steps."""
 
+import logging
 import os, sys, json, time, subprocess, threading, select, shutil, re, platform, tempfile, shlex
 from pathlib import Path
 from dx_app.core import config
@@ -625,8 +626,8 @@ def setup_run(step,params=None):
             try:
                 from shared.media import media_python
                 media_python.cache_clear()
-            except Exception:
-                pass
+            except (ImportError, AttributeError):
+                logging.exception("Media cache reset failed after Setup step %s", step)
             print(f"[SETUP:{step}] Done. exit_code={config._comp_exit_code}")
     threading.Thread(target=_run,daemon=True).start()
     return{"ok":True,"started":True}

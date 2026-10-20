@@ -2,6 +2,8 @@
 import json
 import subprocess
 import sys
+import threading
+from functools import lru_cache
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -195,3 +197,59 @@ def test_a_failed_probe_is_cached_for_the_process_until_setup_clears_it(monkeypa
 def test_setup_steps_clear_the_media_cache_when_they_finish():
     source = (Path(__file__).resolve().parents[2] / "dx_app" / "core" / "setup_steps.py").read_text()
     assert "media_python.cache_clear()" in source
+
+
+def test_setup_cache_reset_cannot_be_overwritten_by_an_inflight_failure(monkeypatch):
+    from shared import media
+
+    media.media_python.cache_clear()
+    probing = threading.Event()
+    release_probe = threading.Event()
+    resetting = threading.Event()
+    reset_done = threading.Event()
+    failures = []
+    attempts = []
+
+    @lru_cache(maxsize=1)
+    def probe():
+        attempts.append(None)
+        if len(attempts) == 1:
+            probing.set()
+            assert release_probe.wait(5)
+            raise media.MediaError("pre-Setup OpenCV unavailable")
+        return "/repaired/python"
+
+    def old_request():
+        try:
+            media.media_python()
+        except media.MediaError as error:
+            failures.append(str(error))
+
+    def reset():
+        resetting.set()
+        media.media_python.cache_clear()
+        reset_done.set()
+
+    monkeypatch.setattr(media, "_probe_media_python", probe)
+    request = threading.Thread(target=old_request)
+    setup = threading.Thread(target=reset)
+    try:
+        request.start()
+        assert probing.wait(5)
+        setup.start()
+        assert resetting.wait(5)
+        assert not reset_done.wait(0.1), "Reset completed while an older probe could still publish a failure"
+        release_probe.set()
+        request.join(5)
+        setup.join(5)
+        assert not request.is_alive() and not setup.is_alive()
+        assert failures == ["pre-Setup OpenCV unavailable"]
+        assert reset_done.is_set()
+        assert media.media_python() == "/repaired/python"
+        assert media.media_python() == "/repaired/python"
+    finally:
+        release_probe.set()
+        request.join(5)
+        if setup.ident is not None:
+            setup.join(5)
+        media.media_python.cache_clear()

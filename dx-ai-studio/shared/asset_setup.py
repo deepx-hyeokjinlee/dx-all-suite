@@ -34,6 +34,15 @@ def _url_filename(url):
     return _name(unquote(parsed.path.rsplit("/", 1)[-1]), "Asset")
 
 
+def _redact_urls(message):
+    def redact(match):
+        url = match.group(0).split("?", 1)[0].split("#", 1)[0]
+        scheme, _, rest = url.partition("://")
+        host, slash, path = rest.partition("/")
+        return "{}://{}{}{}".format(scheme, host.rsplit("@", 1)[-1], slash, path)
+    return re.sub(r"https?://[^\s<>\"]+", redact, message, flags=re.I)
+
+
 def _declaration(script, name, values=None):
     """Read only quoted SDK constants, never source/execute shell or expand commands."""
     text = script.read_text(encoding="utf-8")
@@ -413,13 +422,15 @@ def install_assets(component, model=None, *, demo=False, sdk_root=None, resource
                 break
             except DownloadCancelled:
                 raise
-            except OSError:
+            except OSError as error:
+                log(_redact_urls("Download attempt {}/{} failed for {}: {}: {}".format(
+                    attempt + 1, len(urls), candidate, type(error).__name__, error)), flush=True)
                 if attempt == len(urls) - 1:
                     raise
         log("{} {} ({} bytes, {})".format(result.status, name, result.size, result.verification), flush=True)
     _link(model_output, models)
     if model is None:
-        log("Downloading video archive {}".format(video_url), flush=True)
+        log(_redact_urls("Downloading video archive {}".format(video_url)), flush=True)
         download_file(video_url, archive, open_url=open_url or _open_url, cancel=cancel, validate=_validate_archive)
         _extract_videos(archive, videos, cancel)
         _link(output / "videos", videos)
@@ -445,7 +456,8 @@ def main(argv=None):
         print("[CANCELLED] {}".format(exc), file=sys.stderr, flush=True)
         return 130
     except Exception as exc:
-        print("[ERROR] Asset setup failed (existing assets preserved): {}".format(exc), file=sys.stderr, flush=True)
+        print(_redact_urls("[ERROR] Asset setup failed (existing assets preserved): {}".format(exc)),
+              file=sys.stderr, flush=True)
         return 1
     finally:
         signal.signal(signal.SIGTERM, previous)

@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tarfile
 import threading
+import urllib.error
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
@@ -229,6 +230,93 @@ def test_cli_cancel_is_nonzero(monkeypatch):
 
     monkeypatch.setattr(module, "install_assets", cancelled)
     assert module.main(["stream", "--model", "tiny.dxnn"]) == 130
+
+
+@pytest.mark.parametrize("kind", ["http", "permission", "network"])
+@pytest.mark.parametrize("password", ["password", "pass'word"])
+def test_failed_download_candidates_are_logged_without_url_secrets(tmp_path, monkeypatch, kind, password):
+    module = assets()
+    root = sdk(tmp_path)
+    models = root / "dx_stream" / "samples" / "models"
+    models.mkdir(parents=True)
+    target = models / "tiny.dxnn"
+    target.write_bytes(b"old-model")
+    urls = [
+        "https://user:{}@first.example/models/tiny.dxnn?token=private-token#private-fragment".format(password),
+        "https://user:{}@last.example/models/tiny.dxnn?signature=private-signature#private-fragment".format(password),
+    ]
+    monkeypatch.setattr(module.dxrt, "download_urls", lambda url: urls)
+    messages, calls = [], []
+    def open_url(url):
+        calls.append(url)
+        if kind == "http":
+            raise urllib.error.HTTPError(url, 404, "missing " + url, {}, None)
+        if kind == "permission":
+            raise PermissionError("access denied for " + url)
+        raise OSError("connection failed for " + url)
+    expected = {"http": urllib.error.HTTPError, "permission": PermissionError, "network": OSError}[kind]
+    with pytest.raises(expected):
+        module.install_assets(
+            "stream", model="tiny.dxnn", sdk_root=root, resource_root=tmp_path / "res",
+            open_url=open_url, log=lambda message, **kwargs: messages.append(message),
+        )
+    assert calls == urls
+    diagnostic = "\n".join(messages)
+    assert "https://first.example/models/tiny.dxnn" in diagnostic
+    assert "https://last.example/models/tiny.dxnn" in diagnostic
+    for secret in ("user:" + password, "private-token", "private-signature", "private-fragment"):
+        assert secret not in diagnostic
+    assert {"http": "404", "permission": "access denied", "network": "connection failed"}[kind] in diagnostic
+    assert target.read_bytes() == b"old-model"
+    assert not list(models.rglob("*.part"))
+
+
+def test_download_fallback_keeps_the_success_path_and_reports_the_failed_candidate(tmp_path, monkeypatch):
+    module = assets()
+    root = sdk(tmp_path)
+    urls = ["https://first.example/tiny.dxnn", "https://last.example/tiny.dxnn"]
+    monkeypatch.setattr(module.dxrt, "download_urls", lambda url: urls)
+    messages, calls = [], []
+    def open_url(url):
+        calls.append(url)
+        if url == urls[0]:
+            raise urllib.error.HTTPError(url, 404, "missing", {}, None)
+        return Response(b"model")
+    module.install_assets(
+        "stream", model="tiny.dxnn", sdk_root=root, resource_root=tmp_path / "res",
+        open_url=open_url, log=lambda message, **kwargs: messages.append(message),
+    )
+    assert calls == urls
+    assert (root / "dx_stream" / "samples" / "models" / "tiny.dxnn").read_bytes() == b"model"
+    assert any(urls[0] in message and "404" in message for message in messages)
+
+
+def test_download_cancel_does_not_try_the_next_candidate(tmp_path, monkeypatch):
+    module = assets()
+    from shared.atomic_download import DownloadCancelled
+
+    root = sdk(tmp_path)
+    urls = ["https://first.example/tiny.dxnn", "https://last.example/tiny.dxnn"]
+    monkeypatch.setattr(module.dxrt, "download_urls", lambda url: urls)
+    calls = []
+    def cancelled(url):
+        calls.append(url)
+        raise DownloadCancelled("cancelled")
+    with pytest.raises(DownloadCancelled):
+        module.install_assets("stream", model="tiny.dxnn", sdk_root=root,
+                              resource_root=tmp_path / "res", open_url=cancelled)
+    assert calls == urls[:1]
+
+
+def test_cli_download_errors_redact_url_credentials_and_query(monkeypatch, capsys):
+    module = assets()
+    def failure(*args, **kwargs):
+        raise OSError("Failed https://user:password@host.example/model.dxnn?token=private-token#private-fragment")
+    monkeypatch.setattr(module, "install_assets", failure)
+    assert module.main(["stream", "--model", "tiny.dxnn"]) == 1
+    error = capsys.readouterr().err
+    assert "https://host.example/model.dxnn" in error
+    assert "password" not in error and "private-token" not in error and "private-fragment" not in error
 
 
 @pytest.mark.parametrize("truncated", [False, True])

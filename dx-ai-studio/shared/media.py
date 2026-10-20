@@ -33,17 +33,16 @@ def media_python():
     with _FAILURE_LOCK:
         if _FAILURE:
             raise MediaError(_FAILURE[0])
-    try:
-        return _probe_media_python()
-    except MediaError as error:
-        with _FAILURE_LOCK:
+        try:
+            return _probe_media_python()
+        except MediaError as error:
             _FAILURE[:] = [str(error)]
-        raise
+            raise
 
 
 def _media_cache_clear():
-    _probe_media_python.cache_clear()
     with _FAILURE_LOCK:
+        _probe_media_python.cache_clear()
         _FAILURE.clear()
 
 
