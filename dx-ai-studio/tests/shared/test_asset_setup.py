@@ -316,7 +316,7 @@ def test_local_readiness_never_verifies_existing_partials_and_never_uses_network
     (output / "videos" / "dance.mov").write_bytes(b"bad")
     monkeypatch.setattr(module, "_open_url", lambda url: pytest.fail("readiness must be local"))
     result = check(component, sdk_root=root, resource_root=resources)
-    assert result["ok"] is False
+    assert result["verified"] is False   # present partials are never verified (ok = nothing missing)
     assert result["models"]["unverified"] >= 1
     assert "unverified" in result["detail"].lower()
     module.install_assets(component, sdk_root=root, resource_root=resources, open_url=opener([], archive()))

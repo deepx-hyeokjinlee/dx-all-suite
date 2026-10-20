@@ -264,6 +264,38 @@ def _local_group(files):
     return result
 
 
+_VIDEO_SUFFIXES = (".mp4", ".mov", ".avi", ".mkv")
+
+
+def _inventory_files(videos, inventory, filename):
+    if (inventory.is_symlink() or inventory.parent.is_symlink()
+            or inventory.stat().st_size > 1024 * 1024):
+        raise ValueError("Unverified sample video inventory: {}".format(inventory))
+    data = json.loads(inventory.read_text(encoding="utf-8"))
+    names = data.get("files")
+    if (data.get("version") != 1 or data.get("archive") != filename
+            or not isinstance(names, list) or not names):
+        raise ValueError("Unverified sample video inventory: {}".format(inventory))
+    files = []
+    for name in names:
+        path = PurePosixPath(name)
+        if path.is_absolute() or ".." in path.parts or ".studio-assets" in path.parts or "\\" in name:
+            raise ValueError("Unsafe sample video inventory")
+        files.append(videos.joinpath(*path.parts))
+    return files
+
+
+def _legacy_videos(videos):
+    """Present media files without a Studio inventory: all unverified (an empty folder: missing)."""
+    found = sorted(path for path in (videos.rglob("*") if videos.is_dir() else [])
+                   if path.is_file() and path.suffix.lower() in _VIDEO_SUFFIXES
+                   and ".studio-assets" not in path.parts)
+    group = _local_group(found)
+    if not found:
+        group.update(missing=1, total=1)   # the archive is the unit when nothing is there
+    return group
+
+
 def _group_detail(label, group):
     text = "{} {}/{}".format(label, group["total"] - group["missing"], group["total"])
     if group["unverified"]:
@@ -304,21 +336,12 @@ def sample_assets_status(component, sdk_root=None, resource_root=None):
         if videos.is_symlink() and videos.resolve() != (resources / "videos" / video_suffix).resolve():
             raise OSError("Conflicting video symlink: {}".format(videos))
         inventory = videos / ".studio-assets" / "sample-videos.json"
-        if (inventory.is_symlink() or inventory.parent.is_symlink()
-                or inventory.stat().st_size > 1024 * 1024):
-            raise ValueError("Unverified sample video inventory: {}".format(inventory))
-        data = json.loads(inventory.read_text(encoding="utf-8"))
-        names = data.get("files")
-        if (data.get("version") != 1 or data.get("archive") != filename
-                or not isinstance(names, list) or not names):
-            raise ValueError("Unverified sample video inventory: {}".format(inventory))
-        files = []
-        for name in names:
-            path = PurePosixPath(name)
-            if path.is_absolute() or ".." in path.parts or ".studio-assets" in path.parts or "\\" in name:
-                raise ValueError("Unsafe sample video inventory")
-            files.append(videos.joinpath(*path.parts))
-        result["videos"] = _local_group(files)
+        if not inventory.exists() and not inventory.is_symlink():
+            # Videos another installer (the SDK's setup_sample_videos.sh) extracted carry no Studio
+            # inventory: the media files present are unverified, not missing.
+            result["videos"] = _legacy_videos(videos)
+        else:
+            result["videos"] = _local_group(_inventory_files(videos, inventory, filename))
         result["ok"] = result["models"]["ok"] and result["videos"]["ok"]
         result["demo_ok"] = demo_models["ok"] and result["videos"]["ok"]
         result["verified"] = result["models"]["all_verified"] and result["videos"]["all_verified"]

@@ -103,3 +103,22 @@ def test_running_the_step_again_verifies_a_present_file_without_downloading_it(a
     module.install_assets("app", sdk_root=root, resource_root=resources, open_url=opener([], archive()))
     assert target.stat().st_mtime_ns == before, "a size-matching file is verified in place"
     assert module.sample_assets_status("app", sdk_root=root, resource_root=resources)["verified"] is True
+
+
+def test_videos_the_sdk_installed_without_a_studio_inventory_are_unverified_not_missing(app):
+    """The SDK's setup_sample_videos.sh writes no Studio inventory; those videos are present."""
+    module = assets()
+    root, resources = app
+    module.install_assets("app", demo=True, sdk_root=root, resource_root=resources,
+                          open_url=opener([], archive()))
+    videos = root / "assets" / "videos"
+    import shutil
+    shutil.rmtree(videos / ".studio-assets")   # inventory and member records: as the SDK leaves it
+    status = module.sample_assets_status("app", sdk_root=root, resource_root=resources)
+    assert status["videos"]["unverified"] == 1 and status["videos"]["missing"] == 0, status
+    assert status["demo_ok"] is True and status["verified"] is False
+    for item in videos.iterdir():
+        if item.is_file():
+            item.unlink()
+    status = module.sample_assets_status("app", sdk_root=root, resource_root=resources)
+    assert status["demo_ok"] is False and status["videos"]["ok"] is False
