@@ -213,3 +213,22 @@ def test_running_demo_can_stop_after_reopening_with_all_demos_unready(stream_pag
     assert len(page.starts) == starts
     assert page.locator(".dds-stage .dds-run").count() == 0
     assert page.locator(".dds-stage .dds-setup").first.is_visible()
+
+
+def test_a_korean_ui_shows_the_whole_profile_context_refusal_in_korean(stream_page):
+    """SR-843: the refusal the server really sends (separate detail / remediation) reads
+    entirely in Korean — the observed sentence and the Setup instruction included."""
+    page = stream_page
+    failure = {"error": "contract_failed", "message": "Runtime contract failed: profile.context",
+               "detail": "Active runtime profile has no complete inference Python.",
+               "remediation": "Run the DX-Runtime Dependencies step in Setup, then try again."}
+    page.add_route("**/api/demos/0/start", lambda route: _reply(route, failure, 424))
+    page.evaluate("() => DXI18n.setLang('ko')")
+    page.wait_for_selector("#start-demo-0")
+    page.click("#start-demo-0")
+    text = _inline_error(page).inner_text()
+    assert "런타임 점검을 통과하지 못했습니다 (profile.context)" in text
+    assert "활성 런타임 profile에 사용할 수 있는 추론용 Python이 없습니다." in text
+    assert "Setup에서 DX-Runtime 종속성 설치 단계를 실행한 뒤 다시 시도하세요." in text
+    for english in (failure["message"], failure["detail"], failure["remediation"]):
+        assert english not in text

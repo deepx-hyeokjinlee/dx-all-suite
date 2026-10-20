@@ -188,7 +188,9 @@ class TestServerMessagesAreCounted:
     #
     # Driving it to 0 is therefore not the goal. It only stops new messages from piling
     # up — a new message needs a matching pattern in server-error-i18n.js.
-    MAX_UNTRANSLATED_SERVER_MESSAGES = 94
+    # 96: +2 for the arithmetic-transform messages of dx_compiler/core/validation.py (SR-758), both
+    # covered by patterns in server-error-i18n.js (tests/test_server_error_i18n.py samples them).
+    MAX_UNTRANSLATED_SERVER_MESSAGES = 96
 
     def test_the_extractor_exists(self):
         from tools.i18n_audit.extractors import extract_server_messages  # noqa: F401
@@ -215,12 +217,15 @@ class TestServerMessagesAreCounted:
         assert extract_server_messages(src, module="m", source_file="a.py") == []
 
     def test_the_repository_count_does_not_grow(self):
+        from tools.i18n_audit.config import is_excluded_path
         from tools.i18n_audit.extractors import extract_server_messages
 
         total = 0
         for path in sorted(ROOT.rglob("*.py")):
-            rel = str(path.relative_to(ROOT))
+            rel = path.relative_to(ROOT).as_posix()
             if any(x in rel for x in (".venv", "node_modules", "tests/", "test_", "scripts/", "tools/")):
+                continue
+            if is_excluded_path(rel):  # run artifacts under var/ and outputs/ are not source
                 continue
             total += len(extract_server_messages(
                 path.read_text(encoding="utf-8"), module="?", source_file=rel))
