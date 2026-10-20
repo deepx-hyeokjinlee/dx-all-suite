@@ -582,9 +582,10 @@ bash scripts/run_ci.sh --acceptance=all --strict       # NOT RUN also fails the 
   Playwright) and Google Chrome or Chromium (or `./.venv/bin/python -m playwright install chromium`). The run
   checks them first and stops with the install command when one is missing, rather than reporting nearly
   every AC as NOT RUN.
-- **OpenCV compatibility and isolation (SR-839)**: Studio's `.venv` deliberately has **no cv2** —
-  Studio never imports SDK native packages into its server interpreter or puts SDK `site-packages` on
-  its `sys.path`. Camera discovery, previews and Setup's OpenCV diagnostic run in an isolated media
+- **OpenCV compatibility and isolation (SR-839)**: Studio's server **never imports cv2** — its
+  `.venv` need not have it, and a cv2 that is there (system site-packages) is not used. Studio never
+  imports SDK native packages into its server interpreter or puts SDK `site-packages` on its
+  `sys.path`. Camera discovery, previews and Setup's OpenCV diagnostic run in an isolated media
   child (`shared/media.py`): the first of the Studio inference venv, the runtime venvs, the Studio
   interpreter and `/usr/bin/python3` that imports NumPy + OpenCV (`dx_engine` not needed). The issue's
   old step 1 (`./.venv/bin/python -c 'import cv2'`) therefore no longer applies. Verify the new design
