@@ -2812,8 +2812,8 @@ window._DX_I18N_DICT = {
     es: 'Las ejecuciones con cámara / Continuous y Graph Live dibujan en una pantalla virtual Xvfb. Ningún paso de instalación la instala; instálela usted mismo:',
   },
   'Verify': {
-    ko: '검증',
-    ja: '検証',
+    ko: '확인',
+    ja: '確認',
     'zh-CN': '验证',
     'zh-TW': '驗證',
     es: 'Verificar',
