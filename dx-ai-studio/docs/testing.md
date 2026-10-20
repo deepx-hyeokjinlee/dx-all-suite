@@ -582,6 +582,36 @@ bash scripts/run_ci.sh --acceptance=all --strict       # NOT RUN also fails the 
   Playwright) and Google Chrome or Chromium (or `./.venv/bin/python -m playwright install chromium`). The run
   checks them first and stops with the install command when one is missing, rather than reporting nearly
   every AC as NOT RUN.
+- **OpenCV compatibility and isolation**: the CI requirements retain the Python-version-specific
+  NumPy constraint for test dependencies, but Studio does not import SDK native packages into its
+  server interpreter or expose SDK `site-packages` on its own `sys.path`. Camera discovery and
+  Setup's OpenCV diagnostic use an isolated compatible media child; it needs OpenCV + NumPy, not
+  `dx_engine`. From the Studio root, check that same boundary with
+  `./.venv/bin/python -c "from shared.media import run_media; print(run_media('probe'))"`.
+  `pip check` alone cannot diagnose an OpenCV/NumPy ABI mismatch. A failed media probe appears as
+  an actionable Setup diagnostic and `/api/cameras` HTTP 503 (`media_runtime_unavailable`), not
+  a successful empty camera list. Repair the compatible environment through Setup; do not inject
+  SDK package paths into Studio. Python 3.13+ requires NumPy 2.x with an ABI-compatible OpenCV.
+- **App preparation (SR-842 / SR-845)**: Studio's existing DX-APP Build action requests
+  `build.sh --all --type Release --arch x86_64`; the SDK's minimal no-argument default is unchanged.
+  Readiness requires executable declared C++ demo variants and both Graph runners, rather than
+  any file ending in `_sync`. For Graph-only repair, run in the SDK's `dx_app` directory:
+  `./build.sh --target multi_model_graph_sync multi_model_graph_async`
+  (or `./build.sh --all` for the complete preparation). These are explicit user build actions,
+  not commands the acceptance tests execute.
+  Live camera/RTSP also requires Xvfb: Setup checks it and displays `sudo apt install xvfb` as
+  an explicit administrator action; no global installation happens merely by checking status.
+  Failed Live starts retain each slot's error and remediation beside Start, including after the
+  toast expires. Start retries; a successful retry clears the old errors. Partial success keeps
+  successful streams and Stop available.
+- **Sample assets**: the App Setup action runs `python -m shared.asset_setup app` from the Studio
+  root, not the SDK's bulk `setup.sh`. Readiness uses local validation receipts and file metadata
+  without remote requests on status GETs. Existing files with unknown integrity (including old
+  partial downloads) are **unverified**, not ready merely because their paths exist. Run Sample
+  Assets Setup explicitly to validate/repair them; do not delete user assets to reset readiness.
+  Demo Quick Start skips ready steps but requests the full build and declared sample asset set
+  when needed; it is not a small-download mode. Status/diagnostic acceptance checks never click
+  Run All or Quick Start and do not start installations, builds, or asset downloads.
 - **Selection**: `all`, a ticket key (`SDKREQ-474`) or its number (`474`), or an alias:
   `launcher app stream agent zoo compiler edgeguide monitor benchmark boot i18n sdklib toolbar tutorial
   cloud`. DX Cloud is `SDKREQ-710` (alias `cloud`).
@@ -598,6 +628,13 @@ bash scripts/run_ci.sh --acceptance=all --strict       # NOT RUN also fails the 
   graph run). Missing → the AC is **NOT RUN** with the reason, never a pass.
 - **NOT RUN** means "this machine cannot check it", e.g. `NOT RUN: no camera (/dev/video* missing)`. It is
   not a failure unless `--strict` is given; QA reruns those AC on a machine that has the hardware.
+  App benchmark selection comes from the rendered list for the chosen language and executable
+  variant, not the first downloaded preferred model. Camera checks require that executable
+  variant, choose Category before Model and use a V4L2 capture node (not a metadata node). Graph
+  checks choose an installed, runnable SDK example. Missing genuine build/model/hardware
+  prerequisites are explicitly NOT RUN; once ready, request/start/validation errors fail
+  immediately rather than timing out or being converted into skips. Real camera/Graph acceptance
+  is not mocked; fixture-based browser regressions separately exercise failure/retry states.
 - **Report**: `var/acceptance/<timestamp>/` — `report.md` and `report.html` (ticket → AC → PASS / FAIL /
   NOT RUN, time per ticket and per AC, test ids, a short failure reason, detected hardware and versions),
   `junit.xml` (one `testsuite` per ticket with property `testrail_case_id`; each AC is a `testcase`

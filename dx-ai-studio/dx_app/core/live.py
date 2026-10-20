@@ -177,9 +177,11 @@ def _start_live(model_name, category, model_file, lang, variant, input_type, cam
     _xw, _xh = (int(v) for v in _XVFB_RES.split("x")[:2])
     env["DXAPP_SCREEN_W"], env["DXAPP_SCREEN_H"] = str(2 * _xw), str(2 * _xh)
 
-    # The runner needs the -v path to exist on disk: RTSP and the multi-slot camera's udp:// would end at once
-    # with "Input file not found" and a black screen. URLs go through -r (C++ rtsp_url, opened by OpenCV).
-    inf = "-r" if "://" in _inp_str else "-v"
+    # Device paths are not video files; select the runner's camera source for direct capture.
+    if input_type == "camera" and n_total_slots <= 1:
+        inf, _inp_str = "-c", str(_cam_idx)
+    else:
+        inf = "-r" if "://" in _inp_str else "-v"
     if lang == "cpp":
         bp = BUILD_DIR / f"{model_name}_{variant}"
         if not bp.exists():

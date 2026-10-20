@@ -36,6 +36,18 @@ def _load_sample(frame):
     frame.locator("#graph-content g.node-group").first.wait_for(timeout=60000)
 
 
+def _wait_for_compile(frame, response, timeout=1500000):
+    assert response.ok, f"Compile request failed (HTTP {response.status}): {response.text()[:2000]}"
+    frame.wait_for_function(
+        "() => !!document.querySelector('#result .error') || /Compilation (Complete|Failed)/.test("
+        "document.querySelector('.progress-container h3')?.textContent || '')", timeout=timeout)
+    error = frame.locator("#result .error")
+    assert not error.count(), error.inner_text()
+    heading = frame.locator(".progress-container h3").inner_text()
+    log = frame.locator("#log-content")
+    assert "Complete" in heading, log.inner_text()[-2000:] if log.count() else heading
+
+
 def test_six_viewer_tabs_and_only_input_before_a_compile(pages):
     page, frame = _compiler(pages)
     tabs = frame.locator(".viewer-tab[data-phase]")
@@ -132,10 +144,9 @@ def test_a_real_dx_com_compile_produces_a_dxnn_and_a_summary(pages, studio):
     frame.locator("#model_path").fill(str(ONNX))
     frame.locator("#config_path").fill(str(CONFIG))
     frame.locator("#output_dir").fill(str(out))
-    frame.locator("#compile-main-btn").click()
-    frame.wait_for_function("() => /Compilation (Complete|Failed)/.test(document.querySelector('.progress-container h3')?.textContent || '')",
-                            timeout=1500000)
-    assert "Complete" in frame.locator(".progress-container h3").inner_text(), frame.locator("#log-content").inner_text()[-2000:]
+    with page.expect_response(lambda r: r.url.endswith("/compile") and r.request.method == "POST") as submitted:
+        frame.locator("#compile-main-btn").click()
+    _wait_for_compile(frame, submitted.value)
     with page.expect_download(timeout=120000):
         frame.locator("#save-summary-btn").click()
     assert any(out.rglob("*.dxnn"))

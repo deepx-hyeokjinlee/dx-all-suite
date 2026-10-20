@@ -98,14 +98,15 @@ SETUP_STEPS={
     },
     "dx-app-build":{
         "label":"DX-APP Build","script":lambda:DX_APP_ROOT/"build.sh",
-        "args":["--type","Release","--arch","x86_64"],"cwd":lambda:DX_APP_ROOT,
-        "desc":"Compile C++ demo binaries (cmake build)",
+        "args":["--all","--type","Release","--arch","x86_64"],"cwd":lambda:DX_APP_ROOT,
+        "desc":"Compile all C++ demo and Graph binaries (cmake build)",
         # build.sh installs the postprocess .so via `sudo cp ... /usr/local/lib` + `sudo ldconfig`.
         "needs_sudo":True,
     },
     "dx-app-setup":{
-        "label":"Sample Assets Setup","script":lambda:DX_APP_ROOT/"setup.sh",
-        "args":[],"cwd":lambda:DX_APP_ROOT,
+        "label":"Sample Assets Setup",
+        "cmd":lambda:[sys.executable,"-m","shared.asset_setup","app"],
+        "cwd":lambda:Path(__file__).resolve().parents[2],
         "desc":"Download sample models and videos for demos",
     },
     "inference-venv":{
@@ -238,30 +239,46 @@ def _probe_dx_engine_venv():
     return False,"venv-dx-runtime not found"
 
 
+def _app_build_status():
+    """Check the declared demo variants and Graph through the same resolvers as Studio execution."""
+    from dx_app.core import graph_cli
+    from dx_app.core.inference_exec import _is_executable_file
+    from shared import dx_app_layout
+
+    targets = {}
+    for example in dx_app_layout.examples(DX_APP_ROOT):
+        if example.cpp_dir is None:
+            continue
+        for variant in ("sync", "async"):
+            if dx_app_layout.cpp_source(DX_APP_ROOT, example.task, example.name, variant).is_file():
+                name = f"{example.name}_{variant}"
+                targets[name] = _is_executable_file(dx_app_layout.cpp_binary(BUILD_DIR, example.name, variant))
+    graphs = {name: graph_cli.binary(variant) is not None for variant, name in graph_cli.NAMES.items()}
+    missing = [name for name, ready in {**graphs, **targets}.items() if not ready]
+    detail = f"C++: {sum(targets.values())}/{len(targets)} · Graph: {sum(graphs.values())}/{len(graphs)}"
+    if missing:
+        detail += " · missing: " + ", ".join(missing[:4])
+        if len(missing) > 4:
+            detail += f" (+{len(missing) - 4})"
+    return {"ok": bool(targets) and all(targets.values()) and all(graphs.values()), "detail": detail}
+
+
 def setup_status():
     """Return dict of {step_id: {ok, detail}} for all setup steps."""
     r={}
     cmake_ok=bool(shutil.which("cmake"))
     gcc_ok=bool(shutil.which("gcc") or shutil.which("gcc-12") or shutil.which("g++"))
     ninja_ok=bool(shutil.which("ninja") or shutil.which("ninja-build"))
-    r["dx-app-deps"]={"ok":cmake_ok and gcc_ok,
+    xvfb_ok=bool(shutil.which("Xvfb"))
+    deps=(("cmake", cmake_ok), ("gcc", gcc_ok), ("ninja", ninja_ok), ("Xvfb", xvfb_ok))
+    r["dx-app-deps"]={"ok":cmake_ok and gcc_ok and xvfb_ok,
         # The screen (shared step list) splits on " · " into short facts on one line; show words, no emoji.
-        "detail":" · ".join([n for n, ok in (("cmake", cmake_ok), ("gcc", gcc_ok), ("ninja", ninja_ok)) if ok]
-                            + (["missing: " + ", ".join(n for n, ok in (("cmake", cmake_ok), ("gcc", gcc_ok), ("ninja", ninja_ok)) if not ok)]
-                               if not (cmake_ok and gcc_ok and ninja_ok) else []))}
-    bdir=DX_APP_ROOT/"build_x86_64"
-    bins=list(bdir.rglob("*_sync"))[:1] if bdir.exists() else []
-    # The bin/ installed by build.sh counts as built too (prebuilt tree, the per-model layout's --minimal build)
-    bin_dir=DX_APP_ROOT/"bin"
-    if not bins and bin_dir.is_dir():
-        bins=[p for p in bin_dir.glob("*_sync") if p.is_file()][:1]
-    r["dx-app-build"]={"ok":bool(bins),
-        "detail":f"build_x86_64/ {'found' if bdir.exists() else 'not found'}" + (" · bin/" if bin_dir.is_dir() else "")}
-    mdir=ASSETS_DIR/"models";vdir=ASSETS_DIR/"videos"
-    nm=len(list(mdir.glob("*.dxnn"))) if mdir.exists() else 0
-    nv=len([f for f in vdir.iterdir() if f.is_file()]) if vdir.exists() else 0
-    r["dx-app-setup"]={"ok":nm>0 and nv>0,
-        "detail":f"{nm} model(s), {nv} video(s)"}
+        "detail":" · ".join([n for n, ok in deps if ok]
+                            + (["missing: " + ", ".join(n for n, ok in deps if not ok)]
+                               if not all(ok for _, ok in deps) else []))}
+    r["dx-app-build"]=_app_build_status()
+    from shared.asset_setup import sample_assets_status
+    r["dx-app-setup"]=sample_assets_status("app",sdk_root=DX_APP_ROOT)
     rv=DX_RT_ROOT/"release.ver"
     rt_ver=rv.read_text().strip() if rv.exists() else None
     # release.ver may already start with "v" (e.g. "v3.4.1") → don't double it into "vv3.4.1".
@@ -298,7 +315,7 @@ def setup_status():
 
 
 def deep_diagnostics():
-    """Run 12 deep diagnostic checks (Python-native, no shell dependency)."""
+    """Run deep diagnostic checks without importing native media libraries into Studio."""
     checks=[]
 
     # 1. PCIe Link — DeepX Vendor ID 1ff4
@@ -426,13 +443,23 @@ def deep_diagnostics():
         checks.append({"id":"model_integrity","label":{"ko":"모델 파일 무결성","en":"Model File Integrity","ja":"モデルファイル整合性","zhCN":"模型文件完整性","zhTW":"模型檔案完整性","es":"Integridad de los archivos de modelo"},"ok":False,
             "detail":"assets/models/ not found","fix":{"ko":"setup.sh 실행하여 모델 다운로드","en":"Run setup.sh to download models","ja":"setup.shを実行してモデルをダウンロード","zhCN":"运行setup.sh下载模型","zhTW":"執行setup.sh下載模型","es":"Ejecute setup.sh para descargar los modelos"}})
 
-    # 12. OpenCV availability
+    xvfb_ok=bool(shutil.which("Xvfb"))
+    checks.append({"id":"live_display",
+        "label":{"ko":"Live display (Xvfb)","en":"Live display (Xvfb)","ja":"ライブ表示 (Xvfb)",
+                 "zhCN":"实时显示 (Xvfb)","zhTW":"即時顯示 (Xvfb)","es":"Pantalla en vivo (Xvfb)"},
+        "ok":xvfb_ok,"detail":"Xvfb found" if xvfb_ok else "Xvfb not installed",
+        "fix":{lang:"sudo apt install xvfb" for lang in ("ko","en","ja","zhCN","zhTW","es")}})
+
+    # OpenCV is probed in a compatible child; importing it here can abort the server on a NumPy ABI mismatch.
+    from shared.media import run_media, MediaError
     try:
-        import cv2
-        checks.append({"id":"opencv","label":{"ko":"OpenCV","en":"OpenCV","ja":"OpenCV","zhCN":"OpenCV","zhTW":"OpenCV","es":"OpenCV"},"ok":True,"detail":f"v{cv2.__version__}"})
-    except ImportError:
+        versions=run_media("probe")
+        checks.append({"id":"opencv","label":{"ko":"OpenCV","en":"OpenCV","ja":"OpenCV","zhCN":"OpenCV","zhTW":"OpenCV","es":"OpenCV"},"ok":True,"detail":f"v{versions['opencv']}"})
+    except MediaError as exc:
         checks.append({"id":"opencv","label":{"ko":"OpenCV","en":"OpenCV","ja":"OpenCV","zhCN":"OpenCV","zhTW":"OpenCV","es":"OpenCV"},"ok":False,
-            "detail":"Not installed","fix":{"ko":"pip install opencv-python-headless","en":"pip install opencv-python-headless","ja":"pip install opencv-python-headless","zhCN":"pip install opencv-python-headless","zhTW":"pip install opencv-python-headless","es":"pip install opencv-python-headless"}})
+            "detail":str(exc),"fix":{"ko":"Setup에서 Python Inference Deps 실행","en":"Run Python Inference Deps in Setup",
+            "ja":"Setup で Python Inference Deps を実行","zhCN":"在 Setup 中运行 Python Inference Deps",
+            "zhTW":"在 Setup 中執行 Python Inference Deps","es":"Ejecute Python Inference Deps en Setup"}})
 
     passed=sum(1 for c in checks if c["ok"])
     total=len(checks)

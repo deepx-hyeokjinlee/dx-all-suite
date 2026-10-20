@@ -155,6 +155,8 @@ def studio(request):
     env = {**os.environ, **extra,
            "DX_LAUNCHER_RUN_DIR": str(run_dir), "XDG_STATE_HOME": str(work / "state"),
            "DX_BIND_LOCAL": "1", "PYTHONUNBUFFERED": "1", "DX_NO_BROWSER": "1"}
+    env["DX_COMPILER_ALLOWED_ROOTS"] = os.pathsep.join(
+        p for p in (env.get("DX_COMPILER_ALLOWED_ROOTS", ""), str(work)) if p)
     log = work / "launcher.out"
     with open(log, "wb") as out:
         proc = subprocess.Popen(["bash", str(ROOT / "launcher.sh"), "--no-kill", "--port", str(port), "--fast",

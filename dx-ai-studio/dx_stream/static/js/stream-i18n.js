@@ -153,6 +153,7 @@ window._DX_I18N_DICT = {
     'Maximum keyframe interval': { ko: '키프레임 최대 간격', ja: '最大キーフレーム間隔', 'zh-CN': '最大关键帧间隔', 'zh-TW': '最大關鍵影格間隔', es: 'Intervalo máximo entre fotogramas clave' },
     'Build failed': { ko: '빌드 실패', ja: 'ビルド失敗', 'zh-CN': '构建失败', 'zh-TW': '建置失敗', es: 'Error de compilación' },
     'Demo playback stopped.': { ko: '데모 재생이 멈췄습니다.', ja: 'デモの再生が停止しました。', 'zh-CN': '演示播放已停止。', 'zh-TW': '示範播放已停止。', es: 'La reproducción de la demo se detuvo.' },
+    'Invalid demo start response. Retry or check the runtime.': { ko: '데모 시작 응답이 올바르지 않습니다. 다시 시도하거나 runtime을 확인하세요.', ja: 'デモ開始の応答が無効です。再試行するか runtime を確認してください。', 'zh-CN': '演示启动响应无效。请重试或检查 runtime。', 'zh-TW': '示範啟動回應無效。請重試或檢查 runtime。', es: 'La respuesta de inicio de la demo no es válida. Reinténtalo o revisa el runtime.' },
     'Unable to start demo playback.': { ko: '데모를 재생하지 못했습니다.', ja: 'デモを再生できませんでした。', 'zh-CN': '无法开始播放演示。', 'zh-TW': '無法開始播放示範。', es: 'No se pudo iniciar la reproducción de la demo.' },
     'No output backend became ready.': { ko: '영상 출력이 준비되지 않았습니다.', ja: '映像出力の準備ができませんでした。', 'zh-CN': '视频输出未能就绪。', 'zh-TW': '影像輸出未能就緒。', es: 'Ninguna salida de video quedó lista.' },
     'Verify the selected input and Stream output dependencies, then retry.': { ko: '선택한 입력과 Stream 출력 의존성을 확인한 뒤 다시 시도하세요.', ja: '選んだ入力と Stream の出力依存関係を確認してから、もう一度お試しください。', 'zh-CN': '请检查所选输入和 Stream 输出依赖项，然后重试。', 'zh-TW': '請檢查所選輸入與 Stream 輸出相依套件，然後重試。', es: 'Revisa la entrada seleccionada y las dependencias de salida de Stream, y vuelve a intentarlo.' },

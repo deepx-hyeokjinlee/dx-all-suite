@@ -2059,6 +2059,13 @@ window._DX_I18N_DICT = {
     'zh-CN': '缺少实时运行所需的软件包', 'zh-TW': '缺少即時執行所需的套件',
     es: 'Faltan paquetes necesarios para la ejecución en vivo',
   },
+  'media_runtime_unavailable': {
+    ko: 'OpenCV 환경을 사용할 수 없습니다. Setup에서 Python Inference Deps를 확인하세요',
+    ja: 'OpenCV 環境を利用できません。Setup で Python Inference Deps を確認してください',
+    'zh-CN': 'OpenCV 环境不可用。请在 Setup 中检查 Python Inference Deps',
+    'zh-TW': 'OpenCV 環境無法使用。請在 Setup 中檢查 Python Inference Deps',
+    es: 'El entorno OpenCV no está disponible. Revise Python Inference Deps en Setup',
+  },
   'live_runner_failed': {
     ko: '예제가 스스로 끝났습니다', ja: 'サンプルが自ら終了しました',
     'zh-CN': '示例自行退出', 'zh-TW': '範例自行結束',
@@ -2783,12 +2790,12 @@ window._DX_I18N_DICT = {
     'zh-TW': '檢查變更計畫和復原指引',
     es: 'Inspeccione planes de cambio y guía de reversión',
   },
-  'Install only what the demo needs, in one go — downloads only the required models and skips steps already done': {
-    ko: '데모에 필요한 것만 한 번에 설치 — 필요한 모델만 다운로드, 이미 된 단계는 건너뜀',
-    ja: 'デモに必要なものだけを一度にインストール — 必要なモデルのみダウンロードし、完了済みの手順はスキップします',
-    'zh-CN': '一次性只安装演示所需内容 — 仅下载所需模型，跳过已完成的步骤',
-    'zh-TW': '一次只安裝示範所需內容 — 僅下載所需模型，略過已完成的步驟',
-    es: 'Instale solo lo que la demo necesita, de una vez — descarga solo los modelos necesarios y omite los pasos ya completados',
+  'Prepare demos in one go — full C++ build and all sample assets; skips ready steps': {
+    ko: '데모를 한 번에 준비 — 전체 C++ build와 모든 sample assets, 완료된 단계는 건너뜀',
+    ja: 'デモを一括準備 — C++ の全体ビルドとすべてのサンプル素材、準備済みの手順はスキップします',
+    'zh-CN': '一次性准备演示 — 完整 C++ 构建及全部示例资源，跳过已就绪的步骤',
+    'zh-TW': '一次準備示範 — 完整 C++ 建置及所有範例資源，略過已就緒的步驟',
+    es: 'Prepare las demos de una vez — compilación C++ completa y todos los recursos de ejemplo; omite los pasos listos',
   },
   'Lab': {
     ko: '실험실',
@@ -2992,9 +2999,12 @@ window._DX_I18N_DICT = {
     es: 'Comprobando el grafo…',
   },
   'The graph runner is not built. Build dx_app (./build.sh) to use the Graph Composer.': {
-    ko: '그래프 실행 파일이 빌드되지 않았습니다. Graph Composer를 쓰려면 dx_app을 빌드하세요 (./build.sh).', ja: 'グラフ実行ファイルがビルドされていません。Graph Composer を使うには dx_app をビルドしてください (./build.sh)。',
-    'zh-CN': '图运行程序尚未构建。要使用图编排器，请构建 dx_app (./build.sh)。', 'zh-TW': '圖執行程式尚未建置。要使用圖編排器，請建置 dx_app (./build.sh)。',
-    es: 'El ejecutor de grafos no está compilado. Compile dx_app (./build.sh) para usar el compositor de grafos.',
+    en: 'The graph runner is not built. Run ./build.sh --all in dx_app to use the Graph Composer.',
+    ko: '그래프 실행 파일이 빌드되지 않았습니다. Graph Composer를 쓰려면 dx_app에서 ./build.sh --all 을 실행하세요.',
+    ja: 'グラフ実行ファイルがビルドされていません。Graph Composer を使うには dx_app で ./build.sh --all を実行してください。',
+    'zh-CN': '图运行程序尚未构建。要使用图编排器，请在 dx_app 中运行 ./build.sh --all。',
+    'zh-TW': '圖執行程式尚未建置。要使用圖編排器，請在 dx_app 中執行 ./build.sh --all。',
+    es: 'El ejecutor de grafos no está compilado. Ejecute ./build.sh --all en dx_app para usar el compositor de grafos.',
   },
   'Empty graph': {
     ko: '빈 그래프', ja: '空のグラフ',

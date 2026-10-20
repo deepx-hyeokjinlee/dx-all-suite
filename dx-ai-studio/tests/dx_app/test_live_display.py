@@ -470,6 +470,15 @@ def test_live_rtsp_goes_in_as_rtsp(tmp_path, monkeypatch):
     assert cmd[cmd.index(url) - 1] == "-r"
 
 
+@pytest.mark.parametrize("camera_id", [None, 2])
+def test_single_slot_camera_uses_the_camera_source(tmp_path, monkeypatch, camera_id):
+    exists = Path.exists
+    monkeypatch.setattr(Path, "exists", lambda p: str(p) == f"/dev/video{camera_id or 0}" or exists(p))
+    cmd = _live_cmd(tmp_path, monkeypatch, input_type="camera", camera_id=camera_id)
+    assert cmd[cmd.index("-c") + 1] == str(camera_id or 0)
+    assert "-v" not in cmd and "-r" not in cmd
+
+
 def test_multi_slot_camera_streams_go_in_as_urls(tmp_path, monkeypatch):
     """Several live slots on one camera read the ffmpeg fan-out (udp://…), which -v refused the same way; -r opens it
     (verified: 110 frames at 12.2 FPS from an mpegts UDP stream)."""

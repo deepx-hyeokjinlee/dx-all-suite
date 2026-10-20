@@ -451,7 +451,12 @@ def main(argv: list[str] | None = None) -> int:
     for k, (ok, detail) in hw.items():
         print(f"   {k:<8} {'yes' if ok else 'no ':<4} {detail}")
 
-    tmp_root = Path(tempfile.mkdtemp(prefix="dx-acceptance-", dir="/dev/shm" if Path("/dev/shm").is_dir() else None))
+    tmp_parent = os.environ.get("DX_ACCEPT_TMP") or ("/dev/shm" if Path("/dev/shm").is_dir() else None)
+    try:
+        tmp_root = Path(tempfile.mkdtemp(prefix="dx-acceptance-", dir=tmp_parent))
+    except OSError as exc:
+        print(f"--acceptance cannot create its temporary workspace: {exc}", file=sys.stderr)
+        return 2
     outcomes = tmp_root / "outcomes.jsonl"
     logs = out / "logs"
     walls: dict[str, float] = {}

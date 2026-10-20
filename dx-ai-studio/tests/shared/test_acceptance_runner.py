@@ -5,6 +5,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+from types import SimpleNamespace
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -202,3 +203,58 @@ def test_preflight_stops_a_browser_run_without_playwright_or_chromium():
 def test_preflight_lets_a_run_without_browser_ac_through():
     tickets = [{"key": "X", "ac": [{"id": "X-AC1", "requires": [], "tests": ["t::a"]}]}]
     assert acc.preflight(tickets, {"browser": (False, "playwright not installed")}) == []
+
+
+def test_acceptance_uses_isolated_workspaces_below_the_callers_temp_root(monkeypatch, tmp_path):
+    monkeypatch.setenv("DX_ACCEPT_TMP", str(tmp_path))
+    monkeypatch.setenv("DX_ACCEPT_HW", "")
+    monkeypatch.setattr(acc, "_load_hardware_probe", lambda: lambda: HW)
+    monkeypatch.setattr(acc, "plan", lambda *args: [])
+    created = []
+    mkdtemp = acc.tempfile.mkdtemp
+
+    def record_workspace(**kwargs):
+        path = Path(mkdtemp(**kwargs))
+        created.append(path)
+        return str(path)
+
+    monkeypatch.setattr(acc.tempfile, "mkdtemp", record_workspace)
+    for n in range(2):
+        assert acc.main(["478", "--out", str(tmp_path / f"report-{n}")]) == 1
+    assert all(p.parent == tmp_path for p in created)
+    assert len(set(created)) == 2
+    assert all(not p.exists() for p in created)
+
+
+def test_acceptance_compiler_allows_only_its_workspace_and_preserves_extra_roots(monkeypatch, tmp_path):
+    from tests.acceptance import conftest
+
+    root = tmp_path / "studio"
+    root.mkdir()
+    monkeypatch.setattr(conftest, "ROOT", root)
+    monkeypatch.setenv("DX_ACCEPT_TMP", str(tmp_path))
+    monkeypatch.setenv("DX_COMPILER_ALLOWED_ROOTS", "/existing/root")
+    monkeypatch.setattr(conftest, "_wait_ready", lambda studio: None)
+    captured = {}
+
+    def launch(*args, **kwargs):
+        captured.update(kwargs["env"])
+        return SimpleNamespace(poll=lambda: 0)
+
+    monkeypatch.setattr(conftest.subprocess, "Popen", launch)
+    request = SimpleNamespace(module=SimpleNamespace(LAUNCHER_ENV={}))
+    studio = conftest.studio.__wrapped__(request)
+    try:
+        running = next(studio)
+        allowed = captured["DX_COMPILER_ALLOWED_ROOTS"].split(conftest.os.pathsep)
+        assert allowed == ["/existing/root", str(running.run_dir.parent)]
+        assert "/dev/shm" not in allowed
+        from dx_compiler.core.path_policy import PathPolicyError, check_output_dir
+
+        monkeypatch.setenv("DX_COMPILER_ALLOWED_ROOTS", captured["DX_COMPILER_ALLOWED_ROOTS"])
+        output = running.run_dir.parent / "compile-out"
+        assert check_output_dir(str(output)) == output.resolve()
+        with pytest.raises(PathPolicyError, match="outside the allowed folders"):
+            check_output_dir(str(tmp_path / "unrelated-output"))
+    finally:
+        studio.close()

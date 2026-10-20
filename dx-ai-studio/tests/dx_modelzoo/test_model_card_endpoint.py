@@ -1,13 +1,17 @@
 """POST /api/model_card/<id> returns the card as an attachment in the requested language."""
+import base64
 import json
+import re
 import sys
 import threading
 import time
+from io import BytesIO
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import pytest
+from PIL import Image
 
 from dx_modelzoo.core.model_card_studio import DxAppMissing, NoDxAppExample, studio_card
 from shared.paths import DX_APP_ROOT
@@ -91,6 +95,21 @@ def test_card_in_korean(port):
     assert "attachment" in resp.headers.get("Content-Disposition", "")
     assert '<html lang="ko">' in page and "빠른 시작" in page and "객체 탐지" in page
     assert 'src="data:image/webp;base64,' in page and 'href="README.md"' not in page
+
+
+@pytest.mark.parametrize("extension", ["webp", "jpg"])
+def test_card_embeds_an_optimized_result_without_the_original(port, tmp_path, monkeypatch, extension):
+    image_path = tmp_path / "optimized/examples" / f"yolo26n_result-jpg.{extension}"
+    image_path.parent.mkdir(parents=True)
+    Image.new("RGB", (32, 24), "red").save(image_path)
+    monkeypatch.setitem(_SERVER_GLOBALS["globals"], "DATA_DIR", tmp_path)
+    page = _post(port, "/api/model_card/yolo26n",
+                 {"lang": "ko", "labels": {"Quick start": "빠른 시작"}}).read().decode()
+    assert '<html lang="ko">' in page and "빠른 시작" in page
+    embedded = re.search(r'src="data:image/webp;base64,([^"]+)"', page)
+    assert embedded is not None, "optimized-only release assets must be embedded in the HTML card"
+    with Image.open(BytesIO(base64.b64decode(embedded.group(1)))) as image:
+        assert image.format == "WEBP" and image.size == (32, 24)
 
 
 def test_get_command_uses_the_setup_name(port):

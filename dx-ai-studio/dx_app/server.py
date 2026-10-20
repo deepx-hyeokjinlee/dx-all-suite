@@ -7,6 +7,7 @@ from pathlib import Path
 
 from shared.dx_server import DXBaseHandler, DXServer, RequestBodyError
 from shared import debug_log
+from shared.media import MediaError
 
 from dx_app.core import config
 from dx_app.core.config import (resolve_model_path, SCRIPT_DIR, DX_APP_ROOT, STATIC_DIR, TEMPLATES_DIR, SERVER_NAME, OUTPUTS_DIR,
@@ -429,7 +430,12 @@ class Handler(DXBaseHandler):
             if path=="/api/outputs":return self.send_json(list_outputs())
             if path=="/api/postprocessors":return self.send_json(POSTPROCESSORS)
             if path=="/api/task_types":return self.send_json(TASK_TYPES)
-            if path=="/api/cameras":return self.send_json(list_cameras())
+            if path=="/api/cameras":
+                try:
+                    return self.send_json(list_cameras())
+                except MediaError as error:
+                    return self.send_json(
+                        {"error_key": "media_runtime_unavailable", "error": str(error)}, 503)
             if path=="/api/live_poll":return self.send_json(poll_inference(self.read_query_param("id")))
             if path=="/api/live_result":return self.send_json(get_inference_result(self.read_query_param("id")))
             if path=="/api/run_poll":
@@ -849,16 +855,27 @@ def main():
     if srv is None:
         sys.exit(1)
 
-    dx.register_signals()
-    _hb_touch()
-    if _idle_shutdown_enabled():
-        threading.Thread(target=_watchdog, args=(srv,), daemon=True).start()
-    dx.print_banner(args.port)
+    from dx_monitor.core import hardware_init
+    try:
+        hardware_init.init()
+        dx.register_signals()
+        _hb_touch()
+        if _idle_shutdown_enabled():
+            threading.Thread(target=_watchdog, args=(srv,), daemon=True).start()
+        dx.print_banner(args.port)
 
-    if not args.no_browser:
-        threading.Timer(0.5, lambda: webbrowser.open(f"http://localhost:{args.port}")).start()
+        if not args.no_browser:
+            threading.Timer(0.5, lambda: webbrowser.open(f"http://localhost:{args.port}")).start()
 
-    srv.serve_forever()
+        srv.serve_forever()
+    finally:
+        try:
+            _stop_children()
+        finally:
+            try:
+                hardware_init.shutdown()
+            finally:
+                srv.server_close()
     print("Server stopped.")
 
 if __name__=="__main__":main()

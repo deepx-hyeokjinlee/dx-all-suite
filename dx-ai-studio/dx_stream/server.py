@@ -68,9 +68,11 @@ def _contract_failure_detail(failure: ContractCheck) -> str:
     return " — ".join(p for p in (failure.observed, failure.remediation) if p)
 
 
-def _stream_launch_contract(demo: dict) -> tuple[ContractResult, object | None]:
-    """Return the active-profile contract and launch context for one selected demo."""
-    activation, context = _active_stream_context()
+def _stream_launch_contract(
+    demo: dict, *, active_context: tuple[ContractResult, object | None] | None = None,
+) -> tuple[ContractResult, object | None]:
+    """Return launch admission, sharing read-only context facts within one listing."""
+    activation, context = active_context if active_context is not None else _active_stream_context()
     if not activation.passed:
         return activation, None
     assert context is not None
@@ -89,6 +91,34 @@ def _stream_launch_contract(demo: dict) -> tuple[ContractResult, object | None]:
         pipelines_dir=config.PIPELINES_DIR,
     )
     return ContractResult(activation.checks + contract.checks), context
+
+
+def _stream_demo_entries() -> list[dict]:
+    """Use the launch contract without activating or repairing the runtime from GET."""
+    active_context = _active_stream_context()
+
+    def availability(demo: dict) -> dict:
+        contract, _ = _stream_launch_contract(demo, active_context=active_context)
+        reasons = [
+            {
+                "code": "contract_failed",
+                "check_id": check.check_id,
+                "message": f"Runtime contract failed: {check.check_id}",
+                "detail": _contract_failure_detail(check),
+            }
+            for check in contract.checks if not check.passed
+        ]
+        return {
+            "available": contract.passed,
+            "reason": "; ".join(
+                " — ".join(part for part in (item["message"], item["detail"]) if part)
+                for item in reasons
+            ) if reasons else "Ready to run",
+            "reason_items": reasons,
+            "demo_id": demo["id"],
+        }
+
+    return demos.list_demo_entries(availability_check=availability)
 
 
 def _deepx_element_types(body: object) -> set[str]:
@@ -358,7 +388,7 @@ class DXStreamHandler(DXBaseHandler):
             if path == "/api/status":
                 return self.send_json(status.check_system(pipeline_mgr=_pipeline_mgr))
             if path == "/api/demos":
-                return self.send_json(demos.list_demo_entries())
+                return self.send_json(_stream_demo_entries())
             if path == "/api/models":
                 catalog_source = models.get_catalog_source()
                 model_list = models.get_models()
