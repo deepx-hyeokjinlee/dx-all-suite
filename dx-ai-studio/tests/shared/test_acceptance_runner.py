@@ -258,3 +258,79 @@ def test_acceptance_compiler_allows_only_its_workspace_and_preserves_extra_roots
             check_output_dir(str(tmp_path / "unrelated-output"))
     finally:
         studio.close()
+
+
+# --- source identity (S6) --------------------------------------------------------------------
+# HEAD alone misreports a dirty tree, and a Studio copy inside another checkout (the remote
+# validation workspace under var/) reported the enclosing repository's commit.
+
+def _tree(root: Path) -> Path:
+    (root / "dx_app").mkdir(parents=True)
+    (root / "dx_app" / "server.py").write_text("print('a')\n")
+    (root / ".gitignore").write_text("var/\n__pycache__/\n*.py[cod]\n.venv/\n")
+    (root / "var" / "acceptance").mkdir(parents=True)
+    (root / "var" / "acceptance" / "report.md").write_text("run output\n")
+    return root
+
+
+def _git(root: Path, *args):
+    subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                   check=True, capture_output=True)
+
+
+def test_identity_records_commit_dirty_flag_and_a_source_fingerprint(tmp_path):
+    root = _tree(tmp_path / "studio")
+    _git(root, "init", "-q")
+    _git(root, "add", "-A")
+    _git(root, "commit", "-qm", "init")
+    clean = acc.source_identity(root)
+    assert clean["commit"] and clean["commit"] != "none" and clean["dirty"] is False
+    assert len(clean["fingerprint"]) == 64 and clean["files"] == 2
+
+    (root / "var" / "acceptance" / "report.md").write_text("another run\n")
+    (root / "dx_app" / "__pycache__").mkdir()
+    (root / "dx_app" / "__pycache__" / "server.cpython-312.pyc").write_bytes(b"x")
+    assert acc.source_identity(root)["fingerprint"] == clean["fingerprint"], "run outputs are not source"
+
+    (root / "dx_app" / "server.py").write_text("print('b')\n")
+    edited = acc.source_identity(root)
+    assert edited["dirty"] is True and edited["fingerprint"] != clean["fingerprint"]
+    assert edited["commit"] == clean["commit"]
+
+    (root / "dx_app" / "server.py").write_text("print('a')\n")
+    (root / "dx_app" / "new.py").write_text("x = 1\n")
+    untracked = acc.source_identity(root)
+    assert untracked["dirty"] is True and untracked["fingerprint"] != clean["fingerprint"]
+
+
+def test_a_copy_inside_another_checkout_reports_no_commit_but_the_same_fingerprint(tmp_path):
+    outer = tmp_path / "outer"
+    outer.mkdir()
+    (outer / ".gitignore").write_text("studio/var/\n")
+    (outer / "README").write_text("x\n")
+    _git(outer, "init", "-q")
+    _git(outer, "add", "-A")
+    _git(outer, "commit", "-qm", "outer")
+    (outer / ".gitignore").write_text("studio/\n")
+    copy = _tree(outer / "studio")
+    plain = _tree(tmp_path / "plain")
+    identity = acc.source_identity(copy)
+    assert identity["commit"] == "none" and identity["dirty"] is None
+    assert identity["fingerprint"] == acc.source_identity(plain)["fingerprint"]
+
+
+def test_the_report_shows_commit_dirty_and_fingerprint(tmp_path, monkeypatch):
+    monkeypatch.setattr(acc, "source_identity", lambda root: {
+        "commit": "abc1234", "tree": "def5678", "dirty": True, "fingerprint": "f" * 64, "files": 3,
+        "method": "git"})
+    env = {**acc.environment({"npu": (False, "none")}), "when": "2026-10-20T12:00:00", "stopped": ""}
+    assert env["source"]["dirty"] is True and env["git"] == "abc1234+dirty"
+    acc.write_markdown(tmp_path / "report.md", [], env, 1.0)
+    text = (tmp_path / "report.md").read_text()
+    assert "abc1234+dirty" in text and "f" * 12 in text
+
+
+def test_the_source_identity_is_printable_without_running_anything(capsys):
+    assert acc.main(["--source-identity"]) == 0
+    printed = json.loads(capsys.readouterr().out)
+    assert set(printed) >= {"commit", "dirty", "fingerprint", "files"}
