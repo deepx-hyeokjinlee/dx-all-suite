@@ -582,36 +582,61 @@ bash scripts/run_ci.sh --acceptance=all --strict       # NOT RUN also fails the 
   Playwright) and Google Chrome or Chromium (or `./.venv/bin/python -m playwright install chromium`). The run
   checks them first and stops with the install command when one is missing, rather than reporting nearly
   every AC as NOT RUN.
-- **OpenCV compatibility and isolation**: the CI requirements retain the Python-version-specific
-  NumPy constraint for test dependencies, but Studio does not import SDK native packages into its
-  server interpreter or expose SDK `site-packages` on its own `sys.path`. Camera discovery and
-  Setup's OpenCV diagnostic use an isolated compatible media child; it needs OpenCV + NumPy, not
-  `dx_engine`. From the Studio root, check that same boundary with
-  `./.venv/bin/python -c "from shared.media import run_media; print(run_media('probe'))"`.
-  `pip check` alone cannot diagnose an OpenCV/NumPy ABI mismatch. A failed media probe appears as
-  an actionable Setup diagnostic and `/api/cameras` HTTP 503 (`media_runtime_unavailable`), not
-  a successful empty camera list. Repair the compatible environment through Setup; do not inject
-  SDK package paths into Studio. Python 3.13+ requires NumPy 2.x with an ABI-compatible OpenCV.
-- **App preparation (SR-842 / SR-845)**: Studio's existing DX-APP Build action requests
-  `build.sh --all --type Release --arch x86_64`; the SDK's minimal no-argument default is unchanged.
-  Readiness requires executable declared C++ demo variants and both Graph runners, rather than
-  any file ending in `_sync`. For Graph-only repair, run in the SDK's `dx_app` directory:
-  `./build.sh --target multi_model_graph_sync multi_model_graph_async`
-  (or `./build.sh --all` for the complete preparation). These are explicit user build actions,
-  not commands the acceptance tests execute.
-  Live camera/RTSP also requires Xvfb: Setup checks it and displays `sudo apt install xvfb` as
-  an explicit administrator action; no global installation happens merely by checking status.
-  Failed Live starts retain each slot's error and remediation beside Start, including after the
-  toast expires. Start retries; a successful retry clears the old errors. Partial success keeps
-  successful streams and Stop available.
-- **Sample assets**: the App Setup action runs `python -m shared.asset_setup app` from the Studio
-  root, not the SDK's bulk `setup.sh`. Readiness uses local validation receipts and file metadata
-  without remote requests on status GETs. Existing files with unknown integrity (including old
-  partial downloads) are **unverified**, not ready merely because their paths exist. Run Sample
-  Assets Setup explicitly to validate/repair them; do not delete user assets to reset readiness.
-  Demo Quick Start skips ready steps but requests the full build and declared sample asset set
-  when needed; it is not a small-download mode. Status/diagnostic acceptance checks never click
-  Run All or Quick Start and do not start installations, builds, or asset downloads.
+- **OpenCV compatibility and isolation (SR-839)**: Studio's `.venv` deliberately has **no cv2** —
+  Studio never imports SDK native packages into its server interpreter or puts SDK `site-packages` on
+  its `sys.path`. Camera discovery, previews and Setup's OpenCV diagnostic run in an isolated media
+  child (`shared/media.py`): the first of the Studio inference venv, the runtime venvs, the Studio
+  interpreter and `/usr/bin/python3` that imports NumPy + OpenCV (`dx_engine` not needed). The issue's
+  old step 1 (`./.venv/bin/python -c 'import cv2'`) therefore no longer applies. Verify the new design
+  from the Studio root, after installing `requirements-ci.txt`:
+
+  ```bash
+  ./.venv/bin/python -c "from shared.media import media_python, run_media; print(media_python(), run_media('probe'))"
+  ./.venv/bin/python -c "from dx_app.core.camera import list_cameras; print(list_cameras())"
+  ```
+
+  The first prints the media interpreter and `{'opencv': …, 'numpy': …}`; the second lists the
+  cameras with `available: True`. A failed probe is an actionable Setup diagnostic and `/api/cameras`
+  HTTP 503 (`media_runtime_unavailable`), never an empty camera list; it is cached for the process
+  (no repeated 15 s probes) until a Setup step finishes. `pip check` cannot diagnose an
+  OpenCV/NumPy ABI mismatch. Python 3.13+ needs NumPy 2.x with an ABI-compatible OpenCV.
+- **App preparation (SR-842 / SR-845)**: DX-APP Build runs `build.sh --all --type Release --arch x86_64`.
+  Its readiness is what Studio needs from it: the run_demo C++ runners (`build.sh --minimal`'s set,
+  read from the SDK's `run_demo.sh`) and both Graph runners. Every other per-model target is reported
+  (`all C++ n/m`) but does not gate — a target that does not build on a board must not make Run All
+  rebuild forever. For Graph-only repair, in the SDK's `dx_app`:
+  `./build.sh --target multi_model_graph_sync multi_model_graph_async`.
+  **Xvfb is optional** and not a step: dx_app `install.sh --all` never installs it, so it does not gate
+  DX-APP Dependencies (that made Run All / Quick Start re-run sudo `install.sh` forever). Setup shows it
+  beside the list as "Optional — Live display capture" with `sudo apt install xvfb`; Live and Graph
+  Live start fail with that hint beside Start when it is missing.
+- **Sample assets (SR-848 follow-up)**: Sample Assets Setup runs `python -m shared.asset_setup app`
+  from the Studio root, never the SDK's `setup.sh` / `setup_sample_models.sh` / `download_models.py`
+  (SR-847 / SR-848; `tests/shared/test_no_sdk_download_scripts.py` pins every path). Readiness is
+  local only. A file that is present but has no Studio completion record is **unverified**, not
+  missing: it counts as installed, is shown as unverified (Setup facts, Model Zoo badge), and running
+  the step again (Setup "Verify", or downloading it again in Model Zoo) checks its size against the
+  server and keeps a matching file in place. **Demo Quick Start** runs the demo form of the steps:
+  `build.sh --minimal` and `asset_setup app --demo` (only the models `run_demo.sh` launches, plus the
+  sample videos), and judges them by that demo set. Status checks never start an installer.
+- **GStreamer environment (SR-846)**: dx_stream's installer exports `GST_PLUGIN_PATH` /
+  `LD_LIBRARY_PATH` in `~/.bashrc` below Ubuntu's non-interactive `return`, so `ssh host '…'`,
+  services and desktop launchers never see them. Studio does not depend on it: `dx_stream/core/gst_env.py`
+  finds `libgstdxstream.so` in the installed locations, sets `GST_PLUGIN_PATH` in the Stream server
+  before GStreamer initialises, and every pipeline child gets the profile's plugin and library
+  directories (`shared/runtime_environment.build_child_environment`); the status probe passes the
+  same environment. `libgstdxstream.so`'s own dependencies resolve through the system loader
+  (checked on the validation board with `ldd` in an empty environment). Verify over a
+  non-interactive shell: `ssh host 'cd <studio> && ./.venv/bin/python -c "from dx_stream.core import status; print(status._check_gst())"'`
+  → `plugin: True`. A bare `ssh host 'gst-inspect-1.0 dxstream'` still fails — that is the SDK issue.
+- **Source identity (report header)**: each report and `results.json` record the commit of the
+  repository that tracks the Studio tree, a dirty flag (tracked edits or untracked files), the Studio
+  tree hash and a sha256 **source fingerprint** over every source file (`.gitignore`'d run artifacts
+  such as `var/` excluded). A copy the enclosing repository does not track (a validation workspace
+  under `var/`) reports commit `none` rather than that repository's HEAD; its fingerprint equals the
+  checkout's. Print it without running anything: `python scripts/acceptance.py --source-identity`.
+  Status/diagnostic acceptance checks never click Run All or Quick Start and do not start
+  installations, builds, or asset downloads.
 - **Selection**: `all`, a ticket key (`SDKREQ-474`) or its number (`474`), or an alias:
   `launcher app stream agent zoo compiler edgeguide monitor benchmark boot i18n sdklib toolbar tutorial
   cloud`. DX Cloud is `SDKREQ-710` (alias `cloud`).
