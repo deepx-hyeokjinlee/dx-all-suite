@@ -78,25 +78,29 @@ _BUSY = {"graph_live": ("graph_live_busy", "The Graph Composer has a Live run. S
          "gallery": ("gallery_busy", "The Graph Composer is building a gallery. Wait for it to finish.")}
 
 
+def _deps_missing() -> list:
+    """Live streaming needs a virtual display (Xvfb), libX11/libxcb to drive and grab it and Pillow to encode the
+    frames — the only non-stdlib pieces of the live path (all OS packages). Without them frame capture is blank and
+    _ensure_xvfb raises deep inside, surfacing as a cryptic 500, so the start fails fast with what to install.
+    (No mss — tests/dx_app/test_live_grab.py.)"""
+    from dx_app.core import camera as _camera
+    missing = []
+    if not shutil.which("Xvfb"):
+        missing.append("Xvfb (sudo apt install xvfb)")
+    if _camera._xlib() is None or _camera._xcb() is None:
+        missing.append("libX11 / libxcb (sudo apt install libx11-6)")
+    try:
+        import PIL  # noqa: F401
+    except Exception:
+        missing.append("Pillow (sudo apt install python3-pil)")
+    return missing
+
+
 def _start_live(model_name, category, model_file, lang, variant, input_type, camera_id, rtsp_url, video_path,
                 slot_idx, n_total_slots):
     """run_inference_live once this slot holds the NPU."""
 
-    # Live streaming needs a virtual display (Xvfb), libX11/libxcb to drive and grab it and Pillow to encode the
-    # frames — the only non-stdlib pieces of the live path (all OS packages). Without them frame
-    # capture is blank and _ensure_xvfb raises deep inside, surfacing as a cryptic 500. Fail fast
-    # + actionable. (No mss — tests/dx_app/test_live_grab.py.)
-    import shutil
-    from dx_app.core import camera as _camera
-    _missing = []
-    if not shutil.which("Xvfb"):
-        _missing.append("Xvfb (sudo apt install xvfb)")
-    if _camera._xlib() is None or _camera._xcb() is None:
-        _missing.append("libX11 / libxcb (sudo apt install libx11-6)")
-    try:
-        import PIL  # noqa: F401
-    except Exception:
-        _missing.append("Pillow (sudo apt install python3-pil)")
+    _missing = _deps_missing()
     if _missing:
         return _err("live_deps_missing", "Live streaming requires: " + ", ".join(_missing))
 

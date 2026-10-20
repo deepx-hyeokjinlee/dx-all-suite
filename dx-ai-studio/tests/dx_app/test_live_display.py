@@ -237,6 +237,7 @@ def test_live_refuses_an_image_only_model(tmp_path, monkeypatch):
     """Some runners refuse -v (arcface, CLIP, ReID, VPR, DOPE, SFA3D, DeepMAR, CAS-ViT) and exit at once, leaving a
     black screen. The UI does not block camera or RTSP for continuous runs, so the server refuses them with a reason."""
     from dx_app.core import live
+    monkeypatch.setattr(live, "_deps_missing", lambda: [])   # the host's Xvfb is not what this test is about
     monkeypatch.setattr(live.config, "model_image_only", lambda cat, name: True)
     r = live.run_inference_live("arcface_mobilefacenet_112x112", "face_recognition", "m.dxnn",
                                 input_type="camera", slot_idx=5)
@@ -453,6 +454,7 @@ def _live_cmd(tmp_path, monkeypatch, **kw):
     monkeypatch.setattr(live, "resolve_model_path", lambda f, r: model)
     monkeypatch.setattr(live, "_ensure_xvfb", lambda s: None)
     monkeypatch.setattr(live, "_start_cam_mux", lambda idx, n: True)
+    monkeypatch.setattr(live, "_deps_missing", lambda: [])
     monkeypatch.setattr(live.subprocess, "Popen", FakeProc)
     monkeypatch.setattr(live, "_video_frame_count", lambda p: None)
     slot = kw.pop("slot_idx", 6)
