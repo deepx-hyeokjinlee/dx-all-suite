@@ -129,7 +129,7 @@ class TestTheRealRepositoryIsMeasured:
     # words most likely to drift between screens.
     # What remains needs product decisions — which of two Korean words for "Task" to
     # standardise on, or whether to translate placeholder paths such as /path/to/*.json.
-    # 237 → 235: 'Retry' is 재시도 / 再試行 suite-wide; Setup's 'Verify' reuses 확인 / 確認.
+    # 237 → 235: 'Retry' has one translation suite-wide ("retry", not "reconnect"); Setup's 'Verify' reuses "check".
     MAX_TERMINOLOGY_DRIFT = 235
     # **Zero is not the goal.** Most overflows are legitimate translations:
     #   'Inference timed out' -> 'La inferencia agotó el tiempo de espera'
