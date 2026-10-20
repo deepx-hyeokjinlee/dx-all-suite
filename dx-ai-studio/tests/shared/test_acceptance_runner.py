@@ -334,3 +334,14 @@ def test_the_source_identity_is_printable_without_running_anything(capsys):
     assert acc.main(["--source-identity"]) == 0
     printed = json.loads(capsys.readouterr().out)
     assert set(printed) >= {"commit", "dirty", "fingerprint", "files"}
+
+
+def test_the_no_ai_chat_check_is_not_run_where_an_agent_cli_is_installed(tmp_path):
+    """485-AC4 needs Chat with no AI connected; a system-wide agent CLI connects it."""
+    from tests.acceptance import test_sdkreq_485_toolbar_chat as chat
+
+    assert chat._system_agent_clis(str(tmp_path)) == []
+    cli = tmp_path / "copilot"
+    cli.write_text("#!/bin/sh\n")
+    cli.chmod(0o755)
+    assert chat._system_agent_clis(str(tmp_path)) == [str(cli)]
