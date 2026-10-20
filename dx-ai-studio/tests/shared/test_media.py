@@ -153,3 +153,45 @@ def test_normalization_preserves_panel_and_upscale_rules(
         "normalize", source=str(source), output=str(output), crop_panel=crop_panel,
     ) == expected
     assert output.read_bytes().startswith(b"\xff\xd8")
+
+
+def test_a_failed_probe_is_cached_for_the_process_until_setup_clears_it(monkeypatch, tmp_path):
+    """A board without a compatible OpenCV must not re-run interpreter probes (up to 15 s each)
+    on every camera list / preview; the failure is kept until a Setup step changes the runtime."""
+    from shared import media
+
+    python = tmp_path / "runtime" / "bin" / "python3"
+    python.parent.mkdir(parents=True)
+    python.touch()
+    monkeypatch.setattr(media.runtime, "STUDIO_INFER_VENV", tmp_path / "absent")
+    monkeypatch.setattr(media.runtime, "runtime_venv_roots", lambda: [python.parent.parent])
+    monkeypatch.setattr(media.sys, "executable", str(python))
+    monkeypatch.setattr(media.shutil, "which", lambda name: None)
+    calls = []
+
+    def run(command, **kwargs):
+        calls.append(command)
+        return SimpleNamespace(returncode=1, stdout="", stderr="ModuleNotFoundError: cv2")
+
+    monkeypatch.setattr(media.subprocess, "run", run)
+    media.media_python.cache_clear()
+    try:
+        with pytest.raises(media.MediaError, match="cv2"):
+            media.media_python()
+        one_round = len(calls)
+        assert one_round >= 1
+        for _ in range(3):
+            with pytest.raises(media.MediaError, match="cv2"):
+                media.media_python()
+        assert len(calls) == one_round, "the failure is cached, not re-probed"
+        media.media_python.cache_clear()
+        with pytest.raises(media.MediaError):
+            media.media_python()
+        assert len(calls) == 2 * one_round
+    finally:
+        media.media_python.cache_clear()
+
+
+def test_setup_steps_clear_the_media_cache_when_they_finish():
+    source = (Path(__file__).resolve().parents[2] / "dx_app" / "core" / "setup_steps.py").read_text()
+    assert "media_python.cache_clear()" in source

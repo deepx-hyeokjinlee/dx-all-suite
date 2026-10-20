@@ -55,32 +55,43 @@ def probe_npu():
     return True, ", ".join(filter(None, [first, *devices[:2]]))
 
 
-def _is_capture_device(path: str) -> bool:
+def _capture_state(path: str) -> str:
+    """"capture" for a V4L2 video-capture node, "denied" when this user may not open it, else "other"."""
     try:
         fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
+    except PermissionError:
+        return "denied"
     except OSError:
-        return False
+        return "other"
     # A mutable buffer is filled in place; fcntl.ioctl then returns the ioctl's int result, not the buffer.
     buf = bytearray(104)
     try:
         fcntl.ioctl(fd, _VIDIOC_QUERYCAP, buf)
     except OSError:
-        return False
+        return "other"
     finally:
         os.close(fd)
     caps, device_caps = struct.unpack_from("<II", buf, 84)
     caps = device_caps if caps & _V4L2_CAP_DEVICE_CAPS else caps
-    return bool(caps & _V4L2_CAP_VIDEO_CAPTURE)
+    return "capture" if caps & _V4L2_CAP_VIDEO_CAPTURE else "other"
+
+
+def _is_capture_device(path: str) -> bool:
+    return _capture_state(path) == "capture"
 
 
 def probe_camera():
     nodes = sorted(glob.glob("/dev/video*"))
     if not nodes:
         return False, "no camera (/dev/video* missing)"
-    capture = [n for n in nodes if _is_capture_device(n)]
-    if not capture:
-        return False, f"no capture camera ({', '.join(nodes)} are not V4L2 capture devices)"
-    return True, ", ".join(capture)
+    states = {node: _capture_state(node) for node in nodes}
+    capture = [n for n, state in states.items() if state == "capture"]
+    if capture:
+        return True, ", ".join(capture)
+    denied = [n for n, state in states.items() if state == "denied"]
+    if denied:
+        return False, f"no usable camera: permission denied ({', '.join(denied)})"
+    return False, f"no capture camera ({', '.join(nodes)} are not V4L2 capture devices)"
 
 
 def probe_dx_com():

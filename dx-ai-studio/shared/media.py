@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import sys
+import threading
 from functools import lru_cache
 from pathlib import Path
 
@@ -21,8 +22,36 @@ def _environment():
     return env
 
 
-@lru_cache(maxsize=1)
+_FAILURE_LOCK = threading.Lock()
+_FAILURE = []   # the cached MediaError text, when no compatible interpreter was found
+
+
 def media_python():
+    """The first interpreter that imports numpy + cv2. Success and failure are both cached for the
+    process: a board without OpenCV must not repeat probes of up to 15 s each on every request.
+    ``media_python.cache_clear()`` (called when a Setup step finishes) probes again."""
+    with _FAILURE_LOCK:
+        if _FAILURE:
+            raise MediaError(_FAILURE[0])
+    try:
+        return _probe_media_python()
+    except MediaError as error:
+        with _FAILURE_LOCK:
+            _FAILURE[:] = [str(error)]
+        raise
+
+
+def _media_cache_clear():
+    _probe_media_python.cache_clear()
+    with _FAILURE_LOCK:
+        _FAILURE.clear()
+
+
+media_python.cache_clear = _media_cache_clear
+
+
+@lru_cache(maxsize=1)
+def _probe_media_python():
     candidates = [
         root / "bin" / "python3"
         for root in [runtime.STUDIO_INFER_VENV, *runtime.runtime_venv_roots()]

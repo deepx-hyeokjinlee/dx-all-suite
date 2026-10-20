@@ -58,3 +58,17 @@ def test_one_failing_probe_is_reported_and_never_stops_the_others(monkeypatch):
     assert set(got) == set(hw.KINDS)
     assert got["camera"][0] is False and "camera probe failed" in got["camera"][1] and "TypeError" in got["camera"][1]
     assert all(got[k] == (True, k) for k in hw.KINDS if k != "camera")
+
+
+def test_an_unreadable_camera_is_reported_as_permission_denied_not_as_no_capture_device(monkeypatch):
+    import errno
+
+    def denied(path, flags):
+        raise PermissionError(errno.EACCES, "Permission denied", path)
+
+    monkeypatch.setattr(hw.os, "open", denied)
+    monkeypatch.setattr(hw.glob, "glob", lambda pattern: ["/dev/video0", "/dev/video1"])
+    ok, detail = hw.probe_camera()
+    assert ok is False
+    assert detail == "no usable camera: permission denied (/dev/video0, /dev/video1)"
+    assert "not V4L2" not in detail
