@@ -74,6 +74,27 @@ def demo_model_files(root):
     return list(dict.fromkeys(names))
 
 
+def demo_video_files(root):
+    """The videos dx_app's run_demo.sh plays (its ``DEMO_VIDEO=( … )`` array), relative to assets/videos.
+
+    Read as text like DEMO_MODEL. Empty entries (image-only demos) and other folders are left out; a tree
+    without the array (an older dx_app, dx_stream) names none.
+    """
+    try:
+        text = (Path(root) / "run_demo.sh").read_text(encoding="utf-8")
+    except OSError:
+        return []
+    match = re.search(r"^DEMO_VIDEO=\(\s*$(.*?)^\)", text, re.M | re.S)
+    if match is None:
+        return []
+    names = []
+    for line in match.group(1).splitlines():
+        token = line.split("#", 1)[0].strip().strip("\"'")
+        if token.startswith("assets/videos/") and ".." not in PurePosixPath(token).parts:
+            names.append(token[len("assets/videos/"):])
+    return list(dict.fromkeys(names))
+
+
 def _model_tasks(component, root, model, demo=False):
     if model is not None:
         _name(model)
@@ -285,14 +306,22 @@ def _inventory_files(videos, inventory, filename):
     return files
 
 
-def _legacy_videos(videos):
-    """Present media files without a Studio inventory: all unverified (an empty folder: missing)."""
+def _legacy_videos(videos, required=()):
+    """Present media files without a Studio inventory: all unverified (an empty folder: missing).
+
+    Without an inventory nothing says which files the archive held, so a half-extracted folder would look
+    complete. ``required`` (the videos the demos play) must all be there; each one absent counts as missing.
+    """
     found = sorted(path for path in (videos.rglob("*") if videos.is_dir() else [])
                    if path.is_file() and path.suffix.lower() in _VIDEO_SUFFIXES
                    and ".studio-assets" not in path.parts)
+    absent = [name for name in required if not videos.joinpath(*PurePosixPath(name).parts).is_file()]
     group = _local_group(found)
-    if not found:
+    if not found and not absent:
         group.update(missing=1, total=1)   # the archive is the unit when nothing is there
+    elif absent:
+        group.update(missing=len(absent), total=group["total"] + len(absent), ok=False, all_verified=False,
+                     absent=absent)
     return group
 
 
@@ -339,7 +368,7 @@ def sample_assets_status(component, sdk_root=None, resource_root=None):
         if not inventory.exists() and not inventory.is_symlink():
             # Videos another installer (the SDK's setup_sample_videos.sh) extracted carry no Studio
             # inventory: the media files present are unverified, not missing.
-            result["videos"] = _legacy_videos(videos)
+            result["videos"] = _legacy_videos(videos, demo_video_files(root) if component == "app" else ())
         else:
             result["videos"] = _local_group(_inventory_files(videos, inventory, filename))
         result["ok"] = result["models"]["ok"] and result["videos"]["ok"]

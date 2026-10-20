@@ -122,3 +122,31 @@ def test_videos_the_sdk_installed_without_a_studio_inventory_are_unverified_not_
             item.unlink()
     status = module.sample_assets_status("app", sdk_root=root, resource_root=resources)
     assert status["demo_ok"] is False and status["videos"]["ok"] is False
+
+
+def test_a_half_extracted_folder_without_an_inventory_is_not_ready(app):
+    """Without a Studio inventory nothing says which files the archive held: a folder holding some other video
+    but not one the demos play (run_demo.sh DEMO_VIDEO) is missing that video, not ready."""
+    module = assets()
+    root, resources = app
+    module.install_assets("app", demo=True, sdk_root=root, resource_root=resources,
+                          open_url=opener([], archive()))
+    videos = root / "assets" / "videos"
+    import shutil
+    shutil.rmtree(videos / ".studio-assets")
+    (videos / "dance.mov").unlink()
+    (videos / "other.mp4").write_bytes(b"\0")
+    status = module.sample_assets_status("app", sdk_root=root, resource_root=resources)
+    assert status["videos"]["ok"] is False and status["videos"]["missing"] == 1, status
+    assert status["videos"]["absent"] == ["dance.mov"]
+    assert status["demo_ok"] is False and status["ok"] is False
+
+
+def test_the_demo_videos_are_read_from_run_demo_sh(app):
+    root, _ = app
+    assert assets().demo_video_files(root) == ["dance.mov"]
+    (root / "run_demo.sh").write_text('DEMO_VIDEO=(\n    ""\n    "assets/videos/a.mp4"  # x\n    "sample/b.mp4"\n'
+                                      '    "assets/videos/../x.mp4"\n    "assets/videos/a.mp4"\n)\n')
+    assert assets().demo_video_files(root) == ["a.mp4"]
+    (root / "run_demo.sh").unlink()
+    assert assets().demo_video_files(root) == []
