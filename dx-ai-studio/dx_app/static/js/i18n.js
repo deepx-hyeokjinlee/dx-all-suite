@@ -5217,6 +5217,7 @@ function _i18nOptions() {
   var dict = window._DX_I18N_DICT || {};
   var lang = (window.DXI18n && window.DXI18n.lang) || 'en';
   document.querySelectorAll('select option').forEach(function(opt) {
+    if (opt.hasAttribute('data-chat-t')) return;   // the chat widget translates its own options
     var txt = opt.textContent.trim();
     var orig = opt.getAttribute('data-i18n-orig') || txt;
     if (lang === 'en') {
