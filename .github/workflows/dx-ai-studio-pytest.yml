@@ -35,6 +35,7 @@ concurrency:
 jobs:
   pytest-gate:
     name: run_ci.sh (blocking)
+    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'skip-self-hosted-ci')
     runs-on:
       - self-hosted
       - sdk

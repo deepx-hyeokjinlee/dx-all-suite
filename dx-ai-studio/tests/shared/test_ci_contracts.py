@@ -144,6 +144,36 @@ def test_ci_workflow_uses_self_hosted_runner():
     assert "ci-browser-smoke" not in workflow
 
 
+def _workflow_job_condition(filename, job_id):
+    import re
+
+    workflow = (ROOT.parent / ".github" / "workflows" / filename).read_text(encoding="utf-8")
+    job = workflow.split("\n  {}:\n".format(job_id), 1)[1]
+    job = re.split(r"\n  [\w-]+:\n", job, maxsplit=1)[0]
+    match = re.search(r"(?ms)^    if:\s*(?:>-\n)?(.*?)^    runs-on:", job)
+    assert match, "{} must decide whether to run before allocating a runner".format(job_id)
+    return " ".join(match.group(1).split())
+
+
+def test_studio_pr_gate_accepts_explicit_skip_without_disabling_manual_runs():
+    condition = _workflow_job_condition("dx-ai-studio-pytest.yml", "pytest-gate")
+    assert condition == (
+        "github.event_name != 'pull_request' || "
+        "!contains(github.event.pull_request.labels.*.name, 'skip-self-hosted-ci')"
+    )
+
+
+def test_harness_pr_skip_preserves_host_fork_and_non_pr_guards():
+    condition = _workflow_job_condition("dx-agent-dev-gate-ghes.yml", "harness-gate")
+    assert condition == (
+        "github.server_url != 'https://github.com' && "
+        "(github.event_name != 'pull_request' || "
+        "github.event.pull_request.head.repo.full_name == github.repository) && "
+        "(github.event_name != 'pull_request' || "
+        "!contains(github.event.pull_request.labels.*.name, 'skip-self-hosted-ci'))"
+    )
+
+
 def test_i18n_smoke_workflow_is_manual_dispatch_only():
     workflow = (
         ROOT.parent / ".github" / "workflows" / "dx-ai-studio-i18n-audit.yml"

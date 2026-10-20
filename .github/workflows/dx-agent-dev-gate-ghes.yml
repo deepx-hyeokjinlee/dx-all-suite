@@ -51,7 +51,10 @@ concurrency:
 jobs:
   harness-gate:
     name: harness-gate
-    if: github.server_url != 'https://github.com' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    if: >-
+      github.server_url != 'https://github.com' &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'skip-self-hosted-ci'))
     runs-on: self-hosted
     timeout-minutes: 20
     steps:
