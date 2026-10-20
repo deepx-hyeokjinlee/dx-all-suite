@@ -1368,7 +1368,10 @@ class LauncherHandler(DXBaseHandler):
         "/static/shared/",
         "/static/sdk-library-data",
         "/static/about-data",
-        "/static/img/",
+        # launcher/static/img's own entries only: a module keeps its /static/img/... (DX App's graph thumbnails)
+        "/static/img/about/",
+        "/static/img/intro/",
+        "/static/img/deepx-logo.svg",
         "/static/fonts/",
         "/static/pdfs/",
         "/assets/",
