@@ -840,6 +840,31 @@ def create_server(port=DEFAULT_PORT):
     return srv
 
 
+def _start_telemetry():
+    """Bind NPU telemetry for get_hw() without ever stopping the server.
+
+    Under the launcher DX Monitor already runs the one NPU telemetry worker, so DX App reads
+    it over loopback (shared.telemetry_client) instead of polling the device a second time.
+    Standalone, DX App starts its own supervisor. Any failure leaves telemetry unavailable with
+    the error (shown in run records and reports) — never mock values.
+    Returns the hardware_init module when DX App owns a supervisor to stop, else None."""
+    from shared import hardware as shared_hardware
+    from shared.telemetry_client import FailedTelemetry, MonitorTelemetry, monitor_port_file
+
+    port_file = monitor_port_file()
+    if port_file is not None:
+        shared_hardware.init_hw(telemetry=MonitorTelemetry(port_file), explicit_mock=False)
+        return None
+    try:
+        from dx_monitor.core import hardware_init
+        hardware_init.init(explicit_mock=False)
+        return hardware_init
+    except Exception as error:  # noqa: BLE001 — telemetry must never take the server down
+        print(f"[DX App] NPU telemetry unavailable: {error}", file=sys.stderr)
+        shared_hardware.init_hw(telemetry=FailedTelemetry(error), explicit_mock=False)
+        return None
+
+
 def main():
     global _gui_port
     import argparse
@@ -855,9 +880,8 @@ def main():
     if srv is None:
         sys.exit(1)
 
-    from dx_monitor.core import hardware_init
+    telemetry_owner = _start_telemetry()
     try:
-        hardware_init.init()
         dx.register_signals()
         _hb_touch()
         if _idle_shutdown_enabled():
@@ -873,7 +897,8 @@ def main():
             _stop_children()
         finally:
             try:
-                hardware_init.shutdown()
+                if telemetry_owner is not None:
+                    telemetry_owner.shutdown()
             finally:
                 srv.server_close()
     print("Server stopped.")

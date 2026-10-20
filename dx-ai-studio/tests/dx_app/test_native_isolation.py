@@ -101,7 +101,8 @@ def test_app_main_owns_isolated_telemetry_lifecycle(monkeypatch, serve_fails):
     monkeypatch.setattr(server, "DXServer", lambda *args: runner)
     monkeypatch.setattr(server, "_idle_shutdown_enabled", lambda: False)
     monkeypatch.setattr(server, "_stop_children", lambda: calls.append("children"))
-    monkeypatch.setattr(hardware_init, "init", lambda: calls.append("telemetry_start"))
+    monkeypatch.delenv("DX_MONITOR_PORT_FILE", raising=False)   # standalone: DX App owns a supervisor
+    monkeypatch.setattr(hardware_init, "init", lambda **kw: calls.append("telemetry_start"))
     monkeypatch.setattr(hardware_init, "shutdown", lambda: calls.append("telemetry_stop"))
     monkeypatch.setattr(sys, "argv", ["dx-app", "--no-browser"])
     if serve_fails:
