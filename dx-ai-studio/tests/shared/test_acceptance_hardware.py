@@ -72,3 +72,61 @@ def test_an_unreadable_camera_is_reported_as_permission_denied_not_as_no_capture
     assert ok is False
     assert detail == "no usable camera: permission denied (/dev/video0, /dev/video1)"
     assert "not V4L2" not in detail
+
+
+def _dx_app_tree(tmp_path, built=True, models=1):
+    root = tmp_path / "dx_app"
+    (root / "config").mkdir(parents=True)
+    (root / "config" / "model_registry.json").write_text("[]")
+    (root / "bin").mkdir()
+    if built:
+        runner = root / "bin" / "yolov8_sync"
+        runner.write_text("")
+        runner.chmod(0o755)
+    (root / "assets" / "models").mkdir(parents=True)
+    for i in range(models):
+        (root / "assets" / "models" / f"m{i}.dxnn").write_bytes(b"DXNN")
+    return root
+
+
+@pytest.mark.parametrize(("built", "models", "ok", "says"), [
+    (True, 2, True, "2 models"), (False, 2, False, "not built"), (True, 0, False, "no dx_app models downloaded")])
+def test_dx_app_is_a_prepared_board_s_dx_app(tmp_path, monkeypatch, built, models, ok, says):
+    root = _dx_app_tree(tmp_path, built, models)
+    monkeypatch.setattr(hw, "_studio_answer", lambda code, timeout=0: {"root": str(root),
+                                                                        "models": str(root / "assets" / "models")})
+    got = hw.probe_dx_app()
+    assert got[0] is ok and says in got[1], got
+
+
+def test_a_checkout_without_the_dx_runtime_submodule_has_no_dx_app(tmp_path, monkeypatch):
+    monkeypatch.setattr(hw, "_studio_answer", lambda code, timeout=0: {"root": str(tmp_path / "dx_app"),
+                                                                        "models": str(tmp_path / "m")})
+    ok, detail = hw.probe_dx_app()
+    assert not ok and "dx_app is not installed" in detail
+
+
+def test_dx_rt_is_a_python_with_dx_engine(monkeypatch):
+    monkeypatch.setattr(hw, "_studio_answer", lambda code, timeout=0: None)
+    assert hw.probe_dx_rt() == (False, "dx-runtime is not installed (no Python with dx_engine; dx-runtime/install.sh)")
+    monkeypatch.setattr(hw, "_studio_answer", lambda code, timeout=0: "/rt/bin/python3")
+    assert hw.probe_dx_rt() == (True, "dx_engine via /rt/bin/python3")
+
+
+def test_dx_compiler_needs_its_sample_models_and_dx_com_but_not_the_compile_disk(tmp_path, monkeypatch):
+    monkeypatch.setattr(hw, "SUITE", tmp_path)
+    monkeypatch.setattr(hw, "_dx_com_status", lambda: {"ok": True, "v": "2.4.1"})
+    assert not hw.probe_dx_compiler()[0]
+    onnx = tmp_path / "dx-compiler" / "dx_com" / "sample_models" / "onnx"
+    onnx.mkdir(parents=True)
+    (onnx / "MobileNetV2-1.onnx").write_bytes(b"")
+    assert hw.probe_dx_compiler()[0]
+    monkeypatch.setattr(hw, "_dx_com_status", lambda: {"ok": False, "v": None})
+    assert hw.probe_dx_compiler() == (False, "dx_com not installed (dx-compiler venv; DX Compiler > Setup)")
+
+
+def test_the_runner_accepts_every_kind_the_probes_answer():
+    spec = importlib.util.spec_from_file_location("acceptance_runner", ROOT / "scripts" / "acceptance.py")
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    assert tuple(runner.REQUIREMENTS) == hw.KINDS == tuple(hw._PROBES)

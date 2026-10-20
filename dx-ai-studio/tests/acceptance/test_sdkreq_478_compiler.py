@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 
 from tests.acceptance.conftest import module_frame, wait_home
-from tests.acceptance.hardware import SUITE, need
+from tests.acceptance.hardware import SUITE, need, probe
 
 LAUNCHER_ENV = {"DX_AGENT_ADAPTER": "mock", "DX_AGENT_DEV_PIN_AGENTS": "claude,copilot"}
 SAMPLES = SUITE / "dx-compiler" / "dx_com" / "sample_models"
@@ -133,7 +133,12 @@ def test_without_dx_com_compile_is_locked_with_a_clear_reason(pages):
     frame.wait_for_function("() => document.getElementById('compile-main-btn').disabled", timeout=30000)
     reason = frame.locator("#compile-gate-reason")
     reason.wait_for(state="visible", timeout=15000)
-    assert "dx_com" in reason.inner_text()
+    if probe("dx_com")[1].startswith("dx_com not installed"):
+        # No dx_com on this board for real: Setup's own step says so first, with the Install button that fixes it.
+        assert reason.inner_text().strip() == "Install the SDK first"
+        assert frame.locator("#setup-install-btn").is_visible()
+    else:
+        assert "dx_com" in reason.inner_text()
 
 
 def test_a_real_dx_com_compile_produces_a_dxnn_and_a_summary(pages, studio):

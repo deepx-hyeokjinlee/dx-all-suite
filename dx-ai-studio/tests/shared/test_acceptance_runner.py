@@ -99,7 +99,8 @@ def test_every_mapped_test_exists_and_is_collected():
 # --- statuses, plan and reports ---------------------------------------------------------------
 
 HW = {"npu": (True, "DXRT v3.5.0"), "camera": (False, "no camera (/dev/video* missing)"), "dx_com": (True, "dx_com"),
-      "llm": (False, "no LLM configured"), "aws": (False, "no AWS credentials"), "browser": (True, "chromium")}
+      "llm": (False, "no LLM configured"), "aws": (False, "no AWS credentials"), "browser": (True, "chromium"),
+      "dx_app": (True, "dx_app · 300 models"), "dx_rt": (True, "dx_engine"), "dx_compiler": (True, "dx_com")}
 
 
 def _ac(tests, requires=()):

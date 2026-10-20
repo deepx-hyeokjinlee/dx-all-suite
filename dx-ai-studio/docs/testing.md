@@ -54,6 +54,19 @@ Run module suites **separately** — do not run `tests/launcher/` and
 `requires_node`, `requires_pillow`, `requires_dx_runtime`, `external`, `smoke`, `e2e`,
 `help_audit`. Skip environment-dependent tests, e.g. `-m "not requires_dx_runtime"`.
 
+### Without the SDK
+
+Studio is often checked out without what a test reads from the installed SDK: a clone whose
+submodules (dx-runtime, dx-compiler, dx-modelzoo) are not checked out, or a board with an older
+dx_app. Such a test calls `tests/installed_sdk.py` (`require`, `require_dx_app`,
+`require_graph_examples`) and is **skipped with the reason** (`not installed here: …`) instead of
+failing. Everything else is hermetic: a test of Studio's own logic replaces the host's Xvfb, dx_com,
+categories and runtime context rather than reading them. So `bash scripts/run_ci.sh` passes on such a
+clone (2026-10-20, a clone with empty submodules on a DX-M1 board: EXIT 0).
+
+`DX_TESTS_REQUIRE_SDK=1` turns those skips into failures. Use it on a board with the release SDK,
+where every one of these tests must actually run.
+
 ## Gates
 
 There is no `.github/workflows/` in this repo — the real gate is `scripts/run_ci.sh`.
@@ -647,11 +660,16 @@ bash scripts/run_ci.sh --acceptance=all --strict       # NOT RUN also fails the 
   run state in a temp `DX_LAUNCHER_RUN_DIR`, so a studio already running is left alone) and drives it with
   Playwright. A few AC reuse developer tests that check the same thing. Each test file runs in its own
   pytest process; one launcher and one browser serve all AC of a file.
-- **Hardware**: each AC lists what it needs — `npu`, `camera`, `dx_com`, `llm`, `aws`, `browser`.
+- **Hardware and SDK**: each AC lists what it needs — `npu`, `camera`, `dx_com`, `llm`, `aws`, `browser`,
+  and the SDK pieces of a prepared board: `dx_app`, `dx_rt`, `dx_compiler`.
   `tests/acceptance/hardware.py` detects them (`/dev/dxrt*` + `dxrt-cli -s`; a V4L2 capture
   `/dev/video*`; dx_com installed **and** 8 GB free disk; an LLM endpoint in Studio chat settings;
-  boto3 + an AWS profile; Playwright + chromium). Present → the AC runs for real (NPU inference, demo,
-  graph run). Missing → the AC is **NOT RUN** with the reason, never a pass.
+  boto3 + an AWS profile; Playwright + chromium; dx_app checked out, built (`bin/`) and with models;
+  a Python that imports dx_engine; dx-compiler's sample models and dx_com). Present → the AC runs for
+  real (NPU inference, demo, graph run). Missing → the AC is **NOT RUN** with the reason, never a pass.
+  `tests/acceptance/conftest.py` applies the same `requires` before each test, so a test run directly
+  with pytest is NOT RUN for the same reason. A clone whose submodules are not checked out runs every
+  AC that needs none of them (2026-10-20, such a clone on a DX-M1 board: 81 PASS, 0 FAIL, 22 NOT RUN).
 - **NOT RUN** means "this machine cannot check it", e.g. `NOT RUN: no camera (/dev/video* missing)`. It is
   not a failure unless `--strict` is given; QA reruns those AC on a machine that has the hardware.
   App benchmark selection comes from the rendered list for the chosen language and executable

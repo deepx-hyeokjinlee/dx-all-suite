@@ -1,4 +1,5 @@
-"""What this machine can run for the acceptance suite: NPU, camera, dx_com, LLM, AWS, browser.
+"""What this machine can run for the acceptance suite: NPU, camera, dx_com, LLM, AWS, browser, and the DEEPX SDK
+pieces a prepared board has (dx_app built with models, dx-runtime, dx-compiler).
 
 Stdlib only: scripts/acceptance.py imports it before any test runs, and the acceptance tests call
 ``need()`` so a test run directly with pytest says NOT RUN for the same reason instead of passing.
@@ -19,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SUITE = ROOT.parent
-KINDS = ("npu", "camera", "dx_com", "llm", "aws", "browser")
+KINDS = ("npu", "camera", "dx_com", "llm", "aws", "browser", "dx_app", "dx_rt", "dx_compiler")
 # dxcom writes several GB of intermediate files; with less free space a compile fails half way
 # (and can fill the disk for everything else on the board).
 DX_COM_MIN_FREE_GB = 8.0
@@ -94,17 +95,28 @@ def probe_camera():
     return False, f"no capture camera ({', '.join(nodes)} are not V4L2 capture devices)"
 
 
-def probe_dx_com():
-    code = ("import json; from dx_compiler.core.setup_service import SetupService; "
-            "s = SetupService().check_status(); "
-            "print(json.dumps({'ok': s['dx_com_installed'], 'v': s['dx_com_version']}))")
-    out = _run([_venv_python(), "-c", code], timeout=120, cwd=str(ROOT),
+def _studio_answer(code: str, timeout: int = 120):
+    """The last line of `code` run by Studio's venv in Studio's root, parsed as JSON; None when it gave no answer."""
+    out = _run([_venv_python(), "-c", code], timeout=timeout, cwd=str(ROOT),
                env={**os.environ, "PYTHONPATH": str(ROOT)})
     if out is None or out.returncode != 0:
-        return False, "dx_com probe failed"
+        return None
     try:
-        got = json.loads(out.stdout.strip().splitlines()[-1])
+        return json.loads(out.stdout.strip().splitlines()[-1])
     except (ValueError, IndexError):
+        return None
+
+
+@lru_cache(maxsize=None)
+def _dx_com_status():
+    return _studio_answer("import json; from dx_compiler.core.setup_service import SetupService; "
+                          "s = SetupService().check_status(); "
+                          "print(json.dumps({'ok': s['dx_com_installed'], 'v': s['dx_com_version']}))")
+
+
+def probe_dx_com():
+    got = _dx_com_status()
+    if got is None:
         return False, "dx_com probe gave no answer"
     if not got["ok"]:
         return False, "dx_com not installed (dx-compiler venv)"
@@ -174,8 +186,45 @@ def probe_browser():
     return False, "no chromium for Playwright"
 
 
+def probe_dx_app():
+    """dx_app as a prepared board has it: checked out, built (bin/) and with models downloaded."""
+    got = _studio_answer("import json; from dx_app.core.config import DX_APP_ROOT, MODELS_DIR; "
+                         "print(json.dumps({'root': str(DX_APP_ROOT), 'models': str(MODELS_DIR)}))", timeout=60)
+    root = Path(got["root"]) if got else SUITE / "dx-runtime" / "dx_app"
+    models = Path(got["models"]) if got else root / "assets" / "models"
+    if not (root / "config" / "model_registry.json").is_file():
+        return False, f"dx_app is not installed ({root}; the dx-runtime submodule)"
+    if not any(p.is_file() and os.access(p, os.X_OK) for p in (root / "bin").glob("*")):
+        return False, f"dx_app is not built ({root}/bin is empty; DX App > Setup > Build)"
+    n = sum(1 for p in models.glob("*.dxnn") if p.is_file())
+    if not n:
+        return False, f"no dx_app models downloaded ({models}; DX App > Setup)"
+    return True, f"dx_app {root} · {n} models"
+
+
+def probe_dx_rt():
+    """dx-runtime installed: a Python that imports dx_engine, which Studio's NPU telemetry and runners use."""
+    got = _studio_answer("import json; from shared.runtime import runtime_python; "
+                         "print(json.dumps(runtime_python()))", timeout=120)
+    if not got:
+        return False, "dx-runtime is not installed (no Python with dx_engine; dx-runtime/install.sh)"
+    return True, f"dx_engine via {got}"
+
+
+def probe_dx_compiler():
+    """dx-compiler checked out with its sample models and dx_com installed (free disk is dx_com's own check)."""
+    samples = SUITE / "dx-compiler" / "dx_com" / "sample_models" / "onnx"
+    if not any(samples.glob("*.onnx")):
+        return False, f"dx-compiler sample models missing ({samples}; the dx-compiler submodule)"
+    got = _dx_com_status()
+    if not (got and got["ok"]):
+        return False, "dx_com not installed (dx-compiler venv; DX Compiler > Setup)"
+    return True, f"dx_com {got['v']}, sample models in {samples.parent}"
+
+
 _PROBES = {"npu": probe_npu, "camera": probe_camera, "dx_com": probe_dx_com,
-           "llm": probe_llm, "aws": probe_aws, "browser": probe_browser}
+           "llm": probe_llm, "aws": probe_aws, "browser": probe_browser,
+           "dx_app": probe_dx_app, "dx_rt": probe_dx_rt, "dx_compiler": probe_dx_compiler}
 
 
 @lru_cache(maxsize=None)

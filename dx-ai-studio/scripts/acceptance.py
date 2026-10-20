@@ -33,7 +33,7 @@ from xml.etree import ElementTree as ET
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "tests" / "acceptance" / "manifest.json"
-REQUIREMENTS = ("npu", "camera", "dx_com", "llm", "aws", "browser")
+REQUIREMENTS = ("npu", "camera", "dx_com", "llm", "aws", "browser", "dx_app", "dx_rt", "dx_compiler")
 PASS, FAIL, NOT_RUN = "PASS", "FAIL", "NOT RUN"
 MIN_FREE_MB = 450           # stop before the board's disk fills up
 PROCESS_TIMEOUT = 1800
@@ -149,7 +149,8 @@ def ac_status(ac: dict, hw: dict, records: dict, stopped: str = "") -> dict:
     """PASS / FAIL / NOT RUN for one AC. ``stopped``: why the run ended early; tests it never reached are NOT RUN."""
     missing = [r for r in ac["requires"] if not hw.get(r, (False, ""))[0]]
     if missing:
-        return {"status": NOT_RUN, "reason": "; ".join(hw[r][1] for r in missing), "duration": 0.0, "tests": []}
+        reason = "; ".join(hw.get(r, (False, f"{r} not probed"))[1] for r in missing)
+        return {"status": NOT_RUN, "reason": reason, "duration": 0.0, "tests": []}
     tests, status, reasons, duration = [], PASS, [], 0.0
     for node in ac["tests"]:
         recs = _match(records, node)
