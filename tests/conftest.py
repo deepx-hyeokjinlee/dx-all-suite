@@ -603,8 +603,10 @@ def apparmor_profile(os_type: str) -> str:
     (Ubuntu 24.04 apparmor 4.0.x: no dac_read_search) attaches to the container's
     /usr/sbin/unix_chkpwd and blocks reading RHEL's mode-000 /etc/shadow -> sudo
     fails with a PAM account error. docker-default keeps the helper confined.
+    DX_APPARMOR_PROFILE in the environment overrides the per-OS default.
     """
-    return "docker-default" if os_type in ("rhel", "centos") else "unconfined"
+    return os.environ.get("DX_APPARMOR_PROFILE") or (
+        "docker-default" if os_type in ("rhel", "centos") else "unconfined")
 
 
 def compose_env(component: str, os_type: str, version: str) -> dict:
@@ -622,7 +624,7 @@ def compose_env(component: str, os_type: str, version: str) -> dict:
     env["COMPONENT"] = component
     env["BASE_IMAGE"] = get_base_image(os_type, version)
     env["COMPOSE_PROJECT_NAME"] = compose_project_name(component, os_type, version)
-    env["DX_APPARMOR_PROFILE"] = env.get("DX_APPARMOR_PROFILE") or apparmor_profile(os_type)
+    env["DX_APPARMOR_PROFILE"] = apparmor_profile(os_type)
     env["LOCAL_VOLUME_PATH"] = os.getenv("LOCAL_VOLUME_PATH", str(PROJECT_ROOT))
     env["DOCKER_VOLUME_PATH"] = os.getenv("DOCKER_VOLUME_PATH", "/deepx/workspace")
 
