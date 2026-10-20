@@ -1,6 +1,7 @@
 """CI runner contracts — align with dx_app run_tc.sh / self-hosted gate."""
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -451,6 +452,20 @@ def test_coverage_omits_the_non_module_directories():
         assert path in cfg, f".coveragerc must omit {path}"
 
 
+
+def _shipped_packages() -> list:
+    """[tool.setuptools] packages in pyproject.toml. tomllib is Python 3.11+ and Studio supports 3.8, so older
+    interpreters read the one array this needs."""
+    text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    try:
+        import tomllib
+    except ImportError:
+        section = text.split("[tool.setuptools]", 1)[1]
+        array = re.search(r"^packages\s*=\s*\[(.*?)\]", section, re.S | re.M).group(1)
+        return re.findall(r'"([^"]+)"', array)
+    return tomllib.loads(text)["tool"]["setuptools"]["packages"]
+
+
 def test_every_shipped_module_is_still_covered_by_the_baseline():
     """The single-root switch must not silently drop a module from the ledger.
 
@@ -459,14 +474,11 @@ def test_every_shipped_module_is_still_covered_by_the_baseline():
     tests/ and would demand a baseline for the test tree itself.
     """
     import json
-    import tomllib
 
     baseline = json.loads(
         (ROOT / "config" / "coverage_baseline.json").read_text(encoding="utf-8")
     )
-    with (ROOT / "pyproject.toml").open("rb") as fh:
-        packages = tomllib.load(fh)["tool"]["setuptools"]["packages"]
-    shipped = {pkg.split(".", 1)[0] for pkg in packages}
+    shipped = {pkg.split(".", 1)[0] for pkg in _shipped_packages()}
 
     missing = sorted(shipped - set(baseline))
     assert not missing, f"shipped package with no coverage baseline entry: {missing}"
@@ -696,12 +708,8 @@ def test_sonar_properties_never_commits_an_endpoint_or_token():
 
 def test_sonar_sources_match_the_shipped_packages():
     """A module missing from sonar.sources is silently never analysed."""
-    import tomllib
-
     props = _sonar_properties()
-    with (ROOT / "pyproject.toml").open("rb") as fh:
-        packages = tomllib.load(fh)["tool"]["setuptools"]["packages"]
-    shipped = {pkg.split(".", 1)[0] for pkg in packages}
+    shipped = {pkg.split(".", 1)[0] for pkg in _shipped_packages()}
     declared = {s.strip() for s in props["sonar.sources"].split(",") if s.strip()}
     assert declared == shipped, (
         f"sonar.sources drifted from pyproject packages: "
