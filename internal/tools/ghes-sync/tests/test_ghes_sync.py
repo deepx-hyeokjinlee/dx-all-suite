@@ -823,10 +823,18 @@ def test_quickguide_exists_and_covers_the_scenarios(name):
                    "--dry-run", "DST-AHEAD", "TO-AHEAD",
                    "--dry-run --update-branch", "Update branch",
                    ("최신 상태가 아닙니다" if name.endswith("-KO.md") else "not up to date with its base"),   # default-vs---update-branch comparison, quoted in the doc's language
-                   "--reverse --pull-only --reset-to-base", "@GHES"):                     # GHES-side reset in Scenario 2
+                   "--reverse --pull-only --reset-to-base", "@GHES",                      # GHES-side reset in Scenario 2
+                   "branch = none"):                                                        # the no-feature-branch recipe
         assert needle in text, f"{name}: must mention {needle!r}"
     readme = (SUITE / "internal" / "tools" / "ghes-sync" / ("README.md" if name == "QUICKGUIDE.md" else "README-KO.md")).read_text(encoding="utf-8")
     assert name in readme, f"README must link {name}"
+
+
+@_pytest.mark.parametrize("name", ["README.md", "README-KO.md"])
+def test_readme_documents_the_reset_guard_and_branch_none(name):
+    text = (SUITE / "internal" / "tools" / "ghes-sync" / name).read_text(encoding="utf-8")
+    for needle in ("branch = none", "--reset-to-base", "pr_base"):
+        assert needle in text, f"{name}: must mention {needle!r}"
 
 
 # ── lessons from the first real --reverse --reset-to-base run (orangepi, GnuTLS -110) ──
@@ -1662,3 +1670,155 @@ def test_pr_number_comes_from_the_url_not_the_trailing_output(env):
     edits = [c for c in env.gh_calls() if c.startswith("pr edit")]
     assert edits, env.gh_calls()
     assert all(c.split()[2] == "42" for c in edits), edits
+
+
+# ── --reset-to-base guards + `branch = none` (2026-10-20) ─────────────────────
+# `branch` means "the feature branch I sync". Putting an integration branch there
+# (because there is no feature branch yet) turned --reset-to-base into a forced
+# rewrite of main/dev on BOTH the mirror and GHES — see the design spec.
+
+def _git_pushes(log) -> list:
+    """Lines of the fake-git log that pushed. A missing log = git never ran."""
+    text = log.read_text(encoding="utf-8") if log.exists() else ""
+    return [line for line in text.splitlines() if " push" in line]
+
+
+def _integration_branch_scenario(env, *, branch: str):
+    """dx_app integrates on dev (pr_base = dev), dx-runtime on main. `branch` is
+    whatever the caller put in [defaults] — an integration name is the bug."""
+    r = env.repos
+    r.make("dx_app", "dx-runtime")
+    for n in ("dx_app", "dx-runtime"):
+        r.commit("src", n, "main", "base", files={"a": "0"})
+        r.mirror_branch(n, "main")
+    git("update-ref", "refs/heads/dev", "refs/heads/main", cwd=r.bare("dst", "dx_app"))
+    r.commit("dst", "dx_app", "dev", "ghes dev moved", files={"d": "1"})
+    env.write_conf([("dx_app", "pr_base = dev"), ("dx-runtime", "")], branch=branch)
+
+
+@pytest.mark.parametrize("branch,repo,mapping", [
+    ("main", "dx_app", "main <= dev"),              # dx-runtime's main == its pr_base: a no-op, not an error
+    ("dev", "dx-runtime", "dev <= main"),           # dx_app's dev == its pr_base: likewise
+    ("master", "dx_app", "master <= dev"),
+    ("develop", "dx_app", "develop <= dev"),
+])
+def test_reset_to_base_refuses_an_integration_branch_before_any_network(env, branch, repo, mapping):
+    """--reset-to-base rewrites <branch> to <pr_base> with force-with-lease. When
+    <branch> is an integration branch that silently force-rewrites main/dev."""
+    _integration_branch_scenario(env, branch=branch)
+    log = env.install_fake_git()
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 2, out(r)
+    assert "--reset-to-base" in out(r) and branch in out(r)
+    assert repo in out(r) and mapping in out(r)     # names the repo that would be rewritten
+    assert _git_pushes(log) == [], log                 # refused before any git ran at all
+
+
+def test_reset_to_base_refusal_message_is_clean_in_both_languages(env):
+    """A backtick inside a "$(m ...)" message is command substitution, not quoting —
+    the first version of this message ran `branch` and leaked a shell error."""
+    for lang in ("ko", "en"):
+        _integration_branch_scenario(env, branch="main")
+        r = env.run("--reverse", "--reset-to-base", "--lang", lang)
+        assert r.returncode == 2, out(r)
+        assert "command not found" not in out(r) and "명령어를" not in out(r), out(r)
+        assert out(r).count("ERROR:") == 1, out(r)
+
+
+def test_reset_to_base_refusal_lists_the_rewrite_and_the_way_out(env):
+    _integration_branch_scenario(env, branch="main")
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 2, out(r)
+    assert "main <= dev" in out(r)                   # what would have happened
+    assert "--branch" in out(r) and "--reverse --push-only" in out(r)   # both alternatives
+
+
+def test_reset_to_base_still_works_for_a_real_feature_branch(env):
+    """The guard must not catch the normal workflow."""
+    tip, dev = _squash_merged_scenario(env)
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    assert env.repos.rev("src", "dx_app", f"refs/heads/{BR}") == dev
+
+
+def test_reset_to_base_warns_when_branch_equals_pr_base(env):
+    """branch == pr_base: reset_to_base()/reset_ghes_branch() return early, and the
+    same-name list loses the only branch — the run went completely silent."""
+    env.repos.make("dx_app")
+    env.repos.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    env.repos.mirror_branch("dx_app", "main")
+    env.write_conf([("dx_app", "")], branch="main", pr_base="main")
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 0, out(r)
+    assert "pr_base" in out(r) and "main" in out(r)
+    assert "--reset-to-base" in out(r).rsplit("SUMMARY", 1)[-1]   # summary says it applied nowhere
+
+
+def test_branch_none_syncs_only_the_integration_branches_in_reverse(env):
+    """No feature branch yet: bring GHES's pr_base + main back to the mirror."""
+    r_ = env.repos
+    r_.make("dx_app")
+    r_.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    r_.mirror_branch("dx_app", "main")
+    git("update-ref", "refs/heads/dev", "refs/heads/main", cwd=r_.bare("dst", "dx_app"))
+    ghes_main = r_.commit("dst", "dx_app", "main", "ci: dci", files={"m": "1"})
+    ghes_dev = r_.commit("dst", "dx_app", "dev", "dev moved", files={"d": "1"})
+    env.write_conf([("dx_app", "pr_base = dev")], branch="none")
+    r = env.run("--reverse")
+    assert r.returncode == 0, out(r)
+    assert "같은 이름으로 sync: dev main" in r.stdout
+    assert env.repos.rev("src", "dx_app", "refs/heads/main") == ghes_main
+    assert env.repos.rev("src", "dx_app", "refs/heads/dev") == ghes_dev
+
+
+def test_branch_none_is_refused_in_the_forward_direction(env):
+    """Forward = push the feature branch to GHES and open a PR. With no feature
+    branch the only reading would be 'push mirror main straight into GHES main',
+    which bypasses the GHES PR review."""
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "")], branch="none")
+    log = env.install_fake_git()
+    r = env.run("--no-pr")
+    assert r.returncode == 2, out(r)
+    assert "--reverse" in out(r) and "none" in out(r)
+    assert _git_pushes(log) == [], log                 # refused before any git ran at all
+
+
+def test_branch_none_is_refused_with_reset_to_base(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "pr_base = dev")], branch="none")
+    r = env.run("--reverse", "--reset-to-base")
+    assert r.returncode == 2, out(r)
+    assert "--reset-to-base" in out(r)
+
+
+def test_branch_none_is_reported_as_none_in_print_config(env):
+    env.repos.make("dx_app")
+    env.write_conf([("dx_app", "pr_base = dev")], branch="none")
+    r = env.run("--reverse", "--print-config")
+    assert r.returncode == 0, out(r)
+    assert "branch = none" in r.stdout
+
+
+def test_branch_none_via_cli_option_and_case_insensitively(env):
+    env.repos.make("dx_app")
+    env.repos.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    env.repos.mirror_branch("dx_app", "main")
+    env.write_conf([("dx_app", "pr_base = dev")])          # [defaults] branch = feature/x
+    r = env.run("--reverse", "--branch", "NONE", "--print-config")
+    assert r.returncode == 0, out(r)
+    assert "branch = none" in r.stdout and BR not in r.stdout
+
+
+def test_branch_none_to_ahead_hint_does_not_quote_an_empty_branch(env):
+    r_ = env.repos
+    r_.make("dx_app")
+    r_.commit("src", "dx_app", "main", "base", files={"a": "0"})
+    r_.mirror_branch("dx_app", "main")
+    r_.commit("src", "dx_app", "main", "mirror main moved", files={"a": "1"})
+    env.write_conf([("dx_app", "")], branch="none")
+    r = env.run("--reverse")
+    assert r.returncode == 0, out(r)
+    line = [l for l in out(r).splitlines() if "dx_app:main" in l and "TO-AHEAD" in l][0]
+    assert "''" not in line and "' '" not in line, line
+    assert "branch = none" in line, line          # not "the forward run syncs only 'none'"

@@ -120,6 +120,28 @@ repo별 헤더 로그가 이것을 그대로 보여 준다: `같은 이름으로
 `reverse_branches`는 `[defaults]`(모든 repo)와 `[repo NAME]` 섹션(그 repo만, defaults보다 우선) 어디에나 둘 수 있고,
 쓰지 않으면 위 표가 기본이다.
 
+### 진행 중인 feature 브랜치가 없을 때 — `branch = none`
+
+`branch`는 REQUIRED라서 feature 브랜치 사이사이에는 넣을 값이 없다. 이때 `main`이나 `dev`를
+임시로 넣으면 **안 된다**: `--reset-to-base`가 그 공유 브랜치를 미러와 GHES 양쪽에서
+force-rewrite하게 된다(이제 그 조합은 네트워크 호출 전에 exit 2로 거부된다).
+
+대신 `branch = none`을 쓴다 — `reverse_branches`가 `pr_base` + `main`으로 떨어지고, 이것이 곧
+"integration 브랜치만 맞춘다"이다:
+
+```bash
+ghes-sync.sh --reverse --pull-only --branch none    # 폐쇄망
+ghes-sync.sh --reverse --push-only --branch none    # 일반망
+```
+
+| repo | `pr_base` | `--reverse --branch none`이 sync하는 브랜치 |
+|---|---|---|
+| dx_app, dx_stream | dev | `dev`, `main` |
+| dx-runtime, dx-compiler, dx-all-suite | main | `main` |
+
+`branch = none`은 `--reverse` 전용이고(forward는 미러의 `main`/`dev`를 GHES에 바로 push하는
+셈이라 PR 리뷰를 우회한다), `--reset-to-base`와 함께 쓸 수 없다.
+
 ## 시나리오 3 — GHES → 미러, 같은 이름 브랜치만 (`--reverse`)
 
 history 재작성 없이 GHES 쪽에만 커밋이 생겼을 때: `main`의 `dci` bot bump, feature 브랜치의 merge-update 커밋(forward에서 `DST-AHEAD`),

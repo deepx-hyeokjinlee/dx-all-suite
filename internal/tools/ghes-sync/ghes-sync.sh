@@ -14,7 +14,9 @@
 #                     개인 값(src_host = 내 mirror org, branch = 내 feature 브랜치)은 여기에 두어
 #                     sync.conf 가 `git status` 에 나타나지 않게 한다.
 #   --branch NAME     sync 할 source 브랜치 (설정/override/GHES_SYNC_BRANCH 를 모두 이기고,
-#                     repo별 `branch` 도 덮어쓴다; `dst_branch` 매핑은 건드리지 않는다)
+#                     repo별 `branch` 도 덮어쓴다; `dst_branch` 매핑은 건드리지 않는다).
+#                     `--branch none` = feature 브랜치 없음 — integration 브랜치(pr_base + main)만
+#                     GHES -> mirror 로 맞춘다. --reverse 전용이고 --reset-to-base 와 함께 쓸 수 없다.
 #   --repo NAME       이 repo만 처리 (반복 가능; 설정 파일의 순서 유지)
 #   --pull-only       src/dst를 로컬 cache로 fetch만 하고 push하지 않음
 #   --push-only       src fetch 생략(cache 사용), dst는 fetch, push 수행
@@ -42,6 +44,9 @@
 #                       commit 나열, --force-with-lease 로 push(fetch와 push 사이에 mirror 브랜치가 움직였을 때만 거부).
 #                     --no-backup 은 양쪽 backup 브랜치 생략. 흐름: 폐쇄망 `--reverse --pull-only --reset-to-base`
 #                     → 일반망 `--reverse --push-only --reset-to-base` → 다음 forward 는 UP-TO-DATE.
+#                     `branch` 가 integration 브랜치(main/master/dev/develop 또는 어떤 repo의 pr_base)면
+#                     거부한다 — 그 브랜치를 pr_base 로 force-rewrite 하게 되기 때문. `branch` 와 `pr_base`
+#                     가 같은 repo 는 reset 할 것이 없으므로 WARNING 과 함께 건너뛴다.
 #   --cache-dir DIR   bare-repo cache (기본: 설정의 cache_dir, 없으면 $XDG_CACHE_HOME/ghes-sync)
 #   --print-config    repo별 유효 설정을 출력하고 종료
 #   --lang ko|en      출력 언어. 기본: GHES_SYNC_LANG, 없으면 터미널 locale(LC_ALL > LC_MESSAGES > LANG 이
@@ -125,7 +130,9 @@ Usage:
                     sync.conf never shows up in `git status`.
   --branch NAME     the source branch to sync. Beats the config, the override file and
                     GHES_SYNC_BRANCH, and overrides a per-repo `branch` as well; a
-                    `dst_branch` mapping is left alone.
+                    `dst_branch` mapping is left alone. `--branch none` = no feature branch:
+                    sync only the integration branches (pr_base + main) GHES -> mirror.
+                    --reverse only, and not allowed together with --reset-to-base.
   --repo NAME       only this repo (repeatable; config order is kept)
   --pull-only       fetch src/dst into the local cache, push nothing
   --push-only       skip the src fetch (use the cache), fetch dst, push
@@ -155,6 +162,9 @@ Usage:
                       between fetch and push).
                     --no-backup skips both backup branches. Flow: closed network `--reverse --pull-only --reset-to-base`
                     → open network `--reverse --push-only --reset-to-base` → the next forward run is UP-TO-DATE.
+                    Refused when `branch` is an integration branch (main/master/dev/develop, or any repo's
+                    pr_base) — it would force-rewrite that branch. A repo whose `branch` equals its `pr_base`
+                    has nothing to reset and is skipped with a WARNING.
   --cache-dir DIR   bare-repo cache (default: cache_dir from the config, else $XDG_CACHE_HOME/ghes-sync)
   --print-config    print the effective per-repo config and exit
   --lang ko|en      output language. Default: GHES_SYNC_LANG, else the terminal locale (LC_ALL > LC_MESSAGES >
@@ -486,7 +496,11 @@ resolve() {
   local name="$1" v
   R_NAME="$name"
   R_BRANCH="$(eff "$name" branch)"
-  [ -n "$R_BRANCH" ] || die2 "$(m "[repo $name]: 'branch' 가 비어 있습니다 — $OVERRIDE_HINT 에 feature 브랜치를 설정([defaults] branch = feature/<topic>)하거나 export GHES_SYNC_BRANCH=<branch>" "[repo $name]: 'branch' is empty — set your feature branch in $OVERRIDE_HINT ([defaults] branch = feature/<topic>) or export GHES_SYNC_BRANCH=<branch>")"
+  # `branch = none` (대소문자 무시): sync 할 feature 브랜치가 없다 — --reverse 에서
+  # integration 브랜치(pr_base + main)만 GHES → mirror 로 맞춘다. 가드는 pre-flight 에.
+  R_NO_BRANCH=0
+  case "$R_BRANCH" in [Nn][Oo][Nn][Ee]) R_BRANCH=""; R_NO_BRANCH=1 ;; esac
+  [ -n "$R_BRANCH" ] || [ "$R_NO_BRANCH" -eq 1 ] || die2 "$(m "[repo $name]: 'branch' 가 비어 있습니다 — $OVERRIDE_HINT 에 feature 브랜치를 설정([defaults] branch = feature/<topic>)하거나 export GHES_SYNC_BRANCH=<branch> — feature 브랜치가 아직 없으면 branch = none (--reverse 전용)" "[repo $name]: 'branch' is empty — set your feature branch in $OVERRIDE_HINT ([defaults] branch = feature/<topic>) or export GHES_SYNC_BRANCH=<branch> — with no feature branch yet use branch = none (--reverse only)")"
   R_DST_BRANCH="$(eff "$name" dst_branch)"; [ -n "$R_DST_BRANCH" ] || R_DST_BRANCH="$R_BRANCH"
   R_SRC_URL="${CFG[$name.src_url]:-}"
   if [ -z "$R_SRC_URL" ]; then
@@ -592,8 +606,10 @@ if [ "$PRINT_CONFIG" -eq 1 ]; then
   for n in "${TARGETS[@]}"; do
     resolve "$n"
     printf '[%s]\n' "$n"
+    pc_b="$R_BRANCH"; pc_db="$R_DST_BRANCH"
+    if [ "$R_NO_BRANCH" -eq 1 ]; then pc_b=none; pc_db=none; fi
     printf '  src_url = %s\n  dst_url = %s\n  path = %s\n  branch = %s\n  dst_branch = %s\n  pr_base = %s\n  mode = %s\n  gitlinks = %s\n  gitlink_check = %s\n' \
-      "$R_SRC_URL" "$R_DST_URL" "$R_PATH" "$R_BRANCH" "$R_DST_BRANCH" "$R_PR_BASE" "$R_MODE" "$R_GITLINKS" "$R_GL_CHECK"
+      "$R_SRC_URL" "$R_DST_URL" "$R_PATH" "$pc_b" "$pc_db" "$R_PR_BASE" "$R_MODE" "$R_GITLINKS" "$R_GL_CHECK"
     [ "$R_SYNC" = off ]        && printf '  sync = off\n'
     [ -n "$R_GHCLOUD_URL" ]    && printf '  ghcloud_url = %s\n' "$R_GHCLOUD_URL"
     [ -n "$R_GHCLOUD_REF" ]    && printf '  ghcloud_ref = %s\n' "$R_GHCLOUD_REF"
@@ -602,13 +618,60 @@ if [ "$PRINT_CONFIG" -eq 1 ]; then
   exit 0
 fi
 
+# ---------------------------------------------------------------------------
+# pre-flight: branch 설정과 --reset-to-base 의 조합 검사 (네트워크 호출 전에 한 번)
+# ---------------------------------------------------------------------------
+# `branch` 는 "내가 sync 하는 feature 브랜치"다. feature 브랜치가 없다는 이유로 거기에
+# integration 브랜치(main/dev) 이름을 넣으면 --reset-to-base 가 그 브랜치를 pr_base 로
+# force-rewrite 한다 — mirror 와 GHES 양쪽에서. 루프 안에서 막으면 앞쪽 repo 는 이미
+# 덮어쓴 뒤이므로 여기서 전부 먼저 검사한다.
+NO_BRANCH=0
+for n in "${TARGETS[@]}"; do
+  resolve "$n"
+  if [ "$R_NO_BRANCH" -eq 1 ]; then NO_BRANCH=1; fi
+done
+if [ "$NO_BRANCH" -eq 1 ]; then
+  if [ "$REVERSE" -eq 0 ]; then
+    die2 "$(m "branch = none 은 --reverse 전용입니다. forward (mirror → GHES) 는 feature 브랜치를 GHES 로 push 하고 PR 을 여는 동작이라 기준 브랜치가 필요하고, mirror 의 main/dev 를 GHES 에 바로 push 하는 것은 GHES PR 리뷰를 우회합니다. integration 브랜치를 GHES 기준으로 당겨오려면 '--reverse' 를 쓰세요." "branch = none is for --reverse only. The forward direction (mirror → GHES) pushes your feature branch to GHES and opens a PR, so it needs a branch; pushing the mirror's main/dev straight into GHES would bypass the GHES PR review. To pull the integration branches down from GHES use '--reverse'.")"
+  fi
+  if [ "$RESET_TO_BASE" -eq 1 ]; then
+    die2 "$(m "branch = none 과 --reset-to-base 는 함께 쓸 수 없습니다 — 되돌릴 feature 브랜치가 없습니다. integration 브랜치를 GHES 기준으로 맞추기만 하려면 --reset-to-base 없이 실행하세요." "branch = none cannot be combined with --reset-to-base — there is no feature branch to reset. To just align the integration branches with GHES, run without --reset-to-base.")"
+  fi
+fi
+if [ "$RESET_TO_BASE" -eq 1 ]; then
+  PROTECTED_BRANCHES="main master dev develop"
+  for n in "${TARGETS[@]}"; do
+    resolve "$n"
+    if [ -n "$R_PR_BASE" ] && ! has_word "$R_PR_BASE" "$PROTECTED_BRANCHES"; then
+      PROTECTED_BRANCHES="$PROTECTED_BRANCHES $R_PR_BASE"
+    fi
+  done
+  RESET_REWRITES=""
+  for n in "${TARGETS[@]}"; do
+    resolve "$n"
+    [ "$R_SYNC" = off ] && continue
+    # branch == pr_base 는 reset 이 애초에 no-op 이라 여기서는 통과시킨다 (repo 별 WARNING 으로 안내).
+    if [ -n "$R_PR_BASE" ] && [ "$R_PR_BASE" != "$R_BRANCH" ] && has_word "$R_BRANCH" "$PROTECTED_BRANCHES"; then
+      RESET_REWRITES="$RESET_REWRITES
+    - $n : $R_BRANCH <= $R_PR_BASE"
+    fi
+  done
+  if [ -n "$RESET_REWRITES" ]; then
+    die2 "$(m "--reset-to-base 는 '머지된 feature 브랜치를 pr_base 로 되돌리는' 옵션입니다. 지금 branch 에 integration 브랜치가 지정되어 있어서, 다음 repo 에서 mirror 와 GHES 의 그 브랜치를 force-with-lease 로 재작성하게 됩니다:$RESET_REWRITES
+  feature 브랜치를 지정하거나(--branch <feature> 또는 [defaults] branch), integration 브랜치를 GHES 기준으로 맞추기만 하려면 --reset-to-base 없이 '--reverse --push-only' 를 쓰세요." "--reset-to-base means 'put the merged feature branch back on pr_base'. An integration branch is configured as 'branch', so the following repos would have that branch rewritten (force-with-lease) on BOTH the mirror and GHES:$RESET_REWRITES
+  Name a feature branch (--branch <feature>, or [defaults] branch); to only align the integration branches with GHES, use '--reverse --push-only' without --reset-to-base.")"
+  fi
+fi
+
 # reverse_branches NAME → 이 repo가 --reverse 에서 같은 이름으로 sync하는 브랜치 목록(설정, 없으면 branch + pr_base + main)
 reverse_branches() {
   local n="$1" branches b
   branches="$(eff "$n" reverse_branches)"
   if [ -z "$branches" ]; then
-    branches="$R_BRANCH"
-    for b in "$R_PR_BASE" main; do [ -n "$b" ] && ! has_word "$b" "$branches" && branches="$branches $b"; done
+    # 빈 항목은 건너뛴다 — branch = none 이면 자동으로 pr_base + main 이 된다.
+    for b in "$R_BRANCH" "$R_PR_BASE" main; do
+      if [ -n "$b" ] && ! has_word "$b" "$branches"; then branches="${branches:+$branches }$b"; fi
+    done
   fi
   printf '%s' "$branches"
 }
@@ -618,7 +681,7 @@ compute_name_w() {
   for n in "${TARGETS[@]}"; do
     resolve "$n"
     if [ "$REVERSE" -eq 1 ]; then
-      for b in $(reverse_branches "$n") "$R_BRANCH<=$R_PR_BASE" "$R_BRANCH<=$R_PR_BASE@GHES"; do k="$n:$b"; [ "${#k}" -gt "$w" ] && w="${#k}"; done
+      for b in $(reverse_branches "$n") ${R_BRANCH:+"$R_BRANCH<=$R_PR_BASE" "$R_BRANCH<=$R_PR_BASE@GHES"}; do k="$n:$b"; [ "${#k}" -gt "$w" ] && w="${#k}"; done
     else [ "${#n}" -gt "$w" ] && w="${#n}"; fi
   done
   NAME_W="$w"
@@ -638,6 +701,7 @@ fi
 # repo별 처리
 # ---------------------------------------------------------------------------
 declare -A ACTION=() STATUS=() DETAIL=() SRC_SHA=() DST_BEFORE=() DST_AFTER=() PRINFO=() SYNCED_OK=()
+RESET_ACTIVE=0   # --reset-to-base 가 실제로 적용된 repo 수 (branch != pr_base)
 declare -a ROWS=()      # 요약 행: repo(forward) 또는 repo:branch(reverse)
 ROW_KEY=""              # process_reverse 가 브랜치별로 설정; 비어 있으면 R_NAME 이 key
 ANY_FAIL=0
@@ -1019,6 +1083,15 @@ process_reverse() {
     local kept="" ; for b in $branches; do [ "$b" = "$R_BRANCH" ] || kept="$kept $b"; done; branches="${kept# }"
   fi
   hdr "$R_NAME (REVERSE): GHES $R_DST_URL → mirror $R_SRC_URL | $(m "같은 이름으로 sync: ${branches:-없음}" "same-name sync: ${branches:-none}")$( [ "$RESET_TO_BASE" -eq 1 ] && [ -n "$R_PR_BASE" ] && [ "$R_PR_BASE" != "$R_BRANCH" ] && { [ "$PUSH_ONLY" -eq 0 ] && printf ' | reset@GHES: GHES %s <= GHES %s' "$R_BRANCH" "$R_PR_BASE"; [ "$PULL_ONLY" -eq 0 ] && printf ' | reset: mirror %s <= GHES %s' "$R_BRANCH" "$R_PR_BASE"; } )"
+  if [ "$RESET_TO_BASE" -eq 1 ]; then
+    # reset_to_base()/reset_ghes_branch() 는 base == branch 면 조용히 return 한다 —
+    # same-name 목록에서도 branch 가 빠지므로 repo 가 통째로 요약에서 사라진다. 그 이유를 밝힌다.
+    if [ -z "$R_PR_BASE" ] || [ "$R_PR_BASE" = "$R_BRANCH" ]; then
+      rwarn "$R_NAME" "$(m "branch 와 pr_base 가 모두 '$R_BRANCH' 입니다 — 되돌릴 feature 브랜치가 없어 이 repo 의 --reset-to-base 는 건너뜁니다" "branch and pr_base are both '$R_BRANCH' — no feature branch to reset, so --reset-to-base is skipped for this repo")"
+    else
+      RESET_ACTIVE=$((RESET_ACTIVE + 1))
+    fi
+  fi
   ensure_cache "$cache"
   if [ "$PUSH_ONLY" -eq 0 ] && ! has_creds "$R_DST_URL" "$(token_for dst "$R_DST_URL")"; then rv_fail_all "$branches" "$(cred_hint dst "$R_DST_URL")"; return; fi
   if ! has_creds "$R_SRC_URL" "$(token_for src "$R_SRC_URL")"; then rv_fail_all "$branches" "$(cred_hint src "$R_SRC_URL")"; return; fi
@@ -1071,6 +1144,8 @@ process_reverse() {
       n="$(git -C "$cache" rev-list --count "$S..$D")"
       if [ "$b" = "$R_BRANCH" ]; then
         DETAIL[$ROW_KEY]="$(m "mirror 가 GHES 보다 $n commit 앞서 있음 — 할 일 없음 (forward 실행이 push 합니다)" "the mirror is $n commit(s) ahead of GHES — nothing to do (the forward run pushes it)")"
+      elif [ "$R_NO_BRANCH" -eq 1 ]; then
+        DETAIL[$ROW_KEY]="$(m "mirror 가 GHES 보다 $n commit 앞서 있음 — branch = none 이라 forward 로 push 할 브랜치가 없음; mirror 의 $b 가 왜 앞서는지 확인 필요 (GHES $b 가 reset/rewind 되었나?)" "the mirror is $n commit(s) ahead of GHES — branch = none, so no forward run pushes it; check why the mirror's $b is ahead (was GHES $b reset/rewound?)")"
       else
         DETAIL[$ROW_KEY]="$(m "mirror 가 GHES 보다 $n commit 앞서 있음 — forward 실행은 '$R_BRANCH' 만 sync 하므로 이 브랜치는 push되지 않음; mirror 의 $b 가 왜 앞서는지 확인 필요 (GHES $b 가 reset/rewind 되었나?)" "the mirror is $n commit(s) ahead of GHES — the forward run syncs only '$R_BRANCH', so this branch is not pushed; check why the mirror's $b is ahead (was GHES $b reset/rewound?)")"
       fi
@@ -1289,5 +1364,8 @@ done
 if [ "${#NOTES[@]}" -gt 0 ]; then
   printf '\n'
   for ((i = 0; i < ${#NOTES[@]}; i++)); do printf '  [%d] %s\n' "$((i + 1))" "${NOTES[i]}"; done
+fi
+if [ "$RESET_TO_BASE" -eq 1 ] && [ "$RESET_ACTIVE" -eq 0 ]; then
+  printf '\n  %s\n' "$(m "--reset-to-base: 이번 실행에서 reset 이 적용된 repo 가 없습니다 (모든 대상에서 branch 와 pr_base 가 같음)" "--reset-to-base: no repo was reset in this run (branch equals pr_base on every target)")"
 fi
 [ "$ANY_FAIL" -eq 0 ] && exit 0 || exit 1

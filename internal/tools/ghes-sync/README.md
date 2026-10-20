@@ -253,6 +253,42 @@ open-network step `--reverse --push-only --reset-to-base`, and the next forward 
 
 `--reset-to-base` is only accepted together with `--reverse`.
 
+**It is refused when `branch` is an integration branch.** `--reset-to-base` rewrites `branch` to
+`pr_base` with `--force-with-lease` on *both* the mirror and GHES, so a `branch` of `main`, `master`,
+`dev`, `develop` — or any repo's own `pr_base` — would force-rewrite that shared branch (with
+`branch = main` and dx_app's `pr_base = dev`, `main` would be reset to `dev`). The run stops with
+exit 2 *before any network call*, naming each repo and the rewrite it would have done. Name a real
+feature branch (`--branch <feature>`), or, to only bring the integration branches down from GHES,
+drop `--reset-to-base` and run `--reverse --push-only`.
+
+A repo whose `branch` equals its own `pr_base` has nothing to reset: both reset halves return early,
+the same-name list loses that branch, and the repo would vanish from the summary without a word. It
+is now skipped with a `WARNING`, and when that is true for *every* target the summary says
+`--reset-to-base` was applied nowhere.
+
+### No feature branch yet — `branch = none`
+
+`branch` is REQUIRED, so with no feature branch in flight there was nothing valid to put there —
+and putting `main` there is exactly the trap above. Set `branch = none` instead (in
+`sync.override.conf`, `--branch none`, or `GHES_SYNC_BRANCH=none`; case-insensitive):
+
+```bash
+# bring GHES's integration branches (pr_base + main) back to the mirror
+bash internal/tools/ghes-sync/ghes-sync.sh --reverse --branch none
+```
+
+`reverse_branches` then defaults to `pr_base` + `main` per repo (the feature entry simply drops out),
+so dx_app/dx_stream sync `dev` + `main` and everything else syncs `main`.
+
+Two things are refused with exit 2:
+
+| Combination | Why |
+|---|---|
+| `branch = none` without `--reverse` | Forward means "push my feature branch to GHES and open a PR". With no branch the only reading left is "push the mirror's `main`/`dev` straight into GHES", which bypasses the GHES PR review (`dci`). |
+| `branch = none` with `--reset-to-base` | There is no feature branch to put back on `pr_base`. |
+
+A real branch literally named `none` cannot be synced this way — rename it or use a different branch.
+
 ## Output language
 
 Messages are printed in Korean or English. Selection order: `--lang ko|en` > `GHES_SYNC_LANG` > the terminal

@@ -129,6 +129,28 @@ The header line of each repo shows exactly this: `same-name sync: dev main | res
 `reverse_branches` may be set under `[defaults]` (all repos) and/or under a `[repo NAME]` section (that repo only,
 wins over defaults); leaving it unset gives the table above.
 
+### No feature branch in flight — `branch = none`
+
+`branch` is REQUIRED, so between feature branches there is nothing valid to put there. Do **not**
+park `main` or `dev` in it: `--reset-to-base` would then force-rewrite that shared branch on the
+mirror *and* GHES (the tool now refuses that combination outright, exit 2, before any network call).
+
+Set `branch = none` instead — `reverse_branches` falls back to `pr_base` + `main`, which is exactly
+"keep the integration branches in sync":
+
+```bash
+ghes-sync.sh --reverse --pull-only --branch none    # closed network
+ghes-sync.sh --reverse --push-only --branch none    # open network
+```
+
+| repo | `pr_base` | `--reverse --branch none` syncs |
+|---|---|---|
+| dx_app, dx_stream | dev | `dev`, `main` |
+| dx-runtime, dx-compiler, dx-all-suite | main | `main` |
+
+`branch = none` is `--reverse`-only (forward would mean pushing the mirror's `main`/`dev` straight
+into GHES, bypassing the PR review) and cannot be combined with `--reset-to-base`.
+
 ## Scenario 3 — GHES → Mirror, same-name branches only (`--reverse`)
 
 Use when GHES gained commits on branches that also exist on the mirror and no history was rewritten: `dci` bot bumps

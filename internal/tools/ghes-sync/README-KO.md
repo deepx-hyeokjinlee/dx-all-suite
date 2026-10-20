@@ -239,6 +239,41 @@ push한다 — 행 `<repo>:<branch><=<pr_base>@GHES`(GHES가 merge 시 브랜치
 
 `--reset-to-base`는 `--reverse`와 함께만 허용된다.
 
+**`branch`가 integration 브랜치면 거부된다.** `--reset-to-base`는 미러와 GHES **양쪽에서**
+`branch`를 `pr_base`로 `--force-with-lease` 재작성한다. 그래서 `branch`가 `main`/`master`/`dev`/
+`develop`이거나 어떤 repo의 `pr_base`와 같으면 그 공유 브랜치를 force로 덮어쓰게 된다
+(`branch = main` + dx_app의 `pr_base = dev` 조합이면 `main`이 `dev`로 리셋된다). 이 경우
+**네트워크 호출 전에** exit 2로 중단하고, 어느 repo에서 무엇을 덮어쓸 뻔했는지 전부 나열한다.
+실제 feature 브랜치를 지정하거나(`--branch <feature>`), integration 브랜치를 GHES 기준으로
+맞추기만 하려면 `--reset-to-base` 없이 `--reverse --push-only`를 쓴다.
+
+`branch`와 `pr_base`가 같은 repo는 되돌릴 것이 없다: 양쪽 reset 함수가 바로 return하고
+same-name 목록에서도 그 브랜치가 빠져서 repo가 요약에서 통째로 사라졌었다. 이제는 `WARNING`과
+함께 건너뛰고, 대상 repo 전부가 그 상태면 요약에 "적용된 repo 없음"을 한 줄로 남긴다.
+
+### feature 브랜치가 아직 없을 때 — `branch = none`
+
+`branch`는 REQUIRED라서 진행 중인 feature 브랜치가 없으면 넣을 값이 없었고, 거기에 `main`을
+넣는 것이 바로 위의 함정이다. 대신 `branch = none`을 쓴다(`sync.override.conf`, `--branch none`,
+`GHES_SYNC_BRANCH=none` — 대소문자 무시):
+
+```bash
+# GHES의 integration 브랜치(pr_base + main)를 미러로 가져온다
+bash internal/tools/ghes-sync/ghes-sync.sh --reverse --branch none
+```
+
+이러면 `reverse_branches` 기본값이 repo별 `pr_base` + `main`이 된다(feature 항목만 빠진다).
+dx_app/dx_stream은 `dev` + `main`, 나머지는 `main`을 sync한다.
+
+exit 2로 거부되는 조합은 두 가지다:
+
+| 조합 | 이유 |
+|---|---|
+| `--reverse` 없이 `branch = none` | forward는 "내 feature 브랜치를 GHES에 push하고 PR을 연다"는 동작이다. 브랜치가 없으면 남는 해석은 "미러의 `main`/`dev`를 GHES에 바로 push"뿐이고, 이는 GHES PR 리뷰(`dci`)를 우회한다. |
+| `branch = none` + `--reset-to-base` | `pr_base`로 되돌릴 feature 브랜치가 없다. |
+
+이름이 실제로 `none`인 브랜치는 이 방식으로 sync할 수 없다 — 브랜치 이름을 바꾸거나 다른 브랜치를 쓴다.
+
 ## 출력 언어
 
 메시지는 국문 또는 영문으로 출력된다. 선택 순서: `--lang ko|en` > `GHES_SYNC_LANG` > 터미널 locale(`LC_ALL` >
