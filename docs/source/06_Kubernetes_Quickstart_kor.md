@@ -77,7 +77,7 @@ Pod가 deepx.ai/dx-m1: 1 요청 → containerd가 /dev/dxrtN + runtime libs 주�
 
     CDI spec이 host의 `libdxrt.so.3`, `libonnxruntime.so.1`을 모든 NPU Pod에
     마운트하므로, 노드의 DX-RT와 Pod image의 DX-RT는 같은 build여야 합니다(host와
-    image에서 각각 `dxrt-cli --version`으로 확인). 다르면 `undefined symbol` 오류로
+    image에서 각각 `dxcli --version`으로 확인). 다르면 `undefined symbol` 오류로
     실패합니다.
 
 2. **containerd CDI 활성화.** containerd 2.x는 CDI가 기본으로 켜져 있어서(`enable_cdi =
@@ -167,7 +167,7 @@ prometheus-operator가 있다면 `metrics.serviceMonitor.enabled=true`를 설정
 | Pod는 스케줄됐지만 `/dev/dxrt*` 없음 | containerd CDI 비활성 — config.toml.tmpl 수정 후 k3s 재시작 |
 | host에서 `dxcli`가 device를 못 찾음 | driver/firmware 미설치 — `dx-runtime/install.sh` 재실행, device init 실패 시 cold boot |
 | device unhealthy 보고 | sysfs에는 있으나 `dxcli -s`에 없음 — 대부분 host 전원 재인가 필요 |
-| 추론 Pod가 `Running`에 머물고 `dxrun`이 종료되지 않음 | 노드에서 host `dxrt.service`가 동작 중 — `sudo systemctl disable --now dxrt.service` (Prerequisite 1) |
+| 추론 Pod가 `Running`에 머물고 `dxrun`이 종료되지 않음 | 노드에서 host `dxrt.service`가 동작 중 — `sudo systemctl disable --now dxrt.service` (사전 준비 1단계) |
 | Pod에서 `dxrun: symbol lookup error: undefined symbol` | 노드 DX-RT와 Pod image DX-RT가 다름 — CDI가 host `libdxrt.so.3`를 마운트하므로 노드와 image에 같은 DX-RT build 설치 |
 | pod에서 `dxcli` 실행 시 `GLIBC_2.xx not found` | image의 glibc가 host runtime보다 낮음. DXRT v3.4.2는 GLIBC_2.38 필요 — base를 `ubuntu:24.04` 이상으로 |
 

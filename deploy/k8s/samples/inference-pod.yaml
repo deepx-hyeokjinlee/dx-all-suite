@@ -73,7 +73,7 @@ spec:
           # A single run takes seconds; fail instead of hanging forever.
           timeout 120 dxrun -m "$MODEL" -s -v || {
             rc=$?
-            [ "$rc" -eq 124 ] && echo "dxrun timed out — is dxrt.service running on the node? (sudo systemctl disable --now dxrt.service)"
+            [ "$rc" -eq 124 ] && echo "dxrun timed out -- is dxrt.service running on the node? (sudo systemctl disable --now dxrt.service)"
             exit "$rc"
           }
       volumeMounts:

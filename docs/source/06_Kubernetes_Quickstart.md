@@ -79,7 +79,7 @@ Components (mirroring the proven NVIDIA stack layout):
 
     The CDI spec mounts the host `libdxrt.so.3` and `libonnxruntime.so.1` into
     every NPU Pod, so the node's DX-RT must be the same build as the DX-RT in
-    the Pod image (`dxrt-cli --version` on the host and in the image). A
+    the Pod image (`dxcli --version` on the host and in the image). A
     mismatch fails with `undefined symbol` errors.
 
 2. **containerd CDI enabled.** containerd 2.x turns CDI on by default (`enable_cdi =
@@ -171,7 +171,7 @@ The device plugin serves Prometheus metrics on `:9400` (headless Service
 | Pod scheduled but `/dev/dxrt*` missing | containerd CDI not enabled — apply the config.toml.tmpl change and restart k3s |
 | `dxcli` reports no devices on host | Driver/firmware not installed — rerun `dx-runtime/install.sh`, then cold-boot if device init fails |
 | Device reported unhealthy | Card present in sysfs but absent from `dxcli -s` — usually needs a host power cycle |
-| Inference Pod stays `Running`, `dxrun` never exits | Host `dxrt.service` is running on the node — `sudo systemctl disable --now dxrt.service` (Prerequisite 1) |
+| Inference Pod stays `Running`, `dxrun` never exits | Host `dxrt.service` is running on the node — `sudo systemctl disable --now dxrt.service` (Prerequisites, step 1) |
 | `dxrun: symbol lookup error: undefined symbol` in a Pod | Node DX-RT and Pod image DX-RT differ — CDI mounts the host `libdxrt.so.3`; install the same DX-RT build on the node and in the image |
 | `GLIBC_2.xx not found` running `dxcli` in a pod | The image's glibc is older than the host runtime's. DXRT v3.4.2 needs GLIBC_2.38 — use `ubuntu:24.04` or newer as the base |
 
