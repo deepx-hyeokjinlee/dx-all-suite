@@ -4,7 +4,7 @@
 #
 # 사용법:
 #   ghes-sync.sh [--config FILE] [--override FILE] [--branch NAME] [--repo NAME ...] [--pull-only | --push-only]
-#                [--dry-run] [--tags] [--no-pr] [--reviewers A,B] [--update-branch]
+#                [--dry-run] [--tags] [--no-pr] [--pr-prefix-ci-skip] [--reviewers A,B] [--update-branch]
 #                [--reverse [--force-with-lease] [--reset-to-base [--no-backup]]]
 #                [--cache-dir DIR] [--print-config] [--lang ko|en] [--help]
 #
@@ -23,6 +23,16 @@
 #   --dry-run         fetch·분류까지만 수행; push / gh 명령은 출력만 하고 실행하지 않음
 #   --tags            refs/tags/* 도 push (절대 force 없음)
 #   --no-pr           PR을 만들지 않음 (push만)
+#   --pr-prefix-ci-skip
+#                     PR 제목의 conventional-commit type 접두사를 'ci-skip:' 으로 치환한다
+#                     ('feat(internal): X' → 'ci-skip: X'; 접두사가 없으면 앞에 붙임). 미러 PR 이
+#                     없어 생성 제목을 쓰는 경우에도 동일하게 적용된다.
+#
+#   PR 을 만들 때(mode = pr) 제목과 본문:
+#     제목 = 미러 PR 제목 그대로(없으면 'ci: sync <repo> <branch> -> <base> (N commits)').
+#     본문 = [미러 PR 설명] + [생성 요약] + [pull_request_template.md].
+#     템플릿은 dst pr_base → source 브랜치 순으로 찾고, 본문에 이미 있으면 붙이지 않는다.
+#     이미 열려 있는 PR 은 제목도 본문도 다시 쓰지 않는다.
 #   --reviewers A,B   push 가 실제 일어난(CREATE/FAST-FORWARD) PR 에 reviewer 를 (재)요청 — sync.conf 의 `reviewers` 를 덮어씀
 #   --update-branch   dst의 PR base(pr_base)가 앞서갔을 때 base를 브랜치에 merge(merge commit —
 #                     rebase/force push 없음)하고 ff-push. conflict면 중단(아무것도 남기지 않음)하고
@@ -109,7 +119,7 @@ m() { if [ "$LANG_SEL" = ko ]; then printf '%s' "$1"; else printf '%s' "$2"; fi;
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 CONFIG="$SCRIPT_DIR/sync.conf"
 declare -a ONLY_REPOS=()
-PULL_ONLY=0; PUSH_ONLY=0; DRY_RUN=0; TAGS=0; NO_PR=0; PRINT_CONFIG=0; CACHE_OVERRIDE=""; UPDATE_BRANCH=0; OVERRIDE=""; REVIEWERS_OVERRIDE=""; BRANCH_OVERRIDE=""
+PULL_ONLY=0; PUSH_ONLY=0; DRY_RUN=0; TAGS=0; NO_PR=0; PR_PREFIX_CI_SKIP=0; PRINT_CONFIG=0; CACHE_OVERRIDE=""; UPDATE_BRANCH=0; OVERRIDE=""; REVIEWERS_OVERRIDE=""; BRANCH_OVERRIDE=""
 REVERSE=0; FORCE_LEASE=0; RESET_TO_BASE=0; NO_BACKUP=0
 
 usage_ko() { sed -n '2,/^set -euo pipefail/p' "${BASH_SOURCE[0]}" | sed '$d' | sed 's/^# \{0,1\}//'; }
@@ -119,7 +129,7 @@ fetch → submodule pointer check → fast-forward push (never force) → create
 
 Usage:
   ghes-sync.sh [--config FILE] [--override FILE] [--branch NAME] [--repo NAME ...] [--pull-only | --push-only]
-               [--dry-run] [--tags] [--no-pr] [--reviewers A,B] [--update-branch]
+               [--dry-run] [--tags] [--no-pr] [--pr-prefix-ci-skip] [--reviewers A,B] [--update-branch]
                [--reverse [--force-with-lease] [--reset-to-base [--no-backup]]]
                [--cache-dir DIR] [--print-config] [--lang ko|en] [--help]
 
@@ -139,6 +149,17 @@ Usage:
   --dry-run         fetch + classify only; print the push / gh commands instead of running them
   --tags            also push refs/tags/* (never force)
   --no-pr           do not create PRs (push only)
+  --pr-prefix-ci-skip
+                    replace the PR title's conventional-commit type prefix with `ci-skip:`
+                    (`feat(internal): X` -> `ci-skip: X`; prepended when there is no prefix).
+                    Applies to the generated title too, so the intent does not depend on
+                    whether a mirror PR was found.
+
+  When a PR is created (mode = pr), its title and body are:
+    title = the mirror PR's title verbatim, else `ci: sync <repo> <branch> -> <base> (N commits)`
+    body  = [mirror PR description] + [generated summary] + [pull_request_template.md]
+    the template is looked up on the dst pr_base first, then the source branch, and is not
+    appended when the body already has it. An already-open PR keeps its title and body.
   --reviewers A,B   (re)request these reviewers on the PR after a push that moved the branch
                     (CREATE/FAST-FORWARD) — overrides `reviewers` in sync.conf
   --update-branch   when the PR base (pr_base) moved on dst: merge the base INTO the branch (merge commit —
@@ -243,6 +264,7 @@ while [ $# -gt 0 ]; do
     --reverse)   REVERSE=1; shift ;;
     --force-with-lease) FORCE_LEASE=1; shift ;;
     --reset-to-base) RESET_TO_BASE=1; shift ;;
+    --pr-prefix-ci-skip) PR_PREFIX_CI_SKIP=1; shift ;;
     --no-backup) NO_BACKUP=1; shift ;;
     --print-config) PRINT_CONFIG=1; shift ;;
     --lang)      [ $# -ge 2 ] || die2 "$(m "--lang 에 값이 필요합니다 (ko|en)" "--lang needs a value (ko|en)")"; resolve_lang "$2" "--lang"; shift 2 ;;
@@ -845,14 +867,16 @@ api_base() {  # api_base DST_URL → https://api.github.com | <scheme>://<host>/
 # PR number parsed off the end of that blob can come from the wrong line.
 pr_url_of() { printf '%s' "$1" | grep -oE 'https?://[^[:space:]]+/pull/[0-9]+' | head -n1; }
 
-rest_curl() {  # rest_curl OUTFILE METHOD URL [DATAFILE] → http code 출력; DST_TOKEN 은 -K 설정 파일로 전달(argv 아님)
-  local out="$1" method="$2" url="$3" data="${4:-}" cfg code
+rest_call() {  # rest_call TOKEN OUTFILE METHOD URL [DATAFILE] → http code 출력; token 은 -K 설정 파일로 전달(argv 아님)
+  local tok="$1" out="$2" method="$3" url="$4" data="${5:-}" cfg code
   cfg="$(mktemp)"; chmod 600 "$cfg"
-  printf 'header = "Authorization: token %s"\nheader = "Accept: application/vnd.github+json"\nheader = "Content-Type: application/json"\n' "$DST_TOKEN" > "$cfg"
+  printf 'header = "Authorization: token %s"\nheader = "Accept: application/vnd.github+json"\nheader = "Content-Type: application/json"\n' "$tok" > "$cfg"
   if [ -n "$data" ]; then code="$(tmo "$PROBE_TIMEOUT" curl -sS -K "$cfg" -X "$method" --data "@$data" -o "$out" -w '%{http_code}' "$url" 2>/dev/null || true)"
   else code="$(tmo "$PROBE_TIMEOUT" curl -sS -K "$cfg" -o "$out" -w '%{http_code}' "$url" 2>/dev/null || true)"; fi
   rm -f "$cfg"; printf '%s' "$code"
 }
+# dst(GHES) 호출용 고정 wrapper — 마이그레이션 잔재가 아니라 "dst token 을 쓴다"는 뜻의 이름이다.
+rest_curl() { rest_call "$DST_TOKEN" "$@"; }
 
 request_reviewers() {  # request_reviewers PR_NUM BACKEND API_REPO SLUG — push 가 실제 일어난(CREATE/FAST-FORWARD) PR 에만 (재)요청
   # 리뷰 봇(dci)은 PR 이 열릴 때만 돌고 이후 push 에는 돌지 않는다; reviewer 재요청(UI 의 "Re-request review" 와 같은
@@ -873,6 +897,121 @@ request_reviewers() {  # request_reviewers PR_NUM BACKEND API_REPO SLUG — push
   if [ "$code" = 201 ]; then rlog "$R_NAME" "$(m "PR #$num reviewer 재요청 (REST): $list" "PR #$num reviewer re-requested (REST): $list")"
   else rwarn "$R_NAME" "$(m "PR #$num reviewer 재요청 실패 (HTTP ${code:-none}) — token 의 pull request write 권한과 reviewer 계정명을 확인하세요; sync 자체는 성공" "PR #$num reviewer re-request failed (HTTP ${code:-none}) — check the token's pull-request write permission and the reviewer login; the sync itself succeeded")"; fi
   rm -f "$resp" "$payload"
+}
+
+# GitHub 의 PR body 상한은 65536자(현재 문서 기준). 조립한 본문은 [mirror 설명] + [생성 요약] +
+# [템플릿] 이라 mirror 설명 외의 몫이 얼마가 될지 호출 시점에 달라진다 — 그 몫과 변동분을
+# 덮을 여유를 두고 자른다.
+readonly PR_BODY_MAX=60000
+# 조각 사이 구분선("\n\n---\n\n" 두 개)과 truncation 표시 줄이 차지하는 몫.
+readonly PR_BODY_RESERVE=64
+
+# pr_template CACHE → stdout: 이 repo 의 PR 템플릿 (없으면 1 을 반환하고 아무것도 출력하지 않음).
+# 해석 순서는 GitHub 자신과 같다: 먼저 base repo(dst 의 pr_base), 그다음 제안하는 브랜치.
+# 두 ref 모두 ensure_pr 시점에 이미 cache 에 있으므로 네트워크 호출이 없다.
+PR_TEMPLATE_FROM=""
+pr_template() {
+  local cache="$1" r p
+  PR_TEMPLATE_FROM=""
+  for r in "refs/remotes/dst/$R_PR_BASE" "refs/remotes/src/$R_BRANCH"; do
+    git -C "$cache" rev-parse -q --verify "$r" >/dev/null 2>&1 || continue
+    for p in .github/pull_request_template.md .github/PULL_REQUEST_TEMPLATE.md \
+             pull_request_template.md PULL_REQUEST_TEMPLATE.md \
+             docs/pull_request_template.md docs/PULL_REQUEST_TEMPLATE.md; do
+      if git -C "$cache" cat-file -e "$r:$p" 2>/dev/null; then
+        PR_TEMPLATE_FROM="$p @ ${r#refs/remotes/}"
+        git -C "$cache" show "$r:$p"
+        return 0
+      fi
+    done
+  done
+  return 1
+}
+
+# 비교용 정규화: 앞뒤 공백 제거 + 체크된 항목을 빈 항목으로 (리뷰어가 체크했다고 다른 글이 되면 안 된다)
+norm_anchor() { sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^- \[[xX]\]/- [ ]/'; }
+# template_already_in TEMPLATE_FILE BODY_FILE → body 가 이미 템플릿을 담고 있으면 0.
+# 비교 기준은 *anchor* 줄 — markdown heading 과 task-list 항목. 채워 넣은 산문은 바뀌지만
+# 구조는 그대로이기 때문에 전체 텍스트가 아니라 anchor 로 판단한다.
+template_already_in() {
+  # body 는 한 번만 정규화해서 파일로 둔다. `... | grep -q` 는 첫 일치에서 파이프를 닫아
+  # 앞단에 SIGPIPE 를 주고, set -o pipefail 때문에 그 파이프라인이 실패로 보인다.
+  local tpl="$1" body="$2" anchors line bnorm rc=0
+  bnorm="$(mktemp)"; norm_anchor < "$body" > "$bnorm"
+  anchors="$(norm_anchor < "$tpl" | grep -E '^(#{1,6} |- \[ \])' || true)"
+  if [ -z "$anchors" ]; then
+    # heading 도 checkbox 도 없는 템플릿(짧은 산문)은 의미 있는 줄 "전부" 를 기준으로 본다.
+    # 첫 줄 하나만 보면 그 줄이 "---" 같은 흔한 토막일 때 본문의 구분선과 맞아떨어져
+    # 템플릿이 통째로 사라진다(PR #119 리뷰 r21147).
+    anchors="$(awk '{gsub(/<!--.*-->/, ""); gsub(/^[[:space:]]+|[[:space:]]+$/, ""); if (length($0)) print}' "$tpl")"
+    [ -n "$anchors" ] || { rm -f "$bnorm"; return 0; }      # 빈 템플릿이면 붙일 것이 없다
+  fi
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    grep -qxF -e "$line" "$bnorm" || { rc=1; break; }   # anchor 는 "-" 로 시작할 수 있다 → -e 필수
+  done <<< "$anchors"
+  rm -f "$bnorm"; return "$rc"
+}
+
+# mirror_pr → MIRROR_PR_{NUM,STATE,URL,BODY}: 이 브랜치를 head 로 하는 mirror 쪽 PR
+# (OPEN 우선, 없으면 가장 최근). best-effort — 실패는 경고일 뿐이고 PR 은 생성된 요약만으로도 만들어진다.
+MIRROR_PR_NUM=""; MIRROR_PR_STATE=""; MIRROR_PR_URL=""; MIRROR_PR_BODY=""; MIRROR_PR_TITLE=""
+mirror_pr() {
+  MIRROR_PR_NUM=""; MIRROR_PR_STATE=""; MIRROR_PR_URL=""; MIRROR_PR_BODY=""; MIRROR_PR_TITLE=""
+  local slug owner name api tok list objs pick resp code jqpick
+  # repo_slug → "HOST/OWNER/REPO" (3조각; 그보다 짧으면 repo_slug 가 die 한다)
+  slug="$(repo_slug "$R_SRC_URL")"; owner="${slug#*/}"; owner="${owner%/*}"; name="${slug##*/}"
+  if [ "$HAVE_GH" -eq 1 ]; then
+    # gh 의 내장 template 로 "number<TAB>state<TAB>url" 을 받는다 — JSON 을 sed/grep 으로
+    # 쪼개면 값에 구분자가 섞이는 순간 깨진다(PR #119 리뷰).
+    if ! list="$(gh pr list -R "$slug" --head "$R_BRANCH" --state all --limit 10 --json number,state,url \
+                   --template '{{range .}}{{printf "%v\t%v\t%v\n" .number .state .url}}{{end}}' 2>&1)"; then
+      rwarn "$R_NAME" "$(m "mirror PR 조회 실패 ($slug) — 생성된 요약만 사용합니다: $(printf '%s' "$list" | tr '\n' ' ')" "could not list mirror PRs ($slug) — using the generated summary only: $(printf '%s' "$list" | tr '\n' ' ')")"
+      return 1
+    fi
+    pick="$(printf '%s\n' "$list" | awk -F'\t' 'NF>=3 && tolower($2)=="open" {print; exit}')"
+    [ -n "$pick" ] || pick="$(printf '%s\n' "$list" | awk -F'\t' 'NF>=3 {print; exit}')"
+    [ -n "$pick" ] || return 1
+    MIRROR_PR_NUM="$(printf '%s' "$pick" | cut -f1)"
+    MIRROR_PR_STATE="$(printf '%s' "$pick" | cut -f2)"
+    MIRROR_PR_URL="$(printf '%s' "$pick" | cut -f3)"
+    [ -n "$MIRROR_PR_NUM" ] || return 1
+    # title/body 는 따로 받아 온다 — --template 로 원문 그대로 나오므로 JSON unescape 가 필요 없다.
+    MIRROR_PR_TITLE="$(gh pr view "$MIRROR_PR_NUM" -R "$slug" --json title --template '{{.title}}' 2>/dev/null || true)"
+    MIRROR_PR_BODY="$(gh pr view "$MIRROR_PR_NUM" -R "$slug" --json body --template '{{.body}}' 2>/dev/null || true)"
+    return 0
+  fi
+  # gh 가 없을 때: REST + jq. 여러 줄 + escape 된 body 를 직접 unescape 하지 않는다.
+  if ! command -v jq >/dev/null 2>&1; then
+    rwarn "$R_NAME" "$(m "mirror PR 설명 조회 생략 — gh CLI 도 jq 도 없어서 REST 응답의 body 를 읽을 수 없습니다; 생성된 요약만 사용합니다" "mirror PR description skipped — without the gh CLI or jq the REST response body cannot be read; using the generated summary only")"
+    return 1
+  fi
+  tok="$(token_for src "$R_SRC_URL")"
+  if [ -z "$tok" ] || [ "$HAVE_CURL" -eq 0 ]; then
+    rwarn "$R_NAME" "$(m "mirror PR 설명 조회 생략 — mirror token 또는 curl 이 없습니다 ($SRC_VARS); 생성된 요약만 사용합니다" "mirror PR description skipped — no mirror token or no curl ($SRC_VARS); using the generated summary only")"
+    return 1
+  fi
+  api="$(api_base "$R_SRC_URL")"; resp="$(mktemp)"
+  code="$(rest_call "$tok" "$resp" GET "$api/repos/$owner/$name/pulls?state=all&head=$owner:$R_BRANCH")"
+  if [ "$code" != 200 ]; then
+    rwarn "$R_NAME" "$(m "mirror PR 조회 실패 (HTTP ${code:-none}) — 생성된 요약만 사용합니다" "could not list mirror PRs (HTTP ${code:-none}) — using the generated summary only")"
+    rm -f "$resp"; return 1
+  fi
+  jqpick='([.[]|select(.state=="open")]+.)[0]'
+  MIRROR_PR_NUM="$(jq -r "$jqpick.number // empty" "$resp" 2>/dev/null || true)"
+  MIRROR_PR_STATE="$(jq -r "$jqpick.state // empty" "$resp" 2>/dev/null || true)"
+  MIRROR_PR_URL="$(jq -r "$jqpick.html_url // empty" "$resp" 2>/dev/null || true)"
+  MIRROR_PR_TITLE="$(jq -r "$jqpick.title // empty" "$resp" 2>/dev/null || true)"
+  MIRROR_PR_BODY="$(jq -r "$jqpick.body // empty" "$resp" 2>/dev/null || true)"
+  rm -f "$resp"
+  if [ -n "$MIRROR_PR_NUM" ]; then return 0; else return 1; fi
+}
+
+# ci_skip_title TITLE → conventional-commit 의 type 접두사를 'ci-skip:' 으로 바꾼다.
+# `feat(internal): X` / `fix!: X` → `ci-skip: X`; 접두사가 없으면 그냥 앞에 붙인다.
+# 이미 `ci-skip:` 으로 시작하면 그대로다(치환 후 다시 붙이므로 idempotent).
+ci_skip_title() {
+  printf 'ci-skip: %s' "$(printf '%s' "$1" | sed -E 's/^[a-zA-Z][a-zA-Z0-9_-]*(\([^)]*\))?!?:[[:space:]]*//')"
 }
 
 ensure_pr() {  # R_*, TIP, cache 사용
@@ -906,6 +1045,8 @@ ensure_pr() {  # R_*, TIP, cache 사용
   url="$(printf '%s' "$existing" | grep -o '"html_url": *"[^"]*"' | head -n1 | sed 's/.*"\([^"]*\)"$/\1/' || true)"
   [ -n "$url" ] || url="$(printf '%s' "$existing" | grep -o '"url": *"[^"]*"' | head -n1 | sed 's/.*"\([^"]*\)"$/\1/' || true)"
   if [ -n "$num" ]; then
+    # 이미 열려 있는 PR 은 제목도 body 도 다시 쓰지 않는다 — 리뷰어가 손본 설명을 덮어쓰게 된다.
+    # 아래 2.4/2.5 의 제목·본문 조립은 PR 을 "생성"할 때만 적용된다.
     PRINFO[$R_NAME]="#$num (existing) $url"; rlog "$R_NAME" "$(m "PR #$num 이미 열려 있음 $url" "PR #$num already open $url")"; rm -f "$resp"
     request_reviewers "$num" "$backend" "$api/repos/$owner/$name" "$slug"; return 0
   fi
@@ -916,15 +1057,63 @@ ensure_pr() {  # R_*, TIP, cache 사용
   fi
   ahead="$(git -C "$cache" rev-list --count "refs/remotes/dst/$R_PR_BASE..$TIP")"
   if [ "$ahead" -eq 0 ]; then PRINFO[$R_NAME]="nothing ahead of $R_PR_BASE"; rm -f "$resp"; return 0; fi
-  # conventional-commit 형식: GHES 의 commit-message-checker-pr workflow 가 "sync(<repo>): ..." 를 거부함
-  title="ci: sync $R_NAME $R_BRANCH -> $R_PR_BASE ($ahead commits)"
-  body="$(mktemp)"
+  local sum_f tpl_f mbody keep
+  sum_f="$(mktemp)"; tpl_f="$(mktemp)"; body="$(mktemp)"
+  mirror_pr || true
+  # 2.4 제목: mirror PR 제목을 그대로 쓴다 — 리뷰어가 mirror 에서 읽은 것과 같은 문장이 GHES 에
+  #     뜬다. mirror PR 이 없으면 기존 생성 제목. (conventional-commit 형식이어야 한다 —
+  #     GHES 의 commit-message-checker-pr workflow 가 "sync(<repo>): ..." 같은 형식을 거부함.)
+  #     mirror PR 번호는 제목에 넣지 않는다: GHES 에서 "#7" 은 GHES 의 7번을 가리킨다. 본문
+  #     첫 블록의 "Mirror PR: <url>" 이 정확한 링크다.
+  if [ -n "$MIRROR_PR_TITLE" ]; then title="$MIRROR_PR_TITLE"
+  else title="ci: sync $R_NAME $R_BRANCH -> $R_PR_BASE ($ahead commits)"; fi
+  [ "$PR_PREFIX_CI_SKIP" -eq 1 ] && title="$(ci_skip_title "$title")"
+  # 2.5 body = [mirror PR 설명] + [생성 요약] + [PR 템플릿]. 셋 중 존재하는 조각 사이에만
+  #     구분선이 들어가므로, mirror PR 도 템플릿도 없으면 예전과 똑같은 본문이 된다.
   {
-    printf 'Automated sync by ghes-sync.sh from the github.com mirror.\n\nSource: %s @ %s\nCommits ahead of `%s`: %s\n\n' \
-      "$R_BRANCH" "$(short "$TIP")" "$R_PR_BASE" "$ahead"
+    printf 'Automated sync by ghes-sync.sh from the github.com mirror.\n\n'
+    [ -n "$MIRROR_PR_URL" ] && printf 'Mirror PR: %s (#%s, %s)\n' "$MIRROR_PR_URL" "$MIRROR_PR_NUM" "$MIRROR_PR_STATE"
+    printf 'Source: %s @ %s\nCommits ahead of `%s`: %s\n\n' "$R_BRANCH" "$(short "$TIP")" "$R_PR_BASE" "$ahead"
     git -C "$cache" log --format='- %h %s' -n 50 "refs/remotes/dst/$R_PR_BASE..$TIP"
     [ "$ahead" -gt 50 ] && printf -- '- ... (%s more)\n' "$((ahead - 50))"
-  } > "$body"
+  } > "$sum_f"
+  pr_template "$cache" > "$tpl_f" || : > "$tpl_f"
+  mbody="$MIRROR_PR_BODY"
+  if [ -n "$MIRROR_PR_NUM" ]; then
+    rlog "$R_NAME" "$(m "mirror PR #$MIRROR_PR_NUM ($MIRROR_PR_STATE) 설명 ${#mbody}자를 본문 앞에 넣습니다" "using mirror PR #$MIRROR_PR_NUM ($MIRROR_PR_STATE) — ${#mbody} chars of description go first")"
+  fi
+  # mirror 설명만 자른다: 생성 요약과 템플릿은 짧고 상한이 있으며 리뷰에 꼭 필요하다.
+  # 단위는 전부 byte 다 — GitHub 의 상한도, wc -c 도, head -c 도 byte 기준이므로
+  # 문자 수(${#var})와 섞으면 한글이 섞인 설명에서 예산이 어긋난다(PR #119 리뷰).
+  local mbytes cut
+  mbytes="$(printf '%s' "$mbody" | wc -c)"
+  keep=$(( PR_BODY_MAX - $(wc -c < "$sum_f") - $(wc -c < "$tpl_f") - PR_BODY_RESERVE ))
+  if [ -n "$mbody" ] && [ "$mbytes" -gt "$keep" ]; then
+    if [ "$keep" -gt 0 ]; then
+      # head -c 는 byte 로 자르므로 멀티바이트 문자 한가운데에서 끊길 수 있고, 그 상태로
+      # 보내면 API 가 거부한다. iconv -c 로 잘린 조각만 떨어뜨린다.
+      cut="$(printf '%s' "$mbody" | head -c "$keep")"
+      if command -v iconv >/dev/null 2>&1; then cut="$(printf '%s' "$cut" | iconv -c -f UTF-8 -t UTF-8)"; fi
+      mbody="$cut
+… (truncated by ghes-sync)"
+      rwarn "$R_NAME" "$(m "mirror PR 설명이 너무 길어 잘랐습니다 (PR body 상한)" "the mirror PR description was truncated (PR body limit)")"
+    else
+      mbody=""
+      rwarn "$R_NAME" "$(m "생성 요약과 PR 템플릿만으로 PR body 상한에 닿아 mirror PR 설명을 넣지 못했습니다" "the generated summary and the PR template alone reach the PR body limit — the mirror PR description was left out entirely")"
+    fi
+  fi
+  : > "$body"
+  [ -n "$mbody" ] && printf '%s\n\n---\n\n' "$mbody" >> "$body"
+  cat "$sum_f" >> "$body"
+  if [ -s "$tpl_f" ]; then
+    if template_already_in "$tpl_f" "$body"; then
+      rlog "$R_NAME" "$(m "PR 템플릿 ($PR_TEMPLATE_FROM) 은 이미 본문에 있어 덧붙이지 않습니다" "the PR template ($PR_TEMPLATE_FROM) is already in the body — not appended")"
+    else
+      printf '\n---\n\n' >> "$body"; cat "$tpl_f" >> "$body"
+      rlog "$R_NAME" "$(m "PR 템플릿을 덧붙였습니다: $PR_TEMPLATE_FROM" "appended the PR template: $PR_TEMPLATE_FROM")"
+    fi
+  fi
+  rm -f "$sum_f" "$tpl_f"
   # 3. 생성
   rlog "$R_NAME" "PR title: $title"
   if [ "$DRY_RUN" -eq 1 ]; then

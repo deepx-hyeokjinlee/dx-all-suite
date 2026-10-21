@@ -146,6 +146,58 @@ commit이라, strict gitlink 검사가 dx-runtime push를 영구히 막게 된�
 | 출력 형식 | 메시지는 출력 언어를 따름(*출력 언어* 절 참고: 한국어 locale이면 국문, 그 외 영문; action 이름·환경변수·git 명령 같은 기술 용어는 두 언어에서 동일). repo별 줄은 `[ghes-sync] <repo(:branch)>  │ 메시지` 형식으로, repo key를 실행마다 한 폭으로 맞춰 `│` 열이 정렬됨; `▶`는 repo 시작, `WARNING:` / `FAIL:`은 문제 표시 |
 
 
+### PR 제목
+
+GHES PR은 **미러 PR 제목을 그대로** 쓴다 — GHES에서 리뷰하는 사람이 미러에서 작성자가 쓴 것과
+같은 문장을 읽게 된다. 미러 PR이 없으면 기존 생성 제목
+`ci: sync <repo> <branch> -> <base> (N commits)` 을 쓴다. 미러 PR *번호*는 일부러 제목에 넣지
+않는다 — GHES에서 그냥 `#7`을 쓰면 GHES 자신의 7번을 가리키기 때문이다. 정확한 링크는 본문의
+`Mirror PR: <url>` 줄이다.
+
+제목은 conventional-commit 형식을 유지해야 한다. GHES의 `commit-message-checker-pr` workflow가
+다른 형식을 거부하기 때문이며, `feat(internal): …` 같은 미러 제목은 이미 조건을 만족한다.
+
+`--pr-prefix-ci-skip` 은 그 type 접두사를 `ci-skip:` 으로 치환한다:
+
+| 미러 PR 제목 | `--pr-prefix-ci-skip` 적용 후 |
+|---|---|
+| `feat(internal): ghes-sync — build the GHES PR body` | `ci-skip: ghes-sync — build the GHES PR body` |
+| `Update the sync tool` (접두사 없음) | `ci-skip: Update the sync tool` |
+| `ci-skip: already skipped` | 그대로 (idempotent) |
+
+미러 PR이 없어 생성 제목을 쓰는 경우에도 동일하게 적용된다 — "이 sync는 CI를 돌리지 않는다"는
+의도가 미러 PR 유무에 좌우되지 않도록 하기 위해서다.
+
+### PR 설명 본문
+
+GHES PR body는 최대 세 조각으로 조립된다. 구분선은 **존재하는 조각 사이에만** 들어가므로
+셋 다 없으면 이 도구가 늘 쓰던 본문과 정확히 같다.
+
+| 조각 | 출처 | 조건 |
+|---|---|---|
+| 미러 PR 설명 | `branch`를 head로 하는 미러 PR (OPEN 우선, 없으면 가장 최근) | 찾았을 때 |
+| 생성 요약 | `Mirror PR:` 링크, source 브랜치 + sha, `pr_base` 대비 commit 수, 앞 50개 제목 | 항상 |
+| `pull_request_template.md` | repo 자신 — `refs/remotes/dst/<pr_base>` 우선(GitHub이 해석하는 기준), 그다음 올리는 브랜치 | 파일이 있고 본문에 아직 없을 때 |
+
+템플릿 경로는 `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`,
+루트의 같은 두 이름, `docs/` 아래 순서로 첫 번째 것을 쓴다. 두 ref 모두 이미 bare cache에
+있으므로 네트워크 호출이 늘지 않는다.
+
+**덧붙이지 않는 경우.** github.com 웹 UI로 연 미러 PR은 템플릿을 이미 품고 있다. 그대로
+덧붙이면 모든 섹션이 두 번 나오므로, 본문에 없을 때만 붙인다. 판단 기준은 *anchor* 줄 —
+마크다운 heading과 task-list 항목이며, `- [x]`는 `- [ ]`로 정규화해서 체크 여부가 다른 글로
+보이지 않게 한다. 템플릿에 써 넣은 산문은 바뀌지만 구조는 바뀌지 않기 때문이다.
+
+미러 PR을 읽으려면 JSON 클라이언트가 필요하다: `gh` CLI(권장 — GHES PR을 어느 backend로
+만들든 미러 조회에는 gh를 먼저 쓴다) 또는 REST 경로용 `jq`. 둘 다 없거나 조회가 실패하면
+WARNING 한 줄을 남기고 생성 요약만으로 진행한다. 템플릿은 git만 필요하므로 영향이 없다.
+`--dry-run`은 무엇을 찾았는지 보고하고 아무것도 만들지 않는다.
+
+이미 열려 있는 GHES PR은 제목도 body도 다시 쓰지 않는다 — 리뷰어 재요청만 수행한다. 따라서 이
+기능 이전에 열린 PR은 생성 당시의 `ci: sync …` 제목을 그대로 유지하고, 이후에 열린 PR은 생성
+시점의 미러 PR 제목을 유지한다(그 뒤 미러 PR 제목이 바뀌어도 따라가지 않는다). 위에 설명한
+동작은 모두 PR을 **생성할 때** 적용된다.
+
 ### base가 전진했을 때: 기본 실행 vs `--update-branch`
 
 브랜치를 딴 뒤 GHES의 `pr_base`(`main` / `dev`)에 새 커밋이 들어오면(그 사이 merge된 다른 PR, dci bump 등) 아래 줄이 나온다:

@@ -11,30 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from conftest import TOOL, Env, git, out
-
-BR = "feature/x"
-
-
-def _basic(env: Env, *, gitlinks: bool = True, dst_has_branch: bool = False) -> dict:
-    """dx_app (leaf) + dx-runtime (parent with gitlink dx_app) on src; dst has
-    `main` for both (the shared base). Returns the interesting SHAs."""
-    r = env.repos
-    r.make("dx_app", "dx-runtime")
-    app_main = r.commit("src", "dx_app", "main", "app base", files={"a.txt": "0\n"})
-    rt_main = r.commit("src", "dx-runtime", "main", "rt base", files={"r.txt": "0\n"},
-                       gitlinks={"dx_app": app_main})
-    for n in ("dx_app", "dx-runtime"):
-        r.mirror_branch(n, "main")
-    app_tip = r.commit("src", "dx_app", BR, "app feature", files={"a.txt": "1\n"}, parent_branch="main")
-    rt_tip = r.commit("src", "dx-runtime", BR, "rt feature", files={"r.txt": "1\n"},
-                      gitlinks={"dx_app": app_tip if gitlinks else app_main}, parent_branch="main")
-    if dst_has_branch:
-        for n in ("dx_app", "dx-runtime"):
-            r.mirror_branch(n, BR)
-    env.write_conf([("dx_app", ""), ("dx-runtime", "gitlinks = dx_app:dx_app")])
-    return {"app_main": app_main, "rt_main": rt_main, "app_tip": app_tip, "rt_tip": rt_tip}
-
+from conftest import BR, TOOL, Env, _basic, git, out
 
 # ── static / usage ────────────────────────────────────────────────────────────
 

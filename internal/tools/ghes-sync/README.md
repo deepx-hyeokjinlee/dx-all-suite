@@ -154,6 +154,60 @@ ghcloud history does not contain, and the strict gitlink check would block every
 | output format | messages follow the output language (see *Output language*: Korean on a Korean locale, English otherwise; technical tokens — action names, env vars, git commands — are the same in both). Per-repo lines are `[ghes-sync] <repo(:branch)>  │ message` with the repo key padded to one width per run, so the `│` column lines up; `▶` starts a repo, `WARNING:` / `FAIL:` prefix problems |
 
 
+### The PR title
+
+The GHES PR carries the **mirror PR's title verbatim**, so a reviewer on GHES reads the same
+sentence the author wrote on the mirror. Without a mirror PR the generated
+`ci: sync <repo> <branch> -> <base> (N commits)` is used, as before. The mirror PR *number*
+is deliberately not in the title — on GHES a bare `#7` links to GHES's own 7, not the
+mirror's; the body's `Mirror PR: <url>` line is the accurate link.
+
+The title must stay conventional-commit shaped, because GHES's `commit-message-checker-pr`
+workflow rejects other forms — a mirror title like `feat(internal): …` already satisfies it.
+
+`--pr-prefix-ci-skip` replaces that type prefix with `ci-skip:`:
+
+| title on the mirror | with `--pr-prefix-ci-skip` |
+|---|---|
+| `feat(internal): ghes-sync — build the GHES PR body` | `ci-skip: ghes-sync — build the GHES PR body` |
+| `Update the sync tool` (no prefix) | `ci-skip: Update the sync tool` |
+| `ci-skip: already skipped` | unchanged (idempotent) |
+
+It applies to the generated title as well, so "this sync must not run CI" does not depend on
+whether a mirror PR happened to be found.
+
+### The PR description
+
+The GHES PR body is assembled from up to three parts; separators appear only between
+parts that exist, so with none of them the body is exactly what this tool always wrote.
+
+| Part | Where it comes from | When |
+|---|---|---|
+| the mirror PR's description | the mirror PR whose head is `branch` (OPEN preferred, else the most recently updated) | whenever one is found |
+| the generated summary | `Mirror PR:` link, source branch + sha, commits ahead of `pr_base`, and the first 50 subjects | always |
+| `pull_request_template.md` | the repo itself — `refs/remotes/dst/<pr_base>` first (what GitHub resolves against), then the branch being proposed | when the file exists and the body does not already contain it |
+
+The template is looked up at `.github/pull_request_template.md`,
+`.github/PULL_REQUEST_TEMPLATE.md`, the same two names at the repo root, and under `docs/`
+— first hit wins. Both refs are already in the bare cache, so this costs no network call.
+
+**Why it is sometimes not appended.** A mirror PR opened through github.com's web UI already
+contains the template. Re-appending it would duplicate every section, so the template is added
+only when the body is missing it, judged on *anchor* lines — markdown headings and task-list
+items, with `- [x]` normalised to `- [ ]` so a ticked box does not count as different text.
+Prose you typed into the template changes; its structure does not.
+
+Reading the mirror PR needs a JSON client: the `gh` CLI (preferred — it is used regardless of
+which backend opens the GHES PR) or `jq` for the REST path. Without either, or on any lookup
+failure, the run prints one WARNING and continues with the generated summary; the template is
+unaffected because it only needs git. `--dry-run` reports what it found and creates nothing.
+
+An already-open GHES PR is left exactly as it is — neither its title nor its body is rewritten;
+the run only re-requests reviewers. So a PR opened before this feature keeps the generated
+`ci: sync …` title, and one opened after keeps whatever the mirror PR was called at the time,
+even if the mirror PR has since been renamed. Everything described above applies when the PR
+is **created**.
+
 ### When the base moved: default run vs `--update-branch`
 
 You will see this line whenever `pr_base` (`main` / `dev`) on GHES received commits after your branch was cut —
