@@ -594,6 +594,14 @@ def test_npu_workflow_is_scheduled_and_opt_in_not_a_blocking_pr_gate():
     )
 
 
+def test_npu_schedule_requires_a_configured_model_before_allocating_a_runner():
+    condition = _workflow_job_condition("dx-ai-studio-npu.yml", "npu-tier")
+    assert condition == (
+        "(github.event_name != 'schedule' || vars.DX_E2E_NPU_MODEL != '') && "
+        "(github.event_name != 'pull_request' || github.event.label.name == 'run-npu')"
+    )
+
+
 def test_npu_workflow_serialises_on_the_single_board():
     """Two concurrent runs would contend for the one NPU."""
     workflow = _npu_workflow()
