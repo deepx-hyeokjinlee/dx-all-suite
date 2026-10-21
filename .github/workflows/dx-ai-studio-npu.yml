@@ -2,22 +2,13 @@
 #
 # The real-NPU tier of the inference triple gate (tests/e2e/ -m e2e_npu).
 #
-# It is NOT part of the blocking PR gate: it needs a DX-M1 plus an installed
-# .dxnn, so gating every PR on it would make merges depend on one board's health.
-# Instead it runs nightly, on demand, and on a PR that opts in with the `run-npu`
-# label — which is the point of having a mock tier that blocks and a hardware tier
-# that verifies.
-#
-# run_ci.sh --npu exports DX_E2E_NPU_STRICT=1, so a missing NPU or model FAILS
-# here instead of skipping. A scheduled job that silently skips would report green
-# while proving nothing, which is the failure mode this tier exists to close.
+# CI 장비 환경 준비 전까지 자동 실행 트리거를 제거하고 모든 실행을 중지합니다.
+# 재개 시 아래 job 조건과 필요한 트리거를 함께 복구해야 합니다.
+# 실제 NPU 검증의 run_ci.sh --npu strict 정책은 그대로 유지합니다.
 name: dx-ai-studio NPU tier
 run-name: dx-ai-studio NPU tier — ${{ github.event_name }}
 
 on:
-  schedule:
-    # 18:00 UTC = 03:00 KST, after the board is idle.
-    - cron: '0 18 * * *'
   workflow_dispatch:
     inputs:
       model:
@@ -30,8 +21,6 @@ on:
         required: false
         default: ''
         type: string
-  pull_request:
-    types: [labeled]
 
 permissions:
   contents: read
@@ -44,9 +33,7 @@ concurrency:
 jobs:
   npu-tier:
     name: Inference triple gate (real NPU)
-    if: >-
-      (github.event_name != 'schedule' || vars.DX_E2E_NPU_MODEL != '') &&
-      (github.event_name != 'pull_request' || github.event.label.name == 'run-npu')
+    if: ${{ false }}
     runs-on:
       - self-hosted
       - sdk

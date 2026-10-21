@@ -576,30 +576,17 @@ def test_npu_workflow_runs_on_hardware_runner():
     assert "ubuntu-latest" not in workflow
 
 
-def test_npu_workflow_is_scheduled_and_opt_in_not_a_blocking_pr_gate():
-    """The hardware tier must never gate every PR.
+def test_npu_workflow_has_no_automatic_triggers_while_ci_is_unconfigured():
+    import re
 
-    One DX-M1 backs it, so making every merge depend on that board's health is
-    exactly the fragility the mock tier exists to avoid. It may run on a schedule,
-    on demand, and on a PR that explicitly opts in with the `run-npu` label.
-    """
     workflow = _npu_workflow()
-    assert "schedule:" in workflow, "the hardware tier must run on a schedule"
-    assert "workflow_dispatch:" in workflow
-    assert "types: [labeled]" in workflow, (
-        "pull_request must be limited to `labeled`, otherwise every PR waits on the NPU"
-    )
-    assert "github.event.label.name == 'run-npu'" in workflow, (
-        "the PR path must be gated on the opt-in label"
-    )
+    triggers = workflow.split("\non:\n", 1)[1].split("\npermissions:", 1)[0]
+    assert re.findall(r"^  ([\w-]+):", triggers, re.M) == ["workflow_dispatch"]
 
 
-def test_npu_schedule_requires_a_configured_model_before_allocating_a_runner():
+def test_npu_workflow_stays_paused_before_allocating_a_runner():
     condition = _workflow_job_condition("dx-ai-studio-npu.yml", "npu-tier")
-    assert condition == (
-        "(github.event_name != 'schedule' || vars.DX_E2E_NPU_MODEL != '') && "
-        "(github.event_name != 'pull_request' || github.event.label.name == 'run-npu')"
-    )
+    assert condition == "${{ false }}"
 
 
 def test_npu_workflow_serialises_on_the_single_board():
