@@ -44,10 +44,9 @@ concurrency:
 jobs:
   npu-tier:
     name: Inference triple gate (real NPU)
-    # On a PR this runs ONLY for the opt-in label; schedule/dispatch always run.
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.label.name == 'run-npu'
+      (github.event_name != 'schedule' || vars.DX_E2E_NPU_MODEL != '') &&
+      (github.event_name != 'pull_request' || github.event.label.name == 'run-npu')
     runs-on:
       - self-hosted
       - sdk
