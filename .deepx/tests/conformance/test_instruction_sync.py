@@ -657,6 +657,10 @@ class TestTemplateFragmentInclusionParity:
         "brainstorming-spec-before-plan",
         "mandatory-process-skill-sequence",
         "autopilot-mode-guard",
+        # The gate carries the SUITE_ROOT auto-detection block, and a sub-repo
+        # session is exactly where a generated setup.sh has to reach across
+        # projects — yet no sub-repo template included it (SR-857).
+        "artifact-verification-gate",
         "session-sentinels",
         "plan-output",
         "instruction-verification-loop",
