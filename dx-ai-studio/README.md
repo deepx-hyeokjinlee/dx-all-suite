@@ -12,8 +12,9 @@ experience, in six languages.
 The **hub** is the studio's home screen and the single place everything launches from.
 
 - **Describe it, run it.** The prompt box (*Describe anything. Run it on DX-M1.*) takes a
-  plain-words request: **Build it** opens the module that already does it, or runs the coding
-  agent right on the home page, where you follow its activity and answer its questions.
+  plain-words request: **Build it** first presents suggested tool routes or an agent plan.
+  Select a route card to open a tool, or choose the execution button to start the agent
+  on the home page. It does not immediately run a compile, inference or agent task.
 - **One boot, all tools.** The launcher starts every module server for you on a short boot
   screen. The **tool cards** below the prompt show live facts (demo and model counts) and open
   each tool **embedded** in the hub, under one address.
@@ -31,20 +32,29 @@ The **hub** is the studio's home screen and the single place everything launches
   the studio) and **Tutorial**; the bottom bar links to Get Started, S/W Download, Tech Docs,
   Documents, Model Zoo, GitHub and deepx.ai; the **chat assistant** (bottom-right) answers
   SDK/module questions from any screen.
+- **Consistent navigation.** The left rail switches modules, **Hub** at its bottom returns
+  home, and top page tabs switch views within the selected module. Graph Composer is a
+  page inside **DX App**, not a separate tool.
 
 ## Getting started
 
 **Prerequisites:** Linux (Debian 12/13, Ubuntu 20.04–26.04) with **Python 3.8+**.
-DX AI Studio has **no pip dependencies** (pure Python standard library, ModelZoo tab
-included), and `./launcher.sh` self-installs the package (editable) on first run, so
+The base DX AI Studio package has **no third-party runtime dependencies**
+(`dependencies = []`, Python standard library, ModelZoo tab included), and `./launcher.sh`
+self-installs the package (editable) on first run, so
 there's no manual `pip install` step. Real inference uses the DEEPX SDK and NPU; DX Stream
-uses the system GStreamer + PyGObject; live DX App runs (camera / RTSP / Continuous / Run
-Demo video) use the OS packages `xvfb` and `python3-pil`.
+uses the system GStreamer + PyGObject. Live DX App runs (including Graph Live) need
+`xvfb`, `libxcb1` and Pillow (typically `python3-pil`); Graph file-frame editing needs
+Pillow and video-frame extraction also needs `ffmpeg`. Graph validation / execution
+requires the dx_app graph runners (`multi_model_graph_sync` / `multi_model_graph_async`)
+and the selected models. DX Cloud's real AWS operations use the optional `boto3` extra,
+not a base Studio dependency.
 
 **Layout:** DX AI Studio is meant to sit inside a `dx-all-suite` tree, alongside
 sibling `dx-runtime` / `dx-compiler`. Running actual NPU inference or compiling models
-needs the DEEPX SDK (from those siblings), an NPU + driver, and models fetched into
-`dx-runtime/dx_app` — but the whole studio is fully browsable without any hardware, SDK,
+uses the appropriate SDK from those siblings: local compilation needs the compiler SDK,
+while NPU inference needs an NPU + driver, DX-RT and prepared models in
+`dx-runtime/dx_app`. The Studio remains browsable without hardware, SDK,
 or models; each tool says what is missing.
 
 ```bash
@@ -66,10 +76,16 @@ does not modify `dx-runtime` sources. The Studio-owned compatibility matrix in
 immutable GitHub revision URLs, and SHA-256 digests. Package discovery uses installed
 Debian package metadata, not the version of a source checkout.
 
-- **Supported migration:** Studio can reconcile the declared `2.3.0` and `2.4.1` rollback
-  profiles to the target `2.4.2` profile (DX-RT 3.4.2, NPU driver 2.6.0 — the runtime the
-  suite release pins) on `x86_64` and `aarch64` hosts. A runtime it does not declare (for
-  example a newer pre-release) is never replaced: reconciliation stops as blocked.
+- **Supported migration:** Studio can reconcile the declared `2.3.0`, `2.4.1` and `2.4.2`
+  profiles to the target `2.5.0` profile (DX-RT 3.5.0, NPU driver 2.7.0 — the runtime the
+  suite release pins; FW 2.7.6) on `x86_64` and `aarch64` hosts. The older profiles are kept
+  deliberately as verified rollback profiles: they are only reconciliation sources and rollback
+  targets, never installation targets, and each digest was checked against the published
+  packages. A runtime it does not declare (for example a newer pre-release) is never replaced:
+  reconciliation stops as blocked ("No verified rollback profile").
+- **Pending release tag:** the `2.5.0` profile pins the dx-runtime commit `2ae64bf` and the
+  dx-all-suite release-candidate commit `9584d56`; refresh `suite_revision` /
+  `runtime_revision` with `scripts.runtime_profile_update --tag v2.5.0` once that tag is published.
 - **New dx-runtime release:** `python -m scripts.runtime_profile_update --write` reads the
   latest `DEEPX-AI/dx-runtime` release (or `--tag vX.Y.Z`) and adds its profile — revisions,
   DX-RT / driver versions from `RELEASE_NOTES.md`, `.deb` URLs and SHA-256 digests computed
@@ -102,9 +118,9 @@ inference.
 
 | Tool | What it's for |
 |------|----------------|
-| **DX App** | Run NPU inference on images, video, camera or RTSP; ready-made Run Demo, live multi-stream, benchmark & compare. → [guide](dx_app/README.md) |
+| **DX App** | Run NPU inference on images, video, camera or RTSP; Run Demo, live multi-stream, benchmark & compare, and Graph Composer for multi-model / logic workflows. → [guide](docs/source/05_DX_App.md) |
 | **DX Stream** | Real-time GStreamer vision-AI pipelines with live playback (WebRTC, or MJPEG from another computer). → [guide](dx_stream/README.md) |
-| **DX Model Zoo** | Browse nearly 500 DEEPX models across 28 tasks; open details and use them. → [guide](dx_modelzoo/README.md) |
+| **DX Model Zoo** | Browse 497 canonical model variants across 29 tasks in the October 2026 reference; inspect artifacts, examples and metrics. → [guide](dx_modelzoo/README.md) |
 | **DX Compiler** | Compile ONNX → `.dxnn`: config wizard, quantization tuning + diagnosis, re-quantization. → [guide](dx_compiler/README.md) |
 | **DX EdgeGuide** | Recommend the best NPU board + host for your workload from real benchmarks. → [guide](dx_planner/README.md) |
 | **DX Benchmark** | Browse and compare NPU throughput / latency / multi-stream results. → [guide](dx_benchmark/README.md) |
@@ -117,6 +133,13 @@ From the **hub** you can also open the **SDK Library** (DEEPX docs & brochures i
 
 Every tool stays browsable when no NPU or SDK is present and says what is missing — DX Monitor
 shows *NPU telemetry unavailable* rather than made-up values.
+
+The catalog reference is dx_app dev `2e20108a5` and Studio's internal snapshot dated
+2026-10-13 (348 → 497 entries, +149); variants are not distinct architectures.
+Graph Composer can run **492** of those variants (excluding four anomaly models and
+the LiDAR model). The loaded catalog / connected dx_app determine actual availability.
+Use existing model images; a missing display image is not a reason to regenerate the
+whole catalog.
 
 ## For developers
 
