@@ -754,3 +754,34 @@ class TestTemplateFragmentInclusionParity:
             + "\n\nFix: ensure EN and KO templates include the same "
             "{{FRAGMENT:xxx}} directives."
         )
+
+
+# ── fragments must not be glued together (dx_app GHES #431 review, 2026-10-22) ──
+# `{{FRAGMENT:a}}` on one template line and `{{FRAGMENT:b}}` on the next produced
+# "...last line of a\n## B heading" — markdown needs a blank line before a heading,
+# and every fragment starts with one. 136 such placements existed across the five
+# levels, so the fix belongs in the generator, not in the templates.
+
+def _instruction_files(root):
+    names = ("CLAUDE.md", "CLAUDE-KO.md", "AGENTS.md", "AGENTS-KO.md")
+    out = [root / n for n in names]
+    out += [root / ".github" / n for n in ("copilot-instructions.md", "copilot-instructions-KO.md")]
+    return [p for p in out if p.is_file()]
+
+
+@pytest.mark.parametrize("name,root", sorted(PROJECT_ROOTS.items()))
+def test_generated_instructions_keep_a_blank_line_before_every_heading(name, root):
+    if not Path(root).is_dir():
+        pytest.skip(f"{name}: not initialised")
+    bad = []
+    for p in _instruction_files(Path(root)):
+        lines = p.read_text(encoding="utf-8").splitlines()
+        fence = False
+        for i, line in enumerate(lines):
+            if line.lstrip().startswith("```"):
+                fence = not fence
+            if fence or i == 0:
+                continue
+            if line.startswith("## ") and lines[i - 1].strip():
+                bad.append(f"{p}:{i + 1}: '{line[:48]}' follows '{lines[i - 1][:40]}'")
+    assert not bad, "a markdown heading needs a blank line before it:\n  " + "\n  ".join(bad[:12])
