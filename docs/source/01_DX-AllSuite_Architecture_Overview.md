@@ -13,7 +13,8 @@ This guide provides a comprehensive overview of the **DXNN (DEEPX Neural Network
 ## System Architecture & Core Modules
 
 <div align="center">
-  <img src="./resources/DXNN-SDK-Full-Architecture.png" width="600">
+  <img src="./resources/DXNN-SDK-Full-Architecture.png#only-light" width="600">
+  <img src="./resources/DXNN-SDK-Full-Architecture-dark.png#only-dark" width="600">
   <p><strong>Figure. DXNN SDK Full Architecture Overview.</strong></p>
 </div>
 

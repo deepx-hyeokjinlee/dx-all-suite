@@ -3,7 +3,10 @@
 **DX-AllSuite** is an all-in-one software platform designed to streamline the entire process of compiling, optimizing, simulating, and deploying AI inference applications on **DEEPX NPUs**. It ensures optimal compatibility and powerful hardware performance through a complete toolchain that covers everything from model creation to real-world "Physical AI" deployment.  
 
 <div align="center">
-  <img src="./docs/source/img/DXNN-SDK-Full-Architecture.png" width="600">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/source/img/DXNN-SDK-Full-Architecture-dark.png">
+    <img src="./docs/source/img/DXNN-SDK-Full-Architecture.png" width="600">
+  </picture>
   <p><strong>Figure. DXNN SDK Full Architecture Overview.</strong></p>
 </div>
 
@@ -14,7 +17,10 @@
 - **Flexible Ecosystem**: Fully supports **Python and C++ APIs** and offers a **ModelZoo** with 345 optimized models. As a leader in the Open-Source Physical AI Alliance, we provide seamless workflows for popular frameworks.  
 
 <div align="center">
-  <img src="./docs/source/img/DXNN-SDK-Simple-Architecture.png" width="600">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/source/img/DXNN-SDK-Simple-Architecture-dark.png">
+    <img src="./docs/source/img/DXNN-SDK-Simple-Architecture.png" width="600">
+  </picture>
   <p><strong>Figure. DXNN SDK Simple Architecture Overview.</strong></p>
 </div>
 

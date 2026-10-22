@@ -3,7 +3,10 @@
 **DX-AllSuite**는 **DEEPX NPU** 상에서 AI inference 애플리케이션을 컴파일, 최적화, 시뮬레이션, 배포하는 전 과정을 간소화하도록 설계된 올인원 소프트웨어 플랫폼입니다. 모델 제작부터 실제 "Physical AI" 배포까지 모두 아우르는 완전한 toolchain을 통해 최적의 호환성과 강력한 하드웨어 성능을 보장합니다.
 
 <div align="center">
-  <img src="./docs/source/img/DXNN-SDK-Full-Architecture.png" width="600">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/source/img/DXNN-SDK-Full-Architecture-dark.png">
+    <img src="./docs/source/img/DXNN-SDK-Full-Architecture.png" width="600">
+  </picture>
   <p><strong>그림. DXNN SDK 전체 아키텍처 개요.</strong></p>
 </div>
 
@@ -14,7 +17,10 @@
 - **Flexible Ecosystem**: **Python 및 C++ API**를 완전히 지원하며, 345개 최적화된 모델을 갖춘 **ModelZoo**를 제공합니다. Open-Source Physical AI Alliance의 리더로서, 널리 쓰이는 framework들에 대한 매끄러운 워크플로를 제공합니다.
 
 <div align="center">
-  <img src="./docs/source/img/DXNN-SDK-Simple-Architecture.png" width="600">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/source/img/DXNN-SDK-Simple-Architecture-dark.png">
+    <img src="./docs/source/img/DXNN-SDK-Simple-Architecture.png" width="600">
+  </picture>
   <p><strong>그림. DXNN SDK 간략 아키텍처 개요.</strong></p>
 </div>
 
