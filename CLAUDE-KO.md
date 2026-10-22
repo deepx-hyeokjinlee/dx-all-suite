@@ -864,13 +864,15 @@ python -c "import dx_com; print('dxcom OK')" 2>/dev/null || {
 ### dxcom Anti-Fabrication (컴파일 작업에 MANDATORY)
 
 dxcom이 사용 가능하고 컴파일이 진행될 때:
-- **dxcom API 호출을 기억에서 절대 조작하지 마세요.** 항상 toolset 파일을 읽으세요:
-  - CLI: `dx-compiler/.deepx/toolsets/dxcom-cli.md`
-  - Python API: `dx-compiler/.deepx/toolsets/dxcom-api.md`
-  - Config schema: `dx-compiler/.deepx/toolsets/config-schema.md`
+- **dxcom API 호출을 기억에서 절대 조작하지 마세요.** 항상 toolset 파일을 읽으세요.
+  **dx-compiler** 저장소의 `.deepx/toolsets/` 아래에 있습니다:
+  - CLI: `dxcom-cli.md`
+  - Python API: `dxcom-api.md`
+  - Config schema: `config-schema.md`
 - **올바른 import**: `import dx_com; dx_com.compile(...)` (`from dxcom import dxcom`이 아님)
 - **`compiler.properties`를 절대 수정하지 마세요** — 설치 프로그램이 관리하는 시스템 파일입니다.
-  `dx-compiler/.deepx/memory/common_pitfalls.md` Pitfall #21과 #22를 참조하세요.
+  **dx-compiler** 저장소 `.deepx/memory/` 의 common_pitfalls.md Pitfall #21과 #22를
+  참조하세요.
 
 ### Background Compilation (RECOMMENDED)
 

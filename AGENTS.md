@@ -889,13 +889,15 @@ python -c "import dx_com; print('dxcom OK')" 2>/dev/null || {
 ### dxcom Anti-Fabrication (MANDATORY for compilation tasks)
 
 When dxcom is available and compilation proceeds:
-- **NEVER fabricate dxcom API calls from memory.** Always read the toolset files:
-  - CLI: `dx-compiler/.deepx/toolsets/dxcom-cli.md`
-  - Python API: `dx-compiler/.deepx/toolsets/dxcom-api.md`
-  - Config schema: `dx-compiler/.deepx/toolsets/config-schema.md`
+- **NEVER fabricate dxcom API calls from memory.** Always read the toolset files,
+  which live in the **dx-compiler** repo under `.deepx/toolsets/`:
+  - CLI: `dxcom-cli.md`
+  - Python API: `dxcom-api.md`
+  - Config schema: `config-schema.md`
 - **Correct import**: `import dx_com; dx_com.compile(...)` (NOT `from dxcom import dxcom`)
 - **NEVER modify `compiler.properties`** — system file managed by the installer.
-  See `dx-compiler/.deepx/memory/common_pitfalls.md` Pitfalls #21 and #22.
+  See Pitfalls #21 and #22 in the **dx-compiler** repo's `.deepx/memory/`
+  common_pitfalls.md.
 
 ### Background Compilation (RECOMMENDED)
 

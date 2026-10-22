@@ -661,6 +661,11 @@ class TestTemplateFragmentInclusionParity:
         # session is exactly where a generated setup.sh has to reach across
         # projects — yet no sub-repo template included it (SR-857).
         "artifact-verification-gate",
+        # Prerequisites Check + Sanity Check Failure Recovery: lived inline in
+        # the suite template only, so a sub-repo session never saw the sanity
+        # gate, the no-pipe rule, or the compiler-only SKIPPED exception
+        # (SR-865, SR-866).
+        "prerequisites-check",
         "session-sentinels",
         "plan-output",
         "instruction-verification-loop",
