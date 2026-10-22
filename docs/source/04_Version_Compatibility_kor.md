@@ -334,7 +334,7 @@ python3 -c "import dx_com; print(dx_com.__version__)"
 **단계 3. Model Zoo**  
 설치된 DX-ModelZoo 버전을 확인합니다. `dx-modelzoo`가 설치된 환경에서 실행하십시오.
 ```Bash
-python3 -c "from dx_modelzoo.version import __version__; print(__version__)"
+python3 -c "from importlib.metadata import version; print(version('dx-modelzoo'))"
 ```
 
 ---

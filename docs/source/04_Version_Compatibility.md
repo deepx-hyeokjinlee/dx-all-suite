@@ -334,7 +334,7 @@ python3 -c "import dx_com; print(dx_com.__version__)"
 **Step 3. Model Zoo**  
 Verify the installed DX-ModelZoo version. Run it in the environment where `dx-modelzoo` is installed.
 ```Bash
-python3 -c "from dx_modelzoo.version import __version__; print(__version__)"
+python3 -c "from importlib.metadata import version; print(version('dx-modelzoo'))"
 ```
 
 ---
