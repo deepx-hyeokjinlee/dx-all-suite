@@ -153,42 +153,7 @@ session ID에 `_auto_`를 사용하지 마세요. 올바른 suite session은 두
 
 {{FRAGMENT:session-sentinels}}
 
-## 필수 산출물
-
-모든 컴파일 또는 앱 생성 세션은 DONE을 출력하기 전에 세션 출력 디렉토리
-(`dx-agent-dev/<session_id>/`)에 다음 파일을 반드시 생성해야 합니다.
-이것은 **모든 작업 유형**에 적용됩니다 — compiler-only, app-only, cross-project.
-
-| 파일 | 목적 | 필요 시점 |
-|------|------|-----------|
-| `setup.sh` | 환경 설정 (sanity check, dxcom 설치, venv, pip 종속성) | 항상 |
-| `run.sh` | venv 활성화와 함께 원클릭 inference 실행기 | 항상 |
-| `README.md` | 세션 요약, 빠른 시작, 파일 목록 | 항상 |
-| `verify.py` | ONNX vs DXNN 수치 비교 | 컴파일 포함 시 |
-| `session.log` | 실제 명령 출력 로그 (직접 작성한 요약이 아님) | 항상 |
-| `config.json` | dxcom 컴파일 설정 | 컴파일 포함 시 |
-| `*.dxnn` | 컴파일된 모델 바이너리 | 컴파일 포함 시 |
-
-이것들은 애플리케이션별 산출물 (factory/inference 패턴이 있는 Python 파일,
-GStreamer pipeline 코드 등)에 추가됩니다.
-
-각 서브 프로젝트도 agent/skill 문서에서 이러한 파일의 템플릿을 정의합니다
-(예: `dx-compiler/.deepx/agents/dx-dxnn-compiler.md` Phase 5.5).
-
-### Cross-project suite 작업 — pre-DONE `.dxnn` 확인 (HARD GATE, REC-X4)
-
-**컴파일이 포함된 모든 작업**에서 DONE sentinel을 출력하기 전에, `.dxnn` 파일이
-compiler session 디렉토리에 존재하는지 확인하세요:
-
-```bash
-COMPILER_SESSION="<compiler_session_dir>"   # 예: dx-compiler/dx-agent-dev/20260430-..._compile
-test -f "${COMPILER_SESSION}/yolo26n.dxnn" \
-  || { echo "BLOCKED: yolo26n.dxnn not found — 컴파일이 아직 실행 중입니다. compile.pid가 종료될 때까지 기다리세요."; exit 1; }
-```
-
-`yolo26n.dxnn`이 없는 상태에서 DONE을 출력하면 백그라운드 컴파일이 나중에 완료되더라도
-`test_dxnn_compiled`가 실패합니다 (test harness는 DONE 시점에 파일을 수집합니다).
-Phase 5.8을 참조하세요: `dx-compiler/.deepx/agents/dx-dxnn-compiler.md`.
+{{FRAGMENT:mandatory-deliverables}}
 
 {{FRAGMENT:artifact-verification-gate}}
 

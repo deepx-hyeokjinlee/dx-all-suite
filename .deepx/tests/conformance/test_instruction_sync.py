@@ -670,6 +670,9 @@ class TestTemplateFragmentInclusionParity:
         # its CLAUDE.md carried the section heading but not the "Option A vs
         # Option B" prohibition (SR-867).
         "rule-conflict-resolution",
+        # The deliverable table (incl. keeping the source model and the ban on
+        # submitting another session's output) was suite-inline only (SR-868).
+        "mandatory-deliverables",
         "session-sentinels",
         "plan-output",
         "instruction-verification-loop",

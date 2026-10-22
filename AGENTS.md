@@ -642,12 +642,22 @@ This applies to **every task type** — compiler-only, app-only, and cross-proje
 | `session.log` | Actual command output log (NOT hand-written summary) | Always |
 | `config.json` | dxcom compilation configuration | Compilation involved |
 | `*.dxnn` | Compiled model binary | Compilation involved |
+| `*.onnx` / `*.pt` | The source model, kept next to the `.dxnn` it produced | Compilation involved |
 
 These are in ADDITION to any application-specific artifacts (Python files with
 factory/inference patterns, GStreamer pipeline code, etc.).
 
+**Every deliverable must be produced by THIS session.** Copying a file out of
+another session's output directory — another agent's, another round's, your own
+earlier one — and presenting it as this session's work is prohibited, with or
+without edits. It is not a shortcut to the same result: the point of the
+directory is to show what this run produced. The same rule already covers
+`session.log` (no heredoc, no `echo`, no hand-written summary); it applies to
+every file in the table. If a prerequisite is missing, say so and stop — do not
+borrow one.
+
 Each sub-project also defines templates for these files in its agent/skill documents
-(e.g., `dx-compiler/.deepx/agents/dx-dxnn-compiler.md` Phase 5.5).
+(e.g. Phase 5.5 of the **dx-compiler** repo's `.deepx/agents/` dx-dxnn-compiler.md).
 
 ### Cross-project suite tasks — pre-DONE `.dxnn` check (HARD GATE, REC-X4)
 
@@ -662,7 +672,7 @@ test -f "${COMPILER_SESSION}/yolo26n.dxnn" \
 
 Emitting DONE while `yolo26n.dxnn` is absent causes `test_dxnn_compiled` to fail even if
 background compilation eventually produces it (the test harness collects files at DONE time).
-See Phase 5.8 in `dx-compiler/.deepx/agents/dx-dxnn-compiler.md` for the full pre-DONE gate.
+See Phase 5.8 of the **dx-compiler** repo's `.deepx/agents/` dx-dxnn-compiler.md for the full pre-DONE gate.
 
 ## Artifact Verification Gate (HARD GATE — All Code Generation)
 
