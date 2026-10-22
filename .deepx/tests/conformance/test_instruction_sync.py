@@ -666,6 +666,10 @@ class TestTemplateFragmentInclusionParity:
         # gate, the no-pipe rule, or the compiler-only SKIPPED exception
         # (SR-865, SR-866).
         "prerequisites-check",
+        # dx_app's templates were the only ones that never pulled this in, so
+        # its CLAUDE.md carried the section heading but not the "Option A vs
+        # Option B" prohibition (SR-867).
+        "rule-conflict-resolution",
         "session-sentinels",
         "plan-output",
         "instruction-verification-loop",
