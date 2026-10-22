@@ -83,8 +83,8 @@ Debian package metadata, not the version of a source checkout.
   targets, never installation targets, and each digest was checked against the published
   packages. A runtime it does not declare (for example a newer pre-release) is never replaced:
   reconciliation stops as blocked ("No verified rollback profile").
-- **Pending release tag:** the `2.5.0` profile pins the dx-runtime commit `2ae64bf` and the
-  dx-all-suite release-candidate commit `9584d56`; refresh `suite_revision` /
+- **Pending release tag:** the `2.5.0` profile pins the dx-runtime commit `4f0a363` and the
+  dx-all-suite release-candidate commit `a7a9199`; refresh `suite_revision` /
   `runtime_revision` with `scripts.runtime_profile_update --tag v2.5.0` once that tag is published.
 - **New dx-runtime release:** `python -m scripts.runtime_profile_update --write` reads the
   latest `DEEPX-AI/dx-runtime` release (or `--tag vX.Y.Z`) and adds its profile — revisions,

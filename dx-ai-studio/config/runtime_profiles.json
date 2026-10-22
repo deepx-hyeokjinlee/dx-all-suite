@@ -98,8 +98,8 @@
     },
     "2.5.0": {
       "gstreamer_abi": "1.20",
-      "suite_revision": "9584d56b15632528af90bb7e7ff1c23d7f6102ef",
-      "runtime_revision": "2ae64bf024b75169c07cc330a593df521481afbb",
+      "suite_revision": "a7a9199a3d3063c814172015fb51d9c7016ab5fd",
+      "runtime_revision": "4f0a363b9ce119081063e89fdd7bc31fe96df28c",
       "architectures": {
         "x86_64": {
           "runtime": {
