@@ -241,6 +241,20 @@ conflict를 "고치려고" `--force-with-lease`/`--reset-to-base`를 쓰지 않�
    sub-repo gate(`subrepo-gate`)가 그 PR에서 실행된다.
 4. GHES → 공개 export는 기존 release 절차(rsync + `release-excluded`).
 
+### 전부 push 한 뒤에 PR 을 연다
+
+forward 실행은 2단계다: **먼저 전 repo 를 설정 순서(nested 먼저, dx-all-suite 마지막)로
+push 하고, 그 다음에 같은 순서로 PR 을 연다.**
+
+이유는 반대편 CI 다. 각 sub-repo 에는 `pull_request` 로 뜨는 drift gate 가 있고, 그 게이트는
+같은 이름의 dx-all-suite 브랜치를 clone 한다. 첫 sub-repo 의 PR 이 dx-all-suite push 전에
+열리면 게이트가 suite 브랜치를 찾지 못해 default branch 로 fallback 하고, 거기 없는
+fragment 때문에 실패한다(GHES 2026-10-22: 변경 자체는 정상인데 dx-runtime·dx-compiler 가
+모두 red). 게이트의 재시도 창을 늘리는 대신 PR 을 전부 뒤로 미뤄 경합 자체를 없앴다.
+
+덤으로, 뒤쪽 repo 의 push 가 실패하면 앞쪽 repo 의 PR 도 열리지 않으므로 중간에 끊긴 sync 가
+리뷰 요청을 남기지 않는다.
+
 ## 역방향 — `--reverse` (GHES → 미러)
 
 GHES 쪽 변경을 미러로 되가져온다: `main`/`dev`의 `dci` bot·merge 커밋, 그리고 `--update-branch`가 PR 브랜치에

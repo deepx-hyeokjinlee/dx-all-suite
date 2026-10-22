@@ -252,6 +252,22 @@ Never use `--force-with-lease` / `--reset-to-base` to "fix" a conflict — it dr
    (`harness-gate`) and the sub-repo gates (`subrepo-gate`) run on those PRs.
 4. GHES → public export follows the existing release procedure (rsync + `release-excluded`).
 
+### Push everything, then open the PRs
+
+A forward run has two phases: **all repos are pushed first, in config order (nested first,
+dx-all-suite last), and only then are the PRs opened** — again in config order.
+
+The reason is the other side's CI. Each sub-repo carries a drift gate that fires on
+`pull_request` and clones the dx-all-suite branch with the same name. When the PR for the
+first sub-repo was opened before dx-all-suite had been pushed, that gate could not find the
+suite branch, fell back to the suite's default branch and failed on fragments the default
+branch does not have (GHES, 2026-10-22: dx-runtime and dx-compiler both red while the change
+itself was fine). Opening every PR after every push removes the race rather than widening the
+gate's retry window.
+
+A side effect worth having: if a later repo fails to push, the earlier repos' PRs were never
+opened, so a half-finished sync does not leave review requests behind.
+
 ## Reverse direction — `--reverse` (GHES → mirror)
 
 Brings GHES-side changes back to the mirror: `dci` bot / merged commits on `main`/`dev`, and the

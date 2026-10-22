@@ -18,6 +18,9 @@
 #                     `--branch none` = feature 브랜치 없음 — integration 브랜치(pr_base + main)만
 #                     GHES -> mirror 로 맞춘다. --reverse 전용이고 --reset-to-base 와 함께 쓸 수 없다.
 #   --repo NAME       이 repo만 처리 (반복 가능; 설정 파일의 순서 유지)
+#                     forward 는 2단계다: 전 repo 를 먼저 push 하고, 그 다음에 PR 을 연다.
+#                     PR 이 반대편 CI 를 깨우는데 그 CI 가 아직 push 되지 않은 브랜치
+#                     (특히 마지막에 올라가는 dx-all-suite)를 clone 하려 하기 때문이다.
 #   --pull-only       src/dst를 로컬 cache로 fetch만 하고 push하지 않음
 #   --push-only       src fetch 생략(cache 사용), dst는 fetch, push 수행
 #   --dry-run         fetch·분류까지만 수행; push / gh 명령은 출력만 하고 실행하지 않음
@@ -144,6 +147,9 @@ Usage:
                     sync only the integration branches (pr_base + main) GHES -> mirror.
                     --reverse only, and not allowed together with --reset-to-base.
   --repo NAME       only this repo (repeatable; config order is kept)
+                    The forward run has two phases: every repo is pushed first, then the PRs
+                    are opened. A PR starts the other side's CI, and that CI clones branches
+                    this run may not have pushed yet — dx-all-suite goes last of all.
   --pull-only       fetch src/dst into the local cache, push nothing
   --push-only       skip the src fetch (use the cache), fetch dst, push
   --dry-run         fetch + classify only; print the push / gh commands instead of running them
@@ -1231,7 +1237,7 @@ process() {
       if ! gpush "$R_DST_URL" "$(token_for dst "$R_DST_URL")" 'refs/tags/*:refs/tags/*'; then fail "$(m "tag push 실패 (tag 는 절대 force 하지 않음) — git: ${GPUSH_ERR:-?}" "tag push failed (tags are never forced) — git: ${GPUSH_ERR:-?}")"; return; fi
     fi
   fi
-  ensure_pr || true
+  if [ "${DEFER_PR:-0}" -eq 1 ]; then PR_TIPS[$R_NAME]="$TIP"; else ensure_pr || true; fi
 }
 
 # ── --reverse: GHES(dst 역할) -> mirror(src 역할); bare cache 가 운반체 ──
@@ -1523,8 +1529,24 @@ if [ "$REVERSE" -eq 1 ]; then
     if [ "${CFG[$n.sync]:-on}" = off ]; then skip_sync_off "$n"; else process_reverse "$n"; fi
   done
 else
+  # forward 는 2단계로 돈다: 먼저 전 repo 를 push 하고, 그 다음에 PR 을 연다. PR 은 반대편
+  # CI 를 깨우는데(sub-repo drift gate 는 pull_request 로 뜬다) 그 CI 가 아직 push 되지 않은
+  # 브랜치 — 특히 맨 마지막에 push 되는 dx-all-suite — 를 clone 하려 하기 때문이다.
+  # (GHES 2026-10-22: dx-runtime/dx-compiler 게이트가 suite 브랜치를 못 찾고 main 으로
+  # fallback 해, main 에 없는 fragment 때문에 drift 로 떨어졌다.)
+  declare -A PR_TIPS=()   # repo → PR 을 열 때 쓸 TIP (2단계에서 재사용)
+  # 1단계: 전 repo push (설정 순서 = nested 먼저, dx-all-suite 마지막 → gitlink 안전)
+  DEFER_PR=1
   for n in "${TARGETS[@]}"; do
     if [ "${CFG[$n.sync]:-on}" = off ]; then skip_sync_off "$n"; else process "$n"; fi
+  done
+  # 2단계: 모든 브랜치가 dst 에 올라간 뒤에 PR 을 연다. ensure_pr 는 R_*/TIP/cache 만
+  # 쓰므로 repo 를 다시 resolve 하고 1단계에서 보관한 TIP 을 돌려주면 된다.
+  DEFER_PR=0
+  for n in "${TARGETS[@]}"; do
+    [ -n "${PR_TIPS[$n]:-}" ] || continue
+    resolve "$n"; TIP="${PR_TIPS[$n]}"; cache="$CACHE_DIR/$R_NAME.git"
+    ensure_pr || true
   done
 fi
 
