@@ -543,6 +543,8 @@ def test_coverage_uses_append_across_isolated_processes():
     assert "scripts/coverage_gate.py" in cov_block, (
         "coverage must be compared against config/coverage_baseline.json"
     )
+    module_run = cov_block.split("-- coverage 3/4:", 1)[1].split("-- coverage 4/4:", 1)[0]
+    assert "tests/dx_edge/" in module_run, "DX Cloud (dx_edge) tests must contribute to coverage"
 
 
 def test_browser_suites_support_sharding():
