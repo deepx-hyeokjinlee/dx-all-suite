@@ -27,7 +27,7 @@ DX-RT uses the DX NPU Driver to send input data to the NPU via the PCIe interfac
 
 **DX-ModelZoo**
 
-DEEPX aims to provide developers with an effortless experience using DEEPX NPUs through DEEPX Open Modelzoo, which offers a variety of neural network models supported by DEEPX NPUs.
+DEEPX aims to provide developers with an effortless experience using DEEPX NPUs through DEEPX Open ModelZoo, which offers a variety of neural network models supported by DEEPX NPUs.
 
 All featured models are provided with pre-trained ONNX models, configuration json files, and pre-compiled binaries named DXNN(DEEPX Neural Network).
 
@@ -37,9 +37,9 @@ Developers can also compile featured ONNXs to DXNN, which enables rapid applicat
 
 As an example of using the DX-RT API, the User Application Example allows users to easily set up the runtime environment and quickly see a demonstration. DX-APP enables rapid demonstrations of deep learning model inference for vision tasks such as object detection, face detection, and classification, utilizing the DEEPX NPU. Users can refer to the DX-APP code as a guide for developing their own applications.
 
-**DX-Stream**
+**DX-STREAM**
 
-DX-Stream is a GStreamer Custom Plugin designed to simplify the development of Vision AI Applications using DEEPX's NPU in a GStreamer pipeline format. DX-Stream enables rapid and efficient development of Vision AI Applications by providing a modular, pipeline-based framework powered by DEEPX's NPU. The customizable preprocessing, inference, and postprocessing elements ensure flexibility for a variety of AI scenarios.
+DX-STREAM is a GStreamer Custom Plugin designed to simplify the development of Vision AI Applications using DEEPX's NPU in a GStreamer pipeline format. DX-STREAM enables rapid and efficient development of Vision AI Applications by providing a modular, pipeline-based framework powered by DEEPX's NPU. The customizable preprocessing, inference, and postprocessing elements ensure flexibility for a variety of AI scenarios.
 
 ---
 
@@ -71,7 +71,7 @@ DX-Stream is a GStreamer Custom Plugin designed to simplify the development of V
 **Core Components**
   - DX-RT & DX-FW & NPU Driver: Foundational software for NPU control
   - DX-APP: C++ and Python examples to jump-start your projects
-  - DX-Stream: GStreamer integration for seamless multimedia pipelines
+  - DX-STREAM: GStreamer integration for seamless multimedia pipelines
 
 **Flexibility & Support**
   - OS: Compatible with Debian-based Linux
@@ -90,6 +90,9 @@ DX-Stream is a GStreamer Custom Plugin designed to simplify the development of V
 ### Agent-Driven Development (Beta)
 [Link](00_Agent_Driven_Development.md)
 
+### Agent-Driven Development Showcases
+[Link](00b_Agent_Driven_Development_Showcases.md)
+
 ### Architecture Overview
 [Link](01_DX-AllSuite_Architecture_Overview.md)
 
@@ -104,5 +107,11 @@ DX-Stream is a GStreamer Custom Plugin designed to simplify the development of V
 
 ### FAQ & Troubleshooting
 [Link](05_FAQ_Troubleshooting_Guide.md)
+
+### Kubernetes Quickstart
+[Link](06_Kubernetes_Quickstart.md)
+
+### Kubernetes Beginner Guide
+[Link](07_Kubernetes_Beginner_Guide.md)
 
 ---
