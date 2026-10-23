@@ -153,6 +153,7 @@ def test_ci_workflow_checks_out_recursive_submodules():
     for checkout in checkouts:
         step = checkout.split("\n      - name:", 1)[0]
         assert "submodules: recursive" in step
+        assert "token: ${{ secrets.GH_DCI_TOKEN }}" in step
 
 
 def _workflow_job_condition(filename, job_id):

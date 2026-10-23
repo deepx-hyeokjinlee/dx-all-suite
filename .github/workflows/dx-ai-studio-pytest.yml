@@ -49,6 +49,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
+          token: ${{ secrets.GH_DCI_TOKEN }}
 
       # The venv lives OUTSIDE the workspace on purpose: actions/checkout cleans
       # untracked files, which would delete an in-tree .venv on every run and add
@@ -91,6 +92,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
+          token: ${{ secrets.GH_DCI_TOKEN }}
 
       - name: Provision test venv
         run: |
@@ -143,6 +145,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
+          token: ${{ secrets.GH_DCI_TOKEN }}
 
       - name: Provision test venv
         run: |
@@ -194,6 +197,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
+          token: ${{ secrets.GH_DCI_TOKEN }}
 
       - name: Provision test venv
         run: |
