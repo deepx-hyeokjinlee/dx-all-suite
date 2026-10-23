@@ -864,9 +864,9 @@
               "size": 7633
             },
             {
-              "path": "dx-runtime/dx_rt/csharp_package/DxEngine_NuGet_Guide.md",
-              "title": "C# NuGet Package Guide",
-              "size": 3852
+              "path": "dx-runtime/dx_rt/examples/csharp/README.md",
+              "title": "Using DX-RT from C#",
+              "size": 8963
             },
             {
               "path": "dx-runtime/docs/source/agent_development.md",
