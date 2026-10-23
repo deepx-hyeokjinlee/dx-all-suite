@@ -372,7 +372,11 @@ def discover_runtime_profile(
         # manifest membership, so report the detected version (release.ver, else the installed
         # package version) when a runtime executable is present — reconcile() then accepts it if
         # the App/Stream launch contracts validate.
-        detected = _read_release_version(runtime_root) or package_runtime_version
+        # The suite checkout's release.ver says nothing about what is installed, so it is only
+        # trusted when the caller explicitly pointed DX_RUNTIME_ROOT at a bundle.
+        detected = (
+            _read_release_version(runtime_root) if explicit_runtime_root else None
+        ) or package_runtime_version
         if detected and executable is not None:
             runtime_version = detected
 

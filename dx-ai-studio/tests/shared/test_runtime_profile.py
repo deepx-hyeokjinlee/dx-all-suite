@@ -194,3 +194,20 @@ def test_bundled_manifest_reconciles_old_profiles_to_2_5_0_and_blocks_unknown(mo
     plan = api.plan_reconciliation(unsupported, manifest)
     assert plan.state is api.ReconciliationState.BLOCKED
     assert "No verified rollback profile" in plan.reason
+
+
+def test_mismatched_package_pair_ignores_suite_checkout_release_ver(monkeypatch, tmp_path):
+    api = _api()
+    checkout = tmp_path / "dx-runtime"
+    checkout.mkdir()
+    (checkout / "release.ver").write_text("v2.5.0\n", encoding="utf-8")
+    manifest = api.load_runtime_manifest(PROFILE_MANIFEST)
+    for rt, drv in (("3.5.0", "2.6.0"), ("3.4.2", "2.7.0"), ("3.4.2", None), ("3.6.0", "2.8.0")):
+        monkeypatch.delenv("DX_RUNTIME_ROOT", raising=False)
+        monkeypatch.setattr(api, "_installed_package_versions", lambda rt=rt, drv=drv: (rt, drv))
+        monkeypatch.setattr(api, "_runtime_executable", lambda: "/usr/local/bin/dxcli")
+        monkeypatch.setattr(api, "normalize_architecture", lambda value=None: "x86_64")
+        monkeypatch.setattr(api, "_installed_runtime_root", lambda: checkout)
+        profile = api.discover_runtime_profile(manifest=manifest)
+        assert profile.state is api.ProfileState.UNSUPPORTED
+        assert profile.runtime_version == rt
