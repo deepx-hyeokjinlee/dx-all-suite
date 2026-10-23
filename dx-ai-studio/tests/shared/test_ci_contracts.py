@@ -144,6 +144,17 @@ def test_ci_workflow_uses_self_hosted_runner():
     assert "ci-browser-smoke" not in workflow
 
 
+def test_ci_workflow_checks_out_recursive_submodules():
+    workflow = (
+        ROOT.parent / ".github" / "workflows" / "dx-ai-studio-pytest.yml"
+    ).read_text(encoding="utf-8")
+    checkouts = workflow.split("      - name: Checkout\n")[1:]
+    assert len(checkouts) == 4
+    for checkout in checkouts:
+        step = checkout.split("\n      - name:", 1)[0]
+        assert "submodules: recursive" in step
+
+
 def _workflow_job_condition(filename, job_id):
     import re
 
