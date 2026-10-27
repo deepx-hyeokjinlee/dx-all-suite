@@ -118,7 +118,10 @@ sudo apt install libdxrt-bin
 | Package | 내용 |
 |---|---|
 | `dxrt-driver-dkms` | NPU kernel driver. DKMS로 현재 kernel에 맞춰 빌드되며(`dkms`, `build-essential` 의존) kernel 업데이트 시 자동으로 다시 빌드됩니다 |
-| `libdxrt-bin` | `/usr/local` 아래의 pre-built DX-RT library와 header, `dxrt-cli` 등 runtime 도구, `dxrt` service |
+| `libdxrt-bin` | `/usr/local` 아래의 pre-built DX-RT library와 header, `dxcli` 등 runtime 도구, `dxrt` service |
+
+!!! note "CLI 명령어 이름"
+    DX-RT v3.4.0부터 `dxrt-cli`, `parse_model`, `run_model`의 이름이 각각 `dxcli`, `dxparse`, `dxrun`으로 변경되었습니다. 기존 이름도 하위 호환을 위한 별칭으로 계속 사용할 수 있습니다.
 
 !!! warning "재부팅과 firmware"
     `dxrt-driver-dkms` 설치 후 kernel이 NPU driver를 로드하도록 재부팅하십시오. Firmware는
@@ -200,7 +203,7 @@ Docker 경로를 사용할 계획이지만 Docker가 설치되어 있지 않은 
 
 - **단계 1 (Source)**: PyTorch 또는 TensorFlow와 같은 주요 AI 프레임워크로부터 훈련된 모델과 소스 코드를 확보합니다.  
 - **단계 2 (Export)**: 모델을 **DX-COM**이 인식하는 표준 형식인 **ONNX**로 내보냅니다.  
-    : Tip: NPU 사양과 최대 호환성을 보장하기 위해 입력 텐서 크기를 설정하고 **Opset 11 이상**을 사용하십시오.  
+    : Tip: NPU 사양과 최대 호환성을 보장하기 위해 입력 텐서 크기를 설정하고 **Opset 11~21(권장: 17)**을 사용하십시오.  
 - **단계 3 (DX-COM)**: 컴파일러 가상 환경(`venv-dx-compiler`) 내에서 ONNX 모델을 NPU에 최적화된 `.dxnn` 바이너리로 변환합니다.  
 - **단계 4 (DX-RT)**: 생성된 모델을 로드하고 런타임 가상 환경(`venv-dx-runtime`)을 사용하여 타겟 장치에서 추론을 실행합니다.  
 - **단계 5. (NPU Acceleration)**: 실시간 AI 추론 성능을 확인하고 최종 출력을 검토합니다.  
@@ -325,8 +328,8 @@ dxcom -m model.onnx -c config.json -o output/ --export_html
 # Method 1. Using the installation script
 ./dx-runtime/install.sh --target=dx_fw
 
-# Method 2. Manual update using dxrt-cli
-dxrt-cli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
+# Method 2. Manual update using dxcli
+dxcli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
 ```
 
 **단계 2. 콜드 부트(Cold Boot) 수행**  
@@ -390,7 +393,7 @@ dxmz info resnet50_224x224
 #### A. 하드웨어 및 버전 확인 
 다음 명령을 실행하여 시스템에서 인식된 NPU 장치에 대한 정보를 표시합니다.  
 ```Bash
-dxrt-cli -s
+dxcli -s
 ```
 
 **성공 체크리스트**  
@@ -480,7 +483,7 @@ dx-modelzoo GPU 이미지에는 이미지의 CUDA 버전에 맞는 `onnxruntime-
 - **컨테이너 내에서 `onnxruntime-gpu`를 업그레이드하지 마십시오** (예: `pip install -U onnxruntime-gpu`). 최신 릴리스가 다른 CUDA 메이저 버전용일 수 있으며, 그러면 평가가 CPU로 폴백됩니다. `[gpu]` extra 설치도 필요 없습니다. 베이스 이미지와 중복되는 pip CUDA 12 라이브러리만 추가됩니다.
 - 확인 방법: `python -c "import onnxruntime as ort; print(ort.__version__)"`를 실행하고, 평가 중 `nvidia-smi`를 확인하십시오.
 
-dx-compiler의 `q-pro` calibration은 GPU를 자동으로 사용합니다 (`quantization_device` auto-detection).
+dx-compiler의 `q-pro` calibration은 GPU가 있으면 자동으로 GPU를 사용합니다(`--use_gpu`, 기본값 `True`). CPU를 강제하려면 `--use_gpu False`를, 특정 GPU를 지정하려면 `CUDA_VISIBLE_DEVICES`를 설정하십시오.
 
 **B. Intel GPU (VA-API 미디어 가속) — dx-runtime (dx_stream)**
 
@@ -549,7 +552,7 @@ dxcom -m sample_models/onnx/YOLOV5S-1.onnx \
 docker exec -it dx-runtime-24.04
 
 # 2. Inside Container: Verify NPU hardware recognition
-dxrt-cli -s
+dxcli -s
 ```
 
 **B-2. 샘플 애플리케이션 실행 (`dx_app`)**  
@@ -700,10 +703,10 @@ services:
 
 설치가 성공적으로 완료되었는지, 소프트웨어와 하드웨어가 올바르게 통신하는지 최종 점검을 수행합니다.  
 
-#### A. 하드웨어 인식 확인 (`dxrt-cli`)
+#### A. 하드웨어 인식 확인 (`dxcli`)
 컨테이너 내부에서 다음 명령을 실행하여 NPU가 보이고 작동하는지 확인합니다.   
 ```Bash
-dxrt-cli -s
+dxcli -s
 ```
 
 **성공 체크리스트**  

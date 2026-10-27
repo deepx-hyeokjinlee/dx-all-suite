@@ -124,7 +124,10 @@ sudo apt install libdxrt-bin
 | Package | Contents |
 |---|---|
 | `dxrt-driver-dkms` | NPU kernel driver, built for the running kernel through DKMS (pulls in `dkms` and `build-essential`) and rebuilt automatically on kernel updates |
-| `libdxrt-bin` | Pre-built DX-RT library and headers under `/usr/local`, `dxrt-cli` and the other runtime tools, and the `dxrt` service |
+| `libdxrt-bin` | Pre-built DX-RT library and headers under `/usr/local`, `dxcli` and the other runtime tools, and the `dxrt` service |
+
+!!! note "CLI command names"
+    Since DX-RT v3.4.0, `dxrt-cli`, `parse_model`, and `run_model` have been renamed to `dxcli`, `dxparse`, and `dxrun`. The old names remain available as backward-compatible aliases.
 
 !!! warning "Reboot and firmware"
     Reboot after installing `dxrt-driver-dkms` so the kernel loads the NPU driver. Firmware
@@ -207,7 +210,7 @@ This path is designed for users who have a specific model architecture trained i
 
 - **Step 1 (Source)**: Secure your trained models and source code from major AI frameworks such as PyTorch or TensorFlow.     
 - **Step 2 (Export)**: Export the model to **ONNX**, the standard format recognized by **DX-COM**.  
-    : Tip: Set input tensor size and use **Opset 11 or higher** to ensure maximum compatibility with NPU specifications.  
+    : Tip: Set input tensor size and use **Opset 11–21 (17 recommended)** to ensure maximum compatibility with NPU specifications.  
 - **Step 3 (DX-COM)**: Convert the ONNX model into an NPU-optimized `.dxnn` binary within the compiler virtual environment (`venv-dx-compiler`).  
 - **Step 4 (DX-RT)**: Load the generated model and run inference on the target device using the runtime virtual environment (`venv-dx-runtime`).  
 - **Step 5 (NPU Acceleration)**: Verify real-time AI inference performance and inspect the final output.  
@@ -331,8 +334,8 @@ You can update the firmware using the automated installation script or the dedic
 # Method 1. Using the installation script
 ./dx-runtime/install.sh --target=dx_fw
 
-# Method 2. Manual update using dxrt-cli
-dxrt-cli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
+# Method 2. Manual update using dxcli
+dxcli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
 ```
 
 **Step 2. Perform a Cold Boot**  
@@ -396,7 +399,7 @@ Once the local installation is finished, perform a final check to confirm that t
 #### A. Hardware and Version Check  
 Run the following command to display information about the NPU devices recognized by the system.  
 ```Bash
-dxrt-cli -s
+dxcli -s
 ```
 
 **Success Checklist**  
@@ -487,7 +490,7 @@ The dx-modelzoo GPU image already includes an `onnxruntime-gpu` build that match
 - **Do not upgrade `onnxruntime-gpu` inside the container** (e.g. `pip install -U onnxruntime-gpu`): the newest release may target a different CUDA major version, and evaluation then falls back to the CPU. The `[gpu]` extra is not needed either; it only adds pip CUDA 12 libraries that duplicate the base image.
 - To check: `python -c "import onnxruntime as ort; print(ort.__version__)"`, and watch `nvidia-smi` during evaluation.
 
-For dx-compiler, `q-pro` calibration uses the GPU automatically (`quantization_device` auto-detection).
+For dx-compiler, `q-pro` calibration runs on the GPU automatically when one is available (`--use_gpu`, default `True`). Use `--use_gpu False` to force CPU, or set `CUDA_VISIBLE_DEVICES` to select a specific GPU.
 
 **B. Intel GPU (VA-API Media Acceleration) — dx-runtime (dx_stream)**
 
@@ -558,7 +561,7 @@ Before running any inference, ensure the container can communicate with the NPU 
 docker exec -it dx-runtime-24.04 bash
 
 # 2. Inside Container: Verify NPU hardware recognition
-dxrt-cli -s
+dxcli -s
 ```
 
 **B-2. Running Sample Applications (`dx_app`)**  
@@ -709,10 +712,10 @@ services:
 
 This performs a final check to ensure that the installation was completed successfully and that the software and hardware communicate correctly.  
 
-#### A. Hardware Recognition Check (`dxrt-cli`)
+#### A. Hardware Recognition Check (`dxcli`)
 Run the following command inside the container to verify that the NPU is visible and operational:  
 ```Bash
-dxrt-cli -s
+dxcli -s
 ```
 
 **Success Checklist**  
