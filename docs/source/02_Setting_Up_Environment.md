@@ -367,7 +367,7 @@ The provided scripts install DX-ModelZoo and prepare its workspace.
 ```
 
 !!! note "GPU Inference (ONNX Runtime GPU)"  
-    `--extra gpu` installs `.[gpu]` (`onnxruntime-gpu` and CUDA libraries) and removes `onnxruntime`, because the two packages cannot coexist. Do not combine `gpu` with `all`, which includes `cpu`. Requirements: NVIDIA GPU (Pascal/Turing/Ampere), NVIDIA Driver ≥ 535.230.02, CUDA 12.2, cuDNN 9.1. After installation, add the NVIDIA library paths printed by the script to `LD_LIBRARY_PATH`.  
+    `--extra gpu` installs `.[gpu]` (`onnxruntime-gpu` and CUDA libraries) and removes `onnxruntime`, because the two packages cannot coexist. Do not combine `gpu` with `all`, which includes `cpu`. Requirements: NVIDIA GPU (Pascal/Turing/Ampere), NVIDIA Driver ≥ 535.230.02, CUDA 12.2, cuDNN 9.1. After installation, add the NVIDIA library paths printed by the script to `LD_LIBRARY_PATH`. These requirements apply to the local (pip) install; Docker GPU images have their own driver requirement (see GPU Acceleration Options below).  
 
 `modelzoo-1_prepare_assets.sh` copies `dx-modelzoo/.env.example` to `dx-modelzoo/.env` only when `.env` does not exist. Edit it for your environment:  
 
@@ -473,6 +473,12 @@ Docker images can optionally be built with GPU acceleration. The two options ser
 
 Host requirements: NVIDIA driver and [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 (`sudo nvidia-ctk runtime configure --runtime=docker && sudo systemctl restart docker`).
+
+The NVIDIA driver must support the image's CUDA version, which the container toolkit checks at container start:
+
+- Default CUDA 12.8.1 image: driver **R570 or newer** (`nvidia-smi` shows CUDA Version ≥ 12.8).
+- Datacenter/professional GPUs on the R535, R550, R560, or R565 branches can also run it through CUDA forward compatibility. Other GPUs (e.g. GeForce) on these branches fail with `unsatisfied condition: cuda>=12.8`.
+- With `--cuda_version=<ver>`, the driver must support that CUDA version. Ubuntu 24.04 cuDNN base images start at CUDA 12.6.3 (no lower tag exists), which needs driver R560 or newer on GeForce and other non-datacenter GPUs.
 
 ```Bash
 # Build on a CUDA base image (default CUDA version: 12.8.1, override with --cuda_version=<ver>)
@@ -623,7 +629,7 @@ dxmz --help
     The `dx-modelzoo` container does not start its own `dxrtd`. It uses the DX-RT service running in the `dx-runtime` container (or on the host). Start the `dx-runtime` container before NPU (`dxnn`) evaluation.  
 
 !!! note "GPU Image (ONNX Runtime GPU)"  
-    The default image installs `.[cpu]`. To evaluate ONNX models on an NVIDIA GPU, build and run with `--nvidia_gpu`. It uses the `nvidia/cuda` cuDNN runtime base image (CUDA/cuDNN included) and installs an `onnxruntime-gpu` build matching the image's CUDA version (see GPU Acceleration Options above), so no `LD_LIBRARY_PATH` setup is needed. The host requires the NVIDIA driver and NVIDIA Container Toolkit.  
+    The default image installs `.[cpu]`. To evaluate ONNX models on an NVIDIA GPU, build and run with `--nvidia_gpu`. It uses the `nvidia/cuda` cuDNN runtime base image (CUDA/cuDNN included) and installs an `onnxruntime-gpu` build matching the image's CUDA version (see GPU Acceleration Options above), so no `LD_LIBRARY_PATH` setup is needed. The host requires the NVIDIA driver (R570 or newer for the default CUDA 12.8.1 image) and NVIDIA Container Toolkit.  
     ```Bash
     ./docker_build.sh --target=dx-modelzoo --ubuntu_version=24.04 --nvidia_gpu
     ./docker_run.sh --target=dx-modelzoo --ubuntu_version=24.04 --nvidia_gpu

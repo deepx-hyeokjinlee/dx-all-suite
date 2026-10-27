@@ -361,7 +361,7 @@ dxcli -u ./dx-runtime/dx_fw/m1/X.X.X/mdot2/fw.bin
 ```
 
 !!! note "GPU 추론 (ONNX Runtime GPU)"  
-    `--extra gpu`는 `.[gpu]`(`onnxruntime-gpu` 및 CUDA 라이브러리)를 설치하고, 두 패키지가 공존할 수 없으므로 `onnxruntime`을 제거합니다. `cpu`를 포함하는 `all`과 `gpu`를 함께 사용하지 마십시오. 요구 사항: NVIDIA GPU (Pascal/Turing/Ampere), NVIDIA Driver ≥ 535.230.02, CUDA 12.2, cuDNN 9.1. 설치 후 스크립트가 출력하는 NVIDIA 라이브러리 경로를 `LD_LIBRARY_PATH`에 추가하십시오.  
+    `--extra gpu`는 `.[gpu]`(`onnxruntime-gpu` 및 CUDA 라이브러리)를 설치하고, 두 패키지가 공존할 수 없으므로 `onnxruntime`을 제거합니다. `cpu`를 포함하는 `all`과 `gpu`를 함께 사용하지 마십시오. 요구 사항: NVIDIA GPU (Pascal/Turing/Ampere), NVIDIA Driver ≥ 535.230.02, CUDA 12.2, cuDNN 9.1. 설치 후 스크립트가 출력하는 NVIDIA 라이브러리 경로를 `LD_LIBRARY_PATH`에 추가하십시오. 이 요구 사항은 로컬(pip) 설치 기준이며, Docker GPU 이미지의 driver 요구 사항은 아래 GPU Acceleration Options를 참고하십시오.  
 
 `modelzoo-1_prepare_assets.sh`는 `.env`가 없을 때만 `dx-modelzoo/.env.example`을 `dx-modelzoo/.env`로 복사합니다. 환경에 맞게 수정하십시오.  
 
@@ -466,6 +466,12 @@ Docker 이미지는 GPU 가속 옵션으로 빌드할 수 있습니다. 두 옵�
 
 호스트 요구사항: NVIDIA driver 및 [nvidia-container-toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 (`sudo nvidia-ctk runtime configure --runtime=docker && sudo systemctl restart docker`).
+
+NVIDIA driver는 이미지의 CUDA 버전을 지원해야 하며, container toolkit이 container 시작 시 이를 검사합니다.
+
+- 기본 CUDA 12.8.1 이미지: driver **R570 이상** (`nvidia-smi`의 CUDA Version ≥ 12.8).
+- R535, R550, R560 또는 R565 branch의 datacenter/professional GPU도 CUDA forward compatibility로 실행할 수 있습니다. 그 외 GPU(예: GeForce)는 이 branch에서 `unsatisfied condition: cuda>=12.8` 오류로 실패합니다.
+- `--cuda_version=<ver>` 사용 시 driver가 해당 CUDA 버전을 지원해야 합니다. Ubuntu 24.04용 cuDNN 베이스 이미지는 CUDA 12.6.3부터 제공되며(그보다 낮은 tag 없음), GeForce 등 datacenter 외 GPU에서는 driver R560 이상이 필요합니다.
 
 ```Bash
 # CUDA base image로 빌드 (기본 CUDA 버전: 12.8.1, --cuda_version=<ver>로 변경 가능)
@@ -614,7 +620,7 @@ dxmz --help
     `dx-modelzoo` 컨테이너는 자체 `dxrtd`를 실행하지 않고 `dx-runtime` 컨테이너(또는 호스트)에서 실행 중인 DX-RT 서비스를 사용합니다. NPU(`dxnn`) 평가 전에 `dx-runtime` 컨테이너를 실행하십시오.  
 
 !!! note "GPU 이미지 (ONNX Runtime GPU)"  
-    기본 이미지는 `.[cpu]`를 설치합니다. NVIDIA GPU에서 ONNX 모델을 평가하려면 `--nvidia_gpu`로 빌드 및 실행하십시오. CUDA/cuDNN이 포함된 `nvidia/cuda` cuDNN runtime 베이스 이미지를 사용하고 CUDA 버전에 맞는 `onnxruntime-gpu`를 설치하므로(위 GPU 가속 옵션 참고) `LD_LIBRARY_PATH` 설정이 필요 없습니다. 호스트에는 NVIDIA 드라이버와 NVIDIA Container Toolkit이 필요합니다.  
+    기본 이미지는 `.[cpu]`를 설치합니다. NVIDIA GPU에서 ONNX 모델을 평가하려면 `--nvidia_gpu`로 빌드 및 실행하십시오. CUDA/cuDNN이 포함된 `nvidia/cuda` cuDNN runtime 베이스 이미지를 사용하고 CUDA 버전에 맞는 `onnxruntime-gpu`를 설치하므로(위 GPU 가속 옵션 참고) `LD_LIBRARY_PATH` 설정이 필요 없습니다. 호스트에는 NVIDIA 드라이버(기본 CUDA 12.8.1 이미지는 R570 이상)와 NVIDIA Container Toolkit이 필요합니다.  
     ```Bash
     ./docker_build.sh --target=dx-modelzoo --ubuntu_version=24.04 --nvidia_gpu
     ./docker_run.sh --target=dx-modelzoo --ubuntu_version=24.04 --nvidia_gpu
