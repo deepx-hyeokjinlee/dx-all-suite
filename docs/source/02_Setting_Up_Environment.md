@@ -581,13 +581,18 @@ cd /deepx/dx-runtime/dx_app
 # 1. Prepare resources (Download .dxnn models and sample images)
 ./setup.sh
 
-# 2. Run demo 
-./run_demo.sh 			# Run C++ based demo
-./run_demo_python.sh 		# Run Python demo
+# 2. Run demo (interactive menu covers both C++ and Python examples)
+./run_demo.sh
 ```
 
 !!! note "Demo Selection"  
-    Upon execution, the terminal will display a list of available demos (0, 1, 2...). Simply enter the corresponding number and press **Enter** to start.
+    `run_demo.sh` is a text-based menu with three steps:
+
+    1. **AI task**
+    2. **Language and execution mode**: C++ sync/async, Python sync/async, or Python with C++ post-processing
+    3. **Input**: video or image
+
+    Enter the number at each prompt, or press **Enter** to accept the default. Use `./run_demo.sh --help` to pre-select options without the menu.
 
 **B-3. Running the Streaming Framework (`dx_stream`)**  
 This module is a GStreamer-based module optimized for real-time multi-channel video stream processing.  
