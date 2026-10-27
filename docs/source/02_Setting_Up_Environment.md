@@ -733,12 +733,14 @@ If your output meets the following three conditions, the hardware integration is
 
 [Example of Normal Output]  
 ```Plaintext
-DX-RT v3.2.0
-========================================================
-* Device 0: M1, Accelerator type
---------------------- Version ---------------------
-* RT Driver version : v2.1.0
-* FW version :      v2.5.0
+DXRT v3.5.0 (build: x.xxxxxxx)
+=======================================================
+ * Device 0: M1, Accelerator type
+---------------------   Version   ---------------------
+ * RT Driver version   : v2.7.0
+ * PCIe Driver version : v2.7.0
+-------------------------------------------------------
+ * FW version          : v2.7.6
 -------------------------------------------------------
 ... (Continued)
 ```
