@@ -10,6 +10,36 @@
  47f982f545968712f9db5212e060b609aebbe7b0 dx-k8s-device-plugin (heads/main)  
 
 #### dx-modelzoo  
++d960ad5a0403719fcb8079382df79f3f8cdd950a dx-modelzoo (d960ad5)  
+
+#### dx-runtime  
+ 25dbc8b9adeaa86221f7119cec4ea1774d33a3f6 dx-runtime (remotes/origin/HEAD)  
+ 3c3b052b106f9438807c2e893ac028e11cb55b4b dx-runtime/dx_app (heads/dev)  
+ 5c17d2ef0b2c169fd33e980f74d0de89fdaada85 dx-runtime/dx_fw (v2.7.7)  
+ 6fe72a73f1d85554130dfd6485c134b887095983 dx-runtime/dx_fw/extern/cc_sw_bundle (heads/main)  
+ b2d7bfdc8b5f2922d497dc9ab8164a3415c7a626 dx-runtime/dx_fw/extern/cherryusb (b2d7bfd)  
+ 4d192d129ea7f1c58c3f735d2e8db85faed2503c dx-runtime/dx_fw/extern/cherryusb/third_party/nimble-1.6.0/nimble (heads/master)  
+ 7de2f76ae0d6e377071307934312b2523f5d7787 dx-runtime/dx_fw/extern/cherryusb/third_party/zephyr_bluetooth-2.7.5/zephyr_bluetooth (heads/master)  
+ d4ac03a5b514f91def04c56429672504ad8945c1 dx-runtime/dx_fw/extern/toolchain (d4ac03a)  
+ ed78f7610825e9389c761c02a0ebab73075da9fe dx-runtime/dx_fw/firmware/bootloader (ed78f76)  
+ 520126c6293e2e9d34f023342d7b830e796e7ab5 dx-runtime/dx_fw/firmware/freertos/apps (520126c)  
+ 47ba312127af9f92939773cbf8a425b3229ff86a dx-runtime/dx_fw/firmware/freertos/kern (47ba312)  
+ 4273ca3211b99914f31518378fb590fbff064953 dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Community-Supported-Ports (4273ca3)  
+ 3f9c99a682c5c796bb7eb89fd9c4385688fce27a dx-runtime/dx_fw/firmware/freertos/kern/portable/ThirdParty/Partner-Supported-Ports (3f9c99a)  
+ e1994fcd7468122b548b6efe47f9fdeff0eee031 dx-runtime/dx_fw/firmware/freertos/plat (e1994fc)  
+ f5f3bae60f2b4b95ba023c5400265a6f9ffab2ff dx-runtime/dx_fw/firmware/freertos/tcp (f5f3bae)  
+ dbf70559b27d39c1fdb68dfb9a32140b6a6777a0 dx-runtime/dx_fw/firmware/freertos/tcp/test/FreeRTOS-Kernel  
+### 2026-10-27  
+#### dx-compiler  
+ a72a918966e32d61b1c4d64bb8d84a9ba79a8c28 dx-compiler (v2.5.0-rc+manual-20261027.a72a918)  
+ d9faff0d7bc32e7adebc6552446f978118d3ab3b dx-compiler/tests_internal/bats (d9faff0)  
+ 697471b7a89d3ab38571f38c6c7c4b460d1f5e35 dx-compiler/tests_internal/test_helper/bats-assert (697471b)  
+ 0954abb9925cad550424cebca2b99255d4eabe96 dx-compiler/tests_internal/test_helper/bats-support (heads/main)  
+
+#### dx-k8s-device-plugin  
+ 47f982f545968712f9db5212e060b609aebbe7b0 dx-k8s-device-plugin (heads/main)  
+
+#### dx-modelzoo  
 +aa8e55fc4c74df776f759b540f3503a78d4101f9 dx-modelzoo (aa8e55f)  
 
 #### dx-runtime  
