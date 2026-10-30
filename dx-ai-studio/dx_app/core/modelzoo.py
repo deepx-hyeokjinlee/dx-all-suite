@@ -93,7 +93,10 @@ def _open(opener, url, timeout):
 
 
 def _fetch_page(source):
-    url = SOURCE_URLS.get(source, SOURCE_URLS[SOURCE_INTERNAL])
+    return _fetch_url(source, SOURCE_URLS.get(source, SOURCE_URLS[SOURCE_INTERNAL]))
+
+
+def _fetch_url(source, url):
     try:
         opener = _make_opener(source)
         # Bounded timeout: ModelZoo browses a REMOTE catalog (both sources are network hosts),
@@ -449,6 +452,13 @@ def modelzoo_list(source="internal"):
     # Each source has a different document shape: the public page is inline JSON, the
     # internal publish page a 20-column table. _parse_models only parses tables.
     if source == SOURCE_PUBLIC:
+        # developer.deepx.ai/modelzoo/ wraps the catalog in a same-host iframe; read the frame's document.
+        from shared.modelzoo_payload import payload_frame_url
+        frame = payload_frame_url(html, SOURCE_URLS[SOURCE_PUBLIC])
+        if frame:
+            html, err = _fetch_url(source, frame)
+            if err:
+                return {"ok": False, "error": err, "models": []}
         try:
             models = _models_from_payload(html)
         except ValueError as e:
