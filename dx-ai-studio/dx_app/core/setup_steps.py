@@ -130,6 +130,28 @@ SETUP_STEPS={
         "cwd":lambda:DX_APP_ROOT.parent,   # dx-ai-studio root so `import shared` resolves
         "desc":"Ensure numpy+cv2+dx_engine coexist for Python demos (studio venv; no dx-runtime changes)",
     },
+    "model-build":{
+        # One model's C++ runners, started from Model Zoo (Build C++ runner). Targets come from
+        # _model_build_targets (examples that have a C++ source) — never free argv. No sudo.
+        "label":"C++ runner build","script":lambda:DX_APP_ROOT/"build.sh",
+        "args":["--type","Release","--arch",host_arch()],"cwd":lambda:DX_APP_ROOT,
+        "desc":"Build one model's C++ runners (build.sh --target); started from Model Zoo",
+    },
+    "clean-build":{
+        "label":"Clean C++ build",
+        "cmd":lambda:[sys.executable,"-m","dx_app.core.maintenance","clean-build"],
+        "cwd":lambda:DX_APP_ROOT.parent,   # dx-ai-studio root so `import dx_app` resolves
+        "desc":"Delete build_* and bin/, rebuild the demo runners for this machine",
+        "needs_sudo":True,
+    },
+    "runtime-reset":{
+        "label":"Reset runtime and reinstall",
+        "cmd":lambda:[sys.executable,"-m","dx_app.core.maintenance","runtime-reset"],
+        "cwd":lambda:DX_APP_ROOT.parent,
+        "desc":"Uninstall DX-RT, NPU driver, venvs, C++ builds (downloaded models kept)",
+        "needs_sudo":True,
+        "confirm":"RESET",   # typed in the page; checked again in setup_run
+    },
     "dx-compiler":{
         "label":"DX-COM Compiler","script":lambda:DX_COMPILER_ROOT/"install.sh",
         "args":[],"cwd":lambda:DX_COMPILER_ROOT,
@@ -311,6 +333,30 @@ def live_display_status():
             "detail": "Xvfb found" if ok else f"Xvfb not installed · {LIVE_DISPLAY_HINT}"}
 
 
+def _dx_device_nodes():
+    """Device nodes the loaded driver creates: /dev/dxrt* (newer) or /dev/deepx* (legacy)."""
+    dev=Path("/dev")
+    return [d.name for d in sorted(dev.glob("dxrt*"))+sorted(dev.glob("deepx*"))] if dev.exists() else []
+
+
+def _driver_installed():
+    """The module is on disk for the next boot. Runtime reset removes the DKMS package while the module stays
+    loaded (in use) until reboot, so the device node alone would say the driver is fine."""
+    try:
+        return subprocess.run(["modinfo","-n","dxrt_driver"],capture_output=True,text=True,timeout=10).returncode==0
+    except (OSError,subprocess.SubprocessError):
+        return True     # cannot tell — do not force a driver reinstall
+
+
+def _driver_status():
+    devs=_dx_device_nodes()
+    if not devs:
+        return {"ok":False,"detail":"/dev/dxrt* or /dev/deepx* not found"}
+    if any(d.startswith("dxrt") for d in devs) and not _driver_installed():
+        return {"ok":False,"detail":"Loaded, but not installed for the next boot"}
+    return {"ok":True,"detail":", ".join(devs)}
+
+
 def setup_status():
     """Return dict of {step_id: {ok, detail}} for all setup steps."""
     r={}
@@ -335,10 +381,7 @@ def setup_status():
     # dx-rt-build — ok only when the dx_engine Python API is importable in venv-dx-runtime
     venv_ok,venv_detail=_probe_dx_engine_venv()
     r["dx-rt-build"]={"ok":venv_ok,"detail":venv_detail}
-    # dx-driver — the loaded driver creates /dev/dxrt* (newer) or /dev/deepx* (legacy); accept both
-    devs=(sorted(Path("/dev").glob("dxrt*"))+sorted(Path("/dev").glob("deepx*"))) if Path("/dev").exists() else []
-    r["dx-driver"]={"ok":bool(devs),
-        "detail":", ".join(d.name for d in devs) if devs else "/dev/dxrt* or /dev/deepx* not found"}
+    r["dx-driver"]=_driver_status()
     dxcom=_find_dxcom();ver=_dxcom_version()
     r["dx-compiler"]={"ok":dxcom is not None,
         "detail":f"v{ver}" if ver else ("Install required" if not (DX_COMPILER_ROOT/"install.sh").exists() else "install.sh found"),
@@ -359,6 +402,10 @@ def setup_status():
         "kernel": platform.release(),
         "python": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
     }
+    # The command each SDK card shows (rendered by setup.js) and the word the reset dialog asks for.
+    r["commands"] = {sid: " ".join(_display_argv(sid)) for sid in
+                     ("dx-app-deps","dx-rt-deps","dx-rt-build","dx-driver","dx-app-build","dx-app-setup")}
+    r["runtime-reset"] = {"confirm": RESET_CONFIRM}
     _du = shutil.disk_usage(str(DX_APP_ROOT if DX_APP_ROOT.exists() else Path.home()))
     r["disk"] = {"free_gb": round(_du.free / 1e9, 1), "min_gb": MIN_FREE_GB}
     return r
@@ -508,13 +555,68 @@ def deep_diagnostics():
         checks.append({"id":"opencv","label":{"ko":"OpenCV","en":"OpenCV","ja":"OpenCV","zhCN":"OpenCV","zhTW":"OpenCV","es":"OpenCV"},"ok":True,"detail":f"v{versions['opencv']}"})
     except MediaError as exc:
         checks.append({"id":"opencv","label":{"ko":"OpenCV","en":"OpenCV","ja":"OpenCV","zhCN":"OpenCV","zhTW":"OpenCV","es":"OpenCV"},"ok":False,
-            "detail":str(exc),"fix":{"ko":"Setup에서 Python Inference Deps 실행","en":"Run Python Inference Deps in Setup",
-            "ja":"Setup で Python Inference Deps を実行","zhCN":"在 Setup 中运行 Python Inference Deps",
-            "zhTW":"在 Setup 中執行 Python Inference Deps","es":"Ejecute Python Inference Deps en Setup"}})
+            "detail":str(exc),"fix":{"ko":"Setup에서 Demo Quick Start(또는 Set up the rest)를 다시 실행","en":"Run Demo Quick Start (or Set up the rest) in Setup again",
+            "ja":"Setup で Demo Quick Start（または Set up the rest）をもう一度実行","zhCN":"在 Setup 中再次运行 Demo Quick Start（或 Set up the rest）",
+            "zhTW":"在 Setup 中再次執行 Demo Quick Start（或 Set up the rest）","es":"Vuelva a ejecutar Demo Quick Start (o Set up the rest) en Setup"}})
 
-    passed=sum(1 for c in checks if c["ok"])
-    total=len(checks)
+    s=npu_sanity()
+    checks.append({"id":"npu_sanity","label":{lang:"NPU sanity check" for lang in ("ko","en","ja","zhCN","zhTW","es")},
+        "ok":s["state"]=="passed","pending":s["state"]=="needs_password",
+        "detail":{"passed":"Sanity check PASSED","needs_password":"Needs administrator password"}.get(
+            s["state"], s.get("detail") or "Sanity check FAILED"),
+        **({"fix":s["fix"]} if s["state"]=="failed" else {})})
+
+    # A pending row (no sudo yet) is neither a pass nor a failure.
+    counted=[c for c in checks if not c.get("pending")]
+    passed=sum(1 for c in counted if c["ok"])
+    total=len(counted)
     return {"checks":checks,"passed":passed,"total":total,"all_ok":passed==total}
+
+
+SANITY_SCRIPT = DX_RT_ROOT.parent / "scripts" / "sanity_check.sh"
+_ANSI = re.compile(r"\x1b\[[0-9;]*m")
+_COLD_BOOT = {"ko":"NPU 초기화 실패 — 전원을 완전히 끄고(cold boot) 10~30초 뒤 다시 켠 다음 다시 확인하세요",
+  "en":"NPU initialization failed — power the system fully off (cold boot), wait 10–30 s, power on, check again",
+  "ja":"NPU の初期化に失敗 — 電源を完全に切り（コールドブート）、10〜30 秒後に入れ直してから再確認してください",
+  "zh-CN":"NPU 初始化失败 — 完全断电（冷启动），等待 10–30 秒后开机再检查",
+  "zh-TW":"NPU 初始化失敗 — 完全斷電（冷開機），等待 10–30 秒後開機再檢查",
+  "es":"Falló la inicialización de la NPU: apague el equipo por completo (arranque en frío), espere 10–30 s, enciéndalo y vuelva a comprobar"}
+_REINSTALL = {"ko":"Setup 4단계 NPU Linux Driver를 다시 실행하거나 실행 로그를 확인하세요",
+  "en":"Run Setup step 4 (NPU Linux Driver) again, or read the execution log",
+  "ja":"Setup のステップ 4（NPU Linux Driver）を再実行するか、実行ログを確認してください",
+  "zh-CN":"重新运行 Setup 第 4 步（NPU Linux Driver），或查看执行日志",
+  "zh-TW":"重新執行 Setup 第 4 步（NPU Linux Driver），或查看執行日誌",
+  "es":"Vuelva a ejecutar el paso 4 de Setup (NPU Linux Driver) o revise el registro de ejecución"}
+
+
+def npu_sanity(password=None):
+    """dx-runtime/scripts/sanity_check.sh --dx_rt (it runs `sudo ./SanityCheck.sh`), judged by its TEXT, never
+    the exit code. Without a cached sudo session and no password → pending, so Deep Diagnostics stays
+    password-free; POST /api/setup/sanity runs it with the password."""
+    env=os.environ.copy(); cleanup=lambda: None
+    if password:
+        cleanup=_configure_sudo_env(env,password)
+        err=_preauthorize_sudo(password,env)
+        if err:
+            cleanup(); return {"state":"auth_failed","error":err}
+    else:
+        try:
+            if subprocess.run(["sudo","-n","true"],capture_output=True,text=True,timeout=10).returncode!=0:
+                return {"state":"needs_password"}
+        except (OSError,subprocess.SubprocessError):
+            return {"state":"needs_password"}
+    try:
+        r=subprocess.run(["bash",str(SANITY_SCRIPT),"--dx_rt"],env=env,stdin=subprocess.DEVNULL,
+                         capture_output=True,text=True,timeout=180)
+        out=_ANSI.sub("",(r.stdout or "")+(r.stderr or ""))
+    except (OSError,subprocess.SubprocessError) as exc:
+        out=f"[ERROR] {exc}"
+    finally:
+        cleanup()
+    ok="Sanity check PASSED" in out and "[ERROR]" not in out
+    first=next((l.strip() for l in out.splitlines() if "[ERROR]" in l or "FAILED" in l),"")
+    fix=_COLD_BOOT if re.search(r"initiali[sz]",out,re.I) else _REINSTALL
+    return {"state":"passed" if ok else "failed","detail":first,"fix":None if ok else fix,"log":out[-6000:]}
 
 # inference-venv last: the only step that yields a numpy+cv2+dx_engine interpreter (it seeds from the dx_engine
 # DX-Runtime Build installs). Without it a "done" Quick Start crashed every Python-path Use Default.
@@ -538,6 +640,40 @@ def quick_start_plan():
     return [sid for sid in _QUICK_ORDER if not ready(sid)]
 
 
+_SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+RESET_CONFIRM = SETUP_STEPS["runtime-reset"]["confirm"]
+
+
+def _model_build_targets(params):
+    """`<example>_sync/_async` that have a C++ source — the whitelist for build.sh --target (no free argv)."""
+    name, cat = str(params.get("model_name") or ""), str(params.get("category") or "")
+    mf = str(params.get("model_file") or "")
+    if not (_SAFE_NAME.match(name) and _SAFE_NAME.match(cat)) or ".." in name or ".." in mf:
+        return []
+    from shared import dx_app_layout as layout
+    ex = layout.example_name(DX_APP_ROOT, cat, name, mf)
+    if not _SAFE_NAME.match(ex or ""):
+        return []
+    return [f"{ex}_{v}" for v in ("sync", "async") if layout.cpp_source(DX_APP_ROOT, cat, ex, v).is_file()]
+
+
+def _display_argv(step):
+    """The command a step runs, as shown on its Setup card (paths relative to the suite)."""
+    argv, _ = step_argv(step, {})
+    suite = str(DX_RT_ROOT.parent.parent)
+    shown = []
+    for a in argv:
+        if a == "bash":
+            continue
+        if a == sys.executable:
+            shown.append("python")
+        elif str(a).startswith(suite + os.sep):
+            shown.append(str(a)[len(suite) + 1:])   # e.g. dx-runtime/dx_app/build.sh
+        else:
+            shown.append(str(a))
+    return shown
+
+
 def step_argv(step, params=None):
     """(argv, cwd) a setup step runs. ``demo_only`` (Quick Start) selects the demo form of the
     build (build.sh --minimal) and asset (asset_setup --demo) steps."""
@@ -549,8 +685,16 @@ def step_argv(step, params=None):
         args = ["--minimal" if a == "--all" else a for a in args]
     if demo and step == "dx-app-setup":
         args = args + ["--demo"]
+    if step == "model-build":
+        args = ["--target", *_model_build_targets(params)] + args
     argv = cfg["cmd"]() + args if cfg.get("cmd") else ["bash", str(cfg["script"]())] + args
     return argv, cfg["cwd"]()
+
+
+class _Starting:
+    """Placeholder in config._comp_proc between the busy check and Popen (keeps the check atomic)."""
+    def poll(self):
+        return None
 
 
 def setup_run(step,params=None):
@@ -560,11 +704,26 @@ def setup_run(step,params=None):
     if not cfg:return{"ok":False,"error":f"Unknown step: {step}"}
     # A step is driven by either a shell "script" (bash <path> [args]) or a direct "cmd"
     # (argv list, for studio-native steps that must not add scripts to the dx-runtime tree).
+    if cfg.get("confirm") and params.get("confirm") != cfg["confirm"]:
+        return{"ok":False,"code":"confirm_required","error":f"Type {cfg['confirm']} to confirm"}
+    if step=="model-build" and not _model_build_targets(params):
+        return{"ok":False,"code":"no_cpp_source","error":"This model has no C++ example to build"}
     script=cfg["script"]() if cfg.get("script") else None
     if script is not None and not script.exists():return{"ok":False,"error":f"{script.name} not found"}
+    # One Setup job at a time, server-side: Model Zoo starts model-build from another page, so the page's
+    # own SETUP.running guard is not enough. (config._comp_proc was never assigned before, so this never fired.)
     with config._comp_lock:
         if config._comp_proc and config._comp_proc.poll() is None:
             return{"ok":False,"error":"Another process is already running"}
+        config._comp_proc=_Starting()
+    try:
+        return _setup_start(step,cfg,params)
+    except BaseException:
+        config._comp_proc=None
+        raise
+
+
+def _setup_start(step,cfg,params):
     env=os.environ.copy()
     # Real-time log/progress: force Python children (e.g. download_models.py progress bar)
     # to flush stdout immediately instead of block-buffering when piped — otherwise progress
@@ -576,8 +735,8 @@ def setup_run(step,params=None):
     env.setdefault("PIP_BREAK_SYSTEM_PACKAGES", "1")
     if cfg.get("needs_credentials"):
         u=params.get("username","");p=params.get("password","")
-        if not u:return{"ok":False,"error":"Please enter your username (email)"}
-        if not p:return{"ok":False,"error":"Please enter your password"}
+        if not u:config._comp_proc=None;return{"ok":False,"error":"Please enter your username (email)"}
+        if not p:config._comp_proc=None;return{"ok":False,"error":"Please enter your password"}
         env["DX_USERNAME"]=u;env["DX_PASSWORD"]=p
     sudo_cleanup = lambda: None
     if cfg.get("needs_sudo"):
@@ -585,12 +744,20 @@ def setup_run(step,params=None):
         sudo_error = _preauthorize_sudo(params.get("password",""), env)
         if sudo_error:
             sudo_cleanup()
+            config._comp_proc=None
             # sudo_auth marker lets the client re-prompt for the password instead of failing.
             return{"ok":False,"error":sudo_error,"sudo_auth":True}
     # Demo Quick Start passes {"demo_only": true} for the build and asset steps (step_argv).
     run_argv,cwd=step_argv(step,params)
     with config._comp_log_lock:config._comp_log=""
-    config._comp_done=False;config._comp_exit_code=-1
+    config._comp_done=False;config._comp_exit_code=-1;config._comp_step=step
+    if step=="runtime-reset":
+        # The NPU driver is about to be removed: stop any run that holds the device.
+        try:
+            from dx_app.core.inference import stop_inference, shutdown_live_processes
+            stop_inference(); shutdown_live_processes()
+        except Exception:
+            logging.exception("could not stop running inference before runtime-reset")
     def _run():
         import select as _select,os as _os
         buf=[]
@@ -603,6 +770,7 @@ def setup_run(step,params=None):
              stdout=subprocess.PIPE,stderr=subprocess.STDOUT,
              stdin=subprocess.PIPE,cwd=str(cwd),env=env,bufsize=0)
             config._comp_stdin_proc=proc
+            config._comp_proc=proc
             fd=proc.stdout.fileno()
             while True:
                 rlist,_,_=_select.select([fd],[],[],0.1)
@@ -634,6 +802,7 @@ def setup_run(step,params=None):
         except Exception as e:
             buf.append(f"\n[ERROR] {e}\n")
             config._comp_exit_code=1
+            if isinstance(config._comp_proc,_Starting):config._comp_proc=None
         finally:
             sudo_stop.set()
             sudo_cleanup()
@@ -664,6 +833,23 @@ def setup_run(step,params=None):
             print(f"[SETUP:{step}] Done. exit_code={config._comp_exit_code}")
     threading.Thread(target=_run,daemon=True).start()
     return{"ok":True,"started":True}
+
+def model_build_log():
+    """Log of the model-build job only — Model Zoo must not read other Setup jobs."""
+    if config._comp_step != "model-build":
+        return {"log":"","done":True,"exit_code":None,"busy":bool(config._comp_proc and config._comp_proc.poll() is None),
+                "step":config._comp_step}
+    out = setup_log()
+    out["busy"] = False
+    return out
+
+
+def model_build_stop():
+    """Stop only a running model-build (Model Zoo must not stop a driver install, …)."""
+    if config._comp_step != "model-build" or config._comp_done:
+        return {"ok":False,"error":"No C++ runner build is running"}
+    return setup_stop()
+
 
 def setup_stop():
     """Stop the running Setup process."""

@@ -2,6 +2,20 @@
 
 Notable changes to the DX-AI-Studio User Manual.
 
+## v0.1.2 / 2026-11
+
+**Setup and Model Zoo**
+
+- A fresh board (incl. Raspberry Pi / aarch64) is ready after one Demo Quick Start: it also prepares the Python
+  inference interpreter, keeps the runtime venv through the driver step, never stops on a package dialog, and
+  builds for the board's own CPU architecture. No restart is needed after Setup steps.
+- Setup → **Maintenance**: Clean build, Reset and reinstall. Deep Diagnostics: **NPU sanity check**.
+- Model Zoo: **Build C++ runner** for a downloaded model; new C++ runners show up without a restart.
+- The NPU Linux Driver step counts as done only when the driver is installed for the next boot, not merely loaded,
+  so Demo Quick Start after a reset reinstalls it instead of leaving the board without a driver after reboot.
+- Setup jobs no longer overlap: a second job (e.g. a Model Zoo build during a Setup step) is refused.
+- Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
+
 ## v0.1.1 / 2026-10
 
 Changes since the v0.1.0 beta manual.

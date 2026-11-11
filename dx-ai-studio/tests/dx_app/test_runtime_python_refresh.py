@@ -43,10 +43,19 @@ def test_python_run_without_interpreter_says_what_to_do(tmp_path, monkeypatch):
     r = inference.run_inference("demo", "object_detection", "model.dxnn", lang="python",
                                 variant="sync", input_type="image", image_path="img.jpg")
     assert r["error_key"] == "python_runtime_missing"
-    assert "Python Inference Deps" in r["error"]
+    assert "Demo Quick Start" in r["error"]
 
 
 def test_setup_step_completion_refreshes_interpreter():
     import inspect
     from dx_app.core import setup_steps
-    assert "refresh_runtime_python()" in inspect.getsource(setup_steps.setup_run)
+    assert "refresh_runtime_python()" in inspect.getsource(setup_steps._setup_start)
+
+
+def test_guidance_names_buttons_that_exist():
+    """inference-venv is hidden from the Setup list on purpose; point at Quick Start / Set up the rest (they re-run it)."""
+    import inspect
+    from dx_app.core import setup_steps, inference
+    for src in (inspect.getsource(setup_steps.deep_diagnostics), inspect.getsource(inference.run_inference)):
+        assert "Run Python Inference Deps" not in src and "Run Setup → Python Inference Deps" not in src
+    assert "Demo Quick Start" in inspect.getsource(inference.run_inference)

@@ -205,6 +205,7 @@ for _name, _path in [("DX_APP_ROOT", DX_APP_ROOT), ("DX_COMPILER_ROOT", DX_COMPI
         print(f"[WARNING] Set {_name} environment variable to override")
 # Generic background setup-step subprocess state (used by setup_steps.py — NOT compiler).
 _comp_proc=None; _comp_lock=threading.Lock()
+_comp_step=""   # id of the running / last Setup step (model-build endpoints check it)
 _comp_log=""; _comp_log_lock=threading.Lock()
 _comp_done=False; _comp_exit_code=-1
 _comp_dxnn_path=""; _comp_output_dir=""

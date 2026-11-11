@@ -323,6 +323,7 @@ def merge_conf_and_catalog(conf_models, catalog_data):
             "demo": _build_demo_info(cm["id"], cm["category"], cm.get("model_file", ""),
                                      _representative_input(cm["id"], cm["category"])),
             "variants": _detect_inference_variants(cm["id"], cm["category"], cm.get("model_file", "")),
+            "cpp_buildable": _cpp_buildable(cm["id"], cm["category"], cm.get("model_file", "")),
             "legal": {},
             "thumbnail": f"thumbnails/{cm['id']}.jpg",
             "example_images": {
@@ -551,6 +552,17 @@ def _build_demo_info(model_id, category, model_file="", demo_input=None):
 # dx_postprocess pybind extension.
 _PY_VARIANTS = ("sync", "async", "sync_cpp_postprocess", "async_cpp_postprocess")
 _CPP_VARIANTS = ("sync", "async")
+
+
+def _cpp_buildable(model_id, category, model_file=""):
+    """The example has a C++ source but no runner in BUILD_DIR → Model Zoo can build just this model
+    (Setup step model-build, build.sh --target). Demo Quick Start builds only the demo runners."""
+    if not DX_APP_ROOT.exists():
+        return False
+    from shared import dx_app_layout as _layout
+    name = _layout.example_name(DX_APP_ROOT, category, model_id, model_file or "")
+    return (_layout.cpp_source(DX_APP_ROOT, category, name, "sync").is_file()
+            and not _layout.cpp_binary(BUILD_DIR, name, "sync").exists())
 
 
 def _detect_inference_variants(model_id, category, model_file=""):
@@ -783,6 +795,7 @@ def _refresh_variants(catalog):
     for m in (catalog or {}).get("models", []):
         if "variants" in m:
             m["variants"] = _detect_inference_variants(m.get("id"), m.get("category"), m.get("model_file", ""))
+            m["cpp_buildable"] = _cpp_buildable(m.get("id"), m.get("category"), m.get("model_file", ""))
 
 
 def get_catalog():

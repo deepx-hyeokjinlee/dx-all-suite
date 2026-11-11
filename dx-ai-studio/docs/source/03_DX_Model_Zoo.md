@@ -38,6 +38,13 @@ Step 4. **Try it in-browser** — run inference right from the detail view (uplo
    per-stage latency table, and switch the execution path (C++/Python × Sync/Async).
    DX App must be reachable, the selected model downloaded, its example prepared / built,
    and the NPU runtime ready. Non-image tasks do not necessarily support this image demo.
+   If the model has a C++ example that is not built yet (Demo Quick Start builds only the demo models),
+   the inference panel shows **Build C++ runner** under *Execution path*. It builds just this model's
+   runners (`build.sh --target`, no password), shows the elapsed time and the last build line, can be
+   cancelled, and selects **C++ · Sync** when done — no restart. While another Setup job runs, it asks you to
+   try again when that job finishes.
+
+   ![Model Zoo inference panel — Build C++ runner for AlexNet, building with the elapsed time, the last build line and Cancel build.](resources/modelzoo-cpp-build.png)
    
 Step 5. Or pull the model into **[DX App](05_DX_App.md)** or **[DX Compiler](04_DX_Compiler.md)**
    (the detail view also links straight to "View Model Graph" and a compile guide).  

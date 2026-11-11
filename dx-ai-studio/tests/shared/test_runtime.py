@@ -302,4 +302,4 @@ def test_inference_venv_paths_sync_dx_postprocess():
     from shared import runtime
     from dx_app.core import setup_steps
     assert inspect.getsource(runtime.ensure_inference_venv).count("sync_dx_postprocess(") >= 2
-    assert "sync_dx_postprocess(" in inspect.getsource(setup_steps.setup_run)
+    assert "sync_dx_postprocess(" in inspect.getsource(setup_steps._setup_start)

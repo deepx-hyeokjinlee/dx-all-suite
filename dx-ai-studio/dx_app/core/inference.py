@@ -279,7 +279,7 @@ def run_inference(model_name, category, model_file, lang="cpp", variant="sync",
                 except OSError: pass
             return _err("python_runtime_missing",
                         "No Python with numpy + OpenCV + dx_engine for the Python examples. "
-                        "Run Setup → Python Inference Deps (no restart needed).")
+                        "Run Demo Quick Start (or Set up the rest) in Setup again — no restart needed.")
         pf = _python_script_path(category, model_name, variant, py_dir=PY_DIR)
         if not pf:
             if _b64_tmp:
