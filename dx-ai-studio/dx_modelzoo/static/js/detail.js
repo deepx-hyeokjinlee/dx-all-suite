@@ -893,6 +893,21 @@ function initDownloadButtons(container) {
   });
 }
 
+// Re-fetch this model's catalog entry and re-render the bits that depend on
+// download state (Run Inference panel + download badges), without reloading
+// the whole detail page (which would lose scroll position / open sections).
+async function refreshInferencePanelAfterDownload(modelId) {
+  try {
+    const resp = await fetch(modelzooApiUrl(`/api/catalog/${encodeURIComponent(modelId)}`));
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (!data.ok || !data.model) return;
+    _currentDetailModel = data.model;
+    if (typeof renderInferencePanel === 'function') renderInferencePanel(data.model);
+    refreshDetailActionBarsForHealth();
+  } catch (_) { /* best-effort — a stale panel is a UX annoyance, not worth surfacing an error for */ }
+}
+
 async function downloadModel(event, modelId, quantType) {
   const btn = event.target.closest('button');
   const btnArea = btn?.parentElement;
@@ -982,6 +997,11 @@ async function downloadModel(event, modelId, quantType) {
         } else {
           setModelZooStatusHtml(statusEl, `<span style="color:var(--status-ok)">${_mzIco('check')} ${T('Download complete')}</span>`);
           btn.style.display = '';
+          // The inference panel's Run/Use-Default gating was rendered from the
+          // pre-download snapshot (isDownloaded: false) and is never touched again
+          // otherwise — without this, the buttons stay disabled until a full page
+          // reload even though the file is now on disk (dx-swe-debugging: U-RPI-1).
+          refreshInferencePanelAfterDownload(modelId);
         }
       } catch (_) { /* polling error, continue */ }
     }, 2000);

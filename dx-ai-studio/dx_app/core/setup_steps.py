@@ -3,6 +3,7 @@
 import logging
 import os, sys, json, time, subprocess, threading, select, shutil, re, platform, tempfile, shlex
 from pathlib import Path
+from shared.paths import host_arch
 from dx_app.core import config
 from dx_app.core.config import (SCRIPT_DIR, DX_APP_ROOT, SCRIPTS_DIR, BUILD_DIR,
                     DX_COMPILER_ROOT, DX_COMPILER_VENV,
@@ -93,13 +94,17 @@ SETUP_STEPS={
     },
     "dx-driver":{
         "label":"NPU Linux Driver","script":lambda:DX_RT_ROOT.parent/"install.sh",
-        "args":["--target=dx_rt_npu_linux_driver"],"cwd":lambda:DX_RT_ROOT.parent,
+        # --skip-uninstall/--venv-reuse: every runtime target recreates venv-dx-runtime unless told to reuse
+        # it (default --venv-force-remove), which deleted the dx_engine DX-Runtime Build had just installed.
+        "args":["--target=dx_rt_npu_linux_driver","--skip-uninstall","--venv-reuse"],"cwd":lambda:DX_RT_ROOT.parent,
         "desc":"Install DEEPX NPU kernel driver (requires sudo)",
         "needs_sudo":True,
     },
     "dx-app-build":{
         "label":"DX-APP Build","script":lambda:DX_APP_ROOT/"build.sh",
-        "args":["--all","--type","Release","--arch","x86_64"],"cwd":lambda:DX_APP_ROOT,
+        # Native build for THIS machine. A fixed "x86_64" turned a Raspberry Pi build into a cross build:
+        # dx_postprocess skipped (the *_cpp_postprocess paths fail) and nothing installed into bin/.
+        "args":["--all","--type","Release","--arch",host_arch()],"cwd":lambda:DX_APP_ROOT,
         "desc":"Compile all C++ demo and Graph binaries (cmake build)",
         # build.sh installs the postprocess .so via `sudo cp ... /usr/local/lib` + `sudo ldconfig`.
         "needs_sudo":True,
@@ -156,18 +161,23 @@ def _configure_sudo_env(env, password):
         f.write(f"#!/bin/sh\nexec /bin/cat {shlex.quote(pass_path)}\n")
     os.chmod(askpass_path, 0o700)
 
+    # apt in the runtime scripts runs as `sudo apt-get …`; sudo drops their `export DEBIAN_FRONTEND`, and a
+    # debconf dialog then waits forever (dpkg runs in apt's pty — the Setup stdin box cannot reach it).
+    keep_env = "DEBIAN_FRONTEND,NEEDRESTART_MODE"
     with open(sudo_wrapper_path, "w", encoding="utf-8") as f:
-        f.write(f"#!/bin/sh\nexec {shlex.quote(real_sudo)} -A \"$@\"\n")
+        f.write(f"#!/bin/sh\nexec {shlex.quote(real_sudo)} -A --preserve-env={keep_env} \"$@\"\n")
     os.chmod(sudo_wrapper_path, 0o700)
 
     env["SUDO_ASKPASS"] = askpass_path
     env["SUDO_REQUIRE_ASKPASS"] = "force"
     env["DX_REAL_SUDO"] = real_sudo
+    env["DEBIAN_FRONTEND"] = "noninteractive"
+    env["NEEDRESTART_MODE"] = "a"
     env["PATH"] = temp_dir + os.pathsep + env.get("PATH", "")
 
     def cleanup():
         shutil.rmtree(temp_dir, ignore_errors=True)
-        for key in ("SUDO_ASKPASS", "SUDO_REQUIRE_ASKPASS", "DX_REAL_SUDO"):
+        for key in ("SUDO_ASKPASS", "SUDO_REQUIRE_ASKPASS", "DX_REAL_SUDO", "DEBIAN_FRONTEND", "NEEDRESTART_MODE"):
             env.pop(key, None)
 
     return cleanup
@@ -349,6 +359,8 @@ def setup_status():
         "kernel": platform.release(),
         "python": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
     }
+    _du = shutil.disk_usage(str(DX_APP_ROOT if DX_APP_ROOT.exists() else Path.home()))
+    r["disk"] = {"free_gb": round(_du.free / 1e9, 1), "min_gb": MIN_FREE_GB}
     return r
 
 
@@ -504,7 +516,13 @@ def deep_diagnostics():
     total=len(checks)
     return {"checks":checks,"passed":passed,"total":total,"all_ok":passed==total}
 
-_QUICK_ORDER = ["dx-app-deps","dx-rt-deps","dx-rt-build","dx-driver","dx-app-build","dx-app-setup"]
+# inference-venv last: the only step that yields a numpy+cv2+dx_engine interpreter (it seeds from the dx_engine
+# DX-Runtime Build installs). Without it a "done" Quick Start crashed every Python-path Use Default.
+# DX-APP Dependencies runs the runtime's `apt-get upgrade` (whole system), then the build and the samples follow:
+# a fresh Raspberry Pi setup took a 29 GB card to 97 %. The Setup page confirms below this (setup.js _setupDiskOk).
+MIN_FREE_GB = 5.0
+
+_QUICK_ORDER = ["dx-app-deps","dx-rt-deps","dx-rt-build","dx-driver","dx-app-build","dx-app-setup","inference-venv"]
 # Steps Quick Start runs in their demo form (demo_only): build.sh --minimal, asset_setup --demo.
 _DEMO_FORM_STEPS = ("dx-app-build", "dx-app-setup")
 
@@ -628,6 +646,21 @@ def setup_run(step,params=None):
                 media_python.cache_clear()
             except (ImportError, AttributeError):
                 logging.exception("Media cache reset failed after Setup step %s", step)
+            # …and the inference interpreter: Python Inference Deps / runtime steps change which one works.
+            try:
+                config.refresh_runtime_python()
+            except Exception:
+                logging.exception("runtime python refresh failed after Setup step %s", step)
+            # DX-APP Build (re)installs dx_postprocess into the system python; bring it into the Studio
+            # inference venv when that venv already exists (Python Inference Deps is then skipped as done).
+            if step == "dx-app-build" and config._comp_exit_code == 0:
+                try:
+                    from shared.runtime import STUDIO_INFER_VENV, sync_dx_postprocess
+                    _venv_py = STUDIO_INFER_VENV / "bin" / "python3"
+                    if _venv_py.is_file():
+                        sync_dx_postprocess(str(_venv_py))
+                except Exception:
+                    logging.exception("dx_postprocess sync failed after Setup step %s", step)
             print(f"[SETUP:{step}] Done. exit_code={config._comp_exit_code}")
     threading.Thread(target=_run,daemon=True).start()
     return{"ok":True,"started":True}

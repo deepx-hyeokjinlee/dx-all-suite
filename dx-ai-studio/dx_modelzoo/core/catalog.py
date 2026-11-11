@@ -766,17 +766,41 @@ def _refresh_download_flags(catalog):
         m["downloaded_qpro"] = _model_on_disk(m.get("model_file_qpro"))
 
 
+_variants_sig = None
+
+
+def _build_signature():
+    """Which C++ runners exist changes only when the build dir does (build.sh adds files to it)."""
+    try:
+        return (str(BUILD_DIR), BUILD_DIR.stat().st_mtime_ns)
+    except OSError:
+        return (str(BUILD_DIR), None)
+
+
+def _refresh_variants(catalog):
+    """`variants` were detected once at load, so runners built later (Setup → DX-APP Build) stayed hidden and
+    Use Default took the Python path until dx_modelzoo restarted."""
+    for m in (catalog or {}).get("models", []):
+        if "variants" in m:
+            m["variants"] = _detect_inference_variants(m.get("id"), m.get("category"), m.get("model_file", ""))
+
+
 def get_catalog():
     """Return the cached catalog, loading it if needed. The RLock prevents concurrent reloads; download flags are
-    re-checked every 2 seconds."""
-    global _catalog_cache, _flags_checked_at
+    re-checked every 2 seconds, and the execution paths (`variants`) whenever the C++ build dir changed."""
+    global _catalog_cache, _flags_checked_at, _variants_sig
     with _catalog_lock:
         if _catalog_cache is None:
             reload_catalog()  # the RLock is re-entrant — safe from the same thread
+            _variants_sig = _build_signature()
         now = time.time()
         if now - _flags_checked_at >= _FLAGS_TTL_S:
             _flags_checked_at = now
             _refresh_download_flags(_catalog_cache)
+            sig = _build_signature()
+            if sig != _variants_sig:
+                _variants_sig = sig
+                _refresh_variants(_catalog_cache)
         return _catalog_cache
 
 

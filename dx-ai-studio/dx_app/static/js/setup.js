@@ -129,6 +129,7 @@ function setupMarkStepDone(stepId){
   if(det)det.textContent=_T5('방금 완료됨','Completed just now','完了したばかり','刚刚完成','剛剛完成','Completado ahora mismo');
 }
 async function setupRun(stepId){
+  if(!(await _setupDiskOk([stepId])))return;
   var params={};
   if(SETUP_SUDO_STEPS[stepId]){
     var authFailed=false;
@@ -346,6 +347,7 @@ async function runDiagnostics(){
  */
 async function _setupRunSequence(steps, opts) {
   opts=opts||{};
+  if(!(await _setupDiskOk(steps)))return{cancelled:true};
   var progressEl=opts.progressEl;
   var extraParamsFor=opts.extraParamsFor||function(){return{};};
   var sudoPassword=null;
@@ -423,6 +425,21 @@ async function setupRunAll() {
  */
 /* Demo form of the build and asset steps (setup_steps.step_argv): build.sh --minimal and the run_demo models only. */
 function _setupDemoParams(id){return (id==='dx-app-setup'||id==='dx-app-build')?{demo_only:true}:{};}
+/* The runtime's dependency step upgrades the whole OS (apt-get upgrade), then the build and the
+   sample download follow: confirm before starting with less than setup_status().disk.min_gb free. */
+var _SETUP_DISK_STEPS={'dx-app-deps':1,'dx-app-build':1,'dx-app-setup':1};
+async function _setupDiskOk(steps){
+  if(!steps.some(function(id){return _SETUP_DISK_STEPS[id];}))return true;
+  var d=null;try{d=(await api('/api/setup/status')).disk;}catch(_){return true;}
+  if(!d||d.free_gb>=d.min_gb)return true;
+  return confirm(_T6(
+    '디스크 여유 공간이 '+d.free_gb+'GB입니다 (권장 '+d.min_gb+'GB 이상). 이 설치는 시스템 패키지 업그레이드와 빌드·샘플 다운로드를 포함합니다. 계속할까요?',
+    'Only '+d.free_gb+' GB free (recommended '+d.min_gb+' GB+). This setup upgrades system packages, builds and downloads samples. Continue?',
+    '空き容量は '+d.free_gb+' GB です（推奨 '+d.min_gb+' GB 以上）。システムパッケージの更新・ビルド・サンプルのダウンロードを行います。続行しますか？',
+    '可用磁盘空间仅 '+d.free_gb+' GB（建议 '+d.min_gb+' GB 以上）。此安装会升级系统软件包、编译并下载示例。是否继续？',
+    '可用磁碟空間僅 '+d.free_gb+' GB（建議 '+d.min_gb+' GB 以上）。此安裝會升級系統套件、編譯並下載範例。是否繼續？',
+    'Solo hay '+d.free_gb+' GB libres (se recomiendan '+d.min_gb+' GB+). Esta instalación actualiza paquetes del sistema, compila y descarga ejemplos. ¿Continuar?'));
+}
 async function setupDemoQuickStart() {
   if(SETUP.running){toast(_T6('다른 작업이 이미 실행 중입니다','Another task is already running','別のタスクが実行中です','另一个任务正在运行','另一個任務正在執行','Otra tarea ya está en ejecución'),'err');return;}
   var btn=$('setup-quickstart-btn');
