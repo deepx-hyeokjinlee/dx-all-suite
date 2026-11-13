@@ -54,14 +54,9 @@ def _read_release_ver(path):
         return '--'
 
 def _get_npu_driver_version():
-    """Driver version from dxrt-cli or /dev/deepx*."""
-    try:
-        r = subprocess.run(['dxrt-cli', '--version'], capture_output=True, text=True, timeout=5)
-        if r.returncode == 0:
-            return r.stdout.strip().split('\n')[0]
-    except Exception:
-        pass
-    return '--'
+    """dxrt_driver module version (shared.dxrt.npu_driver_version), '--' when no driver is installed."""
+    from shared.dxrt import npu_driver_version
+    return npu_driver_version() or '--'
 
 
 SETUP_STEPS={

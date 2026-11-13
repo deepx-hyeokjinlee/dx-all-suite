@@ -12,11 +12,33 @@ Contract: tests/dx_app/test_dxrt_container.py (shared by the studio's dx_app and
 from __future__ import annotations
 
 import re
+import subprocess
 from pathlib import Path
 from typing import Optional
 
 from shared.paths import DX_RUNTIME_ROOT
 from shared.dx_app_layout import container_version
+
+# The dxrt_driver kernel module's version (what Setup shows as "NPU Driver"). `dxrt-cli --version` is the
+# DX-RT runtime ("DXRT v3.5.0"), not the driver (v2.7.0) — never use it for this.
+_SYS_DRIVER_VERSION = Path("/sys/module/dxrt_driver/version")
+
+
+def npu_driver_version() -> Optional[str]:
+    """'v2.7.0' from the loaded module, else from the installed one (modinfo), else None."""
+    try:
+        value = _SYS_DRIVER_VERSION.read_text(encoding="utf-8").strip()
+    except OSError:
+        value = ""
+    if not value:
+        try:
+            r = subprocess.run(["modinfo", "-F", "version", "dxrt_driver"], capture_output=True, text=True, timeout=5)
+            value = r.stdout.strip() if r.returncode == 0 else ""
+        except (OSError, subprocess.SubprocessError):
+            value = ""
+    value = value.lstrip("v")
+    return f"v{value}" if value else None
+
 
 NEEDS_FOR_V9 = "3.5.0"
 _V9_FROM = (3, 5, 0)

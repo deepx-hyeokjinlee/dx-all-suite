@@ -14,6 +14,8 @@ Notable changes to the DX-AI-Studio User Manual.
 - The NPU Linux Driver step counts as done only when the driver is installed for the next boot, not merely loaded,
   so Demo Quick Start after a reset reinstalls it instead of leaving the board without a driver after reboot.
 - Setup jobs no longer overlap: a second job (e.g. a Model Zoo build during a Setup step) is refused.
+- **NPU Driver** in Setup's Version Info (DX App and DX Stream) shows the driver's own version (e.g. v2.7.0), not the
+  DX-RT version that `dxrt-cli --version` prints.
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
 
 ## v0.1.1 / 2026-10
