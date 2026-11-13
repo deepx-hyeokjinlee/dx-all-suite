@@ -81,6 +81,7 @@ BROWSER_SUITE_PATHS = {
     "tests/dx_stream/test_demo_errors_browser.py",
     "tests/shared/test_icon_label_browser.py",
     "tests/launcher/test_sdk_library_module_nav_browser.py",
+    "tests/launcher/test_sdk_doc_links_browser.py",
     "tests/launcher/test_connected_browsers_browser.py",
     "tests/shared/test_i18n_placeholder_merge_browser.py",
     "tests/launcher/test_escape_layers_browser.py",
