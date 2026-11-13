@@ -29,6 +29,8 @@ Notable changes to the DX-AI-Studio User Manual.
 - DX Stream Demo Launcher follows the installed dx_stream: Secondary Inference finds the SDK's
   efficientnet-lite0_224x224 model, and the Face / Pose PPU demos the SDK no longer ships are not listed (they
   stayed "Needs setup" with nothing to install).
+- Agent Dev shows a build started on Home (or Agent Dev work from Auto Compile) also when Agent Dev was opened
+  earlier in the session; before, it showed it only on its first visit.
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
 
 ## v0.1.1 / 2026-10
