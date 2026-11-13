@@ -22,6 +22,8 @@ Notable changes to the DX-AI-Studio User Manual.
   DX-RT version that `dxrt-cli --version` prints.
 - Hub: the *Measured on DX-M1* tour step says these are DEEPX's DX Model Zoo figures on DX-M1, not a run on this
   computer. DX App's engine-error hint points to Setup → Deep Diagnostics instead of a Mock mode DX App does not have.
+- Hub: the link bar under the stage keeps room to spare, so it stays on one row (en at 1440 px, es at
+  1280 px) in browsers that draw text slightly wider; before, Spanish at 1280 × 800 no longer fit one screen.
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
 
 ## v0.1.1 / 2026-10
