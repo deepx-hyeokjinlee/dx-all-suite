@@ -31,6 +31,14 @@ Notable changes to the DX-AI-Studio User Manual.
   stayed "Needs setup" with nothing to install).
 - Agent Dev shows a build started on Home (or Agent Dev work from Auto Compile) also when Agent Dev was opened
   earlier in the session; before, it showed it only on its first visit.
+- SDK Library document viewer:
+  - The DX All Suite architecture figure shows again. Images marked `#only-light` / `#only-dark` were broken;
+    the viewer now shows the one for the current theme.
+  - Section links (`#…`, also `## Title {#id}` headings) scroll the document; they opened the Studio again
+    in a new tab. A link to a section of another document opens it at that section.
+  - Links written as HTML (`<a href="…">`) open the document in the viewer instead of a 404 tab.
+  - Links to a file the Library does not show (it lists the documents users need) or that is not a
+    document (.py, .sh, a folder) read as plain text instead of a link that does nothing.
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
 
 ## v0.1.1 / 2026-10
