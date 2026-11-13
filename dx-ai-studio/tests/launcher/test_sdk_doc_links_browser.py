@@ -29,6 +29,7 @@ LIB = {"drawers": [{"id": "d", "title": "Docs", "color": "blue", "sections": [{"
     {"path": "docs/guide.md", "title": "Guide", "type": "md"},
     {"path": "showcase/README.md", "title": "Showcase", "type": "md"},
     {"path": "showcase/game/README.md", "title": "Game", "type": "md"},
+    {"path": "docs/code.md", "title": "Code", "type": "md"},
 ]}]}]}
 
 FILLER = "\n\n".join(f"Paragraph {i} " + "text " * 60 for i in range(30))
@@ -49,6 +50,8 @@ DOCS = {
         "Plain text after.\n"
     ),
     "showcase/game/README.md": "# Game\n\nThe game.\n",
+    "docs/code.md": ("# Code\n\n- `<variant>_sync.cpp`: one variant\n\n"
+                     "Include `<dxrt/dxrt_api.h>`, run `--lang <lang>`, write `**x**` or `[a](b.md)` literally.\n"),
 }
 IMAGES = {"docs/resources/full.png", "docs/resources/full-dark.png", "showcase/game/demo.png"}
 
@@ -197,3 +200,12 @@ def test_a_heading_with_its_own_id_is_found_and_the_id_is_not_shown(viewer):
       const body = document.getElementById('sdkViewerBody');
       return h ? h.getBoundingClientRect().top - body.getBoundingClientRect().top : null; }""")
     assert top is not None and 0 <= top < 200, top
+
+
+def test_inline_code_shows_exactly_what_the_doc_wrote(viewer):
+    """`<variant>_sync.cpp` showed as `_sync.cpp` and `#include <dxrt/dxrt_api.h>` as `dxrt_api.h`: the text
+    inside backticks went into the page as HTML. 72 library docs have `<…>` in inline code."""
+    page, port, _ = viewer
+    _open(page, port, "docs/code.md")
+    codes = page.evaluate("[...document.querySelectorAll('#sdkViewerBody code')].map(c => c.textContent)")
+    assert codes == ["<variant>_sync.cpp", "<dxrt/dxrt_api.h>", "--lang <lang>", "**x**", "[a](b.md)"], codes

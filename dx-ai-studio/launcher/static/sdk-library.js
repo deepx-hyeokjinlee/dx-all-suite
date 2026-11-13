@@ -825,7 +825,13 @@
     };
     const inline = (text) => {
       let t = text;
-      t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // Inline code is text, not markup: `<variant>_sync.cpp` and `#include <dxrt/dxrt_api.h>` lost their
+      // <…> as HTML tags. Set the spans aside (escaped) so the bold / link / image rules below leave them alone.
+      const codeSpans = [];
+      t = t.replace(/`([^`]+)`/g, (m, c) => {
+        codeSpans.push('<code>' + escHtmlSafe(c) + '</code>');
+        return '\x00IC' + (codeSpans.length - 1) + '\x00';
+      });
       t = t.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
       t = t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
       t = t.replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -849,7 +855,7 @@
         const url = refs[(label || txt).toLowerCase()];
         return url ? mkLink(txt, url) : m;
       });
-      return t;
+      return t.replace(/\x00IC(\d+)\x00/g, (m, n) => codeSpans[+n]);
     };
 
     const isBlank = (l) => /^\s*$/.test(l) || l.trim() === '\x00REF\x00';
