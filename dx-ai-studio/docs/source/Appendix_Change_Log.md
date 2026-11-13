@@ -26,6 +26,9 @@ Notable changes to the DX-AI-Studio User Manual.
   1280 px) in browsers that draw text slightly wider; before, Spanish at 1280 × 800 no longer fit one screen.
 - Deep Diagnostics (DX App, DX Stream) asks DKMS for the DX-RT driver module only: 1–2 s instead of 6.5 s on a
   board with other DKMS modules and several kernels.
+- DX Stream Demo Launcher follows the installed dx_stream: Secondary Inference finds the SDK's
+  efficientnet-lite0_224x224 model, and the Face / Pose PPU demos the SDK no longer ships are not listed (they
+  stayed "Needs setup" with nothing to install).
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
 
 ## v0.1.1 / 2026-10
