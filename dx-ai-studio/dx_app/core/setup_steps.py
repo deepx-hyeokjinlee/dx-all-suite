@@ -406,6 +406,22 @@ def setup_status():
     return r
 
 
+
+def _dkms_check():
+    """Deep Diagnostics row for the driver's DKMS entry (shared.dxrt.dkms_dxrt_status asks for the module only)."""
+    from shared import dxrt
+    label={"ko":"DKMS 드라이버 상태","en":"DKMS Driver Status","ja":"DKMSドライバ状態","zhCN":"DKMS驱动状态","zhTW":"DKMS驅動狀態","es":"Estado del driver DKMS"}
+    rc,out=dxrt.dkms_dxrt_status()
+    if rc==-1:
+        return {"id":"dkms","label":label,"ok":False,"detail":"dkms not installed","fix":{"ko":"sudo apt install dkms","en":"sudo apt install dkms","ja":"sudo apt install dkms","zhCN":"sudo apt install dkms","zhTW":"sudo apt install dkms","es":"sudo apt install dkms"}}
+    if rc==-2:
+        return {"id":"dkms","label":label,"ok":False,"detail":"dkms status timed out"}
+    dxrt_dkms=[l for l in out.splitlines() if "dxrt" in l.lower() or "deepx" in l.lower()]
+    installed_ok=any("installed" in l.lower() for l in dxrt_dkms)
+    return {"id":"dkms","label":label,"ok":installed_ok,
+        "detail":"; ".join(dxrt_dkms)[:200] if dxrt_dkms else "No DKMS entry for dxrt/deepx",
+        "fix":{"ko":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","en":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","ja":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zhCN":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zhTW":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","es":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver"}}
+
 def deep_diagnostics():
     """Run deep diagnostic checks without importing native media libraries into Studio."""
     checks=[]
@@ -451,18 +467,7 @@ def deep_diagnostics():
         checks.append({"id":"kmod_dma","label":{"ko":"커널 모듈 (dx_dma)","en":"Kernel Module (dx_dma)","ja":"カーネルモジュール (dx_dma)","zhCN":"内核模块 (dx_dma)","zhTW":"核心模組 (dx_dma)","es":"Módulo del kernel (dx_dma)"},"ok":False,"detail":"lsmod failed"})
 
     # 5. DKMS Status
-    try:
-        dkms_out=subprocess.check_output(["dkms","status"],text=True,timeout=10,stderr=subprocess.DEVNULL).strip()
-        dxrt_dkms=[l for l in dkms_out.splitlines() if "dxrt" in l.lower() or "deepx" in l.lower()]
-        installed_ok=any("installed" in l.lower() for l in dxrt_dkms)
-        checks.append({"id":"dkms","label":{"ko":"DKMS 드라이버 상태","en":"DKMS Driver Status","ja":"DKMSドライバ状態","zhCN":"DKMS驱动状态","zhTW":"DKMS驅動狀態","es":"Estado del driver DKMS"},"ok":installed_ok,
-            "detail":"; ".join(dxrt_dkms)[:200] if dxrt_dkms else "No DKMS entry for dxrt/deepx",
-            "fix":{"ko":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","en":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","ja":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zhCN":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zhTW":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","es":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver"}})
-    except FileNotFoundError:
-        checks.append({"id":"dkms","label":{"ko":"DKMS 드라이버 상태","en":"DKMS Driver Status","ja":"DKMSドライバ状態","zhCN":"DKMS驱动状态","zhTW":"DKMS驅動狀態","es":"Estado del driver DKMS"},"ok":False,
-            "detail":"dkms not installed","fix":{"ko":"sudo apt install dkms","en":"sudo apt install dkms","ja":"sudo apt install dkms","zhCN":"sudo apt install dkms","zhTW":"sudo apt install dkms","es":"sudo apt install dkms"}})
-    except Exception as e:
-        checks.append({"id":"dkms","label":{"ko":"DKMS 드라이버 상태","en":"DKMS Driver Status","ja":"DKMSドライバ状態","zhCN":"DKMS驱动状态","zhTW":"DKMS驅動狀態","es":"Estado del driver DKMS"},"ok":False,"detail":str(e)})
+    checks.append(_dkms_check())
 
     # 6. dxrt.service systemd
     try:

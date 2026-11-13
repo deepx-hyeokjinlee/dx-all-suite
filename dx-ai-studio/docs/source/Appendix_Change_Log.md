@@ -24,6 +24,8 @@ Notable changes to the DX-AI-Studio User Manual.
   computer. DX App's engine-error hint points to Setup → Deep Diagnostics instead of a Mock mode DX App does not have.
 - Hub: the link bar under the stage keeps room to spare, so it stays on one row (en at 1440 px, es at
   1280 px) in browsers that draw text slightly wider; before, Spanish at 1280 × 800 no longer fit one screen.
+- Deep Diagnostics (DX App, DX Stream) asks DKMS for the DX-RT driver module only: 1–2 s instead of 6.5 s on a
+  board with other DKMS modules and several kernels.
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
 
 ## v0.1.1 / 2026-10

@@ -40,6 +40,30 @@ def npu_driver_version() -> Optional[str]:
     return f"v{value}" if value else None
 
 
+# The DX-RT driver's DKMS module (dx_rt_npu_linux_driver/debian/rules: DKMS_MODULE_NAME).
+DKMS_MODULE = "dxrt-driver-dkms"
+
+
+def dkms_dxrt_status() -> tuple:
+    """(returncode, output) of `dkms status` for the DX-RT driver: -1 when dkms is missing, -2 on timeout.
+
+    Asks for the driver module only — a bare `dkms status` walks every module on every kernel (6.5 s on a Pi with
+    v4l2loopback and seven kernels, 0.8 s for this module). Falls back to the full listing when the module query
+    finds nothing, since older packages named the module differently (callers look for "dxrt" / "deepx")."""
+    def run(argv):
+        r = subprocess.run(argv, capture_output=True, text=True, timeout=15)
+        return r.returncode, (r.stdout or "").strip()
+    try:
+        rc, out = run(["dkms", "status", "-m", DKMS_MODULE])
+        if rc == 0 and out:
+            return rc, out
+        return run(["dkms", "status"])
+    except FileNotFoundError:
+        return -1, ""
+    except subprocess.TimeoutExpired:
+        return -2, ""
+
+
 NEEDS_FOR_V9 = "3.5.0"
 _V9_FROM = (3, 5, 0)
 
