@@ -12,6 +12,7 @@ from dx_modelzoo.core.config import (CATALOG_FILE, CONFIG_FILE, CATEGORIES, EXAM
                          DX_APP_ROOT, MODELS_DIR, CPP_DIR, PY_DIR, BUILD_DIR, DATA_DIR,
                          SAMPLE_IMAGES, MODEL_IMAGE_OVERRIDE, SAMPLE_IMG_DIR)
 from dx_modelzoo.core.postprocessor_paths import resolve_postprocessor_path
+from dx_modelzoo.metadata.devices import upgrade_processor
 from shared.catalog_sources import parse_test_models_conf as _shared_parse_test_models_conf
 
 
@@ -879,15 +880,10 @@ def reload_catalog():
         # Models that exist only on the publish page (new models from the dx_app per-model layout) are listed too,
         # not just used for enrichment — but only for known tasks.
         merged.extend(_generated_only_models(generated, used, metadata_source))
-        # Ensure default processor/specification (for models absent from the generated catalog)
-        for model in merged:
-            model.setdefault("processor", {"supported_devices": [], "status": "metadata_pending"})
-            model.setdefault("specification", {})
-    else:
-        # Ensure default processor/specification even without a generated catalog
-        for model in merged:
-            model.setdefault("processor", {"supported_devices": [], "status": "metadata_pending"})
-            model.setdefault("specification", {})
+    for model in merged:
+        # Supported products by one rule (devices.py) — also upgrades older generated catalogs' ["dx_m1"].
+        model["processor"] = upgrade_processor(model.get("processor"))
+        model.setdefault("specification", {})
 
     for model in merged:
         _enrich_legal(model)

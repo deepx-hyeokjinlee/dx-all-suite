@@ -14,6 +14,10 @@ Notable changes to the DX-AI-Studio User Manual.
 - The NPU Linux Driver step counts as done only when the driver is installed for the next boot, not merely loaded,
   so Demo Quick Start after a reset reinstalls it instead of leaving the board without a driver after reboot.
 - Setup jobs no longer overlap: a second job (e.g. a Model Zoo build during a Setup step) is refused.
+- Model Zoo: *Supported hardware* in each model's Specification — DX-M1 and DX-H1 Quattro; DX-M1M per model from
+  the next DX Model Zoo release (a notice until then).
+- EdgeGuide: NPU memory as `dxrt-cli -s` measures it — DX-M1 3.9 GB LPDDR5 5600 Mbps, DX-M1M 1.9 GB LPDDR4 4200 Mbps,
+  DX-H1 Quattro 15.7 GB LPDDR5x 6000 Mbps (4 chips). It read 1 GB for both M1 and M1M.
 - **NPU Driver** in Setup's Version Info (DX App and DX Stream) shows the driver's own version (e.g. v2.7.0), not the
   DX-RT version that `dxrt-cli --version` prints.
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.

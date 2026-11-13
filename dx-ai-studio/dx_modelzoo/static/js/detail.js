@@ -519,6 +519,24 @@ function renderExampleImages(model) {
   }
 }
 
+/* Products a model runs on (catalog `processor`, rule in dx_modelzoo/metadata/devices.py). DX-H1 Quattro is 4 × M1.
+   DX-M1M is per model, from dx-modelzoo YAML `target_hardware` — until the model has it, say when it comes. */
+const _HW_NAMES = { dx_m1: 'DX-M1', dx_m1m: 'DX-M1M', dx_h1_quattro: 'DX-H1 Quattro' };
+function _supportedHardwareHtml(processor) {
+  const p = processor || {};
+  const devices = Array.isArray(p.supported_devices) && p.supported_devices.length ? p.supported_devices : ['dx_m1', 'dx_h1_quattro'];
+  const m1m = p.m1m || { status: 'pending' };
+  const names = escapeHtml(devices.map(d => _HW_NAMES[d] || d).join(' · '));
+  let note = '';
+  if (m1m.status === 'pending') {
+    note = T('DX-M1M: per-model support is listed from the next DX Model Zoo release.');
+  } else if (m1m.status === 'unsupported') {
+    note = T('Not supported on DX-M1M') + (m1m.reason ? ` (${m1m.reason})` : '');
+  }
+  return `<span class="mz-hw-list">${names}</span>`
+    + (note ? `<div class="mz-hw-note" data-m1m="${escapeHtml(m1m.status)}">${escapeHtml(note)}</div>` : '');
+}
+
 function renderSpecification(model) {
   const spec = model.specification || {};
   const technical = model.technical || {};
@@ -534,11 +552,12 @@ function renderSpecification(model) {
     ['Quantization', Array.isArray(spec.quantization) ? spec.quantization.join(', ') : spec.quantization],
     ['Postprocessor', technical.postprocessor],
     ['Input Shape', technical.input_shape],
+    ['Supported hardware', { __html: _supportedHardwareHtml(model.processor) }],
   ];
   const leftRows = rows.slice(0, 5);
   const rightRows = rows.slice(5);
   const renderRows = (entries) => `<table class="mz-spec-table"><tbody>
-    ${entries.map(([k, v]) => `<tr><th>${T(k)}</th><td>${_detailValue(v, 'Not provided by source')}</td></tr>`).join('')}
+    ${entries.map(([k, v]) => `<tr><th>${T(k)}</th><td>${v && v.__html !== undefined ? v.__html : _detailValue(v, 'Not provided by source')}</td></tr>`).join('')}
   </tbody></table>`;
 
   return `<div class="mz-spec-columns">

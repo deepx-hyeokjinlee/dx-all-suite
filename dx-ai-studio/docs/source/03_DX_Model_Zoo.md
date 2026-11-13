@@ -25,6 +25,10 @@ Step 2. **Open a model** to see its detail view: task, input shape, accuracy met
    Key Facts, Example, artifacts / actions and metrics in a 2×2 layout. A before/after
    slider is available for suitable examples, including super-resolution: open a
    Real-ESRGAN variant and compare its existing input / result images.
+   *Specification → Supported hardware* lists the products the model runs on: **DX-M1** and **DX-H1 Quattro**
+   (four M1 chips, so it runs whatever M1 runs). Whether a model fits **DX-M1M** (1.92 GiB NPU memory) is recorded
+   per model by DX Model Zoo; until a model has that record, the row says it comes with the next DX Model Zoo
+   release. A model that does not fit shows *Not supported on DX-M1M* with the reason.
 
 Step 3. **Download** an available artifact — a Q-Lite / Q-Pro `.dxnn` (with progress /
    cancel), ONNX or JSON. Not every model provides every artifact or quantization tier.

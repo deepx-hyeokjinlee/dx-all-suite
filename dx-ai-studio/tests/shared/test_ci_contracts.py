@@ -109,6 +109,7 @@ BROWSER_SUITE_PATHS = {
     "tests/dx_modelzoo/test_model_card_export_browser.py",
     "tests/dx_modelzoo/test_model_card_layout_browser.py",
     "tests/dx_modelzoo/test_cpp_build_browser.py",
+    "tests/dx_modelzoo/test_supported_hardware_browser.py",
     "tests/test_catalog_virtual_scroll_browser.py",
     "tests/test_iframe_lang_sync_browser.py",
     "tests/test_tutorial_stale_step.py",
