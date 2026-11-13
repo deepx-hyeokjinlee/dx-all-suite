@@ -7241,12 +7241,12 @@ window._DX_I18N_PLACEHOLDERS = {
   'Open in new tab': {ko:'새 탭에서 열기',ja:'新しいタブで開く',es:'Abrir en nueva pestaña','zh-CN':'在新标签页中打开','zh-TW':'在新分頁中開啟'},
   'View pipeline reference table': {ko:'파이프라인 레퍼런스 테이블 보기',ja:'パイプライン参照テーブルを表示',es:'Ver tabla de referencia del pipeline','zh-CN':'查看流水线参考表','zh-TW':'檢視管線參考表'},
   'File browser': {ko:'파일 탐색기',ja:'ファイルブラウザ',es:'Explorador de archivos','zh-CN':'文件浏览器','zh-TW':'檔案瀏覽器'},
-  'Check that dx_engine is running. Real inference is not available in Mock mode.': {
-    ko: 'dx_engine이 실행 중인지 확인해주세요. (Mock 모드에서는 실제 추론이 불가능합니다)',
-    ja: 'dx_engineが実行中か確認してください。(Mockモードでは実際の推論はできません)',
-    'zh-CN': '请确认dx_engine正在运行。(Mock模式下无法进行实际推理)',
-    'zh-TW': '請確認dx_engine正在執行。(Mock模式下無法進行實際推論)',
-    es: 'Verifique que dx_engine esté en ejecución. La inferencia real no está disponible en modo Mock.',
+  'Check that the NPU runtime (dx_engine) is ready: Setup → Deep Diagnostics.': {
+    ko: 'NPU 런타임(dx_engine)이 준비되었는지 확인해주세요: 설치 → 심층 진단.',
+    ja: 'NPU ランタイム(dx_engine)の準備ができているか確認してください: セットアップ → 詳細診断。',
+    'zh-CN': '请确认 NPU 运行时（dx_engine）已就绪：安装 → 深度诊断。',
+    'zh-TW': '請確認 NPU 執行階段（dx_engine）已就緒：安裝 → 深度診斷。',
+    es: 'Verifique que el runtime de la NPU (dx_engine) esté listo: Instalación → Diagnóstico profundo.',
   },
   'Check the model file or executable path.': {
     ko: '모델 파일 또는 실행파일 경로를 확인해주세요.',

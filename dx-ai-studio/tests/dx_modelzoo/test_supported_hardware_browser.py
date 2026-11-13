@@ -1,7 +1,8 @@
 """Model Zoo detail → Specification → "Supported hardware", on screen.
 
 DX-M1 and DX-H1 Quattro always (Quattro = 4 × M1). DX-M1M per model from dx-modelzoo YAML `target_hardware`
-(next release): until then a notice says so; once present it is listed, or "Not supported on DX-M1M (reason)".
+(next release): until then the row says it is not confirmed yet (no date promised); once present it is listed, or
+"Not supported on DX-M1M (reason)".
 The real catalog answer is used and only `processor` is swapped, so the page is the real one."""
 from __future__ import annotations
 
@@ -63,13 +64,13 @@ def test_today_m1_and_quattro_with_the_m1m_notice(browser):
     text = _row(browser)
     assert "Supported hardware" in text
     assert "DX-M1 · DX-H1 Quattro" in text
-    assert "DX-M1M: per-model support is listed from the next DX Model Zoo release." in text
+    assert "DX-M1M: support for this model is not confirmed yet." in text
 
 
 def test_m1m_listed_when_the_yaml_says_so(browser):
     text = _row(browser, SUPPORTED)
     assert "DX-M1 · DX-M1M · DX-H1 Quattro" in text
-    assert "next DX Model Zoo release" not in text and "Not supported" not in text
+    assert "not confirmed yet" not in text and "Not supported" not in text
 
 
 def test_unsupported_shows_the_reason(browser):
@@ -79,10 +80,10 @@ def test_unsupported_shows_the_reason(browser):
 
 
 @pytest.mark.parametrize("lang,label,notice", [
-    ("ko", "지원 하드웨어", "DX-M1M: 모델별 지원 여부는 다음 DX Model Zoo 릴리스부터 표시됩니다."),
-    ("ja", "対応ハードウェア", "DX-M1M: モデルごとの対応可否は次の DX Model Zoo リリースから表示されます。"),
+    ("ko", "지원 하드웨어", "DX-M1M: 이 모델의 지원 여부는 아직 확인되지 않았습니다."),
+    ("ja", "対応ハードウェア", "DX-M1M: このモデルの対応可否はまだ確認されていません。"),
 ])
 def test_row_speaks_the_page_language(browser, lang, label, notice):
     text = _row(browser, lang=lang)
     assert label in text and notice in text
-    assert "Supported hardware" not in text and "per-model support" not in text
+    assert "Supported hardware" not in text and "not confirmed yet" not in text

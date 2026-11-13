@@ -520,7 +520,7 @@ function renderExampleImages(model) {
 }
 
 /* Products a model runs on (catalog `processor`, rule in dx_modelzoo/metadata/devices.py). DX-H1 Quattro is 4 × M1.
-   DX-M1M is per model, from dx-modelzoo YAML `target_hardware` — until the model has it, say when it comes. */
+   DX-M1M is per model, from dx-modelzoo YAML `target_hardware` — until the model has it, say it is not confirmed. */
 const _HW_NAMES = { dx_m1: 'DX-M1', dx_m1m: 'DX-M1M', dx_h1_quattro: 'DX-H1 Quattro' };
 function _supportedHardwareHtml(processor) {
   const p = processor || {};
@@ -529,7 +529,7 @@ function _supportedHardwareHtml(processor) {
   const names = escapeHtml(devices.map(d => _HW_NAMES[d] || d).join(' · '));
   let note = '';
   if (m1m.status === 'pending') {
-    note = T('DX-M1M: per-model support is listed from the next DX Model Zoo release.');
+    note = T('DX-M1M: support for this model is not confirmed yet.');
   } else if (m1m.status === 'unsupported') {
     note = T('Not supported on DX-M1M') + (m1m.reason ? ` (${m1m.reason})` : '');
   }

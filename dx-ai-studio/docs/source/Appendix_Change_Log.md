@@ -2,9 +2,9 @@
 
 Notable changes to the DX-AI-Studio User Manual.
 
-## v0.1.2 / 2026-11
+## v0.1.1 hotfix / 2026-11
 
-**Setup and Model Zoo**
+**Setup, Model Zoo, EdgeGuide and Hub**
 
 - A fresh board (incl. Raspberry Pi / aarch64) is ready after one Demo Quick Start: it also prepares the Python
   inference interpreter, keeps the runtime venv through the driver step, never stops on a package dialog, and
@@ -14,12 +14,14 @@ Notable changes to the DX-AI-Studio User Manual.
 - The NPU Linux Driver step counts as done only when the driver is installed for the next boot, not merely loaded,
   so Demo Quick Start after a reset reinstalls it instead of leaving the board without a driver after reboot.
 - Setup jobs no longer overlap: a second job (e.g. a Model Zoo build during a Setup step) is refused.
-- Model Zoo: *Supported hardware* in each model's Specification — DX-M1 and DX-H1 Quattro; DX-M1M per model from
-  the next DX Model Zoo release (a notice until then).
+- Model Zoo: *Supported hardware* in each model's Specification — DX-M1 and DX-H1 Quattro; DX-M1M per model once
+  DX Model Zoo records it (until then: not confirmed yet).
 - EdgeGuide: NPU memory as `dxrt-cli -s` measures it — DX-M1 3.9 GB LPDDR5 5600 Mbps, DX-M1M 1.9 GB LPDDR4 4200 Mbps,
   DX-H1 Quattro 15.7 GB LPDDR5x 6000 Mbps (4 chips). It read 1 GB for both M1 and M1M.
 - **NPU Driver** in Setup's Version Info (DX App and DX Stream) shows the driver's own version (e.g. v2.7.0), not the
   DX-RT version that `dxrt-cli --version` prints.
+- Hub: the *Measured on DX-M1* tour step says these are DEEPX's DX Model Zoo figures on DX-M1, not a run on this
+  computer. DX App's engine-error hint points to Setup → Deep Diagnostics instead of a Mock mode DX App does not have.
 - Sample videos no longer keep their 1.2 GB archive after extraction; Setup warns below 5 GB free disk.
 
 ## v0.1.1 / 2026-10

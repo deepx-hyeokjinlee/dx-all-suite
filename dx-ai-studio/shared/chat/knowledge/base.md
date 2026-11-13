@@ -160,7 +160,7 @@ lsmod | grep dxrt           # dxrt_driver, dx_dma 모듈 로드 확인
 | DX-H1 Quattro | AI Accelerator | PCIe Gen3 x16 (4×4 bifurcation) | 100 TOPS | M1 chip 4개(chip당 3.92 GiB LPDDR5x), 고성능 서버/엣지. M1에서 도는 model은 그대로 돈다 |
 
 - Model Zoo 상세 → Specification → **Supported hardware**: DX-M1 · DX-H1 Quattro. DX-M1M 지원 여부는 model별로
-  DX Model Zoo가 기록하며, 다음 DX Model Zoo 릴리스부터 표시된다 (그 전에는 안내 문구).
+  DX Model Zoo가 기록하면 표시된다 (그 전에는 "아직 확인되지 않음").
 
 ### NPU 모니터링 (`dxrt-cli`)
 - `dxrt-cli -s`: NPU 상태 요약 (온도, 전압, 클럭, DRAM 사용량)
