@@ -410,17 +410,17 @@ def setup_status():
 def _dkms_check():
     """Deep Diagnostics row for the driver's DKMS entry (shared.dxrt.dkms_dxrt_status asks for the module only)."""
     from shared import dxrt
-    label={"ko":"DKMS 드라이버 상태","en":"DKMS Driver Status","ja":"DKMSドライバ状態","zhCN":"DKMS驱动状态","zhTW":"DKMS驅動狀態","es":"Estado del driver DKMS"}
+    label={"ko":"DKMS 드라이버 상태","en":"DKMS Driver Status","ja":"DKMSドライバ状態","zh-CN":"DKMS驱动状态","zh-TW":"DKMS驅動狀態","es":"Estado del driver DKMS"}
     rc,out=dxrt.dkms_dxrt_status()
     if rc==-1:
-        return {"id":"dkms","label":label,"ok":False,"detail":"dkms not installed","fix":{"ko":"sudo apt install dkms","en":"sudo apt install dkms","ja":"sudo apt install dkms","zhCN":"sudo apt install dkms","zhTW":"sudo apt install dkms","es":"sudo apt install dkms"}}
+        return {"id":"dkms","label":label,"ok":False,"detail":"dkms not installed","fix":{"ko":"sudo apt install dkms","en":"sudo apt install dkms","ja":"sudo apt install dkms","zh-CN":"sudo apt install dkms","zh-TW":"sudo apt install dkms","es":"sudo apt install dkms"}}
     if rc==-2:
         return {"id":"dkms","label":label,"ok":False,"detail":"dkms status timed out"}
     dxrt_dkms=[l for l in out.splitlines() if "dxrt" in l.lower() or "deepx" in l.lower()]
     installed_ok=any("installed" in l.lower() for l in dxrt_dkms)
     return {"id":"dkms","label":label,"ok":installed_ok,
         "detail":"; ".join(dxrt_dkms)[:200] if dxrt_dkms else "No DKMS entry for dxrt/deepx",
-        "fix":{"ko":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","en":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","ja":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zhCN":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zhTW":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","es":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver"}}
+        "fix":{"ko":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","en":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","ja":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zh-CN":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","zh-TW":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver","es":"cd dx-runtime && sudo ./install.sh --target=dx_rt_npu_linux_driver"}}
 
 def deep_diagnostics():
     """Run deep diagnostic checks without importing native media libraries into Studio."""
@@ -560,7 +560,7 @@ def deep_diagnostics():
             "zhTW":"在 Setup 中再次執行 Demo Quick Start（或 Set up the rest）","es":"Vuelva a ejecutar Demo Quick Start (o Set up the rest) en Setup"}})
 
     s=npu_sanity()
-    checks.append({"id":"npu_sanity","label":{lang:"NPU sanity check" for lang in ("ko","en","ja","zhCN","zhTW","es")},
+    checks.append({"id":"npu_sanity","label":{lang:"NPU sanity check" for lang in ("ko","en","ja","zh-CN","zh-TW","es")},
         "ok":s["state"]=="passed","pending":s["state"]=="needs_password",
         "detail":{"passed":"Sanity check PASSED","needs_password":"Needs administrator password"}.get(
             s["state"], s.get("detail") or "Sanity check FAILED"),
